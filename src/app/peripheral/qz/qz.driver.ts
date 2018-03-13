@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Subject, Observable } from "rxjs";
 
 import { AbstractDriver } from "../common/abstract.driver";
-import { QzConnectionDeatil } from "../printer/interface/qzconnection.interface";
 import { environment } from "../../../environments/environment";
 import { DriverReadyBroker } from '../common/driverstatus.broker';
 
