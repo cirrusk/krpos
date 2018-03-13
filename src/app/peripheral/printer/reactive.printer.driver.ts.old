@@ -1,0 +1,259 @@
+import { Observable } from 'rxjs';
+
+import { AbstractPrinterDriver } from "./abstract.printer.driver";
+import { PrinterConfigs } from './interface/override.printerconfig.interface';
+import { environment } from '../../../environments/environment.prod';
+
+
+declare var qz: any;
+
+enum DriverStatus {
+    notConnected = 'notConnected',
+    connected = 'connected',
+    selected = 'selected',
+    ready = 'ready'
+}
+
+enum PixelPrintMode {
+    HTML = 'html',
+    PDF = 'pdf',
+    IMAGE = 'image'
+}
+
+enum DocumentFormat {
+    HTML_PLAIN = 'plain',
+    HTML_FILE = 'file',
+    BASE64 = 'base64'
+}
+
+export class ReactivePrinterDriver extends AbstractPrinterDriver {
+
+    private status: DriverStatus;
+
+    private selectedPrinterName: string;
+
+    private curPrinterConfig: any;
+
+    constructor() {
+        super();
+        if (!environment.production) {
+            this.turnOnDebug();
+        }
+    }
+
+    public getOpenConnObserver(): Observable<any> {
+        return Observable.fromPromise(this.promOpenConn);
+    }
+
+    public notifyConnected() {
+        this.status = DriverStatus.connected;
+    }
+
+    public isConnected(): boolean {
+        return this.isActiveConn();
+    }
+
+    public checkConnected() {
+        if (this.isConnected()) {
+            this.notifyConnected();
+        } else {
+            this.errorHandler('Application is not connected to QZ tray');
+        }
+    }
+
+    public getCloseConnObserver(): Observable<any> {
+        return Observable.fromPromise(this.promCloseConn);
+    }
+
+    public notifyDisconnected() {
+        this.status = DriverStatus.notConnected;
+    }
+
+    public getQzTrayVersion(): string {
+        this.promQzTrayVer.then((version) => {
+            return version;
+        })
+        .catch((err) => {
+            this.errorHandler(err);
+        });
+
+        return null;
+    }
+
+    public getPrinterList(): Array<string> {
+        this.promPrintersList.then((list) => {
+            return list;
+        })
+        .catch((err) => {
+            this.errorHandler(err);
+        });
+
+        return [];
+    }
+
+    /**
+     * @deprecated
+     * 
+     * Observable 로 Selection 할 경우 qz-tray.js 에서 undefined function 오류 발생
+     * Promise 를 사용하는 selectDefaultPrinter() 사용
+    */
+    public getPrintSelectionObserver(): Observable<any> {
+        return Observable.fromPromise(this.promDefaultPrinter);
+    }
+
+    public notifyPrinterSelection(printerName: string) {
+        this.status = DriverStatus.selected;
+        this.selectedPrinterName = printerName;
+    }
+
+    public selectDefaultPrinter(): string {
+        qz.printers.getDefault().then((printerName) => {
+            this.notifyPrinterSelection(printerName);
+            console.log(`Default printer was selected. Name is ${printerName}. Driver status is ${this.status}`);
+
+            return this.selectedPrinterName;
+        })
+        .catch((err) => {
+            this.errorHandler(err);
+        });
+
+        return null;
+    }
+
+    public makeDefaultPrinterConfig(): any {
+        if (this.status !== DriverStatus.selected) {
+            this.errorHandler('Select printer first');
+        }
+
+        this.curPrinterConfig = this.createPrinterConfig(this.selectedPrinterName);
+        this.status = DriverStatus.ready;
+
+        return this.curPrinterConfig;
+    }
+
+    public overridePrinterConfig(opts: PrinterConfigs): any {
+        try {
+            this.curPrinterConfig.reconfigure({
+                size: opts.size,
+                units: opts.units,
+                colorType: opts.colorType,
+                interpolation: opts.interpolation
+                //scaleContent: opts.scaleContent
+                //density: opts.density
+            });
+        } catch (err) {
+            console.log(`Reconfigure error. ${err}`);
+        }
+
+        return this.curPrinterConfig;
+    }
+
+    private checkPrintReady() {
+        if (this.status !== DriverStatus.ready) {
+            if (this.status === DriverStatus.selected) {
+                this.makeDefaultPrinterConfig();
+            } else {
+                this.errorHandler('Select printer first')
+            }
+        }
+    }
+
+    // HTML 모드 못 쓰니까 나중에 지우자.
+    private printPixelMode(data: string, type: PixelPrintMode, opts: PrinterConfigs, format: DocumentFormat = null): Observable<any> {
+        this.checkPrintReady();
+
+        if (opts !== null) {
+            let newConfig = this.overridePrinterConfig(opts);
+            
+            console.log(`New Configuration was set.`)
+            console.dir(newConfig);
+
+        }
+
+        let printData = [{
+            type: type,
+            format : format,
+            data: data
+        }];
+
+        console.log(printData);
+
+        return Observable.fromPromise(
+            qz.print(this.curPrinterConfig, printData)
+                .catch((err) => {
+                    this.errorHandler('Printing was failed : ' + err);
+                })
+            );
+    }
+
+    public printInlineHTML(htmlString: string, opts: PrinterConfigs = null): Observable<any> {
+        return this.printPixelMode('<html>' + htmlString.toString() + '</html>', PixelPrintMode.HTML, opts, DocumentFormat.HTML_PLAIN);
+    }
+
+    public printHTMLFile(htmlFilePath: string, opts: PrinterConfigs = null): Observable<any> {
+        return this.printPixelMode(htmlFilePath, PixelPrintMode.HTML, opts, DocumentFormat.HTML_FILE);
+    }
+
+    public printImageFile(imgFilePath: string, opts: PrinterConfigs = null) {
+        this.checkPrintReady();
+
+        let printData = [{
+            type: 'image',
+            data: imgFilePath
+        }];
+
+        qz.print(this.curPrinterConfig, printData)
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    public printImageEncodedBase64(encodedString: string, opts: PrinterConfigs = null): Observable<any> {
+        return this.printPixelMode(encodedString, PixelPrintMode.IMAGE, opts, DocumentFormat.BASE64);
+    }
+    
+    public printPDFFile(pdfFilePath: string, opts: PrinterConfigs = null): Observable<any> {
+        return this.printPixelMode(pdfFilePath, PixelPrintMode.PDF, opts);
+    }
+
+    public printPDFEncodedBase64(encodedString: string, opts: PrinterConfigs = null): Observable<any> {
+        return this.printPixelMode(encodedString, PixelPrintMode.PDF, opts, DocumentFormat.BASE64);
+    }
+
+    public printRawMode(data: string) {
+        this.checkPrintReady();
+
+        let printData = [{
+            type: 'raw',
+            data: data
+        }];
+
+        return Observable.fromPromise(
+            qz.print(this.curPrinterConfig, printData)
+                .catch((err) => {
+                    this.errorHandler('Printing was failed : ' + err);
+                })
+            );
+    }
+
+    public printRawImage(imagePath: string) {
+        this.checkPrintReady();
+
+        let printData = [{
+            type: 'raw',
+            format: 'image',
+            data: imagePath,
+            options: {
+                language: "ESCPOS",
+                dotDensity: 'double'
+            }
+        }];
+
+        return Observable.fromPromise(
+            qz.print(this.curPrinterConfig, printData)
+                .catch((err) => {
+                    this.errorHandler('Printing was failed : ' + err);
+                })
+            );
+    }
+}

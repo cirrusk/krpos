@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<logo/>
+<!-- textln align="center" -->
+<title>
+    상품 구입 계약서 및 영수증
+</title>
+
+<header>
+    <company></company>
+    <summary></summary>
+</header>
+
+<dash></dash>
+
+<body>
+
+    <entries>
+        <entry>
+            <name></name>
+            <quantitiy></quantitiy>
+            <stockprice></stockprice>
+            <price></price>
+        </entry>
+        <totalprice>
+        </totalprice>
+    </entries>
+
+    <dash></dash>
+
+    <payments>
+        <cash>
+        </cash>
+        <cards>
+            <creditcards>
+                <creditcard>
+                </creditcard>
+            </creditcards>
+            <checkcards>
+                <checkcard>
+                </checkcard>
+            </checkcards>
+            <cashiccards>
+                <cashiccard>
+                </cashiccard>
+            </cashiccards>
+        </cards>
+        <banktransfer>
+        </banktransfer>
+        <apoint>
+        </apoint>
+        <mpoint>
+        </mpoint>
+        <coupons>
+            <coupon>
+            </coupon>
+        </coupons>
+
+        <cardsignature>
+        </cardsignature>
+    </payments>
+
+    <dash></dash>
+
+    <price>
+
+    <dash></dash>
+
+    <performances>
+        <private>
+        </private>
+        <group>
+        </group>
+    </performances>
+
+</body>
+
+<dash></dash>
+
+<footer>
+</footer>
+
+<companyInfo>
+  <ceo>
+    <>
+  </ceo>
+     
+    대      표: 김장환
+  <address>
+      서울시 강서구 양천로
+  </address>
+  <telephone/>
+</companyInfo>
+<products>
+</products>
+
