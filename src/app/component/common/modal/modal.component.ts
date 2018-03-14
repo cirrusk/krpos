@@ -44,7 +44,7 @@ export class ModalComponent implements OnInit, OnDestroy {
 
         // close modal on background click
         if (this.dimClickClose === 'true') {
-            console.log(`${this.dimClickClose}`)
+            console.log(`modal dim click close : ${this.dimClickClose}`)
             this.element.on('click', function (e: any) {
                 var target = $(e.target);
                 if (!target.closest('.modal-body').length) {
@@ -56,7 +56,7 @@ export class ModalComponent implements OnInit, OnDestroy {
         // 커스터마이징. ESC close 추가
         // document 전체에 대한 event listener 를 등록한다. (Component 포커스 받으려면 인풋 필드 필요)
         if (this.escKeyClose === 'true') {
-            console.log(`${this.dimClickClose}`)
+            console.log(`modal esc key close : ${this.escKeyClose}`)
             this.renderer.listenGlobal('document', 'keyup', (evt) => {
                 if (evt.keyCode === 27) {
                     modal.close();
