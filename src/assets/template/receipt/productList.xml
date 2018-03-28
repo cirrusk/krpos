@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Precompile 금지 -->
+<document>
+    <text-line>
+    상품명    단가    수량    금액
+    </text-line>
+    <dash-line />
+        {{#productList}}
+            <text-line>
+                {{idx}} {{skuCode}} {{productName}} {{price}} {{qty}} {{totalPrice}}
+            </text-line>
+        {{/productList}}
+    <dash-line />
+</document>

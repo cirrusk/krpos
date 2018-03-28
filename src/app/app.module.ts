@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { PosMainComponent } from './component/posmain.component';
 import { ProductSearchComponent } from './component/product/productsearch.component';
@@ -26,6 +27,10 @@ import { DriverReadyBroker } from './peripheral/common/driverstatus.broker';
 import { QZDriver } from './peripheral/qz/qz.driver';
 import { PrinterDriver } from './peripheral/printer/printer.driver';
 import { NetworkDriver } from './peripheral/network/network.driver';
+import { EscPos } from './service/common/printer/helpers/escpos';
+import { FileDownloader } from './service/common/file/filedownloader';
+import { ReceiptDataProvider } from './service/provider/receipt/receiptdata.provider';
+import { ReceiptService } from './service/receipt.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +42,8 @@ import { NetworkDriver } from './peripheral/network/network.driver';
   imports: [
     BrowserModule,
     FormsModule, ReactiveFormsModule,
-    HttpModule
+    HttpModule,
+    HttpClientModule,
   ],
   providers: [
     DriverReadyBroker,
@@ -46,9 +52,13 @@ import { NetworkDriver } from './peripheral/network/network.driver';
     ProductSearchService, ProductDataProvider,
     ModalService,
     PrinterDriver,
+    EscPos,
+    FileDownloader,
     PrinterService,
     NetworkDriver,
     NetworkService,
+    ReceiptDataProvider,
+    ReceiptService,
   ],
   bootstrap: [PosMainComponent]
 })

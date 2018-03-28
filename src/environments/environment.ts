@@ -5,7 +5,13 @@
 
 export const environment = {
   production: false,
+  qzDebugMode: false,
 
   hybrisEndpointDomain: 'www.abnkorea.co.kr',
-  hybrisEndpointPort: 80
+  hybrisEndpointPort: 80,
+
+  // 임시 - 추후 삭제
+  occEndpointDomain: 'http://localhost:4200',
+
+  receitPolicyFile: '/assets/template/receipt/policy/receipt.json'
 };

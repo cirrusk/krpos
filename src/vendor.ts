@@ -7,5 +7,6 @@ import '@angular/router';
 import '@angular/forms';
 
 // Other vendors for example jQuery, Lodash or Bootstrap
-import 'jquery';
-import 'lodash';
+//import 'lodash';
+//import 'jquery';
+//import 'text-encoding';

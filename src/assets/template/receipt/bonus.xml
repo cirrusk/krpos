@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <text-line>
+        PV : {{bonus.ordering.PV}} BV : {{bonus.ordering.BV}}
+    </text-line>
+    <text-line>
+        PV SUM : {{bonus.final.PV}} BV SUM : {{bonus.final.BV}}
+    </text-line>
+    <text-line>
+        GROUP PV : {{bonus.group.PV}} GROUP BV : {{bonus.group.BV}}
+    </text-line>
+    <text-line>
+        잔여 A 포인트 : {{aPoint}}
+    </text-line>
+    <text-line>
+        POS 번호 및 캐셔 정보 : POS No. {{orderInfo.posId}} / {{orderInfo.cashier.lastName}}, {{orderInfo.cashier.firstName}}
+    </text-line>
+    <text-line>
+        공제 번호 : {{orderInfo.macAndCoNum}}
+    </text-line>
+</document>

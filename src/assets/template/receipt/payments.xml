@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    {{#if payments.cash}}
+        {{#if payments.cash.detail}}
+            <text-line>
+                [현금결제]
+            </text-line>
+            <text-line>
+                받은금액 {{payments.cash.detail.received}}
+            </text-line>
+            <text-line>
+                거스름돈 {{payments.cash.detail.changes}}
+            </text-line>
+        {{else}}
+            <text-line>
+                [현금결제] {{payments.cash.amount}}
+            </text-line>
+        {{/if}}
+    {{/if}}
+    {{#if payments.creditcard}}
+        {{#if payments.creditcard.cancel}}
+            <text-line>
+                [신용카드결제]
+            </text-line>
+        {{else}}
+            <text-line>
+                [신용카드결제] {{payments.creaditcard.amount}}
+            </text-line>
+        {{/if}}
+    {{/if}}
+</document>

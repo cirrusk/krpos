@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <text-line>
+        주문형태: {{orderInfo.type}}
+    </text-line>
+    <text-line>
+        회원정보: {{orderInfo.account}}
+    </text-line>
+    <text-line>
+        구매일자: {{moment orderInfo.date format="DD/MM/YYYY HH:mm:ss"}}
+        주문번호: {{orderInfo.number}}
+    </text-line>
+</document>

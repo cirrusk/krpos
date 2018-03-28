@@ -39,7 +39,7 @@ export class QZDriver extends AbstractDriver {
         //this.connInfo = Observable.fromPromise(qz.websocket.getConnectionInfo());
         this.qzTrayVersion = Observable.fromPromise(qz.api.getVersion());
 
-        if (!environment.production) {
+        if (environment.qzDebugMode) {
             this.turnOnDebug();
         } else {
             this.turnOffDebug();

@@ -1,0 +1,50 @@
+{
+    "templateList": [
+        "templApInfo",
+        "templOrderSummary",
+        "templProductList",
+        "templPrices",
+        "templBonus",
+        "templPayments",
+        "templBarcode",
+        "templNoticeHealthyFood",
+        "templNotice",
+        "templCompanyInfo",
+        "templPaperCut"
+    ],
+    "precompile": {
+        "templApInfo": true,
+        "templOrderSummary": true,
+        "templProductList": false,
+        "templPrices": true,
+        "templBonus": true,
+        "templPayments": false,
+        "templBarcode": true,
+        "templNoticeHealthyFood": true,
+        "templNotice": true,
+        "templCompanyInfo": true,
+        "templPaperCut": true
+    },
+    "downloadUriPrefix": "/assets/template/receipt/",
+    "downloadUris": {
+        "templApInfo": "apInfo.xml",
+        "templOrderSummary": "orderSummary.xml",
+        "templProductList": "productList.xml",
+        "templPrices": "prices.xml",
+        "templBonus": "bonus.xml",
+        "templPayments": "payments.xml",
+        "templBarcode": "barcode.xml",
+        "templNoticeHealthyFood": "noticeHealthyFood.xml",
+        "templNotice": "notice.xml",
+        "templCompanyInfo": "companyInfo.xml",
+        "templPaperCut": "papercut.xml"
+    },
+    "receipts": [
+        "ordering_1"
+    ],
+    "receiptTemplates": {
+        "ordering_1": ["templApInfo", "templOrderSummary",
+                        "templProductList", "templPrices", "templBonus", "templPayments", "templBarcode",
+                        "templNoticeHealthyFood", "templNotice", "templCompanyInfo", "templPaperCut"]
+    }
+}

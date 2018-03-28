@@ -11,7 +11,6 @@ export class DriverReadyBroker {
     private waitNetworkDriver: Subject<any> = new Subject();
 
     constructor() {
-        console.log('Broker');
 
     }
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <text-line>
+        상품 수량 {{price.totalQty}}
+    </text-line>
+    <text-line>
+        과세 물품 {{price.amountWithoutVAT}}
+    </text-line>
+    <text-line>
+        부 가 세 {{price.amountVAT}}
+    </text-line>
+    <text-line>
+        <bold>
+            합 계 {{price.totalAmount}}
+        </bold>
+    </text-line>
+    <text-line>
+        <bold>
+            할인금액 {{price.discount.total}}
+        </bold>    
+    </text-line>
+    <text-line>
+        <bold>
+            결제금액 {{price.finalAmount}}
+        </bold>
+    </text-line>
+</document>
