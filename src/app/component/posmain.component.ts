@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
 import { ModalService } from './../service/common/modal/modal.service';
 import { AddCartBroker } from "../broker/cart/addcart.broker";
@@ -33,19 +33,30 @@ import { NetworkService } from "../service/common/network/network.service";
     </modal>
     `
 })
-export class PosMainComponent {
+export class PosMainComponent implements OnInit {
     private macAddress: string;
 
     constructor(private modalService: ModalService,
                 private networkService: NetworkService) {
+        console.log('1');
     }
 
     ngOnInit() {
-        
+        console.log('2');
+        this.getMACAddress();
+        console.log('3');
     }
 
     ngOnDestroy() {
         
+    }
+
+    private getMACAddress() {
+        this.networkService.wait().subscribe(
+            () => {
+                this.macAddress = this.networkService.getLocalMacAddress();
+            }
+        );
     }
 
     public openModal(id: string) {
