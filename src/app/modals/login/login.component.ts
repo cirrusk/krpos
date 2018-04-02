@@ -72,7 +72,7 @@ export class LoginComponent extends ModalComponent implements OnInit {
     // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     this.authService.authentication(loginid, loginpwd).subscribe(
       result => {
-        this.logger.debug('user authentication code : ' + result.code, 'login.component');
+        this.logger.debug('get user authentication code...', 'login.component');
         // access token  취득 및 session 저장
         this.getAccessToken(result.code);
       },
