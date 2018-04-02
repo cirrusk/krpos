@@ -25,7 +25,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private logger: Logger) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
-        this.logger.debug('*** [dashboard component] access token subscribe ... ');
+        this.logger.debug('access token subscribe ... ', 'dashboard.component');
         this.tokeninfo = result;
       }
     );

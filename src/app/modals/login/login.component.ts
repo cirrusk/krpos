@@ -49,7 +49,7 @@ export class LoginComponent extends ModalComponent implements OnInit {
    * 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
    */
   startWork() {
-    this.logger.debug(`${this.loginId}`);
+    this.logger.debug(`login id : ${this.loginId}`, 'login.component');
     const loginid = this.loginId;
     const loginpwd = this.loginPassword || '';
 
@@ -72,7 +72,7 @@ export class LoginComponent extends ModalComponent implements OnInit {
     // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     this.authService.authentication(loginid, loginpwd).subscribe(
       result => {
-        this.logger.debug('*** user authentication code : ' + result.code);
+        this.logger.debug('user authentication code : ' + result.code, 'login.component');
         // access token  취득 및 session 저장
         this.getAccessToken(result.code);
       },

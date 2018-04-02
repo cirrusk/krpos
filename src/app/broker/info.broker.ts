@@ -10,7 +10,7 @@ export class InfoBroker {
   private subject = new Subject<any>();
   constructor(private logger: Logger) { }
   sendInfo(message: any) {
-    this.logger.debug('*** [info broker] send info...');
+    this.logger.debug('Send info...', 'info.broker');
     this.subject.next(message);
   }
 
