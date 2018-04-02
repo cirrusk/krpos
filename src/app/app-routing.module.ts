@@ -1,8 +1,9 @@
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PreloadAllModules, Routes, RouterModule, Router } from '@angular/router';
+
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { TestComponent } from './common/test/test.component';
 
 const routes: Routes = [
