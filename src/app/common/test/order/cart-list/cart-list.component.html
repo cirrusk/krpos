@@ -1,0 +1,30 @@
+<div class="table-margin">
+    <ng-container *ngIf="cartList != 0;else empty">
+        <table style="border: 1px solid #444444;">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let entry of cartList">
+                    <td>{{entry.code}}</td>
+                    <td>{{entry.name}}</td>
+                    <td>{{entry.price}}</td>
+                    <td>{{entry.qty}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <label>
+            >> Total Price : {{totalPrice | currency : 'KRW' : 'symbol' : '1.0-0'}}
+        </label>
+    </ng-container>
+    <ng-template #empty>
+        <div>
+            No Cart Entry
+        </div>
+    </ng-template>
+</div>    

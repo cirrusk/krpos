@@ -1,65 +1,35 @@
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 
-import { PosMainComponent } from './component/posmain.component';
-import { ProductSearchComponent } from './component/product/productsearch.component';
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './common/header/header.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AppRoutingModule } from './app-routing.module';
+import { CoreModule } from './core/core.module';
+import { TestModule } from './common/test/test.module';
 
-import { AddCartBroker } from './broker/cart/addcart.broker';
-
-import { ProductSearchService } from './service/product.search.service';
-import { ProductDataProvider } from './service/provider/productdata.provider';
-
-import { CartListComponent } from './component/order/cartlist.component';
-import { ModalComponent } from './component/common/modal/modal.component';
-
-import { ClickEventObserverComponent } from './study/observable/clickevent.component';
-import { PrintReceiptComponent } from './component/order/printreceipt.component';
-
-import { ModalService } from './service/common/modal/modal.service';
-import { PrinterService } from './service/common/printer/printer.service';
-import { ReceiptFormComponent } from './component/order/receiptform.component';
-import { NetworkService } from './service/common/network/network.service';
-import { DriverReadyBroker } from './peripheral/common/driverstatus.broker';
-import { QZDriver } from './peripheral/qz/qz.driver';
-import { PrinterDriver } from './peripheral/printer/printer.driver';
-import { NetworkDriver } from './peripheral/network/network.driver';
-import { EscPos } from './service/common/printer/helpers/escpos';
-import { FileDownloader } from './service/common/file/filedownloader';
-import { ReceiptDataProvider } from './service/provider/receipt/receiptdata.provider';
-import { ReceiptService } from './service/receipt.service';
+import { Config } from './core/config/config';
 
 @NgModule({
-  declarations: [
-    PosMainComponent, ProductSearchComponent, CartListComponent,
-    ModalComponent,
-    PrintReceiptComponent,ReceiptFormComponent,
-    ClickEventObserverComponent,
-  ],
   imports: [
     BrowserModule,
-    FormsModule, ReactiveFormsModule,
-    HttpModule,
     HttpClientModule,
+    AppRoutingModule,
+    CoreModule,
+    TestModule
+  ],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    DashboardComponent
   ],
   providers: [
-    DriverReadyBroker,
-    AddCartBroker,
-    QZDriver,
-    ProductSearchService, ProductDataProvider,
-    ModalService,
-    PrinterDriver,
-    EscPos,
-    FileDownloader,
-    PrinterService,
-    NetworkDriver,
-    NetworkService,
-    ReceiptDataProvider,
-    ReceiptService,
+    Config,
+    { provide: APP_INITIALIZER, useFactory: initConfig, deps: [Config], multi: true },
   ],
-  bootstrap: [PosMainComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export function initConfig(config: Config) { return () => config.load(); }

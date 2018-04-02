@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 import { Product } from './../../interface/product.interface';
-import { ProductVO } from "../../vo/product.vo";
+import { ProductVO } from '../../vo/product.vo';
 
 @Injectable()
 export class ProductDataProvider {
@@ -16,27 +16,27 @@ export class ProductDataProvider {
     }
 
     public searchProductCode(code: string): null | ProductVO {
-        for (let item of this.products) {
+        for (const item of this.products) {
             if (item.code === code) {
                 console.log(`Found name ${item.name}`);
                 return new ProductVO(item.code, item.name, item.price, item.qty, item.barcode);
             }
         }
 
-        console.log("No item found...");
+        console.log('No item found...');
 
         return null;
     }
 
     public searchBarcode(barcode: string): null | ProductVO {
-        for (let item of this.products) {
+        for (const item of this.products) {
             if (item.barcode === barcode) {
                 console.log(`Found name ${item.name}`);
                 return new ProductVO(item.code, item.name, item.price, item.qty, item.barcode);
             }
         }
 
-        console.log("No item found...");
+        console.log('No item found...');
 
         return null;
     }

@@ -1,0 +1,6 @@
+div .width{
+    border-style: solid;
+    border-color: coral;
+    border-width: 2px;
+    width: 260px;
+}

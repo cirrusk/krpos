@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { EscPos } from './common/printer/helpers/escpos/escpos';
-import { ReceiptDataProvider } from "./provider/receipt/receiptdata.provider";
+import { ReceiptDataProvider } from './../core/provider/receipt-data-provider';
+import { EscPos } from './../core/peripheral/model/helper/escpos/escpos';
 
 enum ReceiptMapper {
     order = 'ordering_1'
@@ -15,7 +15,7 @@ export class ReceiptService {
     }
 
     public getOrderReceipt(data: any): string {
-        let templateList: Array<string> = this.receitDataProvider.getReceiptTemplates(ReceiptMapper.order);
+        const templateList: Array<string> = this.receitDataProvider.getReceiptTemplates(ReceiptMapper.order);
 
         let retText = '';
 
@@ -31,7 +31,7 @@ export class ReceiptService {
                 const transformed = EscPos.getTransformed(parsed);
                 retText += transformed;
             }
-            
+
         });
 
         return retText;

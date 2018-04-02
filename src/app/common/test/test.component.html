@@ -1,0 +1,34 @@
+<h1>POS Demo</h1>
+<div class="pos-demo">
+    <div class="pos-product-cart">
+        <pos-product-search></pos-product-search>
+        <pos-cart-list></pos-cart-list>
+    </div>
+    <div class="pos-receipt-print">
+        <pos-receipt-print></pos-receipt-print>
+    </div>
+    <div class="pos-click-observer">
+        <pos-click-observer></pos-click-observer>
+    </div>
+
+    <div class="pos-modal-div">
+    <h3>Modal Dialog Test</h3>
+
+    <button type="button" class="btn_modal" (click)="openModal('modal-test-1')">Open Modal 1</button>
+
+    <pos-modal id="modal-test-1" dimClickClose="true" escKeyClose="true">
+        <div class="modal">
+            <div class="modal-body">
+                <h1>A Custom Modal!</h1>
+                <p>
+                    Home page text: <input type="text" [(ngModel)]="bodyText" />
+                </p>
+                <button type="button" class="type02" (click)="closeModal('modal-test-1');">Close</button>
+            </div>
+        </div>
+        <div class="modal-background"></div>
+    </pos-modal>
+    </div>
+</div>    
+  
+

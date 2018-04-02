@@ -1,0 +1,7 @@
+{
+    "tslint.enable": true,
+    "tslint.autoFixOnSave": true,
+    "tslint.configFile": "./tslint.json",
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "editor.fontFamily": "D2Coding"
+}

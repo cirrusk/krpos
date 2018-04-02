@@ -37,7 +37,7 @@
       true,
       {
         "order": [
-          "static-field",
+          // "static-field",
           "instance-field",
           "static-method",
           "instance-method"
@@ -45,7 +45,7 @@
       }
     ],
     "no-arg": true,
-    "no-bitwise": true,
+    "no-bitwise": false,
     "no-console": [
       true,
       "debug",
@@ -120,13 +120,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      "pos",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "app",
+      "pos",
       "kebab-case"
     ],
     "no-output-on-prefix": true,

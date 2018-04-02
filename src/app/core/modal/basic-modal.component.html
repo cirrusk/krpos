@@ -1,0 +1,20 @@
+<div class="pop_wrap pop_m" #dialogElm posModalCenter>
+  <div class="pop_header" #headerElm>
+      <h1 #titleElm>{{title}}</h1>
+      <button type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus_blur'" (click)="close()">{{closeButtonLabel}}</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container" #bodyElm>
+      <div class="pop_content">
+          <p class="txt_alert" #messageElm [innerHTML]="message"></p>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer line clearfix" #footerElm>
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href *ngIf="actionButtonLabel != undefined && actionButtonLabel != ''" class="btn01_blue" #actionButtonElm (click)="!!action()">{{actionButtonLabel}}</a>
+          <a href *ngIf="closeButtonLabel != undefined && closeButtonLabel != ''" class="btn01_white" #closeButtonElm (click)="!!close()">{{closeButtonLabel}}</a>
+      </span>
+  </div>
+</div>

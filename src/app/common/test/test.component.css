@@ -1,0 +1,105 @@
+/* MODAL STYLES
+-------------------------------*/
+pos-modal {
+    /* modals are hidden by default */
+  
+    display: none;
+  }
+  pos-modal .modal {
+    /* modal container fixed across whole screen */
+  
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* z-index must be higher than .modal-background */
+  
+    z-index: 1000;
+    /* enables scrolling for taa modals */
+  
+    overflow: auto;
+  }
+  pos-modal .modal .modal-body {
+    padding: 20px;
+    background: #fff;
+    /* margin exposes part of the modal background */
+  
+    margin: 40px;
+  }
+  pos-modal .modal-background {
+    /* modal background fixed across whole screen */
+  
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* semi-transparent black  */
+  
+    background-color: #000;
+    opacity: 0.75;
+    /* z-index must be below .modal and above everything else  */
+  
+    z-index: 900;
+  }
+  body.modal-open {
+    /* body overflow is hidden to hide main scrollbar when modal window is open */
+  
+    overflow: hidden;
+  }
+
+  .pos-demo {
+    margin-top: 25px;
+    margin-left:14px;
+    margin-right: 14px;
+    margin-bottom: 0px;
+  }
+
+  .pos-product-cart {
+    margin-bottom: 14px;
+    padding: 15px;
+    border-style: solid;
+    border-color:blue;
+    border-width:1px;
+    width:90%
+  }
+
+  .pos-receipt-print {
+    margin-bottom: 14px;
+    padding: 15px;
+    border-style: solid;
+    border-color:blue;
+    border-width:1px;
+    width:90%  
+  }
+
+  .pos-click-observer {
+    margin-bottom: 14px;
+    padding: 15px;
+    border-style: solid;
+    border-color:blue;
+    border-width:1px;
+    width:90%  
+  }
+
+  .btn_modal {
+    background-color: rgb(47, 57, 189);
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.pos-modal-div {
+  margin-bottom: 40px;
+  padding: 15px;
+  border-style: solid;
+  border-color:blue;
+  border-width:1px;
+  width:90%; 
+}
+
