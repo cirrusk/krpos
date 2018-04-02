@@ -27,17 +27,20 @@ export class NetworkDriver extends AbstractDriver {
         // Wait QZ Driver
         const waitQz: Subject<any> = this.driverReadyBroker.getQzObserver();
 
-        this.logger.debug('1. Network Driver : Waiting QZ', 'network.driver');
+        this.logger.debug('1. Waiting QZ...', 'network.driver');
 
         waitQz.subscribe(
             () => {
                 this.loadLocalNetworkInfo();
+            },
+            (err) => {},
+            () => {
             }
         );
     }
 
     private loadLocalNetworkInfo(): void {
-        this.logger.debug('2. loadLocalNetworkInfo start...', 'network.driver');
+        this.logger.debug('2. getNetworkInfo...', 'network.driver');
         /**
          * qz.websocket
          *
