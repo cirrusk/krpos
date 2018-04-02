@@ -51,10 +51,10 @@ export class QZDriver extends AbstractDriver {
         // this.connInfo = fromPromise(qz.websocket.getConnectionInfo());
         this.qzTrayVersion = fromPromise(qz.api.getVersion());
 
-        if (!environment.production) {
+        if (environment.production) {
             this.turnOffDebug();
         } else {
-            this.turnOffDebug();
+            this.turnOnDebug();
         }
 
         this.notifier = this.driverReadyBroker.getQzObserver();
