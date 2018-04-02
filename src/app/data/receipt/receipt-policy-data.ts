@@ -32,7 +32,7 @@ export class ReceiptPolicyData {
     }
 
     public get precompile(): Map<string, boolean> {
-    return this._precompile;
+        return this._precompile;
     }
 
     public set precompile(value: Map<string, boolean>) {
