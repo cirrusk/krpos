@@ -11,6 +11,9 @@ import { BatchService } from '../service/batch.service';
 
 import { Logger } from './logger/logger';
 import { InfoBroker } from '../broker/info.broker';
+import { SearchService } from '../service/order/search.service';
+import { SearchAccountBroker } from '../broker/order/search/search-account.broker';
+import { SearchBroker } from '../broker/order/search/search.broker';
 
 @NgModule({
   imports: [
@@ -28,7 +31,7 @@ import { InfoBroker } from '../broker/info.broker';
     RouterModule,
     PeripheralModule
   ],
-  providers: [DatePipe, TerminalService, AuthService, Logger, BatchService, InfoBroker],
+  providers: [DatePipe, TerminalService, AuthService, Logger, BatchService, InfoBroker, SearchService, SearchAccountBroker],
   declarations: []
 })
 export class CoreModule {

@@ -12,6 +12,7 @@ import { PasswordComponent } from '../../modals/password/password.component';
 import { ModalService } from './modal.service';
 import { FocusBlurDirective } from './focus-blur.directive';
 import { ModalCenterDirective } from './modal-center.directive';
+import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
 
 
 
@@ -23,7 +24,8 @@ import { ModalCenterDirective } from './modal-center.directive';
     LoginComponent,
     PasswordComponent,
     FocusBlurDirective,
-    ModalCenterDirective
+    ModalCenterDirective,
+    SearchAccountComponent
   ],
   providers: [
     ModalService,
@@ -44,7 +46,8 @@ import { ModalCenterDirective } from './modal-center.directive';
     ModalMainComponent,
     BasicModalComponent,
     LoginComponent,
-    PasswordComponent
+    PasswordComponent,
+    SearchAccountComponent
   ]
 })
 export class ModalModule { }

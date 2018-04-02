@@ -1,0 +1,105 @@
+<div class="pop_wrap pop_l" posModalCenter>
+  <div class="pop_header">
+      <h1>회원정보조회</h1>
+      <button type="button" class="ico_comm pop_close01" (click)="close()">닫기</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <p class="txt01">회원 정보 조회 시 아래의 타입으로 조회 가능합니다.</p>
+          <label class="inp_rd type01" for="ps1">휴대폰번호/전화번호<input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label>
+          <!-- 회원검색영역 -->
+          <div class="mbinfo_search">
+              <select #searchMemberType title="회원구분">
+                  <option value="A">ABO회원</option>
+                  <option value="M">일반회원</option>
+                  <option value="C">소비자</option>
+              </select>
+              <input #inputSearchText type="text" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)" value="{{searchText}}">
+              <button type="button" class="btn01_blue" (click)="getAccountList(searchMemberType.value,inputSearchText.value)">확인</button>
+          </div>
+          <!-- //회원검색영역 -->
+
+          <!-- 검색결과 영역 : 검색 후-->
+          <div class="mbinfo_list type02">
+              <span class="tab_type01">
+                  <span class="on">일반결제</span>
+                  <span>그룹결제</span>
+              </span>
+              <p class="txt"><strong>총 <span class="fc_red">{{totalCnt}}</span>건</strong>이 검색되었습니다.</p>
+              <span class="btn_wrap">
+                  <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
+                  <a href="javascript:void(0)" class="ico_comm prev03">이전</a>
+                  <a href="javascript:void(0)" class="ico_comm next03 on">다음</a>
+                  <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
+              </span>
+              <!-- 검색결과 : 있음(페이지당 회원 최대 수 10개) -->
+              <div class="tbl_col clearfix" *ngIf="accountList && accountList.accounts.length != 0; else elseEmpty">
+                  <!-- 왼쪽테이블 -->
+                  <table>
+                      <caption>회원조회결과</caption>
+                      <colgroup>
+                          <col>
+                          <col style="width:80px">
+                          <col style="width:85px">
+                          <col style="width:125px">
+                      </colgroup>
+                      <thead>
+                          <tr>
+                              <th scope="col">회원명</th>
+                              <th scope="col">회원번호</th>
+                              <th scope="col">생년월일</th>
+                              <th scope="col">전화번호</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <!-- 회원 선택시 tr에 on클래스 추가 -->
+                          <tr [class.on]='activeNum == i' *ngFor="let account of accountList.accounts; let i = index" (click)='activeRow(i)'>
+                              <td class="tit"><span class="elips">{{account.name}}</span></td>
+                              <td><span class="bg_bar none">{{account.uid}}</span></td>
+                              <td><span class="bg_bar"></span></td>
+                              <td><span class="bg_bar"></span></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  <!-- //왼쪽테이블 -->
+                  <!-- 오른쪽테이블 -->
+                  <table>
+                      <caption>회원조회결과</caption>
+                      <colgroup>
+                          <col>
+                          <col style="width:80px">
+                          <col style="width:85px">
+                          <col style="width:125px">
+                      </colgroup>
+                      <thead>
+                          <tr>
+                              <th scope="col">회원명</th>
+                              <th scope="col">회원번호</th>
+                              <th scope="col">생년월일</th>
+                              <th scope="col">전화번호</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <!-- 회원 선택시 tr에 on클래스 추가 -->
+                      </tbody>
+                  </table>
+                  <!-- //오른쪽테이블 -->
+              </div>
+              <ng-template #elseEmpty>
+                  <p class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
+              </ng-template>
+              <!-- // 검색결과 : 있음(페이지당 회원 최대 수 10개) -->
+          </div>
+          <!-- //검색결과 영역 : 검색 후 -->
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href="javascript:void(0)" class="btn01_blue" (click)="sendAccountInfo()">선택</a>
+          <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
+      </span>
+  </div>
+</div>
