@@ -6,7 +6,7 @@ import { ModalService, Modal, Logger } from '../../service/pos';
 import { TerminalInfo } from '../../data/models/terminal-info';
 import { AuthService } from '../../service/auth.service';
 import { InfoBroker } from '../../broker/info.broker';
-
+import Utils from '../../core/utils';
 
 /**
  * 별도의 UI를 가지는 경우 ModalComponent를 상속받아 사용.
@@ -55,7 +55,7 @@ export class LoginComponent extends ModalComponent implements OnInit {
 
     // 1. AD 계정 Validation 체크
     // 2. 비밀번호 미입력
-    if (loginpwd === '') {
+    if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
       this.modal.openMessage(
         {
           title: '비밀번호 미입력',
