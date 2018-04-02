@@ -51,8 +51,8 @@ export class NetworkDriver extends AbstractDriver {
          * retries : Number of times to reconnect before failing.
          * delay : Seconds before firing a connection. Ignored if options.retries is 0.
          */
-        // qz.websocket.getNetworkInfo(environment.hybrisEndpointDomain, environment.hybrisEndpointPort).then(
-        qz.websocket.getNetworkInfo().then(
+        // qz.websocket.getNetworkInfo().then(
+        qz.websocket.getNetworkInfo(environment.hybrisEndpointDomain, environment.hybrisEndpointPort).then(
             (result) => {
                 this._ipAddress = result.ipAddress;
                 this._macAddress = result.macAddress;
