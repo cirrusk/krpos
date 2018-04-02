@@ -121,7 +121,7 @@ export default class Utils {
    * plug-in 설치(https://chrome.google.com/webstore/detail/close-kiosk/dfbjahmenldfpkokepmfmkjkhdjelmkb)
    */
   public static kioskModeEnd() {
-    window.close();
+    self.close();
     location.href = 'http://closekiosk';
   }
 

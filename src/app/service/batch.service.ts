@@ -24,7 +24,8 @@ export class BatchService {
    * 로그오프 시 배치 저장 후(POS 종료 확인 팝업 -> 배치 정보 저장  팝업 뜸) 대시보드 메인으로 이동
    */
   endBatch() {
-    this.logger.debug('*** end batch...');
+    this.logger.debug('*** end batch, and session storage clear...', 'batch.service');
+    sessionStorage.clear();
   }
 
 
