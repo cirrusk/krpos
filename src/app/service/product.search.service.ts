@@ -1,12 +1,9 @@
-
 import { Injectable } from '@angular/core';
 
 // import { ProductDataProvider } from './provider/productdata.provider';
+// import { ProductVO } from "../vo/product.vo";
 import { ProductDataProvider } from './../core/provider/product-data-provider';
 import { ProductData } from '../data/models/product-data';
-// import { ProductVO } from "../vo/product.vo";
-
-
 
 @Injectable()
 export class ProductSearchService {
