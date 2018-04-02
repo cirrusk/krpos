@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
-import { ReceiptPolicy } from './../../service/provider/receipt/receiptpolicy.interface';
+import { ReceiptPolicyData } from './../../data/receipt/receipt-policy-data';
+import { ReceiptPolicy } from './../../data/receipt/receipt-policy';
 import { FormatReader } from './../peripheral/common/format-reader';
-import { ReceiptPolicyVO } from './../../service/provider/receipt/receiptpolicy.vo';
+// import { ReceiptPolicy } from './../../service/provider/receipt/receiptpolicy.interface';
+// import { ReceiptPolicyVO } from './../../service/provider/receipt/receiptpolicy.vo';
+
 import { EscPos } from '../peripheral/model/helper/escpos';
 
 import { environment } from '../../../environments/environment';
@@ -11,7 +14,8 @@ import { environment } from '../../../environments/environment';
 @Injectable()
 export class ReceiptDataProvider {
 
-  private policy: ReceiptPolicyVO;
+  // private policy: ReceiptPolicyVO;
+  private policy: ReceiptPolicyData;
   private preparedData: Map<string, string>;
 
   constructor(private formatReader: FormatReader) {
@@ -30,7 +34,7 @@ export class ReceiptDataProvider {
 
         waitDownload.subscribe(
           (msg: ReceiptPolicy) => {
-              this.policy = new ReceiptPolicyVO(msg);
+              this.policy = new ReceiptPolicyData(msg);
 
               this.preparedData = new Map();
               this.precompile();

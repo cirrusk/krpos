@@ -1,9 +1,11 @@
+import { CartEntry } from './../../../../data/models/cart-entry';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ProductVO } from './../../../../vo/product.vo';
 import { AddCartBroker } from './../../../../broker/cart/addcart.broker';
-import { CartEntry } from './../../../../interface/cartentry.interface';
+// import { CartEntry } from './../../../../interface/cartentry.interface';
+
 
 @Component({
   selector: 'pos-cart-list',
