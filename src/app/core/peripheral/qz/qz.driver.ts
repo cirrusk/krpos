@@ -43,7 +43,7 @@ export class QZDriver extends AbstractDriver {
 
         super('QZ Driver');
 
-        this.logger.debug(`1. qz tray web socket active? [${qz.websocket.isActive()}]`, 'qz.driver');
+        this.logger.debug(`1. qz tray websocket ready..., web socket active? [${qz.websocket.isActive()}]`, 'qz.driver');
 
         const config = {retries: 5, delay: 1};
         this.openConn = fromPromise(qz.websocket.connect(config));
@@ -70,7 +70,7 @@ export class QZDriver extends AbstractDriver {
         .subscribe(
             () => {
                 this.status = Status.Connected;
-                this.logger.debug(`2. qz tray websocket connect..., qz tray web socket active? [${qz.websocket.isActive()}]`, 'qz.driver');
+                this.logger.debug(`2. qz tray websocket connect..., web socket active? [${qz.websocket.isActive()}]`, 'qz.driver');
                 waitingForConnection.next();
             },
             (err) => {
