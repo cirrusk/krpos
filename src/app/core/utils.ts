@@ -122,7 +122,6 @@ export default class Utils {
    */
   public static kioskModeEnd() {
     self.close();
-    location.href = 'http://closekiosk';
   }
 
   public static padding(text: string, padchar?: string, size?: number): string {
