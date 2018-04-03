@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
 
 import { TextEncoder, TextDecoder } from 'text-encoding';
 
@@ -67,7 +68,8 @@ export default class Utils {
    */
   public static handleError(error: Response | any) {
     console.error(`httpclient error : ${error}`);
-    return Observable.throw(error.message || error);
+    return Observable.throw(error); // error.message ||
+
   }
 
   /**
