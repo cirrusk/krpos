@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHandler, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Config } from '../pos';
 import { Observable } from 'rxjs/Observable';
 import { AccountList } from '../../data/models/order/account-list';
+import Utils from '../../core/utils';
 
 @Injectable()
 export class SearchService {
 
-  constructor(private httpClient: HttpClient, private httpHandler: HttpHandler, private config: Config) { }
+  constructor(private httpClient: HttpClient, private config: Config) { }
 
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
     // API ROOT URL
@@ -24,22 +25,7 @@ export class SearchService {
 
     return this.httpClient.get<AccountList>(apiURL)
                .map(data => data as AccountList)
-               .catch(this.handleError);
+               .catch(Utils.handleError);
   }
 
-  private extractData(res: Response) {
-    if (res.status < 200 || res.status >= 300) {
-      console.error(`get terminal info error: ${res.statusText}`);
-      return {};
-    } else {
-      const body = res;
-      console.log('... ' + JSON.stringify(body));
-      return body || {};
-    }
-  }
-
-  private handleError(error: Response | any) {
-    console.error(`terminal info error : ${error}`);
-    return Observable.throw(error.message || error);
-  }
 }
