@@ -23,8 +23,8 @@ export default class BarcodeNode extends XMLNode {
         system = BARCODE_SYSTEM.CODE_39; break;
       case 'ITF':
         system = BARCODE_SYSTEM.ITF; break;
-      case 'CODABAR':
-        system = BARCODE_SYSTEM.CODABAR; break;
+      case 'NW7':
+        system = BARCODE_SYSTEM.NW7; break;
       case 'CODE_93':
         system = BARCODE_SYSTEM.CODE_93; break;
       case 'CODE_128':
@@ -43,7 +43,7 @@ export default class BarcodeNode extends XMLNode {
       case 'DOT_750':
         width = BARCODE_WIDTH.DOT_750; break;
       default:
-        width = BARCODE_WIDTH.DOT_375;
+        width = BARCODE_WIDTH.DOT_560;
     }
 
     switch (this.attributes.labelFont) {
@@ -71,17 +71,19 @@ export default class BarcodeNode extends XMLNode {
     if (/\d+/.test(this.attributes.height)) {
       height = parseInt(this.attributes.height);
     } else {
-      height = 162;
+      height = 100;
     }
 
-    if (/\d+/.test(this.attributes.leftSpacing)) {
-      leftSpacing = parseInt(this.attributes.leftSpacing);
-    } else {
-      leftSpacing = 0;
-    }
+    // if (/\d+/.test(this.attributes.leftSpacing)) {
+    //   leftSpacing = parseInt(this.attributes.leftSpacing);
+    // } else {
+    //   leftSpacing = 0;
+    // }
 
-    if (system && this.content) {
-      bufferBuilder.printBarcode(this.content, system, width, height, labelFont, labelPosition, leftSpacing);
+    let data: string = this.content.trim();
+
+    if (system && data) {
+      bufferBuilder.printBarcode(data, system, width, height, labelFont, labelPosition, leftSpacing);
     }
 
     return bufferBuilder;

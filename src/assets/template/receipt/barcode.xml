@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <barcode system="EAN-8">
-        {{orderInfo.number}}
+    <barcode system="UPC_A">
+        123456789
     </barcode>
 </document>

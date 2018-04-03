@@ -10,7 +10,8 @@
         "templNoticeHealthyFood",
         "templNotice",
         "templCompanyInfo",
-        "templPaperCut"
+        "templPaperCut",
+        "templDashline"
     ],
     "precompile": {
         "templApInfo": true,
@@ -23,7 +24,8 @@
         "templNoticeHealthyFood": true,
         "templNotice": true,
         "templCompanyInfo": true,
-        "templPaperCut": true
+        "templPaperCut": true,
+        "templDashline": true
     },
     "downloadUriPrefix": "/assets/template/receipt/",
     "downloadUris": {
@@ -37,14 +39,18 @@
         "templNoticeHealthyFood": "noticeHealthyFood.xml",
         "templNotice": "notice.xml",
         "templCompanyInfo": "companyInfo.xml",
-        "templPaperCut": "papercut.xml"
+        "templPaperCut": "papercut.xml",
+        "templDashline": "dashline.xml"
     },
     "receipts": [
-        "ordering_1"
+        "ordering_1", "ordering_2"
     ],
     "receiptTemplates": {
         "ordering_1": ["templApInfo", "templOrderSummary",
-                        "templProductList", "templPrices", "templBonus", "templPayments", "templBarcode",
-                        "templNoticeHealthyFood", "templNotice", "templCompanyInfo", "templPaperCut"]
+                        "templProductList", "templPrices", "templBonus", "templPayments", "templDashline", "templBarcode",
+                        "templNoticeHealthyFood", "templNotice", "templDashline", "templCompanyInfo", "templPaperCut"
+        ],
+        "ordering_2": ["templApInfo", "templDashline", "templBarcode", "templDashline", "templPaperCut"
+        ]
     }
 }
