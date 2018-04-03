@@ -14,8 +14,6 @@ import { PosModalService } from './../../core/service/pos-modal.service';
 import { ProductSearchService } from './../../service/product.search.service';
 import { AddCartBroker } from './../../broker/cart/addcart.broker';
 
-import { ReceiptFormComponent } from './../../component/order/receiptform.component';
-import { PrintReceiptComponent } from './../../component/order/printreceipt.component';
 import { ProductSearchComponent } from './product-search/product-search.component';
 
 import { ProductDataProvider } from './../../core/provider/product-data-provider';
