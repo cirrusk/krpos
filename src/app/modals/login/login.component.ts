@@ -1,3 +1,4 @@
+import { ErrorInfo } from './../../data/error/error-info';
 import { Component, OnInit, Input } from '@angular/core';
 
 import { ModalComponent } from '../../core/modal/modal.component';
@@ -51,7 +52,7 @@ export class LoginComponent extends ModalComponent implements OnInit {
    * 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
    */
   startWork() {
-    this.logger.debug(`login id : ${this.loginId}`, 'login.component');
+    if (this.loginId) { this.logger.debug(`login id : ${this.loginId}`, 'login.component'); }
     const loginid = this.loginId;
     const loginpwd = this.loginPassword || '';
 
@@ -94,7 +95,13 @@ export class LoginComponent extends ModalComponent implements OnInit {
       result => {
         sessionStorage.setItem('tokenInfo', JSON.stringify(result));
       },
-      error => {},
+      err => {
+        const errdata = Utils.parseError(err);
+        if (errdata && errdata.error) {
+          this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
+          this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
+        }
+      },
       () => {
         this.saveBatch();
         const accesstoken = JSON.parse(sessionStorage.getItem('tokenInfo'));
@@ -114,5 +121,6 @@ export class LoginComponent extends ModalComponent implements OnInit {
   close() {
     this.modal.clearAllModals(this);
   }
+
 
 }

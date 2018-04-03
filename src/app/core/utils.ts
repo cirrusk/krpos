@@ -1,3 +1,4 @@
+import { ErrorInfo } from './../data/error/error-info';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 
@@ -70,6 +71,11 @@ export default class Utils {
     console.error(`httpclient error : ${error}`);
     return Observable.throw(error); // error.message ||
 
+  }
+
+  public static parseError(err): ErrorInfo {
+    const errorData = err as ErrorInfo;
+    return (errorData) ? errorData : null;
   }
 
   /**
