@@ -7,7 +7,6 @@ export class XMLParser {
 
   public parser(xml: string): BufferBuilder {
     const parsedXML = parser(xml);
-    console.log(parsedXML);
     return this.compile(parsedXML);
   }
 

@@ -3,7 +3,6 @@ import { Component, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs/Subscription";
 
 import { AddCartBroker } from "../../broker/cart/addcart.broker";
-import { ProductVO } from "../../vo/product.vo";
 import { CartEntry } from "../../interface/cartentry.interface";
 
 @Component({
@@ -54,30 +53,30 @@ export class CartListComponent implements OnDestroy {
         this.subscription = this.addCartBroker.getSubscription().subscribe(value => {
             console.log(`Add to cart ${value}`);
 
-            this.addCartEntry(value);
+            //this.addCartEntry(value);
 
         });
     }
 
-    private addCartEntry(productData: ProductVO) {
-        let existedIdx: number = this.cartList.findIndex(
-            function (obj) {
-                return obj.code === productData.code;
-            }
-        );
+    private addCartEntry() {
+        // let existedIdx: number = this.cartList.findIndex(
+        //     function (obj) {
+        //         return obj.code === productData.code;
+        //     }
+        // );
 
-        // Not existing
-        if (existedIdx === -1) {
-            this.cartList.push(
-                {code: productData.code, name: productData.name, price: productData.price, qty: 1}
-            );
-        }
-        // Existing
-        else {
-            this.cartList[existedIdx].qty++;
-        }
+        // // Not existing
+        // if (existedIdx === -1) {
+        //     this.cartList.push(
+        //         {code: productData.code, name: productData.name, price: productData.price, qty: 1}
+        //     );
+        // }
+        // // Existing
+        // else {
+        //     this.cartList[existedIdx].qty++;
+        // }
 
-        this.calculateTotalPrice();
+        // this.calculateTotalPrice();
     }
 
     ngOnDestroy() {

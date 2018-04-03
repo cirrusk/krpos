@@ -1,7 +1,6 @@
 import { Component, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 
 import { PrinterService } from '../../service/common/printer/printer.service';
-import { PrinterConfigs } from '../../peripheral/printer/interface/override.printerconfig.interface';
 import { ReceiptFormComponent } from './receiptform.component';
 
 import { PrinterCommands } from '../../service/common/printer/helpers/printer.commands';

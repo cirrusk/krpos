@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 
 import { Subject, Observable } from "rxjs";
+import { NetworkDriver } from "../../../core/peripheral/network/network.driver";
+import { DriverReadyBroker } from "../../../core/broker/driverstatus.broker";
 
-import { NetworkDriver } from "../../../peripheral/network/network.driver";
-import { DriverReadyBroker } from "../../../peripheral/common/driverstatus.broker";
 
 @Injectable()
 export class NetworkService {

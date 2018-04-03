@@ -2,12 +2,12 @@ import { Injectable } from "@angular/core";
 
 import { Observable, Subject, Subscription } from 'rxjs';
 
-import { PrinterConfigs } from "../../../peripheral/printer/interface/override.printerconfig.interface";
-import { PrinterDriver } from "../../../peripheral/printer/printer.driver";
 import { FileDownloader } from './../file/filedownloader';
-import { DriverReadyBroker } from './../../../peripheral/common/driverstatus.broker';
 import { EscPos } from './helpers/escpos';
 import { UTF8ArrayConverter } from "../utils/utf8.arrayconverter";
+import { PrinterConfigs } from "../../../core/peripheral/model/printer-configs";
+import { PrinterDriver } from "../../../core/peripheral/printer/printer.driver";
+import { DriverReadyBroker } from "../../../core/broker/driverstatus.broker";
 
 @Injectable()
 export class PrinterService {

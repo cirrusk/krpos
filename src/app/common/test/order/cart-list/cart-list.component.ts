@@ -2,7 +2,6 @@ import { CartEntry } from './../../../../data/models/cart-entry';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ProductVO } from './../../../../vo/product.vo';
 import { AddCartBroker } from './../../../../broker/cart/addcart.broker';
 // import { CartEntry } from './../../../../interface/cartentry.interface';
 
@@ -24,30 +23,14 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.subscription = this.addCartBroker.getSubscription().subscribe(value => {
         console.log(`Add to cart ${value}`);
 
-        this.addCartEntry(value);
 
     });
   }
 
   ngOnInit() {
   }
-  private addCartEntry(productData: ProductVO) {
-    const existedIdx: number = this.cartList.findIndex(
-        function (obj) {
-            return obj.code === productData.code;
-        }
-    );
+  private addCartEntry() {
 
-    // Not existing
-    if (existedIdx === -1) {
-        this.cartList.push(
-            {code: productData.code, name: productData.name, price: productData.price, qty: 1}
-        );
-    } else {
-        this.cartList[existedIdx].qty++;
-    }
-
-    this.calculateTotalPrice();
   }
 
   ngOnDestroy() {
