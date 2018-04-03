@@ -37,7 +37,7 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
   providers: [
     Config,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [Config], multi: true },
-    {provide : HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true},
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true },
     SearchBroker
   ],
   bootstrap: [AppComponent]
