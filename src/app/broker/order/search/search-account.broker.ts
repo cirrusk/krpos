@@ -10,7 +10,7 @@ export class SearchAccountBroker {
   constructor(private logger: Logger) { }
 
   sendInfo(message: any) {
-    this.logger.debug('*** [search account broker] send info...');
+    this.logger.debug('Send info...', 'search.account.broker');
     this.subject.next(message);
   }
 
