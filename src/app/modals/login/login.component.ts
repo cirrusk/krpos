@@ -1,5 +1,5 @@
-import { ErrorInfo } from './../../data/error/error-info';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent } from '../../core/modal/modal.component';
 import { AuthService } from '../../service/auth.service';
@@ -7,6 +7,7 @@ import { BatchService } from './../../service/batch.service';
 import { ModalService, Modal, Logger } from '../../service/pos';
 import { InfoBroker } from '../../broker/info.broker';
 import { TerminalInfo } from '../../data/models/terminal-info';
+import { ErrorInfo } from './../../data/error/error-info';
 import Utils from '../../core/utils';
 
 /**
@@ -25,11 +26,13 @@ import Utils from '../../core/utils';
   selector: 'pos-login',
   templateUrl: './login.component.html'
 })
-export class LoginComponent extends ModalComponent implements OnInit {
+export class LoginComponent extends ModalComponent implements OnInit, OnDestroy {
 
   @Input() loginId: string;
   @Input() loginPassword: string;
   terminalInfo: TerminalInfo;
+  authsubscription: Subscription;
+  tokensubscription: Subscription;
   constructor(
     modalService: ModalService,
     private authService: AuthService,
@@ -42,6 +45,11 @@ export class LoginComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.terminalInfo = JSON.parse(sessionStorage.getItem('terminalInfo'));
+  }
+
+  ngOnDestroy() {
+    this.authsubscription.unsubscribe();
+    this.tokensubscription.unsubscribe();
   }
 
   /**
@@ -72,17 +80,31 @@ export class LoginComponent extends ModalComponent implements OnInit {
       );
       return;
     }
+
+    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+    // 고민해야할 부분!!!
+    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+    // 비즈니스 로직을 전부 Service로 가져다 놓아야 하는게 아닌지 확인!!!.
+    // 만약 그럴 경우 후속 처리나 메시지 처리가 복잡해짐.
+    // Service 에서 undescribe 할 수 없음.
+    // 이유는 Lifecycle hooks가 Component Lifecycle 이기 때문!!!
     // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
-    this.authService.authentication(loginid, loginpwd).subscribe(
+    this.authsubscription = this.authService.authentication(loginid, loginpwd).subscribe(
       result => {
         this.logger.debug('get user authentication code...', 'login.component');
-        // access token  취득 및 session 저장
-        this.getAccessToken(result.code);
+        this.getAccessToken(result.code); // access token  취득 및 session 저장
       },
-      error => {},
-      () => {}
+      error => {
+        const errdata = Utils.parseError(error);
+        if (errdata && errdata.errors) {
+          this.logger.error(`authentication error type : ${errdata.errors[0].type}`);
+          this.logger.error(`authentication error message : ${errdata.errors[0].message}`);
+        } else if (errdata && errdata.error) {
+          this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
+          this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
+        }
+      }
     );
-
   }
 
   /**
@@ -91,22 +113,23 @@ export class LoginComponent extends ModalComponent implements OnInit {
    * @param authcode
    */
   private getAccessToken(authcode: string) {
-    this.authService.accessToken(authcode).subscribe(
+    this.tokensubscription = this.authService.accessToken(authcode).subscribe(
       result => {
         sessionStorage.setItem('tokenInfo', JSON.stringify(result));
-      },
-      err => {
-        const errdata = Utils.parseError(err);
-        if (errdata && errdata.error) {
-          this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
-          this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
-        }
-      },
-      () => {
         this.saveBatch();
         const accesstoken = JSON.parse(sessionStorage.getItem('tokenInfo'));
         this.infoBroker.sendInfo(accesstoken);
         this.close();
+      },
+      error => {
+        const errdata = Utils.parseError(error);
+        if (errdata && errdata.errors) {
+          this.logger.error(`authentication error type : ${errdata.errors[0].type}`);
+          this.logger.error(`authentication error message : ${errdata.errors[0].message}`);
+        } else if (errdata && errdata.error) {
+          this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
+          this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
+        }
       }
     );
   }

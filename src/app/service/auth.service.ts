@@ -15,7 +15,10 @@ import Utils from '../core/utils';
 export class AuthService {
 
   terminalInfo: TerminalInfo;
-  constructor(private http: HttpClient, private config: Config, private logger: Logger) {
+  constructor(
+    private http: HttpClient,
+    private config: Config,
+    private logger: Logger) {
     this.terminalInfo =  JSON.parse(sessionStorage.getItem('terminalInfo'));
   }
 
@@ -43,12 +46,12 @@ export class AuthService {
 
   /**
    * Employee Identification - Access Token
+   * client_secret 값 확인 필요!!!
    *
    * @param authCode
    */
   public accessToken(authCode: string): Observable<AccessToken> {
     const tokenUrl = this.config.getConfig('tokenApiUrl');
-
     const clientid = this.terminalInfo.id;
 
     const httpParams = new HttpParams()

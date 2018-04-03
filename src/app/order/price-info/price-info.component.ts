@@ -10,8 +10,7 @@ import { SearchAccountBroker } from '../../broker/order/search/search-account.br
 
 @Component({
   selector: 'pos-price-info',
-  templateUrl: './price-info.component.html',
-  styleUrls: ['./price-info.component.css']
+  templateUrl: './price-info.component.html'
 })
 export class PriceInfoComponent implements OnInit, OnDestroy {
   private searchUserInfo: string;
