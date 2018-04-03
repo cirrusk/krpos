@@ -4,8 +4,10 @@ import { TextEncoder, TextDecoder } from 'text-encoding';
 
 export default class Utils {
 
+  /** 텍스트 인코더 정의 */
   private static encoder = new TextEncoder('utf-8');
 
+  /** 텍스트 디코더 정의 */
   private static decoder = new TextDecoder('utf-8');
 
   /**
@@ -115,7 +117,7 @@ export default class Utils {
   /**
    * chrome kiosk mode 종료
    *
-   * 방법 1.window.close();
+   * 방법 1.self.close();
    * 방법 2. ALT + F4
    * 방법 3. location.href = 'http://closekiosk';
    * plug-in 설치(https://chrome.google.com/webstore/detail/close-kiosk/dfbjahmenldfpkokepmfmkjkhdjelmkb)
@@ -124,13 +126,20 @@ export default class Utils {
     self.close();
   }
 
+  /**
+   * 문자열 패딩하기
+   *
+   * @param text
+   * @param padchar
+   * @param size
+   */
   public static padding(text: string, padchar?: string, size?: number): string {
     padchar = padchar || ' ';
     size = size || text.length;
     if (text.length < size) {
       const ln = size - text.length;
       const remain = ( ln % 2 === 0 ) ? '' : padchar;
-      const pads = padchar.repeat( ln / 2);
+      const pads = padchar.repeat( ln / 2 );
       return pads + text + pads + remain;
     }
     return text;
