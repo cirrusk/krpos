@@ -68,11 +68,16 @@ export default class Utils {
    * @param error
    */
   public static handleError(error: Response | any) {
-    console.error(`httpclient error : ${error}`);
+    // console.error(`httpclient error : ${error}`);
     return Observable.throw(error); // error.message ||
 
   }
 
+  /**
+   * Error 정보 객체 파싱하기
+   *
+   * @param err
+   */
   public static parseError(err): ErrorInfo {
     const errorData = err as ErrorInfo;
     return (errorData) ? errorData : null;
