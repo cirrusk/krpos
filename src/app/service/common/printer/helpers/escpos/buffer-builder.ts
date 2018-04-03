@@ -91,6 +91,7 @@ export class BufferBuilder {
     this.buffer.write(Command.GS_H(labelPosition)); // HRI font
     this.buffer.write(Command.GS_K(barcodeSystem, data.length)); // data is a string in UTF-8
     this.buffer.write(data, 'ascii');
+    this.buffer.write(Command.NUL, 'ascii');
     return this;
   }
 
@@ -214,15 +215,15 @@ export enum ALIGNMENT {
 }
 
 export enum BARCODE_SYSTEM {
-  UPC_A = 65,
-  UPC_E = 66,
-  EAN_13 = 67,
-  EAN_8 = 68,
-  CODE_39 = 69,
-  ITF = 70,
-  CODABAR = 71,
-  CODE_93 = 72,
-  CODE_128 = 73
+  UPC_A = 48,
+  UPC_E = 49,
+  EAN_13 = 50,
+  EAN_8 = 51,
+  CODE_39 = 52,
+  ITF = 53,
+  NW7 = 54,
+  CODE_93 = 55,
+  CODE_128 = 56
 }
 
 export enum BARCODE_WIDTH {
