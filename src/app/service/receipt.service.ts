@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { ReceiptDataProvider } from './../core/provider/receipt-data-provider';
-import { EscPos } from './../core/peripheral/model/helper/escpos/escpos';
+import { EscPos } from '../core/peripheral/printer/helper/escpos';
 
 enum ReceiptMapper {
     order = 'ordering_1'

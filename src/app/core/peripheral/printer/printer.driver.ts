@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { Observable } from 'rxjs/Observable';
@@ -8,7 +9,7 @@ import { QZDriver } from './../qz/qz.driver';
 import { DriverReadyBroker } from './../../broker/driverstatus.broker';
 import { DocumentFormat } from './../common/document-format.enum';
 import { DocumentType } from './../common/document-type.enum';
-import { PrinterConfigs } from './../model/printer-configs';
+import { PrinterConfigs } from './helper/printer-configs';
 import { Logger } from '../../logger/logger';
 
 const enum Status {

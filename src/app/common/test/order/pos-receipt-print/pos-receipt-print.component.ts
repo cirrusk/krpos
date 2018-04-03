@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ReceiptService } from './../../../../service/receipt.service';
 import { PrinterService } from './../../../../core/peripheral/printer/printer.service';
-import { PrinterCommands } from './../../../../core/peripheral/model/helper/printer-commands';
+import { PrinterCommands } from './../../../../core/peripheral/printer/helper/printer-commands';
 import Utils from '../../../../core/utils';
 
 @Component({

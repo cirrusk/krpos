@@ -1,13 +1,12 @@
-import { Logger } from './../../logger/logger';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { PrinterDriver } from './printer.driver';
 import { FormatReader } from './../common/format-reader';
 import { DriverReadyBroker } from './../../broker/driverstatus.broker';
-import { PrinterConfigs } from '../model/printer-configs';
-
-import { EscPos } from '../model/helper/escpos';
+import { PrinterConfigs } from './helper/printer-configs';
+import { Logger } from './../../logger/logger';
+import { EscPos } from './helper/escpos/escpos';
 import Utils from '../../utils';
 
 @Injectable()

@@ -22,7 +22,7 @@ import { ReceiptDataProvider } from './../../core/provider/receipt-data-provider
 import { ReceiptService } from '../../service/receipt.service';
 import { CartListComponent } from './order/cart-list/cart-list.component';
 import { PosReceiptPrintComponent } from './order/pos-receipt-print/pos-receipt-print.component';
-import { EscPos } from '../../core/peripheral/model/helper/escpos';
+import { EscPos } from './../../core/peripheral/printer/helper/escpos/escpos';
 import { ClickObserverComponent } from './study/click-observer/click-observer.component';
 
 

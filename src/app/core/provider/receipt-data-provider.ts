@@ -4,12 +4,9 @@ import { Subject } from 'rxjs/Subject';
 import { ReceiptPolicyData } from './../../data/receipt/receipt-policy-data';
 import { ReceiptPolicy } from './../../data/receipt/receipt-policy';
 import { FormatReader } from './../peripheral/common/format-reader';
-// import { ReceiptPolicy } from './../../service/provider/receipt/receiptpolicy.interface';
-// import { ReceiptPolicyVO } from './../../service/provider/receipt/receiptpolicy.vo';
-
-import { EscPos } from '../peripheral/model/helper/escpos';
 
 import { environment } from '../../../environments/environment';
+import { EscPos } from '../peripheral/printer/helper/escpos';
 
 @Injectable()
 export class ReceiptDataProvider {

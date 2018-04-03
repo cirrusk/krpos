@@ -1,10 +1,10 @@
-import { Logger } from './../../logger/logger';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { NetworkDriver } from './network.driver';
+import { Logger } from './../../logger/logger';
 
 @Injectable()
 export class NetworkService {
