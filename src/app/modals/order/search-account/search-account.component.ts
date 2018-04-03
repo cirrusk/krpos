@@ -10,8 +10,7 @@ import { SearchAccountBroker } from '../../../broker/order/search/search-account
 
 @Component({
   selector: 'pos-search-account',
-  templateUrl: './search-account.component.html',
-  styleUrls: ['./search-account.component.css']
+  templateUrl: './search-account.component.html'
 })
 export class SearchAccountComponent extends ModalComponent implements OnInit, OnDestroy {
   private accountList: AccountList; // 회원 정보 리스트

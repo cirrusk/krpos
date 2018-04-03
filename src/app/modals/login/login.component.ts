@@ -19,8 +19,7 @@ import Utils from '../../core/utils';
  */
 @Component({
   selector: 'pos-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent extends ModalComponent implements OnInit {
 

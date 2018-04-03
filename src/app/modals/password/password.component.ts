@@ -4,8 +4,7 @@ import { ModalService, Modal, Logger } from '../../service/pos';
 
 @Component({
   selector: 'pos-password',
-  templateUrl: './password.component.html',
-  styleUrls: ['./password.component.css']
+  templateUrl: './password.component.html'
 })
 export class PasswordComponent extends ModalComponent implements OnInit {
 
