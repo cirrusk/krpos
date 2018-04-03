@@ -1,7 +1,7 @@
 import { ErrorInfo } from './../data/error/error-info';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
-
+import * as CryptoJS from 'crypto-js';
 import { TextEncoder, TextDecoder } from 'text-encoding';
 
 export default class Utils {
@@ -160,6 +160,28 @@ export default class Utils {
       return pads + text + pads + remain;
     }
     return text;
+  }
+
+  /**
+   * AES 암호화 하기
+   *
+   * @param plaintext 암호화할 문자열
+   * @param encryptkey 암호화할때 사용할 키값(복호화할때도 동일값)
+   */
+  public static encryptAes(plaintext: string, encryptkey: string): string {
+    const encrypted = CryptoJS.AES.encrypt(plaintext, encryptkey);
+    return encrypted.toString();
+  }
+
+  /**
+   * AES 복호화 하기
+   *
+   * @param encryptedtext 암호화된 문자열
+   * @param decryptkey 복호화할때 사용할 키값(암호화할때도 동일값)
+   */
+  public static decryptAes(encryptedtext: string, decryptkey: string): string {
+    const decrypted = CryptoJS.AES.decrypt(encryptedtext, decryptkey);
+    return decrypted.toString(CryptoJS.enc.Utf8);
   }
 
 }
