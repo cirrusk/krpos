@@ -1,21 +1,24 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { ModalComponent } from '../../core/modal/modal.component';
+import { AuthService } from '../../service/auth.service';
 import { BatchService } from './../../service/batch.service';
 import { ModalService, Modal, Logger } from '../../service/pos';
-import { TerminalInfo } from '../../data/models/terminal-info';
-import { AuthService } from '../../service/auth.service';
 import { InfoBroker } from '../../broker/info.broker';
+import { TerminalInfo } from '../../data/models/terminal-info';
 import Utils from '../../core/utils';
 
 /**
+ * Component 형식으로 레이어 팝업을 띄울 경우 사용.
  * 별도의 UI를 가지는 경우 ModalComponent를 상속받아 사용.
  * 모달로 Component 자체를 띄우기 위해서는
  * 반드시 @see ModalComponent 를 상속받아서 구현해야함.
  * 그렇지 않을 경우 정상적으로 모달 팝업이 뜨지 않음.
- * 호출은 @see PosModal 서비스를 이용하여 호출함.
+ * 호출은 @see Modal 서비스를 이용하여 호출함.
  * 일반적인 메시지, 확인 창은 기본 Component (@see BasicModalComponent ) 제공하고 있음.
  * 생성된 모달 Component는 반드시 modal.module 에 등록해야 함.
+ * 참고) PosModalService 는 Simple Layer 타입으로 화면에 Modal Component selector를 이용하여
+ * 레이어를 띄우도록 되어 있으며, 필요한 레이어를 화면에 기술해야함.
  */
 @Component({
   selector: 'pos-login',
