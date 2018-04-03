@@ -81,8 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             closeAllDialogs: true
           });
 
-          this.timer_id = undefined;
-          clearTimeout(this.timer_id);
+          if (this.timer_id !== undefined) { clearTimeout(this.timer_id); }
           this.timer_id = setTimeout(() => {
             this.modal.clearAllModals(this.modal.getModalArray()[0]);
           }, 1000 * 60 * 2); // 2분정도 후에 강제로 닫자. 그렇지 않으면 모달이 계속 뜸.
