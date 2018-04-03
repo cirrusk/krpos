@@ -123,8 +123,11 @@ export default class Utils {
    * plug-in 설치(https://chrome.google.com/webstore/detail/close-kiosk/dfbjahmenldfpkokepmfmkjkhdjelmkb)
    */
   public static kioskModeEnd() {
-    self.close();
-    // location.href = 'http://closekiosk';
+    // tampermonkey
+    // @grant window.close
+    self.close(); // only kiosk mode
+    // window.open('', '_self').close();
+    // location.href = '/closekiosk';
   }
 
   /**

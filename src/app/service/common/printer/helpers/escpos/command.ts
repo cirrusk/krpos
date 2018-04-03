@@ -1,4 +1,5 @@
 export class Command {
+  public static NUL: string        = '\0';
 
   public static ESC: number        = 0x1B;
   public static FF: number         = 0x0C;
