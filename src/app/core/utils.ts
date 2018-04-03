@@ -124,6 +124,7 @@ export default class Utils {
    */
   public static kioskModeEnd() {
     self.close();
+    // location.href = 'http://closekiosk';
   }
 
   /**
