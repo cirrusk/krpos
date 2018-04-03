@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { QzHealthChecker } from './../../core/service/qz-health-checker';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 import { Subscription } from 'rxjs/Subscription';
@@ -32,12 +33,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   timersubscription: Subscription;
   tokensubscription: Subscription;
+  qzsubscription: Subscription;
+  timer_id: any;
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
     private modal: Modal,
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
+    private qzchecker: QzHealthChecker,
     private logger: Logger) {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
@@ -57,12 +61,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
     this.tokeninfo = JSON.parse(sessionStorage.getItem('tokenInfo'));
     this.getTerminalInfo();
+    // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
+    this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
+      result => {
+        if (result) {
+          this.logger.debug('qz websocket connection is alive!!!', 'header.component');
+        } else {
+          this.logger.warn('qz websocket connection is dead!!!, check qz tray running mode...', 'header.component');
+          // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
+          this.modal.openMessage({
+            title: 'QZ Tray 상태 체크',
+            message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
+            closeButtonLabel: '닫기',
+            closeByEnter: true,
+            closeByEscape: true,
+            closeByClickOutside: true,
+            closeAllDialogs: true
+          });
+
+          this.timer_id = undefined;
+          clearTimeout(this.timer_id);
+          this.timer_id = setTimeout(() => {
+            this.modal.clearAllModals(this.modal.getModalArray()[0]);
+          }, 1000 * 60 * 2); // 2분정도 후에 강제로 닫자. 그렇지 않으면 모달이 계속 뜸.
+        }
+      }
+    );
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.timersubscription.unsubscribe();
     this.tokensubscription.unsubscribe();
+    this.qzsubscription.unsubscribe();
   }
 
   private getPosTimer(): string {

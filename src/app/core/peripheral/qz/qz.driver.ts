@@ -1,4 +1,3 @@
-import { Logger } from './../../logger/logger';
 import { Injectable } from '@angular/core';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { Observable } from 'rxjs/Observable';
@@ -6,7 +5,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { AbstractDriver } from '../abstract.driver';
 import { DriverReadyBroker } from './../../broker/driverstatus.broker';
-
+import { Logger } from './../../logger/logger';
 import { environment } from '../../../../environments/environment';
 
 // import 'rxjs/add/operator/fromPromise';
@@ -81,7 +80,7 @@ export class QZDriver extends AbstractDriver {
 
         qz.websocket.setClosedCallbacks((evt) => {
             this.status = Status.Disconnected;
-            this.logger.debug(`[qz.driver] qz tray close callback for qz driver : ${evt}, status : ${this.status}`, 'qz.driver');
+            this.logger.debug(`qz tray close callback for qz driver : ${evt}, status : ${this.status}`, 'qz.driver');
         });
 
         const waitingForGetDetails: Subject<any> = new Subject();

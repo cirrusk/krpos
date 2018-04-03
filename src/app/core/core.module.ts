@@ -1,3 +1,4 @@
+import { QzHealthChecker } from './service/qz-health-checker';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -31,7 +32,17 @@ import { SearchBroker } from '../broker/order/search/search.broker';
     RouterModule,
     PeripheralModule
   ],
-  providers: [DatePipe, TerminalService, AuthService, Logger, BatchService, InfoBroker, SearchService, SearchAccountBroker],
+  providers: [
+    DatePipe,
+    TerminalService,
+    AuthService,
+    Logger,
+    BatchService,
+    InfoBroker,
+    SearchService,
+    SearchAccountBroker,
+    QzHealthChecker
+  ],
   declarations: []
 })
 export class CoreModule {
