@@ -62,6 +62,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.tokeninfo = JSON.parse(sessionStorage.getItem('tokenInfo'));
     this.getTerminalInfo();
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
+    // 메모리 문제등이 발생할 경우 다른 방안을 찾자.
     this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
       result => {
         if (result) {
