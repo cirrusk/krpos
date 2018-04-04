@@ -17,6 +17,7 @@ import { SearchService } from '../service/order/search.service';
 import { SearchAccountBroker } from '../broker/order/search/search-account.broker';
 import { SearchBroker } from '../broker/order/search/search.broker';
 import { LoginService } from './service/login.service';
+import { CartService } from '../service/order/cart.service';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { LoginService } from './service/login.service';
     BatchService,
     SearchService,
     LoginService,
+    CartService,
     InfoBroker,
     SearchAccountBroker,
     QzHealthChecker,

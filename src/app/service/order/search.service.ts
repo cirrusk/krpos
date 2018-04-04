@@ -29,4 +29,11 @@ export class SearchService {
                .catch(Utils.handleError);
   }
 
+  getProductInfoByBacode(): void {
+
+  }
+
+  getProductInfoSKUcode(userId: string, code: string): void {
+
+  }
 }

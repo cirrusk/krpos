@@ -1,3 +1,4 @@
+import { CartEntry } from './../../data/models/order/cart-entryt';
 import { Accounts } from './../../data/models/order/accounts';
 import { OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
@@ -7,6 +8,10 @@ import { Modal } from '../../service/pos';
 import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
 import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
+import { CartInfo } from '../../data/models/order/cart-info';
+import { CartService } from '../../service/order/cart.service';
+import { FormGroup, FormArray, FormControl } from '@angular/forms';
+import Utils from '../../core/utils';
 
 @Component({
   selector: 'pos-price-info',
@@ -14,12 +19,16 @@ import { SearchAccountBroker } from '../../broker/order/search/search-account.br
 })
 export class PriceInfoComponent implements OnInit, OnDestroy {
   private searchUserInfo: string;
+  private cartInfoSubscription: Subscription;
   private accountInfoSubscription: Subscription;
   private accountInfo: Accounts;
   private searchMode: string;
   private searchParams: SearchParam;
+  private cartInfo: CartInfo;
+  private cartList: Array<CartEntry>;
 
   constructor(private modal: Modal,
+              private cartService: CartService,
               private searchBroker: SearchBroker,
               private searchAccountBroker: SearchAccountBroker) {
     this.searchMode = 'A';
@@ -27,7 +36,16 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         console.log('++*** accounts Info subscribe ... ',  result);
-        this.accountInfo = result;
+        if (result) {
+          this.accountInfo = result;
+
+          const terminalInfo = JSON.parse(sessionStorage.getItem('terminalInfo'));
+          this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
+                                                             this.accountInfo.uid, terminalInfo.pointOfService.name , 'POS').subscribe(
+          cartResult => {this.cartInfo = cartResult; },
+          err => {console.error(err); }
+          );
+        }
       }
     );
   }
@@ -61,6 +79,22 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       this.searchParams.searchMode = this.searchMode;
       this.searchParams.searchText = searchText;
       this.searchBroker.sendInfo(this.searchParams);
+    } else {
+      this.cartService.addCartEntries(this.accountInfo.uid, this.cartInfo.code, searchText).subscribe(
+        result => {console.error(result); },
+        err => { this.modal.openMessage(
+                                        {
+                                          title: '확인',
+                                          message: err.error.errors[0].message,
+                                          closeButtonLabel: '닫기',
+                                          closeByEnter: false,
+                                          closeByEscape: true,
+                                          closeByClickOutside: true,
+                                          closeAllDialogs: true
+                                        }
+                                      );
+                                     }
+      );
     }
   }
 }

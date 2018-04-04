@@ -7,6 +7,8 @@ import { Accounts } from '../../../data/models/order/accounts';
 import { SearchService } from '../../../service/order/search.service';
 import { SearchBroker } from '../../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../../broker/order/search/search-account.broker';
+import { CartService } from '../../../service/order/cart.service';
+import { CartInfo } from '../../../data/models/order/cart-info';
 
 @Component({
   selector: 'pos-search-account',
@@ -19,14 +21,17 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private totalCnt: number; // 검색 총 합계
   private searchSubscription: Subscription;
   private searchListSubscription: Subscription;
+  private cartInfoSubscription: Subscription;
   private searchMemberType: string; // 회원 유형
   private searchText: string; // 검색어
+  private cartInfo: CartInfo;
 
   constructor(modalService: ModalService,
       private renderer: Renderer,
       private modal: Modal,
       private logger: Logger,
       private searchService: SearchService,
+      private cartService: CartService,
       private searchBroker: SearchBroker,
       private searchAccountBroker: SearchAccountBroker
     ) {
@@ -36,7 +41,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
     this.searchSubscription = this.searchBroker.getInfo().subscribe(
       result => {
-        if (result.searchText) {
+        if (result.searchText.trim()) {
           // 전달 받은 데이터로 검색
           this.getAccountList(result.searchType, result.searchText);
 
@@ -53,12 +58,17 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   ngOnDestroy() {
     this.searchSubscription.unsubscribe();
-    this.searchListSubscription.unsubscribe();
+    if (this.searchListSubscription) {
+      this.searchListSubscription.unsubscribe();
+    }
+    if (this.cartInfoSubscription) {
+      this.cartInfoSubscription.unsubscribe();
+    }
   }
 
   // account 검색
   getAccountList(searchMemberType: string, searchText: string): void {
-    if (searchText) {
+    if (searchText.trim()) {
       this.activeNum = -1;
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
                                                       .subscribe(result => this.accountList = result);
@@ -90,6 +100,10 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   sendAccountInfo(): void {
     if (this.activeNum > -1) {
       this.account = this.accountList.accounts[this.activeNum];
+      this.cartInfoSubscription = this.cartService.createCartInfo(this.account.uid, this.account.uid, '01', 'pos').subscribe(
+        result => this.cartInfo = result
+      );
+
       this.searchAccountBroker.sendInfo(this.account);
       this.modal.clearAllModals(this);
     }
