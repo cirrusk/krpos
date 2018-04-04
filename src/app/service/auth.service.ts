@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
+import { NetworkService } from './../core/peripheral/network/network.service';
 import { Config, Logger, LoginService } from './pos';
 
 import { AccessToken } from './../data/models/access-token';
@@ -18,6 +19,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private loginService: LoginService,
+    private networkService: NetworkService,
     private config: Config,
     private logger: Logger) {
     this.terminalInfo = this.loginService.getTerminalInfo();
@@ -25,18 +27,19 @@ export class AuthService {
 
   /**
    * Employee Identification - User authentication
+   * 2018.04.04 add param mac address
    *
    * @param userid
    * @param userpassword
    */
   public authentication(userid: string, userpassword: string): Observable<any> {
     const authUrl = this.config.getApiUrl('auth');
-    const clientid = this.terminalInfo.id;
-
+    const clientid = this.terminalInfo && this.terminalInfo.id;
     const httpParams = new HttpParams()
     .set('clientId', clientid)
     .set('userId', userid)
-    .set('password', userpassword);
+    .set('password', userpassword)
+    .set('mac_address', this.networkService.getLocalMacAddress());
 
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
 
@@ -53,7 +56,7 @@ export class AuthService {
    */
   public accessToken(authCode: string): Observable<AccessToken> {
     const tokenUrl = this.config.getApiUrl('token');
-    const clientid = this.terminalInfo.id;
+    const clientid = this.terminalInfo && this.terminalInfo.id;
 
     const httpParams = new HttpParams()
     .set('code', authCode)
