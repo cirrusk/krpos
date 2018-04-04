@@ -2,7 +2,6 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { TextEncoder, TextDecoder } from 'text-encoding';
 import { ErrorInfo } from './../data/error/error-info';
-import * as format from 'string-format';
 
 export default class Utils {
 
@@ -160,22 +159,6 @@ export default class Utils {
       return pads + text + pads + remain;
     }
     return text;
-  }
-
-  /**
-   * 문자열 중에 format 대상 문자열에 대해 replace (json type)
-   *
-   * <code>
-   * let url = 'http://localhost/rest/user/{user_id}';
-   * url = format(url, {user_id: 'testuser'});
-   * console.log(url); // ---> http://localhost/rest/user/testuser
-   * </code>
-   *
-   * @param text
-   * @param replacer json type
-   */
-  public static formatString(text: string, replacer: any): string {
-    return format(text, replacer);
   }
 
 }

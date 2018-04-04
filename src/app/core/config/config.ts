@@ -11,7 +11,6 @@ import * as format from 'string-format';
 @Injectable()
 export class Config {
   private config: Object = null;
-  private env:    string;
   constructor(private http: HttpClient) { }
 
   /**
@@ -30,7 +29,8 @@ export class Config {
       jsonparam.baseSiteId = baseSiteId;
       return format(cnf[key], jsonparam);
     } else {
-      return cnf[key];
+      const param = { baseSiteId: baseSiteId };
+      return format(cnf[key], param);
     }
   }
 
@@ -52,7 +52,7 @@ export class Config {
 
   public load() {
     return new Promise((resolve, reject) => {
-      this.env = 'dev';
+      let env; env = 'dev';
       this.http.get('config/env.json')
       // .map(res => res.json())
       .map(res => res)
@@ -62,15 +62,14 @@ export class Config {
         return Observable.throw(error.json().error || 'Server error');
       })
       .subscribe((envdata) => {
-        this.env = envdata.env;
-        console.log(`[akl pos] production type ===> ${this.env}`);
+        env = envdata.env;
+        console.log(`[akl pos] production type ===> ${env}`);
         let request: any = null;
-        switch (this.env) {
-          case 'prod': {
-            request = this.http.get('config/config.' + this.env + '.json');
-          } break;
-          case 'dev': {
-            request = this.http.get('config/config.' + this.env + '.json');
+        switch (env) {
+          case 'prod':
+          case 'dev':
+          case 'qa': {
+            request = this.http.get('config/config.' + env + '.json');
           } break;
           case 'default': {
             console.error('Environment file is not set or invalid.');
@@ -82,7 +81,7 @@ export class Config {
           // .map( res => res.json() )
           .map( res => res )
           .catch((error: any) => {
-            console.error('Error reading ' + this.env + ' configuration file');
+            console.error('Error reading ' + env + ' configuration file');
             resolve(error);
             return Observable.throw(error || 'Server error');
           })
@@ -95,7 +94,6 @@ export class Config {
           resolve(true);
         }
       });
-
     });
   }
 

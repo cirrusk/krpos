@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
-import { Config, Logger } from './pos';
+import { Config, Logger, LoginService } from './pos';
 
 import { AccessToken } from './../data/models/access-token';
 import { TerminalInfo } from './../data/models/terminal-info';
@@ -17,9 +17,10 @@ export class AuthService {
   terminalInfo: TerminalInfo;
   constructor(
     private http: HttpClient,
+    private loginService: LoginService,
     private config: Config,
     private logger: Logger) {
-    this.terminalInfo =  JSON.parse(sessionStorage.getItem('terminalInfo'));
+    this.terminalInfo = this.loginService.getTerminalInfo();
   }
 
   /**
@@ -29,7 +30,7 @@ export class AuthService {
    * @param userpassword
    */
   public authentication(userid: string, userpassword: string): Observable<any> {
-    const authUrl = this.config.getConfig('authApiUrl');
+    const authUrl = this.config.getApiUrl('auth');
     const clientid = this.terminalInfo.id;
 
     const httpParams = new HttpParams()
@@ -51,7 +52,7 @@ export class AuthService {
    * @param authCode
    */
   public accessToken(authCode: string): Observable<AccessToken> {
-    const tokenUrl = this.config.getConfig('tokenApiUrl');
+    const tokenUrl = this.config.getApiUrl('token');
     const clientid = this.terminalInfo.id;
 
     const httpParams = new HttpParams()
