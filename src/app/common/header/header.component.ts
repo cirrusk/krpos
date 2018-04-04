@@ -93,10 +93,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
-    this.timersubscription.unsubscribe();
-    this.tokensubscription.unsubscribe();
-    this.qzsubscription.unsubscribe();
+    if (this.subscription) { this.subscription.unsubscribe(); }
+    if (this.timersubscription) { this.timersubscription.unsubscribe(); }
+    if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
+    if (this.qzsubscription) { this.qzsubscription.unsubscribe(); }
   }
 
   private getPosTimer(): string {
