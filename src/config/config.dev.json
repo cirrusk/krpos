@@ -15,5 +15,6 @@
     "logLevel": "debug",
     "hybrisEndpointDomain": "www.abnkorea.co.kr",
     "hybrisEndpointPort": 80,
-    "heathcheckInterval": 3000
+    "healthcheckInterval": 9000,
+    "hybrisCheckUrl": "https://127.0.0.1:9002/"
 }

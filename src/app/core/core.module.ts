@@ -1,4 +1,4 @@
-import { QzHealthChecker } from './service/qz-health-checker';
+import { CheckComponent } from './../common/check/check.component';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { TerminalService } from './../service/terminal.service';
 import { AuthService } from '../service/auth.service';
 import { BatchService } from '../service/batch.service';
 
+import { QzHealthChecker } from './service/qz-health-checker';
 import { Logger } from './logger/logger';
 import { InfoBroker } from '../broker/info.broker';
 import { SearchService } from '../service/order/search.service';

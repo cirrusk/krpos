@@ -5,6 +5,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './common/header/header.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { CheckComponent } from './common/check/check.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
 import { TestModule } from './common/test/test.module';
@@ -14,6 +15,7 @@ import { OrderComponent } from './order/order.component';
 import { OrderListComponent } from './order/order-list/order-list.component';
 import { OrderMenuComponent } from './order/order-menu/order-menu.component';
 import { PriceInfoComponent } from './order/price-info/price-info.component';
+
 import { SearchBroker } from './broker/order/search/search.broker';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 
@@ -32,7 +34,8 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
     OrderComponent,
     OrderListComponent,
     OrderMenuComponent,
-    PriceInfoComponent
+    PriceInfoComponent,
+    CheckComponent
   ],
   providers: [
     Config,
