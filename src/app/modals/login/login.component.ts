@@ -100,8 +100,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       error => {
         const errdata = Utils.parseError(error);
         if (errdata && errdata.errors) {
-          this.logger.error(`authentication error type : ${errdata.errors[0].type}`);
-          this.logger.error(`authentication error message : ${errdata.errors[0].message}`);
+          this.logger.error(`authentication error type : ${errdata.errors[0].type}`, 'login.component');
+          this.logger.error(`authentication error message : ${errdata.errors[0].message}`, 'login.component');
         } else if (errdata && errdata.error) {
           this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
           this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
@@ -127,8 +127,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       error => {
         const errdata = Utils.parseError(error);
         if (errdata && errdata.errors) {
-          this.logger.error(`authentication error type : ${errdata.errors[0].type}`);
-          this.logger.error(`authentication error message : ${errdata.errors[0].message}`);
+          this.logger.error(`authentication error type : ${errdata.errors[0].type}`, 'login.component');
+          this.logger.error(`authentication error message : ${errdata.errors[0].message}`, 'login.component');
         } else if (errdata && errdata.error) {
           this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
           this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
