@@ -1,6 +1,11 @@
 import { AmwayValue } from './amway-value';
 import { BasePrice } from './base-price';
 
+/**
+ * Add to Cart Response 객체
+ *
+ * null 로 되어 있어서 type을 알기 어려운 변수가 많음.
+ */
 export class CartData {
     statusCode: string;
     quantityAdded: number;
@@ -30,8 +35,6 @@ export class Entry {
     tes: string;
     kitEntryCode: string;
 }
-
-
 
 export class TotalPrice extends BasePrice { }
 
