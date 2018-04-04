@@ -44,9 +44,15 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   ngOnInit() {
   }
 
+  /**
+   * 주의)
+   * subscribe가 발생하지 않은 상태에서 그냥 destroy되면
+   * Cannot read property 'unsubscribe' of undefined 에러가 발생함.
+   * 반드시 존재여부를 체크한 후 undescribe 해야함.
+   */
   ngOnDestroy() {
-    this.authsubscription.unsubscribe();
-    this.tokensubscription.unsubscribe();
+    if (this.authsubscription) {this.authsubscription.unsubscribe(); }
+    if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
   }
 
   /**
@@ -141,6 +147,5 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   close() {
     this.modal.clearAllModals(this);
   }
-
 
 }
