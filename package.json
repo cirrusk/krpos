@@ -27,6 +27,7 @@
     "lodash": "^4.17.4",
     "moment": "2.22.0",
     "mutable-buffer": "^2.0.3",
+    "string-format": "^1.0.0",
     "npm": "^5.8.0",
     "numeral": "^2.0.6",
     "rxjs": "^5.5.6",
