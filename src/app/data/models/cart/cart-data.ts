@@ -25,8 +25,8 @@ export class Entry {
     totalPrice: TotalPrice;
     product: Product;
     updateable: boolean;
-    deliveryMode: null; // DeliveryModeWsDTO
-    deliveryPointOfService: null; // PointOfServiceWsDTO
+    deliveryMode: any; // DeliveryModeWsDTO
+    deliveryPointOfService: any; // PointOfServiceWsDTO
     retailPrice: RetailPrice;
     pickupDateTime: string;
     aboBasePrice: number;
@@ -53,7 +53,7 @@ export class Product {
     description: string;
     purchasable: boolean;
     stock: Stock;
-    futureStocks: null; // < FutureStockWsDTO > array
+    futureStocks: any; // < FutureStockWsDTO > array
     availableForPickup: boolean;
     averageRating: number; // double
     numberOfReviews: number; // integer(int32)
@@ -62,28 +62,28 @@ export class Product {
     variantType: string;
     price: Price;
     baseProduct: string;
-    images: null; // < ImageWsDTO > array
-    categories: null; // < CategoryWsDTO > array
-    reviews: null; // < ReviewWsDTO > array
-    classifications: null; // < ClassificationWsDTO > array
-    potentialPromotions: null; // < PromotionWsDTO > array
-    variantOptions: null; // < VariantOptionWsDTO > array
-    baseOptions: null; // < BaseOptionWsDTO > array
+    images: any; // < ImageWsDTO > array
+    categories: any; // < CategoryWsDTO > array
+    reviews: any; // < ReviewWsDTO > array
+    classifications: any; // < ClassificationWsDTO > array
+    potentialPromotions: any; // < PromotionWsDTO > array
+    variantOptions: any; // < VariantOptionWsDTO > array
+    baseOptions: any; // < BaseOptionWsDTO > array
     volumePricesFlag: boolean;
-    volumePrices: null; // < PriceWsDTO > array
-    productReferences: null; // < ProductReferenceWsDTO > array
+    volumePrices: any; // < PriceWsDTO > array
+    productReferences: any; // < ProductReferenceWsDTO > array
     variantMatrix: string;
-    priceRange: null; // PriceRangeWsDTO
+    priceRange: any; // PriceRangeWsDTO
     multidimensional: boolean;
     alias: string;
     weight: number; // double
-    dimensions: null; // AmwayDimensionWsDTO
+    dimensions: any; // AmwayDimensionWsDTO
     productAttributes: string; // Map<String,String>
     onlineSince: string; // Date
     kitEntry: string; // Set<AmwayKitEntryProductWsDTO>
     kitPrice: number; // double
     retailPrice: RetailPrice; // PriceWsDTO
-    deliveryModes: null; // List<DeliveryModeWsDTO>
+    deliveryModes: any; // List<DeliveryModeWsDTO>
 }
 
 export class Stock {
