@@ -15,6 +15,7 @@ import { InfoBroker } from '../broker/info.broker';
 import { SearchService } from '../service/order/search.service';
 import { SearchAccountBroker } from '../broker/order/search/search-account.broker';
 import { SearchBroker } from '../broker/order/search/search.broker';
+import { LoginService } from './service/login.service';
 
 @NgModule({
   imports: [
@@ -33,15 +34,16 @@ import { SearchBroker } from '../broker/order/search/search.broker';
     PeripheralModule
   ],
   providers: [
-    DatePipe,
     TerminalService,
     AuthService,
-    Logger,
     BatchService,
-    InfoBroker,
     SearchService,
+    LoginService,
+    InfoBroker,
     SearchAccountBroker,
-    QzHealthChecker
+    QzHealthChecker,
+    DatePipe,
+    Logger
   ],
   declarations: []
 })

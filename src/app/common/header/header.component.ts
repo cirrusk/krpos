@@ -1,11 +1,11 @@
-import { QzHealthChecker } from './../../core/service/qz-health-checker';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
-import { NetworkService, Logger, Modal } from '../../service/pos';
+import { NetworkService, Logger, Modal, QzHealthChecker, LoginService } from '../../service/pos';
+
 import { InfoBroker } from '../../broker/info.broker';
 
 import { AccessToken } from './../../data/models/access-token';
@@ -38,6 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
+    private loginService: LoginService,
     private modal: Modal,
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
@@ -50,6 +51,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.tokeninfo = result;
       }
     );
+    this.tokeninfo = this.loginService.getTokenInfo();
   }
 
   ngOnInit() {
@@ -59,7 +61,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.posTimer = this.getPosTimer();
       }
     );
-    this.tokeninfo = JSON.parse(sessionStorage.getItem('tokenInfo'));
+
     this.getTerminalInfo();
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
     // 5분에 한번씩 체크

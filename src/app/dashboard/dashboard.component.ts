@@ -1,13 +1,12 @@
-import { BatchService } from './../service/batch.service';
-import { AccessToken } from './../data/models/access-token';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { LoginComponent } from '../modals/login/login.component';
-import { Modal, Logger } from '../service/pos';
+import { Modal, Logger, LoginService } from '../service/pos';
+import { BatchService } from './../service/batch.service';
+import { AccessToken } from './../data/models/access-token';
 import { InfoBroker } from '../broker/info.broker';
 import Utils from '../core/utils';
-
 
 @Component({
   selector: 'pos-dashboard',
@@ -21,6 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private modal: Modal,
     private infoBroker: InfoBroker,
     private batchService: BatchService,
+    private loginService: LoginService,
     private logger: Logger) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tokeninfo = JSON.parse(sessionStorage.getItem('tokenInfo'));
+    this.tokeninfo = this.loginService.getTokenInfo();
   }
 
   ngOnDestroy() {
@@ -44,7 +44,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 3. 대시보드 메인 노출
    */
   startShift() {
-    if (this.tokeninfo === null) {
+    console.log('is login ? ' + this.loginService.isLogin());
+    // if (this.tokeninfo === null) {
+    if (!this.loginService.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
           title: '',
@@ -78,15 +80,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     let msg: string;
     let btn: string;
-    let islogin: boolean;
-    if (this.tokeninfo && Utils.isNotEmpty(this.tokeninfo.access_token)) {
+    const islogin: boolean = this.loginService.isLogin();
+    console.log('is login ? ' + islogin);
+    // if (this.tokeninfo && Utils.isNotEmpty(this.tokeninfo.access_token)) {
+    if (islogin) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
       btn = '계속';
-      islogin = true;
     } else {
       msg = `POS를 종료하시겠습니까?<br>화면 종료가 진행됩니다.`;
       btn = '확인';
-      islogin = false;
     }
     this.modal.openConfirm(
       {

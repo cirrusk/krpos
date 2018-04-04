@@ -6,7 +6,6 @@ import { AuthService } from '../../service/auth.service';
 import { BatchService } from './../../service/batch.service';
 import { ModalService, Modal, Logger } from '../../service/pos';
 import { InfoBroker } from '../../broker/info.broker';
-import { TerminalInfo } from '../../data/models/terminal-info';
 import { ErrorInfo } from './../../data/error/error-info';
 import Utils from '../../core/utils';
 
@@ -30,7 +29,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
 
   @Input() loginId: string;
   @Input() loginPassword: string;
-  terminalInfo: TerminalInfo;
   authsubscription: Subscription;
   tokensubscription: Subscription;
   constructor(
@@ -44,7 +42,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   ngOnInit() {
-    this.terminalInfo = JSON.parse(sessionStorage.getItem('terminalInfo'));
   }
 
   ngOnDestroy() {
