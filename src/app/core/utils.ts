@@ -1,7 +1,7 @@
-import { ErrorInfo } from './../data/error/error-info';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { TextEncoder, TextDecoder } from 'text-encoding';
+import { ErrorInfo } from './../data/error/error-info';
 
 export default class Utils {
 
