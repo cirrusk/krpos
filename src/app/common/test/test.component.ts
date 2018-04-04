@@ -17,7 +17,7 @@ export class TestComponent implements OnInit {
 
   ngOnInit() {
 
-   let o1: OrderEntries;
+    let o1: OrderEntries;
     o1 = new OrderEntries(new Product('A111111'), '10');
 
     let o2: OrderEntries;
