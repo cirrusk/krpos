@@ -44,8 +44,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 3. 대시보드 메인 노출
    */
   startShift() {
-    console.log('is login ? ' + this.loginService.isLogin());
-    // if (this.tokeninfo === null) {
     if (!this.loginService.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
@@ -81,8 +79,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let msg: string;
     let btn: string;
     const islogin: boolean = this.loginService.isLogin();
-    console.log('is login ? ' + islogin);
-    // if (this.tokeninfo && Utils.isNotEmpty(this.tokeninfo.access_token)) {
     if (islogin) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
       btn = '계속';
