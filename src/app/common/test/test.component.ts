@@ -1,7 +1,12 @@
-
+import { OrderParams } from './../../data/models/order-params';
+import { OrderEntries } from './../../data/models/order-entries';
 import { Component, OnInit } from '@angular/core';
 
 import { PosModalService } from './../../core/service/pos-modal.service';
+
+import { Product } from './../../data/models/product';
+
+
 
 @Component({
   selector: 'pos-test',
@@ -13,15 +18,26 @@ export class TestComponent implements OnInit {
   constructor(private modalService: PosModalService) { }
 
   ngOnInit() {
-    // this.getMACAddress();
+
+   let o1: OrderEntries;
+    o1 = new OrderEntries(new Product('A111111'), '10');
+
+    let o2: OrderEntries;
+    o2 = new OrderEntries(new Product('B111111'), '7');
+
+    const oa: OrderEntries[] = [];
+    oa.push(o1);
+    oa.push(o2);
+
+    let op: OrderParams;
+    op = new OrderParams(oa);
+    // op.orderEntries = oa;
+
+    console.log('################## Add to Cart Parameter JSON ###################### ' + JSON.stringify(op));
+
   }
 
   private getMACAddress() {
-    // this.networkService.wait().subscribe(
-    //     () => {
-    //         this.macAddress = this.networkService.getLocalMacAddress();
-    //     }
-    // );
   }
 
   public openModal(id: string) {
@@ -33,7 +49,6 @@ export class TestComponent implements OnInit {
   }
 
   public loadMacAddress() {
-    // this.macAddress = this.networkService.getLocalMacAddress();
   }
 
 }
