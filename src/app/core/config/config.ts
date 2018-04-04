@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
+import * as format from 'string-format';
 
 @Injectable()
 export class Config {
@@ -14,10 +15,39 @@ export class Config {
   constructor(private http: HttpClient) { }
 
   /**
-     * Use to get the data found in the second file (config file)
-     */
-  public getConfig(key: any) {
-      return this.config[key];
+   * API URL 가져오기
+   * baseSiteId는 기본적으로 변환.
+   *
+   * @param key API URL key
+   * @param params replace 할 path variable json
+   */
+  public getApiUrl(key: string, params?: any) {
+    const baseSiteId = this.config['baseSiteId'];
+    const cnf = this.config['apiUrl'];
+    if (params) {
+      const jsondata = JSON.stringify(params);
+      const jsonparam = JSON.parse(jsondata);
+      jsonparam.baseSiteId = baseSiteId;
+      return format(cnf[key], jsonparam);
+    } else {
+      return cnf[key];
+    }
+  }
+
+  /**
+   * Use to get the data found in the second file (config file)
+   */
+  public getConfig(key: string) {
+    // 이 부분 잘 가져올 수 있는 방법 고민!!!
+    if (key.indexOf('.') !== -1) {
+      const keys = key.split('.');
+      if (keys.length === 2) {
+        return this.config[keys[0]][keys[1]];
+      } else if (keys.length === 3) {
+        return this.config[keys[0]][keys[1]][keys[2]];
+      }
+    }
+    return this.config[key];
   }
 
   public load() {
