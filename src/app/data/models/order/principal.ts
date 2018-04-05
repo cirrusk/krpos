@@ -1,4 +1,10 @@
 export class Principal {
-    private name: string;
-    private uid: string;
+    name: string;
+    uid: string;
+
+    constructor(_name: string,
+                _uid: string) {
+                    this.name = _name;
+                    this.uid = _uid;
+                }
 }
