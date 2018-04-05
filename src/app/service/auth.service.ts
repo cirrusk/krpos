@@ -36,7 +36,7 @@ export class AuthService {
     .set('clientId', clientid)
     .set('userId', userid)
     .set('password', userpassword)
-    .set('mac_address', Utils.convertMacAddress(this.networkService.getLocalMacAddress()));
+    .set('mac_address', this.networkService.getLocalMacAddress('-'));
 
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
 

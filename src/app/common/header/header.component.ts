@@ -115,7 +115,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private getTerminalInfo() {
     this.networkService.wait().subscribe(
       () => {
-        const macAddress = this.networkService.getLocalMacAddress();
+        const macAddress = this.networkService.getLocalMacAddress('-');
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
             this.posName = result.pointOfService.displayName;

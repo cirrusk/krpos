@@ -26,7 +26,6 @@ export class TerminalService {
    * @param macaddress
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
-    macaddress = Utils.convertMacAddress(macaddress);
     const terminalApiUrl = this.config.getConfig('terminalApiUrl');
     const httpParams = new HttpParams().set('macAddress', macaddress);
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');

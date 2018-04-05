@@ -15,7 +15,7 @@ export class CartService {
   constructor(private httpClient: HttpClient, private config: Config, private networkService: NetworkService, private logger: Logger) { }
 
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
-    const macAddress = Utils.convertMacAddress(this.networkService.getLocalMacAddress());
+    const macAddress = this.networkService.getLocalMacAddress('-');
     const cartParams = new CartParams(pickupStore, cartType, null);
     const apiURL = this.config.getApiUrl('createCart', {'accountId' : accountId, 'userId': userId})
                                        + `?fields=BASIC&mac_address=${macAddress}`;

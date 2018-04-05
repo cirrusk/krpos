@@ -4,7 +4,8 @@ import { Observable } from 'rxjs/Observable';
 
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { NetworkDriver } from './network.driver';
-import { Logger } from './../../logger/logger';
+import { Logger } from '../../logger/logger';
+import Utils from '../../utils';
 
 @Injectable()
 export class NetworkService {
@@ -35,9 +36,13 @@ export class NetworkService {
     return this.ipAddress;
   }
 
-  public getLocalMacAddress(): string {
+  public getLocalMacAddress(splitter?: string): string {
     if (this.macAddress === null) {
+      if (splitter) {
+        this.macAddress = Utils.convertMacAddress(this.networkDriver.macAddress, splitter);
+      } else {
         this.macAddress = this.networkDriver.macAddress;
+      }
     }
     this.logger.debug('3. Local Mac Address received successfully...', 'network.service');
     return this.macAddress;
