@@ -1,19 +1,17 @@
-import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
-import { CartEntry } from './../../data/models/order/cart-entryt';
-import { Accounts } from './../../data/models/order/accounts';
 import { OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { SearchParam } from '../../data/models/order/search-param';
+
+import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
 import { Modal } from '../../service/pos';
 import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
 import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
-import { CartInfo } from '../../data/models/order/cart-info';
+
 import { CartService } from '../../service/order/cart.service';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
+import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
 import Utils from '../../core/utils';
-import { CartModification } from '../../data/model';
 
 @Component({
   selector: 'pos-price-info',
