@@ -4,8 +4,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { LoginComponent } from '../modals/login/login.component';
 import { Modal, Logger, LoginService } from '../service/pos';
 import { BatchService } from './../service/batch.service';
-import { AccessToken } from './../data/models/access-token';
 import { InfoBroker } from '../broker/info.broker';
+import { AccessToken } from '../data/model';
+
 import Utils from '../core/utils';
 
 @Component({
