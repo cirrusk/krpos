@@ -8,7 +8,7 @@ import { NetworkService, Logger, Modal, QzHealthChecker, LoginService } from '..
 
 import { InfoBroker } from '../../broker/info.broker';
 
-import { TerminalService } from './../../service/terminal.service';
+import { TerminalService } from '../../service/terminal.service';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 
