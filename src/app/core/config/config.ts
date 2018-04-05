@@ -1,17 +1,10 @@
-import { Inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-
-// Observable operators
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-
+import { Injectable } from '@angular/core';
 import * as format from 'string-format';
+
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class Config {
-  private config: Object = null;
-  constructor(private http: HttpClient) { }
 
   /**
    * API URL 가져오기
@@ -21,8 +14,8 @@ export class Config {
    * @param params replace 할 path variable json
    */
   public getApiUrl(key: string, params?: any) {
-    const baseSiteId = this.config['baseSiteId'];
-    const cnf = this.config['apiUrl'];
+    const baseSiteId = environment.baseSiteId; //  this.config['baseSiteId'];
+    const cnf = environment.apiUrl; //  this.config['apiUrl'];
     if (params) {
       const jsondata = JSON.stringify(params);
       const jsonparam = JSON.parse(jsondata);
@@ -35,66 +28,21 @@ export class Config {
   }
 
   /**
-   * Use to get the data found in the second file (config file)
+   * Config 정보 가져오기
+   *
+   * @param key
    */
   public getConfig(key: string) {
     // 이 부분 잘 가져올 수 있는 방법 고민!!!
     if (key.indexOf('.') !== -1) {
       const keys = key.split('.');
       if (keys.length === 2) {
-        return this.config[keys[0]][keys[1]];
+        return environment[keys[0]][keys[1]];
       } else if (keys.length === 3) {
-        return this.config[keys[0]][keys[1]][keys[2]];
+        return environment[keys[0]][keys[1]][keys[2]];
       }
     }
-    return this.config[key];
-  }
-
-  public load() {
-    return new Promise((resolve, reject) => {
-      let env; env = 'dev';
-      this.http.get('config/env.json')
-      // .map(res => res.json())
-      .map(res => res)
-      .catch((error: any) => {
-        console.error('Error reading "env.json" file');
-        resolve(error);
-        return Observable.throw(error.json().error || 'Server error');
-      })
-      .subscribe((envdata) => {
-        env = envdata.env;
-        console.log(`[akl pos] production type ===> ${env}`);
-        let request: any = null;
-        switch (env) {
-          case 'prod':
-          case 'dev':
-          case 'qa': {
-            request = this.http.get('config/config.' + env + '.json');
-          } break;
-          case 'default': {
-            console.error('Environment file is not set or invalid.');
-            resolve(true);
-          } break;
-        }
-        if (request) {
-          request
-          // .map( res => res.json() )
-          .map( res => res )
-          .catch((error: any) => {
-            console.error('Error reading ' + env + ' configuration file');
-            resolve(error);
-            return Observable.throw(error || 'Server error');
-          })
-          .subscribe((responseData) => {
-            this.config = responseData;
-            resolve(true);
-          });
-        } else {
-          console.error('Env config file "env.json" is not valid');
-          resolve(true);
-        }
-      });
-    });
+    return environment[key];
   }
 
 }

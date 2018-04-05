@@ -1,5 +1,4 @@
-import { AddCartBroker } from './broker/order/cart/add-cart.broker';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -17,6 +16,7 @@ import { OrderListComponent } from './order/order-list/order-list.component';
 import { OrderMenuComponent } from './order/order-menu/order-menu.component';
 import { PriceInfoComponent } from './order/price-info/price-info.component';
 
+import { AddCartBroker } from './broker/order/cart/add-cart.broker';
 import { SearchBroker } from './broker/order/search/search.broker';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 
@@ -40,7 +40,6 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
   ],
   providers: [
     Config,
-    { provide: APP_INITIALIZER, useFactory: initConfig, deps: [Config], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true },
     SearchBroker,
     AddCartBroker
@@ -48,5 +47,3 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
-export function initConfig(config: Config) { return () => config.load(); }
