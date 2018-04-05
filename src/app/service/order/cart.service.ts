@@ -1,15 +1,12 @@
-import { CartInfo } from './../../data/models/order/cart-info';
 import { Injectable } from '@angular/core';
-import { Config, NetworkService } from '../pos';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { OrderEntryList } from '../../data/models/order/order-entry-list';
-import { CartModification } from '../../data/models/order/cart-modification';
-import { OrderParams } from '../../data/models/order/order-params';
-import { Product } from '../../data/models/product';
-import { OrderEntries } from '../../data/models/order/order-entries';
+
+import { Config, NetworkService } from '../pos';
+import {
+  CartInfo, CartParams, CartModification,
+  OrderEntries, OrderEntryList, OrderParams, Product} from '../../data/model';
 import Utils from '../../core/utils';
-import { CartParams } from '../../data/models/order/cart-params';
 
 @Injectable()
 export class CartService {
