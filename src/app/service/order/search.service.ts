@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { MemberType } from '../../data/models/order/member-type.enum';
-import { AccountList } from '../../data/model';
+import { AccountList, MemberType } from '../../data/model';
 import { Config } from '../pos';
 import Utils from '../../core/utils';
 
