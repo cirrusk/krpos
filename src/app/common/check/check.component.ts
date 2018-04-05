@@ -25,12 +25,12 @@ export class CheckComponent implements OnInit, OnDestroy {
   private checkUse: boolean;
   constructor(private http: HttpClient, private config: Config) {
     this.checkInterval = this.config.getConfig('healthCheckInterval');
+    this.checkUse = this.config.getConfig('healthCheckUse');
     this.success = 0;
     this.failure = 0;
   }
 
   ngOnInit() {
-    this.checkUse = this.config.getConfig('healthCheckUse');
     if (this.checkUse) {
       const checkUrl = this.config.getConfig('hybrisCheckUrl');
       this.httpSubscription = this.http.get(checkUrl)
