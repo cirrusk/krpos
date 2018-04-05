@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
 import { Product, CartEntry, CartModification, OrderEntry, ProductInfo } from '../../data/model';
+import { Logger } from '../../service/pos';
 
 @Component({
   selector: 'pos-order-list',
@@ -12,13 +13,13 @@ export class OrderListComponent implements OnInit, OnDestroy {
   private cartList: Array<CartEntry>;
   private subscription: Subscription;
 
-  constructor(private addCartBroker: AddCartBroker) {
+  constructor(private addCartBroker: AddCartBroker, private logger: Logger) {
     this.cartList = new Array<CartEntry>();
 
     this.subscription = this.addCartBroker.getInfo().subscribe(value => {
-      console.log(`Add to cart ${value}`);
-      this.addCartEntry(value);
-  });
+        this.logger.debug(`Add to cart ${value}`, 'order.list.component');
+        this.addCartEntry(value);
+      });
    }
 
   ngOnInit() {
