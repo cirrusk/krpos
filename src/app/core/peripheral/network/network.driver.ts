@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
 import { AbstractDriver } from '../abstract.driver';
-import { DriverReadyBroker } from './../../broker/driverstatus.broker';
-import { QZDriver } from './../qz/qz.driver';
+import { DriverReadyBroker } from '../../broker/driverstatus.broker';
+import { QZDriver } from '../qz/qz.driver';
 
 import { Logger } from '../../logger/logger';
 import { Config } from '../../config/config';

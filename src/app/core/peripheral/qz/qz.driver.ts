@@ -4,9 +4,9 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
 import { AbstractDriver } from '../abstract.driver';
-import { DriverReadyBroker } from './../../broker/driverstatus.broker';
+import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { Config } from '../../config/config';
-import { Logger } from './../../logger/logger';
+import { Logger } from '../../logger/logger';
 import { QZSelfsignedCert } from './qz.selfsigned.cert';
 
 // import 'rxjs/add/operator/fromPromise';
