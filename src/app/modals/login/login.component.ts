@@ -3,10 +3,10 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent } from '../../core/modal/modal.component';
 import { AuthService } from '../../service/auth.service';
-import { BatchService } from './../../service/batch.service';
+import { BatchService } from '../../service/batch.service';
 import { ModalService, Modal, Logger } from '../../service/pos';
 import { InfoBroker } from '../../broker/info.broker';
-import { ErrorInfo } from './../../data/error/error-info';
+import { ErrorInfo } from '../../data/error/error-info';
 import Utils from '../../core/utils';
 
 /**
