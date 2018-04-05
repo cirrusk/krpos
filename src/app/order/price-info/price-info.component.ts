@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
+import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
 import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
 import { CartService } from '../../service/order/cart.service';
