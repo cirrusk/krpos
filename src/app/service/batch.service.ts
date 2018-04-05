@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 
 import { InfoBroker } from '../broker/info.broker';
 import { Config } from '../core/config/config';
-import { Logger } from './pos';
+import { StorageService, Logger } from './pos';
 
 @Injectable()
 export class BatchService {
 
   constructor(
               private http: HttpClient,
+              private storageService: StorageService,
               private infoBroker: InfoBroker,
               private config: Config, private logger: Logger) { }
 
@@ -29,7 +30,7 @@ export class BatchService {
    */
   endBatch() {
     this.logger.debug('End batch, and session storage access token info remove...', 'batch.service');
-    sessionStorage.removeItem('tokenInfo'); // remove access token info
+    this.storageService.removeItem('tokenInfo'); // remove access token info
     this.infoBroker.sendInfo(null); // info broker에 null access token을 전송해서 초기 상태로 변경.
   }
 

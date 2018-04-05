@@ -7,7 +7,7 @@ import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
 import { CartService } from '../../service/order/cart.service';
 import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
-import { Modal } from '../../service/pos';
+import { StorageService, Modal } from '../../service/pos';
 
 import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
 import Utils from '../../core/utils';
@@ -32,6 +32,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
   constructor(private modal: Modal,
               private cartService: CartService,
+              private storageService: StorageService,
               private searchBroker: SearchBroker,
               private searchAccountBroker: SearchAccountBroker,
               private addCartBroker: AddCartBroker) {
@@ -43,7 +44,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         if (result) {
           this.accountInfo = result;
 
-          const terminalInfo = JSON.parse(sessionStorage.getItem('terminalInfo'));
+          const terminalInfo = this.storageService.getItem('terminalInfo');
           this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
                                                                       this.accountInfo.uid,
                                                                       terminalInfo.pointOfService.name , 'POS').subscribe(

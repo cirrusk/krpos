@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
-import { Config, Logger, LoginService, NetworkService } from './pos';
+import { Config, Logger, StorageService, NetworkService } from './pos';
 import { TerminalInfo, AccessToken } from '../data/model';
 import Utils from '../core/utils';
 
@@ -15,11 +15,11 @@ export class AuthService {
   terminalInfo: TerminalInfo;
   constructor(
     private http: HttpClient,
-    private loginService: LoginService,
+    private storageService: StorageService,
     private networkService: NetworkService,
     private config: Config,
     private logger: Logger) {
-    this.terminalInfo = this.loginService.getTerminalInfo();
+    this.terminalInfo = this.storageService.getTerminalInfo();
   }
 
   /**

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent } from '../../core/modal/modal.component';
 import { AuthService } from '../../service/auth.service';
 import { BatchService } from '../../service/batch.service';
-import { ModalService, Modal, Logger } from '../../service/pos';
+import { ModalService, StorageService, Modal, Logger } from '../../service/pos';
 import { InfoBroker } from '../../broker/info.broker';
 import { ErrorInfo } from '../../data/error/error-info';
 import Utils from '../../core/utils';
@@ -35,6 +35,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     modalService: ModalService,
     private authService: AuthService,
     private batchService: BatchService,
+    private storageSerive: StorageService,
     private infoBroker: InfoBroker,
     private modal: Modal,
     private logger: Logger) {
@@ -118,9 +119,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   private getAccessToken(authcode: string) {
     this.tokensubscription = this.authService.accessToken(authcode).subscribe(
       result => {
-        sessionStorage.setItem('tokenInfo', JSON.stringify(result));
+        this.storageSerive.setItem('tokenInfo', result);
         this.saveBatch();
-        const accesstoken = JSON.parse(sessionStorage.getItem('tokenInfo'));
+        const accesstoken = this.storageSerive.getItem('tokenInfo');
         this.infoBroker.sendInfo(accesstoken);
         this.close();
       },

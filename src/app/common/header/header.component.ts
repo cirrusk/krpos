@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
-import { NetworkService, Logger, Modal, QzHealthChecker, LoginService } from '../../service/pos';
+import { NetworkService, Logger, Modal, QzHealthChecker, StorageService } from '../../service/pos';
 
 import { InfoBroker } from '../../broker/info.broker';
 
@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
-    private loginService: LoginService,
+    private storageService: StorageService,
     private modal: Modal,
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
@@ -51,7 +51,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.tokeninfo = result;
       }
     );
-    this.tokeninfo = this.loginService.getTokenInfo();
+    this.tokeninfo = this.storageService.getTokenInfo();
   }
 
   ngOnInit() {
@@ -119,8 +119,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
             this.posName = result.pointOfService.displayName;
-            sessionStorage.setItem('clientId', result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
-            sessionStorage.setItem('terminalInfo', JSON.stringify(result)); // 혹시 몰라서 전체 저장
+            this.storageService.setItem('clientId', result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
+            this.storageService.setItem('terminalInfo', result); // 혹시 몰라서 전체 저장
           },
           error => {
             this.posName = '-';

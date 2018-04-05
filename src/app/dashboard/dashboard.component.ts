@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { LoginComponent } from '../modals/login/login.component';
-import { Modal, Logger, LoginService } from '../service/pos';
+import { Modal, Logger, StorageService } from '../service/pos';
 import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker/info.broker';
 import { AccessToken } from '../data/model';
@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private modal: Modal,
     private infoBroker: InfoBroker,
     private batchService: BatchService,
-    private loginService: LoginService,
+    private storageService: StorageService,
     private logger: Logger) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tokeninfo = this.loginService.getTokenInfo();
+    this.tokeninfo = this.storageService.getTokenInfo();
   }
 
   ngOnDestroy() {
@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 3. 대시보드 메인 노출
    */
   startShift() {
-    if (!this.loginService.isLogin()) {
+    if (!this.storageService.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
           title: '',
@@ -79,7 +79,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     let msg: string;
     let btn: string;
-    const islogin: boolean = this.loginService.isLogin();
+    const islogin: boolean = this.storageService.isLogin();
     if (islogin) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
       btn = '계속';

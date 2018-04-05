@@ -31,7 +31,7 @@ export class TerminalService {
     const httpParams = new HttpParams().set('macAddress', macaddress);
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     return this.http.post(terminalApiUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
-    .timeout(5000)
+    .timeout(1000 * 15)
     .map(Utils.extractData)
     .catch(Utils.handleError);
   }

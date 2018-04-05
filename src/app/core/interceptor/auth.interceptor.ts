@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { LoginService } from '../../service/pos';
+import { StorageService } from '../../service/pos';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private loginService: LoginService) { }
+  constructor(private storageService: StorageService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const currentUserInfo = this.loginService.getTokenInfo(); // JSON.parse(sessionStorage.getItem('tokenInfo'));
+    const currentUserInfo = this.storageService.getTokenInfo();
 
     if (currentUserInfo) {
       request = request.clone({
