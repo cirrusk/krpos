@@ -10,7 +10,7 @@ import 'rxjs/add/operator/retryWhen';
 import 'rxjs/add/operator/repeatWhen';
 import 'rxjs/add/operator/takeWhile';
 
-import { Config } from './../../core/config/config';
+import { Config } from '../../core/config/config';
 
 @Component({
   selector: 'pos-check',
