@@ -17,5 +17,5 @@
     "hybrisEndpointPort": 80,
     "healthCheckUse": false,
     "healthCheckInterval": 9000,
-    "hybrisCheckUrl": "https://127.0.0.1:9002/"
+    "hybrisCheckUrl": "https://127.0.0.1:9002/amwaycommercewebservices/"
 }
