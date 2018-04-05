@@ -7,10 +7,9 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
 
-import { TerminalInfo } from './../data/models/terminal-info';
-
-import Utils from '../core/utils';
+import { TerminalInfo } from '../data/model';
 import { Config, Logger } from './pos';
+import Utils from '../core/utils';
 
 @Injectable()
 export class TerminalService {
