@@ -3,12 +3,11 @@ import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
-import { Modal } from '../../service/pos';
-import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
 import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
-
 import { CartService } from '../../service/order/cart.service';
+import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
+import { Modal } from '../../service/pos';
 
 import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
 import Utils from '../../core/utils';
