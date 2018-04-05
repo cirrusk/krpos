@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
+import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
 import { Product, CartEntry, CartModification, OrderEntry, ProductInfo } from '../../data/model';
 
 @Component({
