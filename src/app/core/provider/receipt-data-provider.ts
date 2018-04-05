@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
-import { ReceiptPolicyData } from './../../data/receipt/receipt-policy-data';
-import { ReceiptPolicy } from './../../data/receipt/receipt-policy';
-import { FormatReader } from './../peripheral/common/format-reader';
+import { ReceiptPolicyData } from '../../data/receipt/receipt-policy-data';
+import { ReceiptPolicy } from '../../data/receipt/receipt-policy';
+import { FormatReader } from '../peripheral/common/format-reader';
 
 import { EscPos } from '../peripheral/printer/helper/escpos';
 import { Config } from '../config/config';
