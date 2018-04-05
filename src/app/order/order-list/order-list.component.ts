@@ -1,11 +1,8 @@
-import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
-import { Product } from './../../data/models/product';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CartEntry } from '../../data/models/order/cart-entryt';
-import { CartModification } from '../../data/models/order/cart-modification';
-import { OrderEntry } from '../../data/models/order/order-entry';
-import { ProductInfo } from '../../data/models/order/product-info';
 import { Subscription } from 'rxjs/Subscription';
+
+import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
+import { Product, CartEntry, CartModification, OrderEntry, ProductInfo } from '../../data/model';
 
 @Component({
   selector: 'pos-order-list',
