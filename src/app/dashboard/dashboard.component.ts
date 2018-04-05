@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { LoginComponent } from '../modals/login/login.component';
 import { Modal, Logger, LoginService } from '../service/pos';
-import { BatchService } from './../service/batch.service';
+import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker/info.broker';
 import { AccessToken } from '../data/model';
 
