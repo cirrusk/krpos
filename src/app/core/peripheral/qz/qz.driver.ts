@@ -7,6 +7,7 @@ import { AbstractDriver } from '../abstract.driver';
 import { DriverReadyBroker } from './../../broker/driverstatus.broker';
 import { Logger } from './../../logger/logger';
 import { environment } from '../../../../environments/environment';
+import { QZSelfsignedCert } from './qz.selfsigned.cert';
 
 // import 'rxjs/add/operator/fromPromise';
 
@@ -18,6 +19,10 @@ const enum Status {
 }
 
 declare var qz: any;
+declare var KJUR: any;
+declare var stob64: any;
+declare var KEYUTIL: any;
+declare var hextorstr: any;
 
 @Injectable()
 export class QZDriver extends AbstractDriver {
@@ -64,6 +69,8 @@ export class QZDriver extends AbstractDriver {
 
     public connect() {
         const waitingForConnection: Subject<any> = new Subject();
+
+        this.registerCertInfo();
 
         this.openConn
         .subscribe(
@@ -137,5 +144,29 @@ export class QZDriver extends AbstractDriver {
 
     protected turnOffDebug(): void {
         qz.api.showDebug(false);
+    }
+
+    protected registerCertInfo(): void {
+        qz.security.setCertificatePromise( (resolve, reject) => {
+            resolve(QZSelfsignedCert.cert.trim());
+        });
+
+        qz.security.setSignaturePromise( (toSign) => {
+            return (resolve, reject) => {
+                try {
+                    const pk = KEYUTIL.getKey(QZSelfsignedCert.privateKey.trim());
+
+                    const sig = new KJUR.crypto.Signature({"alg": "SHA1withRSA"});
+                    sig.init(pk);
+                    sig.updateString(toSign);
+                    const signatureHex = sig.sign();
+
+                    resolve(stob64(hextorstr(signatureHex)));
+                } catch (err) {
+                    console.error(err);
+                    reject(err);
+                }
+            }
+        });
     }
 }

@@ -11,7 +11,7 @@ export const environment = {
   hybrisEndpointPort: 80,
 
   // 임시 - 추후 삭제
-  occEndpointDomain: 'http://localhost:4200',
+  occEndpointDomain: '',
 
   receitPolicyFile: '/assets/template/receipt/policy/receipt.json'
 };
