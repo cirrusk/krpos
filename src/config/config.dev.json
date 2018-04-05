@@ -7,7 +7,8 @@
         "token": "https://127.0.0.1:9002/authorizationserver/oauth/token",
         "batchStart": "https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{user_id}/orderbatches",
         "createCart": "https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/accounts/{accountId}/users/{userId}/carts",
-        "addToCart": "https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries"
+        "addToCart": "https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries",
+        "updateVolAcc": "https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount"
     },
     "terminalApiUrl": "https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/terminal",
     "authApiUrl": "https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/authorize",

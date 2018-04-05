@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Config, NetworkService } from '../pos';
+import { Config, NetworkService, Logger } from '../pos';
 import {
   CartInfo, CartParams, CartModification,
   OrderEntries, OrderEntryList, OrderParams, Product} from '../../data/model';
@@ -12,7 +12,7 @@ import Utils from '../../core/utils';
 export class CartService {
   private orderEntries: OrderEntryList;
 
-  constructor(private httpClient: HttpClient, private config: Config, private networkService: NetworkService) { }
+  constructor(private httpClient: HttpClient, private config: Config, private networkService: NetworkService, private logger: Logger) { }
 
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
     const macAddress = Utils.convertMacAddress(this.networkService.getLocalMacAddress());
@@ -23,6 +23,16 @@ export class CartService {
 
     return this.httpClient.post<CartInfo>(apiURL, JSON.stringify(cartParams), { headers : httpHeaders })
                           .map(data => data as CartInfo);
+  }
+
+  updateVolumeAccount(userId: string, cartId: string, volumeAccount: string): Observable<HttpResponseBase> {
+    const apiURL = this.config.getApiUrl('updateVolAcc', {'userId' : userId, 'cartId': cartId});
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/x-www-form-urlencoded');
+
+    const httpParams = new HttpParams().set('volumeAccount', volumeAccount);
+
+    return this.httpClient.put<HttpResponseBase>(apiURL, httpParams, { headers : httpHeaders, observe: 'response'})
+                          .map(data => data as HttpResponseBase);
   }
 
   addCartEntries(userId: string, cartId: string, code: string): Observable<CartModification> {
