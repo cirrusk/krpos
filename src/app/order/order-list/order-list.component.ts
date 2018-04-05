@@ -13,6 +13,8 @@ export class OrderListComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(private addCartBroker: AddCartBroker) {
+    this.cartList = new Array<CartEntry>();
+
     this.subscription = this.addCartBroker.getInfo().subscribe(value => {
       console.log(`Add to cart ${value}`);
       this.addCartEntry(value);
