@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Config } from '../pos';
 import { Observable } from 'rxjs/Observable';
-import { AccountList } from '../../data/models/order/account-list';
+
+import { AccountList, MemberType } from '../../data/model';
+import { Config } from '../pos';
 import Utils from '../../core/utils';
-import { MemberType } from '../../data/models/order/member-type.enum';
 
 @Injectable()
 export class SearchService {

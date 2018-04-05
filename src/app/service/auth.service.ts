@@ -5,11 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
-import { NetworkService } from './../core/peripheral/network/network.service';
-import { Config, Logger, LoginService } from './pos';
-
-import { AccessToken } from './../data/models/access-token';
-import { TerminalInfo } from './../data/models/terminal-info';
+import { Config, Logger, LoginService, NetworkService } from './pos';
+import { TerminalInfo, AccessToken } from '../data/model';
 import Utils from '../core/utils';
 
 @Injectable()
