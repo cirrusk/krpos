@@ -8,7 +8,7 @@ export * from './models/order/order-entry-list';
 export * from './models/order/account-list';
 export * from './models/order/member-type.enum';
 
+export * from './models/access-token';
 export * from './models/product';
-
 export * from './models/terminal-info';
 export * from './models/product-data';
