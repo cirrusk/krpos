@@ -7,8 +7,8 @@ import { AbstractDriver } from '../abstract.driver';
 import { DriverReadyBroker } from './../../broker/driverstatus.broker';
 import { QZDriver } from './../qz/qz.driver';
 
-import { environment } from '../../../../environments/environment';
 import { Logger } from '../../logger/logger';
+import { Config } from '../../config/config';
 
 declare var qz: any;
 
@@ -20,6 +20,7 @@ export class NetworkDriver extends AbstractDriver {
     constructor(
             private qzDriver: QZDriver,
             private driverReadyBroker: DriverReadyBroker,
+            private config: Config,
             private logger: Logger) {
 
         super('Network');
@@ -41,6 +42,8 @@ export class NetworkDriver extends AbstractDriver {
 
     private loadLocalNetworkInfo(): void {
         this.logger.debug('2. getNetworkInfo...', 'network.driver');
+        const domain = this.config.getConfig('hybrisEndpointDomain');
+        const port = this.config.getConfig('hybrisEndpointPort');
         /**
          * qz.websocket
          *
@@ -52,7 +55,7 @@ export class NetworkDriver extends AbstractDriver {
          * delay : Seconds before firing a connection. Ignored if options.retries is 0.
          */
         // qz.websocket.getNetworkInfo().then(
-        qz.websocket.getNetworkInfo(environment.hybrisEndpointDomain, environment.hybrisEndpointPort).then(
+        qz.websocket.getNetworkInfo(domain, port).then(
             (result) => {
                 this._ipAddress = result.ipAddress;
                 this._macAddress = result.macAddress;

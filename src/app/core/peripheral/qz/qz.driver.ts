@@ -5,8 +5,8 @@ import { Subject } from 'rxjs/Subject';
 
 import { AbstractDriver } from '../abstract.driver';
 import { DriverReadyBroker } from './../../broker/driverstatus.broker';
+import { Config } from '../../config/config';
 import { Logger } from './../../logger/logger';
-import { environment } from '../../../../environments/environment';
 import { QZSelfsignedCert } from './qz.selfsigned.cert';
 
 // import 'rxjs/add/operator/fromPromise';
@@ -43,19 +43,19 @@ export class QZDriver extends AbstractDriver {
     // Provide Connection event subscription to external class
     private notifier: Subject<any>;
 
-    constructor(private driverReadyBroker: DriverReadyBroker, private logger: Logger) {
+    constructor(private driverReadyBroker: DriverReadyBroker, private config: Config, private logger: Logger) {
 
         super('QZ Driver');
 
         this.logger.debug(`1. qz tray websocket ready..., web socket active? [${qz.websocket.isActive()}]`, 'qz.driver');
-
-        const config = {retries: 5, delay: 1};
-        this.openConn = fromPromise(qz.websocket.connect(config));
+        const prod = this.config.getConfig('production');
+        const conf = {retries: 5, delay: 1};
+        this.openConn = fromPromise(qz.websocket.connect(conf));
         this.closeConn = fromPromise(qz.websocket.disconnect());
         // this.connInfo = fromPromise(qz.websocket.getConnectionInfo());
         this.qzTrayVersion = fromPromise(qz.api.getVersion());
 
-        if (environment.production) {
+        if (prod) {
             this.turnOffDebug();
         } else {
             this.turnOnDebug();
@@ -156,7 +156,7 @@ export class QZDriver extends AbstractDriver {
                 try {
                     const pk = KEYUTIL.getKey(QZSelfsignedCert.privateKey.trim());
 
-                    const sig = new KJUR.crypto.Signature({"alg": "SHA1withRSA"});
+                    const sig = new KJUR.crypto.Signature({'alg': 'SHA1withRSA'});
                     sig.init(pk);
                     sig.updateString(toSign);
                     const signatureHex = sig.sign();
@@ -166,7 +166,7 @@ export class QZDriver extends AbstractDriver {
                     console.error(err);
                     reject(err);
                 }
-            }
+            };
         });
     }
 }

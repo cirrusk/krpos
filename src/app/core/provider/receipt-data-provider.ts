@@ -5,8 +5,8 @@ import { ReceiptPolicyData } from './../../data/receipt/receipt-policy-data';
 import { ReceiptPolicy } from './../../data/receipt/receipt-policy';
 import { FormatReader } from './../peripheral/common/format-reader';
 
-import { environment } from '../../../environments/environment';
 import { EscPos } from '../peripheral/printer/helper/escpos';
+import { Config } from '../config/config';
 
 @Injectable()
 export class ReceiptDataProvider {
@@ -15,12 +15,12 @@ export class ReceiptDataProvider {
   private policy: ReceiptPolicyData;
   private preparedData: Map<string, string>;
 
-  constructor(private formatReader: FormatReader) {
+  constructor(private formatReader: FormatReader, private config: Config) {
     // Blocking IO
     const waitDownload: Subject<any> = new Subject();
 
     // Policy File
-    const policyUri: string = environment.occEndpointDomain + environment.receitPolicyFile;
+    const policyUri: string = this.config.getConfig('occEndpointDomain') + this.config.getConfig('receitPolicyFile');
 
     this.formatReader.get(policyUri)
         .subscribe(
@@ -46,7 +46,7 @@ export class ReceiptDataProvider {
     console.log(this.policy);
 
     this.getTemplateList().forEach((templateName: string) => {
-        const url = environment.occEndpointDomain + this.getDownloadUriPrefix() + downloadUriMap.get(templateName);
+        const url = this.config.getConfig('occEndpointDomain') +  this.getDownloadUriPrefix() + downloadUriMap.get(templateName);
 
         this.formatReader.get(url)
         .subscribe(
