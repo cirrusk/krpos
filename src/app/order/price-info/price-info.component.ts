@@ -1,3 +1,4 @@
+import { AddCartBroker } from './../../broker/order/cart/add-cart.broker';
 import { CartEntry } from './../../data/models/order/cart-entryt';
 import { Accounts } from './../../data/models/order/accounts';
 import { OnDestroy } from '@angular/core';
@@ -12,6 +13,7 @@ import { CartInfo } from '../../data/models/order/cart-info';
 import { CartService } from '../../service/order/cart.service';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import Utils from '../../core/utils';
+import { CartModification } from '../../data/model';
 
 @Component({
   selector: 'pos-price-info',
@@ -26,11 +28,14 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   private searchParams: SearchParam;
   private cartInfo: CartInfo;
   private cartList: Array<CartEntry>;
+  private productInfo: CartEntry;
+  private cartModification: CartModification;
 
   constructor(private modal: Modal,
               private cartService: CartService,
               private searchBroker: SearchBroker,
-              private searchAccountBroker: SearchAccountBroker) {
+              private searchAccountBroker: SearchAccountBroker,
+              private addCartBroker: AddCartBroker) {
     this.searchMode = 'A';
     this.searchParams = new SearchParam();
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
@@ -80,8 +85,16 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       this.searchParams.searchText = searchText;
       this.searchBroker.sendInfo(this.searchParams);
     } else {
-      this.cartService.addCartEntries(this.accountInfo.uid, this.cartInfo.code, searchText).subscribe(
-        result => {console.error(result); },
+      this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.guid, searchText).subscribe(
+        result => {// 임시 로직
+                   this.cartModification = result;
+                   this.productInfo.code = this.cartModification.entry.product.code;
+                   this.productInfo.name = this.cartModification.entry.product.name;
+                   this.productInfo.qty = this.cartModification.entry.quantity;
+                   this.productInfo.price = this.cartModification.entry.product.price.value;
+                   this.productInfo.desc = this.cartModification.entry.product.description;
+                   this.addCartBroker.sendInfo(this.productInfo);
+                    },
         err => { this.modal.openMessage(
                                         {
                                           title: '확인',

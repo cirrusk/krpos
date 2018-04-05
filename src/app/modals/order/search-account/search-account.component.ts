@@ -46,7 +46,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
           this.getAccountList(result.searchType, result.searchText);
 
           // 추후 제거 예정
-          this.totalCnt = 1;
+          this.totalCnt = this.accountList === undefined ? 0 : this.accountList.accounts.length;
           this.searchText = result.searchText;
         }
       }
@@ -71,10 +71,10 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     if (searchText.trim()) {
       this.activeNum = -1;
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
-                                                      .subscribe(result => this.accountList = result);
-      // 추후 페이징 처리 후 제거
-      this.totalCnt = 1;
-
+                                                      .subscribe(result => {this.accountList = result;
+                                                      // 추후 페이징 처리 후 제거
+                                                      this.totalCnt = this.accountList === undefined ? 0 : this.accountList.accounts.length;
+                                                      });
     } else {
       this.modal.openMessage(
         {
@@ -100,10 +100,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   sendAccountInfo(): void {
     if (this.activeNum > -1) {
       this.account = this.accountList.accounts[this.activeNum];
-      this.cartInfoSubscription = this.cartService.createCartInfo(this.account.uid, this.account.uid, '01', 'pos').subscribe(
-        result => this.cartInfo = result
-      );
-
       this.searchAccountBroker.sendInfo(this.account);
       this.modal.clearAllModals(this);
     }

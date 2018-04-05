@@ -1,3 +1,4 @@
+import { AddCartBroker } from './broker/order/cart/add-cart.broker';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -41,7 +42,8 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
     Config,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [Config], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true },
-    SearchBroker
+    SearchBroker,
+    AddCartBroker
   ],
   bootstrap: [AppComponent]
 })
