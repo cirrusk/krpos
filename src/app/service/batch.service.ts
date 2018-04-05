@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { InfoBroker } from './../broker/info.broker';
-import { Config } from './../core/config/config';
+import { InfoBroker } from '../broker/info.broker';
+import { Config } from '../core/config/config';
 import { Logger } from './pos';
 
 @Injectable()
