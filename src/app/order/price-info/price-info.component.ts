@@ -20,6 +20,8 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   private searchUserInfo: string;
   private cartInfoSubscription: Subscription;
   private accountInfoSubscription: Subscription;
+  private updateVolumeAccountSubscription: Subscription;
+  private addCartSubscription: Subscription;
   private accountInfo: Accounts;
   private searchMode: string;
   private searchParams: SearchParam;
@@ -43,9 +45,15 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
           const terminalInfo = JSON.parse(sessionStorage.getItem('terminalInfo'));
           this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
-                                                             this.accountInfo.uid, terminalInfo.pointOfService.name , 'POS').subscribe(
-          cartResult => {this.cartInfo = cartResult; },
-          err => {console.error(err); }
+                                                                      this.accountInfo.uid,
+                                                                      terminalInfo.pointOfService.name , 'POS').subscribe(
+          cartResult => {
+            this.cartInfo = cartResult;
+            this.updateVolumeAccount(this.cartInfo);
+          },
+          err => {
+            console.error(err);
+          }
           );
         }
       }
@@ -57,10 +65,28 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.accountInfoSubscription.unsubscribe();
+    if (this.updateVolumeAccountSubscription) {
+      this.updateVolumeAccountSubscription.unsubscribe();
+    }
+    if (this.addCartSubscription) {
+      this.addCartSubscription.unsubscribe();
+    }
   }
 
   activeSearchMode(mode: string): void {
     this.searchMode = mode;
+  }
+
+  updateVolumeAccount(cartInfo: CartInfo): void {
+    this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
+                                                                                this.cartInfo.guid,
+                                                                                this.accountInfo.uid).subscribe(
+      res => {
+        console.log('update volume account' + res.status);
+      },
+      error => {
+        console.error('update volume account error' + error);
+      });
   }
 
   popupSearchUserInfo(searchText: string): void {
@@ -82,7 +108,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       this.searchParams.searchText = searchText;
       this.searchBroker.sendInfo(this.searchParams);
     } else {
-      this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.guid, searchText).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.guid, searchText).subscribe(
         result => {// 임시 로직
                    this.cartModification = result;
                    this.productInfo.code = this.cartModification.entry.product.code;
