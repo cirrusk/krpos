@@ -30,7 +30,6 @@ export class CheckComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const checkUrl = this.config.getConfig('hybrisCheckUrl');
-    console.log(checkUrl);
     this.httpSubscription = this.http.get(checkUrl)
     .repeatWhen(() => Observable.timer(1000, this.checkInterval))
     // .repeatWhen(() => TimerObservable.create(0, this.checkInterval))

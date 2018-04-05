@@ -61,7 +61,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.posTimer = this.getPosTimer();
       }
     );
-
     this.getTerminalInfo();
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
     // 5분에 한번씩 체크
@@ -123,7 +122,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
             sessionStorage.setItem('clientId', result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
             sessionStorage.setItem('terminalInfo', JSON.stringify(result)); // 혹시 몰라서 전체 저장
           },
-          err => { this.posName = '-'; }
+          error => {
+            this.posName = '-';
+            this.logger.error(error);
+          }
         );
       }
     );
