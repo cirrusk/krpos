@@ -11,7 +11,6 @@ import { Config } from '../config/config';
 @Injectable()
 export class ReceiptDataProvider {
 
-  // private policy: ReceiptPolicyVO;
   private policy: ReceiptPolicyData;
   private preparedData: Map<string, string>;
 
