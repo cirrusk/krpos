@@ -6,7 +6,6 @@ import { Config, NetworkService, Logger } from '../pos';
 import {
   CartInfo, CartParams, CartModification,
   OrderEntries, OrderEntryList, OrderParams, Product} from '../../data/model';
-import Utils from '../../core/utils';
 
 @Injectable()
 export class CartService {
