@@ -124,7 +124,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           },
           error => {
             this.posName = '-';
-            this.logger.error(error);
+            this.logger.error(`Terminal info get fail : ${error.name} - ${error.message}`, 'header.component');
           }
         );
       }
