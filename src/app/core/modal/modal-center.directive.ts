@@ -41,6 +41,7 @@ export class ModalCenterDirective implements OnInit {
     const h = '-' + (this.element.nativeElement.offsetHeight / 2) + 'px';
     const w = '-' + (this.element.nativeElement.offsetWidth / 2) + 'px';
 
+
     this.renderer.setElementStyle(this.element.nativeElement, 'margin-left', w);
     this.renderer.setElementStyle(this.element.nativeElement, 'margin-top', h);
 
