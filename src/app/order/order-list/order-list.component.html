@@ -34,11 +34,11 @@
 
               <tr *ngFor="let cartEntry of cartList">
                   <td>9999</td>
-                  <td class="al">cartEntry.code</td>
-                  <td class="al"><span class="elips">cartEntry.name</span></td>
-                  <td>cartEntry.qty</td>
-                  <td class="ar">cartEntry.price</td>
-                  <td class="ar">999,999,999</td>
+                  <td class="al">{{cartEntry.code}}</td>
+                  <td class="al"><span class="elips">{{cartEntry.name}}</span></td>
+                  <td>{{cartEntry.qty}}</td>
+                  <td class="ar">{{cartEntry.price}}</td>
+                  <td class="ar">{{cartEntry.price*cartEntry.qty}}</td>
                   <td></td>
               </tr>                                   
           </tbody>

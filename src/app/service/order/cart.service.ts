@@ -34,7 +34,7 @@ export class CartService {
                           .map(data => data as HttpResponseBase);
   }
 
-  addCartEntries(userId: string, cartId: string, code: string): Observable<CartModification> {
+  addCartEntries(userId: string, cartId: string, code: string): Observable<CartModification[]> {
     const o1: OrderEntries = new OrderEntries(new Product(code), '1');
     const oa: OrderEntries[] = [];
     oa.push(o1);
@@ -43,7 +43,7 @@ export class CartService {
     const apiURL = this.config.getApiUrl('addToCart', {'userId' : userId, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.post<CartModification>(apiURL, JSON.stringify(op), { headers : httpHeaders })
-                          .map(data => data as CartModification);
+    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(op), { headers : httpHeaders })
+                          .map(data => data as CartModification[]);
   }
 }

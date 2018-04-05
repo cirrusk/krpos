@@ -28,7 +28,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   private cartInfo: CartInfo;
   private cartList: Array<CartEntry>;
   private productInfo: CartEntry;
-  private cartModification: CartModification;
+  private cartModification: CartModification[];
 
   constructor(private modal: Modal,
               private cartService: CartService,
@@ -112,11 +112,11 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.guid, searchText).subscribe(
         result => {// 임시 로직
                    this.cartModification = result;
-                   this.productInfo.code = this.cartModification.entry.product.code;
-                   this.productInfo.name = this.cartModification.entry.product.name;
-                   this.productInfo.qty = this.cartModification.entry.quantity;
-                   this.productInfo.price = this.cartModification.entry.product.price.value;
-                   this.productInfo.desc = this.cartModification.entry.product.description;
+                   this.productInfo = new CartEntry(this.cartModification[0].entry.product.code,
+                                                    this.cartModification[0].entry.product.name,
+                                                    this.cartModification[0].entry.quantity,
+                                                    this.cartModification[0].entry.product.price.value,
+                                                    this.cartModification[0].entry.product.description);
                    this.addCartBroker.sendInfo(this.productInfo);
                     },
         err => { this.modal.openMessage(
