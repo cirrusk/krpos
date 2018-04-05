@@ -4,9 +4,9 @@
       <!-- 검색영역 -->
       <div class="search_wrap">
           <div class="inner">
-              <div class="tab click_add">
-                  <button type="button" [class.add_act]="searchMode == 'A'" (click)="activeSearchMode('A')">회원</button>
-                  <button type="button" [class.add_act]="searchMode == 'P'" (click)="activeSearchMode('P')">상품</button>
+              <div class="tab">
+                  <button type="button" [class.on]="searchMode == 'A'" (click)="activeSearchMode('A')">회원</button>
+                  <button type="button" [class.on]="searchMode == 'P'" (click)="activeSearchMode('P')">상품</button>
               </div>
               <div class="search">
                   <input #searchText type="text" (keydown.enter)="!!popupSearchUserInfo(searchText.value)">
