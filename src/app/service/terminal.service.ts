@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
+import 'rxjs/add/operator/finally';
 
 import { TerminalInfo } from '../data/model';
 import { Config, Logger } from './pos';
@@ -14,7 +15,10 @@ import Utils from '../core/utils';
 @Injectable()
 export class TerminalService {
 
-  constructor(private http: HttpClient, private config: Config, private logger: Logger) { }
+  constructor(
+      private http: HttpClient,
+      private config: Config,
+      private logger: Logger) { }
 
   /**
    * POS 단말기 인증
@@ -32,7 +36,8 @@ export class TerminalService {
     return this.http.post(terminalApiUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
     .timeout(1000 * 15)
     .map(Utils.extractData)
-    .catch(Utils.handleError);
+    .catch(Utils.handleError)
+    .finally(() => { });
   }
 
 }

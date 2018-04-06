@@ -80,7 +80,7 @@ export class ModalMainComponent {
   }
 
   clickOutside(event) {
-    if (this.content.closeByClickOutside && event.target.classList.contains('dim_box')) {
+    if (this.content.closeByClickOutside && event.target.classList.contains('layer_pop')) {
       this.content.modalResult();
     }
   }

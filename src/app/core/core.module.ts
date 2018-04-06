@@ -1,4 +1,3 @@
-import { CheckComponent } from './../common/check/check.component';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -6,6 +5,7 @@ import { RouterModule } from '@angular/router';
 
 import { PeripheralModule } from './peripheral/peripheral.module';
 import { ModalModule } from './modal/modal.module';
+import { CheckComponent } from './../common/check/check.component';
 import { TerminalService } from './../service/terminal.service';
 import { AuthService } from '../service/auth.service';
 import { BatchService } from '../service/batch.service';
@@ -18,6 +18,9 @@ import { SearchAccountBroker } from '../broker/order/search/search-account.broke
 import { SearchBroker } from '../broker/order/search/search.broker';
 import { CartService } from '../service/order/cart.service';
 import { StorageService } from './service/storage.service';
+import { throwIfAlreadyLoaded } from './module-import-guard';
+import { ToastModule } from './toast/toast.module';
+import { SpinnerModule } from './spinner/spinner.module';
 
 @NgModule({
   imports: [
@@ -26,14 +29,18 @@ import { StorageService } from './service/storage.service';
     ReactiveFormsModule,
     RouterModule,
     PeripheralModule,
-    ModalModule
+    ModalModule,
+    ToastModule,
+    SpinnerModule
   ],
   exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    PeripheralModule
+    PeripheralModule,
+    ToastModule,
+    SpinnerModule
   ],
   providers: [
     TerminalService,
@@ -53,11 +60,5 @@ import { StorageService } from './service/storage.service';
 export class CoreModule {
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
     throwIfAlreadyLoaded(parentModule, 'CoreModule');
-  }
-}
-
-export function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
-  if (parentModule) {
-    throw new Error(`${moduleName} has already been loaded. Import Core modules in the AppModule only.`);
   }
 }

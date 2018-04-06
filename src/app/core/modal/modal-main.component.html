@@ -1,6 +1,5 @@
-<div class='dim_box' 
-role="dialog" (click)="clickOutside($event)">
-</div>
-<div [ngClass]="{'dialog-no-animation': !isAnimation}" [style.width]="dialogWidth">
-    <template #element></template>
+<div class="layer_pop" role="dialog" (click)="clickOutside($event)">
+    <div [ngClass]="{'dialog-no-animation': !isAnimation}" [style.width]="dialogWidth">
+        <template #element></template>
+    </div>
 </div>
