@@ -3,7 +3,6 @@ import { Subject } from 'rxjs/Subject';
 
 export interface SpinnerState {
   show: boolean;
-  message?: string;
 }
 
 @Injectable()
@@ -16,7 +15,7 @@ export class SpinnerService {
    }
 
    show(message?: string) {
-     this.spinnerSubject.next(<SpinnerState> { show: true, message: message });
+     this.spinnerSubject.next(<SpinnerState> { show: true });
    }
 
    hide() {
