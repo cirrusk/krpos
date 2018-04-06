@@ -14,32 +14,35 @@ export class StorageService {
   }
 
   /**
+   * 세션 정보 저장하기
    *
-   * @param key
-   * @param value
+   * @param key 세션 정보 키 문자열
+   * @param value 세션 저장 정보 객체
    */
   public setItem<T>(key: string, value: T): void {
     this.storage.setItem(key, JSON.stringify(value));
   }
 
   /**
+   * 세션 정보 조회하기
    *
-   * @param key
+   * @param key 세션 정보 조회 키
    */
   public getItem<T>(key: string) {
     return JSON.parse(this.storage.getItem(key));
   }
 
   /**
+   * 특정 세션 정보 삭제하기
    *
-   * @param key
+   * @param key 세션 정보 삭제 키
    */
   public removeItem(key: string): void {
     this.storage.removeItem(key);
   }
 
   /**
-   *
+   * 모든 세션 정보 삭제
    */
   public clear(): void {
     this.storage.clear();
