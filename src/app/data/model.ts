@@ -1,7 +1,7 @@
 // models define
 export * from './models/order/account-list';
 export * from './models/order/accounts';
-export * from './models/order/cart-entryt';
+export * from './models/order/cart-entry';
 export * from './models/order/cart-info';
 export * from './models/order/cart-modification';
 export * from './models/order/cart-params';

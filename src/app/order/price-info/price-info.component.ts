@@ -43,19 +43,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         console.log('++*** accounts Info subscribe ... ',  result);
         if (result) {
           this.accountInfo = result;
-
-          const terminalInfo = this.storageService.getItem('terminalInfo');
-          this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
-                                                                      this.accountInfo.uid,
-                                                                      terminalInfo.pointOfService.name , 'POS').subscribe(
-          cartResult => {
-            this.cartInfo = cartResult;
-            this.updateVolumeAccount(this.cartInfo);
-          },
-          err => {
-            console.error(err);
-          }
-          );
+          this.createCartInfo();
         }
       }
     );
@@ -80,7 +68,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
   updateVolumeAccount(cartInfo: CartInfo): void {
     this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
-                                                                                this.cartInfo.guid,
+                                                                                this.cartInfo.code,
                                                                                 this.accountInfo.uid).subscribe(
       res => {
         console.log('update volume account' + res.status);
@@ -90,48 +78,97 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       });
   }
 
-  popupSearchUserInfo(searchText: string): void {
+  // 검샙 팝업
+  popupSearch(searchText: string): void {
+    // param 설정
+    this.searchParams.searchMode = this.searchMode;
+    this.searchParams.searchText = searchText;
+
+    // 회원검색
     if (this.searchMode === 'A') {
-      this.modal.openModalByComponent(SearchAccountComponent,
-        {
-          title: '',
-          message: '',
-          width: '200%',
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          // closeByEnter: true,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllDialogs: true
-        }
-      );
-      this.searchParams.searchMode = this.searchMode;
-      this.searchParams.searchText = searchText;
-      this.searchBroker.sendInfo(this.searchParams);
+      this.callSearchAccount();
+    // 제품 검색
     } else {
-      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.guid, searchText).subscribe(
-        result => {// 임시 로직
-                   this.cartModification = result;
-                   this.productInfo = new CartEntry(this.cartModification[0].entry.product.code,
-                                                    this.cartModification[0].entry.product.name,
-                                                    this.cartModification[0].entry.quantity,
-                                                    this.cartModification[0].entry.product.price.value,
-                                                    this.cartModification[0].entry.product.description);
-                   this.addCartBroker.sendInfo(this.productInfo);
-                    },
-        err => { this.modal.openMessage(
-                                        {
-                                          title: '확인',
-                                          message: err.error.errors[0].message,
-                                          closeButtonLabel: '닫기',
-                                          closeByEnter: false,
-                                          closeByEscape: true,
-                                          closeByClickOutside: true,
-                                          closeAllDialogs: true
-                                        }
-                                      );
-                                     }
-      );
+      this.callSearchProduct();
     }
+    this.searchBroker.sendInfo(this.searchParams);
+  }
+
+  // 유저정보 검색
+  callSearchAccount(): void {
+    this.modal.openModalByComponent(SearchAccountComponent,
+      {
+        title: '',
+        message: '',
+        width: '200%',
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        // closeByEnter: true,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllDialogs: true
+      }
+    );
+  }
+
+  // 제품 검색
+  callSearchProduct(): void {
+    // 추후 지정
+    // this.modal.openModalByComponent(SearchAccountComponent,
+    //   {
+    //     title: '',
+    //     message: '',
+    //     width: '200%',
+    //     actionButtonLabel: '확인',
+    //     closeButtonLabel: '취소',
+    //     // closeByEnter: true,
+    //     closeByEscape: true,
+    //     closeByClickOutside: true,
+    //     closeAllDialogs: true
+    //   }
+    // );
+  }
+
+  // 장바구니 생성
+  createCartInfo(): void {
+    const terminalInfo = this.storageService.getItem('terminalInfo');
+
+    this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
+                                                                this.accountInfo.uid,
+                                                                terminalInfo.pointOfService.name , 'POS').subscribe(
+      cartResult => {
+        this.cartInfo = cartResult;
+        this.updateVolumeAccount(this.cartInfo);
+      },
+      err => {
+        console.error(err);
+      }
+    );
+  }
+
+  // 장바구니 담기
+  addCartEntries(searchText: string): void {
+    this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, searchText).subscribe(
+      result => {// 임시 로직
+                 this.cartModification = result;
+                 this.productInfo = new CartEntry(this.cartModification[0].entry.product.code,
+                                                  this.cartModification[0].entry.product.name,
+                                                  this.cartModification[0].entry.quantity,
+                                                  this.cartModification[0].entry.product.price.value,
+                                                  this.cartModification[0].entry.product.description);
+                 this.addCartBroker.sendInfo(this.productInfo);
+      },
+      err => { this.modal.openMessage({
+                                        title: '확인',
+                                        message: err.error.errors[0].message,
+                                        closeButtonLabel: '닫기',
+                                        closeByEnter: false,
+                                        closeByEscape: true,
+                                        closeByClickOutside: true,
+                                        closeAllDialogs: true
+                                      }
+                                    );
+      }
+    );
   }
 }
