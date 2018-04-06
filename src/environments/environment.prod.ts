@@ -21,6 +21,7 @@ export const environment = {
   authApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/authorize',
   tokenApiUrl: 'https://127.0.0.1:9002/authorizationserver/oauth/token',
   logLevel: 'debug',
+  qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
   hybrisCheckUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/'

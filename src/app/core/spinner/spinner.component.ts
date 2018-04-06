@@ -8,7 +8,7 @@ import { SpinnerService, SpinnerState } from '../service/spinner.service';
   templateUrl: './spinner.component.html'
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
-  show = false;
+  show: boolean;
   private spinnerState: Subscription;
   constructor(private spinnerSerive: SpinnerService) { }
 

@@ -14,7 +14,7 @@ export class SpinnerService {
     if (prior) {return prior; }
    }
 
-   show(message?: string) {
+   show() {
      this.spinnerSubject.next(<SpinnerState> { show: true });
    }
 

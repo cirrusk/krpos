@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
-import { NetworkService, Logger, Modal, QzHealthChecker, StorageService } from '../../service/pos';
+import { NetworkService, Logger, Modal, QzHealthChecker, StorageService, Config } from '../../service/pos';
 
 import { InfoBroker } from '../../broker/info.broker';
 
@@ -35,6 +35,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   tokensubscription: Subscription;
   qzsubscription: Subscription;
   timer_id: any;
+  qzCheck: boolean;
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
@@ -43,7 +44,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
     private qzchecker: QzHealthChecker,
-    private logger: Logger) {
+    private logger: Logger,
+    private config: Config) {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
@@ -52,6 +54,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     );
     this.tokeninfo = this.storageService.getTokenInfo();
+    this.qzCheck = this.config.getConfig('qzCheck');
   }
 
   ngOnInit() {
@@ -62,40 +65,43 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     );
     this.getTerminalInfo();
+
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
     // 5분에 한번씩 체크
     // 메모리 문제등이 발생할 경우 다른 방안을 찾자.
-    this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
-      result => {
-        if (result) {
-          this.logger.debug('qz websocket connection is alive!!!', 'header.component');
-        } else {
-          this.logger.warn('qz websocket connection is dead!!!, check qz tray running mode...', 'header.component');
-          // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
-          this.modal.openMessage({
-            title: 'QZ Tray 상태 체크',
-            message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
-            closeButtonLabel: '닫기',
-            closeByEnter: true,
-            closeByEscape: true,
-            closeByClickOutside: true,
-            closeAllDialogs: true
-          });
+    if (this.qzCheck) {
+      this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
+        result => {
+          if (result) {
+            this.logger.debug('qz websocket connection is alive!!!', 'header.component');
+          } else {
+            this.logger.warn('qz websocket connection is dead!!!, check qz tray running mode...', 'header.component');
+            // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
+            this.modal.openMessage({
+              title: 'QZ Tray 상태 체크',
+              message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
+              closeButtonLabel: '닫기',
+              closeByEnter: true,
+              closeByEscape: true,
+              closeByClickOutside: true,
+              closeAllDialogs: true
+            });
 
-          if (this.timer_id !== undefined) { clearTimeout(this.timer_id); }
-          this.timer_id = setTimeout(() => {
-            this.modal.clearAllModals(this.modal.getModalArray()[0]);
-          }, 1000 * 60 * 2); // 2분정도 후에 강제로 닫자. 그렇지 않으면 모달이 계속 뜸.
+            if (this.timer_id !== undefined) { clearTimeout(this.timer_id); }
+            this.timer_id = setTimeout(() => {
+              this.modal.clearAllModals(this.modal.getModalArray()[0]);
+            }, 1000 * 60 * 2); // 2분정도 후에 강제로 닫자. 그렇지 않으면 모달이 계속 뜸.
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   ngOnDestroy() {
     if (this.subscription) { this.subscription.unsubscribe(); }
     if (this.timersubscription) { this.timersubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
-    if (this.qzsubscription) { this.qzsubscription.unsubscribe(); }
+    if (this.qzCheck && this.qzsubscription) { this.qzsubscription.unsubscribe(); }
   }
 
   private getPosTimer(): string {
@@ -113,6 +119,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 먼저 수행되니 주의 필요.
    */
   private getTerminalInfo() {
+
     this.networkService.wait().subscribe(
       () => {
         const macAddress = this.networkService.getLocalMacAddress('-');
