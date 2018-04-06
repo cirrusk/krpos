@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-// import { TimerObservable } from 'rxjs/observable/TimerObservable';
+import { TimerObservable } from 'rxjs/observable/TimerObservable';
 import { Subscription } from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/do';
@@ -10,7 +10,7 @@ import 'rxjs/add/operator/retryWhen';
 import 'rxjs/add/operator/repeatWhen';
 import 'rxjs/add/operator/takeWhile';
 
-import { Config } from '../../core/config/config';
+import { Config } from '../../service/pos';
 
 @Component({
   selector: 'pos-check',
@@ -33,15 +33,13 @@ export class CheckComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.checkUse) {
       const checkUrl = this.config.getConfig('hybrisCheckUrl');
-      this.httpSubscription = this.http.get(checkUrl)
-      .repeatWhen(() => Observable.timer(1000, this.checkInterval))
-      // .repeatWhen(() => TimerObservable.create(0, this.checkInterval))
+      this.httpSubscription = this.http.get(checkUrl, { responseType: 'text' })
+      // .repeatWhen(() => Observable.timer(1000, this.checkInterval))
+      .repeatWhen(() => TimerObservable.create(0, this.checkInterval))
       .retryWhen(err => {
         return err.do(res => {
-          this.failure++;
-          if (this.failure > 0) { // 화면 초기화 위해서 실패가 있으면 성공플래그 초기화
-            this.success = 0;
-          }
+          if (res.status !== 200) { this.failure++; }
+          if (this.failure > 0) { this.success = 0; } // 화면 초기화 위해서 실패가 있으면 성공플래그 초기화
         }).delay(this.checkInterval);
       })
       .subscribe(res => {
@@ -54,4 +52,5 @@ export class CheckComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.checkUse && this.httpSubscription) { this.httpSubscription.unsubscribe(); }
   }
+
 }

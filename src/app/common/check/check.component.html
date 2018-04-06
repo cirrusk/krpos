@@ -1,5 +1,26 @@
 <p style='position:fixed;bottom:3px;right:10px;color:#fff;font-size:8pt;' *ngIf="failure > 0">
  Hybris 연결 상태 : 성공 {{success}}, 실패 [<span style='color:red'>{{failure}}</span>]
 </p>
-
+<div class="layer_pop" *ngIf="failure > 0">
+    <div class="pop_wrap pop_m">
+        <div class="pop_header">
+            <h1>POS 화면 잠금</h1>
+            <!-- <button type="button" class="ico_comm pop_close01">닫기</button> -->
+        </div>
+        <!-- pop_container -->
+        <div class="pop_container">
+            <div class="pop_content">
+                <p class="txt_alert">Hybris 시스템이 정상적이지 않습니다.<br>Hybris가 기동되면 정상적으로 진행됩니다.</p>
+            </div>
+        </div>
+        <!-- //pop_container -->
+        <div class="pop_footer line clearfix">
+            <!-- <span class="fl">취소 ESC</span>
+            <span class="fr">
+                <a href="#" class="btn01_blue">계속</a>
+                <a href="#" class="btn01_white">취소</a>
+            </span> -->
+        </div>
+    </div>
+</div>
 
