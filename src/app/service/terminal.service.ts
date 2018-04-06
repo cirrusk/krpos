@@ -11,12 +11,14 @@ import 'rxjs/add/operator/finally';
 import { TerminalInfo } from '../data/model';
 import { Config, Logger } from './pos';
 import Utils from '../core/utils';
+import { SpinnerService } from '../core/service/spinner.service';
 
 @Injectable()
 export class TerminalService {
 
   constructor(
       private http: HttpClient,
+      private spinner: SpinnerService,
       private config: Config,
       private logger: Logger) { }
 
@@ -30,6 +32,7 @@ export class TerminalService {
    * @param macaddress
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
+    this.spinner.show();
     const terminalApiUrl = this.config.getConfig('terminalApiUrl');
     const httpParams = new HttpParams().set('macAddress', macaddress);
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
@@ -37,7 +40,7 @@ export class TerminalService {
     .timeout(1000 * 15)
     .map(Utils.extractData)
     .catch(Utils.handleError)
-    .finally(() => { });
+    .finally(() => { this.spinner.hide(); });
   }
 
 }

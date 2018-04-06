@@ -5,8 +5,7 @@ import { SpinnerService, SpinnerState } from '../service/spinner.service';
 @Component({
   moduleId: module.id,
   selector: 'pos-spinner',
-  templateUrl: './spinner.component.html',
-  styleUrls: ['./spinner.component.css']
+  templateUrl: './spinner.component.html'
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
   show = false;
