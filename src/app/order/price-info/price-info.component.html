@@ -9,8 +9,8 @@
                   <button type="button" [class.on]="searchMode == 'P'" (click)="activeSearchMode('P')">상품</button>
               </div>
               <div class="search">
-                  <input #searchText type="text" (keydown.enter)="!!popupSearchUserInfo(searchText.value)">
-                  <button type="button" class="ico_comm search01" (click)='!!popupSearchUserInfo(searchText.value)'>검색</button>
+                  <input #searchText type="text" (keydown.enter)="!!popupSearch(searchText.value)">
+                  <button type="button" class="ico_comm search01" (click)='!!popupSearch(searchText.value)'>검색</button>
               </div>
           </div>
           <!-- 비회원 선택시 class="btn on" -->
@@ -50,7 +50,7 @@
               <div class="ic03">
                   <!-- 비회원시 삭제4 -->
                   <ul>
-                      <li>
+                      <li class="credit">
                           <span>신용카드</span>
                           <em><span></span></em>
                       </li>
@@ -111,13 +111,9 @@
 <!-- //회원정보 및 계산 -->
 
 <!-- 공지사항 -->
-<div class="notice">
-  <em class="tag01">공지사항</em>
-  <div class="bx_notice">
-      <ul>
-          <li>1. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</li>
-          <!-- <li>2. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</li>
-          <li>3. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</li> -->
-      </ul>
-  </div>
-</div>
+<dl class="notice">
+  <dt class="tag01">공지사항</dt>    
+    <dd>1. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</dd>
+    <!-- <li>2. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</li>
+    <li>3. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</li> -->
+</dl>

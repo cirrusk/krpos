@@ -11,12 +11,12 @@ import { Logger } from '../../service/pos';
 })
 export class OrderListComponent implements OnInit, OnDestroy {
   private cartList: Array<CartEntry>;
-  private subscription: Subscription;
+  private addCartsubscription: Subscription;
 
   constructor(private addCartBroker: AddCartBroker, private logger: Logger) {
     this.cartList = new Array<CartEntry>();
 
-    this.subscription = this.addCartBroker.getInfo().subscribe(value => {
+    this.addCartsubscription = this.addCartBroker.getInfo().subscribe(value => {
         this.logger.debug(`Add to cart ${value}`, 'order.list.component');
         this.addCartEntry(value);
       });
@@ -25,9 +25,10 @@ export class OrderListComponent implements OnInit, OnDestroy {
   ngOnInit() {
   }
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.addCartsubscription.unsubscribe();
   }
 
+  // 주문 리스트 추가
   private addCartEntry(cartEntry: CartEntry) {
     const existedIdx: number = this.cartList.findIndex(
       function (obj) {
@@ -35,7 +36,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // Not existing
+    // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(
           {code: cartEntry.code, name: cartEntry.name, qty: 1, price: cartEntry.price, desc: cartEntry.desc}

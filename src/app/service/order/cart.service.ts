@@ -13,6 +13,7 @@ export class CartService {
 
   constructor(private httpClient: HttpClient, private config: Config, private networkService: NetworkService, private logger: Logger) { }
 
+  // 장바구니 생성
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
     const macAddress = this.networkService.getLocalMacAddress('-');
     const cartParams = new CartParams(pickupStore, cartType, null);
@@ -24,6 +25,7 @@ export class CartService {
                           .map(data => data as CartInfo);
   }
 
+  // VolumeAccount 수정
   updateVolumeAccount(userId: string, cartId: string, volumeAccount: string): Observable<HttpResponseBase> {
     const apiURL = this.config.getApiUrl('updateVolAcc', {'userId' : userId, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/x-www-form-urlencoded');
@@ -34,6 +36,7 @@ export class CartService {
                           .map(data => data as HttpResponseBase);
   }
 
+  // 장바구니 추가
   addCartEntries(userId: string, cartId: string, code: string): Observable<CartModification[]> {
     const o1: OrderEntries = new OrderEntries(new Product(code), '1');
     const oa: OrderEntries[] = [];

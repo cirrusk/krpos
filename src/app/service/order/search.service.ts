@@ -11,6 +11,7 @@ export class SearchService {
 
   constructor(private httpClient: HttpClient, private config: Config) { }
 
+  // 회원 정보 조회
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
     // API ROOT URL
     let apiURL = this.config.getConfig('apiRootUrl');
@@ -29,11 +30,13 @@ export class SearchService {
                .catch(Utils.handleError);
   }
 
+  // 상품 정보 조회(Bacode)
   getProductInfoByBacode(): void {
 
   }
 
-  getProductInfoSKUcode(userId: string, code: string): void {
+  // 상품 정보 조회(SKUCode)
+  getProductInfoSKUcode(): void {
 
   }
 }
