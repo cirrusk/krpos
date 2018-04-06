@@ -10,12 +10,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
   show = false;
+  message = '';
   private spinnerState: Subscription;
   constructor(private spinnerSerive: SpinnerService) { }
 
   ngOnInit() {
     this.spinnerState = this.spinnerSerive.spinnerState.subscribe(
-      (state: SpinnerState) => { this.show = state.show; } );
+      (state: SpinnerState) => {
+        this.show = state.show;
+        if (state.message) { this.message = state.message; }
+      } );
   }
 
   ngOnDestroy() {
