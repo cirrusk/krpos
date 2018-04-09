@@ -11,6 +11,9 @@
       <ng-template #workStart>
         <button type="button" class="type02">근무종료</button>    
       </ng-template>
-      <button type="button" (click)="screenLock()" class="type02">화면풀림</button>
+      <button type="button" class="type02" *ngIf="tokeninfo === null; else screenLock">화면풀림</button>
+      <ng-template #screenLock>
+        <button type="button" (click)="screenLock()" class="type02">화면풀림</button>
+      </ng-template>
   </div>
 </div>
