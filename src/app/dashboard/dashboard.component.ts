@@ -1,4 +1,6 @@
+import { BatchInfo } from './../data/models/batch-info';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { LoginComponent } from '../modals/login/login.component';
@@ -16,46 +18,70 @@ import Utils from '../core/utils';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   tokeninfo: AccessToken;
+  batchinfo: BatchInfo;
   tokensubscription: Subscription;
+  batchsubscription: Subscription;
   constructor(
     private modal: Modal,
     private infoBroker: InfoBroker,
     private batchService: BatchService,
     private storageService: StorageService,
-    private logger: Logger) {
+    private logger: Logger,
+    private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
-      result => {
-        this.logger.debug('access token subscribe ... ', 'dashboard.component');
-        this.tokeninfo = result;
+      (result) => {
+        if (result && Utils.isNotEmpty(result.batchNo)) {
+          this.logger.debug('batch info subscribe ... ', 'dashboard.component');
+          this.batchinfo = result;
+        }
       }
     );
   }
 
   ngOnInit() {
     this.tokeninfo = this.storageService.getTokenInfo();
+    this.batchinfo = this.storageService.getBatchInfo();
   }
 
   ngOnDestroy() {
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
+    if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
   }
 
   /**
-   * 1. 로그인 페이지로 이동
-   * 2. 로그인 및 배치 저장
-   * 3. 대시보드 메인 노출
+   * 기본조건 : 로그인 상태일 경우
+   * 1. start batch
+   * 2. order 페이지 이동
    */
   startShift() {
-    if (!this.storageService.isLogin()) {
-      this.modal.openModalByComponent(LoginComponent,
-        {
-          title: '',
-          message: '',
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllDialogs: true
+    if (this.storageService.isLogin()) {
+      this.batchsubscription = this.batchService.startBatch().subscribe(
+        (data) => {
+          if (data && Utils.isNotEmpty(data.batchNo)) {
+            this.storageService.setItem('batchInfo', data);
+            this.modal.openMessage({
+              title: '배치 시작',
+              message: `배치가 성공적으로 시작되었습니다.`,
+              closeButtonLabel: '닫기',
+              closeByEnter: true,
+              closeByEscape: true,
+              closeByClickOutside: true,
+              closeAllDialogs: true
+            });
+            this.router.navigate(['/order']);
+          }
+        },
+        error => {
+          const errdata = Utils.parseError(error);
+          if (errdata && errdata.errors) {
+            this.logger.error(`start batch error type : ${errdata.errors[0].type}`, 'dashboard.component');
+            this.logger.error(`start batch error message : ${errdata.errors[0].message}`, 'dashboard.component');
+          } else if (errdata && errdata.error) {
+            this.logger.error(`start batch error : ${errdata.error.error}`, 'dashboard.component');
+            this.logger.error(`start batch error desc : ${errdata.error.error_description}`, 'dashboard.component');
+          } else {
+            this.logger.error(`start batch error : ${JSON.parse(error)}`, 'dashboard.component');
+          }
         }
       );
     }
@@ -65,7 +91,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 로그오프 시 배치 정보 저장 후(P7페이지 배치 정보 저장 확인 팝업 뜸) 이후, 대시보드 메인으로 이동
    */
   stopShift() {
+      this.logger.debug('stop shift', 'dashboard.component');
+  }
 
+  /**
+   * 배치 저장
+   */
+  private saveBatch() {
+    this.batchService.startBatch();
   }
 
   /**

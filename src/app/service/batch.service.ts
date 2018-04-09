@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
 
 import { InfoBroker } from '../broker/info.broker';
-import { Config } from '../core/config/config';
-import { StorageService, Logger } from './pos';
+import { StorageService, Logger, Config } from './pos';
+import { BatchInfo } from '../data/model';
+import Utils from '../core/utils';
 
 @Injectable()
 export class BatchService {
@@ -19,9 +21,25 @@ export class BatchService {
    * 1. 로그인 팝업
    * 2. 로그인/배치저장
    * 3. 대시보드 메인
+   * terminal: Terminal id of POS machine.
+   * startingBalance: Starting Cash drawer balance. | (string) e.g 120
+   * pickupStore: Store associated with terminal. | (string) e.g 01
    */
-  startBatch() {
+  startBatch(): Observable <BatchInfo> {
     this.logger.debug('Start shift start batch...', 'batch.service');
+    const tokeninfo = this.storageService.getTokenInfo();
+    const terminalinfo = this.storageService.getTerminalInfo();
+    const tid = terminalinfo && terminalinfo.id;
+    const tnm = terminalinfo && terminalinfo.pointOfService.name;
+    const userid = tokeninfo && tokeninfo.employeeId;
+    const batchUrl = this.config.getApiUrl('batchStart', { user_id: userid });
+    console.log(batchUrl);
+    const dataParams = { pickupStore: tid, terminal: tnm, startingBalance: '120' };
+    console.log(JSON.stringify(dataParams));
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.post(batchUrl, dataParams, { headers: httpHeaders, responseType: 'json' })
+    .map(Utils.extractData)
+    .catch(Utils.handleError);
   }
 
   /**

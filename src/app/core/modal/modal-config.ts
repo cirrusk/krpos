@@ -23,7 +23,7 @@ export class ModalConfig {
     static confirmTitle = 'Confirmation';
 
     static messageActionButtonLabel = '';
-    static messageCloseButtonLabel = 'OK';
+    static messageCloseButtonLabel = ''; // OK , 2018.04.09 버튼 안보이게 처리위해 빈값으로
 
     static confirmActionButtonLabel = 'Yes';
     static confirmCloseButtonLabel = 'No';

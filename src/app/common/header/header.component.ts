@@ -11,6 +11,9 @@ import { InfoBroker } from '../../broker/info.broker';
 import { TerminalService } from '../../service/terminal.service';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
+import { LoginComponent } from '../../modals/login/login.component';
+import { InstantiateExpr } from '@angular/compiler';
+import Utils from '../../core/utils';
 
 /**
  * 1. 보류
@@ -49,8 +52,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
-        this.logger.debug('access token subscribe ... ', 'header component');
-        this.tokeninfo = result;
+        if (result && Utils.isNotEmpty(result.access_token)) {
+          this.logger.debug('access token subscribe ... ', 'header component');
+          this.tokeninfo = result;
+        }
       }
     );
     this.tokeninfo = this.storageService.getTokenInfo();
@@ -67,8 +72,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.getTerminalInfo();
 
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
-    // 5분에 한번씩 체크
-    // 메모리 문제등이 발생할 경우 다른 방안을 찾자.
+    // 5분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
     if (this.qzCheck) {
       this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
         result => {
@@ -140,10 +144,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   /**
    * 헤더 영역 근무 시작
-   * 아이콘을 터치하면 비밀번호 입력 페이지로 이동
+   * 아이콘을 터치하면 로그인 팝업
    */
   startWork() {
-
+    if (!this.storageService.isLogin()) {
+      this.modal.openModalByComponent(LoginComponent,
+        {
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByEnter: false,
+          closeByEscape: true,
+          closeByClickOutside: true,
+          closeAllDialogs: true
+        }
+      );
+    }
   }
 
   /**
@@ -164,11 +179,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(PasswordComponent,
       {
         title: '화면풀림',
-        message: '',
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByEnter: false,
-        closeByEscape: true,
+        closeByEscape: false,
         closeByClickOutside: false,
         closeAllDialogs: true
       }

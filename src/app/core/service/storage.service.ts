@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AccessToken, TerminalInfo } from '../../data/model';
+import { AccessToken, TerminalInfo, BatchInfo } from '../../data/model';
 import Utils from '../utils';
 
 @Injectable()
@@ -62,6 +62,14 @@ export class StorageService {
   public getTokenInfo(): AccessToken {
     const tokeninfo: AccessToken = this.getItem('tokenInfo');
     return tokeninfo;
+  }
+
+  /**
+   * Start 시 저장한 Batch 정보 가져오기
+   */
+  public getBatchInfo(): BatchInfo {
+    const batchinfo: BatchInfo = this.getItem('batchInfo');
+    return batchinfo;
   }
 
   /**

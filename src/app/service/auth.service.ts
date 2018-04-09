@@ -37,9 +37,7 @@ export class AuthService {
     .set('userId', userid)
     .set('password', userpassword)
     .set('mac_address', this.networkService.getLocalMacAddress('-'));
-
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-
     return this.http.post(authUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
     .map(Utils.extractData)
     .catch(Utils.handleError);

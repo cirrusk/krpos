@@ -17,3 +17,4 @@ export * from './models/access-token';
 export * from './models/product';
 export * from './models/terminal-info';
 export * from './models/product-data';
+export * from './models/batch-info';
