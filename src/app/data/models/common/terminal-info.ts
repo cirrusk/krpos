@@ -1,4 +1,5 @@
 import { PointOfService } from './point-of-service';
+
 export class TerminalInfo {
     id: string;
     location: string;

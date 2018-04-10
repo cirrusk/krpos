@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AddCartBroker } from './../../../../broker/cart/addcart.broker';
-import { ProductData } from '../../../../data/models/product-data';
-import { CartEntry } from './../../../../data/models/cart-entry';
+import { AddCartBroker } from '../../../../broker/cart/addcart.broker';
+import { ProductData, CartEntry } from '../../../../data/model';
 
 @Component({
   selector: 'pos-cart-list',

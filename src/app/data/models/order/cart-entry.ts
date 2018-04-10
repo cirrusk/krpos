@@ -3,7 +3,7 @@ export class CartEntry {
     name: string;
     qty: number;
     price: number;
-    desc: string;
+    desc?: string;
     constructor(private _code?: string,
                 private _name?: string,
                 private _qty?: number,

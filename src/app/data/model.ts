@@ -13,8 +13,8 @@ export * from './models/order/order-entry-list';
 export * from './models/order/product-info';
 export * from './models/order/search-param';
 
-export * from './models/access-token';
-export * from './models/product';
-export * from './models/terminal-info';
-export * from './models/product-data';
-export * from './models/batch-info';
+export * from './models/common/access-token';
+export * from './models/common/product';
+export * from './models/common/terminal-info';
+export * from './models/common/product-data';
+export * from './models/common/batch-info';
