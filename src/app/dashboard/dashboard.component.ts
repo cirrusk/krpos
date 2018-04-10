@@ -10,6 +10,9 @@ import { AccessToken, BatchInfo } from '../data/model';
 
 import Utils from '../core/utils';
 
+// import { AlertService } from '../core/service/alert.service';
+// import { AlertType } from '../core/alert/alert-type.enum';
+
 @Component({
   selector: 'pos-dashboard',
   templateUrl: './dashboard.component.html'
@@ -25,6 +28,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private infoBroker: InfoBroker,
     private batchService: BatchService,
     private storage: StorageService,
+    // private alert: AlertService,
     private logger: Logger,
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
@@ -114,6 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 5. 취소, 닫기 시 확인 팝업 종료
    */
   posEnd() {
+    // this.alert.show( AlertType.info, '제목', '메시지' );
     let msg: string;
     let btn: string;
     const islogin: boolean = this.storage.isLogin();

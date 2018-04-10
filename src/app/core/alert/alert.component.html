@@ -1,0 +1,14 @@
+<div class="layer_alert" #alertPanel posAlert style='display:none'>
+  <div class="alert_wrap">
+      <div class="alert_header">
+          <h1>{{title}}</h1>
+      </div>
+      <!-- alert_container -->
+      <div class="alert_container">
+          <div class="alert_content">
+              <p class="{{alertType}}" [innerHTML]="message"></p>
+          </div>
+      </div>
+      <!-- //alert_container  -->
+  </div>
+</div>

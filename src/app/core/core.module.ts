@@ -18,8 +18,9 @@ import { SearchAccountBroker } from '../broker/order/search/search-account.broke
 import { SearchBroker } from '../broker/order/search/search.broker';
 import { CartService } from '../service/order/cart.service';
 import { StorageService } from './service/storage.service';
-import { ToastModule } from './toast/toast.module';
+// import { ToastModule } from './toast/toast.module';
 import { SpinnerModule } from './spinner/spinner.module';
+import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
 
 @NgModule({
@@ -30,8 +31,9 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
     RouterModule,
     PeripheralModule,
     ModalModule,
-    ToastModule,
-    SpinnerModule
+    // ToastModule,
+    SpinnerModule,
+    AlertModule
   ],
   exports: [
     CommonModule,
@@ -39,8 +41,9 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
     ReactiveFormsModule,
     RouterModule,
     PeripheralModule,
-    ToastModule,
-    SpinnerModule
+    // ToastModule,
+    SpinnerModule,
+    AlertModule
   ],
   providers: [
     TerminalService,
