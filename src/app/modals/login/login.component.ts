@@ -33,7 +33,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   constructor(
     modalService: ModalService,
     private authService: AuthService,
-    private storageSerive: StorageService,
+    private storage: StorageService,
     private infoBroker: InfoBroker,
     private modal: Modal,
     private logger: Logger) {
@@ -117,8 +117,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   private getAccessToken(authcode: string) {
     this.tokensubscription = this.authService.accessToken(authcode).subscribe(
       result => {
-        this.storageSerive.setItem('tokenInfo', result);
-        const accesstoken = this.storageSerive.getItem('tokenInfo');
+        this.storage.setSessionItem('tokenInfo', result);
+        const accesstoken = this.storage.getSessionItem('tokenInfo');
         this.infoBroker.sendInfo(accesstoken);
         this.close();
       },

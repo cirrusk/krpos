@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
+
 import { AccessToken, TerminalInfo, BatchInfo } from '../../data/model';
 import Utils from '../utils';
 
 @Injectable()
 export class StorageService {
 
-  storage: Storage;
+  sstorage: Storage;
+  lstorage: Storage;
   constructor() {
-    this.storage = sessionStorage;
-    if (!this.isSupported()) {
+    this.sstorage = sessionStorage;
+    this.lstorage = localStorage;
+    if (!this.isSessionStorageSupported()) {
       throw new Error('Session Storage is not supported by this browser!');
+    }
+    if (!this.isLocalStorageSupported()) {
+      throw new Error('Local Storage is not supported by this browser!');
     }
   }
 
@@ -19,8 +25,8 @@ export class StorageService {
    * @param key 세션 정보 키 문자열
    * @param value 세션 저장 정보 객체
    */
-  public setItem<T>(key: string, value: T): void {
-    this.storage.setItem(key, JSON.stringify(value));
+  public setSessionItem<T>(key: string, value: T): void {
+    this.sstorage.setItem(key, JSON.stringify(value));
   }
 
   /**
@@ -28,8 +34,8 @@ export class StorageService {
    *
    * @param key 세션 정보 조회 키
    */
-  public getItem<T>(key: string) {
-    return JSON.parse(this.storage.getItem(key));
+  public getSessionItem<T>(key: string) {
+    return JSON.parse(this.sstorage.getItem(key));
   }
 
   /**
@@ -37,22 +43,22 @@ export class StorageService {
    *
    * @param key 세션 정보 삭제 키
    */
-  public removeItem(key: string): void {
-    this.storage.removeItem(key);
+  public removeSessionItem(key: string): void {
+    this.sstorage.removeItem(key);
   }
 
   /**
    * 모든 세션 정보 삭제
    */
-  public clear(): void {
-    this.storage.clear();
+  public clearSession(): void {
+    this.sstorage.clear();
   }
 
   /**
    * Terminal 정보 가져오기
    */
   public getTerminalInfo(): TerminalInfo {
-    const terminalinfo: TerminalInfo = this.getItem('terminalInfo');
+    const terminalinfo: TerminalInfo = this.getSessionItem('terminalInfo');
     return terminalinfo;
   }
 
@@ -60,7 +66,7 @@ export class StorageService {
    * Access Token 정보 가져오기
    */
   public getTokenInfo(): AccessToken {
-    const tokeninfo: AccessToken = this.getItem('tokenInfo');
+    const tokeninfo: AccessToken = this.getSessionItem('tokenInfo');
     return tokeninfo;
   }
 
@@ -68,7 +74,7 @@ export class StorageService {
    * Start 시 저장한 Batch 정보 가져오기
    */
   public getBatchInfo(): BatchInfo {
-    const batchinfo: BatchInfo = this.getItem('batchInfo');
+    const batchinfo: BatchInfo = this.getSessionItem('batchInfo');
     return batchinfo;
   }
 
@@ -88,13 +94,54 @@ export class StorageService {
     return false;
   }
 
-  private isSupported(): boolean {
-    let supported = true;
+  /**
+   * local storage 에 저장하기
+   *
+   * @param key local 정보 조회키
+   * @param value 저장할 값
+   */
+  public setLocalItem<T>(key: string, value: T): void {
+    this.lstorage.setItem(key, JSON.stringify(value));
+  }
 
-    if (!this.storage) {
+  /**
+   * local storage 조회하기
+   *
+   * @param key local 정보 조회키
+   */
+  public getLocalItem<T>(key: string) {
+    return JSON.parse(this.lstorage.getItem(key));
+  }
+
+  /**
+   * 특정 local storage 값 삭제하기
+   *
+   * @param key local 정보 삭제키
+   */
+  public removeLocalItem(key: string): void {
+    this.lstorage.removeItem(key);
+  }
+
+  /**
+   * local storage 전체 삭제
+   */
+  public clearLocal(): void {
+    this.lstorage.clear();
+  }
+
+  private isSessionStorageSupported(): boolean {
+    let supported = true;
+    if (!this.sstorage) {
       supported = false;
     }
+    return supported;
+  }
 
+  private isLocalStorageSupported(): boolean {
+    let supported = true;
+    if (!this.lstorage) {
+      supported = false;
+    }
     return supported;
   }
 

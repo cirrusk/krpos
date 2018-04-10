@@ -32,7 +32,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
   constructor(private modal: Modal,
               private cartService: CartService,
-              private storageService: StorageService,
+              private storage: StorageService,
               private searchBroker: SearchBroker,
               private searchAccountBroker: SearchAccountBroker,
               private addCartBroker: AddCartBroker) {
@@ -131,7 +131,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
   // 장바구니 생성
   createCartInfo(): void {
-    const terminalInfo = this.storageService.getItem('terminalInfo');
+    const terminalInfo = this.storage.getSessionItem('terminalInfo');
 
     this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
                                                                 this.accountInfo.uid,

@@ -42,7 +42,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
-    private storageService: StorageService,
+    private storage: StorageService,
     private modal: Modal,
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       }
     );
-    this.tokeninfo = this.storageService.getTokenInfo();
+    this.tokeninfo = this.storage.getTokenInfo();
     this.qzCheck = this.config.getConfig('qzCheck');
   }
 
@@ -130,8 +130,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
             this.posName = result.pointOfService.displayName;
-            this.storageService.setItem('clientId', result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
-            this.storageService.setItem('terminalInfo', result); // 혹시 몰라서 전체 저장
+            this.storage.setSessionItem('clientId', result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
+            this.storage.setSessionItem('terminalInfo', result); // 혹시 몰라서 전체 저장
           },
           error => {
             this.posName = '-';
@@ -147,7 +147,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 아이콘을 터치하면 로그인 팝업
    */
   startWork() {
-    if (!this.storageService.isLogin()) {
+    if (!this.storage.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
           actionButtonLabel: '확인',

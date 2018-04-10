@@ -12,7 +12,7 @@ export class BatchService {
 
   constructor(
               private http: HttpClient,
-              private storageService: StorageService,
+              private storage: StorageService,
               private infoBroker: InfoBroker,
               private config: Config, private logger: Logger) { }
 
@@ -27,8 +27,8 @@ export class BatchService {
    */
   startBatch(): Observable <BatchInfo> {
     this.logger.debug('Start shift start batch...', 'batch.service');
-    const tokeninfo = this.storageService.getTokenInfo();
-    const terminalinfo = this.storageService.getTerminalInfo();
+    const tokeninfo = this.storage.getTokenInfo();
+    const terminalinfo = this.storage.getTerminalInfo();
     const tid = terminalinfo && terminalinfo.id;
     const tnm = terminalinfo && terminalinfo.pointOfService.name;
     const userid = tokeninfo && tokeninfo.employeeId;
@@ -48,7 +48,7 @@ export class BatchService {
    */
   endBatch() {
     this.logger.debug('End batch, and session storage access token info remove...', 'batch.service');
-    this.storageService.removeItem('tokenInfo'); // remove access token info
+    this.storage.removeSessionItem('tokenInfo'); // remove access token info
     this.infoBroker.sendInfo(null); // info broker에 null access token을 전송해서 초기 상태로 변경.
   }
 

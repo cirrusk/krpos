@@ -15,11 +15,11 @@ export class AuthService {
   terminalInfo: TerminalInfo;
   constructor(
     private http: HttpClient,
-    private storageService: StorageService,
+    private storage: StorageService,
     private networkService: NetworkService,
     private config: Config,
     private logger: Logger) {
-    this.terminalInfo = this.storageService.getTerminalInfo();
+    this.terminalInfo = this.storage.getTerminalInfo();
   }
 
   /**

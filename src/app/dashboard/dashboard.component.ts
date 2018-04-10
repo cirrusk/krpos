@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private modal: Modal,
     private infoBroker: InfoBroker,
     private batchService: BatchService,
-    private storageService: StorageService,
+    private storage: StorageService,
     private logger: Logger,
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
@@ -38,8 +38,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tokeninfo = this.storageService.getTokenInfo();
-    this.batchinfo = this.storageService.getBatchInfo();
+    this.tokeninfo = this.storage.getTokenInfo();
+    this.batchinfo = this.storage.getBatchInfo();
   }
 
   ngOnDestroy() {
@@ -51,22 +51,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 기본조건 : 로그인 상태일 경우
    * 1. start batch
    * 2. order 페이지 이동
+   * 배치 저장 메시지는 필요없는지 확인 필요
    */
   startShift() {
-    if (this.storageService.isLogin()) {
+    if (this.storage.isLogin()) {
       this.batchsubscription = this.batchService.startBatch().subscribe(
         (data) => {
           if (data && Utils.isNotEmpty(data.batchNo)) {
-            this.storageService.setItem('batchInfo', data);
-            this.modal.openMessage({
-              title: '배치 시작',
-              message: `배치가 성공적으로 시작되었습니다.`,
-              closeButtonLabel: '닫기',
-              closeByEnter: true,
-              closeByEscape: true,
-              closeByClickOutside: true,
-              closeAllDialogs: true
-            });
+            this.storage.setSessionItem('batchInfo', data);
+            // this.modal.openMessage({
+            //   title: '배치 시작',
+            //   message: `배치가 성공적으로 시작되었습니다.`,
+            //   closeButtonLabel: '닫기',
+            //   closeByEnter: true,
+            //   closeByEscape: true,
+            //   closeByClickOutside: true,
+            //   closeAllDialogs: true,
+            //   beforeCloseCallback: function(value) {
+            //     console.log('before close callback');
+            //     this.router.navigate(['/order']);
+            //   }
+            // });
             this.router.navigate(['/order']);
           }
         },
@@ -111,7 +116,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     let msg: string;
     let btn: string;
-    const islogin: boolean = this.storageService.isLogin();
+    const islogin: boolean = this.storage.isLogin();
     if (islogin) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
       btn = '계속';

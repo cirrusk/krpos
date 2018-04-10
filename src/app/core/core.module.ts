@@ -18,9 +18,9 @@ import { SearchAccountBroker } from '../broker/order/search/search-account.broke
 import { SearchBroker } from '../broker/order/search/search.broker';
 import { CartService } from '../service/order/cart.service';
 import { StorageService } from './service/storage.service';
-import { throwIfAlreadyLoaded } from './module-import-guard';
 import { ToastModule } from './toast/toast.module';
 import { SpinnerModule } from './spinner/spinner.module';
+import { throwIfAlreadyLoaded } from './module-import-guard';
 
 @NgModule({
   imports: [

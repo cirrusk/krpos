@@ -6,10 +6,10 @@ import { StorageService } from '../../service/pos';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private storageService: StorageService) { }
+  constructor(private storage: StorageService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const currentUserInfo = this.storageService.getTokenInfo();
+    const currentUserInfo = this.storage.getTokenInfo();
 
     if (currentUserInfo) {
       request = request.clone({
