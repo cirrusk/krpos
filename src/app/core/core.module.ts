@@ -18,7 +18,6 @@ import { SearchAccountBroker } from '../broker/order/search/search-account.broke
 import { SearchBroker } from '../broker/order/search/search.broker';
 import { CartService } from '../service/order/cart.service';
 import { StorageService } from './service/storage.service';
-// import { ToastModule } from './toast/toast.module';
 import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
@@ -31,7 +30,6 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
     RouterModule,
     PeripheralModule,
     ModalModule,
-    // ToastModule,
     SpinnerModule,
     AlertModule
   ],
@@ -41,7 +39,6 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
     ReactiveFormsModule,
     RouterModule,
     PeripheralModule,
-    // ToastModule,
     SpinnerModule,
     AlertModule
   ],
