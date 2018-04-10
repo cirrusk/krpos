@@ -20,22 +20,39 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.alertState = this.alert.alertState.subscribe(
-      (state: AlertState) => {
-        this.show = state.show;
-        this.alertType = state.alertType;
-        if (state.show) {
-          this.renderer.setElementStyle(this.elm.nativeElement, 'display', '');
-        } else {
-          this.renderer.setElementStyle(this.elm.nativeElement, 'display', 'none');
-        }
-        this.title = state.title;
-        this.message = state.message;
-      }
+      (state: AlertState) => this.activation(state)
     );
   }
 
   ngOnDestroy() {
     if (this.alertState) { this.alertState.unsubscribe(); }
   }
-}
 
+  private activation(state: AlertState) {
+    this.show = state.show;
+    this.alertType = state.alertType;
+    // timer 값을 true로 설정할 경우 alert 화면이 3.5 초 후 자동으로 닫힘.
+    if (state.timer) {
+      if (state.show) {
+        this.alertShow();
+      }
+    } else {
+      if (state.show) {
+        this.renderer.setElementStyle(this.elm.nativeElement, 'display', '');
+      } else {
+        this.renderer.setElementStyle(this.elm.nativeElement, 'display', 'none');
+      }
+    }
+    this.title = state.title;
+    this.message = state.message;
+  }
+
+  private alertShow() {
+    this.renderer.setElementStyle(this.elm.nativeElement, 'display', '');
+    window.setTimeout(() => this.alertHide(), 3500);
+  }
+
+  private alertHide() {
+      window.setTimeout(() => this.renderer.setElementStyle(this.elm.nativeElement, 'display', 'none'), 400);
+  }
+}

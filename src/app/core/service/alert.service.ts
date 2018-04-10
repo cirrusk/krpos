@@ -7,6 +7,7 @@ export interface AlertState {
   alertType: string;
   title?: string;
   message?: string;
+  timer?: boolean;
 }
 @Injectable()
 export class AlertService {
@@ -16,8 +17,8 @@ export class AlertService {
     if (prior) { return prior; }
   }
 
-  show(alertType: AlertType, title: string, message: string) {
-    this.alertSubject.next(<AlertState> { show: true, alertType: alertType, title: title, message: message });
+  show(alertType: AlertType, title: string, message: string, timer: boolean) {
+    this.alertSubject.next(<AlertState> { show: true, alertType: alertType, title: title, message: message, timer: timer });
   }
 
   hide() {
