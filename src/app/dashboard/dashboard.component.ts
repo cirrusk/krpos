@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       (result) => {
-        if (result && Utils.isNotEmpty(result.batchNo)) {
+       if (result && Utils.isNotEmpty(result.batchNo)) {
           this.logger.debug('batch info subscribe ... ', 'dashboard.component');
           this.batchinfo = result;
         }
