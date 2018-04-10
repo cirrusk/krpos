@@ -1,8 +1,9 @@
 import { OnDestroy } from '@angular/core';
 import { Component, Input, ElementRef, Renderer, OnInit } from '@angular/core';
 
-import { PosModalService } from '../../service/pos';
+import { PosModalService } from './pos-modal.service';
 import * as jquery from 'jquery';
+
 
 @Component({
   moduleId: module.id,
@@ -73,5 +74,5 @@ export class PosModalComponent implements OnInit, OnDestroy {
       this.element.hide();
       $('body').removeClass('modal-open');
   }
-  
+
 }

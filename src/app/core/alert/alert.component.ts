@@ -1,7 +1,8 @@
-import { AlertState } from './../service/alert.service';
+
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { AlertService } from '../service/alert.service';
+import { AlertService } from './alert.service';
+import { AlertState } from './alert.service';
 import { AlertType } from './alert-type.enum';
 
 @Component({

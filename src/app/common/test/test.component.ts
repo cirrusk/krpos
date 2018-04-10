@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { PosModalService } from './../../core/service/pos-modal.service';
+import { PosModalService } from './../../core/modal/pos-modal.service';
 import { Product, OrderParams, OrderEntries } from '../../data/model';
 
 @Component({

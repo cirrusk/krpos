@@ -9,8 +9,7 @@ import { HttpModule } from '@angular/http';
 import { FormatReader } from './../../core/peripheral/common/format-reader';
 import { PosModalComponent } from './../../core/modal/pos-modal.component';
 import { TestComponent } from './test.component';
-import { PosModalService } from './../../core/service/pos-modal.service';
-
+import { PosModalService } from './../../core/modal/pos-modal.service';
 import { ProductSearchService } from './../../service/product.search.service';
 import { AddCartBroker } from './../../broker/cart/addcart.broker';
 

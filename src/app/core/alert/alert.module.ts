@@ -2,7 +2,7 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AlertComponent } from './alert.component';
-import { AlertService } from '../service/alert.service';
+import { AlertService } from './alert.service';
 import { AlertDirective } from './alert.directive';
 import { throwIfAlreadyLoaded } from '../module-import-guard';
 
