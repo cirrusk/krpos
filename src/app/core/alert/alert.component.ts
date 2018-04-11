@@ -15,6 +15,7 @@ export class AlertComponent implements OnInit, OnDestroy {
   message: string;
   title: string;
   alertType: string;
+  private interval: number;
   private alertState: Subscription;
   @ViewChild('alertPanel', { read: ElementRef }) elm: ElementRef;
   constructor(private alert: AlertService, private renderer: Renderer) { }
@@ -35,6 +36,7 @@ export class AlertComponent implements OnInit, OnDestroy {
     // timer 값을 true로 설정할 경우 alert 화면이 3.5 초 후 자동으로 닫힘.
     if (state.timer) {
       if (state.show) {
+        this.interval = (state.interval > 0) ? state.interval : 3500;
         this.alertShow();
       }
     } else {
@@ -50,7 +52,7 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   private alertShow() {
     this.renderer.setElementStyle(this.elm.nativeElement, 'display', '');
-    window.setTimeout(() => this.alertHide(), 3500);
+    window.setTimeout(() => this.alertHide(), this.interval);
   }
 
   private alertHide() {

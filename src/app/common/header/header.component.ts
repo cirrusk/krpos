@@ -155,7 +155,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           closeByEnter: false,
           closeByEscape: true,
           closeByClickOutside: true,
-          closeAllDialogs: true
+          closeAllDialogs: false
         }
       );
     }

@@ -6,6 +6,9 @@ import { AuthService } from '../../service/auth.service';
 import { ModalService, StorageService, Modal, Logger } from '../../service/pos';
 import { InfoBroker } from '../../broker/info.broker';
 import { ErrorInfo } from '../../data/error/error-info';
+import { AlertService } from './../../core/alert/alert.service';
+import { AlertType } from './../../core/alert/alert-type.enum';
+
 import Utils from '../../core/utils';
 
 /**
@@ -35,6 +38,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     private authService: AuthService,
     private storage: StorageService,
     private infoBroker: InfoBroker,
+    private alert: AlertService,
     private modal: Modal,
     private logger: Logger) {
     super(modalService);
@@ -69,17 +73,13 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // 1. AD 계정 Validation 체크
     // 2. 비밀번호 미입력
     if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-      this.modal.openMessage(
-        {
-          title: '비밀번호 미입력',
-          message: `비밀번호가 공란입니다.`,
-          closeButtonLabel: '닫기',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllDialogs: true
-        }
-      );
+      this.alert.show({
+          alertType: AlertType.warn,
+          title: '확인',
+          message: '비밀번호가 공란입니다.',
+          timer: true,
+          interval: 1000
+        });
       return;
     }
 

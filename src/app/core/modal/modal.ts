@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs/Observable';
 import { Injectable, Injector, Type } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
 import { ModalComponent } from './modal.component';
 import { BasicModalComponent } from './basic-modal.component';
