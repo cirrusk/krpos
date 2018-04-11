@@ -4,7 +4,7 @@ export class ModalConfig {
     static draggable = true;
 
     static grayBg = true;
-    static width = '40%';
+    static width = '';
 
     static closeDelay = 500;
 
@@ -25,8 +25,8 @@ export class ModalConfig {
     static messageActionButtonLabel = '';
     static messageCloseButtonLabel = ''; // OK , 2018.04.09 버튼 안보이게 처리위해 빈값으로
 
-    static confirmActionButtonLabel = 'Yes';
-    static confirmCloseButtonLabel = 'No';
+    static confirmActionButtonLabel = '확인';
+    static confirmCloseButtonLabel = '닫기';
 
 
 }
