@@ -77,10 +77,10 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
                                                                                              0 : this.accountList.accounts.length;
                                                       },
                                                       err => {
-                                                        this.errorMessage('경고', err.error.errors[0].message);
+                                                        this.modal.openMessage(err.error.errors[0].message, '경고');
                                                       });
     } else {
-      this.errorMessage('검색어 미입력', '검색어를 입력해주세요.');
+      this.modal.openMessage('검색어를 입력해주세요.', '검색어 미입력');
       return;
     }
   }
@@ -97,20 +97,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.searchAccountBroker.sendInfo(this.account);
       this.modal.clearAllModals(this);
     }
-  }
-
-  errorMessage(title: string, message: string): void {
-    this.modal.openMessage(
-      {
-        title: title,
-        message: message,
-        closeButtonLabel: '닫기',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllDialogs: true
-      }
-    );
   }
 
   // 모달창 닫기

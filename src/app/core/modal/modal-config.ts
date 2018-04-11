@@ -26,7 +26,7 @@ export class ModalConfig {
     static messageCloseButtonLabel = ''; // OK , 2018.04.09 버튼 안보이게 처리위해 빈값으로
 
     static confirmActionButtonLabel = '확인';
-    static confirmCloseButtonLabel = '닫기';
+    static confirmCloseButtonLabel = '취소';
 
 
 }

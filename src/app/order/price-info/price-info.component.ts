@@ -100,10 +100,8 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       {
         title: '',
         message: '',
-        width: '200%',
-        actionButtonLabel: '확인',
+        actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        // closeByEnter: true,
         closeByEscape: true,
         closeByClickOutside: true,
         closeAllDialogs: true
