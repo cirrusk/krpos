@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalComponent } from '../../core/modal/modal.component';
-import { ModalService, Modal, Logger } from '../../service/pos';
+import { ModalService, Logger } from '../../service/pos';
 
 @Component({
   selector: 'pos-password',
@@ -9,9 +9,7 @@ import { ModalService, Modal, Logger } from '../../service/pos';
 export class PasswordComponent extends ModalComponent implements OnInit {
 
   @Input() loginPassword: string;
-  constructor(modalService: ModalService,
-    private modal: Modal,
-    private logger: Logger) {
+  constructor(modalService: ModalService, private logger: Logger) {
     super(modalService);
   }
 
@@ -23,7 +21,7 @@ export class PasswordComponent extends ModalComponent implements OnInit {
   }
 
   close() {
-    this.modal.clearAllModals(this);
+    this.closeModal();
   }
 
 }

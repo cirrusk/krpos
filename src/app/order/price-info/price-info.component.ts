@@ -7,6 +7,7 @@ import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
 import { CartService } from '../../service/order/cart.service';
 import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
+import { SearchProductComponent } from './../../modals/product/search-product/search-product.component';
 import { StorageService, Modal } from '../../service/pos';
 
 import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
@@ -113,19 +114,18 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   // 제품 검색
   callSearchProduct(): void {
     // 추후 지정
-    // this.modal.openModalByComponent(SearchAccountComponent,
-    //   {
-    //     title: '',
-    //     message: '',
-    //     width: '200%',
-    //     actionButtonLabel: '확인',
-    //     closeButtonLabel: '취소',
-    //     // closeByEnter: true,
-    //     closeByEscape: true,
-    //     closeByClickOutside: true,
-    //     closeAllDialogs: true
-    //   }
-    // );
+    this.modal.openModalByComponent(SearchProductComponent,
+      {
+        title: '',
+        message: '',
+        actionButtonLabel: '선택',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllDialogs: false
+      }
+    );
   }
 
   // 장바구니 생성

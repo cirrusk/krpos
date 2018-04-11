@@ -10,6 +10,7 @@ import { ModalMainComponent } from './modal-main.component';
 import { LoginComponent } from '../../modals/login/login.component';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { SearchAccountComponent } from '../../modals/order/search-account/search-account.component';
+import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
 
 import { ModalService } from './modal.service';
 import { FocusBlurDirective } from './focus-blur.directive';
@@ -24,7 +25,8 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
     LoginComponent,
     PasswordComponent,
     FocusBlurDirective,
-    SearchAccountComponent
+    SearchAccountComponent,
+    SearchProductComponent
   ],
   providers: [
     ModalService,
@@ -45,7 +47,8 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
     BasicModalComponent,
     LoginComponent,
     PasswordComponent,
-    SearchAccountComponent
+    SearchAccountComponent,
+    SearchProductComponent
   ]
 })
 export class ModalModule {

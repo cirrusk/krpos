@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent } from '../../core/modal/modal.component';
 import { AuthService } from '../../service/auth.service';
-import { ModalService, StorageService, Modal, Logger } from '../../service/pos';
+import { ModalService, StorageService, Logger } from '../../service/pos';
 import { InfoBroker } from '../../broker/info.broker';
 import { ErrorInfo } from '../../data/error/error-info';
 import { AlertService } from './../../core/alert/alert.service';
@@ -39,7 +39,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     private storage: StorageService,
     private infoBroker: InfoBroker,
     private alert: AlertService,
-    private modal: Modal,
+    // private modal: Modal,
     private logger: Logger) {
     super(modalService);
   }
@@ -136,7 +136,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   close() {
-    this.modal.clearAllModals(this);
+    this.closeModal();
   }
 
 }
