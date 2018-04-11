@@ -1,5 +1,5 @@
 export enum MemberType {
-    'ABS' = 'A',
+    'ABO' = 'A',
     'MEMBER' = 'M',
     'CONSUMER' = 'C'
 }
