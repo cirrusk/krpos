@@ -70,22 +70,17 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     if (searchText.trim()) {
       this.activeNum = -1;
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
-                                                      .subscribe(result => {this.accountList = result;
-                                                      // 추후 페이징 처리 후 제거
-                                                      this.totalCnt = this.accountList === undefined ? 0 : this.accountList.accounts.length;
+                                                      .subscribe(
+                                                        result => {this.accountList = result;
+                                                        // 추후 페이징 처리 후 제거
+                                                        this.totalCnt = this.accountList === undefined ?
+                                                                                             0 : this.accountList.accounts.length;
+                                                      },
+                                                      err => {
+                                                        this.errorMessage('경고', err.error.errors[0].message);
                                                       });
     } else {
-      this.modal.openMessage(
-        {
-          title: '검색어 미입력',
-          message: `검색어를 입력해주세요.`,
-          closeButtonLabel: '닫기',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllDialogs: true
-        }
-      );
+      this.errorMessage('검색어 미입력', '검색어를 입력해주세요.');
       return;
     }
   }
@@ -102,6 +97,20 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.searchAccountBroker.sendInfo(this.account);
       this.modal.clearAllModals(this);
     }
+  }
+
+  errorMessage(title: string, message: string): void {
+    this.modal.openMessage(
+      {
+        title: title,
+        message: message,
+        closeButtonLabel: '닫기',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllDialogs: true
+      }
+    );
   }
 
   // 모달창 닫기

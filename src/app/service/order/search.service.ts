@@ -17,7 +17,7 @@ export class SearchService {
     let apiURL = this.config.getConfig('apiRootUrl');
 
     // 회원 타입별로 URL 셋팅
-    if (MemberType.ABS === searchMemberType) {
+    if (MemberType.ABO === searchMemberType) {
       apiURL += `amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
     } else if (MemberType.MEMBER === searchMemberType) {
       apiURL += `amwaykorea/accounts/Uid/${searchText}`;

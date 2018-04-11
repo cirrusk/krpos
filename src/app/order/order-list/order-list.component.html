@@ -46,8 +46,8 @@
           </thead>
           <tbody>
 
-              <tr *ngFor="let cartEntry of cartList">
-                  <td>9999</td>
+              <tr *ngFor="let cartEntry of cartList; let i = index">
+                  <td>{{i}}</td>
                   <td class="al">{{cartEntry.code}}</td>
                   <td class="al"><span class="elips">{{cartEntry.name}}</span></td>
                   <td>{{cartEntry.qty}}</td>
