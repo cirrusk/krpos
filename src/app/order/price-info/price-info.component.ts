@@ -29,7 +29,6 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   private cartList: Array<CartEntry>;
   private productInfo: CartEntry;
   private cartModification: CartModification[];
-
   constructor(private modal: Modal,
               private cartService: CartService,
               private storage: StorageService,
@@ -172,3 +171,5 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
     );
   }
 }
+
+

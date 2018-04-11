@@ -19,6 +19,7 @@ import { PriceInfoComponent } from './order/price-info/price-info.component';
 import { AddCartBroker } from './broker/order/cart/add-cart.broker';
 import { SearchBroker } from './broker/order/search/search.broker';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
+import { ClientComponent } from './client/client.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
     OrderListComponent,
     OrderMenuComponent,
     PriceInfoComponent,
-    CheckComponent
+    CheckComponent,
+    ClientComponent
   ],
   providers: [
     Config,

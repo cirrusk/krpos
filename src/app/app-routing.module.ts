@@ -1,3 +1,4 @@
+import { ClientComponent } from './client/client.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'order', component: OrderComponent, canActivate: [LoginGuard]},
+  { path: 'client', component: ClientComponent },
   { path: 'test', component: TestComponent }
 ];
 
