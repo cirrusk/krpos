@@ -23,15 +23,22 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
     this.guser = false;
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() { }
 
+  /**
+   * 신규 사용자 저장
+   *
+   * INPUT 에서 ENTER 이벤트가 발생하기 때문에
+   * alert 창의 ENTER 닫기 이벤트까지 fired 됨(INPUT에 focus 있음).
+   * 반드시 INPUT을 blur 처리를 실행한 후에 alert 오픈해야함.
+   *
+   * @param el 휴대폰/전화번호 INPUT element
+   */
   saveNewCustomer(el) {
     if (Utils.isEmpty(this.userPhone) || this.userPhone.length < 11) {
-      el.blur(); // 이렇게 처리해야만 alert 에서 이벤트 동작!
+      el.blur(); // 주의) 이렇게 처리해야만 alert 에서 이벤트 동작!
       this.alert.show( {alertType: AlertType.warn, message: '입력 형식이 맞지 않습니다'} );
       return;
     }
