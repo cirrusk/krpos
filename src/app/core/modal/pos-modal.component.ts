@@ -1,5 +1,5 @@
 import { OnDestroy } from '@angular/core';
-import { Component, Input, ElementRef, Renderer, OnInit } from '@angular/core';
+import { Component, Input, ElementRef, Renderer2, OnInit } from '@angular/core';
 
 import { PosModalService } from './pos-modal.service';
 import * as jquery from 'jquery';
@@ -17,7 +17,7 @@ export class PosModalComponent implements OnInit, OnDestroy {
   private element: JQuery;
   constructor(private modalService: PosModalService,
               private el: ElementRef,
-              private renderer: Renderer) {
+              private renderer: Renderer2) {
       this.element = $(el.nativeElement);
     }
 
@@ -48,7 +48,8 @@ export class PosModalComponent implements OnInit, OnDestroy {
     // document 전체에 대한 event listener 를 등록한다. (Component 포커스 받으려면 인풋 필드 필요)
     if (this.escKeyClose === 'true') {
         console.log(`modal esc key close : ${this.escKeyClose}`);
-        this.renderer.listenGlobal('document', 'keyup', (evt) => {
+        // this.renderer.listenGlobal('document', 'keyup', (evt) => {
+        this.renderer.listen('document', 'keyup', (evt) => {
             if (evt.keyCode === 27) {
                 modal.close();
             }

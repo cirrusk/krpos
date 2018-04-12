@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { AlertService } from './alert.service';
 import { AlertState } from './alert.service';
@@ -18,7 +18,7 @@ export class AlertComponent implements OnInit, OnDestroy {
   private interval: number;
   private alertState: Subscription;
   @ViewChild('alertPanel', { read: ElementRef }) elm: ElementRef;
-  constructor(private alert: AlertService, private renderer: Renderer) { }
+  constructor(private alert: AlertService, private renderer: Renderer2) { }
 
   ngOnInit() {
     this.alertState = this.alert.alertState.subscribe(
@@ -36,14 +36,14 @@ export class AlertComponent implements OnInit, OnDestroy {
     // timer 값을 true로 설정할 경우 alert 화면이 3.5 초 후 자동으로 닫힘.
     if (state.timer) {
       if (state.show) {
-        this.interval = (state.interval > 0) ? state.interval : 3500;
+        this.interval = state.interval;
         this.alertShow();
       }
     } else {
       if (state.show) {
-        this.renderer.setElementStyle(this.elm.nativeElement, 'display', '');
+        this.renderer.setStyle(this.elm.nativeElement, 'display', '');
       } else {
-        this.renderer.setElementStyle(this.elm.nativeElement, 'display', 'none');
+        this.renderer.setStyle(this.elm.nativeElement, 'display', 'none');
       }
     }
     this.title = state.title;
@@ -51,11 +51,11 @@ export class AlertComponent implements OnInit, OnDestroy {
   }
 
   private alertShow() {
-    this.renderer.setElementStyle(this.elm.nativeElement, 'display', '');
+    this.renderer.setStyle(this.elm.nativeElement, 'display', '');
     window.setTimeout(() => this.alertHide(), this.interval);
   }
 
   private alertHide() {
-      window.setTimeout(() => this.renderer.setElementStyle(this.elm.nativeElement, 'display', 'none'), 400);
+      window.setTimeout(() => this.renderer.setStyle(this.elm.nativeElement, 'display', 'none'), 300);
   }
 }

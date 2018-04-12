@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent } from '../../../core/modal/modal.component';
@@ -26,7 +26,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private cartInfo: CartInfo;
 
   constructor(modalService: ModalService,
-      private renderer: Renderer,
       private modal: Modal,
       private logger: Logger,
       private searchService: SearchService,

@@ -22,11 +22,11 @@ export class AlertService {
     this.alertSubject.next(<AlertState>
       {
       show: true,
-      alertType: params.alertType,
-      title: params.title,
+      alertType: (params.alertType) ? params.alertType : AlertType.warn,
+      title: (params.title) ? params.title : '경고',
       message: params.message,
-      timer: params.timer,
-      interval: params.interval
+      timer: (params.timer) ? params.timer : false,
+      interval: (params.interval > 0) ? params.interval : 3500
     });
   }
 

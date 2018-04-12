@@ -1,6 +1,6 @@
 
 import { Component, ViewChild, ViewContainerRef, ComponentFactoryResolver,
-  Type, ReflectiveInjector, HostListener, Renderer } from '@angular/core';
+  Type, ReflectiveInjector, HostListener } from '@angular/core';
 
 import { ModalComponent } from './modal.component';
 import { ModalConfig } from './modal-config';
@@ -22,7 +22,7 @@ export class ModalMainComponent {
   isGrayBg: boolean;
   isDraggable: boolean;
 
-  constructor(private resolver: ComponentFactoryResolver, private renderer: Renderer) { }
+  constructor(private resolver: ComponentFactoryResolver) { }
 
   addComponent(component: Type<ModalComponent>) {
     const factory = this.resolver.resolveComponentFactory(component);

@@ -12,11 +12,13 @@ export class FocusBlurDirective implements AfterViewInit {
     setTimeout(() => {
       if (this.posFocusBlur === 'focus' || this.posFocusBlur === 'focus_blur') {
           // this._el.nativeElement.focus();
-          this.renderer.invokeElementMethod(this.element.nativeElement, 'focus');
+          // this.renderer.invokeElementMethod(this.element.nativeElement, 'focus');
+          this.element.nativeElement.focus();
       }
       if (this.posFocusBlur === 'blur' || this.posFocusBlur === 'focus_blur') {
           // this.element.nativeElement.blur();
-          this.renderer.invokeElementMethod(this.element.nativeElement, 'blur');
+          // this.renderer.invokeElementMethod(this.element.nativeElement, 'blur');
+          this.element.nativeElement.blur();
       }
     }, 10);
   }

@@ -1,3 +1,5 @@
+import { AlertType } from './../../core/alert/alert-type.enum';
+import { AlertService } from './../../core/alert/alert.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
@@ -34,6 +36,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   constructor(private modal: Modal,
               private cartService: CartService,
               private storage: StorageService,
+              private alert: AlertService,
               private searchBroker: SearchBroker,
               private searchAccountBroker: SearchAccountBroker,
               private addCartBroker: AddCartBroker) {
@@ -128,6 +131,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   }
 
   popupNewAccount() {
+    // this.alert.show( {alertType: AlertType.warn, title: '제목', message: '메시지'} );
     this.modal.openModalByComponent(NewAccountComponent,
       {
         title: '',
