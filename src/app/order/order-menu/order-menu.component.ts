@@ -17,6 +17,11 @@ export class OrderMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  /**
+   * 일반 결제 팝업
+   *
+   * @param evt
+   */
   normalPayment(evt: any) {
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
@@ -32,6 +37,10 @@ export class OrderMenuComponent implements OnInit {
     );
   }
 
+  /**
+   * 복합 결제 팝업
+   * @param evt
+   */
   complexPayment(evt: any) {
     this.checkClass(evt);
     this.modal.openModalByComponent(ComplexPaymentComponent,
@@ -47,6 +56,12 @@ export class OrderMenuComponent implements OnInit {
     );
   }
 
+  /**
+   * 그룹 결제 사용자 검색 팝업
+   * parameter 로 actionType을 넘겨서 그룹 결제일 경우 활용하도록 함.
+   *
+   * @param evt
+   */
   groupPayment(evt: any) {
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchAccountComponent,
@@ -57,11 +72,17 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllDialogs: false
+        closeAllDialogs: false,
+        actionType: 'g'
       }
     );
   }
 
+  /**
+   * 픽업 오더 팝업
+   *
+   * @param evt
+   */
   pickupOrder(evt: any) {
     this.checkClass(evt);
     this.modal.openModalByComponent(PickupOrderComponent,
@@ -77,6 +98,11 @@ export class OrderMenuComponent implements OnInit {
     );
   }
 
+  /**
+   * 구매 취소
+   *
+   * @param evt
+   */
   cancelOrder(evt: any) {
     this.checkClass(evt);
   }
