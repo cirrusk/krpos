@@ -1,8 +1,8 @@
-import { ModalModule } from './../core/modal/modal.module';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { ModalModule } from './../core/modal/modal.module';
 import { LoginComponent } from './login/login.component';
 import { PasswordComponent } from './password/password.component';
 import { SearchProductComponent } from './product/search-product/search-product.component';
