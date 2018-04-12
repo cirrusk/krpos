@@ -4,10 +4,10 @@ import { ModalService } from '../../../service/pos';
 import { FocusBlurDirective } from '../../../core/modal/focus-blur.directive';
 
 @Component({
-  selector: 'pos-normal-payment',
-  templateUrl: './normal-payment.component.html'
+  selector: 'pos-pickup-order',
+  templateUrl: './pickup-order.component.html'
 })
-export class NormalPaymentComponent extends ModalComponent implements OnInit {
+export class PickupOrderComponent extends ModalComponent implements OnInit {
 
   constructor(protected modalService: ModalService) {
     super(modalService);
@@ -19,5 +19,4 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   close() {
     this.closeModal();
   }
-
 }
