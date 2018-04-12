@@ -4,9 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { PeripheralModule } from './peripheral/peripheral.module';
-import { ModalModule } from './modal/modal.module';
-import { CheckComponent } from './../common/check/check.component';
-import { TerminalService } from './../service/terminal.service';
+// import { ModalModule } from './modal/modal.module';
+import { ModalsModule } from '../modals/modals.module';
+import { CheckComponent } from '../common/check/check.component';
+import { TerminalService } from '../service/terminal.service';
 import { AuthService } from '../service/auth.service';
 import { BatchService } from '../service/batch.service';
 
@@ -29,7 +30,7 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
     ReactiveFormsModule,
     RouterModule,
     PeripheralModule,
-    ModalModule,
+    ModalsModule,
     SpinnerModule,
     AlertModule
   ],

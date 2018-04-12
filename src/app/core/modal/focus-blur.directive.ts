@@ -15,7 +15,7 @@ export class FocusBlurDirective implements AfterViewInit {
           // this.renderer.invokeElementMethod(this.element.nativeElement, 'focus');
           this.element.nativeElement.focus();
       }
-      if (this.posFocusBlur === 'blur' || this.posFocusBlur === 'focus_blur') {
+      if (this.posFocusBlur === 'blur' || this.posFocusBlur === 'blur_focus') {
           // this.element.nativeElement.blur();
           // this.renderer.invokeElementMethod(this.element.nativeElement, 'blur');
           this.element.nativeElement.blur();
