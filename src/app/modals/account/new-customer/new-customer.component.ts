@@ -26,6 +26,10 @@ export class NewCustomerComponent extends ModalComponent implements OnInit, OnDe
   ngOnDestroy() {
   }
 
+  saveNewCustomer() {
+    console.log(`phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
+  }
+
   close() {
      this.closeModal();
   }
