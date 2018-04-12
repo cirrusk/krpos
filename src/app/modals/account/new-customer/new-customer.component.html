@@ -1,21 +1,21 @@
 <div class="pop_wrap pop_m">
   <div class="pop_header">
       <h1>비회원 개인정보수집 및 이용동의</h1>
-      <button type="button" class="ico_comm pop_close01">닫기</button>
+      <button type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus_blur'" (click)="close()">{{closeButtonLabel}}</button>
   </div>
   <!-- pop_container -->
   <div class="pop_container">
       <div class="pop_content">
           <div class="in_form">
-              <label class="inp_rd" for="bh1">휴대폰번호<input type="radio" name="bh" id="bh1" checked><span class="checkmark"></span></label>
-              <label class="inp_rd" for="bh2">전화번호<input type="radio" name="bh" id="bh2"><span class="checkmark"></span></label>
+              <label class="inp_rd" for="mobile">휴대폰번호<input type="radio" name="phonetype" id="mobile" (click)="phonetype = 'm'" [(ngModel)]="phonetype" value="m"><span class="checkmark"></span></label>
+              <label class="inp_rd" for="tel">전화번호<input type="radio" name="phonetype" id="tel" (click)="phonetype = 't'" [(ngModel)]="phonetype" value="t"><span class="checkmark"></span></label>
           </div>
           <div class="in_form">
-              <input type="text" class="w370" placeholder="휴대폰/전화번호 입력 시 – 없이 입력해주세요.">
+              <input type="text" class="w370" posOnlyNumber="true" maxlength=11 [(ngModel)]="userPhone" placeholder="휴대폰/전화번호 입력 시 – 없이 입력해주세요.">
           </div>
           <div class="in_form">
-              <label class="inp_ck" for="ag">개인정보수집 및 이용 동의<input type="checkbox" id="ag" checked><span class="checkmark"></span></label>
-              <label class="inp_ck" for="sy">간편선물 받은 사용자 여부<input type="checkbox" id="sy"><span class="checkmark"></span></label>
+              <label class="inp_ck" for="agree">개인정보수집 및 이용 동의<input type="checkbox" id="agree" [checked]="agree" (change)="agree = !agree"><span class="checkmark"></span></label>
+              <label class="inp_ck" for="guser">간편선물 받은 사용자 여부<input type="checkbox" id="guser" [checked]="guser" (change)="guser = !guser"><span class="checkmark"></span></label>
           </div>
       </div>
   </div>

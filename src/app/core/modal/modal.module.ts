@@ -1,3 +1,4 @@
+import { OnlyNumberDirective } from './../common/only-number.directive';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +12,7 @@ import { LoginComponent } from '../../modals/login/login.component';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { SearchAccountComponent } from '../../modals/account/search-account/search-account.component';
 import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
+import { NewCustomerComponent } from '../../modals/account/new-customer/new-customer.component';
 
 import { ModalService } from './modal.service';
 import { FocusBlurDirective } from './focus-blur.directive';
@@ -26,7 +28,9 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
     PasswordComponent,
     FocusBlurDirective,
     SearchAccountComponent,
-    SearchProductComponent
+    SearchProductComponent,
+    NewCustomerComponent,
+    OnlyNumberDirective
   ],
   providers: [
     ModalService,
@@ -39,7 +43,8 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
   exports: [
     FormsModule,
     BasicModalComponent,
-    FocusBlurDirective
+    FocusBlurDirective,
+    OnlyNumberDirective
   ],
   entryComponents: [
     ModalHostComponent,
@@ -48,7 +53,8 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
     LoginComponent,
     PasswordComponent,
     SearchAccountComponent,
-    SearchProductComponent
+    SearchProductComponent,
+    NewCustomerComponent
   ]
 })
 export class ModalModule {

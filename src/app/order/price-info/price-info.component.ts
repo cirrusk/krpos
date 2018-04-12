@@ -12,6 +12,7 @@ import { StorageService, Modal } from '../../service/pos';
 
 import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
 import Utils from '../../core/utils';
+import { NewCustomerComponent } from '../../modals/account/new-customer/new-customer.component';
 
 @Component({
   selector: 'pos-price-info',
@@ -118,6 +119,21 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         message: '',
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllDialogs: false
+      }
+    );
+  }
+
+  popupNewUser() {
+    this.modal.openModalByComponent(NewCustomerComponent,
+      {
+        title: '',
+        message: '',
+        actionButtonLabel: '',
+        closeButtonLabel: '',
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
