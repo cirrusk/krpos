@@ -12,7 +12,7 @@ import { LoginComponent } from '../../modals/login/login.component';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { SearchAccountComponent } from '../../modals/account/search-account/search-account.component';
 import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
-import { NewCustomerComponent } from '../../modals/account/new-customer/new-customer.component';
+import { NewAccountComponent } from '../../modals/account/new-account/new-account.component';
 
 import { ModalService } from './modal.service';
 import { FocusBlurDirective } from './focus-blur.directive';
@@ -29,7 +29,7 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
     FocusBlurDirective,
     SearchAccountComponent,
     SearchProductComponent,
-    NewCustomerComponent,
+    NewAccountComponent,
     OnlyNumberDirective
   ],
   providers: [
@@ -54,7 +54,7 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
     PasswordComponent,
     SearchAccountComponent,
     SearchProductComponent,
-    NewCustomerComponent
+    NewAccountComponent
   ]
 })
 export class ModalModule {

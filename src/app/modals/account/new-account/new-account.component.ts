@@ -4,10 +4,10 @@ import { ModalService } from '../../../service/pos';
 import { OnlyNumberDirective } from '../../../core/common/only-number.directive';
 
 @Component({
-  selector: 'pos-new-customer',
-  templateUrl: './new-customer.component.html'
+  selector: 'pos-new-account',
+  templateUrl: './new-account.component.html'
 })
-export class NewCustomerComponent extends ModalComponent implements OnInit, OnDestroy {
+export class NewAccountComponent extends ModalComponent implements OnInit, OnDestroy {
 
   @Input() userPhone: string;
   @Input() phonetype: string; // 휴대폰/전화번호 타입 선택
@@ -28,6 +28,9 @@ export class NewCustomerComponent extends ModalComponent implements OnInit, OnDe
 
   saveNewCustomer() {
     console.log(`phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
+
+    // API로 보내고 나서 성공 시 close
+    this.close();
   }
 
   close() {

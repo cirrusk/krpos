@@ -12,7 +12,7 @@ import { StorageService, Modal } from '../../service/pos';
 
 import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
 import Utils from '../../core/utils';
-import { NewCustomerComponent } from '../../modals/account/new-customer/new-customer.component';
+import { NewAccountComponent } from '../../modals/account/new-account/new-account.component';
 
 @Component({
   selector: 'pos-price-info',
@@ -127,8 +127,8 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
     );
   }
 
-  popupNewUser() {
-    this.modal.openModalByComponent(NewCustomerComponent,
+  popupNewAccount() {
+    this.modal.openModalByComponent(NewAccountComponent,
       {
         title: '',
         message: '',
