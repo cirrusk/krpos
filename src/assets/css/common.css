@@ -549,7 +549,7 @@ table input[type='text'] {font-family:'NSM';}
 .m_right .nav button.disabled {background-color:#6b7687; color:#4b5366}
 .m_right .nav button:before {content:''; display:inline-block; background-color:#000}
 
-.m_right .promotion {position:relative; margin-top:126px;}
+.m_right .promotion {position:relative; margin-top:71px;}
 .m_right .promotion .img {width:140px; height:187px}
 .m_right .promotion .img li {display:none; width:140px; height:187px}
 .m_right .promotion .img li.on {display:block;}
