@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 import { Subscription } from 'rxjs/Subscription';
@@ -13,8 +13,8 @@ import { HoldOrderComponent } from '../../modals/order/hold-order/hold-order.com
 import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 import { LoginComponent } from '../../modals/login/login.component';
-import { InstantiateExpr } from '@angular/compiler';
 import Utils from '../../core/utils';
+
 
 /**
  * 1. 보류
@@ -30,7 +30,7 @@ import Utils from '../../core/utils';
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-
+  isClientScreen: boolean;
   posName: string;
   posTimer: string;
   tokeninfo: AccessToken;
@@ -40,6 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   qzsubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
+  @Input() isClient: boolean;
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,

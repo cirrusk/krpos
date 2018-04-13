@@ -1,14 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'pos-client',
   templateUrl: './client.component.html'
 })
-export class ClientComponent implements OnInit {
+export class ClientComponent implements OnInit, OnDestroy {
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
+
   }
+
+  ngOnDestroy() {
+
+  }
+
 
 }
