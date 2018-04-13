@@ -1,0 +1,96 @@
+<div class="pop_wrap pop_l">
+  <div class="pop_header">
+      <h1>사업자등록증 조회</h1>
+      <button type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <p class="txt01">사업자 등록증 조회 시 아래의 타입으로 조회 가능합니다.</p>
+          <label class="inp_rd type01" for="bn1">법인명<input type="radio" name="bn1" id="bn1" checked><span class="checkmark"></span></label>
+          <!-- 검색영역 -->
+          <div class="mbinfo_search">
+              <input type="text" style="width:480px">
+              <button type="button" class="btn01_blue">확인</button>
+          </div>
+          <!-- //검색영역 -->
+
+          <div class="mbinfo_list">
+              <p class="txt"><strong>총 <span class="fc_red">5</span>건</strong>의 정보가 있습니다.</p>
+              <!-- 검색결과 있음(최대 5개) -->
+              <div class="tbl_col bg_bar">
+                  <table>
+                      <caption>사업자등록증</caption>
+                      <colgroup>
+                          <col style="width:45px">
+                          <col>
+                          <col style="width:140px">
+                          <col style="width:120px">
+                          <col style="width:110px">
+                      </colgroup>
+                      <thead>
+                          <tr>
+                              <th scope="col">번호</th>
+                              <th scope="col">법인명</th>
+                              <th scope="col">사업자등록번호</th>
+                              <th scope="col">대표자명</th>
+                              <th scope="col">등록일</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <!-- 등록증 선택시 tr에 on클래스 추가 -->
+                          <tr class="on">
+                              <td><span>1</span></td>
+                              <td class="tit"><span class="elips mx315">데일리라이프 데일리라이프데일리라이프데일리라이프데일리라이프데일리라이프데일리라이프</span></td>
+                              <td><span>10-344_5267900</span></td>
+                              <td class="name"><span class="elips mx110">김길동</span></td>
+                              <td><span>2018/02/19 </span></td>
+                          </tr>
+                          <tr>
+                              <td><span>2</span></td>
+                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
+                              <td><span>10-344_5267900</span></td>
+                              <td class="name"><span class="elips mx110">김길동</span></td>
+                              <td><span>2018/02/19 </span></td>
+                          </tr>
+                          <tr>
+                              <td><span>3</span></td>
+                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
+                              <td><span>10-344_5267900</span></td>
+                              <td class="name"><span class="elips mx110">김길동</span></td>
+                              <td><span>2018/02/19 </span></td>
+                          </tr>
+                          <tr>
+                              <td><span>4</span></td>
+                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
+                              <td><span>10-344_5267900</span></td>
+                              <td class="name"><span class="elips mx110">김길동</span></td>
+                              <td><span>2018/02/19 </span></td>
+                          </tr>
+                          <tr>
+                              <td><span>5</span></td>
+                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
+                              <td><span>10-344_5267900</span></td>
+                              <td class="name"><span class="elips mx110">김길동</span></td>
+                              <td><span>2018/02/19 </span></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <!-- //검색결과 있음(최대 5개) -->
+
+              <!-- 검색결과 : 없음
+               <p class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
+              //검색결과 : 없음 -->
+          </div>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href (click)="!!select()" class="btn01_blue">{{actionButtonLabel}}</a>
+          <a href (click)="!!close()" class="btn01_white">{{closeButtonLabel}}</a>
+      </span>
+  </div>
+</div>

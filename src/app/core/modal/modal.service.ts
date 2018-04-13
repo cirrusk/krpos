@@ -27,7 +27,6 @@ export class ModalService {
     if (!this.modalHostComponent) {
       return;
     }
-
     // Close all dialogs if clearAll flag is passed.
     if (clearAll) {
       this.modalHostComponent.removeAllModals();

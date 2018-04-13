@@ -8,10 +8,10 @@
       <div class="pop_content">
           <div class="chc_wrap">
               <!-- 항목 선택시 on클래스 추가 -->
-              <a href="#" class="chc_type01 on"><span>사업자 등록증<br>조회</span><i class="ico_comm etc01"></i></a>
-              <a href="#" class="chc_type04"><span>주문 완료 내역</span><i class="ico_comm etc02"></i></a>
-              <a href="#" class="chc_type03"><span>영수증 재발행</span><i class="ico_comm etc03"></i></a>
-              <a href="#" class="chc_type02"><span>결제수단변경<br>/재주문</span><i class="ico_comm etc04"></i></a>
+              <a #etcorders href (click)="!!searchBER($event)" class="chc_type01 on"><span>사업자 등록증<br>조회</span><!--<i class="ico_comm etc01"></i>--></a>
+              <a #etcorders href (click)="!!completeList($event)" class="chc_type04"><span>주문 완료 내역</span><!--<i class="ico_comm etc02"></i>--></a>
+              <a #etcorders href (click)="!!receiptPrint($event)" class="chc_type03"><span>영수증 재발행</span><!--<i class="ico_comm etc03"></i>--></a>
+              <a #etcorders href (click)="!!changePayment($event)" class="chc_type02"><span>결제수단변경<br>/재주문</span><!--<i class="ico_comm etc04"></i>--></a>
           </div>
       </div>
   </div>

@@ -6,13 +6,13 @@
   </div>
   <div class="right">
       <button type="button" class="type01 dp01"><i class="ico_comm keyboard"></i>키보드</button>
-      <button type="button" class="type01 dp02"><span class="count">2</span>보류</button>
+      <button type="button" class="type01 dp02" (click)="holdOrder()"><span class="count">2</span>보류</button>
       <button type="button" class="type02" (click)="startWork()" *ngIf="tokeninfo === null; else workStart">근무 시작</button>
       <ng-template #workStart>
         <button type="button" class="type02">근무 종료</button>
       </ng-template>
-      <button type="button" class="type02" *ngIf="tokeninfo === null; else screenLock">화면 풀림</button>
-      <ng-template #screenLock>
+      <button type="button" class="type02" *ngIf="tokeninfo === null; else lock">화면 풀림</button>
+      <ng-template #lock>
         <button type="button" (click)="screenLock()" class="type02">화면 잠금</button>
       </ng-template>
   </div>

@@ -15,6 +15,9 @@ import { ComplexPaymentComponent } from './payment/complex-payment/complex-payme
 import { PickupOrderComponent } from './order/pickup-order/pickup-order.component';
 import { EtcOrderComponent } from './order/etc-order/etc-order.component';
 import { PromotionOrderComponent } from './order/promotion-order/promotion-order.component';
+import { SearchBerComponent } from './account/search-ber/search-ber.component';
+import { EcpPrintComponent } from './order/ecp-print/ecp-print.component';
+import { HoldOrderComponent } from './order/hold-order/hold-order.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { PromotionOrderComponent } from './order/promotion-order/promotion-order
     ComplexPaymentComponent,
     PickupOrderComponent,
     EtcOrderComponent,
-    PromotionOrderComponent
+    PromotionOrderComponent,
+    SearchBerComponent,
+    EcpPrintComponent,
+    HoldOrderComponent
   ],
   imports: [
     CommonModule,
@@ -43,7 +49,10 @@ import { PromotionOrderComponent } from './order/promotion-order/promotion-order
     ComplexPaymentComponent,
     PickupOrderComponent,
     EtcOrderComponent,
-    PromotionOrderComponent
+    PromotionOrderComponent,
+    SearchBerComponent,
+    EcpPrintComponent,
+    HoldOrderComponent
   ]
 })
 export class ModalsModule {

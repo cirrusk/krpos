@@ -9,6 +9,7 @@ import { NetworkService, Logger, Modal, QzHealthChecker, StorageService, Config 
 import { InfoBroker } from '../../broker/info.broker';
 
 import { TerminalService } from '../../service/terminal.service';
+import { HoldOrderComponent } from '../../modals/order/hold-order/hold-order.component';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 import { LoginComponent } from '../../modals/login/login.component';
@@ -142,6 +143,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * 보류 내역 조회
+   * 보류 건수가 존재 하지 않을 경우 띄우지 않음.
+   */
+  holdOrder() {
+    this.modal.openModalByComponent(HoldOrderComponent,
+      {
+        title: '',
+        actionButtonLabel: '',
+        closeButtonLabel: '',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: false,
+        closeAllModals: false
+      }
+    );
+  }
   /**
    * 헤더 영역 근무 시작
    * 아이콘을 터치하면 로그인 팝업

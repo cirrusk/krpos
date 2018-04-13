@@ -20,7 +20,6 @@
 
 # IDE - VSCode
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -41,3 +40,4 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+.vscode/settings.json

@@ -88,8 +88,7 @@ export class ModalMainComponent {
   // Press Esc or Enter key to close dialog.
   @HostListener('window:keydown', ['$event'])
   keyboardInput(event: any) {
-    // event.preventDefault();
-    event.stopPropagation();
+    event.stopPropagation();   // event.preventDefault();
     if ((this.content.closeByEnter && event.keyCode === 13) ||
       (this.content.closeByEscape && event.keyCode === 27)) {
       this.content.modalResult();

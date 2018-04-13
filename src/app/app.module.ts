@@ -15,11 +15,13 @@ import { OrderComponent } from './order/order.component';
 import { OrderListComponent } from './order/order-list/order-list.component';
 import { OrderMenuComponent } from './order/order-menu/order-menu.component';
 import { PriceInfoComponent } from './order/price-info/price-info.component';
+import { OrderCompleteComponent } from './order/order-complete/order-complete.component';
 
 import { AddCartBroker } from './broker/order/cart/add-cart.broker';
 import { SearchBroker } from './broker/order/search/search.broker';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { ClientComponent } from './client/client.component';
+
 
 @NgModule({
   imports: [
@@ -38,7 +40,8 @@ import { ClientComponent } from './client/client.component';
     OrderMenuComponent,
     PriceInfoComponent,
     CheckComponent,
-    ClientComponent
+    ClientComponent,
+    OrderCompleteComponent
   ],
   providers: [
     Config,
