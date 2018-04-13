@@ -23,8 +23,8 @@
             <!-- 검색결과 영역 : 검색 후-->
             <div class="mbinfo_list type02">
                 <span class="tab_type01">
-                    <span [class.on]="actionType !== 'g'">일반결제</span>
-                    <span [class.on]="actionType === 'g'">그룹결제</span>
+                    <span [class.on]="paymentType !== 'g'">일반결제</span>
+                    <span [class.on]="paymentType === 'g'">그룹결제</span>
                 </span>
                 <p class="txt"><strong>총 <span class="fc_red">{{totalCnt}}</span>건</strong>이 검색되었습니다.</p>
                 <span class="btn_wrap">

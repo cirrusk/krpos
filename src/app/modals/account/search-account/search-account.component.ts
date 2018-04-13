@@ -24,6 +24,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private searchMemberType: string; // 회원 유형
   private searchText: string; // 검색어
   private cartInfo: CartInfo;
+  private paymentType: string;
 
   constructor(modalService: ModalService,
       private modal: Modal,
@@ -36,6 +37,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     super(modalService);
     this.activeNum = -1;
     this.totalCnt = 0;
+    this.paymentType = 'n';
 
     this.searchSubscription = this.searchBroker.getInfo().subscribe(
       result => {
@@ -52,6 +54,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   }
 
   ngOnInit() {
+    this.logger.debug(`결제 타입 --------------> ${this.paymentType}`, 'search.account.component');
   }
 
   ngOnDestroy() {

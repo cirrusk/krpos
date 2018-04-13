@@ -58,7 +58,9 @@ export class OrderMenuComponent implements OnInit {
 
   /**
    * 그룹 결제 사용자 검색 팝업
-   * parameter 로 actionType을 넘겨서 그룹 결제일 경우 활용하도록 함.
+   * parameter 로 paymentType 을 넘겨서 그룹 결제일 경우 활용하도록 함.
+   * paymentType = 'g' 그룹 결제
+   * paymentType = 'n' 일반 결제
    *
    * @param evt
    */
@@ -73,7 +75,7 @@ export class OrderMenuComponent implements OnInit {
         closeByEscape: true,
         closeByClickOutside: false,
         closeAllDialogs: false,
-        actionType: 'g'
+        paymentType: 'g'
       }
     );
   }
