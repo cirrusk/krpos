@@ -89,12 +89,6 @@ export class StorageService {
   public isLogin(): boolean {
     const tokeninfo: AccessToken = this.getTokenInfo();
     if (tokeninfo && Utils.isNotEmpty(tokeninfo.access_token)) {
-
-      const e = tokeninfo.expires_in;
-      const edt = new Date(e * 1000);
-      const cdt = new Date();
-      console.log(edt + '/' + cdt);
-      console.log('expired? ' + (edt < cdt));
       return true;
     }
     return false;

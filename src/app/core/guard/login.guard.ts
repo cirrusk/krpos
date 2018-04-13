@@ -17,11 +17,12 @@ export class LoginGuard implements CanActivate, CanActivateChild {
     // dashbord -> not login -> login.guard -> dashboard 반복 될 수 있음.
     const url = state.url;
     if (url.indexOf('/order') !== -1) {
-      this.logger.debug('you are not login pos system, redirect to dashbord!', 'login.guard');
+      this.logger.debug('you are not login pos system, redirect to dashboard!', 'login.guard');
       this.router.navigate(['/dashboard']);
     }
     return false;
   }
+
   canActivateChild(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
