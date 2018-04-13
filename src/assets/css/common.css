@@ -187,6 +187,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .txt_info02 {font-size:15px; font-family:'NSR'; text-align:center;}
 .txt_info02:before {content:''; display:inline-block; width:16px; height:16px; margin:-3px 5px 0 0; vertical-align:middle; background:url(/assets/images/common/ico_common.png) -252px -40px no-repeat;}
 .txt_info02.ok:before {background-position:-302px -84px}
+.txt_info02.type02 {font-family:'NSM';}
 .txt01 {font-size:13px; font-family:'NSR'; margin-bottom:1px}
 .txt02 {font-size:14px; font-family:'NSR';}
 .txt03 {text-align:center; padding-bottom:25px; font-family:'NSR';}
@@ -353,7 +354,7 @@ table input[type='text'] {font-family:'NSM';}
 .chc_wrap.fix {height:330px}
 .chc_wrap a {position:relative; display:inline-block; width:177px; height:100px; box-sizing:border-box; margin:10px 0 0 10px; font-size:16px; line-height:20px; vertical-align:middle; color:#fff}
 .chc_wrap a.on:after {content:''; position:absolute; top:0; left:0; display:inline-block; width:177px; height:100px; background-color:rgb(0,0,0,0.2)}
-.chc_wrap a.on:before {content:''; z-index:2; position:absolute; top:15px; right:15px; display:inline-block; width:20px; height:20px; background:url(/assets/images/common/ico_common.png) 0 -137px no-repeat;}
+.chc_wrap a.on:before {content:''; z-index:2; position:absolute; top:15px; right:15px; display:inline-block; width:22px; height:22px; background:url(/assets/images/common/ico_common.png) 0 -137px no-repeat;}
 .chc_wrap a span {position:absolute; top:14px; left:19px; z-index:2}
 .chc_wrap a i {position:absolute; bottom:15px; right:15px; z-index:2}
 .chc_wrap a.chc_type01 {background-color:#0a4b89}
@@ -545,6 +546,7 @@ table input[type='text'] {font-family:'NSM';}
 .m_right .nav button + button {margin-top:5px}
 .m_right .nav button.blue {background-color:#1265cc; color:#fff}
 .m_right .nav button.purple {background-color:#5867c3; color:#fff}
+.m_right .nav button.disabled {background-color:#6b7687; color:#4b5366}
 .m_right .nav button:before {content:''; display:inline-block; background-color:#000}
 
 .m_right .promotion {position:relative; margin-top:126px;}
