@@ -2,7 +2,7 @@
   <div class="left">
       <a routerLink="/dashboard"><img src="/assets/images/common/logo.png" alt="Amway"></a>
       <em>POS No. {{ posName }}</em>
-      <span *ngIf="isClient && (tokeninfo && tokeninfo.employeeName)">담당자 <em>{{tokeninfo.employeeName}}</em></span>
+      <span *ngIf="isClient && employeeName">담당자 <em>{{employeeName}}</em></span>
       <span>{{ posTimer }}</span>
   </div>
   <div class="right" *ngIf="!isClient">
@@ -10,7 +10,7 @@
       <button type="button" class="type01 dp02" (click)="holdOrder()"><span class="count">3</span>보류</button>
       <button type="button" class="type02" (click)="startWork()" *ngIf="tokeninfo === null; else workStart">근무 시작</button>
       <ng-template #workStart>
-        <button type="button" class="type02">근무 종료</button>
+        <button type="button" (click)="endWork()" class="type02">근무 종료</button>
       </ng-template>
       <button type="button" class="type02" *ngIf="tokeninfo === null; else lock">화면 풀림</button>
       <ng-template #lock>

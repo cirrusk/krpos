@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import { AccessToken, TerminalInfo, BatchInfo } from '../../data/model';
 import Utils from '../utils';
 
 @Injectable()
-export class StorageService {
+export class StorageService implements OnDestroy {
 
+  private storageSubject = new Subject<{ key: string, value: any }>();
+  public storageChanges = this.storageSubject.asObservable(); // .share();
   sstorage: Storage;
   lstorage: Storage;
   constructor() {
@@ -17,6 +20,11 @@ export class StorageService {
     if (!this.isLocalStorageSupported()) {
       throw new Error('Local Storage is not supported by this browser!');
     }
+    this.localStroageEventStart();
+  }
+
+  ngOnDestroy() {
+    this.localStorageEventStop();
   }
 
   /**
@@ -25,8 +33,9 @@ export class StorageService {
    * @param key 세션 정보 키 문자열
    * @param value 세션 저장 정보 객체
    */
-  public setSessionItem<T>(key: string, value: T): void {
-    this.sstorage.setItem(key, JSON.stringify(value));
+  public setSessionItem<T>(key: string, data: T): void {
+    this.sstorage.setItem(key, JSON.stringify(data));
+    // this.storageSubject.next({ key: key, value: data});
   }
 
   /**
@@ -45,6 +54,7 @@ export class StorageService {
    */
   public removeSessionItem(key: string): void {
     this.sstorage.removeItem(key);
+    // this.storageSubject.next({ key: key, value: null });
   }
 
   /**
@@ -100,8 +110,9 @@ export class StorageService {
    * @param key local 정보 조회키
    * @param value 저장할 값
    */
-  public setLocalItem<T>(key: string, value: T): void {
-    this.lstorage.setItem(key, JSON.stringify(value));
+  public setLocalItem<T>(key: string, data: T): void {
+    this.lstorage.setItem(key, JSON.stringify(data));
+    this.storageSubject.next({ key: key, value: data});
   }
 
   /**
@@ -120,6 +131,19 @@ export class StorageService {
    */
   public removeLocalItem(key: string): void {
     this.lstorage.removeItem(key);
+    this.storageSubject.next({ key: key, value: null });
+  }
+
+  public setEmployeeName(data: string) {
+    this.setLocalItem('employeeName', data);
+  }
+
+  public getEmloyeeName(): string {
+    return this.getLocalItem('employeeName');
+  }
+
+  public removeEmployeeName(): void {
+    this.removeLocalItem('employeeName');
   }
 
   /**
@@ -145,4 +169,24 @@ export class StorageService {
     return supported;
   }
 
+  private localStroageEventStart(): void {
+    window.addEventListener('storage', this.storageEventListner.bind(this));
+  }
+
+  private localStorageEventStop(): void {
+    window.removeEventListener('storage', this.storageEventListner.bind(this));
+    this.storageSubject.complete();
+  }
+
+  private storageEventListner(event: StorageEvent) {
+    if (event.storageArea === this.lstorage) {
+      let v;
+      try {
+        v = JSON.parse(event.newValue);
+      } catch (e) {
+        v = event.newValue;
+      }
+      this.storageSubject.next({ key: event.key, value: v});
+    }
+  }
 }

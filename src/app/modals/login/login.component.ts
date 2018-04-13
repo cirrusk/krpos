@@ -34,12 +34,11 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   authsubscription: Subscription;
   tokensubscription: Subscription;
   constructor(
-    modalService: ModalService,
+    protected modalService: ModalService,
     private authService: AuthService,
     private storage: StorageService,
     private infoBroker: InfoBroker,
     private alert: AlertService,
-    // private modal: Modal,
     private logger: Logger) {
     super(modalService);
   }
@@ -117,6 +116,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   private getAccessToken(authcode: string) {
     this.tokensubscription = this.authService.accessToken(authcode).subscribe(
       result => {
+        this.storage.setEmployeeName(result.employeeName);
         this.storage.setSessionItem('tokenInfo', result);
         const accesstoken = this.storage.getSessionItem('tokenInfo');
         this.infoBroker.sendInfo(accesstoken);

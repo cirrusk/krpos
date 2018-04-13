@@ -40,6 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   qzsubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
+  employeeName: string;
   @Input() isClient: boolean;
   constructor(
     private terminalService: TerminalService,
@@ -61,10 +62,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     );
     this.tokeninfo = this.storage.getTokenInfo();
+    this.employeeName = this.storage.getEmloyeeName();
     this.qzCheck = this.config.getConfig('qzCheck');
   }
 
   ngOnInit() {
+    const tk = this.storage.storageChanges.subscribe(data => {
+      if (data.key === 'employeeName') {
+        this.employeeName = data.value;
+      }
+    });
+
     const timer = TimerObservable.create(2000, 1000);
     this.timersubscription = timer.subscribe(
       t => {
@@ -187,6 +195,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 3. 대시보드 메인으로 이동
    */
   endWork() {
+
+    this.storage.removeEmployeeName(); // client 담당자 삭제
 
   }
 
