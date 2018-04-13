@@ -108,7 +108,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         closeButtonLabel: '취소',
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllDialogs: true
+        closeAllModals: true
       }
     );
   }
@@ -125,7 +125,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllDialogs: false
+        closeAllModals: false
       }
     );
   }
@@ -141,7 +141,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllDialogs: false
+        closeAllModals: false
       }
     );
   }
@@ -182,7 +182,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
                                         closeByEnter: false,
                                         closeByEscape: true,
                                         closeByClickOutside: true,
-                                        closeAllDialogs: true
+                                        closeAllModals: true
                                       }
                                     );
       }

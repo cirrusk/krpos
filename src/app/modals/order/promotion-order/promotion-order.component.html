@@ -1,0 +1,34 @@
+<div class="pop_wrap pop_l">
+  <div class="pop_header">
+      <h1>프로모션 제품</h1>
+      <button type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <div class="pn_wrap">
+              <span class="paging">
+                  <!-- 이전,다음 리스트가 있을시 on클래스 추가 -->
+                  <a href="#" class="ico_comm prev03">이전</a>
+                  <a href="#" class="ico_comm next03 on">다음</a>
+              </span>
+              <!-- 프로모션 제품 리스트 : 페이지당 상품수 최대 9개 -->
+              <div class="chc_wrap">
+                  <!-- 결제수단 선택시 on클래스 추가 -->
+                  <a href="#" class="chc_type04 on"><span>비닐봉투 소</span><i class="ico_comm prom01"></i></a>
+                  <a href="#" class="chc_type04"><span>비닐봉투 대</span><i class="ico_comm prom02"></i></a>
+                  <a href="#" class="chc_type03"><span>파이토 카페 상품</span><i class="ico_comm prom03"></i></a>
+                  <a href="#" class="chc_type02"><span>프로모션 상품1</span><i class="ico_comm prom00"></i></a>
+                  <a href="#" class="chc_type02"><span>프로모션 상품2</span><i class="ico_comm prom00"></i></a>
+                  <a href="#" class="chc_type02"><span>프로모션 상품3</span><i class="ico_comm prom00"></i></a>
+                  <a href="#" class="chc_type02"><span>프로모션 상품4</span><i class="ico_comm prom00"></i></a>
+              </div>
+              <!-- //프로모션 제품 리스트 : 페이지당 상품수 초대 9개 -->
+          </div>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer clearfix">
+      <span class="fl">취소 ESC</span>
+  </div>
+</div>

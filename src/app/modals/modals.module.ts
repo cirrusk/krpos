@@ -13,6 +13,8 @@ import { NormalPaymentComponent } from './payment/normal-payment/normal-payment.
 import { NewAccountComponent } from './account/new-account/new-account.component';
 import { ComplexPaymentComponent } from './payment/complex-payment/complex-payment.component';
 import { PickupOrderComponent } from './order/pickup-order/pickup-order.component';
+import { EtcOrderComponent } from './order/etc-order/etc-order.component';
+import { PromotionOrderComponent } from './order/promotion-order/promotion-order.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { PickupOrderComponent } from './order/pickup-order/pickup-order.componen
     NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
-    PickupOrderComponent
+    PickupOrderComponent,
+    EtcOrderComponent,
+    PromotionOrderComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +41,9 @@ import { PickupOrderComponent } from './order/pickup-order/pickup-order.componen
     NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
-    PickupOrderComponent
+    PickupOrderComponent,
+    EtcOrderComponent,
+    PromotionOrderComponent
   ]
 })
 export class ModalsModule {

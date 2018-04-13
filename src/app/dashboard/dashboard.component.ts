@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             //   closeByEnter: true,
             //   closeByEscape: true,
             //   closeByClickOutside: true,
-            //   closeAllDialogs: true,
+            //   closeAllModals: false,
             //   beforeCloseCallback: function(value) {
             //     console.log('before close callback');
             //     this.router.navigate(['/order']);
@@ -137,7 +137,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         closeButtonLabel: '취소',
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllDialogs: true
+        closeAllModals: false
       }
     ).subscribe(
       result => {

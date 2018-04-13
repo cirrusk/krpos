@@ -1,3 +1,5 @@
+import { PromotionOrderComponent } from './../../modals/order/promotion-order/promotion-order.component';
+import { EtcOrderComponent } from './../../modals/order/etc-order/etc-order.component';
 import { SearchAccountComponent } from './../../modals/account/search-account/search-account.component';
 import { PickupOrderComponent } from './../../modals/order/pickup-order/pickup-order.component';
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
@@ -32,7 +34,7 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllDialogs: false
+        closeAllModals: false
       }
     );
   }
@@ -51,7 +53,7 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllDialogs: false
+        closeAllModals: false
       }
     );
   }
@@ -74,7 +76,7 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllDialogs: false,
+        closeAllModals: false,
         paymentType: 'g'
       }
     );
@@ -95,7 +97,7 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllDialogs: false
+        closeAllModals: false
       }
     );
   }
@@ -109,12 +111,44 @@ export class OrderMenuComponent implements OnInit {
     this.checkClass(evt);
   }
 
-  promotionProduct(evt: any) {
+  /**
+   * 프로모션
+   *
+   * @param evt
+   */
+  promotionOrder(evt: any) {
     this.checkPromotionClass(evt);
+    this.modal.openModalByComponent(PromotionOrderComponent,
+      {
+        title: '',
+        actionButtonLabel: '',
+        closeButtonLabel: '',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: false,
+        closeAllModals: false
+      }
+    );
   }
 
-  etcProcess(evt: any) {
+  /**
+   * 기타
+   *
+   * @param evt
+   */
+  etcOrder(evt: any) {
     this.checkClass(evt);
+    this.modal.openModalByComponent(EtcOrderComponent,
+      {
+        title: '',
+        actionButtonLabel: '',
+        closeButtonLabel: '',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: false,
+        closeAllModals: false
+      }
+    );
   }
 
   private checkClass(evt: any) {

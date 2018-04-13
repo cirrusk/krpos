@@ -88,7 +88,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
               closeByEnter: true,
               closeByEscape: true,
               closeByClickOutside: true,
-              closeAllDialogs: true
+              closeAllModals: true
             });
 
             if (this.timer_id !== undefined) { clearTimeout(this.timer_id); }
@@ -155,7 +155,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           closeByEnter: false,
           closeByEscape: true,
           closeByClickOutside: true,
-          closeAllDialogs: false
+          closeAllModals: false
         }
       );
     }
@@ -184,7 +184,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: false,
         closeByClickOutside: false,
-        closeAllDialogs: true
+        closeAllModals: true
       }
     );
   }
@@ -208,7 +208,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllDialogs: true,
+        closeAllModals: false,
         keepOpenForAction: false,
         keepOpenForClose: false,
         beforeActionCallback: function(value) {
