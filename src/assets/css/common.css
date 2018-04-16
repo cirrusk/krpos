@@ -222,12 +222,13 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .pop_footer.line {border-top:1px solid #ccc}
 .pop_footer.line02 {border-top:1px solid #ccc; margin-top:30px}
 .pop_footer .fl {margin-top:8px; font-family:'NSB'; font-size:13px}
-.pop_footer .finish {float:left; position:relative; display:inline-block; width:400px; text-align:center; margin-top:7px; font-size:16px}
-.pop_footer .finish:before {content:''; display:inline-block; width:25px; height:25px; box-sizing:border-box; margin:-3px 10px 0 0; vertical-align:middle; background:url(/assets/images/common/ico_common.png) no-repeat}
-.pop_footer .finish.ok {color:#20893d}
-.pop_footer .finish.ok:before {background-position:-47px -135px}
-.pop_footer .finish.fail {color:#f34242}
-.pop_footer .finish.fail:before {background-position:-97px -135px}
+.pop_footer .finish, .pop_content .finish{float:left; position:relative; display:inline-block; width:400px; text-align:center; margin-top:7px; font-size:16px}
+.pop_footer .finish:before, .pop_content .finish:before{content:''; display:inline-block; width:25px; height:25px; box-sizing:border-box; margin:-3px 10px 0 0; vertical-align:middle; background:url(/assets/images/common/ico_common.png) no-repeat}
+.pop_footer .finish.ok, .pop_content .finish.ok {color:#20893d}
+.pop_footer .finish.ok:before, .pop_content .finish.ok:before{background-position:-47px -135px}
+.pop_footer .finish.fail, .pop_content .finish.fail{color:#f34242}
+.pop_footer .finish.fail:before, .pop_content .finish.fail:before{background-position:-97px -135px}
+.pop_content .finish{width:100%; margin-top:25px}
 
 .pop_wrap.pop_s {width:380px}
 .pop_wrap.pop_m {width:550px}
