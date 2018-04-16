@@ -82,7 +82,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
                                                         this.modal.openMessage(err.error.errors[0].message, '경고');
                                                       });
     } else {
-      this.modal.openMessage('검색어를 입력해주세요.', '검색어 미입력');
+      // this.modal.openMessage('검색어를 입력해주세요.', '검색어 미입력');
       return;
     }
   }

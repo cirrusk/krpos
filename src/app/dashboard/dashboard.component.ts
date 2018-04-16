@@ -62,20 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.batchsubscription = this.batchService.startBatch().subscribe(
         (data) => {
           if (data && Utils.isNotEmpty(data.batchNo)) {
-            this.storage.setSessionItem('batchInfo', data);
-            // this.modal.openMessage({
-            //   title: '배치 시작',
-            //   message: `배치가 성공적으로 시작되었습니다.`,
-            //   closeButtonLabel: '닫기',
-            //   closeByEnter: true,
-            //   closeByEscape: true,
-            //   closeByClickOutside: true,
-            //   closeAllModals: false,
-            //   beforeCloseCallback: function(value) {
-            //     console.log('before close callback');
-            //     this.router.navigate(['/order']);
-            //   }
-            // });
+            this.storage.setBatchInfo(data);
             this.router.navigate(['/order']);
           }
         },
@@ -137,7 +124,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         closeButtonLabel: '취소',
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'POS_END'
       }
     ).subscribe(
       result => {

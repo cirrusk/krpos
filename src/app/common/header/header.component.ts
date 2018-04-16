@@ -13,8 +13,8 @@ import { HoldOrderComponent } from '../../modals/order/hold-order/hold-order.com
 import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 import { LoginComponent } from '../../modals/login/login.component';
+import { LogoutComponent } from '../../modals/logout/logout.component';
 import Utils from '../../core/utils';
-
 
 /**
  * 1. 보류
@@ -56,7 +56,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
-        if (result && Utils.isNotEmpty(result.access_token)) {
+        if (result === null) {
+          this.tokeninfo = null;
+        } else if (result && Utils.isNotEmpty(result.access_token)) {
           this.logger.debug('access token subscribe ... ', 'header component');
           this.tokeninfo = result;
         }
@@ -99,7 +101,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
               closeByEnter: true,
               closeByEscape: true,
               closeByClickOutside: true,
-              closeAllModals: true
+              closeAllModals: true,
+              modalId: 'QZSTATUS'
             });
 
             if (this.timer_id !== undefined) { clearTimeout(this.timer_id); }
@@ -142,8 +145,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
             this.posName = result.pointOfService.displayName;
-            this.storage.setSessionItem('clientId', result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
-            this.storage.setSessionItem('terminalInfo', result); // 혹시 몰라서 전체 저장
+            this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
+            this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
           },
           error => {
             this.posName = '-';
@@ -167,7 +170,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'HoldOrderComponent'
       }
     );
   }
@@ -184,7 +188,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
           closeByEnter: false,
           closeByEscape: true,
           closeByClickOutside: true,
-          closeAllModals: false
+          closeAllModals: false,
+          modalId: 'LoginComponent'
         }
       );
     }
@@ -198,7 +203,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
    */
   endWork() {
 
-    this.storage.removeEmployeeName(); // client 담당자 삭제
+    if (this.storage.isLogin()) {
+      this.modal.openModalByComponent(LogoutComponent,
+        {
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByEnter: false,
+          closeByEscape: true,
+          closeByClickOutside: true,
+          closeAllModals: false,
+          modalId: 'LogoutComponent',
+          beforeActionCallback: function(value) {
+            console.log('before action callback ' + value);
+            this.modal.result = true;
+          },
+        }
+      );
+      this.storage.removeEmployeeName(); // client 담당자 삭제
+    }
 
   }
 
@@ -213,9 +235,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByEnter: false,
-        closeByEscape: false,
+        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: true
+        closeAllModals: true,
+        modalId: 'PasswordComponent'
       }
     );
   }

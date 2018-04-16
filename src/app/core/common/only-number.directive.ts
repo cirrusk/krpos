@@ -6,7 +6,7 @@ import { Directive, ElementRef, Input, HostListener } from '@angular/core';
 export class OnlyNumberDirective {
   @Input() posOnlyNumber: boolean;
   // Allow decimal numbers. The \. is only allowed once to occur
-  private regex: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g);
+  private regexOnlyNum: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g); // 숫자만
   // Allow key codes for special events. Reflect :
   // Backspace, tab, end, home
   private specialKeys: Array<string> = [ 'Backspace', 'Tab', 'End', 'Home' ];
@@ -25,7 +25,7 @@ export class OnlyNumberDirective {
       // We need this because the current value on the DOM element
       // is not yet updated with the value from this event
       const next: string = current.concat(evt.key);
-      if (next && !String(next).match(this.regex)) {
+      if (next && !String(next).match(this.regexOnlyNum)) {
         evt.preventDefault();
       }
     }

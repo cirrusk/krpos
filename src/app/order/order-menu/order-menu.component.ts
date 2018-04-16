@@ -34,7 +34,8 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'NormalPaymentComponent'
       }
     );
   }
@@ -53,7 +54,8 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'ComplexPaymentComponent'
       }
     );
   }
@@ -77,7 +79,8 @@ export class OrderMenuComponent implements OnInit {
         closeByEscape: true,
         closeByClickOutside: false,
         closeAllModals: false,
-        paymentType: 'g'
+        paymentType: 'g',
+        modalId: 'SearchAccountComponent'
       }
     );
   }
@@ -97,7 +100,8 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'PickupOrderComponent'
       }
     );
   }
@@ -126,7 +130,8 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'PromotionOrderComponent'
       }
     );
   }
@@ -146,7 +151,8 @@ export class OrderMenuComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'EtcOrderComponent'
       }
     );
   }

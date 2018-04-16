@@ -166,7 +166,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'EcpPrintComponent'
       }
     );
   }

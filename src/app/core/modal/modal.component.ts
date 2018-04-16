@@ -35,6 +35,7 @@ export abstract class ModalComponent {
   beforeCloseCallback: any = undefined;
 
   title: string = undefined;
+  modalId: string = undefined; // 2018.04.16 모달 key event 중복 처리 방지
   actionButtonLabel: string = undefined;
   closeButtonLabel: string = undefined;
   modalAddClass: string = undefined;

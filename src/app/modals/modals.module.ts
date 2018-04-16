@@ -18,6 +18,7 @@ import { PromotionOrderComponent } from './order/promotion-order/promotion-order
 import { SearchBerComponent } from './account/search-ber/search-ber.component';
 import { EcpPrintComponent } from './order/ecp-print/ecp-print.component';
 import { HoldOrderComponent } from './order/hold-order/hold-order.component';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { HoldOrderComponent } from './order/hold-order/hold-order.component';
     PromotionOrderComponent,
     SearchBerComponent,
     EcpPrintComponent,
-    HoldOrderComponent
+    HoldOrderComponent,
+    LogoutComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +54,8 @@ import { HoldOrderComponent } from './order/hold-order/hold-order.component';
     PromotionOrderComponent,
     SearchBerComponent,
     EcpPrintComponent,
-    HoldOrderComponent
+    HoldOrderComponent,
+    LogoutComponent
   ]
 })
 export class ModalsModule {

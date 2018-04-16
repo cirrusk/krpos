@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { InfoBroker } from '../broker/info.broker';
@@ -46,11 +46,18 @@ export class BatchService {
    * 근무종료
    * 로그오프 시 배치 저장 후(POS 종료 확인 팝업 -> 배치 정보 저장  팝업 뜸) 대시보드 메인으로 이동
    */
-  endBatch() {
+  endBatch(): Observable <BatchInfo> {
     this.logger.debug('End batch, and session storage access token info remove...', 'batch.service');
-    this.storage.removeSessionItem('tokenInfo'); // remove access token info
-    this.infoBroker.sendInfo(null); // info broker에 null access token을 전송해서 초기 상태로 변경.
+    const batchinfo = this.storage.getBatchInfo();
+    const batchid = batchinfo && batchinfo.batchNo;
+    const batchUrl = this.config.getApiUrl('batchStop', { batch_id: batchid });
+    console.log(batchUrl);
+    const httpParams = new HttpParams()
+    .set('endingBalance', '200');
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    return this.http.put(batchUrl, httpParams.toString(), { headers: httpHeaders })
+    .map(Utils.extractData)
+    .catch(Utils.handleError);
   }
-
 
 }

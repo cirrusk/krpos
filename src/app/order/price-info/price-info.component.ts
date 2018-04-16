@@ -125,7 +125,8 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'SearchProductComponent'
       }
     );
   }
@@ -141,15 +142,15 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'NewAccountComponent'
       }
     );
   }
 
   // 장바구니 생성
   createCartInfo(): void {
-    const terminalInfo = this.storage.getSessionItem('terminalInfo');
-
+    const terminalInfo = this.storage.getTerminalInfo();
     this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
                                                                 this.accountInfo.uid,
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
@@ -182,7 +183,8 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
                                         closeByEnter: false,
                                         closeByEscape: true,
                                         closeByClickOutside: true,
-                                        closeAllModals: true
+                                        closeAllModals: true,
+                                        modalId: 'ADD_CAR_ERROR'
                                       }
                                     );
       }

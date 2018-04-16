@@ -64,11 +64,79 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * 모달 팝업을 띄울때
+   * modal-main.component.ts 에서 마지막 모달 띄운 id 를 가져와서
+   * 키 이벤트(HostListner) 에서 해당 모달만 이벤트 처리되도록 함.
+   */
+  public getLatestModalId(): any {
+    let data: Array<string> = [];
+    if (this.getSessionItem('latestModalId')) {
+      this.getSessionItem('latestModalId').forEach(item => { data.push(item); });
+    }    
+    if (data) {
+      return data[data.length - 1];  
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * 모달 팝업을 띄울때
+   * this.modal.openModalByComponent 형식으로 띄워줄 경우
+   * modalId: '<Component 이름>' 을 지정하여
+   * 모달 닫기 키 이벤트가 동작할때 해당 모달만 이벤트 처리되도록 함.
+   */
+  public setLatestModalId(item: string): void {
+    let data: Array<string> = [];
+    if (this.getSessionItem('latestModalId')) {
+      this.getSessionItem('latestModalId').forEach(item => { data.push(item); });
+    }   
+    if (data) {
+      data.push(item);
+    } else {
+      data[0] = item;
+    }
+    let reducedata = data.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
+    this.setSessionItem('latestModalId', reducedata);
+  }
+
+  /**
+   * 모달 팝업이 닫힐때
+   * modal-main.component.ts 에서 해당 모달을 찾아서 닫을때
+   * 닫히는 마지막 모달 아이디를 삭제해줌.
+   * 마지막 아이디를 삭제해야 다음 모달팝업이 키 이벤트 처리 됨.
+   * modal.service.ts 에서 removeModal 할때도 삭제해야함(? 중복).
+   */
+  public removeLatestModalId(): void {
+    let data: Array<string> = [];
+    if (this.getSessionItem('latestModalId')) {
+      this.getSessionItem('latestModalId').forEach(item => {
+        data.push(item);
+      });
+      let newdata = data.slice(0, -1);
+      if (newdata) {
+        this.removeSessionItem('latestModalId');
+        newdata.forEach(item => {
+          this.setLatestModalId(item);
+        });
+      }
+    }
+  }
+
+  /**
    * Terminal 정보 가져오기
    */
   public getTerminalInfo(): TerminalInfo {
     const terminalinfo: TerminalInfo = this.getSessionItem('terminalInfo');
     return terminalinfo;
+  }
+
+  public setTerminalInfo(data: any): void {
+    this.setSessionItem('terminalInfo', data);
+  }
+
+  public removeTerminalInfo(): void {
+    this.removeSessionItem('terminalInfo');
   }
 
   /**
@@ -79,12 +147,32 @@ export class StorageService implements OnDestroy {
     return tokeninfo;
   }
 
+  public setTokenInfo(data: any): void {
+    this.setSessionItem('tokenInfo', data);
+  }
+
+  public removeTokenInfo(): void {
+    this.removeSessionItem('tokenInfo');
+  }
+
   /**
    * Start 시 저장한 Batch 정보 가져오기
    */
   public getBatchInfo(): BatchInfo {
     const batchinfo: BatchInfo = this.getSessionItem('batchInfo');
     return batchinfo;
+  }
+
+  public setBatchInfo(data: any): void {
+    this.setSessionItem('batchInfo', data);
+  }
+
+  public getClientId(): string {
+    return this.getSessionItem('clientId');
+  }
+
+  public setClientId(data: string) {
+    this.setSessionItem('clientId', data);
   }
 
   /**

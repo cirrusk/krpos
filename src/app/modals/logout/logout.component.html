@@ -1,0 +1,20 @@
+<div class="pop_wrap pop_m">
+  <div class="pop_header02">
+      <button tabindex="-1" type="button" class="ico_comm pop_close02"  [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <div class="login_wrap">
+              <img src="/assets/images/common/pop_logo.png" alt="Amway">
+              <p class="txt01">근무 종료 하시겠습니까?</p>
+              <a href (click)="!!logout()" class="btn02_blue">{{actionButtonLabel}}</a>
+              <a href (click)="!!close()" class="btn02_white">{{closeButtonLabel}}</a>
+          </div>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer clearfix">
+      <span class="fl">취소 ESC</span>
+  </div>
+</div>

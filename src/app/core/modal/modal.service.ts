@@ -4,13 +4,14 @@ import { Observable } from 'rxjs/Observable';
 
 import { ModalComponent } from './modal.component';
 import { ModalHostComponent } from './modal-host.component';
+import { StorageService } from '../service/storage.service';
 
 @Injectable()
 export class ModalService {
 
   modals: any;
   private modalHostComponent: ModalHostComponent;
-  constructor(private resolver: ComponentFactoryResolver, private applicationRef: ApplicationRef, private injector: Injector) { }
+  constructor(private resolver: ComponentFactoryResolver, private applicationRef: ApplicationRef, private injector: Injector, private storage: StorageService) { }
 
   addModal(component: Type<ModalComponent>, data?: any, index?: number): Observable<any> {
     // Create an instance of dialogMainComponent if not exist.
@@ -37,6 +38,7 @@ export class ModalService {
     } else {
       this.modalHostComponent.removeModal(component);
     }
+    // this.storage.removeLatestModalId();
   }
 
   private createModalHost(): ModalHostComponent {

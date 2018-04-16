@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { PeripheralModule } from './peripheral/peripheral.module';
-// import { ModalModule } from './modal/modal.module';
 import { ModalsModule } from '../modals/modals.module';
 import { CheckComponent } from '../common/check/check.component';
 import { TerminalService } from '../service/terminal.service';

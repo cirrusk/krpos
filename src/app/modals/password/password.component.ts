@@ -9,7 +9,7 @@ import { ModalService, Logger } from '../../service/pos';
 export class PasswordComponent extends ModalComponent implements OnInit {
 
   @Input() loginPassword: string;
-  constructor(modalService: ModalService, private logger: Logger) {
+  constructor(protected modalService: ModalService, private logger: Logger) {
     super(modalService);
   }
 

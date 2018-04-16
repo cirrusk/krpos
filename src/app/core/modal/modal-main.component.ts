@@ -1,9 +1,10 @@
 
-import { Component, ViewChild, ViewContainerRef, ComponentFactoryResolver,
+import { Component, ElementRef, ViewChild, ViewContainerRef, ComponentFactoryResolver,
   Type, ReflectiveInjector, HostListener } from '@angular/core';
 
 import { ModalComponent } from './modal.component';
 import { ModalConfig } from './modal-config';
+import { StorageService } from '../service/storage.service';
 
 @Component({
   moduleId: module.id,
@@ -22,7 +23,7 @@ export class ModalMainComponent {
   isGrayBg: boolean;
   isDraggable: boolean;
 
-  constructor(private resolver: ComponentFactoryResolver) { }
+  constructor(private resolver: ComponentFactoryResolver, private elem: ElementRef, private storage: StorageService) { }
 
   addComponent(component: Type<ModalComponent>) {
     const factory = this.resolver.resolveComponentFactory(component);
@@ -86,12 +87,24 @@ export class ModalMainComponent {
   }
 
   // Press Esc or Enter key to close dialog.
-  @HostListener('window:keydown', ['$event'])
-  keyboardInput(event: any) {
+  @HostListener('document:keydown', ['$event', '$event.target'])
+  keyboardInput(event: any, targetElm: HTMLElement) {
     event.stopPropagation();   // event.preventDefault();
+    const modalid = this.content.modalId;
+    const latestmodalid = this.storage.getLatestModalId();
+    
     if ((this.content.closeByEnter && event.keyCode === 13) ||
       (this.content.closeByEscape && event.keyCode === 27)) {
-      this.content.modalResult();
+      if (modalid && latestmodalid) { // 모달 찾는 값들이 있어야만 처리
+        if (modalid === latestmodalid) { // session 의 마지막 모달 아이디와 전송한 모달 아이디가 같을 경우
+          console.log(`${modalid} : ${latestmodalid}`);
+          this.storage.removeLatestModalId();
+          this.content.modalResult();
+        }
+      } else {
+        console.log('close modal basic');
+        this.content.modalResult();
+      }    
     }
   }
 

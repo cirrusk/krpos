@@ -46,7 +46,8 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false
+        closeAllModals: false,
+        modalId: 'SearchBerComponent'
       }
     );
   }
