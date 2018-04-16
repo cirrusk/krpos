@@ -364,8 +364,10 @@ table input[type='text'] {font-family:'NSM';}
 
 .caution {position:relative; padding-left:55px; margin-top:29px}
 .caution dt {position:absolute; top:-2px; left:0}
-.caution dd {padding-left:13px; line-height:18px; font-size:13px}
+.caution dd {padding-left:13px; margin-top:2px; line-height:18px; font-size:13px}
 .caution dd:before {content:''; display:inline-block; width:3px; height:4px; background:url(/assets/images/common/ico_common.png) -258px -89px no-repeat; margin:-2px 6px 0 -9px; vertical-align:middle;}
+.caution dd.star:before {content:'*'; height:auto; background:none; margin:3px 7px 0 -10px; font-size:13px}
+.caution dd.star {color:#0075a4; text-decoration:underline;}
 .caution dt .tag01 {height:22px; line-height:20px}
 .caution dt .tag01:after {border-top-width:22px}
 
