@@ -38,6 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   timersubscription: Subscription;
   tokensubscription: Subscription;
   qzsubscription: Subscription;
+  empsubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
   employeeName: string;
@@ -67,7 +68,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const tk = this.storage.storageChanges.subscribe(data => {
+    this.empsubscription = this.storage.storageChanges.subscribe(data => {
       if (data.key === 'employeeName') {
         this.employeeName = data.value;
       }
@@ -116,6 +117,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.timersubscription) { this.timersubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
     if (this.qzCheck && this.qzsubscription) { this.qzsubscription.unsubscribe(); }
+    if (this.empsubscription) { this.empsubscription.unsubscribe(); }
   }
 
   private getPosTimer(): string {

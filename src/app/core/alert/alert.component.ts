@@ -22,7 +22,7 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.alertState = this.alert.alertState.subscribe(
-      (state: AlertState) => this.activation(state)
+      (state: AlertState) => this.display(state)
     );
   }
 
@@ -30,11 +30,19 @@ export class AlertComponent implements OnInit, OnDestroy {
     if (this.alertState) { this.alertState.unsubscribe(); }
   }
 
-  private activation(state: AlertState) {
+  /**
+   * alert display 처리함.
+   *
+   * 중요) input 요소가 아닌 element에 focus를 지정하기 위해서는
+   * 해당 element 에 반드시 tabindex를 지정(값은 상관없음)하고
+   * focus를 설정해야함.
+   *
+   * @param state
+   */
+  private display(state: AlertState) {
     this.show = state.show;
     this.alertType = state.alertType;
-    // timer 값을 true로 설정할 경우 alert 화면이 3.5 초 후 자동으로 닫힘.
-    if (state.timer) {
+    if (state.timer) { // timer 값을 true로 설정할 경우 alert 화면이 특정 초 후 자동으로 닫힘.
       if (state.show) {
         this.interval = state.interval;
         this.alertShow();
@@ -42,8 +50,12 @@ export class AlertComponent implements OnInit, OnDestroy {
     } else {
       if (state.show) {
         this.renderer.setStyle(this.elm.nativeElement, 'display', '');
+        this.elm.nativeElement.focus(); // element 에 focus를 지정해야 event 가 처리됨.
+        // setTimeout(() => this.elm.nativeElement.focus(), 200);
       } else {
         this.renderer.setStyle(this.elm.nativeElement, 'display', 'none');
+        this.elm.nativeElement.blur();
+        // setTimeout(() => this.elm.nativeElement.blur(), 200);
       }
     }
     this.title = state.title;
@@ -52,6 +64,7 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   private alertShow() {
     this.renderer.setStyle(this.elm.nativeElement, 'display', '');
+    this.elm.nativeElement.focus();
     window.setTimeout(() => this.alertHide(), this.interval);
   }
 

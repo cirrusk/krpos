@@ -165,7 +165,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
         closeButtonLabel: '취소',
         closeByEnter: false,
         closeByEscape: true,
-        closeByClickOutside: false,
+        closeByClickOutside: true,
         closeAllModals: false
       }
     );

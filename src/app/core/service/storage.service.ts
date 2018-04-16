@@ -7,6 +7,7 @@ import Utils from '../utils';
 @Injectable()
 export class StorageService implements OnDestroy {
 
+  /** localStorage event 처리용 subject */
   private storageSubject = new Subject<{ key: string, value: any }>();
   public storageChanges = this.storageSubject.asObservable(); // .share();
   sstorage: Storage;
@@ -20,11 +21,11 @@ export class StorageService implements OnDestroy {
     if (!this.isLocalStorageSupported()) {
       throw new Error('Local Storage is not supported by this browser!');
     }
-    this.localStroageEventStart();
+    this.localStroageEventStart(); // localstorage event listen start
   }
 
   ngOnDestroy() {
-    this.localStorageEventStop();
+    this.localStorageEventStop(); // localstorage event listen stop
   }
 
   /**
@@ -35,7 +36,6 @@ export class StorageService implements OnDestroy {
    */
   public setSessionItem<T>(key: string, data: T): void {
     this.sstorage.setItem(key, JSON.stringify(data));
-    // this.storageSubject.next({ key: key, value: data});
   }
 
   /**
@@ -54,7 +54,6 @@ export class StorageService implements OnDestroy {
    */
   public removeSessionItem(key: string): void {
     this.sstorage.removeItem(key);
-    // this.storageSubject.next({ key: key, value: null });
   }
 
   /**
@@ -106,6 +105,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * local storage 에 저장하기
+   * local storage event listener data 전달
    *
    * @param key local 정보 조회키
    * @param value 저장할 값
@@ -126,6 +126,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * 특정 local storage 값 삭제하기
+   * local storage event listener data 전달
    *
    * @param key local 정보 삭제키
    */
@@ -134,14 +135,25 @@ export class StorageService implements OnDestroy {
     this.storageSubject.next({ key: key, value: null });
   }
 
+  /**
+   * 고객화면 담당자(캐셔) 지정
+   * 듀얼모니터 event 처리
+   */
   public setEmployeeName(data: string) {
     this.setLocalItem('employeeName', data);
   }
 
+  /**
+   * 고객화면 담당자(캐셔) 정보 가져오기
+   */
   public getEmloyeeName(): string {
     return this.getLocalItem('employeeName');
   }
 
+  /**
+   * 고객화면 담당자 정보 삭제
+   * 캐셔 변경(로그아웃) 시 고객화면 담당자 변경위해
+   */
   public removeEmployeeName(): void {
     this.removeLocalItem('employeeName');
   }
@@ -169,15 +181,24 @@ export class StorageService implements OnDestroy {
     return supported;
   }
 
+  /**
+   * local storage event listen start
+   */
   private localStroageEventStart(): void {
     window.addEventListener('storage', this.storageEventListner.bind(this));
   }
 
+  /**
+   * local storage event listen stop
+   */
   private localStorageEventStop(): void {
     window.removeEventListener('storage', this.storageEventListner.bind(this));
     this.storageSubject.complete();
   }
 
+  /**
+   * local storage event listener define
+   */
   private storageEventListner(event: StorageEvent) {
     if (event.storageArea === this.lstorage) {
       let v;

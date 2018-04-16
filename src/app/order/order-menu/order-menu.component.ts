@@ -96,7 +96,7 @@ export class OrderMenuComponent implements OnInit {
         closeButtonLabel: '',
         closeByEnter: false,
         closeByEscape: true,
-        closeByClickOutside: false,
+        closeByClickOutside: true,
         closeAllModals: false
       }
     );
