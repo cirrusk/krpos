@@ -156,6 +156,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.storage.setScreenLockType(LockType.INIT);
     this.router.navigate(['/dashboard']);
   }
+
   /**
    * Terminal 정보 가져오기
    *
