@@ -10,9 +10,6 @@ import { AccessToken, BatchInfo } from '../data/model';
 
 import Utils from '../core/utils';
 
-// import { AlertService } from '../core/service/alert.service';
-// import { AlertType } from '../core/alert/alert-type.enum';
-
 @Component({
   selector: 'pos-dashboard',
   templateUrl: './dashboard.component.html'
