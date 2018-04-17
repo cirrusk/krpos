@@ -9,7 +9,7 @@ export class AppComponent implements OnDestroy {
   private routesubscription: Subscription;
   isClient: boolean;
   constructor(private router: Router) {
-    this.router.events.subscribe(event => {
+    this.routesubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         const clnt = event.url;
         if (clnt && clnt.indexOf('/client') !== -1) {

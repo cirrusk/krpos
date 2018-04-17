@@ -63,6 +63,20 @@ export class StorageService implements OnDestroy {
     this.sstorage.clear();
   }
 
+  public setScreenLockType(data: number): void {
+    this.removeLocalItem('screenLockType');
+    this.setLocalItem('screenLockType', { lockType: data });
+  }
+
+  public getScreenLockType(): number {
+    const data = this.getLocalItem('screenLockType');
+    return data && data.lockType;
+  }
+
+  public removeScreenLock(): void {
+    this.removeLocalItem('screenLockType');
+  }
+
   /**
    * 모달 팝업을 띄울때
    * modal-main.component.ts 에서 마지막 모달 띄운 id 를 가져와서

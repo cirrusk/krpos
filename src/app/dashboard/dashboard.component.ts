@@ -1,3 +1,4 @@
+import { LockType } from './../common/header/header.component';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -20,12 +21,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   batchinfo: BatchInfo;
   tokensubscription: Subscription;
   batchsubscription: Subscription;
+  isScreenType: number;
   constructor(
     private modal: Modal,
     private infoBroker: InfoBroker,
     private batchService: BatchService,
     private storage: StorageService,
-    // private alert: AlertService,
     private logger: Logger,
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
@@ -41,6 +42,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tokeninfo = this.storage.getTokenInfo();
     this.batchinfo = this.storage.getBatchInfo();
+    this.isScreenType = this.storage.getScreenLockType();
   }
 
   ngOnDestroy() {
@@ -55,6 +57,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 배치 저장 메시지는 필요없는지 확인 필요
    */
   startShift() {
+    if (this.isScreenType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
       this.batchsubscription = this.batchService.startBatch().subscribe(
         (data) => {
@@ -102,7 +105,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 5. 취소, 닫기 시 확인 팝업 종료
    */
   posEnd() {
-    // this.alert.show( AlertType.info, '제목', '메시지' );
+    if (this.isScreenType === LockType.LOCK) { return; }
     let msg: string;
     let btn: string;
     const islogin: boolean = this.storage.isLogin();

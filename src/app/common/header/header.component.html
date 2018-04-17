@@ -1,6 +1,6 @@
 <div id="header">
   <div class="left">
-      <a routerLink="/dashboard"><img src="/assets/images/common/logo.png" alt="Amway"></a>
+      <a href (click)="!!goDashboard()"><img src="/assets/images/common/logo.png" alt="Amway"></a>
       <em>POS No. {{ posName }}</em>
       <span *ngIf="isClient && employeeName">담당자 <em>{{employeeName}}</em></span>
       <span>{{ posTimer }}</span>
@@ -15,9 +15,8 @@
       <ng-template #workStart>
         <button type="button" (click)="endWork()" class="type02">근무 종료</button>
       </ng-template>
-      <button type="button" class="type02" *ngIf="tokeninfo === null; else lock">화면 풀림</button>
-      <ng-template #lock>
-        <button type="button" (click)="screenLock()" class="type02">화면 잠금</button>
-      </ng-template>
+      <button type="button" class="type02" *ngIf="(isScreenLockType === null || isScreenLockType === -1)">화면 풀림</button><!-- 대시보드 로그인 전 -->
+      <button type="button" class="type02" (click)="screenRelease()" *ngIf="(isScreenLockType === 1)">화면 풀림</button><!-- 대시보드 에서 -->
+      <button type="button" class="type02" (click)="screenLock()" *ngIf="(isScreenLockType === 0)">화면 잠금</button><!-- 장바구니에서 -->
   </div>
 </div>

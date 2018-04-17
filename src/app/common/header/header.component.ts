@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Router, NavigationStart } from '@angular/router';
 
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
@@ -16,6 +17,11 @@ import { LoginComponent } from '../../modals/login/login.component';
 import { LogoutComponent } from '../../modals/logout/logout.component';
 import Utils from '../../core/utils';
 
+export enum LockType {
+  INIT = -1,
+  UNLOCK = 0,
+  LOCK = 1
+}
 /**
  * 1. 보류
  * 2. 근무시작 : 아이콘을 터치하면 비밀번호 입력 페이지로 이동
@@ -34,25 +40,36 @@ export class HeaderComponent implements OnInit, OnDestroy {
   posName: string;
   posTimer: string;
   tokeninfo: AccessToken;
-  subscription: Subscription;
-  timersubscription: Subscription;
-  tokensubscription: Subscription;
-  qzsubscription: Subscription;
-  empsubscription: Subscription;
+  private subscription: Subscription;
+  private timersubscription: Subscription;
+  private tokensubscription: Subscription;
+  private qzsubscription: Subscription;
+  private storagesubscription: Subscription;
+  private ordersubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
   employeeName: string;
+  isScreenLockType = LockType.INIT;
   @Input() isClient: boolean;
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
     private storage: StorageService,
+    private router: Router,
     private modal: Modal,
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
     private qzchecker: QzHealthChecker,
     private logger: Logger,
     private config: Config) {
+    this.ordersubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        const clnt = event.url;
+        if (clnt && clnt.indexOf('/order') !== -1) { // 장바구니로 왔을 경우 화면 잠금 버튼으로
+          this.storage.setScreenLockType(LockType.UNLOCK);
+        }
+      }
+    });
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
@@ -67,12 +84,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.tokeninfo = this.storage.getTokenInfo();
     this.employeeName = this.storage.getEmloyeeName();
     this.qzCheck = this.config.getConfig('qzCheck');
+    this.isScreenLockType = this.storage.getScreenLockType();
   }
 
   ngOnInit() {
-    this.empsubscription = this.storage.storageChanges.subscribe(data => {
+    this.storagesubscription = this.storage.storageChanges.subscribe(data => {
       if (data.key === 'employeeName') {
         this.employeeName = data.value;
+      } else if (data.key === 'screenLockType') {
+        if (data.value) {
+          this.isScreenLockType = data.value.lockType;
+        }
       }
     });
 
@@ -120,13 +142,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.timersubscription) { this.timersubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
     if (this.qzCheck && this.qzsubscription) { this.qzsubscription.unsubscribe(); }
-    if (this.empsubscription) { this.empsubscription.unsubscribe(); }
+    if (this.storagesubscription) { this.storagesubscription.unsubscribe(); }
+    if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
   }
 
   private getPosTimer(): string {
     return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
+  private goDashboard() {
+    if (this.isScreenLockType === LockType.LOCK) { return; }
+    this.isScreenLockType = LockType.INIT;
+    this.storage.setScreenLockType(LockType.INIT);
+    this.router.navigate(['/dashboard']);
+  }
   /**
    * Terminal 정보 가져오기
    *
@@ -138,7 +167,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 먼저 수행되니 주의 필요.
    */
   private getTerminalInfo() {
-
     this.networkService.wait().subscribe(
       () => {
         const macAddress = this.networkService.getLocalMacAddress('-');
@@ -161,7 +189,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 보류 내역 조회
    * 보류 건수가 존재 하지 않을 경우 띄우지 않음.
    */
-  holdOrder() {
+  private holdOrder() {
+    if (this.isScreenLockType === LockType.LOCK) { return; }
     this.modal.openModalByComponent(HoldOrderComponent,
       {
         title: '',
@@ -175,11 +204,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     );
   }
+
   /**
    * 헤더 영역 근무 시작
    * 아이콘을 터치하면 로그인 팝업
    */
-  startWork() {
+  private startWork() {
+    if (this.isScreenLockType === LockType.LOCK) { return; }
     if (!this.storage.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
@@ -201,8 +232,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 2. 배치 정보 저장 팝업
    * 3. 대시보드 메인으로 이동
    */
-  endWork() {
-
+  private endWork() {
+    if (this.isScreenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
       this.modal.openModalByComponent(LogoutComponent,
         {
@@ -221,67 +252,55 @@ export class HeaderComponent implements OnInit, OnDestroy {
       );
       this.storage.removeEmployeeName(); // client 담당자 삭제
     }
-
   }
 
   /**
    * 화면 잠금
-   * 화면 잠금 후 대시보드메인으로 이동.
+   * 캐셔 로그인되어 있을 경우만 체크함.
+   * 카트 페이지 에서 화면 잠금 버튼 클릭 시 대시보드로 이동
+   * 이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
    */
-  screenLock() {
-    this.modal.openModalByComponent(PasswordComponent,
-      {
-        title: '화면풀림',
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: false,
-        closeAllModals: true,
-        modalId: 'PasswordComponent'
-      }
-    );
+  private screenLock() {
+    if (this.storage.isLogin()) {
+      this.storage.setScreenLockType(LockType.LOCK);
+      this.isScreenLockType = LockType.LOCK;
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   /**
    * 화면 풀림
-   * 화면 잠금 기능 화면 잠금 후 대시보드 메인으로 이동  (P6참고)
+   * 대시보드 에서 화면 풀림 버튼 클릭 시 비밀번호 입력 창뜨게함.
+   * 비밀번호 입력 정상 처리되면 잠금 플래그를 삭제하고 카트 페이지로 이동함.
+   * 카트 페이지로 이동할 경우 header 에서 url을 보고 있다가 /order로 들어올 경우
+   * 잠금버튼을 활성화함.
+   * 이후에는 카트 페이지에서 화면 잠금 버튼을 클릭하면
+   * 잠금 플래그를 설정하고 대시보드로 이동.
+   * 비밀번호로 잠금을 해제하면 카트로 이동함.
    */
-  screenRelease() {
-
-  }
-
-  test() {
-    const thisref: any = this;
-    this.modal.openConfirm(
-      {
-        title: '화면 테스트',
-        message: `주문 수량이 (<em class="fc_red">0</em>)건 이하입니다.<br>배치 정보를 저장하시겠습니까?`,
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
-        keepOpenForAction: false,
-        keepOpenForClose: false,
-        beforeActionCallback: function(value) {
-          console.log('before action callback');
-        },
-        beforeCloseCallback: function(value) {
-          console.log('before close callback');
-          const rtn = thisref.modal.openConfirm({message: 'OK?'});
-          return rtn;
+  private screenRelease() {
+    if (this.storage.isLogin()) {
+      this.modal.openModalByComponent(PasswordComponent,
+        {
+          title: '화면풀림',
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByEnter: false,
+          closeByEscape: true,
+          closeByClickOutside: false,
+          closeAllModals: true,
+          modalId: 'PasswordComponent'
         }
-      }
-    ).subscribe(
-      result => {
+      ).subscribe((result) => {
         if (result) {
-          console.log('확인');
+          this.storage.removeScreenLock();
+          this.router.navigate(['/order']);
         } else {
-          console.log('취소');
+          this.isScreenLockType = LockType.LOCK;
+          this.storage.setScreenLockType(LockType.LOCK);
         }
-      }
-    );
+      });
+    }
   }
+
 }

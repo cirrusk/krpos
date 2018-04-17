@@ -12,7 +12,7 @@ export class AlertDirective {
   constructor(private element: ElementRef, private renderer: Renderer2) { }
 
   // Press Esc or Enter key to close
-  @HostListener('window:keydown', ['$event'])
+  @HostListener('document:keydown', ['$event'])
   onAlertKeyDown(event: any) {
     event.stopPropagation(); // event.preventDefault();
     if (event.target.tagName === 'INPUT') { return; }
