@@ -131,13 +131,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           if (islogin) {
-            this.batchService.endBatch(); // 나중에는 subsrcibe 해야됨.
+            // 1. 확인 팝업
+            // 2. 배치 정보 저장 팝업
+            // 3. 화면 종료
+            // this.batchService.endBatch(); // 나중에는 subsrcibe 해야됨.
+            console.log('batch 저장');
           } else {
             console.log('login 전 pos 종료[batch 저장하지 않음]');
             Utils.kioskModeEnd();
           }
-        } else {
-          console.log('팝업 화면 그냥 닫기....');
         }
       }
     );
