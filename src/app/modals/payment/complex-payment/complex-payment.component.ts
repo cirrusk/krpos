@@ -35,7 +35,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit {
     this.setSelected(evt);
   }
 
-  private autoTransPayment(evt: any) {
+  private directDebitPayment(evt: any) {
     this.setSelected(evt);
   }
 
@@ -43,7 +43,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit {
     this.setSelected(evt);
   }
 
-  private arPayment(evt: any) {
+  private reCashPayment(evt: any) {
     this.setSelected(evt);
   }
 
@@ -58,10 +58,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit {
   private setSelected(evt: any) {
     evt.stopPropagation();
     const chk = evt.target.classList.contains('on');
+    const parent = this.renderer.parentNode(evt.target);
     if (chk) {
-      this.renderer.removeClass(evt.target, 'on');  
+      this.renderer.removeClass(parent, 'on');
+      this.renderer.removeClass(evt.target, 'on');
     } else {
+      this.renderer.addClass(parent, 'on');
       this.renderer.addClass(evt.target, 'on');
-    }    
+    }
   }
 }

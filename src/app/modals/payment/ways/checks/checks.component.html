@@ -1,0 +1,50 @@
+<div class="pop_wrap pop_m">
+  <div class="pop_header">
+      <h1>현금/수표</h1>
+      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <!-- 결제내역 -->
+          <div class="tbl_row">
+              <table>
+                  <caption>현금/수표</caption>
+                  <colgroup>
+                      <col style="width:110px">
+                      <col>
+                  </colgroup>
+                  <tbody>
+                      <tr>
+                          <th scope="row">내신금액</th>
+                          <td><input type="text" class="w110 ar" title="내신금액"></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">결제금액</th>
+                          <td><input type="text" class="w110 ar" title="결제금액"></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">거스름돈</th>
+                          <td><span class="won">100,000</span></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">결제일자</th>
+                          <td>2018.02.21 17:16:01</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <em class="finish ok">결제가 완료되었습니다.</em>
+          <!-- <em class="finish fail">결제에 실패했습니다.</em> -->
+          <!-- //결제내역 -->
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer line02 clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href="#" class="btn01_blue">확인</a>
+          <a href="#" class="btn01_white">취소</a>
+      </span>
+  </div>
+</div>

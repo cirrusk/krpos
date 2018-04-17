@@ -19,6 +19,15 @@ import { SearchBerComponent } from './account/search-ber/search-ber.component';
 import { EcpPrintComponent } from './order/ecp-print/ecp-print.component';
 import { HoldOrderComponent } from './order/hold-order/hold-order.component';
 import { LogoutComponent } from './logout/logout.component';
+import { CreditCardComponent } from './payment/ways/credit-card/credit-card.component';
+import { CheckCardComponent } from './payment/ways/check-card/check-card.component';
+import { IcCardComponent } from './payment/ways/ic-card/ic-card.component';
+import { CashComponent } from './payment/ways/cash/cash.component';
+import { DirectDebitComponent } from './payment/ways/direct-debit/direct-debit.component';
+import { ReCashComponent } from './payment/ways/re-cash/re-cash.component';
+import { ChecksComponent } from './payment/ways/checks/checks.component';
+import { PointComponent } from './payment/ways/point/point.component';
+import { CouponComponent } from './payment/ways/coupon/coupon.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +44,16 @@ import { LogoutComponent } from './logout/logout.component';
     SearchBerComponent,
     EcpPrintComponent,
     HoldOrderComponent,
-    LogoutComponent
+    LogoutComponent,
+    CreditCardComponent,
+    CheckCardComponent,
+    IcCardComponent,
+    CashComponent,
+    DirectDebitComponent,
+    ReCashComponent,
+    ChecksComponent,
+    PointComponent,
+    CouponComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +73,16 @@ import { LogoutComponent } from './logout/logout.component';
     SearchBerComponent,
     EcpPrintComponent,
     HoldOrderComponent,
-    LogoutComponent
+    LogoutComponent,
+    CreditCardComponent,
+    CheckCardComponent,
+    IcCardComponent,
+    CashComponent,
+    DirectDebitComponent,
+    ReCashComponent,
+    ChecksComponent,
+    PointComponent,
+    CouponComponent
   ]
 })
 export class ModalsModule {

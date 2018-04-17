@@ -33,8 +33,12 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
   private setSelected(evt: any) {
     evt.stopPropagation();
     this.promotions.forEach(promotion => {
+      parent = this.renderer.parentNode(promotion.nativeElement);
+      this.renderer.removeClass(parent, 'on');
       this.renderer.removeClass(promotion.nativeElement, 'on');
     });
+    parent = this.renderer.parentNode(evt.target);
+    this.renderer.addClass(parent, 'on');
     this.renderer.addClass(evt.target, 'on');
   }
 

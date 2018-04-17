@@ -179,8 +179,12 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
   private setSelected(evt: any) {
     evt.stopPropagation();
     this.ecporders.forEach(ecporder => {
+        parent = this.renderer.parentNode(ecporder.nativeElement);
+      this.renderer.removeClass(parent, 'on');
       this.renderer.removeClass(ecporder.nativeElement, 'on');
     });
+    parent = this.renderer.parentNode(evt.target);
+    this.renderer.addClass(parent, 'on');
     this.renderer.addClass(evt.target, 'on');
   }
 }

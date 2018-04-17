@@ -50,7 +50,7 @@ export class Modal {
   }
 
   private getModalId(param: any): string {
-    let modalid: string = '';
+    let modalid = '';
     const keys = Object.keys(param);
     for (let idx = 0, length = keys.length; idx < length; idx++) {
       if (keys[idx] === 'modalId') {

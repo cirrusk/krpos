@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { ModalComponent } from './modal.component';
 import { ModalMainComponent } from './modal-main.component';
-
+import { StorageService } from '../service/storage.service';
 @Component({
   selector: 'pos-modal-host',
   template: '<template #element></template>'
@@ -16,7 +16,7 @@ export class ModalHostComponent {
 
   modals: Array<ModalComponent> = [];
 
-  constructor(private resolver: ComponentFactoryResolver) { }
+  constructor(private resolver: ComponentFactoryResolver, private storage: StorageService) { }
 
   addModal(component: Type<ModalComponent>, data?: any, index?: number): Observable<any> {
     const factory = this.resolver.resolveComponentFactory(ModalMainComponent);
@@ -40,6 +40,7 @@ export class ModalHostComponent {
     // No visible delay if no animaion fade in.
     delayMs = 5;
     component.modalMain.hide();
+    this.storage.removeLatestModalId();
     setTimeout(() => {
       const index = this.modals.indexOf(component);
       if (index > -1) {
@@ -50,6 +51,7 @@ export class ModalHostComponent {
   }
 
   removeModalAndParent(component: ModalComponent) {
+    this.storage.removeAllModalIds();
     const _thisRef = this;
     const modalIndex = this.modals.indexOf(component);
     this.modals.forEach(function (value, index) {
@@ -60,6 +62,7 @@ export class ModalHostComponent {
   }
 
   removeAllModals() {
+    this.storage.removeAllModalIds();
     const _thisRef = this;
     this.modals.forEach(function (value, index) {
       _thisRef.removeModal(value, _thisRef.getCloseDelayForParent(value, index));

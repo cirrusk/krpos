@@ -89,8 +89,12 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
   private setSelected(evt: any) {
     evt.stopPropagation();
     this.etcorders.forEach(etcorder => {
+      parent = this.renderer.parentNode(etcorder.nativeElement);
+      this.renderer.removeClass(parent, 'on');
       this.renderer.removeClass(etcorder.nativeElement, 'on');
     });
+    parent = this.renderer.parentNode(evt.target);
+    this.renderer.addClass(parent, 'on');
     this.renderer.addClass(evt.target, 'on');
   }
 

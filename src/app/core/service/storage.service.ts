@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs/Subject';
 import { Injectable, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 
 import { AccessToken, TerminalInfo, BatchInfo } from '../../data/model';
 import Utils from '../utils';
@@ -69,12 +69,12 @@ export class StorageService implements OnDestroy {
    * 키 이벤트(HostListner) 에서 해당 모달만 이벤트 처리되도록 함.
    */
   public getLatestModalId(): any {
-    let data: Array<string> = [];
+    const data: Array<string> = [];
     if (this.getSessionItem('latestModalId')) {
       this.getSessionItem('latestModalId').forEach(item => { data.push(item); });
-    }    
+    }
     if (data) {
-      return data[data.length - 1];  
+      return data[data.length - 1];
     } else {
       return null;
     }
@@ -87,16 +87,16 @@ export class StorageService implements OnDestroy {
    * 모달 닫기 키 이벤트가 동작할때 해당 모달만 이벤트 처리되도록 함.
    */
   public setLatestModalId(item: string): void {
-    let data: Array<string> = [];
+    const data: Array<string> = [];
     if (this.getSessionItem('latestModalId')) {
-      this.getSessionItem('latestModalId').forEach(item => { data.push(item); });
-    }   
+      this.getSessionItem('latestModalId').forEach(modalitem => { data.push(modalitem); });
+    }
     if (data) {
       data.push(item);
     } else {
       data[0] = item;
     }
-    let reducedata = data.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
+    const reducedata = data.reduce(function(a, b) {if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
     this.setSessionItem('latestModalId', reducedata);
   }
 
@@ -108,12 +108,12 @@ export class StorageService implements OnDestroy {
    * modal.service.ts 에서 removeModal 할때도 삭제해야함(? 중복).
    */
   public removeLatestModalId(): void {
-    let data: Array<string> = [];
+    const data: Array<string> = [];
     if (this.getSessionItem('latestModalId')) {
       this.getSessionItem('latestModalId').forEach(item => {
         data.push(item);
       });
-      let newdata = data.slice(0, -1);
+      const newdata = data.slice(0, -1);
       if (newdata) {
         this.removeSessionItem('latestModalId');
         newdata.forEach(item => {
@@ -121,6 +121,13 @@ export class StorageService implements OnDestroy {
         });
       }
     }
+  }
+
+  /**
+   * 모달 팝업 모두 지우기
+   */
+  public removeAllModalIds(): void {
+    this.removeSessionItem('latestModalId');
   }
 
   /**

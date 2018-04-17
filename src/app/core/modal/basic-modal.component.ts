@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Renderer2, ViewChild, ElementRef } fr
 
 import { ModalComponent } from './modal.component';
 import { ModalService } from './modal.service';
-
+import { StorageService } from '../service/storage.service';
 import { FocusBlurDirective } from './focus-blur.directive';
 
 @Component({
@@ -22,7 +22,7 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
   @ViewChild('actionButtonElm') actionButtonElm: ElementRef;
   @ViewChild('closeButtonElm') closeButtonElm: ElementRef;
 
-  constructor(modalService: ModalService, private renderer: Renderer2) {
+  constructor(modalService: ModalService, private renderer: Renderer2, private storage: StorageService) {
     super(modalService);
   }
 
@@ -68,6 +68,7 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
   }
   protected close() {
     this.result = false;
+    this.storage.removeLatestModalId();
     this.modalResult();
   }
 
