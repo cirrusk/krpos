@@ -158,6 +158,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
                                                                 this.accountInfo.uid,
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
       cartResult => {
+        console.log({}, cartResult);
         this.cartInfo = cartResult;
         this.updateVolumeAccount(this.cartInfo);
         console.error({}, this.cartInfo);
