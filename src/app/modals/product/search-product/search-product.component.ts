@@ -19,9 +19,7 @@ import { Product } from '../../../data/model';
 export class SearchProductComponent extends ModalComponent implements OnInit, AfterViewInit {
 
   @ViewChild('searchValue') private searchValue: ElementRef;
-  // @ViewChild('searchPrev', {read: ViewContainerRef}) private searchPrev: ViewContainerRef;
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
-  // @ViewChild('searchNext', {read: ViewContainerRef}) private searchNext: ViewContainerRef;
   @ViewChild('searchNext', {read: ElementRef}) private searchNext: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
   basicSearchType: string;
