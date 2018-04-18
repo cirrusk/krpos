@@ -213,6 +213,9 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 
 /* popup */
 .layer_pop {position:fixed; left:0; right:0; top:0; bottom:0; background-color:rgba(0,0,0,0.8); z-index:99; display:flex; justify-content:center; align-items:center;}
+.layer_pop.up {z-index:199; background-color:rgba(0,0,0,0.7);}
+.layer_pop.up .pop_wrap {z-index:200}
+.layer_pop.down {background-color:rgba(0,0,0,0.3)}
 
 .pop_wrap {position:relative; background-color:#fff; z-index:100;}
 .pop_container {}
