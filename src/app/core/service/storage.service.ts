@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-
+import { InfoBroker } from '../../broker/info.broker';
 import { AccessToken, TerminalInfo, BatchInfo } from '../../data/model';
 import Utils from '../utils';
 
@@ -12,7 +12,7 @@ export class StorageService implements OnDestroy {
   public storageChanges = this.storageSubject.asObservable(); // .share();
   sstorage: Storage;
   lstorage: Storage;
-  constructor() {
+  constructor(private infobroker: InfoBroker) {
     this.sstorage = sessionStorage;
     this.lstorage = localStorage;
     if (!this.isSessionStorageSupported()) {
@@ -63,18 +63,35 @@ export class StorageService implements OnDestroy {
     this.sstorage.clear();
   }
 
+  /**
+   * 화면 잠금 플래그 처리 지정
+   * localstorage 로 처리하면 별도의 작업 없이
+   * subscribe 할 수 있지만 값이 계속 남아 타 사용자가 들어왔을 경우 적용됨.
+   * 따라서 sessionstorage 에 저장하고 broker에 이벤트를 날리는 방식으로 전환   *
+   *
+   * @param data
+   */
   public setScreenLockType(data: number): void {
-    this.removeLocalItem('screenLockType');
-    this.setLocalItem('screenLockType', { lockType: data });
+    console.log('storage setScreenLockType...............');
+    this.removeSessionItem('screenLockType');
+    this.setSessionItem('screenLockType', { lockType: data });
+    this.infobroker.sendInfo({ lockType: data });
   }
 
+  /**
+   * 화면 잠금 플래그 여부 가져오기
+   */
   public getScreenLockType(): number {
-    const data = this.getLocalItem('screenLockType');
+    const data = this.getSessionItem('screenLockType');
     return data && data.lockType;
   }
 
+  /**
+   * 화면 잠금 플래그 삭제하기
+   */
   public removeScreenLock(): void {
-    this.removeLocalItem('screenLockType');
+    this.removeSessionItem('screenLockType');
+    this.infobroker.sendInfo({ lockType: -1 });
   }
 
   /**

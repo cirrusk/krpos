@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   batchinfo: BatchInfo;
   tokensubscription: Subscription;
   batchsubscription: Subscription;
-  isScreenType: number;
+  screenLockType: number;
   constructor(
     private modal: Modal,
     private infoBroker: InfoBroker,
@@ -34,6 +34,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
        if (result && Utils.isNotEmpty(result.batchNo)) {
           this.logger.debug('batch info subscribe ... ', 'dashboard.component');
           this.batchinfo = result;
+        } else if (result && Utils.isNotEmpty(result.lockType + '')) {
+          this.logger.debug('screen locktype subscribe ... ', 'dashboard.component');
+          this.screenLockType = result.lockType;
         }
       }
     );
@@ -42,7 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tokeninfo = this.storage.getTokenInfo();
     this.batchinfo = this.storage.getBatchInfo();
-    this.isScreenType = this.storage.getScreenLockType();
+    this.screenLockType = this.storage.getScreenLockType();
   }
 
   ngOnDestroy() {
@@ -57,7 +60,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 배치 저장 메시지는 필요없는지 확인 필요
    */
   startShift() {
-    if (this.isScreenType === LockType.LOCK) { return; }
+    if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
       this.batchsubscription = this.batchService.startBatch().subscribe(
         (data) => {
@@ -105,7 +108,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 5. 취소, 닫기 시 확인 팝업 종료
    */
   posEnd() {
-    if (this.isScreenType === LockType.LOCK) { return; }
+    if (this.screenLockType === LockType.LOCK) { return; }
     let msg: string;
     let btn: string;
     const islogin: boolean = this.storage.isLogin();

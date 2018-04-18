@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, NavigationStart } from '@angular/router';
 
@@ -35,7 +35,7 @@ export enum LockType {
   selector: 'pos-header',
   templateUrl: './header.component.html'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   isClientScreen: boolean;
   posName: string;
   posTimer: string;
@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   timer_id: any;
   qzCheck: boolean;
   employeeName: string;
-  isScreenLockType = LockType.INIT;
+  screenLockType = LockType.INIT;
   @Input() isClient: boolean;
   constructor(
     private terminalService: TerminalService,
@@ -62,39 +62,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private qzchecker: QzHealthChecker,
     private logger: Logger,
     private config: Config) {
-    this.ordersubscription = this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        const clnt = event.url;
-        if (clnt && clnt.indexOf('/order') !== -1) { // 장바구니로 왔을 경우 화면 잠금 버튼으로
-          this.storage.setScreenLockType(LockType.UNLOCK);
-        }
-      }
-    });
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
+    this.tokeninfo = this.storage.getTokenInfo();
+    this.employeeName = this.storage.getEmloyeeName();
+    this.qzCheck = this.config.getConfig('qzCheck');
+    this.screenLockType = this.storage.getScreenLockType();
+  }
+
+  ngOnInit() {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
+        console.log(result);
         if (result === null) {
           this.tokeninfo = null;
         } else if (result && Utils.isNotEmpty(result.access_token)) {
           this.logger.debug('access token subscribe ... ', 'header component');
           this.tokeninfo = result;
+        } else if (result && Utils.isNotEmpty(result.lockType + '')) {
+          this.logger.debug('screen locktype subscribe ... ', 'header component');
+          this.screenLockType = result.lockType;
         }
       }
     );
-    this.tokeninfo = this.storage.getTokenInfo();
-    this.employeeName = this.storage.getEmloyeeName();
-    this.qzCheck = this.config.getConfig('qzCheck');
-    this.isScreenLockType = this.storage.getScreenLockType();
-  }
-
-  ngOnInit() {
     this.storagesubscription = this.storage.storageChanges.subscribe(data => {
       if (data.key === 'employeeName') {
         this.employeeName = data.value;
-      } else if (data.key === 'screenLockType') {
-        if (data.value) {
-          this.isScreenLockType = data.value.lockType;
-        }
       }
     });
 
@@ -146,13 +138,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
   }
 
+  ngAfterViewInit() {
+    this.ordersubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        const clnt = event.url;
+        if (clnt && clnt.indexOf('/order') !== -1) { // 장바구니로 왔을 경우 화면 잠금 버튼으로
+          this.storage.setScreenLockType(LockType.UNLOCK);
+        }
+      }
+    });
+  }
+
   private getPosTimer(): string {
     return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
   private goDashboard() {
-    if (this.isScreenLockType === LockType.LOCK) { return; }
-    this.isScreenLockType = LockType.INIT;
+    if (this.screenLockType === LockType.LOCK) { return; }
+    this.screenLockType = LockType.INIT;
     this.storage.setScreenLockType(LockType.INIT);
     this.router.navigate(['/dashboard']);
   }
@@ -191,7 +194,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 보류 건수가 존재 하지 않을 경우 띄우지 않음.
    */
   private holdOrder() {
-    if (this.isScreenLockType === LockType.LOCK) { return; }
+    if (this.screenLockType === LockType.LOCK) { return; }
     this.modal.openModalByComponent(HoldOrderComponent,
       {
         title: '',
@@ -211,7 +214,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 아이콘을 터치하면 로그인 팝업
    */
   private startWork() {
-    if (this.isScreenLockType === LockType.LOCK) { return; }
+    if (this.screenLockType === LockType.LOCK) { return; }
     if (!this.storage.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
@@ -234,7 +237,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * 3. 대시보드 메인으로 이동
    */
   private endWork() {
-    if (this.isScreenLockType === LockType.LOCK) { return; }
+    if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
       this.modal.openModalByComponent(LogoutComponent,
         {
@@ -264,7 +267,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private screenLock() {
     if (this.storage.isLogin()) {
       this.storage.setScreenLockType(LockType.LOCK);
-      this.isScreenLockType = LockType.LOCK;
+      this.screenLockType = LockType.LOCK;
       this.router.navigate(['/dashboard']);
     }
   }
@@ -297,7 +300,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.storage.removeScreenLock();
           this.router.navigate(['/order']);
         } else {
-          this.isScreenLockType = LockType.LOCK;
+          this.screenLockType = LockType.LOCK;
           this.storage.setScreenLockType(LockType.LOCK);
         }
       });

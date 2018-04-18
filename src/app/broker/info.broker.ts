@@ -2,15 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Logger } from '../service/pos';
 
 @Injectable()
 export class InfoBroker {
 
   private subject = new Subject<any>();
-  constructor(private logger: Logger) { }
+  constructor() { }
   sendInfo(message: any) {
-    this.logger.debug('Send info...', 'info.broker');
     this.subject.next(message);
   }
 
