@@ -33,6 +33,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   private cartList: Array<CartEntry>;
   private productInfo: CartEntry;
   private cartModification: CartModification[];
+
   constructor(private modal: Modal,
               private cartService: CartService,
               private storage: StorageService,
@@ -82,7 +83,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       });
   }
 
-  // 검샙 팝업
+  // 검색 팝업
   popupSearch(searchText: string): void {
     // param 설정
     this.searchParams.searchMode = this.searchMode;
@@ -108,27 +109,29 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         closeButtonLabel: '취소',
         closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: true
+        closeAllModals: true,
+        modalId: 'SearchAccountComponent'
       }
     );
   }
 
   // 제품 검색
   callSearchProduct(): void {
+    this.addCartEntries(this.searchParams.searchText);
     // 추후 지정
-    this.modal.openModalByComponent(SearchProductComponent,
-      {
-        title: '',
-        message: '',
-        actionButtonLabel: '선택',
-        closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
-        modalId: 'SearchProductComponent'
-      }
-    );
+    // this.modal.openModalByComponent(SearchProductComponent,
+    //   {
+    //     title: '',
+    //     message: '',
+    //     actionButtonLabel: '선택',
+    //     closeButtonLabel: '취소',
+    //     closeByEnter: false,
+    //     closeByEscape: true,
+    //     closeByClickOutside: true,
+    //     closeAllDialogs: false,
+    //     modalId: 'SearchProductComponent'
+    //   }
+    // );
   }
 
   popupNewAccount() {
@@ -157,6 +160,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       cartResult => {
         this.cartInfo = cartResult;
         this.updateVolumeAccount(this.cartInfo);
+        console.error({}, this.cartInfo);
       },
       err => {
         console.error(err);
@@ -178,7 +182,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       },
       err => { this.modal.openMessage({
                                         title: '확인',
-                                        message: err.error.errors[0].message,
+                                        message: err.error.errors[0].message ? err.error.errors[0].message : err.error.errors[0].type,
                                         closeButtonLabel: '닫기',
                                         closeByEnter: false,
                                         closeByEscape: true,
@@ -191,5 +195,3 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
     );
   }
 }
-
-

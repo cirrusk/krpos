@@ -42,7 +42,7 @@
               <div class="ic02">
                   <!-- 비회원시 삭제3 -->
                   <dl>
-                      <dt>A/R 금액</dt>
+                      <dt>Re-Cash</dt>
                       <dd></dd>
                   </dl>
                   <!-- //비회원시 삭제3 -->
@@ -63,7 +63,7 @@
                           <em></em>
                       </li>
                       <li>
-                          <span>A/R</span>
+                          <span>Re-Cash </span>
                           <em></em>
                       </li>
                       <li>
@@ -81,29 +81,29 @@
       <ul class="calc01">
           <li>
               <span>총수량</span>
-              <em></em>
+              <em>{{ 0 |  number }}</em>
           </li>
           <li>
               <span>할인금액</span>
-              <em class="sale"></em>
+              <em class="sale">{{ 0 |  number }}</em>
           </li>
           <li>
               <span class="t01">Total PV/BV</span>
-              <em></em>
+              <em>{{ 0 |  number }} / {{ 0 |  number }}</em>
           </li>
       </ul>
       <ul class="calc02">
           <li>
               <span>결제금액</span>
-              <em></em>
+              <em>{{ 100000000 |  number }}</em>
           </li>
           <li>
               <span>내신금액</span>
-              <em></em>
+              <em>{{ 0 |  number }}</em>
           </li>
           <li>
-              <span>거스름</span>
-              <em></em>
+              <span>거스름돈</span>
+              <em>{{ 0 |  number }}</em>
           </li>
       </ul>
   </div>

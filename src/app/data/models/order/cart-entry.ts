@@ -4,6 +4,7 @@ export class CartEntry {
     qty: number;
     price: number;
     desc?: string;
+    idx?: number;
     constructor(private _code?: string,
                 private _name?: string,
                 private _qty?: number,

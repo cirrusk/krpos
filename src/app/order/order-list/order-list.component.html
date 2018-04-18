@@ -7,7 +7,20 @@
     <span>
         <a href="#" class="on">홍길동</a>
         <a href="#">박보검</a>
-        <a href="#">조쉬하트넷</a>
+        <a href="#">박보영</a>
+        <a href="#">김하나</a>
+        <a href="#">김태연</a>
+        <a href="#">한승현</a>
+        <a href="#">마동석</a>
+        <a href="#">하정후</a>
+        <a href="#">배지연</a>
+        <a href="#">연정훈</a>
+        <a href="#">김태연</a>
+        <a href="#">한승현</a>
+        <a href="#">마동석</a>
+        <a href="#">하정후</a>
+        <a href="#">배지연</a>
+        <a href="#">연정훈</a>
     </span>
 </div>
 <!-- //고객리스트 : 그룹결제시 노출 -->
@@ -16,14 +29,14 @@
 <div class="section01">
   <div class="list_wrap">
       <!-- 상품이 10개가 넘을 시 노출  -->
-      <div class="paging">
-          <button type="button" class="ico_comm prev01">이전</button>
-          <button type="button" class="ico_comm next01">다음</button>
+      <div class="paging" *ngIf="cartList.length > 10">
+          <button type="button" [disabled]="pager.currentPage === pager.startPage" class="ico_comm prev01" (click)="setPage(pager.currentPage - 1,true)">이전</button>
+          <button type="button" [disabled]="pager.currentPage === pager.endPage" class="ico_comm next01" (click)="setPage(pager.currentPage + 1,true)">다음</button>
       </div>
       <!-- //상품이 10개가 넘을 시 노출  -->
       <div class="list click_add">
           <table>
-          <caption>상품리스트</caption>
+          <caption>상품리스트</caption> 
           <colgroup>
               <col style="width:50px">
               <col style="width:110px">
@@ -46,15 +59,15 @@
           </thead>
           <tbody>
 
-              <tr *ngFor="let cartEntry of cartList; let i = index">
-                  <td>{{i}}</td>
+              <tr *ngFor="let cartEntry of currentCartList; let i = index;" (click)="eventPopup(cartEntry.code)">
+                  <td>{{i+1}}</td>
                   <td class="al">{{cartEntry.code}}</td>
                   <td class="al"><span class="elips">{{cartEntry.name}}</span></td>
                   <td>{{cartEntry.qty}}</td>
-                  <td class="ar">{{cartEntry.price}}</td>
-                  <td class="ar">{{cartEntry.price*cartEntry.qty}}</td>
-                  <td></td>
-              </tr>                                   
+                  <td class="ar">{{cartEntry.price |  number}}</td>
+                  <td class="ar">{{cartEntry.price*cartEntry.qty |  number}}</td>
+                  <td></td>                  
+              </tr>                                    
           </tbody>
           </table>
       </div>

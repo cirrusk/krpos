@@ -8,6 +8,8 @@ import { SearchBroker } from '../../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../../broker/order/search/search-account.broker';
 import { CartService } from '../../../service/order/cart.service';
 import { CartInfo, AccountList, Accounts } from '../../../data/model';
+import { AlertService } from '../../../core/alert/alert.service';
+import { AlertType } from '../../../core/alert/alert-type.enum';
 
 @Component({
   selector: 'pos-search-account',
@@ -31,6 +33,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       private logger: Logger,
       private searchService: SearchService,
       private cartService: CartService,
+      private alert: AlertService,
       private searchBroker: SearchBroker,
       private searchAccountBroker: SearchAccountBroker
     ) {
@@ -79,10 +82,14 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
                                                                                              0 : this.accountList.accounts.length;
                                                       },
                                                       err => {
-                                                        this.modal.openMessage(err.error.errors[0].message, '경고');
+                                                        this.alert.show( {alertType: AlertType.warn,
+                                                                          title: '경고',
+                                                                          message: err.error.errors[0].message,
+                                                                          timer: true,
+                                                                          interval: 2000 } );
                                                       });
     } else {
-      // this.modal.openMessage('검색어를 입력해주세요.', '검색어 미입력');
+      this.alert.show( {alertType: AlertType.warn, title: '검색어 미입력', message: '메시지', timer: true, interval: 2000 } );
       return;
     }
   }
@@ -94,6 +101,17 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   // account 정보 전달
   sendAccountInfo(): void {
+    // 테스트
+    this.account = new Accounts();
+    this.account.accountType = 'AMWAY BUSINESS OWNER';
+    this.account.name = 'testuser';
+    this.account.status = 'ACTIVE';
+    this.account.totalBV = 100;
+    this.account.totalPV = 200;
+    this.account.uid = 'testuser';
+    this.searchAccountBroker.sendInfo(this.account);
+    this.modal.clearAllModals(this);
+
     if (this.activeNum > -1) {
       this.account = this.accountList.accounts[this.activeNum];
       this.searchAccountBroker.sendInfo(this.account);

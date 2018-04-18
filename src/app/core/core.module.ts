@@ -21,6 +21,7 @@ import { StorageService } from './service/storage.service';
 import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
+import { PagerService } from '../service/common/pager.service';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
     SearchService,
     CartService,
     StorageService,
+    PagerService,
     InfoBroker,
     SearchAccountBroker,
     QzHealthChecker,
