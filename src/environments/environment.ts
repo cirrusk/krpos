@@ -26,7 +26,8 @@ export const environment = {
       batchStop: 'https://127.0.0.1:9002/amwaycommercewebservices/v2//{baseSiteId}/orderbatches/{batch_id}',
       createCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
       addToCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
-      updateVolAcc: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount'
+      updateVolAcc: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
+      productSearch: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/products/search'
   },
   terminalApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/terminal',
   authApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/authorize',

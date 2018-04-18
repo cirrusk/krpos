@@ -1,5 +1,6 @@
 import { AmwayValue } from './amway-value';
 import { BasePrice } from './base-price';
+import { Pagination } from '../common/pagination';
 
 /**
  * Add to Cart Response 객체 - CartModificationWsDTO
@@ -42,6 +43,11 @@ export class Entry {
 export class TotalPrice extends BasePrice { }
 
 export class Value extends AmwayValue { }
+
+export class Products {
+    pagination: Pagination;
+    products: Product[];
+}
 
 /**
  * ProductWsDTO
