@@ -136,13 +136,10 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         this.getAccessToken(result.code); // access token  취득 및 session 저장
       },
       error => {
-        const errdata = Utils.parseError(error);
-        if (errdata && errdata.errors) {
-          this.logger.error(`authentication error type : ${errdata.errors[0].type}`, 'login.component');
-          this.logger.error(`authentication error message : ${errdata.errors[0].message}`, 'login.component');
-        } else if (errdata && errdata.error) {
-          this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
-          this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.error(`authentication error type : ${errdata.type}`, 'login.component');
+          this.logger.error(`authentication error message : ${errdata.message}`, 'login.component');
         }
         this.spinner.hide();
       },
@@ -167,17 +164,14 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         this.close();
       },
       error => {
-        const errdata = Utils.parseError(error);
-        if (errdata && errdata.errors) {
-          this.logger.error(`authentication error type : ${errdata.errors[0].type}`, 'login.component');
-          this.logger.error(`authentication error message : ${errdata.errors[0].message}`, 'login.component');
-        } else if (errdata && errdata.error) {
-          this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
-          this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.error(`authentication error type : ${errdata.type}`, 'login.component');
+          this.logger.error(`authentication error message : ${errdata.message}`, 'login.component');
           this.alert.show({
             alertType: AlertType.error,
             title: '오류',
-            message: `${errdata.error.error_description}`
+            message: `${errdata.message}`
           });
         }
       }

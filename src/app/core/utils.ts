@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { TextEncoder, TextDecoder } from 'text-encoding';
-import { ErrorInfo } from './../data/error/error-info';
+import { ErrorInfo } from '../data/error/error-info';
+import { Errors } from '../data/error/errors';
 
 export default class Utils {
 
@@ -77,9 +78,29 @@ export default class Utils {
    *
    * @param err
    */
-  public static parseError(err): ErrorInfo {
+  public static parseError(err: any): ErrorInfo {
     const errorData = err as ErrorInfo;
     return (errorData) ? errorData : null;
+  }
+
+  /**
+   * Error 정보 가져오기
+   *
+   * @param err
+   */
+  public static getError(err: any): Errors {
+    const error = this.parseError(err);
+    let errors: Errors;
+    if (error && error.error.errors) {
+      errors = new Errors(error.error.errors[0].type, error.error.errors[0].message);
+    } else if (error && error.errors) {
+      errors = new Errors(error.errors[0].type, error.errors[0].message);
+    } else if (error && error.error) {
+      errors = new Errors(error.error.error, error.error.error_description);
+    } else {
+      errors = new Errors('Unknown Error', `${JSON.parse(err)}`);
+    }
+    return errors;
   }
 
   /**

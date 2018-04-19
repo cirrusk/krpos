@@ -70,15 +70,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         },
         error => {
-          const errdata = Utils.parseError(error);
-          if (errdata && errdata.error.errors) {
-            this.logger.error(`start batch error type : ${errdata.error.errors[0].type}`, 'dashboard.component');
-            this.logger.error(`start batch error message : ${errdata.error.errors[0].message}`, 'dashboard.component');
-          } else if (errdata && errdata.errors) {
-            this.logger.error(`start batch error type : ${errdata.errors[0].type}`, 'dashboard.component');
-            this.logger.error(`start batch error message : ${errdata.errors[0].message}`, 'dashboard.component');
-          } else {
-            this.logger.error(`start batch error : ${JSON.parse(error)}`, 'dashboard.component');
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.error(`start batch error type : ${errdata.type}`, 'dashboard.component');
+            this.logger.error(`start batch error message : ${errdata.message}`, 'dashboard.component');
           }
         }
       );
