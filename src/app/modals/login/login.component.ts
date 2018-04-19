@@ -144,6 +144,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
           this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
           this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
         }
+        this.spinner.hide();
       },
       () => {
         this.spinner.hide();
@@ -179,6 +180,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
             message: `${errdata.error.error_description}`
           });
         }
+      },
+      () => {
+        this.spinner.hide();
       }
     );
   }

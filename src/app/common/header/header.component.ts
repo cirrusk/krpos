@@ -70,9 +70,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.getTerminalInfo();
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
-        console.log(result);
         if (result === null) {
           this.tokeninfo = null;
         } else if (result && Utils.isNotEmpty(result.access_token)) {
@@ -89,14 +89,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         this.employeeName = data.value;
       }
     });
-
     const timer = TimerObservable.create(2000, 1000);
     this.timersubscription = timer.subscribe(
       t => {
         this.posTimer = this.getPosTimer();
       }
     );
-    this.getTerminalInfo();
 
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
     // 5분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
@@ -167,8 +165,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * network service를 waiting 하게 하고 mac address 취득
    * 그래야 정상적으로 QZ tray web socket established 된후 처리할 수 있음.
    * 관련 작업은 이후에 해주어야함.
-   * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다
-   * 먼저 수행되니 주의 필요.
+   * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
+   * 가끔씩 이 부분이 늦게 처리되어 로그인 시 terminal 정보가 없어서 에러가 발생 ---> 확인 필요!!!
    */
   private getTerminalInfo() {
     this.networkService.wait().subscribe(

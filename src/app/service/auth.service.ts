@@ -7,7 +7,9 @@ import 'rxjs/add/operator/map';
 
 import { Config, Logger, StorageService, NetworkService } from './pos';
 import { TerminalInfo, AccessToken } from '../data/model';
+import { Error } from '../data/error/error';
 import Utils from '../core/utils';
+
 
 @Injectable()
 export class AuthService {
@@ -19,7 +21,7 @@ export class AuthService {
     private networkService: NetworkService,
     private config: Config,
     private logger: Logger) {
-    this.terminalInfo = this.storage.getTerminalInfo();
+      this.terminalInfo = this.storage.getTerminalInfo();
   }
 
   /**
@@ -30,7 +32,13 @@ export class AuthService {
    * @param userpassword
    */
   public authentication(userid: string, userpassword: string): Observable<any> {
+    this.terminalInfo = this.storage.getTerminalInfo();
     const authUrl = this.config.getApiUrl('auth');
+    if (this.terminalInfo === null) {
+      const e = new Error('terminal_error', 'Termianl info is null.');
+      const error = {error: e};
+      return Observable.throw(error);
+    }
     const clientid = this.terminalInfo && this.terminalInfo.id;
     console.log({}, clientid);
     console.log({}, this.terminalInfo);
@@ -54,8 +62,12 @@ export class AuthService {
    */
   public accessToken(authCode: string): Observable<AccessToken> {
     const tokenUrl = this.config.getApiUrl('token');
+    if (this.terminalInfo === null) {
+      const e = new Error('terminal_error', 'Termianl info is null.');
+      const error = {error: e};
+      return Observable.throw(error);
+    }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-
     const httpParams = new HttpParams()
     .set('code', authCode)
     .set('client_id', clientid)
