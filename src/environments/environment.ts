@@ -23,10 +23,11 @@ export const environment = {
       auth: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/auth/authorize',
       token: 'https://127.0.0.1:9002/authorizationserver/oauth/token',
       batchStart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{user_id}/orderbatches',
-      batchStop: 'https://127.0.0.1:9002/amwaycommercewebservices/v2//{baseSiteId}/orderbatches/{batch_id}',
+      batchStop: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/orderbatches/{batch_id}',
       createCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
       addToCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
       updateVolAcc: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
+      deleteItemCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
       productSearch: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/products/search'
   },
   terminalApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/terminal',

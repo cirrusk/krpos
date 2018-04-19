@@ -49,4 +49,13 @@ export class CartService {
     return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(op), { headers : httpHeaders })
                           .map(data => data as CartModification[]);
   }
+
+  // 장바구니 개별 삭제
+  deleteCartEntries(userId: string, cartId: string, entryNumber: string): Observable<HttpResponseBase> {
+    const apiURL = this.config.getApiUrl('deleteItemCart', {'userId' : userId, 'cartId': cartId, 'entryNumber': entryNumber});
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+
+    return this.httpClient.put<HttpResponseBase>(apiURL, { headers : httpHeaders, observe: 'response'})
+                          .map(data => data as HttpResponseBase);
+  }
 }

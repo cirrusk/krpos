@@ -32,6 +32,9 @@ export class AuthService {
   public authentication(userid: string, userpassword: string): Observable<any> {
     const authUrl = this.config.getApiUrl('auth');
     const clientid = this.terminalInfo && this.terminalInfo.id;
+    console.log({}, clientid);
+    console.log({}, this.terminalInfo);
+    console.log({}, this.terminalInfo.id);
     const httpParams = new HttpParams()
     .set('clientId', clientid)
     .set('userId', userid)

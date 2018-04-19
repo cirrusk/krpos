@@ -23,10 +23,11 @@ export const environment = {
       auth: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/auth/authorize',
       token: 'https://oms-dev.abnkorea.co.kr/authorizationserver/oauth/token',
       batchStart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{user_id}/orderbatches',
-      batchStop: 'https://127.0.0.1:9002/amwaycommercewebservices/v2//{baseSiteId}/orderbatches/{batch_id}',
+      batchStop: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/orderbatches/{batch_id}',
       createCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
       addToCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
       updateVolAcc: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
+      deleteItemCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
       productSearch: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/products/search'
   },
   terminalApiUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/amwaykorea/auth/terminal',
