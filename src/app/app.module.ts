@@ -12,6 +12,7 @@ import { TestModule } from './common/test/test.module';
 
 import { Config } from './core/config/config';
 import { OrderComponent } from './order/order.component';
+import { CartListComponent } from './order/cart-list/cart-list.component';
 import { OrderListComponent } from './order/order-list/order-list.component';
 import { OrderMenuComponent } from './order/order-menu/order-menu.component';
 import { PriceInfoComponent } from './order/price-info/price-info.component';
@@ -21,6 +22,7 @@ import { AddCartBroker } from './broker/order/cart/add-cart.broker';
 import { SearchBroker } from './broker/order/search/search.broker';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { ClientComponent } from './client/client.component';
+
 
 
 @NgModule({
@@ -41,7 +43,8 @@ import { ClientComponent } from './client/client.component';
     PriceInfoComponent,
     CheckComponent,
     ClientComponent,
-    OrderCompleteComponent
+    OrderCompleteComponent,
+    CartListComponent
   ],
   providers: [
     Config,

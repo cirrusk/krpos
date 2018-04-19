@@ -104,11 +104,11 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     // 테스트
     this.account = new Accounts();
     this.account.accountType = 'AMWAY BUSINESS OWNER';
-    this.account.name = 'testuser';
+    this.account.name = '7480003';
     this.account.status = 'ACTIVE';
     this.account.totalBV = 100;
     this.account.totalPV = 200;
-    this.account.uid = 'testuser';
+    this.account.uid = '7480003';
     this.searchAccountBroker.sendInfo(this.account);
     this.modal.clearAllModals(this);
 

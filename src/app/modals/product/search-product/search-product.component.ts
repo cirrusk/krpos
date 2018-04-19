@@ -12,6 +12,7 @@ import { AlertType } from '../../../core/alert/alert-type.enum';
 import { Products } from '../../../data/models/cart/cart-data';
 import { Product } from '../../../data/model';
 import { SpinnerService } from '../../../core/spinner/spinner.service';
+import { AddCartBroker } from '../../../broker/order/cart/add-cart.broker';
 
 @Component({
   selector: 'pos-search-product',
@@ -36,6 +37,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private search: SearchService,
     private alert: AlertService,
     private spinner: SpinnerService,
+    private addCartBroker: AddCartBroker,
     private renderer: Renderer2) {
     super(modalService);
     this.basicSearchType = 'sku';
@@ -146,7 +148,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
       });
       return;
     }
-    console.log(`selected product data, see below!!!\n\n${JSON.stringify(this.product, null, 2)}`);
+    this.addCartBroker.sendInfo(this.product);
+    this.close();
   }
 
   searchOption(evt: any) {

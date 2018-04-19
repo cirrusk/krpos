@@ -1,31 +1,33 @@
-import { AlertType } from './../../core/alert/alert-type.enum';
-import { AlertService } from './../../core/alert/alert.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormArray, FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
+import { FormsModule } from '@angular/forms';
 
-import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
-import { SearchBroker } from '../../broker/order/search/search.broker';
-import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
-import { CartService } from '../../service/order/cart.service';
 import { SearchAccountComponent } from '../../modals/account/search-account/search-account.component';
-import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
-import { StorageService, Modal } from '../../service/pos';
-
-import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '../../data/model';
-import Utils from '../../core/utils';
 import { NewAccountComponent } from '../../modals/account/new-account/new-account.component';
 
+import { Modal, StorageService } from '../../service/pos';
+import { CartService } from '../../service/order/cart.service';
+import { AlertService } from '../../core/alert/alert.service';
+import { SearchBroker } from '../../broker/order/search/search.broker';
+import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
+import { Subscription } from 'rxjs/Subscription';
+import { Accounts, SearchParam, CartInfo, CartEntry, CartModification } from '../../data/model';
+import { PagerService } from '../../service/common/pager.service';
+import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
+import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
+
+
 @Component({
-  selector: 'pos-price-info',
-  templateUrl: './price-info.component.html'
+  selector: 'pos-cart-list',
+  templateUrl: './cart-list.component.html'
 })
-export class PriceInfoComponent implements OnInit, OnDestroy {
-  private searchUserInfo: string;
+export class CartListComponent implements OnInit, OnDestroy {
   private cartInfoSubscription: Subscription;
   private accountInfoSubscription: Subscription;
   private updateVolumeAccountSubscription: Subscription;
   private addCartSubscription: Subscription;
+  private productSubscription: Subscription;
+
+  private searchUserInfo: string;
   private accountInfo: Accounts;
   private searchMode: string;
   private searchParams: SearchParam;
@@ -33,22 +35,40 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
   private cartList: Array<CartEntry>;
   private productInfo: CartEntry;
   private cartModification: CartModification[];
+  private currentCartList: CartEntry[];       // 출력 장바구니 리스트
+  private currentPage: number;                // 현재 페이지 번호
+  private pager: any = {};                    // pagination 정보
+
+  private totalItem: number;
+  private totalPrice: number;
 
   constructor(private modal: Modal,
               private cartService: CartService,
               private storage: StorageService,
               private alert: AlertService,
+              private pagerService: PagerService,
               private searchBroker: SearchBroker,
-              private searchAccountBroker: SearchAccountBroker,
-              private addCartBroker: AddCartBroker) {
+              private addCartBroker: AddCartBroker,
+              private searchAccountBroker: SearchAccountBroker) {
+    this.cartList = new Array<CartEntry>();
     this.searchMode = 'A';
     this.searchParams = new SearchParam();
+
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         console.log('++*** accounts Info subscribe ... ',  result);
         if (result) {
           this.accountInfo = result;
           this.createCartInfo();
+        }
+      }
+    );
+
+    this.productSubscription = this.addCartBroker.getInfo().subscribe(
+      productInfo => {
+        console.log('++*** product Info subscribe ... ',  productInfo);
+        if (productInfo) {
+          this.addCartEntries(productInfo.code);
         }
       }
     );
@@ -179,7 +199,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
                                                   this.cartModification[0].entry.quantity,
                                                   this.cartModification[0].entry.product.price.value,
                                                   this.cartModification[0].entry.product.description);
-                 this.addCartBroker.sendInfo(this.productInfo);
+                 this.addCartEntry(this.productInfo);
       },
       err => { this.modal.openMessage({
                                         title: '확인',
@@ -195,6 +215,53 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  // 주문 리스트 추가
+  private addCartEntry(cartEntry: CartEntry) {
+    const existedIdx: number = this.cartList.findIndex(
+      function (obj) {
+        return obj.code === cartEntry.code;
+      }
+    );
+
+    // 리스트에 없을 경우
+    if (existedIdx === -1) {
+      this.cartList.push(
+          {entryNumber: cartEntry.entryNumber,
+           code: cartEntry.code,
+           name: cartEntry.name,
+           qty: 1,
+           price: cartEntry.price,
+           desc: cartEntry.desc}
+      );
+    } else {
+        this.cartList[existedIdx].qty++;
+    }
+
+    // 장바구니에 추가한 페이지로 이동
+    this.setPage(Math.ceil(this.cartList.length / 10));
+  }
+
+  removeItemCart(code: string): void {
+    let index = this.cartList.findIndex(function (obj) {
+      return obj.code === code;
+    });
+
+    this.cartList.splice(index, 1);
+
+    index = index <= this.cartList.length ? index + 1 : index - 1;
+    this.setPage(Math.ceil(index / 10));
+  }
+
+  // 출력 데이터 생성
+  setPage(page: number, pagerFlag: boolean = false) {
+    if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
+      return;
+    }
+
+    // pagination 생성 데이터 조회
+    this.pager = this.pagerService.getPager(this.cartList.length, page);
+    // 출력 리스트 생성
+    this.currentCartList = this.cartList.slice(this.pager.startIndex, this.pager.endIndex + 1);
+  }
 }
-
-

@@ -46,7 +46,12 @@ export class OrderListComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(
-          {code: cartEntry.code, name: cartEntry.name, qty: 1, price: cartEntry.price, desc: cartEntry.desc}
+          {entryNumber: cartEntry.entryNumber,
+           code: cartEntry.code,
+           name: cartEntry.name,
+           qty: 1,
+           price: cartEntry.price,
+           desc: cartEntry.desc}
       );
     } else {
         this.cartList[existedIdx].qty++;
@@ -61,6 +66,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     let num = this.cartList.findIndex(function (obj) {
       return obj.code === str;
     });
+
     this.cartList.splice(num, 1);
 
     num = num <= this.cartList.length ? num + 1 : num - 1;
