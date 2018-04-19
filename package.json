@@ -6,6 +6,10 @@
     "ng": "ng",
     "start": "ng serve --environment=local",
     "build": "ng build --dev --environment=local",
+    "buildDev": "ng build --prod --environment=dev",
+    "buildQA": "ng build --prod --environment=qa",
+    "buildUAT": "ng build --prod --environment=uat",
+    "buildProd": "ng build --prod --environment=prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
