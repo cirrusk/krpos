@@ -11,6 +11,7 @@ import { AlertService } from '../../../core/alert/alert.service';
 import { AlertType } from '../../../core/alert/alert-type.enum';
 import { Products } from '../../../data/models/cart/cart-data';
 import { Product } from '../../../data/model';
+import { SpinnerService } from '../../../core/spinner/spinner.service';
 
 @Component({
   selector: 'pos-search-product',
@@ -34,6 +35,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   constructor(protected modalService: ModalService,
     private search: SearchService,
     private alert: AlertService,
+    private spinner: SpinnerService,
     private renderer: Renderer2) {
     super(modalService);
     this.basicSearchType = 'sku';
@@ -90,6 +92,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
 
       } break;
       case 'prd': {
+        this.spinner.show();
         this.search.getBasicProductInfo(val, this.currentPage).subscribe(data => {
           this.products = data;
           this.productCount = data.pagination.totalResults;
@@ -107,8 +110,14 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
                 this.renderer.addClass(this.searchNext.nativeElement, 'on');
               }
             }
+          } else {
+            this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
+            this.renderer.removeClass(this.searchNext.nativeElement, 'on');
           }
-        });
+        },
+        error => {},
+        () => { this.spinner.hide(); }
+       );
       } break;
     }
   }

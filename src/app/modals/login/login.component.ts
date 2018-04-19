@@ -180,9 +180,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
             message: `${errdata.error.error_description}`
           });
         }
-      },
-      () => {
-        this.spinner.hide();
       }
     );
   }
