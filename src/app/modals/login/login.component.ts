@@ -10,6 +10,7 @@ import { AlertService } from '../../core/alert/alert.service';
 import { AlertType } from '../../core/alert/alert-type.enum';
 
 import Utils from '../../core/utils';
+import { SpinnerService } from '../../core/spinner/spinner.service';
 
 /**
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.
@@ -41,6 +42,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     private storage: StorageService,
     private infoBroker: InfoBroker,
     private alert: AlertService,
+    private spinner: SpinnerService,
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
@@ -81,7 +83,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // } else if ((k>=65 && k<=90) || (k>=97 && k<=122)) {
     //   console.log('영문');
     //   return true;
-    // } else if ((k>=33 && k<=47) || (k>=58 && k<=64) 
+    // } else if ((k>=33 && k<=47) || (k>=58 && k<=64)
     // || (k>=91 && k<=96) || (k>=123 && k<=126)) {
     //   console.log('특수기호');
     //   return false;
@@ -142,6 +144,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
           this.logger.error(`accesstoken error : ${errdata.error.error}`, 'login.component');
           this.logger.error(`accesstoken error desc : ${errdata.error.error_description}`, 'login.component');
         }
+      },
+      () => {
+        this.spinner.hide();
       }
     );
   }
@@ -198,6 +203,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   private loginPwdEnter(evt: any) {
     const loginpwd = evt.target.value;
     if (loginpwd) {
+      this.spinner.show();
       this.startWork();
     } else {
       if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
