@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { COMPOSITION_BUFFER_MODE } from '@angular/forms';
+// https://angular.io/api/forms/COMPOSITION_BUFFER_MODE
+// https://blog.redpumpkin.net/2017/08/13/angular-korean-binding/
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './common/header/header.component';
@@ -22,8 +25,6 @@ import { AddCartBroker } from './broker/order/cart/add-cart.broker';
 import { SearchBroker } from './broker/order/search/search.broker';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { ClientComponent } from './client/client.component';
-
-
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { ClientComponent } from './client/client.component';
   providers: [
     Config,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true },
+    { provide: COMPOSITION_BUFFER_MODE, useValue: false },
     SearchBroker,
     AddCartBroker
   ],
