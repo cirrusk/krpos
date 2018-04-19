@@ -116,22 +116,22 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
 
   // 제품 검색
   callSearchProduct(): void {
-    this.addCartEntries(this.searchParams.searchText);
+    // this.addCartEntries(this.searchParams.searchText);
 
     // 추후 지정
-    // this.modal.openModalByComponent(SearchProductComponent,
-    //   {
-    //     title: '',
-    //     message: '',
-    //     actionButtonLabel: '선택',
-    //     closeButtonLabel: '취소',
-    //     closeByEnter: false,
-    //     closeByEscape: true,
-    //     closeByClickOutside: true,
-    //     closeAllModals: false,
-    //     modalId: 'SearchProductComponent'
-    //   }
-    // );
+    this.modal.openModalByComponent(SearchProductComponent,
+      {
+        title: '',
+        message: '',
+        actionButtonLabel: '선택',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllModals: false,
+        modalId: 'SearchProductComponent'
+      }
+    );
   }
 
   popupNewAccount() {
