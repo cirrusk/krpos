@@ -18,6 +18,7 @@ export const environment = {
       addToCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
       updateVolAcc: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
       deleteItemCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
+      deleteCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}',
       productSearch: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/products/search'
   },
   terminalApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/terminal',

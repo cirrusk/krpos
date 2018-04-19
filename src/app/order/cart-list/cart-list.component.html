@@ -5,7 +5,7 @@
       <button type="button" class="ico_comm next02">다음</button>
   </span>
   <span>
-      <a href="javascript:void(0)" class="on">홍길동</a>
+      <a href="javascript:void(0)" class="on" (click)="removeCart()">홍길동</a>
       <a href="javascript:void(0)">박보검</a>        
       <a href="javascript:void(0)">조쉬하트넷</a>
       <a href="javascript:void(0)">박보영</a>
@@ -156,7 +156,7 @@
       <ul class="calc01">
           <li>
               <span>총수량</span>
-              <em></em>
+              <em>{{totalItem |  number}}</em>
           </li>
           <li>
               <span>할인금액</span>
@@ -170,7 +170,7 @@
       <ul class="calc02">
           <li>
               <span>결제금액</span>
-              <em>{{ 10000 |  number }}</em>
+              <em>{{ totalPrice |  number }}</em>
           </li>
           <li>
               <span>내신금액</span>

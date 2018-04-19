@@ -51,11 +51,19 @@ export class CartService {
   }
 
   // 장바구니 개별 삭제
-  deleteCartEntries(userId: string, cartId: string, entryNumber: string): Observable<HttpResponseBase> {
+  deleteCartEntries(userId: string, cartId: string, entryNumber: number): Observable<HttpResponseBase> {
     const apiURL = this.config.getApiUrl('deleteItemCart', {'userId' : userId, 'cartId': cartId, 'entryNumber': entryNumber});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.put<HttpResponseBase>(apiURL, { headers : httpHeaders, observe: 'response'})
+    return this.httpClient.delete<HttpResponseBase>(apiURL, { headers : httpHeaders, observe: 'response'})
+                          .map(data => data as HttpResponseBase);
+  }
+
+  deleteCart(userId: string, cartId: string): Observable<HttpResponseBase> {
+    const apiURL = this.config.getApiUrl('deleteCart', {'userId' : userId, 'cartId': cartId});
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+
+    return this.httpClient.delete<HttpResponseBase>(apiURL, { headers : httpHeaders, observe: 'response'})
                           .map(data => data as HttpResponseBase);
   }
 }
