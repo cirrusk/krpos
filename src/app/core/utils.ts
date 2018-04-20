@@ -57,7 +57,6 @@ export default class Utils {
       return {};
     } else {
       const body = res;
-      console.log('... ' + this.toJson(body));
       return body || {};
     }
   }
@@ -98,7 +97,7 @@ export default class Utils {
     } else if (error && error.error) {
       errors = new Errors(error.error.error, error.error.error_description);
     } else {
-      errors = new Errors('Unknown Error', `${this.toJson(err)}`);
+      errors = new Errors('Unknown Error', `${Utils.toJson(err)}`);
     }
     return errors;
   }
