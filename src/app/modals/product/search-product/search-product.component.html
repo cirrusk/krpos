@@ -68,7 +68,7 @@
                                 <tr #productRows [class.on]='activeNum === i' *ngFor="let product of products.products; let i = index" (click)="activeRow(i, product)">
                                     <td><span class="tag02_blue">1+1</span></td>
                                     <td class="tit"><span class="elips">{{product.name}}</span></td>
-                                    <td><span class="none">[2010]</span></td>
+                                    <td><span class="none">{{product.vpsCode}}</span></td>
                                     <td><span>{{product.code}}</span></td>
                                     <td><span>재고(총 {{product.stock.stockLevel}}개)</span></td>
                                 </tr>
