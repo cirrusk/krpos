@@ -64,6 +64,7 @@ export class Product {
     averageRating: number; // double
     numberOfReviews: number; // integer(int32)
     summary: string;
+    vpsCode: string;
     manufacturer: string;
     variantType: string;
     price: Price;
