@@ -16,9 +16,7 @@ import { TestModule } from './common/test/test.module';
 import { Config } from './core/config/config';
 import { OrderComponent } from './order/order.component';
 import { CartListComponent } from './order/cart-list/cart-list.component';
-import { OrderListComponent } from './order/order-list/order-list.component';
 import { OrderMenuComponent } from './order/order-menu/order-menu.component';
-import { PriceInfoComponent } from './order/price-info/price-info.component';
 import { OrderCompleteComponent } from './order/order-complete/order-complete.component';
 
 import { AddCartBroker } from './broker/order/cart/add-cart.broker';
@@ -39,9 +37,7 @@ import { ClientComponent } from './client/client.component';
     HeaderComponent,
     DashboardComponent,
     OrderComponent,
-    OrderListComponent,
     OrderMenuComponent,
-    PriceInfoComponent,
     CheckComponent,
     ClientComponent,
     OrderCompleteComponent,
