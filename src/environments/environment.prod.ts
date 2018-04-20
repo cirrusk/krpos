@@ -7,19 +7,22 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  apiRootUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/',
+  apiRootUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2',
   apiUrl: {
-      terminal: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/auth/terminal',
-      auth: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/auth/authorize',
+      terminal: '/{baseSiteId}/auth/terminal',
+      auth: '/{baseSiteId}/auth/authorize',
       token: 'https://127.0.0.1:9002/authorizationserver/oauth/token',
-      batchStart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{user_id}/orderbatches',
-      batchStop: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/orderbatches/{batch_id}',
-      createCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
-      addToCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
-      updateVolAcc: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
-      deleteItemCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
-      deleteCart: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}',
-      productSearch: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/{baseSiteId}/products/search'
+      batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
+      batchStop: '/{baseSiteId}/orderbatches/{batch_id}',
+      createCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
+      addToCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
+      updateVolAcc: '/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
+      getCart: '/{baseSiteId}/terminal/{macAddress}/carts',
+      saveCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cashier/{cashierId}/terminal/{macAddress}/carts/{cartId}/save',
+      restoreCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/restoresavedcart',
+      deleteItemCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
+      deleteCart: '/{baseSiteId}/users/{userId}/carts/{cartId}',
+      productSearch: '/{baseSiteId}/products/search'
   },
   terminalApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/terminal',
   authApiUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2/amwaykorea/auth/authorize',

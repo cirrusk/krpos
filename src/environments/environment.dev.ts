@@ -17,19 +17,22 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  apiRootUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/',
+  apiRootUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2',
   apiUrl: {
-      terminal: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/auth/terminal',
-      auth: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/auth/authorize',
+      terminal: '/{baseSiteId}/auth/terminal',
+      auth: '/{baseSiteId}/auth/authorize',
       token: 'https://oms-dev.abnkorea.co.kr/authorizationserver/oauth/token',
-      batchStart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{user_id}/orderbatches',
-      batchStop: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/orderbatches/{batch_id}',
-      createCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
-      addToCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
-      updateVolAcc: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
-      deleteItemCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
-      deleteCart: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/users/{userId}/carts/{cartId}',
-      productSearch: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/{baseSiteId}/products/search'
+      batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
+      batchStop: '/{baseSiteId}/orderbatches/{batch_id}',
+      createCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
+      addToCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
+      updateVolAcc: '/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
+      getCart: '/{baseSiteId}/terminal/{macAddress}/carts',
+      saveCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cashier/{cashierId}/terminal/{macAddress}/carts/{cartId}/save',
+      restoreCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/restoresavedcart',
+      deleteItemCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
+      deleteCart: '/{baseSiteId}/users/{userId}/carts/{cartId}',
+      productSearch: '/{baseSiteId}/products/search'
   },
   terminalApiUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/amwaykorea/auth/terminal',
   authApiUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/amwaykorea/auth/authorize',

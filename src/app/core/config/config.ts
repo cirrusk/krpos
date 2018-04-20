@@ -10,21 +10,25 @@ export class Config {
   /**
    * API URL 가져오기
    * baseSiteId는 기본적으로 변환.
+   * URL에 Root URL 이 없으면 자동으로 붙힘.
    *
    * @param key API URL key
    * @param params replace 할 path variable json
    */
   public getApiUrl(key: string, params?: any) {
+    const apiRootUrl = environment.apiRootUrl;
     const baseSiteId = environment.baseSiteId; //  this.config['baseSiteId'];
     const cnf = environment.apiUrl; //  this.config['apiUrl'];
+    let apiUrl = String(cnf[key]);
+    if (apiUrl.indexOf(apiRootUrl) === -1) { apiUrl = apiRootUrl + apiUrl; }
     if (params) {
       const jsondata = Utils.toJson(params);
       const jsonparam = Utils.fromJson(jsondata);
       jsonparam.baseSiteId = baseSiteId;
-      return format(cnf[key], jsonparam);
+      return format(apiUrl, jsonparam);
     } else {
       const param = { baseSiteId: baseSiteId };
-      return format(cnf[key], param);
+      return format(apiUrl, param);
     }
   }
 
