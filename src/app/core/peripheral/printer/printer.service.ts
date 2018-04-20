@@ -30,7 +30,7 @@ export class PrinterService {
               // scaleContent: false
           };
 
-          this.logger.debug('Printer driver is ready', 'printer.service');
+          this.logger.set({n: 'printer.service', m: 'Printer driver is ready'}).debug();
 
           this.printerDriver.overridePrinterConfig(this.printerOpts);
       }
@@ -49,7 +49,7 @@ export class PrinterService {
             throw err;
         },
         () => {
-            this.logger.debug('Printing[HTML] is complete', 'printer.service');
+            this.logger.set({n: 'printer.service', m: 'Printing[HTML] is complete'}).debug();
         }
     );
   }
@@ -63,7 +63,7 @@ export class PrinterService {
             throw err;
         },
         () => {
-            this.logger.debug('Printing[Text] is complete', 'printer.service');
+            this.logger.set({n: 'printer.service', m: 'Printing[Text] is complete'}).debug();
         }
     );
   }

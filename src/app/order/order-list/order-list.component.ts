@@ -23,7 +23,7 @@ export class OrderListComponent implements OnInit, OnDestroy {
     this.cartList = new Array<CartEntry>();
 
     this.addCartsubscription = this.addCartBroker.getInfo().subscribe(value => {
-        this.logger.debug(`Add to cart ${value}`, 'order.list.component');
+        this.logger.set({n: 'order.list.component', m: `Add to cart ${value}`}).debug();
         // 장바구니에 담을 정보
         this.addCartEntry(value);
       });

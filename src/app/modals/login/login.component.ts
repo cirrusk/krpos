@@ -76,7 +76,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
    */
   startWork() {
-    if (this.loginId) { this.logger.debug(`login id : ${this.loginId}`, 'login.component'); }
+    if (this.loginId) { this.logger.set({n: 'login.component', m: `login id : ${this.loginId}`}).debug(); }
     const loginid = this.loginId;
     const loginpwd = this.loginPassword || '';
 
@@ -94,14 +94,14 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     this.authsubscription = this.authService.authentication(loginid, loginpwd).subscribe(
       result => {
-        this.logger.debug('get user authentication code...', 'login.component');
+        this.logger.set({n: 'login.component', m: 'get user authentication code...'}).debug();
         this.getAccessToken(result.code); // access token  취득 및 session 저장
       },
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.error(`authentication error type : ${errdata.type}`, 'login.component');
-          this.logger.error(`authentication error message : ${errdata.message}`, 'login.component');
+          this.logger.set({n: 'login.component', m: `authentication error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'login.component', m: `authentication error message : ${errdata.message}`}).error();
         }
         this.spinner.hide();
       },
@@ -128,8 +128,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.error(`authentication error type : ${errdata.type}`, 'login.component');
-          this.logger.error(`authentication error message : ${errdata.message}`, 'login.component');
+          this.logger.set({n: 'login.component', m: `authentication error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'login.component', m: `authentication error message : ${errdata.message}`}).error();
           this.alert.show({
             alertType: AlertType.error,
             title: '오류',

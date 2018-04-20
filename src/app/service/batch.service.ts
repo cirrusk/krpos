@@ -26,7 +26,7 @@ export class BatchService {
    * pickupStore: Store associated with terminal. | (string) e.g 01
    */
   startBatch(): Observable <BatchInfo> {
-    this.logger.debug('Start shift start batch...', 'batch.service');
+    this.logger.set({n: 'batch.service', m: 'Start shift start batch...'}).debug();
     const tokeninfo = this.storage.getTokenInfo();
     const terminalinfo = this.storage.getTerminalInfo();
     const tid = terminalinfo && terminalinfo.id;
@@ -46,7 +46,7 @@ export class BatchService {
    * 로그오프 시 배치 저장 후(POS 종료 확인 팝업 -> 배치 정보 저장  팝업 뜸) 대시보드 메인으로 이동
    */
   endBatch(): Observable <BatchInfo> {
-    this.logger.debug('End batch, and session storage access token info remove...', 'batch.service');
+    this.logger.set({n: 'batch.service', m: 'End batch, and session storage access token info remove...'}).debug();
     const batchinfo = this.storage.getBatchInfo();
     const batchid = batchinfo && batchinfo.batchNo;
     const batchUrl = this.config.getApiUrl('batchStop', { batch_id: batchid });

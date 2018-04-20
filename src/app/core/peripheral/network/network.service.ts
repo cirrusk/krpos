@@ -22,7 +22,7 @@ export class NetworkService {
     const waitNetwork: Subject<any> = this.driverReadyBroker.getNetworkObserver();
     waitNetwork.subscribe(
       () => {
-          this.logger.debug('2. Network service ready to receive data from network driver...', 'network.service');
+          this.logger.set({n: 'network.service', m: '2. Network service ready to receive data from network driver...'}).debug();
           // Init 시점 기다리는 모듈에 통보
           this.waitNWService.next();
       }
@@ -44,12 +44,12 @@ export class NetworkService {
         this.macAddress = this.networkDriver.macAddress;
       }
     }
-    this.logger.debug('3. Local Mac Address received successfully...', 'network.service');
+    this.logger.set({n: 'network.service', m: '3. Local Mac Address received successfully...'}).debug();
     return this.macAddress;
   }
 
   public wait(): Observable<any> {
-    this.logger.debug('1. Network waiting...', 'network.service');
+    this.logger.set({n: 'network.service', m: '1. Network waiting...'}).debug();
     return this.waitNWService.asObservable();
  }
 

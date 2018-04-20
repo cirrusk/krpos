@@ -54,8 +54,8 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     error => {
       const errdata = Utils.getError(error);
       if (errdata) {
-        this.logger.error(`authentication error type : ${errdata.type}`, 'login.component');
-        this.logger.error(`authentication error message : ${errdata.message}`, 'login.component');
+        this.logger.set({n: 'login.component', m: `authentication error type : ${errdata.type}`}).error();
+        this.logger.set({n: 'login.component', m: `authentication error message : ${errdata.message}`}).error();
       }
     });
 

@@ -76,10 +76,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         if (result === null) {
           this.tokeninfo = null;
         } else if (result && Utils.isNotEmpty(result.access_token)) {
-          this.logger.debug('access token subscribe ... ', 'header component');
+          this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
           this.tokeninfo = result;
         } else if (result && Utils.isNotEmpty(result.lockType + '')) {
-          this.logger.debug('screen locktype subscribe ... ', 'header component');
+          this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
           this.screenLockType = result.lockType;
         }
       }
@@ -102,9 +102,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
         result => {
           if (result) {
-            this.logger.debug('qz websocket connection is alive!!!', 'header.component');
+            this.logger.set({n: 'header.component', m: 'qz websocket connection is alive!!!'}).debug();
           } else {
-            this.logger.warn('qz websocket connection is dead!!!, check qz tray running mode...', 'header.component');
+            this.logger.set({n: 'header.component', m: 'qz websocket connection is dead!!!, check qz tray running mode...'}).warn();
             // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
             this.modal.openMessage({
               title: 'QZ Tray 상태 체크',
@@ -180,7 +180,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           },
           error => {
             this.posName = '-';
-            this.logger.error(`Terminal info get fail : ${error.name} - ${error.message}`, 'header.component');
+            this.logger.set({n: 'header.component', m: `Terminal info get fail : ${error.name} - ${error.message}`}).error();
           }
         );
       }

@@ -36,10 +36,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       (result) => {
        if (result && Utils.isNotEmpty(result.batchNo)) {
-          this.logger.debug('batch info subscribe ... ', 'dashboard.component');
+          this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
           this.batchinfo = result;
         } else if (result && Utils.isNotEmpty(result.lockType + '')) {
-          this.logger.debug('screen locktype subscribe ... ', 'dashboard.component');
+          this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
           this.screenLockType = result.lockType;
         }
       }
@@ -87,8 +87,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.error(`start batch error type : ${errdata.type}`, 'dashboard.component');
-            this.logger.error(`start batch error message : ${errdata.message}`, 'dashboard.component');
+            this.logger.set({n: 'dashboard.component', m: `start batch error type : ${errdata.type}`}).error();
+            this.logger.set({n: 'dashboard.component', m: `start batch error message : ${errdata.message}`}).error();
             this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
           }
         }
@@ -100,7 +100,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 로그오프 시 배치 정보 저장 후(P7페이지 배치 정보 저장 확인 팝업 뜸) 이후, 대시보드 메인으로 이동
    */
   stopShift() {
-      this.logger.debug('stop shift', 'dashboard.component');
+      this.logger.set({n: 'dashboard.component', m: 'stop shift'}).debug();
   }
 
   /**

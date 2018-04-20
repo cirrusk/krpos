@@ -2,78 +2,89 @@ import { Injectable } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 import { Levels } from './levels.enum';
-import { Config } from './../config/config';
+import { Config } from '../config/config';
 import Utils from '../utils';
+
+const noop = (): any => undefined;
 
 @Injectable()
 export class Logger {
-  logLevel: string;
+  confLogLevel: string;
+  params: any;
   constructor(private config: Config, private datePipe: DatePipe) {
-    this.logLevel = this.config.getConfig('logLevel');
+    this.confLogLevel = this.config.getConfig('logLevel');
   }
 
-  private consoleLog(level: string, message: string, name?: string) {
-    if (!message) { return; }
-    let logcolor;
-
-    switch (level) {
-      case 'TRACE': {
-        logcolor = 'blue';
-      } break;
-      case 'DEBUG': {
-        logcolor = 'teal';
-      } break;
-      case 'INFO':
-      case 'LOG': {
-        logcolor = 'gray';
-      } break;
-      case 'WARN':
-      case 'ERROR': {
-        logcolor = 'red';
-      } break;
-      case 'OFF':
-      default: return;
+  /**
+   * 적절한 메시지를 구성하여
+   * console 정보를 return 함.
+   * 출력하고자 하는 로그레벨이 환경설정의 로그레벨보다 크면 로그 출력하지 않음.
+   *
+   * @param level 로그레벨
+   */
+  private logger(level: string) {
+    const cnfLevel: string = (this.confLogLevel && this.confLogLevel !== '') ? this.confLogLevel.toUpperCase() : 'DEBUG';
+    if (Levels[level] >= Levels[cnfLevel]) {
+      let nm, msg;
+      if (this.params) {
+        if (this.params.n) { nm = '[' + this.params.n + '] '; } else { nm = ''; }
+        msg = this.params.m ? this.params.m : '';
+        switch (level) {
+          case 'TRACE': { return console.trace.bind(console, `%c[%s] %c%s%s`, 'color:blue', 'TRACE', 'color:blue', nm, msg); }
+          case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', 'DEBUG', 'color:teal', nm, msg); }
+          case 'INFO':
+          case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:gray', 'LOG', 'color:gray', nm, msg); }
+          case 'WARN':
+          case 'ERROR': { return console.error.bind(console, `%c[%s] %c%s%s`, 'color:red', 'ERROR', 'color:red;', nm, msg); }
+          case 'OFF':
+          default: return noop;
+        }
+      } else {
+        switch (level) {
+          case 'TRACE': { return console.trace.bind(console); }
+          case 'DEBUG': { return console.debug.bind(console); }
+          case 'INFO':
+          case 'LOG':   { return console.log.bind(console); }
+          case 'WARN':
+          case 'ERROR': { return console.error.bind(console); }
+          case 'OFF':
+          default: return noop;
+        }
+      }
     }
-
-    const _loglevel: string = (this.logLevel && this.logLevel !== '') ? this.logLevel.toUpperCase() : 'DEBUG';
-    if (Levels[level] >= Levels[_loglevel]) {
-      // const date_str: string = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
-      if (name) { name = '[' + name + '] '; } else { name = ''; }
-      console.log(
-      // console.log.bind(console,
-        // `%c${date_str} [%s] %c%s%s`,
-      `%c[%s] %c%s%s`,
-      `background:#fff; color:${logcolor}`,
-      Utils.padding(`${level}`, ' ', 5),
-      'color:black',
-      name,
-      message
-    );
-    }
   }
 
-  public trace(message: string, name?: string) {
-    this.consoleLog('TRACE', message, name);
+  /**
+   * 로그를 남길 경우 로그 정보를 설정
+   *
+   * @param params : { n : 소스의 대표 명칭, m : 남길 메시지 }
+   */
+  set(params: any) {
+    this.params = params;
+    return this;
   }
 
-  public debug(message: string, name?: string) {
-    this.consoleLog('DEBUG', message, name);
+  get trace() {
+    return this.logger('TRACE');
   }
 
-  public info(message: string, name?: string) {
-    this.consoleLog('INFO', message, name);
+  get debug() {
+    return this.logger('DEBUG');
   }
 
-  public log(message: string, name?: string) {
-    this.consoleLog('LOG', message, name);
+  get info() {
+    return this.logger('INFO');
   }
 
-  public warn(message: string, name?: string) {
-    this.consoleLog('WARN', message, name);
+  get log() {
+    return this.logger('LOG');
   }
 
-  public error(message: string, name?: string) {
-    this.consoleLog('ERROR', message, name);
+  get warn() {
+    return this.logger('WARN');
   }
 
+  get error() {
+    return this.logger('ERROR');
+  }
 }

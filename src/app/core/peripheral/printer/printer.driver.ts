@@ -38,7 +38,7 @@ export class PrinterDriver extends AbstractDriver {
         // Wait QZ Driver
         const waitQz: Subject<any> = this.driverReadyBroker.getQzObserver();
 
-        this.logger.debug('Printer Driver waiting QZ', 'printer.driver');
+        this.logger.set({n: 'printer.driver', m: 'Printer Driver waiting QZ'}).debug();
 
         waitQz.subscribe(
             () => {
@@ -50,7 +50,6 @@ export class PrinterDriver extends AbstractDriver {
         // QZ Tray 종료할때 callback을 받아서 status 변경
         qz.websocket.setClosedCallbacks((evt) => {
             this.status = Status.Disconnected;
-            this.logger.debug(`qz tray close callback for printer driver : ${evt}, status : ${this.status}`, 'printer.driver');
         });
 
     }
@@ -68,7 +67,7 @@ export class PrinterDriver extends AbstractDriver {
             this.selectedPrinterName = printerName;
             this.status = Status.Selected;
 
-            this.logger.debug(`Default printer was selected. Name is ${this.selectedPrinterName}.`, 'printer.driver');
+            this.logger.set({n: 'printer.driver', m: `Default printer was selected. Name is ${this.selectedPrinterName}.`}).debug();
 
             waitingForSelection.next();
         })
@@ -81,7 +80,7 @@ export class PrinterDriver extends AbstractDriver {
             () => {
                 this.initPrinterConfig();
 
-                this.logger.debug('Sending Msg to Printer service', 'printer.driver');
+                this.logger.set({n: 'printer.driver', m: 'Sending Msg to Printer service'}).debug();
 
                 // Send printer ready signal
                 const notifier: Subject<any> = this.driverReadyBroker.getPrinterObserver();
@@ -112,7 +111,7 @@ export class PrinterDriver extends AbstractDriver {
                 // density: opts.density
             });
         } catch (err) {
-            this.logger.error(`Reconfigure error. ${err}`, 'printer.driver');
+            this.logger.set({n: 'printer.driver', m: `Reconfigure error. ${err}`}).error();
         }
 
         return this.curPrinterConfig;
@@ -125,7 +124,7 @@ export class PrinterDriver extends AbstractDriver {
      */
     private checkReady() {
         const isQzActive = qz.websocket.isActive();
-        this.logger.debug(`check ready to printer is active ? ${isQzActive}, status : [${this.status}]`, 'printer.driver');
+        this.logger.set({n: 'printer.driver', m: `check ready to printer is active ? ${isQzActive}, status : [${this.status}]`}).debug();
         if (!isQzActive && (this.status !== Status.Ready)) {
              throw new Error('Printer driver is not ready');
         }

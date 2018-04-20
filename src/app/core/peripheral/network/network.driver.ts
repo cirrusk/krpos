@@ -28,7 +28,7 @@ export class NetworkDriver extends AbstractDriver {
         // Wait QZ Driver
         const waitQz: Subject<any> = this.driverReadyBroker.getQzObserver();
 
-        this.logger.debug('1. Waiting QZ...', 'network.driver');
+        this.logger.set({n: 'network.driver', m: '1. Waiting QZ...'}).debug();
 
         waitQz.subscribe(
             () => {
@@ -41,7 +41,7 @@ export class NetworkDriver extends AbstractDriver {
     }
 
     private loadLocalNetworkInfo(): void {
-        this.logger.debug('2. getNetworkInfo...', 'network.driver');
+        this.logger.set({n: 'network.driver', m: '2. getNetworkInfo...'}).debug();
         const domain = this.config.getConfig('hybrisEndpointDomain');
         const port = this.config.getConfig('hybrisEndpointPort');
         /**
@@ -60,7 +60,7 @@ export class NetworkDriver extends AbstractDriver {
                 this._ipAddress = result.ipAddress;
                 this._macAddress = result.macAddress;
 
-                this.logger.debug('3. Sending signal to Network Service', 'network.driver');
+                this.logger.set({n: 'network.driver', m: '3. Sending signal to Network Service'}).debug();
 
                 // Send signal
                 const notifier: Subject<any> = this.driverReadyBroker.getNetworkObserver();

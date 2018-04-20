@@ -9,7 +9,7 @@ export class AddCartBroker {  private subject = new Subject<any>();
   constructor(private logger: Logger) { }
 
   sendInfo(message: any) {
-    this.logger.debug('Send info...', 'AddCartBroker');
+    this.logger.set({n: 'AddCartBroker', m: 'Send info...'}).debug();
     this.subject.next(message);
   }
 

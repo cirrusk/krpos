@@ -16,11 +16,11 @@ export class OrderGuard implements CanActivate, CanActivateChild {
     const lockType = this.storage.getScreenLockType();
     const batchinfo = this.storage.getBatchInfo();
     if (lockType === LockType.LOCK) {
-      this.logger.debug('pos is locked!!!', 'order.guard');
+      this.logger.set({n: 'order.guard', m: 'pos is locked!!!'}).debug();
       redictCheck = true;
     }
     if (batchinfo === null) {
-      this.logger.debug('pos is not start shift!!!', 'order.guard');
+      this.logger.set({n: 'order.guard', m: 'pos is not start shift!!!'}).debug();
       redictCheck = true;
     }
     if (this.storage.isLogin() && redictCheck !== false) {
@@ -28,7 +28,7 @@ export class OrderGuard implements CanActivate, CanActivateChild {
     }
     const url = state.url;
     if (url.indexOf('/order') !== -1) {
-      this.logger.debug('you are not login pos system, redirect to dashboard!', 'order.guard');
+      this.logger.set({n: 'order.guard', m: 'you are not login pos system, redirect to dashboard!'}).debug();
       redictCheck = true;
     }
     if (redictCheck) {
