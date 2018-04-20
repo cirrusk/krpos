@@ -72,7 +72,6 @@ export class StorageService implements OnDestroy {
    * @param data
    */
   public setScreenLockType(data: number): void {
-    console.log('storage setScreenLockType...............');
     this.removeSessionItem('screenLockType');
     this.setSessionItem('screenLockType', { lockType: data });
     this.infobroker.sendInfo({ lockType: data });

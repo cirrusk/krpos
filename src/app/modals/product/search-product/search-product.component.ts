@@ -6,13 +6,14 @@ import { ModalService } from '../../../service/pos';
 import { Modal } from '../../../core/modal/modal';
 
 import { SearchService } from '../../../service/order/search.service';
-import Utils from '../../../core/utils';
 import { AlertService } from '../../../core/alert/alert.service';
 import { AlertType } from '../../../core/alert/alert-type.enum';
 import { Products } from '../../../data/models/cart/cart-data';
-import { Product } from '../../../data/model';
+import { Product } from '../../../data/models/cart/cart-data';
 import { SpinnerService } from '../../../core/spinner/spinner.service';
 import { AddCartBroker } from '../../../broker/order/cart/add-cart.broker';
+
+import Utils from '../../../core/utils';
 
 @Component({
   selector: 'pos-search-product',
@@ -64,20 +65,16 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   }
 
   next() {
-   if (this.totalPages >= this.currentPage) {
-     this.currentPage++;
-     this.searchProduct();
-   }
+    if (this.totalPages >= this.currentPage) {
+      this.currentPage++;
+      this.searchProduct();
+    }
   }
 
   searchProduct() {
     const val = this.searchValue.nativeElement.value;
     if (Utils.isEmpty(val)) {
-      this.alert.show({
-        alertType: AlertType.warn,
-        title: '확인',
-        message: '검색어를 입력하십시오.'
-      });
+      this.alert.show({ alertType: AlertType.warn, title: '확인', message: '검색어를 입력하십시오.' });
       return;
     }
     if (this.productItems) {
@@ -133,19 +130,11 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   productSelect() {
     let flag = false;
     for (const p of this.productItems) {
-      let chk: boolean;
-      chk = p.nativeElement.classList.contains('on');
-      if (chk) {
-        flag = true;
-        break;
-      }
+      const chk = p.nativeElement.classList.contains('on');
+      if (chk) { flag = true; break; }
     }
     if (!flag) {
-      this.alert.show({
-        alertType: AlertType.warn,
-        title: '확인',
-        message: '상품을 선택하십시오.'
-      });
+      this.alert.show({ alertType: AlertType.warn, title: '확인', message: '상품을 선택하십시오.' });
       return;
     }
     this.addCartBroker.sendInfo(this.product);

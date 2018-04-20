@@ -10,12 +10,13 @@ import { TestComponent } from './common/test/test.component';
 import { OrderComponent } from './order/order.component';
 
 import { LoginGuard } from './core/guard/login.guard';
+import { OrderGuard } from './core/guard/order.guard';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'order', component: OrderComponent, canActivate: [LoginGuard]},
-  { path: 'order-complete', component: OrderCompleteComponent, canActivate: [LoginGuard]},
+  { path: 'order', component: OrderComponent, canActivate: [OrderGuard]},
+  { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
   { path: 'client', component: ClientComponent },
   { path: 'test', component: TestComponent }
 ];
@@ -27,6 +28,6 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
   declarations: [],
-  providers: [LoginGuard]
+  providers: [LoginGuard, OrderGuard]
 })
 export class AppRoutingModule { }

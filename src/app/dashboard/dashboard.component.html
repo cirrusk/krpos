@@ -4,7 +4,10 @@
   <div class="nav_wrap">
       <a href class="n01" routerLink="" *ngIf="screenLockType === 1; else goOrder"><em>판매등록</em><span>일반 결제 시스템을<br>이용하실 수 있습니다</span></a>
       <ng-template #goOrder>
-        <a href class="n01" routerLink="/order"><em>판매등록</em><span>일반 결제 시스템을<br>이용하실 수 있습니다</span></a>
+        <a href class="n01" routerLink="" *ngIf="batchinfo === null; else goOrderCheck"><em>판매등록</em><span>일반 결제 시스템을<br>이용하실 수 있습니다</span></a>
+        <ng-template #goOrderCheck>
+            <a href class="n01" routerLink="/order"><em>판매등록</em><span>일반 결제 시스템을<br>이용하실 수 있습니다</span></a>
+        </ng-template>
       </ng-template>
       <a href class="n02" routerLink=""><em>판매정산</em><span>계산원 정산 시스템을<br>이용하실 수 있습니다</span></a>
       <a href class="n03" (click)="!!startShift()" *ngIf="batchinfo === null; else stopShift"><em>Start Shift</em><span>계산원 교대 근무시<br>이용하실 수 있습니다</span></a>
