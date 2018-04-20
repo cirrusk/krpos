@@ -16,10 +16,10 @@ import { CartModification, CartInfo, CartEntry, Accounts, SearchParam } from '..
 import Utils from '../../core/utils';
 import { NewAccountComponent } from '../../modals/account/new-account/new-account.component';
 
-@Component({
-  selector: 'pos-price-info',
-  templateUrl: './price-info.component.html'
-})
+// @Component({
+//   selector: 'pos-price-info',
+//   templateUrl: './price-info.component.html'
+// })
 export class PriceInfoComponent implements OnInit, OnDestroy {
   private searchUserInfo: string;
   private cartInfoSubscription: Subscription;

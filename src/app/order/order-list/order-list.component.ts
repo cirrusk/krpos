@@ -6,10 +6,10 @@ import { Product, CartEntry, CartModification, OrderEntry, ProductInfo } from '.
 import { Logger } from '../../service/pos';
 import { PagerService } from '../../service/common/pager.service';
 
-@Component({
-  selector: 'pos-order-list',
-  templateUrl: './order-list.component.html'
-})
+// @Component({
+//   selector: 'pos-order-list',
+//   templateUrl: './order-list.component.html'
+// })
 export class OrderListComponent implements OnInit, OnDestroy {
   private cartList: Array<CartEntry>;         // 장바구니 리스트
   private addCartsubscription: Subscription;
