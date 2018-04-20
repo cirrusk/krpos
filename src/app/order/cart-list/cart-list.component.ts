@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { SearchAccountComponent } from '../../modals/account/search-account/search-account.component';
@@ -29,19 +29,20 @@ export class CartListComponent implements OnInit, OnDestroy {
   private removeEntrySubscription: Subscription;
   private removeCartSubscription: Subscription;
 
-  accountInfo: Accounts;                  // 사용자 정보
-  searchMode: string;                     // 조회 모드
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
-  cartList: Array<CartEntry>;             // 장바구니 리스트
   private productInfo: CartEntry;                 // 제품 정보
   private cartModification: CartModification[];   // 장바구니 담기 응답모델
-  currentCartList: CartEntry[];           // 출력 장바구니 리스트
   private currentPage: number;                    // 현재 페이지 번호
   private pager: any = {};                        // pagination 정보
+  private selectedCartNum: number;                // 선택된 카트번호
 
-  totalItem: number;                      // 총 수량
-  totalPrice: number;                     // 총 금액
+  accountInfo: Accounts;                          // 사용자 정보
+  searchMode: string;                             // 조회 모드
+  cartList: Array<CartEntry>;                     // 장바구니 리스트
+  currentCartList: CartEntry[];                   // 출력 장바구니 리스트
+  totalItem: number;                              // 총 수량
+  totalPrice: number;                             // 총 금액
 
   constructor(private modal: Modal,
               private cartService: CartService,
@@ -104,6 +105,10 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   activeSearchMode(mode: string): void {
     this.searchMode = mode;
+  }
+
+  private activeRowCart(index: number): void {
+    this.selectedCartNum = index;
   }
 
   /**
@@ -283,34 +288,35 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 개별 삭제
    * @param code
    */
-  removeItemCart(code: string): void {
-    let index = this.cartList.findIndex(function (obj) {
-      return obj.code === code;
-    });
+  removeItemCart(code: string, event: Event): void {
+    console.log({}, event);
+    // let index = this.cartList.findIndex(function (obj) {
+    //   return obj.code === code;
+    // });
 
-    this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
-                                                                      this.cartInfo.code,
-                                                                      this.cartList[index].entryNumber).subscribe(
-      result => {// 임시 로직
-                 console.log('삭제 성공');
-                 this.cartList.splice(index, 1);
+    // this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
+    //                                                                   this.cartInfo.code,
+    //                                                                   this.cartList[index].entryNumber).subscribe(
+    //   result => {// 임시 로직
+    //              console.log('삭제 성공');
+    //              this.cartList.splice(index, 1);
 
-                 index = index <= this.cartList.length ? index + 1 : index - 1;
-                 this.setPage(Math.ceil(index / 10));
-      },
-      err => { this.modal.openMessage({
-                                        title: '확인',
-                                        message: err.error.errors[0].message ? err.error.errors[0].message : err.error.errors[0].type,
-                                        closeButtonLabel: '닫기',
-                                        closeByEnter: false,
-                                        closeByEscape: true,
-                                        closeByClickOutside: true,
-                                        closeAllModals: true,
-                                        modalId: 'REMOVE_CAR_ERROR'
-                                      }
-                                    );
-      }
-    );
+    //              index = index <= this.cartList.length ? index + 1 : index - 1;
+    //              this.setPage(Math.ceil(index / 10));
+    //   },
+    //   err => { this.modal.openMessage({
+    //                                     title: '확인',
+    //                                     message: err.error.errors[0].message ? err.error.errors[0].message : err.error.errors[0].type,
+    //                                     closeButtonLabel: '닫기',
+    //                                     closeByEnter: false,
+    //                                     closeByEscape: true,
+    //                                     closeByClickOutside: true,
+    //                                     closeAllModals: true,
+    //                                     modalId: 'REMOVE_CAR_ERROR'
+    //                                   }
+    //                                 );
+    //   }
+    // );
   }
 
   /**
@@ -368,4 +374,13 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalItem = sumItem;
     this.totalPrice = sumPrice;
   }
+
+  // @HostListener('document: keydown.delete', ['$event', '$event.target'])
+  // keyboardInput(event: any, targetElm: HTMLElement) {
+  //   event.stopPropagation();   // event.preventDefault();
+
+  //   console.log({}, event);
+  //   console.log({}, targetElm);
+  // }
+
 }
