@@ -24,7 +24,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   ngOnInit() {
   }
 
-  private creditCard(evt: any) {
+  creditCard(evt: any) {
     // this.modal.clearAllModals(this.modal.getModalArray()[0]); // 앞서 열려있던 창 닫기
     this.setSelected(evt);
     this.modal.openModalByComponent(CreditCardComponent,
@@ -41,7 +41,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private icCard(evt: any) {
+  icCard(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(IcCardComponent,
       {
@@ -57,7 +57,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private amwayPoint(evt: any) {
+  amwayPoint(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(PointComponent,
       {
@@ -74,7 +74,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private memberPoint(evt: any) {
+  memberPoint(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(PointComponent,
       {
@@ -91,7 +91,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private cashPayment(evt: any) {
+  cashPayment(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(CashComponent,
       {
@@ -107,7 +107,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private directDebitPayment(evt: any) {
+  directDebitPayment(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(DirectDebitComponent,
       {
@@ -123,7 +123,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private checkPayment(evt: any) {
+  checkPayment(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(ChecksComponent,
       {
@@ -139,7 +139,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private reCashPayment(evt: any) {
+  reCashPayment(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(ReCashComponent,
       {
@@ -155,7 +155,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
-  private couponPayment(evt: any) {
+  couponPayment(evt: any) {
     this.setSelected(evt);
     this.modal.openModalByComponent(CouponComponent,
       {

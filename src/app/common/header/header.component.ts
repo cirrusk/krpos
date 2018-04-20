@@ -151,7 +151,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
-  private goDashboard() {
+  goDashboard() {
     if (this.screenLockType === LockType.LOCK) { return; }
     this.screenLockType = LockType.INIT;
     this.storage.setScreenLockType(LockType.INIT);
@@ -168,7 +168,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
    * 가끔씩 이 부분이 늦게 처리되어 로그인 시 terminal 정보가 없어서 에러가 발생 ---> 확인 필요!!!
    */
-  private getTerminalInfo() {
+  getTerminalInfo() {
     this.networkService.wait().subscribe(
       () => {
         const macAddress = this.networkService.getLocalMacAddress('-');
@@ -191,7 +191,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 보류 내역 조회
    * 보류 건수가 존재 하지 않을 경우 띄우지 않음.
    */
-  private holdOrder() {
+  holdOrder() {
     if (this.screenLockType === LockType.LOCK) { return; }
     this.modal.openModalByComponent(HoldOrderComponent,
       {
@@ -211,7 +211,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 헤더 영역 근무 시작
    * 아이콘을 터치하면 로그인 팝업
    */
-  private startWork() {
+  startWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (!this.storage.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
@@ -234,7 +234,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 2. 배치 정보 저장 팝업
    * 3. 대시보드 메인으로 이동
    */
-  private endWork() {
+  endWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
       this.modal.openModalByComponent(LogoutComponent,
@@ -262,7 +262,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 카트 페이지 에서 화면 잠금 버튼 클릭 시 대시보드로 이동
    * 이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
    */
-  private screenLock() {
+  screenLock() {
     if (this.storage.isLogin()) {
       this.storage.setScreenLockType(LockType.LOCK);
       this.screenLockType = LockType.LOCK;
@@ -280,7 +280,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 잠금 플래그를 설정하고 대시보드로 이동.
    * 비밀번호로 잠금을 해제하면 카트로 이동함.
    */
-  private screenRelease() {
+  screenRelease() {
     if (this.storage.isLogin()) {
       this.modal.openModalByComponent(PasswordComponent,
         {

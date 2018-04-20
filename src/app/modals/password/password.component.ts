@@ -31,7 +31,7 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     if (this.authsubscription) { this.authsubscription.unsubscribe(); }
   }
 
-  private checkPassword() {
+  checkPassword() {
 
     const token = this.storage.getTokenInfo();
     const lognId = token && token.employeeId;
@@ -61,11 +61,11 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
 
   }
 
-  private authUserCheck() {
+  authUserCheck() {
     this.checkPassword();
   }
 
-  private close() {
+  close() {
     this.closeModal();
   }
 

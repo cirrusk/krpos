@@ -11,7 +11,7 @@ import { Modal } from '../../../core/modal/modal';
   templateUrl: './ecp-print.component.html'
 })
 export class EcpPrintComponent extends ModalComponent implements OnInit {
-
+  message: string;
   constructor(protected modalService: ModalService, private alert: AlertService) {
     super(modalService);
   }

@@ -57,7 +57,9 @@ import { CouponComponent } from './payment/ways/coupon/coupon.component';
   ],
   imports: [
     CommonModule,
-    ModalModule
+    FormsModule,
+    ModalModule,
+    ReactiveFormsModule
   ],
   entryComponents: [
     LoginComponent,

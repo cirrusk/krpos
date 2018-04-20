@@ -40,6 +40,7 @@ export class Logger {
       // const date_str: string = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
       if (name) { name = '[' + name + '] '; } else { name = ''; }
       console.log(
+      // console.log.bind(console,
         // `%c${date_str} [%s] %c%s%s`,
       `%c[%s] %c%s%s`,
       `background:#fff; color:${logcolor}`,

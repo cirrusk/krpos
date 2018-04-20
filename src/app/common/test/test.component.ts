@@ -10,6 +10,7 @@ import { Product, OrderParams, OrderEntries } from '../../data/model';
 })
 export class TestComponent implements OnInit {
   private macAddress: string;
+  bodyText: string;
   constructor(private modalService: PosModalService) { }
 
   ngOnInit() {

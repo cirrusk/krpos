@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as format from 'string-format';
 
 import { environment } from '../../../environments/environment';
+import Utils from '../utils';
 
 @Injectable()
 export class Config {
@@ -17,8 +18,8 @@ export class Config {
     const baseSiteId = environment.baseSiteId; //  this.config['baseSiteId'];
     const cnf = environment.apiUrl; //  this.config['apiUrl'];
     if (params) {
-      const jsondata = JSON.stringify(params);
-      const jsonparam = JSON.parse(jsondata);
+      const jsondata = Utils.toJson(params);
+      const jsonparam = Utils.fromJson(jsondata);
       jsonparam.baseSiteId = baseSiteId;
       return format(cnf[key], jsonparam);
     } else {

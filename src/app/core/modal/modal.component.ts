@@ -6,9 +6,10 @@ import { ModalMainComponent } from './modal-main.component';
 import { ModalService } from './modal.service';
 
 @Component({
-  selector: 'pos-modal-component'
+  selector: 'pos-modal-component',
+  template: ''
 })
-export abstract class ModalComponent {
+export class ModalComponent {
 
   private observer: Observer<any>;
   protected result: any;

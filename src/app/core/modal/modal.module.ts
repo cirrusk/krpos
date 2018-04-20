@@ -11,9 +11,11 @@ import { ModalService } from './modal.service';
 import { FocusBlurDirective } from './focus-blur.directive';
 import { OnlyNumberDirective } from '../common/only-number.directive';
 import { throwIfAlreadyLoaded } from '../module-import-guard';
+import { ModalComponent } from './modal.component';
 
 @NgModule({
   declarations: [
+    ModalComponent,
     ModalHostComponent,
     ModalMainComponent,
     BasicModalComponent,
@@ -30,6 +32,7 @@ import { throwIfAlreadyLoaded } from '../module-import-guard';
   ],
   exports: [
     FormsModule,
+    ModalComponent,
     BasicModalComponent,
     FocusBlurDirective,
     OnlyNumberDirective

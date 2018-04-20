@@ -33,7 +33,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
    * 1. POS 종료 확인 팝업
    *
    */
-  private logout() {
+  logout() {
     this.modal.clearAllModals(this.modal.getModalArray()[0]);
     this.modal.openConfirm(
       {
@@ -67,7 +67,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
     // this.close();
   }
 
-  private close() {
+  close() {
     this.closeModal();
   }
 

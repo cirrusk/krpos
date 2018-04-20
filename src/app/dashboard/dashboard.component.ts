@@ -1,4 +1,3 @@
-import { LockType } from './../common/header/header.component';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,8 +7,11 @@ import { Modal, Logger, StorageService } from '../service/pos';
 import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker/info.broker';
 import { AccessToken, BatchInfo } from '../data/model';
-
+import { AlertService, AlertState } from '../core/alert/alert.service';
+import { AlertType } from '../core/alert/alert-type.enum';
+import { LockType } from '../common/header/header.component';
 import Utils from '../core/utils';
+
 
 @Component({
   selector: 'pos-dashboard',
@@ -21,12 +23,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   batchinfo: BatchInfo;
   tokensubscription: Subscription;
   batchsubscription: Subscription;
+  alertsubscription: Subscription;
   screenLockType: number;
   constructor(
     private modal: Modal,
     private infoBroker: InfoBroker,
     private batchService: BatchService,
     private storage: StorageService,
+    private alert: AlertService,
     private logger: Logger,
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
@@ -51,6 +55,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
+    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
   /**
@@ -66,7 +71,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
         (data) => {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.storage.setBatchInfo(data);
-            this.router.navigate(['/order']);
+
+            this.alert.show({
+              alertType: AlertType.info,
+              title: '확인',
+              message: '배치가 시작되었습니다.'
+            });
+
+            this.alertsubscription = this.alert.alertState.subscribe(
+              (state: AlertState) => {
+                if (!state.show) { // 닫히면...
+                  console.log('------------------- 닫힌다.');
+                  this.router.navigate(['/order']);
+                }
+              }
+            );
+
           }
         },
         error => {

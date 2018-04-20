@@ -35,7 +35,7 @@ export class StorageService implements OnDestroy {
    * @param value 세션 저장 정보 객체
    */
   public setSessionItem<T>(key: string, data: T): void {
-    this.sstorage.setItem(key, JSON.stringify(data));
+    this.sstorage.setItem(key, Utils.toJson(data));
   }
 
   /**
@@ -44,7 +44,7 @@ export class StorageService implements OnDestroy {
    * @param key 세션 정보 조회 키
    */
   public getSessionItem<T>(key: string) {
-    return JSON.parse(this.sstorage.getItem(key));
+    return Utils.fromJson(this.sstorage.getItem(key));
   }
 
   /**
@@ -237,7 +237,7 @@ export class StorageService implements OnDestroy {
    * @param value 저장할 값
    */
   public setLocalItem<T>(key: string, data: T): void {
-    this.lstorage.setItem(key, JSON.stringify(data));
+    this.lstorage.setItem(key, Utils.toJson(data));
     this.storageSubject.next({ key: key, value: data});
   }
 
@@ -247,7 +247,7 @@ export class StorageService implements OnDestroy {
    * @param key local 정보 조회키
    */
   public getLocalItem<T>(key: string) {
-    return JSON.parse(this.lstorage.getItem(key));
+    return Utils.fromJson(this.lstorage.getItem(key));
   }
 
   /**
@@ -329,7 +329,7 @@ export class StorageService implements OnDestroy {
     if (event.storageArea === this.lstorage) {
       let v;
       try {
-        v = JSON.parse(event.newValue);
+        v = Utils.fromJson(event.newValue);
       } catch (e) {
         v = event.newValue;
       }

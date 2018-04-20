@@ -15,39 +15,40 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
   }
-  private creditCard(evt: any) {
+
+  creditCard(evt: any) {
     this.setSelected(evt);
   }
 
-  private icCard(evt: any) {
+  icCard(evt: any) {
     this.setSelected(evt);
   }
 
-  private amwayPoint(evt: any) {
+  amwayPoint(evt: any) {
     this.setSelected(evt);
   }
 
-  private memberPoint(evt: any) {
+  memberPoint(evt: any) {
     this.setSelected(evt);
   }
 
-  private cashPayment(evt: any) {
+  cashPayment(evt: any) {
     this.setSelected(evt);
   }
 
-  private directDebitPayment(evt: any) {
+  directDebitPayment(evt: any) {
     this.setSelected(evt);
   }
 
-  private checkPayment(evt: any) {
+  checkPayment(evt: any) {
     this.setSelected(evt);
   }
 
-  private reCashPayment(evt: any) {
+  reCashPayment(evt: any) {
     this.setSelected(evt);
   }
 
-  private couponPayment(evt: any) {
+  couponPayment(evt: any) {
     this.setSelected(evt);
   }
 

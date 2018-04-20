@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, Renderer2 } from '@angular/core';
+// import { FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent } from '../../core/modal/modal.component';
@@ -35,7 +36,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @Input() loginPassword: string;
   authsubscription: Subscription;
   tokensubscription: Subscription;
-  private listner: any;
   constructor(
     protected modalService: ModalService,
     private authService: AuthService,
@@ -50,17 +50,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
 
   ngOnInit() {
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
-    // this.listner = this.renderer.listen(this.loginIdInput.nativeElement, 'keydown', (event) => {
-    //     const t = event.target.value;
-    //     console.log(t + '/' + event.keyCode);
-    //     const r: RegExp = new RegExp(/^(?=.*[a-z])(?=.*[0-9])$/gi);
-    //     console.log('숫자와영문만 ' + String(t).match(r));
-    //     if (event.keyCode === 229) {
-    //       console.log('한글은 입력이 안되게 해야지');
-    //       // event.target.value = event.target.value.replace(/[^0-9]/g, '');
-    //       this.loginIdInput.nativeElement.value = '';
-    //     }
-    // });
   }
 
   /**
@@ -72,38 +61,11 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   ngOnDestroy() {
     if (this.authsubscription) {this.authsubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
-    // this.listner(); // remove listener;
   }
 
-  private loginIdKeypress(evt: any) {
-    // const k = evt.keyCode;
-    // if (k >= 48 && k <= 57) {
-    //   console.log('숫자');
-    //   return true;
-    // } else if ((k>=65 && k<=90) || (k>=97 && k<=122)) {
-    //   console.log('영문');
-    //   return true;
-    // } else if ((k>=33 && k<=47) || (k>=58 && k<=64)
-    // || (k>=91 && k<=96) || (k>=123 && k<=126)) {
-    //   console.log('특수기호');
-    //   return false;
-    // } else if ((k >= 12592) || (k <= 12687)) {
-    //   setTimeout(() => { this.loginIdInput.nativeElement.value = evt.target.value.replace(/[^0-9]/g, ''); }, 50);
-    //   return false;
-    // }
-    // return true;
-  }
-
-  private loginIdBlur(evt: any) {
-    // const k = evt.target.value;
-    // console.log(k);
-    // const r: RegExp = new RegExp(/^[a-z0-9]*$/gi);
-    // if (k.match(r)) {
-    //   console.log('ok');
-    // } else {
-    //   console.log('한글');
-    //   setTimeout(() => { this.loginIdInput.nativeElement.value = evt.target.value.replace(/[^0-9]/g, ''); }, 50);
-    // }
+  idInput(evt: any) {
+    const v = evt.target.value;
+    setTimeout(() => { this.loginIdInput.nativeElement.value = v.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, ''); }, 5);
   }
 
   /**
@@ -113,7 +75,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 비밀번호가 미입력 된 경우,
    * 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
    */
-  private startWork() {
+  startWork() {
     if (this.loginId) { this.logger.debug(`login id : ${this.loginId}`, 'login.component'); }
     const loginid = this.loginId;
     const loginpwd = this.loginPassword || '';
@@ -178,14 +140,14 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     );
   }
 
-  private close() {
+  close() {
     this.closeModal();
   }
 
   /**
    * AD 계정 입력 후 엔터키 입력
    */
-  private loginIdEnter(evt: any) {
+  loginIdEnter(evt: any) {
     const loginid = evt.target.value;
     if (loginid) {
       this.loginPwdInput.nativeElement.focus();
@@ -195,7 +157,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   /**
    * 비밀번호 입력 후 엔터키 입력
    */
-  private loginPwdEnter(evt: any) {
+  loginPwdEnter(evt: any) {
     const loginpwd = evt.target.value;
     if (loginpwd) {
       this.spinner.show();

@@ -1,5 +1,5 @@
 <div class="table-margin">
-    <ng-container *ngIf="cartList != 0;else empty">
+    <ng-container *ngIf="cartList !== null && cartList.length !== 0;else empty">
         <table style="border: 1px solid #444444;">
             <thead>
                 <tr>

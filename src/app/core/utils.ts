@@ -57,7 +57,7 @@ export default class Utils {
       return {};
     } else {
       const body = res;
-      // console.log('... ' + JSON.stringify(body));
+      console.log('... ' + this.toJson(body));
       return body || {};
     }
   }
@@ -98,7 +98,7 @@ export default class Utils {
     } else if (error && error.error) {
       errors = new Errors(error.error.error, error.error.error_description);
     } else {
-      errors = new Errors('Unknown Error', `${JSON.parse(err)}`);
+      errors = new Errors('Unknown Error', `${this.toJson(err)}`);
     }
     return errors;
   }
@@ -145,6 +145,63 @@ export default class Utils {
    */
   public static isNotEmpty(obj: any): boolean  {
     return !this.isEmpty(obj);
+  }
+
+  /**
+   * undefined 인지 체크하기
+   *
+   * @param value
+   */
+  public static isUndefined(value: any): boolean {
+    return typeof value === 'undefined';
+  }
+
+  /**
+   * 문자열인지 체크하기
+   *
+   * @param value
+   */
+  public static isString(value: any): boolean {
+    return typeof value === 'string';
+  }
+
+  /**
+   * 숫자형인지 체크하기
+   *
+   * @param value
+   */
+  public static isNumber(value: any): boolean {
+    return typeof value === 'number';
+  }
+
+  /**
+   * 날짜형인지 체크하기
+   *
+   * @param value
+   */
+  public static isDate(value: any): boolean {
+    return this.toString.call(value) === '[object Date]';
+  }
+
+  /**
+   * json string으로 변환하기
+   *
+   * @param obj
+   */
+  public static toJson(obj: Object): string {
+    if (this.isUndefined(obj)) {
+      return undefined;
+    }
+    return JSON.stringify(obj, null, 2);
+  }
+
+  /**
+   * json 형태로 변환하기
+   *
+   * @param json
+   */
+  public static fromJson(json: string): any {
+    return this.isString(json) ? JSON.parse(json) : json;
   }
 
   /**

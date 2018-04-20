@@ -11,9 +11,9 @@ import Utils from '../../../../core/utils';
   styleUrls: ['./pos-receipt-print.component.css']
 })
 export class PosReceiptPrintComponent implements OnInit {
-  private printingText: string;
-  private prtCmd: PrinterCommands;
-  private receiptTempData: any = {
+  printingText: string;
+  prtCmd: PrinterCommands;
+  receiptTempData: any = {
     shopInfo: {
         name: '강서 AP',
         telephone: '02-1234-1234',
@@ -93,6 +93,10 @@ export class PosReceiptPrintComponent implements OnInit {
   ngOnInit() {
   }
 
+  public click() {
+
+  }
+  
   public clickHtml() {
     // HTML 방식
     // 출력 품질이 좋지 못함
@@ -101,7 +105,7 @@ export class PosReceiptPrintComponent implements OnInit {
     // this.receiptPrinterService.printInlineHTML(html);
 
     const html = document.getElementById('printingForm').shadowRoot.innerHTML;
-}
+  }
 
 public clickRaw() {
     const printMsg: string =

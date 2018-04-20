@@ -21,9 +21,9 @@ export class CheckComponent implements OnInit, OnDestroy {
 
   private httpSubscription: Subscription;
   private checkInterval: number;
-  private success: number;
-  private failure: number;
-  private checkUse: boolean;
+  success: number;
+  failure: number;
+  checkUse: boolean;
   constructor(private http: HttpClient, private config: Config) {
     this.checkInterval = this.config.getConfig('healthCheckInterval');
     this.checkUse = this.config.getConfig('healthCheckUse');

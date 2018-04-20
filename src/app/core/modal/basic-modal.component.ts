@@ -21,7 +21,7 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
   @ViewChild('footerElm') footerElm: ElementRef;
   @ViewChild('actionButtonElm') actionButtonElm: ElementRef;
   @ViewChild('closeButtonElm') closeButtonElm: ElementRef;
-
+  message: string;
   constructor(modalService: ModalService, private renderer: Renderer2, private storage: StorageService) {
     super(modalService);
   }
@@ -66,7 +66,8 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
     this.result = true;
     this.modalResult();
   }
-  protected close() {
+  
+  close() {
     this.result = false;
     this.storage.removeLatestModalId();
     this.modalResult();

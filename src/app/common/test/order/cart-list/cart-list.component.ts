@@ -11,7 +11,7 @@ import { CartEntry } from '../../../../data/models/common/cart-entry';
   styleUrls: ['./cart-list.component.css']
 })
 export class CartListComponent implements OnInit, OnDestroy {
-  private cartList: Array<CartEntry>;
+  cartList: Array<CartEntry>;
 
   private subscription: Subscription;
 

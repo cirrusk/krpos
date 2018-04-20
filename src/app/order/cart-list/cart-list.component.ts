@@ -29,19 +29,19 @@ export class CartListComponent implements OnInit, OnDestroy {
   private removeEntrySubscription: Subscription;
   private removeCartSubscription: Subscription;
 
-  private accountInfo: Accounts;                  // 사용자 정보
-  private searchMode: string;                     // 조회 모드
+  accountInfo: Accounts;                  // 사용자 정보
+  searchMode: string;                     // 조회 모드
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
-  private cartList: Array<CartEntry>;             // 장바구니 리스트
+  cartList: Array<CartEntry>;             // 장바구니 리스트
   private productInfo: CartEntry;                 // 제품 정보
   private cartModification: CartModification[];   // 장바구니 담기 응답모델
-  private currentCartList: CartEntry[];           // 출력 장바구니 리스트
+  currentCartList: CartEntry[];           // 출력 장바구니 리스트
   private currentPage: number;                    // 현재 페이지 번호
   private pager: any = {};                        // pagination 정보
 
-  private totalItem: number;                      // 총 수량
-  private totalPrice: number;                     // 총 금액
+  totalItem: number;                      // 총 수량
+  totalPrice: number;                     // 총 금액
 
   constructor(private modal: Modal,
               private cartService: CartService,
@@ -102,7 +102,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * Search 모드 변경
    * @param mode
    */
-  private activeSearchMode(mode: string): void {
+  activeSearchMode(mode: string): void {
     this.searchMode = mode;
   }
 
@@ -110,7 +110,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * Update VolumeAccount
    * @param cartInfo
    */
-  private updateVolumeAccount(cartInfo: CartInfo): void {
+  updateVolumeAccount(cartInfo: CartInfo): void {
     this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
                                                                                 this.cartInfo.code,
                                                                                 this.accountInfo.uid).subscribe(
@@ -126,7 +126,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 검색 팝업 호출
    * @param searchText
    */
-  private popupSearch(searchText: string): void {
+  popupSearch(searchText: string): void {
     // param 설정
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchText;
@@ -144,7 +144,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 유저정보 검색
    */
-  private callSearchAccount(): void {
+  callSearchAccount(): void {
     this.modal.openModalByComponent(SearchAccountComponent,
       {
         title: '',
@@ -162,7 +162,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 제품 검색
    */
-  private callSearchProduct(): void {
+  callSearchProduct(): void {
     this.addCartEntries(this.searchParams.searchText);
 
     // 추후 지정
@@ -184,7 +184,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 비회원 가입 팝업
    */
-  private popupNewAccount() {
+  popupNewAccount() {
     // this.alert.show( {alertType: AlertType.warn, title: '제목', message: '메시지'} );
     this.modal.openModalByComponent(NewAccountComponent,
       {
@@ -204,7 +204,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 장바구니 생성
    */
-  private createCartInfo(): void {
+  createCartInfo(): void {
     const terminalInfo = this.storage.getTerminalInfo();
     this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
                                                                 this.accountInfo.uid,
@@ -223,7 +223,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 담기
    * @param code
    */
-  private addCartEntries(code: string): void {
+  addCartEntries(code: string): void {
     this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code).subscribe(
       result => {// 임시 로직
                  this.cartModification = result;
@@ -254,7 +254,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 주문 리스트 추가
    * @param cartEntry
    */
-  private addCartEntry(cartEntry: CartEntry) {
+  addCartEntry(cartEntry: CartEntry) {
     const existedIdx: number = this.cartList.findIndex(
       function (obj) {
         return obj.code === cartEntry.code;
@@ -283,7 +283,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 개별 삭제
    * @param code
    */
-  private removeItemCart(code: string): void {
+  removeItemCart(code: string): void {
     let index = this.cartList.findIndex(function (obj) {
       return obj.code === code;
     });
@@ -316,7 +316,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 장바구니 삭제
    */
-  private removeCart(): void {
+  removeCart(): void {
     this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
       result => {// 임시 로직
                  console.log('삭제 성공');
@@ -342,7 +342,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 출력 데이터 생성
    */
-  private setPage(page: number, pagerFlag: boolean = false) {
+  setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
       return;
     }
@@ -357,7 +357,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 가격정보 계산
    */
-  private totalPriceInfo(): void {
+  totalPriceInfo(): void {
     let sumItem = 0;
     let sumPrice = 0;
     this.cartList.forEach(entry => {

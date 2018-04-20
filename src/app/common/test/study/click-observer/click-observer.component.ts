@@ -13,7 +13,7 @@ import { fromEvent } from 'rxjs/observable/fromEvent';
 export class ClickObserverComponent implements OnInit, OnDestroy {
   @ViewChild('btn')
   private btn: ElementRef;
-  private time: string;
+  time: string;
 
   private observer: Observable<any>;
   private subscription: Subscription;

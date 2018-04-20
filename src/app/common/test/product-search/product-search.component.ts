@@ -11,7 +11,7 @@ import { AddCartBroker } from './../../../broker/cart/addcart.broker';
 })
 export class ProductSearchComponent implements OnInit {
 
-  private productSearchForm: FormGroup;
+  productSearchForm: FormGroup;
   constructor(
     private addCartBroker: AddCartBroker,
     private productSearchService: ProductSearchService,

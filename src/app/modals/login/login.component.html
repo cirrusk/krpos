@@ -6,10 +6,11 @@
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
+
             <div class="login_wrap">
                 <img src="/assets/images/common/pop_logo.png" alt="Amway">
                 
-                <span class="id"><input #loginIdTxt type="text" [(ngModel)]="loginId" name="loginId" (blur)="loginIdBlur($event)" (keydown)="loginIdKeypress($event)" (keydown.enter)="loginIdEnter($event)" title="AD계정" required placeholder="AD계정"/></span>
+                <span class="id"><input #loginIdTxt type="text" [(ngModel)]="loginId" name="loginId" (input)="idInput($event)" (keydown.enter)="loginIdEnter($event)" title="AD계정" required placeholder="AD계정"/></span>
                 <span class="pw"><input #loginPasswordTxt type="password" [(ngModel)]="loginPassword" name="loginPassword" (keydown.enter)="loginPwdEnter($event)" autocomplete="off" title="비밀번호" required placeholder="비밀번호"/></span>
                 
                 <a href class="btn02_blue" (click)="!!startWork()">근무시작</a>

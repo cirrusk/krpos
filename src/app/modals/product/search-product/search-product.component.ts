@@ -70,7 +70,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    }
   }
 
-  private searchProduct() {
+  searchProduct() {
     const val = this.searchValue.nativeElement.value;
     if (Utils.isEmpty(val)) {
       this.alert.show({
@@ -124,13 +124,13 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
   }
 
-  private searchProductByBarcode() {
+  searchProductByBarcode() {
     if (Utils.isNotEmpty(this.bcdSearchType)) {
 
     }
   }
 
-  private productSelect() {
+  productSelect() {
     let flag = false;
     for (const p of this.productItems) {
       let chk: boolean;
@@ -160,7 +160,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     this.bcdSearchType = 'bcd';
   }
 
-  private resetCurrentPage(evt: any) {
+  resetCurrentPage(evt: any) {
     if (this.currentPage > 0) { this.currentPage = 0; }
   }
 
@@ -171,7 +171,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * @param index
    * @param product
    */
-  private activeRow(index: number, product: Product): void {
+  activeRow(index: number, product: Product): void {
     this.activeNum = index;
     this.product = product;
   }

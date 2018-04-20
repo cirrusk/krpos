@@ -16,17 +16,17 @@ import { AlertType } from '../../../core/alert/alert-type.enum';
   templateUrl: './search-account.component.html'
 })
 export class SearchAccountComponent extends ModalComponent implements OnInit, OnDestroy {
-  private accountList: AccountList; // 회원 정보 리스트
+  accountList: AccountList; // 회원 정보 리스트
   private account: Accounts; // 회원 정보
   private activeNum: number; // 선택 로우 번호
-  private totalCnt: number; // 검색 총 합계
+  totalCnt: number; // 검색 총 합계
   private searchSubscription: Subscription;
   private searchListSubscription: Subscription;
   private cartInfoSubscription: Subscription;
   private searchMemberType: string; // 회원 유형
-  private searchText: string; // 검색어
+  searchText: string; // 검색어
   private cartInfo: CartInfo;
-  private paymentType: string;
+  paymentType: string;
 
   constructor(modalService: ModalService,
       private modal: Modal,
