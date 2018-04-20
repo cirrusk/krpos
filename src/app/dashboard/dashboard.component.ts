@@ -72,11 +72,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.storage.setBatchInfo(data);
 
-            this.alert.show({
-              alertType: AlertType.info,
-              title: '확인',
-              message: '배치가 시작되었습니다.'
-            });
+            this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
 
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
@@ -86,7 +82,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 }
               }
             );
-
           }
         },
         error => {
@@ -94,6 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (errdata) {
             this.logger.error(`start batch error type : ${errdata.type}`, 'dashboard.component');
             this.logger.error(`start batch error message : ${errdata.message}`, 'dashboard.component');
+            this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
           }
         }
       );

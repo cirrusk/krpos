@@ -10,11 +10,11 @@ import Utils from '../core/utils';
 @Injectable()
 export class BatchService {
 
-  constructor(
-              private http: HttpClient,
+  constructor(private http: HttpClient,
               private storage: StorageService,
               private infoBroker: InfoBroker,
-              private config: Config, private logger: Logger) { }
+              private config: Config,
+              private logger: Logger) { }
 
   /**
    * Start Shift
@@ -34,6 +34,7 @@ export class BatchService {
     const userid = tokeninfo && tokeninfo.employeeId;
     const batchUrl = this.config.getApiUrl('batchStart', { user_id: userid });
     const dataParams = { pickupStore: tnm, terminal: tid, startingBalance: '0' };
+    console.log(Utils.toJson(dataParams));
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post(batchUrl, dataParams, { headers: httpHeaders, responseType: 'json' })
     .map(Utils.extractData)
