@@ -34,7 +34,6 @@ export class BatchService {
     const userid = tokeninfo && tokeninfo.employeeId;
     const batchUrl = this.config.getApiUrl('batchStart', { user_id: userid });
     const dataParams = { pickupStore: tnm, terminal: tid, startingBalance: '0' };
-    console.log(Utils.stringify(dataParams));
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post(batchUrl, dataParams, { headers: httpHeaders, responseType: 'json' })
     .map(Utils.extractData)
@@ -46,11 +45,11 @@ export class BatchService {
    * 로그오프 시 배치 저장 후(POS 종료 확인 팝업 -> 배치 정보 저장  팝업 뜸) 대시보드 메인으로 이동
    */
   endBatch(): Observable <BatchInfo> {
-    this.logger.set({n: 'batch.service', m: 'End batch, and session storage access token info remove...'}).debug();
+    this.logger.set({n: 'batch.service', m: 'end batch...'}).debug();
     const batchinfo = this.storage.getBatchInfo();
     const batchid = batchinfo && batchinfo.batchNo;
     const batchUrl = this.config.getApiUrl('batchStop', { batch_id: batchid });
-    console.log(batchUrl);
+    this.logger.set({n: 'batch.service', m: `${batchUrl}`}).debug();
     const httpParams = new HttpParams().set('endingBalance', '0');
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     return this.http.put(batchUrl, httpParams.toString(), { headers: httpHeaders })

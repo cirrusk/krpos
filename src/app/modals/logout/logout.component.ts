@@ -7,6 +7,7 @@ import { BatchService } from '../../service/batch.service';
 import { InfoBroker } from '../../broker/info.broker';
 import { SpinnerService } from '../../core/spinner/spinner.service';
 import { Router } from '@angular/router';
+import Utils from '../../core/utils';
 
 @Component({
   selector: 'pos-logout',
@@ -63,6 +64,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
             this.spinner.show();
             this.logger.set({n: 'logout.component', m: 'started batch already, stop batch...'}).debug();
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
+              this.logger.set({n: 'logout.component', m: `end batch info : ${Utils.stringify(data)}`}).debug();
               this.storage.logout();
               this.storage.removeEmployeeName(); // client 담당자 삭제
               this.modal.openConfirm({
