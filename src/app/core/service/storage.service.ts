@@ -305,6 +305,20 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * 담당자(캐셔) Id 저장
+   */
+  public setEmployeeId(data: string) {
+    this.setLocalItem('employeeId', data);
+  }
+
+  /**
+   * 담당자(캐셔) Id 가져오기
+   */
+  public getEmloyeeId(): string {
+    return this.getLocalItem('employeeId');
+  }
+
+  /**
    * 고객화면 담당자 정보 삭제
    * 캐셔 변경(로그아웃) 시 고객화면 담당자 변경위해
    */

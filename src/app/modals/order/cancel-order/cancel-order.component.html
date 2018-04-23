@@ -1,0 +1,20 @@
+<div class="pop_wrap pop_s">
+  <div class="pop_header">
+      <h1>주문취소</h1>
+      <button type="button" class="ico_comm pop_close01" (click)="!!close()">닫기</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <p class="txt_alert">해당 주문을 취소하시겠습니까?</p>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer line clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href="javascript:void(0)" class="btn01_blue" (click)="!!cancleOrder()">{{actionButtonLabel}}</a>
+          <a href="javascript:void(0)" class="btn01_white" (click)="!!close()">{{closeButtonLabel}}</a>
+      </span>
+  </div>  
+</div>

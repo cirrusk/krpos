@@ -1,11 +1,14 @@
+import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
+
 import { PromotionOrderComponent } from './../../modals/order/promotion-order/promotion-order.component';
 import { EtcOrderComponent } from './../../modals/order/etc-order/etc-order.component';
 import { SearchAccountComponent } from './../../modals/account/search-account/search-account.component';
 import { PickupOrderComponent } from './../../modals/order/pickup-order/pickup-order.component';
-import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
-import { Modal } from '../../service/pos';
 import { NormalPaymentComponent } from '../../modals/payment/normal-payment/normal-payment.component';
 import { ComplexPaymentComponent } from './../../modals/payment/complex-payment/complex-payment.component';
+import { CancelOrderComponent } from '../../modals/order/cancel-order/cancel-order.component';
+import { Modal } from '../../service/pos';
+
 
 @Component({
   selector: 'pos-order-menu',
@@ -113,6 +116,18 @@ export class OrderMenuComponent implements OnInit {
    */
   cancelOrder(evt: any) {
     this.checkClass(evt);
+    this.modal.openModalByComponent(CancelOrderComponent,
+      {
+        title: '',
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllModals: false,
+        modalId: 'CancelOrderComponent'
+      }
+    );
   }
 
   /**

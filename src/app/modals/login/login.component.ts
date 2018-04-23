@@ -120,6 +120,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     this.tokensubscription = this.authService.accessToken(authcode).subscribe(
       result => {
         this.storage.setEmployeeName(result.employeeName);
+        this.storage.setEmployeeId(result.employeeId);
         this.storage.setTokenInfo(result);
         const accesstoken = this.storage.getTokenInfo();
         this.infoBroker.sendInfo(accesstoken);

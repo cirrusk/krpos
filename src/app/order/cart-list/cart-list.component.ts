@@ -1,19 +1,23 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { SearchAccountComponent } from '../../modals/account/search-account/search-account.component';
 import { NewAccountComponent } from '../../modals/account/new-account/new-account.component';
+import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
 
-import { Modal, StorageService } from '../../service/pos';
+import { Modal, StorageService, Logger } from '../../service/pos';
 import { CartService } from '../../service/order/cart.service';
+import { PagerService } from '../../service/common/pager.service';
 import { AlertService } from '../../core/alert/alert.service';
+import { SpinnerService } from '../../core/spinner/spinner.service';
 import { SearchBroker } from '../../broker/order/search/search.broker';
 import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
+import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
 import { Subscription } from 'rxjs/Subscription';
 import { Accounts, SearchParam, CartInfo, CartEntry, CartModification } from '../../data/model';
-import { PagerService } from '../../service/common/pager.service';
-import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
-import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
+import { AlertType } from '../../core/alert/alert-type.enum';
+import Utils from '../../core/utils';
+
 
 
 @Component({
@@ -25,6 +29,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private accountInfoSubscription: Subscription;
   private updateVolumeAccountSubscription: Subscription;
   private addCartSubscription: Subscription;
+  private updateCartSubscription: Subscription;
   private productSubscription: Subscription;
   private removeEntrySubscription: Subscription;
   private removeCartSubscription: Subscription;
@@ -32,15 +37,17 @@ export class CartListComponent implements OnInit, OnDestroy {
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
   private productInfo: CartEntry;                 // 제품 정보
-  private cartModification: CartModification[];   // 장바구니 담기 응답모델
+  private addCartModel: CartModification[];       // 장바구니 담기 응답모델
+  private updateCartModel: CartModification;      // 장바구니 수정 응답모델
   private currentPage: number;                    // 현재 페이지 번호
   private pager: any = {};                        // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
+  private modifyFlag: boolean;
 
   accountInfo: Accounts;                          // 사용자 정보
   searchMode: string;                             // 조회 모드
   cartList: Array<CartEntry>;                     // 장바구니 리스트
-  currentCartList: CartEntry[];                   // 출력 장바구니 리스트
+  currentCartList: Array<CartEntry>;              // 출력 장바구니 리스트
   totalItem: number;                              // 총 수량
   totalPrice: number;                             // 총 금액
 
@@ -49,14 +56,13 @@ export class CartListComponent implements OnInit, OnDestroy {
               private storage: StorageService,
               private alert: AlertService,
               private pagerService: PagerService,
+              private spinner: SpinnerService,
               private searchBroker: SearchBroker,
               private addCartBroker: AddCartBroker,
-              private searchAccountBroker: SearchAccountBroker) {
-    this.cartList = new Array<CartEntry>();
-    this.searchMode = 'A';
-    this.totalItem = 0;
-    this.totalPrice = 0;
-    this.searchParams = new SearchParam();
+              private searchAccountBroker: SearchAccountBroker,
+              private logger: Logger,
+              private renderer: Renderer2) {
+    this.init();
 
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
@@ -97,6 +103,29 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.removeCartSubscription) {
       this.removeCartSubscription.unsubscribe();
     }
+
+    if (this.updateCartSubscription) {
+      this.updateCartSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * 변수 초기화
+   */
+  private init() {
+    this.cartList = new Array<CartEntry>();
+    this.cartInfo = new CartInfo();
+    this.accountInfo = null;
+    this.searchParams = new SearchParam();
+    this.productInfo = new CartEntry();
+    this.currentCartList = new Array<CartEntry>();
+    this.searchMode = 'A';
+    this.currentPage = 0;
+    this.totalItem = 0;
+    this.totalPrice = 0;
+    this.selectedCartNum = 0;
+    this.modifyFlag =  false;
+    this.pager = {};
   }
 
   /**
@@ -109,22 +138,6 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   private activeRowCart(index: number): void {
     this.selectedCartNum = index;
-  }
-
-  /**
-   * Update VolumeAccount
-   * @param cartInfo
-   */
-  updateVolumeAccount(cartInfo: CartInfo): void {
-    this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
-                                                                                this.cartInfo.code,
-                                                                                this.accountInfo.uid).subscribe(
-      res => {
-        console.log('update volume account' + res.status);
-      },
-      error => {
-        console.error('update volume account error' + error);
-      });
   }
 
   /**
@@ -168,22 +181,20 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 제품 검색
    */
   callSearchProduct(): void {
-    this.addCartEntries(this.searchParams.searchText);
-
     // 추후 지정
-    // this.modal.openModalByComponent(SearchProductComponent,
-    //   {
-    //     title: '',
-    //     message: '',
-    //     actionButtonLabel: '선택',
-    //     closeButtonLabel: '취소',
-    //     closeByEnter: false,
-    //     closeByEscape: true,
-    //     closeByClickOutside: true,
-    //     closeAllModals: false,
-    //     modalId: 'SearchProductComponent'
-    //   }
-    // );
+    this.modal.openModalByComponent(SearchProductComponent,
+      {
+        title: '',
+        message: '',
+        actionButtonLabel: '선택',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllModals: false,
+        modalId: 'SearchProductComponent'
+      }
+    );
   }
 
   /**
@@ -211,6 +222,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   createCartInfo(): void {
     const terminalInfo = this.storage.getTerminalInfo();
+    this.spinner.show();
     this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
                                                                 this.accountInfo.uid,
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
@@ -218,9 +230,39 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.cartInfo = cartResult;
         this.updateVolumeAccount(this.cartInfo);
       },
-      err => {
-        console.error(err);
-      }
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Create cart info error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Create cart info error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
+   * Update VolumeAccount
+   * @param cartInfo
+   */
+  updateVolumeAccount(cartInfo: CartInfo): void {
+    this.spinner.show();
+    this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
+                                                                                this.cartInfo.code,
+                                                                                this.accountInfo.uid).subscribe(
+      res => {
+        this.logger.set({n: 'cartList.component', m: `update Volume Account status : ${res.status}`}).debug();
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Update Volume Account error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Update Volume Account error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
     );
   }
 
@@ -229,29 +271,43 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param code
    */
   addCartEntries(code: string): void {
+    this.spinner.show();
     this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code).subscribe(
-      result => {// 임시 로직
-                 this.cartModification = result;
-                 this.productInfo = new CartEntry(this.cartModification[0].entry.entryNumber,
-                                                  this.cartModification[0].entry.product.code,
-                                                  this.cartModification[0].entry.product.name,
-                                                  this.cartModification[0].entry.quantity,
-                                                  this.cartModification[0].entry.product.price.value,
-                                                  this.cartModification[0].entry.product.description);
-                 this.addCartEntry(this.productInfo);
+      result => {
+        this.addCartModel = result;
+        if (this.addCartModel[0].statusCode === 'success') {
+        this.addCartModel.forEach(addModel => {
+          this.productInfo.entryNumber = addModel.entry.entryNumber;
+          this.productInfo.code = addModel.entry.product.code;
+          this.productInfo.name = addModel.entry.product.name;
+          this.productInfo.qty = addModel.entry.quantity;
+          this.productInfo.price = addModel.entry.product.price.value;
+          this.productInfo.desc = addModel.entry.product.description;
+
+          this.addCartEntry(this.productInfo);
+          });
+        } else {
+        this.modal.openMessage({
+          title: '확인',
+          message: this.addCartModel[0].statusMessage,
+          closeButtonLabel: '닫기',
+          closeByEnter: false,
+          closeByEscape: true,
+          closeByClickOutside: true,
+          closeAllModals: true,
+          modalId: 'ADD_CAR_ERROR'
+        });
+        }
       },
-      err => { this.modal.openMessage({
-                                        title: '확인',
-                                        message: err.error.errors[0].message ? err.error.errors[0].message : err.error.errors[0].type,
-                                        closeButtonLabel: '닫기',
-                                        closeByEnter: false,
-                                        closeByEscape: true,
-                                        closeByClickOutside: true,
-                                        closeAllModals: true,
-                                        modalId: 'ADD_CAR_ERROR'
-                                      }
-                                    );
-      }
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Add cart error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Add cart error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
     );
   }
 
@@ -272,12 +328,12 @@ export class CartListComponent implements OnInit, OnDestroy {
           {entryNumber: cartEntry.entryNumber,
            code: cartEntry.code,
            name: cartEntry.name,
-           qty: 1,
+           qty: cartEntry.qty,
            price: cartEntry.price,
            desc: cartEntry.desc}
       );
     } else {
-        this.cartList[existedIdx].qty++;
+        this.cartList[existedIdx].qty = cartEntry.qty;
     }
 
     // 장바구니에 추가한 페이지로 이동
@@ -285,64 +341,131 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 수량 업데이트
+   * @param code
+   * @param qty
+   */
+  updateItemQtyCart(code: string, qty: number): void {
+    const index = this.cartList.findIndex(function (obj) {
+      return obj.code === code;
+    });
+
+    this.spinner.show();
+    this.updateCartSubscription = this.cartService.updateItemQuantityCart(this.cartInfo.user.uid,
+                                                                      this.cartInfo.code,
+                                                                      this.cartList[index].entryNumber,
+                                                                      code,
+                                                                      qty).subscribe(
+      result => {
+        this.updateCartModel = result;
+        this.productInfo.entryNumber = this.updateCartModel.entry.entryNumber;
+        this.productInfo.code = this.updateCartModel.entry.product.code;
+        this.productInfo.name = this.updateCartModel.entry.product.name;
+        this.productInfo.qty = this.updateCartModel.entry.quantity;
+        this.productInfo.price = this.updateCartModel.entry.product.price.value;
+        this.productInfo.desc = this.updateCartModel.entry.product.description;
+
+        this.addCartEntry(this.productInfo);
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Update item quantity error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Update item quantity error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
    * 장바구니 개별 삭제
    * @param code
    */
-  removeItemCart(code: string, event: Event): void {
-    console.log({}, event);
-    // let index = this.cartList.findIndex(function (obj) {
-    //   return obj.code === code;
-    // });
+  removeItemCart(code: string): void {
+    let index = this.cartList.findIndex(function (obj) {
+      return obj.code === code;
+    });
 
-    // this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
-    //                                                                   this.cartInfo.code,
-    //                                                                   this.cartList[index].entryNumber).subscribe(
-    //   result => {// 임시 로직
-    //              console.log('삭제 성공');
-    //              this.cartList.splice(index, 1);
+    this.spinner.show();
+    this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
+                                                                      this.cartInfo.code,
+                                                                      this.cartList[index].entryNumber).subscribe(
+      result => {
+        this.cartList.splice(index, 1);
 
-    //              index = index <= this.cartList.length ? index + 1 : index - 1;
-    //              this.setPage(Math.ceil(index / 10));
-    //   },
-    //   err => { this.modal.openMessage({
-    //                                     title: '확인',
-    //                                     message: err.error.errors[0].message ? err.error.errors[0].message : err.error.errors[0].type,
-    //                                     closeButtonLabel: '닫기',
-    //                                     closeByEnter: false,
-    //                                     closeByEscape: true,
-    //                                     closeByClickOutside: true,
-    //                                     closeAllModals: true,
-    //                                     modalId: 'REMOVE_CAR_ERROR'
-    //                                   }
-    //                                 );
-    //   }
-    // );
+        index = index <= this.cartList.length ? index + 1 : index - 1;
+        this.setPage(Math.ceil(index / 10));
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Remove item cart error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Remove item cart error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
   }
 
   /**
    * 장바구니 삭제
    */
   removeCart(): void {
+    this.spinner.show();
     this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
-      result => {// 임시 로직
-                 console.log('삭제 성공');
-                 this.cartList.length = 0;
-                 this.currentCartList.length = 0;
-                 this.totalPriceInfo();
+      result => {
+        this.cartList.length = 0;
+        this.currentCartList.length = 0;
+        this.totalPriceInfo();
       },
-      err => { this.modal.openMessage({
-                                        title: '확인',
-                                        message: err.error.errors[0].message ? err.error.errors[0].message : err.error.errors[0].type,
-                                        closeButtonLabel: '닫기',
-                                        closeByEnter: false,
-                                        closeByEscape: true,
-                                        closeByClickOutside: true,
-                                        closeAllModals: true,
-                                        modalId: 'REMOVE_CAR_ERROR'
-                                      }
-                                    );
-      }
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Remove cart error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Remove cart error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
     );
+  }
+
+  /**
+   * 보류된 장바구니 리스트 가져오기
+   */
+  getCarts() {
+    this.cartService.getCarts().subscribe();
+  }
+
+  /**
+   * 장바구니 저장(보류)
+   */
+  saveCart() {
+    this.spinner.show();
+    this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
+      result => {
+        this.init();
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set({n: 'cartList.component', m: `Save cart error type : ${errdata.type}`}).error();
+          this.logger.set({n: 'cartList.component', m: `Save cart error message : ${errdata.message}`}).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
+   * 보류된 장바구니 복원
+   */
+  restoreSavedCart() {
+    this.cartService.restoreSavedCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe();
   }
 
   /**
@@ -375,12 +498,24 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPrice = sumPrice;
   }
 
-  // @HostListener('document: keydown.delete', ['$event', '$event.target'])
-  // keyboardInput(event: any, targetElm: HTMLElement) {
-  //   event.stopPropagation();   // event.preventDefault();
+  @HostListener('document: keydown', ['$event', '$event.target'])
+  keyboardInput(event: any, targetElm: HTMLElement) {
+    event.stopPropagation();   // event.preventDefault();
 
-  //   console.log({}, event);
-  //   console.log({}, targetElm);
-  // }
+    if (this.selectedCartNum !== null && this.selectedCartNum < 10) {
+      // 수정 이벤트
+      if (event.keyCode === 45) {
+        this.modifyFlag = !this.modifyFlag;
+        this.updateItemQtyCart(this.currentCartList[this.selectedCartNum].code, event.keyCode);
+      // 개별 삭제 이벤트
+      } else if (event.keyCode === 46) {
+        this.removeItemCart(this.currentCartList[this.selectedCartNum].code);
+      }
+    }
 
+    // 보류
+    if (event.keyCode === 38) {
+      this.saveCart();
+    }
+  }
 }

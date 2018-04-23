@@ -19,11 +19,11 @@ export class SearchService {
 
     // 회원 타입별로 URL 셋팅
     if (MemberType.ABO === searchMemberType) {
-      apiURL += `amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
+      apiURL += `/amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
     } else if (MemberType.MEMBER === searchMemberType) {
-      apiURL += `amwaykorea/accounts/Uid/${searchText}`;
+      apiURL += `/amwaykorea/accounts/Uid/${searchText}`;
     } else {
-      apiURL += `amwaykorea/accounts/Uid/${searchText}`;
+      apiURL += `/amwaykorea/accounts/Uid/${searchText}`;
     }
 
     return this.httpClient.get<AccountList>(apiURL)

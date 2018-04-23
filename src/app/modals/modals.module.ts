@@ -28,6 +28,7 @@ import { ReCashComponent } from './payment/ways/re-cash/re-cash.component';
 import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
+import { CancelOrderComponent } from './order/cancel-order/cancel-order.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { CouponComponent } from './payment/ways/coupon/coupon.component';
     ReCashComponent,
     ChecksComponent,
     PointComponent,
-    CouponComponent
+    CouponComponent,
+    CancelOrderComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +86,8 @@ import { CouponComponent } from './payment/ways/coupon/coupon.component';
     ReCashComponent,
     ChecksComponent,
     PointComponent,
-    CouponComponent
+    CouponComponent,
+    CancelOrderComponent
   ]
 })
 export class ModalsModule {
