@@ -46,10 +46,18 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       this.storage.logout();
       this.storage.removeEmployeeName(); // client 담당자 삭제
     } else { // Start Shift를 했을 경우
+      // 종료시 주문 건수가 1건 이상 있으면 해당 메시지로 변경해야함.
+      const orderCount = 1;
+      let posmsg = '';
+      if (orderCount > 0) {
+        posmsg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
+      } else {
+        posmsg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
+      }
       this.modal.openConfirm(
         {
           title: 'POS 종료',
-          message: `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`,
+          message: posmsg,
           actionButtonLabel: '계속',
           closeButtonLabel: '취소',
           closeByEnter: false,

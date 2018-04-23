@@ -16,8 +16,8 @@ import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 import { LoginComponent } from '../../modals/login/login.component';
 import { LogoutComponent } from '../../modals/logout/logout.component';
-import Utils from '../../core/utils';
 import { AlertType } from '../../core/alert/alert-type.enum';
+import Utils from '../../core/utils';
 
 export enum LockType {
   INIT = -1,

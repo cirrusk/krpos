@@ -249,6 +249,7 @@ export class StorageService implements OnDestroy {
    * 로그아웃 처리
    */
   public logout(): void {
+    this.removeScreenLock();
     this.removeTokenInfo();
     this.removeBatchInfo();
     if (this.getBatchInfo() != null) {
