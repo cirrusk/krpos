@@ -48,16 +48,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
           }
         }
-
-      //   if (result === null) {
-      //     this.batchNo = null;
-      //   } else if (result && Utils.isNotEmpty(result.batchNo)) {
-      //     this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
-      //     this.batchNo = result.batchNo;
-      //   } else if (result && !Utils.isUndefined(result.lockType)) {
-      //     this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
-      //     this.screenLockType = result.lockType;
-      //   }
       }
     );
   }

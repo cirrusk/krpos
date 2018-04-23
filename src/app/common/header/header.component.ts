@@ -90,16 +90,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
           }
         }
-
-        // if (result === null) {
-        //   this.isLogin = false;
-        // } else if (result && Utils.isNotEmpty(result.access_token)) {
-        //   this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
-        //   this.isLogin = this.storage.isLogin();
-        // } else if (result && !Utils.isUndefined(result.lockType)) {
-        //   this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
-        //   this.screenLockType = result.lockType === undefined ? 0 : result.lockType;
-        // }
       }
     );
     this.storagesubscription = this.storage.storageChanges.subscribe(data => {
