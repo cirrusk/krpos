@@ -24,7 +24,7 @@ export const environment = {
       deleteCart: '/{baseSiteId}/users/{userId}/carts/{cartId}',
       productSearch: '/{baseSiteId}/products/search'
   },
-  logLevel: 'debug',
+  logLevel: 'error',
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
