@@ -5,6 +5,8 @@ import { ModalComponent } from '../../core/modal/modal.component';
 import { ModalService, Logger, StorageService } from '../../service/pos';
 import { BatchService } from '../../service/batch.service';
 import { InfoBroker } from '../../broker/info.broker';
+import { SpinnerService } from '../../core/spinner/spinner.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pos-logout',
@@ -15,9 +17,12 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
   batchsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private modal: Modal,
+    private router: Router,
     private storage: StorageService,
+    private spinner: SpinnerService,
     private batch: BatchService,
-    private infobroker: InfoBroker) {
+    private infobroker: InfoBroker,
+    private logger: Logger) {
     super(modalService);
   }
 
@@ -35,36 +40,55 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
    */
   logout() {
     this.modal.clearAllModals(this.modal.getModalArray()[0]);
-    this.modal.openConfirm(
-      {
-        title: 'POS 종료',
-        message: `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`,
-        actionButtonLabel: '계속',
-        closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
-        modalId: 'LOGOUT'
-      }
-    ).subscribe(
-      result => {
-        if (result) {
-          console.log('stop batch................');
-          this.batchsubscription = this.batch.endBatch().subscribe(data => {
-            this.storage.removeTokenInfo(); // remove access token info
-            this.infobroker.sendInfo(null); // info broker에 null access token을 전송해서 초기 상태로 변경.
-          },
-          (error) => {});
+    if (this.storage.getBatchInfo() == null) { // Start Shift를 하지 않았으면
+      this.logger.set({n: 'logout.component', m: 'not stat shift, only logout...'}).debug();
+      this.storage.logout();
+      this.storage.removeEmployeeName(); // client 담당자 삭제
+    } else { // Start Shift를 했을 경우
+      this.modal.openConfirm(
+        {
+          title: 'POS 종료',
+          message: `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`,
+          actionButtonLabel: '계속',
+          closeButtonLabel: '취소',
+          closeByEnter: false,
+          closeByEscape: true,
+          closeByClickOutside: true,
+          closeAllModals: false,
+          modalId: 'LOGOUT'
         }
-      }
-    );
-
-
-
-    // this.storage.removeTokenInfo();
-    // this.infobroker.sendInfo(null);
-    // this.close();
+      ).subscribe(
+        result => {
+          if (result) {
+            this.spinner.show();
+            this.logger.set({n: 'logout.component', m: 'started batch already, stop batch...'}).debug();
+            this.batchsubscription = this.batch.endBatch().subscribe(data => {
+              this.storage.logout();
+              this.storage.removeEmployeeName(); // client 담당자 삭제
+              this.modal.openConfirm({
+                title: 'POS 종료',
+                message: `배치 정보 저장이 완료되었습니다.`,
+                actionButtonLabel: '확인',
+                closeButtonLabel: '취소',
+                closeByEnter: false,
+                closeByEscape: true,
+                closeByClickOutside: false,
+                closeAllModals: false,
+                modalId: 'LOGOUT_LAST'
+              }).subscribe((res) => {
+                if (res) {
+                  this.router.navigate(['/dashboard']);
+                } else {
+                  this.router.navigate(['/dashboard']);
+                }
+              });
+            },
+            (error) => {},
+            () => { this.spinner.hide(); });
+          }
+        }
+      );
+    }
   }
 
   close() {

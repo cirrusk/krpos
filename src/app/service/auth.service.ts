@@ -40,9 +40,6 @@ export class AuthService {
       return Observable.throw(error);
     }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-    console.log({}, clientid);
-    console.log({}, this.terminalInfo);
-    console.log({}, this.terminalInfo.id);
     const httpParams = new HttpParams()
     .set('clientId', clientid)
     .set('userId', userid)

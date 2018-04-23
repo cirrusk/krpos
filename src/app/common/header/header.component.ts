@@ -82,9 +82,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         } else if (result && Utils.isNotEmpty(result.access_token)) {
           this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
           this.isLogin = this.storage.isLogin();
-        } else if (result && Utils.isNotEmpty(result.lockType + '')) {
+        } else if (result && !Utils.isUndefined(result.lockType)) {
           this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
-          this.screenLockType = result.lockType;
+          this.screenLockType = result.lockType === undefined ? 0 : result.lockType;
         }
       }
     );
@@ -238,7 +238,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * 근무 종료
    * 터미널 인증은 완료되었고 로그인된 상태
-   * 1. POS 종료 확인 팝업
+   * 1. 근무종료 팝업
    * 2. 배치 정보 저장 팝업
    * 3. 대시보드 메인으로 이동
    */
@@ -252,14 +252,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeByEscape: true,
         closeByClickOutside: true,
         closeAllModals: false,
-        modalId: 'LogoutComponent',
-        beforeActionCallback: function(value) {
-          console.log('before action callback ' + value);
-          this.modal.result = true;
-        },
+        modalId: 'LogoutComponent'
       }
     );
-    this.storage.removeEmployeeName(); // client 담당자 삭제
+
   }
 
   /**

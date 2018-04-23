@@ -20,7 +20,8 @@ import Utils from '../core/utils';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   tokeninfo: AccessToken;
-  batchinfo: BatchInfo;
+  // batchinfo: BatchInfo;
+  batchNo: string;
   tokensubscription: Subscription;
   batchsubscription: Subscription;
   alertsubscription: Subscription;
@@ -35,10 +36,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       (result) => {
-       if (result && Utils.isNotEmpty(result.batchNo)) {
+        if (result === null) {
+          this.batchNo = null;
+        } else if (result && Utils.isNotEmpty(result.batchNo)) {
           this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
-          this.batchinfo = result;
-        } else if (result && Utils.isNotEmpty(result.lockType + '')) {
+          this.batchNo = result.batchNo;
+        } else if (result && !Utils.isUndefined(result.lockType)) {
           this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
           this.screenLockType = result.lockType;
         }
@@ -48,7 +51,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tokeninfo = this.storage.getTokenInfo();
-    this.batchinfo = this.storage.getBatchInfo();
+    this.batchNo = (this.storage.getBatchInfo()) ? this.storage.getBatchInfo().batchNo : null;
     this.screenLockType = this.storage.getScreenLockType();
   }
 
@@ -71,13 +74,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         (data) => {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.storage.setBatchInfo(data);
-
+            this.infoBroker.sendInfo(data);
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
-
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
                 if (!state.show) { // 닫히면...
-                  console.log('------------------- 닫힌다.');
                   this.router.navigate(['/order']);
                 }
               }

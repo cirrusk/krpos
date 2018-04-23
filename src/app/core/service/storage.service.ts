@@ -205,8 +205,20 @@ export class StorageService implements OnDestroy {
     return batchinfo;
   }
 
+  /**
+   * 배치 정보 저장
+   *
+   * @param data
+   */
   public setBatchInfo(data: any): void {
     this.setSessionItem('batchInfo', data);
+  }
+
+  /**
+   * 배치 정보 삭제
+   */
+  public removeBatchInfo(): void {
+    this.removeSessionItem('batchInfo');
   }
 
   public getClientId(): string {
@@ -231,6 +243,18 @@ export class StorageService implements OnDestroy {
       return true;
     }
     return false;
+  }
+
+  /**
+   * 로그아웃 처리
+   */
+  public logout(): void {
+    this.removeTokenInfo();
+    this.removeBatchInfo();
+    if (this.getBatchInfo() != null) {
+      this.infobroker.sendInfo({ batchNo: null });
+    }
+    this.infobroker.sendInfo(null);
   }
 
   /**

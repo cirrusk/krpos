@@ -15,6 +15,7 @@ export class OrderGuard implements CanActivate, CanActivateChild {
     let redictCheck = false;
     const lockType = this.storage.getScreenLockType();
     const batchinfo = this.storage.getBatchInfo();
+    const islogin = this.storage.isLogin();
     if (lockType === LockType.LOCK) {
       this.logger.set({n: 'order.guard', m: 'pos is locked!!!'}).debug();
       redictCheck = true;
@@ -23,18 +24,14 @@ export class OrderGuard implements CanActivate, CanActivateChild {
       this.logger.set({n: 'order.guard', m: 'pos is not start shift!!!'}).debug();
       redictCheck = true;
     }
-    if (this.storage.isLogin() && redictCheck !== false) {
+    if (islogin && redictCheck === false) {
       return true;
-    }
-    const url = state.url;
-    if (url.indexOf('/order') !== -1) {
-      this.logger.set({n: 'order.guard', m: 'you are not login pos system, redirect to dashboard!'}).debug();
-      redictCheck = true;
     }
     if (redictCheck) {
       this.router.navigate(['/dashboard']);
+      return false;
     }
-    return false;
+    return true;
   }
 
   canActivateChild(
