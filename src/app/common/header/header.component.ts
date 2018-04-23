@@ -293,7 +293,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeByEnter: false,
         closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: true,
+        closeAllModals: false,
         modalId: 'PasswordComponent'
       }
     ).subscribe((result) => {
