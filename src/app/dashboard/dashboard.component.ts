@@ -121,20 +121,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     if (this.screenLockType === LockType.LOCK) { return; }
     let msg: string;
-    let btn: string;
     const islogin: boolean = this.storage.isLogin();
     if (islogin) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
-      btn = '계속';
     } else {
       msg = `POS를 종료하시겠습니까?<br>화면 종료가 진행됩니다.`;
-      btn = '확인';
     }
     this.modal.openConfirm(
       {
         title: 'POS 종료',
         message: msg,
-        actionButtonLabel: btn,
+        actionButtonLabel: '계속',
         closeButtonLabel: '취소',
         closeByEscape: true,
         closeByClickOutside: false,
@@ -151,7 +148,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             // this.batchService.endBatch(); // 나중에는 subsrcibe 해야됨.
             console.log('batch 저장');
           } else {
-            console.log('login 전 pos 종료[batch 저장하지 않음]');
             Utils.kioskModeEnd();
           }
         }
