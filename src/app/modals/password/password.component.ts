@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent } from '../../core/modal/modal.component';
@@ -6,6 +6,7 @@ import { ModalService, Logger, StorageService } from '../../service/pos';
 import { AuthService } from '../../service/auth.service';
 import { AlertService } from '../../core/alert/alert.service';
 import { AlertType } from '../../core/alert/alert-type.enum';
+import { SpinnerService } from '../../core/spinner/spinner.service';
 import Utils from '../../core/utils';
 
 @Component({
@@ -14,17 +15,20 @@ import Utils from '../../core/utils';
 })
 export class PasswordComponent extends ModalComponent implements OnInit, OnDestroy {
 
+  @ViewChild('loginPasswordTxt') loginPwdInput: ElementRef;
   @Input() loginPassword: string;
   authsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private authService: AuthService,
     private storage: StorageService,
     private alert: AlertService,
+    private spinner: SpinnerService,
     private logger: Logger) {
     super(modalService);
   }
 
   ngOnInit() {
+    setTimeout(() => this.loginPwdInput.nativeElement.focus(), 50);
   }
 
   ngOnDestroy() {
@@ -45,7 +49,7 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
       });
       return;
     }
-
+    this.spinner.show();
     this.authsubscription = this.authService.authentication(lognId, loginPwd).subscribe(
     data => {
       this.result = true;
@@ -54,11 +58,10 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     error => {
       const errdata = Utils.getError(error);
       if (errdata) {
-        this.logger.set({n: 'login.component', m: `authentication error type : ${errdata.type}`}).error();
         this.logger.set({n: 'login.component', m: `authentication error message : ${errdata.message}`}).error();
       }
-    });
-
+    },
+    () => { this.spinner.hide(); });
   }
 
   authUserCheck() {
