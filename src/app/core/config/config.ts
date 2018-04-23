@@ -20,9 +20,6 @@ export class Config {
     const baseSiteId = environment.baseSiteId; //  this.config['baseSiteId'];
     const cnf = environment.apiUrl; //  this.config['apiUrl'];
     let apiUrl = String(cnf[key]);
-    console.log(apiUrl);
-    console.log(apiRootUrl);
-    console.log(apiUrl.indexOf(apiRootUrl));
     if (!apiUrl.startsWith('http') && apiUrl.indexOf(apiRootUrl) === -1) { apiUrl = apiRootUrl + apiUrl; }
     if (params) {
       const jsondata = Utils.toJson(params);
