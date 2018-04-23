@@ -10,12 +10,14 @@ import { NetworkService, Logger, Modal, QzHealthChecker, StorageService, Config 
 import { InfoBroker } from '../../broker/info.broker';
 
 import { TerminalService } from '../../service/terminal.service';
+import { AlertService } from '../../core/alert/alert.service';
 import { HoldOrderComponent } from '../../modals/order/hold-order/hold-order.component';
 import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 import { LoginComponent } from '../../modals/login/login.component';
 import { LogoutComponent } from '../../modals/logout/logout.component';
 import Utils from '../../core/utils';
+import { AlertType } from '../../core/alert/alert-type.enum';
 
 export enum LockType {
   INIT = -1,
@@ -39,7 +41,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   isClientScreen: boolean;
   posName: string;
   posTimer: string;
-  tokeninfo: AccessToken;
   private subscription: Subscription;
   private timersubscription: Subscription;
   private tokensubscription: Subscription;
@@ -48,6 +49,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private ordersubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
+  isLogin: boolean;
+  hasTerminal: boolean;
   employeeName: string;
   screenLockType = LockType.INIT;
   @Input() isClient: boolean;
@@ -57,13 +60,14 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private storage: StorageService,
     private router: Router,
     private modal: Modal,
+    private alert: AlertService,
     private infoBroker: InfoBroker,
     private datePipe: DatePipe,
     private qzchecker: QzHealthChecker,
     private logger: Logger,
     private config: Config) {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
-    this.tokeninfo = this.storage.getTokenInfo();
+    this.isLogin = this.storage.isLogin();
     this.employeeName = this.storage.getEmloyeeName();
     this.qzCheck = this.config.getConfig('qzCheck');
     this.screenLockType = this.storage.getScreenLockType();
@@ -74,10 +78,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
         if (result === null) {
-          this.tokeninfo = null;
+          this.isLogin = false;
         } else if (result && Utils.isNotEmpty(result.access_token)) {
           this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
-          this.tokeninfo = result;
+          this.isLogin = this.storage.isLogin();
         } else if (result && Utils.isNotEmpty(result.lockType + '')) {
           this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
           this.screenLockType = result.lockType;
@@ -85,15 +89,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
     this.storagesubscription = this.storage.storageChanges.subscribe(data => {
-      if (data.key === 'employeeName') {
-        this.employeeName = data.value;
-      }
+      if (data.key === 'employeeName') { this.employeeName = data.value; }
     });
     const timer = TimerObservable.create(2000, 1000);
     this.timersubscription = timer.subscribe(
-      t => {
-        this.posTimer = this.getPosTimer();
-      }
+      t => { this.posTimer = this.getPosTimer(); }
     );
 
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
@@ -177,10 +177,18 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.posName = result.pointOfService.displayName;
             this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
             this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
+            this.hasTerminal = true;
           },
           error => {
+            // setTimeout(() => this.alert.show(
+            //   {
+            //     alertType: AlertType.error,
+            //     title: '확인',
+            //     message: `터미널 정보가 올바르게 설정되지 않았습니다.<br>관리자에게 문의하시기 바랍니다.`,
+            //   }), 50);
             this.posName = '-';
             this.logger.set({n: 'header.component', m: `Terminal info get fail : ${error.name} - ${error.message}`}).error();
+            this.hasTerminal = false;
           }
         );
       }
@@ -209,11 +217,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 헤더 영역 근무 시작
+   * 터미널 인증은 완료되었고 로그인되지 않은 상태
    * 아이콘을 터치하면 로그인 팝업
    */
   startWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
-    if (!this.storage.isLogin()) {
+    if (this.storage.hasTerminalAuth() && !this.storage.isLogin()) {
       this.modal.openModalByComponent(LoginComponent,
         {
           actionButtonLabel: '확인',
@@ -230,13 +239,14 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 근무 종료
+   * 터미널 인증은 완료되었고 로그인된 상태
    * 1. POS 종료 확인 팝업
    * 2. 배치 정보 저장 팝업
    * 3. 대시보드 메인으로 이동
    */
   endWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
-    if (this.storage.isLogin()) {
+    if (this.storage.hasTerminalAuth() && this.storage.isLogin()) {
       this.modal.openModalByComponent(LogoutComponent,
         {
           actionButtonLabel: '확인',
@@ -263,7 +273,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
    */
   screenLock() {
-    if (this.storage.isLogin()) {
+    if (this.storage.hasTerminalAuth() && this.storage.isLogin()) {
       this.storage.setScreenLockType(LockType.LOCK);
       this.screenLockType = LockType.LOCK;
       this.router.navigate(['/dashboard']);
@@ -281,7 +291,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 비밀번호로 잠금을 해제하면 카트로 이동함.
    */
   screenRelease() {
-    if (this.storage.isLogin()) {
+    if (this.storage.hasTerminalAuth() && this.storage.isLogin()) {
       this.modal.openModalByComponent(PasswordComponent,
         {
           title: '화면풀림',
