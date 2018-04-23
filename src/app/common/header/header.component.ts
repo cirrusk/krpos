@@ -151,13 +151,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
-  goDashboard() {
-    if (this.screenLockType === LockType.LOCK) { return; }
-    this.screenLockType = LockType.INIT;
-    this.storage.setScreenLockType(LockType.INIT);
-    this.router.navigate(['/dashboard']);
-  }
-
   /**
    * Terminal 정보 가져오기
    *
