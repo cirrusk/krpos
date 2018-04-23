@@ -74,7 +74,7 @@ export class StorageService implements OnDestroy {
   public setScreenLockType(data: number): void {
     this.removeSessionItem('screenLockType');
     this.setSessionItem('screenLockType', { lockType: data });
-    this.infobroker.sendInfo({ lockType: data });
+    this.infobroker.sendInfo('lck', { lockType: data });
   }
 
   /**
@@ -90,7 +90,7 @@ export class StorageService implements OnDestroy {
    */
   public removeScreenLock(): void {
     this.removeSessionItem('screenLockType');
-    this.infobroker.sendInfo({ lockType: -1 });
+    this.infobroker.sendInfo('lck', { lockType: -1 });
   }
 
   /**
@@ -253,9 +253,9 @@ export class StorageService implements OnDestroy {
     this.removeTokenInfo();
     this.removeBatchInfo();
     if (this.getBatchInfo() != null) {
-      this.infobroker.sendInfo({ batchNo: null });
+      this.infobroker.sendInfo('bat', { batchNo: null });
     }
-    this.infobroker.sendInfo(null);
+    this.infobroker.sendInfo('tkn', null);
   }
 
   /**

@@ -8,8 +8,9 @@ export class InfoBroker {
 
   private subject = new Subject<any>();
   constructor() { }
-  sendInfo(message: any) {
-    this.subject.next(message);
+  sendInfo(type: string, message: any) {
+    const data = {type: type, data: message };
+    this.subject.next(data);
   }
 
   clear() {

@@ -35,15 +35,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       (result) => {
+        const type = result && result.type;
+        const data: any = result && result.data || {};
         if (result === null) {
           this.batchNo = null;
-        } else if (result && Utils.isNotEmpty(result.batchNo)) {
-          this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
-          this.batchNo = result.batchNo;
-        } else if (result && !Utils.isUndefined(result.lockType)) {
-          this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
-          this.screenLockType = result.lockType;
+        } else {
+          if (type === 'bat') {
+            this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
+            this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
+          } else if (type === 'lck') {
+            this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
+            this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
+          }
         }
+
+      //   if (result === null) {
+      //     this.batchNo = null;
+      //   } else if (result && Utils.isNotEmpty(result.batchNo)) {
+      //     this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
+      //     this.batchNo = result.batchNo;
+      //   } else if (result && !Utils.isUndefined(result.lockType)) {
+      //     this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
+      //     this.screenLockType = result.lockType;
+      //   }
       }
     );
   }
@@ -74,7 +88,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.logger.set({n: 'dashboard.component', m: `start batch info : ${Utils.stringify(data)}`}).debug();
             this.storage.setBatchInfo(data);
-            this.infoBroker.sendInfo(data);
+            this.infoBroker.sendInfo('bat', data);
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
