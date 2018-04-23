@@ -96,7 +96,7 @@ export class PosReceiptPrintComponent implements OnInit {
   public click() {
 
   }
-  
+
   public clickHtml() {
     // HTML 방식
     // 출력 품질이 좋지 못함

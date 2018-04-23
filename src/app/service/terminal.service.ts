@@ -30,10 +30,10 @@ export class TerminalService {
    * @param macaddress
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
-    const terminalApiUrl = this.config.getConfig('terminalApiUrl');
+    const apiUrl = this.config.getApiUrl('terminal');
     const httpParams = new HttpParams().set('macAddress', macaddress);
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    return this.http.post(terminalApiUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
+    return this.http.post(apiUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
     .timeout(1000 * 15)
     .map(Utils.extractData)
     .catch(Utils.handleError)

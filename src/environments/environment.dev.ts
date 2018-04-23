@@ -34,9 +34,6 @@ export const environment = {
       deleteCart: '/{baseSiteId}/users/{userId}/carts/{cartId}',
       productSearch: '/{baseSiteId}/products/search'
   },
-  terminalApiUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/amwaykorea/auth/terminal',
-  authApiUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2/amwaykorea/auth/authorize',
-  tokenApiUrl: 'https://oms-dev.abnkorea.co.kr/authorizationserver/oauth/token',
   logLevel: 'debug',
   qzCheck: false,
   healthCheckUse: false,
