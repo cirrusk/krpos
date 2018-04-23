@@ -34,7 +34,7 @@ export class BatchService {
     const userid = tokeninfo && tokeninfo.employeeId;
     const batchUrl = this.config.getApiUrl('batchStart', { user_id: userid });
     const dataParams = { pickupStore: tnm, terminal: tid, startingBalance: '0' };
-    console.log(Utils.toJson(dataParams));
+    console.log(Utils.toJsonString(dataParams));
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post(batchUrl, dataParams, { headers: httpHeaders, responseType: 'json' })
     .map(Utils.extractData)
@@ -51,8 +51,7 @@ export class BatchService {
     const batchid = batchinfo && batchinfo.batchNo;
     const batchUrl = this.config.getApiUrl('batchStop', { batch_id: batchid });
     console.log(batchUrl);
-    const httpParams = new HttpParams()
-    .set('endingBalance', '200');
+    const httpParams = new HttpParams().set('endingBalance', '0');
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     return this.http.put(batchUrl, httpParams.toString(), { headers: httpHeaders })
     .map(Utils.extractData)

@@ -97,7 +97,7 @@ export default class Utils {
     } else if (error && error.error) {
       errors = new Errors(error.error.error, error.error.error_description);
     } else {
-      errors = new Errors('Unknown Error', `${Utils.toJson(err)}`);
+      errors = new Errors('Unknown Error', `${Utils.toJsonString(err)}`);
     }
     return errors;
   }
@@ -187,7 +187,7 @@ export default class Utils {
    *
    * @param obj
    */
-  public static toJson(obj: Object): string {
+  public static toJsonString(obj: Object): string {
     if (this.isUndefined(obj)) {
       return undefined;
     }
@@ -199,7 +199,7 @@ export default class Utils {
    *
    * @param json
    */
-  public static fromJson(json: string): any {
+  public static parseJson(json: string): any {
     return this.isString(json) ? JSON.parse(json) : json;
   }
 
@@ -236,6 +236,20 @@ export default class Utils {
       return pads + text + pads + remain;
     }
     return text;
+  }
+
+  /**
+   * 문자열 날짜를 Date 형식으로 변환
+   *
+   * @param text 문자열 날짜
+   */
+  public static convertDate(text: string): Date {
+    // "dateOfBatchClosed": "2018-03-11T16:04:35+0000",
+    const df = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+    if (df.test(text)) {
+      return new Date(text);
+    }
+    return null;
   }
 
 }
