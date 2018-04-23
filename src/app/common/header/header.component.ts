@@ -222,19 +222,17 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   startWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
-    if (this.storage.hasTerminalAuth() && !this.storage.isLogin()) {
-      this.modal.openModalByComponent(LoginComponent,
-        {
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllModals: false,
-          modalId: 'LoginComponent'
-        }
-      );
-    }
+    this.modal.openModalByComponent(LoginComponent,
+      {
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllModals: false,
+        modalId: 'LoginComponent'
+      }
+    );
   }
 
   /**
@@ -246,24 +244,22 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   endWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
-    if (this.storage.hasTerminalAuth() && this.storage.isLogin()) {
-      this.modal.openModalByComponent(LogoutComponent,
-        {
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllModals: false,
-          modalId: 'LogoutComponent',
-          beforeActionCallback: function(value) {
-            console.log('before action callback ' + value);
-            this.modal.result = true;
-          },
-        }
-      );
-      this.storage.removeEmployeeName(); // client 담당자 삭제
-    }
+    this.modal.openModalByComponent(LogoutComponent,
+      {
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: true,
+        closeAllModals: false,
+        modalId: 'LogoutComponent',
+        beforeActionCallback: function(value) {
+          console.log('before action callback ' + value);
+          this.modal.result = true;
+        },
+      }
+    );
+    this.storage.removeEmployeeName(); // client 담당자 삭제
   }
 
   /**
@@ -273,11 +269,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
    */
   screenLock() {
-    if (this.storage.hasTerminalAuth() && this.storage.isLogin()) {
-      this.storage.setScreenLockType(LockType.LOCK);
-      this.screenLockType = LockType.LOCK;
-      this.router.navigate(['/dashboard']);
-    }
+    this.storage.setScreenLockType(LockType.LOCK);
+    this.screenLockType = LockType.LOCK;
+    this.router.navigate(['/dashboard']);
   }
 
   /**
@@ -291,28 +285,26 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 비밀번호로 잠금을 해제하면 카트로 이동함.
    */
   screenRelease() {
-    if (this.storage.hasTerminalAuth() && this.storage.isLogin()) {
-      this.modal.openModalByComponent(PasswordComponent,
-        {
-          title: '화면풀림',
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: false,
-          closeAllModals: true,
-          modalId: 'PasswordComponent'
-        }
-      ).subscribe((result) => {
-        if (result) {
-          this.storage.removeScreenLock();
-          this.router.navigate(['/order']);
-        } else {
-          this.screenLockType = LockType.LOCK;
-          this.storage.setScreenLockType(LockType.LOCK);
-        }
-      });
-    }
+    this.modal.openModalByComponent(PasswordComponent,
+      {
+        title: '화면풀림',
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByEnter: false,
+        closeByEscape: true,
+        closeByClickOutside: false,
+        closeAllModals: true,
+        modalId: 'PasswordComponent'
+      }
+    ).subscribe((result) => {
+      if (result) {
+        this.storage.removeScreenLock();
+        this.router.navigate(['/order']);
+      } else {
+        this.screenLockType = LockType.LOCK;
+        this.storage.setScreenLockType(LockType.LOCK);
+      }
+    });
   }
 
 }
