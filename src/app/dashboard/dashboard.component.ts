@@ -35,14 +35,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       (result) => {
+        const type = result && result.type;
+        const data: any = result && result.data || {};
         if (result === null) {
           this.batchNo = null;
-        } else if (result && Utils.isNotEmpty(result.batchNo)) {
-          this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
-          this.batchNo = result.batchNo;
-        } else if (result && !Utils.isUndefined(result.lockType)) {
-          this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
-          this.screenLockType = result.lockType;
+        } else {
+          if (type === 'bat') {
+            this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
+            this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
+          } else if (type === 'lck') {
+            this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
+            this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
+          }
         }
       }
     );
@@ -74,7 +78,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.logger.set({n: 'dashboard.component', m: `start batch info : ${Utils.stringify(data)}`}).debug();
             this.storage.setBatchInfo(data);
-            this.infoBroker.sendInfo(data);
+            this.infoBroker.sendInfo('bat', data);
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
@@ -122,8 +126,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     if (this.screenLockType === LockType.LOCK) { return; }
     let msg: string;
-    const islogin: boolean = this.storage.isLogin();
-    if (islogin) {
+    const isloginBatch: boolean = this.storage.isLogin() && Utils.isNotEmpty(this.batchNo);
+    if (isloginBatch) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
     } else {
       msg = `POS를 종료하시겠습니까?<br>화면 종료가 진행됩니다.`;
@@ -142,12 +146,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).subscribe(
       result => {
         if (result) {
-          if (islogin) {
+          if (isloginBatch) {
             // 1. 확인 팝업
             // 2. 배치 정보 저장 팝업
             // 3. 화면 종료
             // this.batchService.endBatch(); // 나중에는 subsrcibe 해야됨.
-            console.log('batch 저장');
+
           } else {
             Utils.kioskModeEnd();
           }

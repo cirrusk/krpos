@@ -123,7 +123,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         this.storage.setEmployeeId(result.employeeId);
         this.storage.setTokenInfo(result);
         const accesstoken = this.storage.getTokenInfo();
-        this.infoBroker.sendInfo(accesstoken);
+        this.infoBroker.sendInfo('tkn', accesstoken);
         this.close();
       },
       error => {

@@ -16,8 +16,8 @@ import { PasswordComponent } from '../../modals/password/password.component';
 import { AccessToken } from '../../data/model';
 import { LoginComponent } from '../../modals/login/login.component';
 import { LogoutComponent } from '../../modals/logout/logout.component';
-import Utils from '../../core/utils';
 import { AlertType } from '../../core/alert/alert-type.enum';
+import Utils from '../../core/utils';
 
 export enum LockType {
   INIT = -1,
@@ -77,14 +77,18 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getTerminalInfo();
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       result => {
+        const type = result && result.type;
+        const data: any = result && result.data || {};
         if (result === null) {
           this.isLogin = false;
-        } else if (result && Utils.isNotEmpty(result.access_token)) {
-          this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
-          this.isLogin = this.storage.isLogin();
-        } else if (result && !Utils.isUndefined(result.lockType)) {
-          this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
-          this.screenLockType = result.lockType === undefined ? 0 : result.lockType;
+        } else {
+          if (type === 'tkn') {
+            this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
+            this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
+          } else if (type === 'lck') {
+            this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
+            this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
+          }
         }
       }
     );
@@ -151,13 +155,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
-  goDashboard() {
-    if (this.screenLockType === LockType.LOCK) { return; }
-    this.screenLockType = LockType.INIT;
-    this.storage.setScreenLockType(LockType.INIT);
-    this.router.navigate(['/dashboard']);
-  }
-
   /**
    * Terminal 정보 가져오기
    *
@@ -168,7 +165,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
    * 가끔씩 이 부분이 늦게 처리되어 로그인 시 terminal 정보가 없어서 에러가 발생 ---> 확인 필요!!!
    */
-  getTerminalInfo() {
+  private getTerminalInfo() {
     this.networkService.wait().subscribe(
       () => {
         const macAddress = this.networkService.getLocalMacAddress('-');
