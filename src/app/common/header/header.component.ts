@@ -84,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           if (type === 'tkn') {
             this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
-            this.isLogin = (data.access_token === undefined || data.access_token) === null ? false : this.storage.isLogin();
+            this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
           } else if (type === 'lck') {
             this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
             this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
