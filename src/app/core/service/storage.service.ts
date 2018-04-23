@@ -176,6 +176,11 @@ export class StorageService implements OnDestroy {
     this.removeSessionItem('terminalInfo');
   }
 
+  public hasTerminalAuth(): boolean {
+    const terminalinfo: TerminalInfo = this.getTerminalInfo();
+    return (terminalinfo !== null && Utils.isNotEmpty(terminalinfo.id));
+  }
+
   /**
    * Access Token 정보 가져오기
    */
