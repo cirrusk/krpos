@@ -97,7 +97,7 @@ export default class Utils {
     } else if (error && error.error) {
       errors = new Errors(error.error.error, error.error.error_description);
     } else {
-      errors = new Errors('Unknown Error', `${Utils.toJsonString(err)}`);
+      errors = new Errors('Unknown Error', `${Utils.stringify(err)}`);
     }
     return errors;
   }
@@ -187,7 +187,7 @@ export default class Utils {
    *
    * @param obj
    */
-  public static toJsonString(obj: Object): string {
+  public static stringify(obj: Object): string {
     if (this.isUndefined(obj)) {
       return undefined;
     }
@@ -199,7 +199,7 @@ export default class Utils {
    *
    * @param json
    */
-  public static parseJson(json: string): any {
+  public static parse(json: string): any {
     return this.isString(json) ? JSON.parse(json) : json;
   }
 

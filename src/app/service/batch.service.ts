@@ -34,7 +34,7 @@ export class BatchService {
     const userid = tokeninfo && tokeninfo.employeeId;
     const batchUrl = this.config.getApiUrl('batchStart', { user_id: userid });
     const dataParams = { pickupStore: tnm, terminal: tid, startingBalance: '0' };
-    console.log(Utils.toJsonString(dataParams));
+    console.log(Utils.stringify(dataParams));
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post(batchUrl, dataParams, { headers: httpHeaders, responseType: 'json' })
     .map(Utils.extractData)

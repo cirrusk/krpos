@@ -22,8 +22,8 @@ export class Config {
     let apiUrl = String(cnf[key]);
     if (!apiUrl.startsWith('http') && apiUrl.indexOf(apiRootUrl) === -1) { apiUrl = apiRootUrl + apiUrl; }
     if (params) {
-      const jsondata = Utils.toJsonString(params);
-      const jsonparam = Utils.parseJson(jsondata);
+      const jsondata = Utils.stringify(params);
+      const jsonparam = Utils.parse(jsondata);
       jsonparam.baseSiteId = baseSiteId;
       return format(apiUrl, jsonparam);
     } else {
