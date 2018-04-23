@@ -220,25 +220,6 @@ export default class Utils {
   }
 
   /**
-   * 문자열 패딩하기
-   *
-   * @param text
-   * @param padchar
-   * @param size
-   */
-  public static padding(text: string, padchar?: string, size?: number): string {
-    padchar = padchar || ' ';
-    size = size || text.length;
-    if (text.length < size) {
-      const ln = size - text.length;
-      const remain = ( ln % 2 === 0 ) ? '' : padchar;
-      const pads = padchar.repeat( ln / 2 );
-      return pads + text + pads + remain;
-    }
-    return text;
-  }
-
-  /**
    * 문자열 날짜를 Date 형식으로 변환
    *
    * @param text 문자열 날짜
