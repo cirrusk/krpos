@@ -20,7 +20,6 @@ import Utils from '../core/utils';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   tokeninfo: AccessToken;
-  // batchinfo: BatchInfo;
   batchNo: string;
   tokensubscription: Subscription;
   batchsubscription: Subscription;
