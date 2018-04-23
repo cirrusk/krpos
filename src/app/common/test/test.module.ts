@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
@@ -24,7 +23,6 @@ import { PosReceiptPrintComponent } from './order/pos-receipt-print/pos-receipt-
 import { EscPos } from './../../core/peripheral/printer/helper/escpos/escpos';
 import { ClickObserverComponent } from './study/click-observer/click-observer.component';
 
-
 @NgModule({
     declarations: [
     TestComponent,
@@ -35,7 +33,7 @@ import { ClickObserverComponent } from './study/click-observer/click-observer.co
     ClickObserverComponent,
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
