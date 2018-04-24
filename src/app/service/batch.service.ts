@@ -72,7 +72,7 @@ export class BatchService {
    * 배치 조회와 삭제를 동시에 merge 한다.
    */
   clearBatch(): Observable <BatchInfo> {
-    this.logger.set('batch.service', 'get current batch and clear exist batch...').debug();
+    this.logger.set('batch.service', 'get current batch and clear exist batch start...').debug();
     return this.getBatch()
     .flatMap((batchinfo: BatchInfo) => {
       return this.endExistBatch(batchinfo.batchNo);

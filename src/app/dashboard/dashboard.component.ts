@@ -110,8 +110,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 로그오프 시 배치 정보 저장 후(P7페이지 배치 정보 저장 확인 팝업 뜸) 이후, 대시보드 메인으로 이동
    */
   stopShift() {
-    this.logger.set('dashboard.component', 'stop shift').debug();
     if (this.screenLockType === LockType.LOCK) { return; }
+    this.logger.set('dashboard.component', 'stop shift').debug();
     const existbatch: boolean = this.batchNo === null ? false : Utils.isNotEmpty(this.batchNo);
     const isloginBatch: boolean = this.storage.isLogin() && existbatch;
     if (isloginBatch) {
@@ -236,13 +236,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 종료 시 배치가 중지되지 않고 닫았을 경우
-   * 다시 로그인 할 경우 생성되었던 배치를 삭제해야함.
-   * 처음에는 로그인할 경우 처리하고자 했으나
-   * subscribe 가 중첩되어 있어서
+   * 종료 시 배치가 중지되지 않고 닫았을 경우 다시 로그인 할 경우 생성되었던 배치를 삭제해야함.
+   * 처음에는 로그인할 경우 처리하고자 했으나 subscribe 가 중첩되어 있어서 get method가 두번 실행되는 오류발생.
+   * 로그인하면 broker를 통해 이벤트를 날리고 이벤트를 받을때 처리하도록 변경.
    */
   private checkAndClearBatch() {
-    this.logger.set('login.component', `checkAndClearBatch...`).debug();
     const tk = this.storage.getTokenInfo();
     const isLogin = this.storage.isLogin();
     const batchinfo = this.storage.getBatchInfo();
