@@ -72,7 +72,6 @@ export class ApiService {
     } else {
       apiUrl = this.config.getApiUrl(apikey);
     }
-    this.logger.set('api.service', `${apiUrl}`).debug();
     return apiUrl;
   }
 
@@ -88,6 +87,7 @@ export class ApiService {
    */
   private callApi(method: string, apikey: string, pathvariables: any, body: object = null, params: any, headertype?: string): Observable<any> {
     const apiUrl = this.getApiUrl(apikey, pathvariables);
+    this.logger.set('api.service', `URL : ${apiUrl}, METHOD : ${method.toUpperCase()}`).debug();
     return this.http.request(method, apiUrl,
     {
       body: body,

@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, Renderer2 } from '@angular/core';
 // import { FormControl, FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-
+// import 'rxjs/add/observable/zip';
 import { ModalComponent } from '../../core/modal/modal.component';
 import { AuthService } from '../../service/auth.service';
 import { ModalService, StorageService, Logger } from '../../service/pos';
@@ -9,10 +10,9 @@ import { InfoBroker } from '../../broker/info.broker';
 import { ErrorInfo } from '../../data/error/error-info';
 import { AlertService } from '../../core/alert/alert.service';
 import { AlertType } from '../../core/alert/alert-type.enum';
+import { SpinnerService } from '../../core/spinner/spinner.service';
 
 import Utils from '../../core/utils';
-import { SpinnerService } from '../../core/spinner/spinner.service';
-import { BatchService } from '../../service/batch.service';
 
 /**
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.
@@ -37,11 +37,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @Input() loginPassword: string;
   authsubscription: Subscription;
   tokensubscription: Subscription;
-  batchsubscription: Subscription;
   constructor(
     protected modalService: ModalService,
     private authService: AuthService,
-    private batchService: BatchService,
     private storage: StorageService,
     private infoBroker: InfoBroker,
     private alert: AlertService,
@@ -64,7 +62,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   ngOnDestroy() {
     if (this.authsubscription) {this.authsubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
-    if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
   }
 
   idInput(evt: any) {
@@ -127,7 +124,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         this.storage.setTokenInfo(result);
         const accesstoken = this.storage.getTokenInfo();
         this.infoBroker.sendInfo('tkn', accesstoken);
-        this.checkAndClearBatch();
+        this.infoBroker.sendInfo('cbt', {act: true});
         this.close();
       },
       error => {
@@ -143,6 +140,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         }
       }
     );
+
   }
 
   close() {
@@ -178,35 +176,4 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     }
   }
 
-  private checkAndClearBatch() {
-    const tk = this.storage.getTokenInfo();
-    const isLogin = this.storage.isLogin();
-    const batchinfo = this.storage.getBatchInfo();
-    const batchno = batchinfo && batchinfo.batchNo;
-    const emptybatch = batchno === null ? true : Utils.isEmpty(batchno);
-    if (isLogin && emptybatch) {
-      this.batchsubscription = this.batchService.getBatch().subscribe(
-        result => {
-          if (result) {
-            const batchNo = result.batchNo;
-            this.batchService.endExistBatch(batchNo).subscribe(
-              data => {
-                this.logger.set('dashboard.component', `end exist batch : ${Utils.stringify(data)}`).debug();
-              }
-            );
-          } else {
-            this.logger.set('login.component', 'not exist current batch, skip clear batch...').debug();
-          }
-        },
-        error => {
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('login.component', `${errdata.message}, skip clear batch...`).debug();
-          }
-        }
-      );
-    } else {
-      this.logger.set('login.component', 'not exist session batch, skip clear batch...').debug();
-    }
-  }
 }

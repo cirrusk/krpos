@@ -47,6 +47,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           } else if (type === 'lck') {
             this.logger.set('dashboard.component', 'screen locktype subscribe ...').debug();
             this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
+          } else if (type === 'cbt') {
+            if (result.data.act) {
+              this.checkAndClearBatch();
+            }
           }
         }
       }
@@ -106,7 +110,54 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 로그오프 시 배치 정보 저장 후(P7페이지 배치 정보 저장 확인 팝업 뜸) 이후, 대시보드 메인으로 이동
    */
   stopShift() {
-      this.logger.set('dashboard.component', 'stop shift').debug();
+    this.logger.set('dashboard.component', 'stop shift').debug();
+    if (this.screenLockType === LockType.LOCK) { return; }
+    const existbatch: boolean = this.batchNo === null ? false : Utils.isNotEmpty(this.batchNo);
+    const isloginBatch: boolean = this.storage.isLogin() && existbatch;
+    if (isloginBatch) {
+      let msg: string;
+      let btn: string;
+      const orderCount = 1;
+      if (orderCount > 0) {
+        msg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
+        btn = '확인';
+      } else {
+        msg = `배치를 종료하시겠습니까?<br>배치정보 저장 후, Stop Shift가 진행됩니다.`;
+        btn = '계속';
+      }
+      this.modal.openConfirm(
+        {
+          title: 'Stop Shift',
+          message: msg,
+          actionButtonLabel: btn,
+          closeButtonLabel: '취소',
+          closeByEscape: true,
+          closeByClickOutside: false,
+          closeAllModals: false,
+          modalId: 'STOPSHIFT'
+        }
+      ).subscribe(result => {
+        if (result) {
+          this.spinner.show();
+          this.logger.set('dashboard.component', 'stop shift, stop batch...').debug();
+          this.batchsubscription = this.batch.endBatch().subscribe(data => {
+            this.storage.removeBatchInfo();
+            this.infoBroker.sendInfo('bat', { batchNo: null });
+            this.modal.openConfirm({
+              title: 'Stop Shift',
+              message: `배치 정보 저장이 완료되었습니다.`,
+              actionButtonLabel: '확인',
+              closeButtonLabel: '취소',
+              closeByEnter: false,
+              closeByEscape: true,
+              closeByClickOutside: false,
+              closeAllModals: false,
+              modalId: 'STOPSHIFT_LAST'
+            });
+          });
+        }
+      });
+    }
   }
 
   /**
@@ -120,10 +171,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     if (this.screenLockType === LockType.LOCK) { return; }
     let msg: string;
+    let btn: string;
     const existbatch: boolean = this.batchNo === null ? false : Utils.isNotEmpty(this.batchNo);
     const isloginBatch: boolean = this.storage.isLogin() && existbatch;
+
     if (isloginBatch) {
-      msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
+      const orderCount = 1;
+      if (orderCount > 0) {
+        msg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
+        btn = '확인';
+      } else {
+        msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
+        btn = '계속';
+      }
     } else {
       msg = `POS를 종료하시겠습니까?<br>화면 종료가 진행됩니다.`;
     }
@@ -131,7 +191,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       {
         title: 'POS 종료',
         message: msg,
-        actionButtonLabel: '계속',
+        actionButtonLabel: btn,
         closeButtonLabel: '취소',
         closeByEscape: true,
         closeByClickOutside: false,
@@ -173,6 +233,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  /**
+   * 종료 시 배치가 중지되지 않고 닫았을 경우
+   * 다시 로그인 할 경우 생성되었던 배치를 삭제해야함.
+   * 처음에는 로그인할 경우 처리하고자 했으나
+   * subscribe 가 중첩되어 있어서
+   */
+  private checkAndClearBatch() {
+    this.logger.set('login.component', `checkAndClearBatch...`).debug();
+    const tk = this.storage.getTokenInfo();
+    const isLogin = this.storage.isLogin();
+    const batchinfo = this.storage.getBatchInfo();
+    const batchno = batchinfo && batchinfo.batchNo;
+    const emptybatch = batchno === null ? true : Utils.isEmpty(batchno);
+    if (isLogin && emptybatch) {
+      this.batchsubscription = this.batch.clearBatch().subscribe(result => {
+        this.logger.set('dashboard.component', `end exist batch : ${Utils.stringify(result)}`).debug();
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('dashboard.component', `${errdata.message}, skip clear batch...`).debug();
+        }
+      });
+    } else {
+      this.logger.set('dashboard.component', 'not exist session batch, skip clear batch...').debug();
+    }
   }
 
 }

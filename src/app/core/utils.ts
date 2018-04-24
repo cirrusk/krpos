@@ -67,7 +67,6 @@ export default class Utils {
    * @param error
    */
   public static handleError(error: Response | any) {
-    // console.error(`httpclient error : ${error}`);
     return Observable.throw(error); // error.message ||
 
   }

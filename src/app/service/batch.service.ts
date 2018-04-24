@@ -1,7 +1,8 @@
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-
-import { StorageService, Logger, ApiService } from './pos';
+import 'rxjs/add/operator/mergeMap';
+import { StorageService, Config, Logger, ApiService } from './pos';
 import { BatchInfo, HttpData } from '../data/model';
 import Utils from '../core/utils';
 
@@ -9,6 +10,8 @@ import Utils from '../core/utils';
 export class BatchService {
 
   constructor(private api: ApiService,
+              private httpClient: HttpClient,
+              private config: Config,
               private storage: StorageService,
               private logger: Logger) { }
 
@@ -66,6 +69,17 @@ export class BatchService {
     const tnm = terminalinfo && terminalinfo.pointOfService.name;
     const data = new HttpData('getBatch', null, null, { pickupStore: tnm, terminal: tid });
     return this.api.get(data);
+  }
+
+  /**
+   * 배치 조회와 삭제를 동시에 merge 한다.
+   */
+  clearBatch(): Observable <BatchInfo> {
+    this.logger.set('batch.service', 'get current batch and clear exist batch...').debug();
+    return this.getBatch()
+    .flatMap((batchinfo: BatchInfo) => {
+      return this.endExistBatch(batchinfo.batchNo);
+    });
   }
 
 }
