@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
           } else if (type === 'cbt') {
             if (result.data.act) {
-              this.checkAndClearBatch();
+              this.clearExistBatch();
             }
           }
         }
@@ -240,7 +240,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 처음에는 로그인할 경우 처리하고자 했으나 subscribe 가 중첩되어 있어서 get method가 두번 실행되는 오류발생.
    * 로그인하면 broker를 통해 이벤트를 날리고 이벤트를 받을때 처리하도록 변경.
    */
-  private checkAndClearBatch() {
+  private clearExistBatch() {
     const tk = this.storage.getTokenInfo();
     const isLogin = this.storage.isLogin();
     const batchinfo = this.storage.getBatchInfo();
