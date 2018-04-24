@@ -14,6 +14,7 @@ export const environment = {
       token: 'https://127.0.0.1:9002/authorizationserver/oauth/token',
       batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
       batchStop: '/{baseSiteId}/orderbatches/{batch_id}',
+      getBatch: '/{baseSiteId}/orderbatches/currentBatch',
       createCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
       addToCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
       updateItemQtyCart : '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
