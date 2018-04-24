@@ -177,12 +177,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.hasTerminal = true;
           },
           error => {
-            // setTimeout(() => this.alert.show(
-            //   {
-            //     alertType: AlertType.error,
-            //     title: '확인',
-            //     message: `터미널 정보가 올바르게 설정되지 않았습니다.<br>관리자에게 문의하시기 바랍니다.`,
-            //   }), 50);
             this.posName = '-';
             this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
@@ -294,7 +288,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     ).subscribe((result) => {
       if (result) {
         this.storage.removeScreenLock();
-        this.router.navigate(['/order']);
+        // this.router.navigate(['/order']);
       } else {
         this.screenLockType = LockType.LOCK;
         this.storage.setScreenLockType(LockType.LOCK);

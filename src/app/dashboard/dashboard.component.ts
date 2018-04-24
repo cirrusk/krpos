@@ -49,6 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
           } else if (type === 'cbt') {
             if (result.data.act) {
+              this.logger.set('dashboard.component', 'clear exist batch during login subscribe ...').debug();
               this.clearExistBatch();
             }
           }
@@ -154,7 +155,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
               closeAllModals: false,
               modalId: 'STOPSHIFT_LAST'
             });
-          });
+          },
+          error => {},
+           () => { this.spinner.hide(); });
         }
       });
     }
@@ -219,6 +222,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 modalId: 'POSEND_LAST'
               }).subscribe(ret => {
                 if (ret) {
+                  this.storage.logout();
                   Utils.kioskModeEnd();
                 }
               });
