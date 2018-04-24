@@ -11,7 +11,6 @@ export class FocusBlurDirective implements AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       if (this.posFocusBlur === 'focus' || this.posFocusBlur === 'focus_blur') {
-          console.log('focus set!!!');
           // this._el.nativeElement.focus();
           // this.renderer.invokeElementMethod(this.element.nativeElement, 'focus');
           this.element.nativeElement.focus();

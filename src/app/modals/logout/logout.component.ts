@@ -52,11 +52,11 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       if (orderCount > 0) {
         posmsg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
       } else {
-        posmsg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
+        posmsg = `근무 종료하시겠습니까?<br>배치정보 저장 후, 근무 종료가 진행됩니다.`;
       }
       this.modal.openConfirm(
         {
-          title: 'POS 종료',
+          title: '근무 종료',
           message: posmsg,
           actionButtonLabel: '계속',
           closeButtonLabel: '취소',
@@ -64,19 +64,18 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
           closeByEscape: true,
           closeByClickOutside: true,
           closeAllModals: false,
-          modalId: 'LOGOUT'
+          modalId: 'ENDWORK'
         }
       ).subscribe(
         result => {
           if (result) {
             this.spinner.show();
-            this.logger.set({n: 'logout.component', m: 'started batch already, stop batch...'}).debug();
+            this.logger.set({n: 'logout.component', m: 'end work, stop batch...'}).debug();
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
-              this.logger.set({n: 'logout.component', m: `end batch info : ${Utils.stringify(data)}`}).debug();
               this.storage.logout();
               this.storage.removeEmployeeName(); // client 담당자 삭제
               this.modal.openConfirm({
-                title: 'POS 종료',
+                title: '근무 종료',
                 message: `배치 정보 저장이 완료되었습니다.`,
                 actionButtonLabel: '확인',
                 closeButtonLabel: '취소',
@@ -84,17 +83,13 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
                 closeByEscape: true,
                 closeByClickOutside: false,
                 closeAllModals: false,
-                modalId: 'LOGOUT_LAST'
-              }).subscribe((res) => {
-                if (res) {
-                  this.router.navigate(['/dashboard']);
-                } else {
-                  this.router.navigate(['/dashboard']);
-                }
+                modalId: 'ENDWORK_LAST'
               });
             },
             (error) => {},
             () => { this.spinner.hide(); });
+          } else {
+            this.router.navigate(['/order']);
           }
         }
       );

@@ -12,6 +12,7 @@ import { AlertType } from '../../core/alert/alert-type.enum';
 
 import Utils from '../../core/utils';
 import { SpinnerService } from '../../core/spinner/spinner.service';
+import { BatchService } from '../../service/batch.service';
 
 /**
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.
@@ -36,9 +37,11 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @Input() loginPassword: string;
   authsubscription: Subscription;
   tokensubscription: Subscription;
+  batchsubscription: Subscription;
   constructor(
     protected modalService: ModalService,
     private authService: AuthService,
+    private batchService: BatchService,
     private storage: StorageService,
     private infoBroker: InfoBroker,
     private alert: AlertService,
@@ -61,6 +64,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   ngOnDestroy() {
     if (this.authsubscription) {this.authsubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
+    if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
   }
 
   idInput(evt: any) {
@@ -84,13 +88,12 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // 2. 비밀번호 미입력
     if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
       this.alert.show({
-          alertType: AlertType.warn,
-          title: '확인',
-          message: '비밀번호가 공란입니다.'
-        });
+        alertType: AlertType.warn,
+        title: '확인',
+        message: '비밀번호가 공란입니다.'
+      });
       return;
     }
-
     // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     this.authsubscription = this.authService.authentication(loginid, loginpwd).subscribe(
       result => {
@@ -124,6 +127,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         this.storage.setTokenInfo(result);
         const accesstoken = this.storage.getTokenInfo();
         this.infoBroker.sendInfo('tkn', accesstoken);
+        this.checkAndClearBatch();
         this.close();
       },
       error => {
@@ -171,6 +175,38 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
           message: '비밀번호가 공란입니다.'
         });
       }
+    }
+  }
+
+  private checkAndClearBatch() {
+    const tk = this.storage.getTokenInfo();
+    const isLogin = this.storage.isLogin();
+    const batchinfo = this.storage.getBatchInfo();
+    const batchno = batchinfo && batchinfo.batchNo;
+    const emptybatch = batchno === null ? true : Utils.isEmpty(batchno);
+    if (isLogin && emptybatch) {
+      this.batchsubscription = this.batchService.getBatch().subscribe(
+        result => {
+          if (result) {
+            const batchNo = result.batchNo;
+            this.batchService.endExistBatch(batchNo).subscribe(
+              data => {
+                this.logger.set({n: 'dashboard.component', m: `end exist batch : ${Utils.stringify(data)}`}).debug();
+              }
+            );
+          } else {
+            this.logger.set({n: 'login.component', m: 'not exist current batch, skip clear batch...'}).debug();
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set({n: 'login.component', m: `${errdata.message}, skip clear batch...`}).debug();
+          }
+        }
+      );
+    } else {
+      this.logger.set({n: 'login.component', m: 'not exist session batch, skip clear batch...'}).debug();
     }
   }
 }

@@ -252,9 +252,7 @@ export class StorageService implements OnDestroy {
     this.removeScreenLock();
     this.removeTokenInfo();
     this.removeBatchInfo();
-    if (this.getBatchInfo() != null) {
-      this.infobroker.sendInfo('bat', { batchNo: null });
-    }
+    this.infobroker.sendInfo('bat', { batchNo: null });
     this.infobroker.sendInfo('tkn', null);
   }
 

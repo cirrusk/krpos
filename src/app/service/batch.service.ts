@@ -45,4 +45,27 @@ export class BatchService {
     return this.api.put(data);
   }
 
+  endExistBatch(batchno: string): Observable <BatchInfo> {
+    this.logger.set({n: 'batch.service', m: 'end exist batch...'}).debug();
+    const data = new HttpData('batchStop', { batch_id: batchno }, null, {endingBalance: '0'} );
+    return this.api.put(data);
+  }
+
+  /**
+   * 현재 배치 정보 조회
+   * 배치를 시작하고 그냥 브라우저를 닫았을 경우
+   * 다시 들어가면 배치정보가 있으면 그냥 정보를 넣어주어
+   * 다시 배치 시작하지 않도록 함.
+   * 왜냐하면 브라우저 종료 후 다시 들어가면 Batch 세션 정보가 날라가므로
+   * Batch 시작 안된 상태가 되며, 여기서 Batch 를 시작하면 already exist error 발생.
+   */
+  getBatch(): Observable <BatchInfo> {
+    this.logger.set({n: 'batch.service', m: 'get current batch...'}).debug();
+    const terminalinfo = this.storage.getTerminalInfo();
+    const tid = terminalinfo && terminalinfo.id;
+    const tnm = terminalinfo && terminalinfo.pointOfService.name;
+    const data = new HttpData('getBatch', null, null, { pickupStore: tnm, terminal: tid });
+    return this.api.get(data);
+  }
+
 }

@@ -241,6 +241,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   endWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
+    this.router.navigate(['/dashboard']);
     this.modal.openModalByComponent(LogoutComponent,
       {
         actionButtonLabel: '확인',
@@ -251,8 +252,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeAllModals: false,
         modalId: 'LogoutComponent'
       }
-    );
-
+    ).subscribe(result => {
+      if (!result) { this.router.navigate(['/order']); }
+    });
   }
 
   /**

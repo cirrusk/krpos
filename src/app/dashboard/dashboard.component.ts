@@ -10,8 +10,8 @@ import { AccessToken, BatchInfo } from '../data/model';
 import { AlertService, AlertState } from '../core/alert/alert.service';
 import { AlertType } from '../core/alert/alert-type.enum';
 import { LockType } from '../common/header/header.component';
+import { SpinnerService } from '../core/spinner/spinner.service';
 import Utils from '../core/utils';
-
 
 @Component({
   selector: 'pos-dashboard',
@@ -28,9 +28,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private modal: Modal,
     private infoBroker: InfoBroker,
-    private batchService: BatchService,
+    private batch: BatchService,
     private storage: StorageService,
     private alert: AlertService,
+    private spinner: SpinnerService,
     private logger: Logger,
     private router: Router) {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
@@ -73,7 +74,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   startShift() {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
-      this.batchsubscription = this.batchService.startBatch().subscribe(
+      this.batchsubscription = this.batch.startBatch().subscribe(
         (data) => {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.logger.set({n: 'dashboard.component', m: `start batch info : ${Utils.stringify(data)}`}).debug();
@@ -109,13 +110,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 배치 저장
-   */
-  private saveBatch() {
-    this.batchService.startBatch();
-  }
-
-  /**
    * POS 종료
    * 1. 확인 팝업 출력
    * 2. 배치정보 저장
@@ -126,7 +120,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   posEnd() {
     if (this.screenLockType === LockType.LOCK) { return; }
     let msg: string;
-    const isloginBatch: boolean = this.storage.isLogin() && Utils.isNotEmpty(this.batchNo);
+    const existbatch: boolean = this.batchNo === null ? false : Utils.isNotEmpty(this.batchNo);
+    const isloginBatch: boolean = this.storage.isLogin() && existbatch;
     if (isloginBatch) {
       msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
     } else {
@@ -141,20 +136,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
         closeByEscape: true,
         closeByClickOutside: false,
         closeAllModals: false,
-        modalId: 'POS_END'
+        modalId: 'POSEND'
       }
     ).subscribe(
       result => {
         if (result) {
           if (isloginBatch) {
-            // 1. 확인 팝업
-            // 2. 배치 정보 저장 팝업
-            // 3. 화면 종료
-            // this.batchService.endBatch(); // 나중에는 subsrcibe 해야됨.
-
+            this.spinner.show();
+            this.logger.set({n: 'dashboard.component', m: 'pos end, stop batch...'}).debug();
+            this.batchsubscription = this.batch.endBatch().subscribe(data => {
+              this.storage.logout();
+              this.storage.removeEmployeeName(); // client 담당자 삭제
+              this.modal.openConfirm({
+                title: 'POS 종료',
+                message: `배치 정보 저장이 완료되었습니다.`,
+                actionButtonLabel: '확인',
+                closeButtonLabel: '취소',
+                closeByEnter: false,
+                closeByEscape: true,
+                closeByClickOutside: false,
+                closeAllModals: false,
+                modalId: 'POSEND_LAST'
+              }).subscribe(ret => {
+                if (ret) {
+                  Utils.kioskModeEnd();
+                }
+              });
+            },
+            (error) => {},
+            () => { this.spinner.hide(); });
           } else {
             Utils.kioskModeEnd();
           }
+        } else {
+          this.router.navigate(['/order']);
         }
       }
     );
