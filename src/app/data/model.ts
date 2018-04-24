@@ -18,3 +18,4 @@ export * from './models/common/product';
 export * from './models/common/terminal-info';
 export * from './models/common/product-data';
 export * from './models/common/batch-info';
+export * from './models/common/http-data';

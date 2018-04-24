@@ -22,6 +22,7 @@ import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { PagerService } from '../service/common/pager.service';
+import { ApiService } from './service/api.service';
 
 @NgModule({
   imports: [
@@ -45,6 +46,7 @@ import { PagerService } from '../service/common/pager.service';
   ],
   providers: [
     TerminalService,
+    ApiService,
     AuthService,
     BatchService,
     SearchService,

@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, InjectionToken } from '@angular/core';
 import * as format from 'string-format';
 
 import { environment } from '../../../environments/environment';
 import Utils from '../utils';
+
+export const CLIENT_SECRET = new InjectionToken<string>('CLIENT_SECRET');
 
 @Injectable()
 export class Config {

@@ -1,14 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-
-import { Config, Logger, StorageService, NetworkService } from './pos';
-import { TerminalInfo, AccessToken } from '../data/model';
+import { ApiService, StorageService, NetworkService, CLIENT_SECRET } from './pos';
+import { TerminalInfo, AccessToken, HttpData } from '../data/model';
 import { Error } from '../data/error/error';
 import Utils from '../core/utils';
+
 
 
 @Injectable()
@@ -16,11 +13,10 @@ export class AuthService {
 
   terminalInfo: TerminalInfo;
   constructor(
-    private http: HttpClient,
+    private api: ApiService,
     private storage: StorageService,
     private networkService: NetworkService,
-    private config: Config,
-    private logger: Logger) {
+    @Inject(CLIENT_SECRET) private clientsecret: string) {
       this.terminalInfo = this.storage.getTerminalInfo();
   }
 
@@ -33,22 +29,13 @@ export class AuthService {
    */
   public authentication(userid: string, userpassword: string): Observable<any> {
     this.terminalInfo = this.storage.getTerminalInfo();
-    const authUrl = this.config.getApiUrl('auth');
     if (this.terminalInfo === null) {
-      const e = new Error('terminal_error', 'Termianl info is null.');
-      const error = {error: e};
-      return Observable.throw(error);
+      return Observable.throw({error: new Error('terminal_error', 'Termianl info is null.')});
     }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-    const httpParams = new HttpParams()
-    .set('clientId', clientid)
-    .set('userId', userid)
-    .set('password', userpassword)
-    .set('mac_address', this.networkService.getLocalMacAddress('-'));
-    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    return this.http.post(authUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
-    .map(Utils.extractData)
-    .catch(Utils.handleError);
+    const param = {clientId: clientid, userId: userid, password: userpassword, mac_address: this.networkService.getLocalMacAddress('-')};
+    const data = new HttpData('auth', null, null, param);
+    return this.api.post(data);
   }
 
   /**
@@ -58,24 +45,13 @@ export class AuthService {
    * @param authCode
    */
   public accessToken(authCode: string): Observable<AccessToken> {
-    const tokenUrl = this.config.getApiUrl('token');
     if (this.terminalInfo === null) {
-      const e = new Error('terminal_error', 'Termianl info is null.');
-      const error = {error: e};
-      return Observable.throw(error);
+      return Observable.throw({error: new Error('terminal_error', 'Termianl info is null.')});
     }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-    const httpParams = new HttpParams()
-    .set('code', authCode)
-    .set('client_id', clientid)
-    .set('client_secret', '83d8f684-7a35-47f7-96fd-b6587d3ed736')
-    .set('grant_type', 'authorization_code');
-
-    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-
-    return this.http.post(tokenUrl, httpParams.toString(), { headers: httpHeaders, responseType: 'json' })
-    .map(Utils.extractData)
-    .catch(Utils.handleError);
+    const param = {code: authCode, client_id: clientid, client_secret: this.clientsecret, grant_type: 'authorization_code'};
+    const data = new HttpData('token', null, null, param);
+    return this.api.post(data);
   }
 
 }

@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { InfoBroker } from '../broker/info.broker';
-import { StorageService, Logger, Config } from './pos';
-import { BatchInfo } from '../data/model';
+import { StorageService, Logger, ApiService } from './pos';
+import { BatchInfo, HttpData } from '../data/model';
 import Utils from '../core/utils';
 
 @Injectable()
 export class BatchService {
 
-  constructor(private http: HttpClient,
+  constructor(private api: ApiService,
               private storage: StorageService,
-              private infoBroker: InfoBroker,
-              private config: Config,
               private logger: Logger) { }
 
   /**
@@ -32,12 +28,9 @@ export class BatchService {
     const tid = terminalinfo && terminalinfo.id;
     const tnm = terminalinfo && terminalinfo.pointOfService.name;
     const userid = tokeninfo && tokeninfo.employeeId;
-    const batchUrl = this.config.getApiUrl('batchStart', { user_id: userid });
     const dataParams = { pickupStore: tnm, terminal: tid, startingBalance: '0' };
-    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-    return this.http.post(batchUrl, dataParams, { headers: httpHeaders, responseType: 'json' })
-    .map(Utils.extractData)
-    .catch(Utils.handleError);
+    const data = new HttpData('batchStart', { user_id: userid }, dataParams, null, 'json');
+    return this.api.post(data);
   }
 
   /**
@@ -48,13 +41,8 @@ export class BatchService {
     this.logger.set({n: 'batch.service', m: 'end batch...'}).debug();
     const batchinfo = this.storage.getBatchInfo();
     const batchid = batchinfo && batchinfo.batchNo;
-    const batchUrl = this.config.getApiUrl('batchStop', { batch_id: batchid });
-    this.logger.set({n: 'batch.service', m: `${batchUrl}`}).debug();
-    const httpParams = new HttpParams().set('endingBalance', '0');
-    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    return this.http.put(batchUrl, httpParams.toString(), { headers: httpHeaders })
-    .map(Utils.extractData)
-    .catch(Utils.handleError);
+    const data = new HttpData('batchStop', { batch_id: batchid }, null, {endingBalance: '0'} );
+    return this.api.put(data);
   }
 
 }

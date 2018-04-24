@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { AccountList, MemberType } from '../../data/model';
-import { Config } from '../pos';
+import { AccountList, MemberType, HttpData } from '../../data/model';
+import { Config, ApiService } from '../pos';
 import Utils from '../../core/utils';
 import { Products } from '../../data/models/cart/cart-data';
 
 @Injectable()
 export class SearchService {
 
-  constructor(private httpClient: HttpClient, private config: Config) { }
+  constructor(private api: ApiService, private httpClient: HttpClient, private config: Config) { }
 
   // 회원 정보 조회
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
@@ -38,17 +38,9 @@ export class SearchService {
    * @param searchdata
    */
   getBasicProductInfo(searchdata: string, currentpage: number): Observable<Products> {
-    const apiUrl = this.config.getApiUrl('productSearch');
-    const httpParams = new HttpParams()
-    .set('query', searchdata)
-    .set('fields', 'BASIC')
-    .set('currentPage', currentpage + '')
-    .set('sort', '')
-    .set('pageSize', '5');
-    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    return this.httpClient.get<Products>(apiUrl, { headers: httpHeaders, params: httpParams, responseType: 'json' })
-    .map(data => data as Products)
-    .catch(Utils.handleError);
+    const params = {query: searchdata, fields: 'BASIC', currentPage: currentpage + '', sort: '', pageSize: '5'};
+    const data = new HttpData('productSearch', null, null, params);
+    return this.api.get(data);
   }
 
   /**
