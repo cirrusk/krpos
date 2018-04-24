@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 
 import { HttpData } from '../../data/model';
 import { Config } from '../config/config';
@@ -87,7 +87,7 @@ export class ApiService {
    */
   private callApi(method: string, apikey: string, pathvariables: any, body: object = null, params: any, headertype?: string): Observable<any> {
     const apiUrl = this.getApiUrl(apikey, pathvariables);
-    this.logger.set('api.service', `URL : ${apiUrl}, METHOD : ${method.toUpperCase()}`).debug();
+    this.logger.set('api.service', `METHOD : ${method.toUpperCase()}, URL : ${apiUrl}`).debug();
     return this.http.request(method, apiUrl,
     {
       body: body,
