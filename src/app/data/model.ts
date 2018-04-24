@@ -12,6 +12,13 @@ export * from './models/order/order-entries';
 export * from './models/order/order-entry-list';
 export * from './models/order/product-info';
 export * from './models/order/search-param';
+export * from './models/order/principal';
+export * from './models/order/abstract-order';
+export * from './models/order/cart-list';
+export * from './models/order/save-cart-result';
+export * from './models/order/stock';
+export * from './models/order/price';
+export * from './models/order/amway-value';
 
 export * from './models/common/access-token';
 export * from './models/common/product';

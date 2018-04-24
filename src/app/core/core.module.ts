@@ -13,6 +13,8 @@ import { BatchService } from '../service/batch.service';
 import { QzHealthChecker } from './service/qz-health-checker';
 import { Logger } from './logger/logger';
 import { InfoBroker } from '../broker/info.broker';
+import { RestoreCartBroker } from '../broker/order/cart/restore-cart.broker';
+import { CancleOrderBroker } from '../broker/order/cart/cancle-order.broker';
 import { SearchService } from '../service/order/search.service';
 import { SearchAccountBroker } from '../broker/order/search/search-account.broker';
 import { SearchBroker } from '../broker/order/search/search.broker';
@@ -23,6 +25,7 @@ import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { PagerService } from '../service/common/pager.service';
 import { ApiService } from './service/api.service';
+
 
 @NgModule({
   imports: [
@@ -55,6 +58,8 @@ import { ApiService } from './service/api.service';
     PagerService,
     InfoBroker,
     SearchAccountBroker,
+    RestoreCartBroker,
+    CancleOrderBroker,
     QzHealthChecker,
     DatePipe,
     Logger

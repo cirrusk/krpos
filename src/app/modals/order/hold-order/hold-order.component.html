@@ -7,9 +7,14 @@
   <div class="pop_container">
       <div class="pop_content">
           <div class="mbinfo_list type03">
-              <p class="txt"><strong>총 <span class="fc_red">3</span>건</strong>의 정보가 있습니다.</p>
-              <!-- 보류내역(최대 3개) : 내역이 0건일때 삭제 -->
-              <div class="tbl_col bg_bar">
+              <p class="txt"><strong>총 <span class="fc_red">{{cartList.length}}</span>건</strong>의 정보가 있습니다.</p>
+              <span class="btn_wrap" *ngIf="cartList.length > 5">
+                <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
+                <a href="#" class="ico_comm prev03">이전</a>
+                <a href="#" class="ico_comm next03 on">다음</a>
+              </span>
+              <!-- 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
+              <div class="tbl_col bg_bar" *ngIf="cartList.length > 0">
                   <table>
                       <caption>보류내역</caption>
                       <colgroup>
@@ -32,34 +37,18 @@
                       </thead>
                       <tbody>
                           <!-- 내역 선택시 tr에 on클래스 추가 -->
-                          <tr class="on">
-                              <td><span>1</span></td>
-                              <td class="name"><span class="elips mx90">김*나나나난나나나나나</span></td>
-                              <td><span>781222</span></td>
-                              <td><span>20개</span></td>
-                              <td class="tit"><span class="elips mx270">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이</span></td>
-                              <td><span>2018/01/30 15:53:55</span></td>
-                          </tr>
-                          <tr>
-                              <td><span>2</span></td>
-                              <td class="name"><span class="elips mx90">김*나</span></td>
-                              <td><span>781222</span></td>
-                              <td><span>20개</span></td>
-                              <td class="tit"><span class="elips mx270">글리스터 리후레셔</span></td>
-                              <td><span>2018/01/30 15:53:55</span></td>
-                          </tr>
-                          <tr>
-                              <td><span>3</span></td>
-                              <td class="name"><span class="elips mx90">김*나</span></td>
-                              <td><span>781222</span></td>
-                              <td><span>20개</span></td>
-                              <td class="tit"><span class="elips mx270">글리스터 리후레셔</span></td>
-                              <td><span>2018/01/30 15:53:55</span></td>
+                          <tr [class.on]="activeNum == i" *ngFor="let cart of currentCartList; let i = index;" (click)="activeRow(i)">
+                              <td><span>{{i+1}}</span></td>
+                              <td class="name"><span class="elips mx90">{{cart.user.name}}</span></td>
+                              <td><span>{{cart.user.uid}}</span></td>
+                              <td><span>{{cart.totalItems}}개</span></td>
+                              <td class="tit"><span class="elips mx270">{{cart.entries[0].product.name}}</span></td>
+                              <td><span>{{cart.saveTime}}</span></td>
                           </tr>
                       </tbody>
                   </table>
               </div>
-              <!-- // 보류내역(최대 3개) : 내역이 0건일때 삭제 -->
+              <!-- // 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
           </div>
       </div>
   </div>

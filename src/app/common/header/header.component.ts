@@ -19,6 +19,7 @@ import { LoginComponent } from '../../modals/login/login.component';
 import { LogoutComponent } from '../../modals/logout/logout.component';
 import { AlertType } from '../../core/alert/alert-type.enum';
 import Utils from '../../core/utils';
+import { CartService } from '../../service/order/cart.service';
 
 export enum LockType {
   INIT = -1,
@@ -55,10 +56,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   hasTerminal: boolean;
   employeeName: string;
   screenLockType = LockType.INIT;
+  holdTotalCount: number;
   @Input() isClient: boolean;
   constructor(
     private terminalService: TerminalService,
     private networkService: NetworkService,
+    private cartService: CartService,
     private storage: StorageService,
     private router: Router,
     private modal: Modal,
@@ -73,6 +76,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.employeeName = this.storage.getEmloyeeName();
     this.qzCheck = this.config.getConfig('qzCheck');
     this.screenLockType = this.storage.getScreenLockType();
+    this.holdTotalCount = 0;
   }
 
   ngOnInit() {
@@ -87,6 +91,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           if (type === 'tkn') {
             this.logger.set('header component', 'access token subscribe ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
+            if (this.isLogin) {
+              this.getholdTotalCount();
+            }
           } else if (type === 'lck') {
             this.logger.set('header component', 'screen locktype subscribe ...').debug();
             this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
@@ -209,6 +216,23 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeByClickOutside: false,
         closeAllModals: false,
         modalId: 'HoldOrderComponent'
+      }
+    );
+  }
+
+  getholdTotalCount() {
+    this.cartService.getCarts().subscribe(
+      result => {
+        console.log({}, result.carts);
+        this.holdTotalCount = result.carts.length;
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
+          this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
       }
     );
   }

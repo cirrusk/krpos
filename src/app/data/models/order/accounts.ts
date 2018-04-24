@@ -5,6 +5,8 @@ export class Accounts {
     totalBV: number;
     totalPV: number;
     uid: string;
+    primaryParty: any; // CustomerWsDTO
+    parties: any; // Set<CustomerWsDTO>
 
     constructor() {}
 }

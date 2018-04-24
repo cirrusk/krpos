@@ -1,5 +1,4 @@
-import { ProductInfo } from './product-info';
-import { Price } from './price';
+import { AmwayValue, Price, ProductInfo } from '../../model';
 
 export class OrderEntry {
     entryNumber: number;
@@ -7,6 +6,30 @@ export class OrderEntry {
     basePrice: Price;
     totalPrice: Price;
     product: ProductInfo;
+    updateable: boolean;
+    deliveryMode: any; // DeliveryModeWsDTO
+    deliveryPointOfService: any; // PointOfServiceWsDTO
+    url: string;
+    retailPrice: Price;
+    pickupDateTime: Date;
+    kitEntryCode: string;
+    dispositionCode: any; // AmwayEnumData
+    totalPriceInclTax: Price;
+    isKitProductOrderEntry: boolean;
+    totalTax: Price;
+    aboBasePrice: number;
+    retailBasePrice: number;
+    proRatedPrice: number;
+    margin: any; // AmwayOrderMarginWsDTO
+    value: AmwayValue;
+    skuversion: string;
+    tes: string;
+    quantityAllocated: number;
+    quantityUnallocated: number;
+    quantityCancelled: number;
+    quantityPending: number;
+    quantityShipped: number;
+    quantityReturned: number;
 
     constructor() {
 

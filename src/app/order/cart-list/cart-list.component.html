@@ -60,7 +60,7 @@
         </thead>
         <tbody>
             <tr [class.on]="selectedCartNum == i" *ngFor="let cartEntry of currentCartList; let i = index;" (click)="activeRowCart(i)">
-                <td>{{i+1}}</td>
+                <td>{{cartEntry.entryNumber+1}}</td>
                 <td class="al">{{cartEntry.code}}</td>
                 <td class="al"><span class="elips">{{cartEntry.name}}</span></td>
                 <td>{{cartEntry.qty}}</td>

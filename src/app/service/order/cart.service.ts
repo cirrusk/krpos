@@ -6,6 +6,8 @@ import { Config, NetworkService, Logger, StorageService } from '../pos';
 import {
   CartInfo, CartParams, CartModification,
   OrderEntries, OrderEntryList, OrderParams, Product} from '../../data/model';
+import { CartList } from '../../data/models/order/cart-list';
+import { SaveCartResult } from '../../data/models/order/save-cart-result';
 
 @Injectable()
 export class CartService {
@@ -124,38 +126,40 @@ export class CartService {
   /**
    * 보류된 장바구니 리스트 가져오기
    */
-  getCarts() {
+  getCarts(userId?: string): Observable<CartList> {
     const macAddress = this.networkService.getLocalMacAddress('-');
-    const apiURL = this.config.getApiUrl('getCart', {'macAddress' : macAddress});
+    let apiURL = this.config.getApiUrl('getCart', {'macAddress' : macAddress});
+    if (userId) {
+      apiURL += `?userId=${userId}`;
+    }
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.get<CartModification>(apiURL, { headers : httpHeaders })
-                          .map(data => data as CartModification);
+    return this.httpClient.get<CartList>(apiURL, { headers : httpHeaders })
+                          .map(data => data as CartList);
   }
 
   /**
    * 장바구니 보류
    */
-  saveCart(accountId: string, userId: string, cartId: string) {
+  saveCart(accountId: string, userId: string, cartId: string): Observable<SaveCartResult> {
     const cashierId = this.storage.getEmloyeeId();
     const macAddress = this.networkService.getLocalMacAddress('-');
 
-    console.log({}, cashierId);
     const apiURL = this.config.getApiUrl('saveCart', {'accountId' : accountId, 'userId': userId, 'cashierId': cashierId, 'macAddress': macAddress, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.patch<HttpResponseBase>(apiURL, { headers : httpHeaders, observe: 'response' })
-                          .map(data => data as HttpResponseBase);
+    return this.httpClient.patch<SaveCartResult>(apiURL, { headers : httpHeaders, observe: 'response' })
+                          .map(data => data as SaveCartResult);
   }
 
   /**
    * 보류된 장바구니 복원
    */
-  restoreSavedCart(userId: string, cartId: string) {
+  restoreSavedCart(userId: string, cartId: string): Observable<SaveCartResult> {
     const apiURL = this.config.getApiUrl('restoreCart', {'userId' : userId, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.patch<HttpResponseBase>(apiURL, { headers : httpHeaders, observe: 'response' })
-                          .map(data => data as HttpResponseBase);
+    return this.httpClient.patch<SaveCartResult>(apiURL, { headers : httpHeaders, observe: 'response' })
+                          .map(data => data as SaveCartResult);
   }
 }

@@ -4,13 +4,13 @@ import { Logger } from '../../../service/pos';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class AddCartBroker {
+export class CancleOrderBroker {
   private subject = new Subject<any>();
 
   constructor(private logger: Logger) { }
 
   sendInfo(message: any) {
-    this.logger.set('AddCartBroker', 'Send info...').debug();
+    this.logger.set('CancleOrderBroker', 'Send info...').debug();
     this.subject.next(message);
   }
 
@@ -21,4 +21,5 @@ export class AddCartBroker {
   getInfo(): Observable<any> {
     return this.subject.asObservable();
   }
+
 }
