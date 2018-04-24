@@ -120,7 +120,7 @@ export class ApiService {
    * @param params 설정 파라미터 json
    */
   private generateParams(params: any): HttpParams {
-    this.logger.set('api.service', `httpparams : ${Utils.stringify(params)}`).debug();
+    this.logger.set('api.service', `Http Params : ${Utils.stringify(params)}`).debug();
     const httpparams = new HttpParams({ fromObject: params });
     return httpparams;
   }
