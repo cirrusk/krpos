@@ -10,8 +10,8 @@
         </ng-template>
       </ng-template>
       <a href class="n02" routerLink=""><em>판매정산</em><span>계산원 정산 시스템을<br>이용하실 수 있습니다</span></a>
-      <a href class="n03" (click)="!!startShift()" *ngIf="batchNo === null; else stopShift"><em>Start Shift</em><span>계산원 교대 근무시<br>이용하실 수 있습니다</span></a>
-      <ng-template #stopShift>
+      <a href class="n03" (click)="!!startShift()" *ngIf="batchNo === null; else stopShiftWork"><em>Start Shift</em><span>계산원 교대 근무시<br>이용하실 수 있습니다</span></a>
+      <ng-template #stopShiftWork>
         <a href class="n03" (click)="!!stopShift()"><em>Stop Shift</em><span>계산원 교대 근무시<br>이용하실 수 있습니다</span></a>  
       </ng-template>
       <a href class="n04" (click)="!!posEnd()"><em>POS 종료</em><span>암웨이 포스 시스템을<br>종료합니다</span></a>
