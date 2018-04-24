@@ -1,3 +1,4 @@
+import { BatchInfo } from './../../data/models/common/batch-info';
 import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, NavigationStart } from '@angular/router';
@@ -50,6 +51,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
+  batchNo: string;
   hasTerminal: boolean;
   employeeName: string;
   screenLockType = LockType.INIT;
@@ -88,10 +90,15 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           } else if (type === 'lck') {
             this.logger.set('header component', 'screen locktype subscribe ...').debug();
             this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
+          } else if (type === 'bat') {
+            this.logger.set('header.component', 'batch info subscribe ...').debug();
+            this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           }
         }
       }
     );
+    const batchinfo: BatchInfo = this.storage.getBatchInfo();
+    this.batchNo = (batchinfo) ? (Utils.isEmpty(batchinfo.batchNo)) ? null : batchinfo.batchNo : null;
     this.storagesubscription = this.storage.storageChanges.subscribe(data => {
       if (data.key === 'employeeName') { this.employeeName = data.value; }
     });

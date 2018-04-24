@@ -7,7 +7,7 @@
   </div>
   <div class="right" *ngIf="!isClient">
       <button type="button" class="type01 dp01"><i class="ico_comm keyboard"></i>키보드</button>
-      <button type="button" class="type01 dp02" (click)="holdOrder()" *ngIf="isLogin === true; else holdPopup"><span class="count">3</span>보류</button>
+      <button type="button" class="type01 dp02" (click)="holdOrder()" *ngIf="(isLogin === true && batchNo != null); else holdPopup"><span class="count">3</span>보류</button>
       <ng-template #holdPopup>
         <button type="button" class="type01 dp02"><span class="count">0</span>보류</button>
       </ng-template>
