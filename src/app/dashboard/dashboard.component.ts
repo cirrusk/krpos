@@ -42,10 +42,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.batchNo = null;
         } else {
           if (type === 'bat') {
-            this.logger.set({n: 'dashboard.component', m: 'batch info subscribe ...'}).debug();
+            this.logger.set('dashboard.component', 'batch info subscribe ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           } else if (type === 'lck') {
-            this.logger.set({n: 'dashboard.component', m: 'screen locktype subscribe ...'}).debug();
+            this.logger.set('dashboard.component', 'screen locktype subscribe ...').debug();
             this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
           }
         }
@@ -77,7 +77,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.batchsubscription = this.batch.startBatch().subscribe(
         (data) => {
           if (data && Utils.isNotEmpty(data.batchNo)) {
-            this.logger.set({n: 'dashboard.component', m: `start batch info : ${Utils.stringify(data)}`}).debug();
+            this.logger.set('dashboard.component', `start batch info : ${Utils.stringify(data)}`).debug();
             this.storage.setBatchInfo(data);
             this.infoBroker.sendInfo('bat', data);
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
@@ -93,8 +93,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set({n: 'dashboard.component', m: `start batch error type : ${errdata.type}`}).error();
-            this.logger.set({n: 'dashboard.component', m: `start batch error message : ${errdata.message}`}).error();
+            this.logger.set('dashboard.component', `start batch error type : ${errdata.type}`).error();
+            this.logger.set('dashboard.component', `start batch error message : ${errdata.message}`).error();
             this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
           }
         }
@@ -106,7 +106,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 로그오프 시 배치 정보 저장 후(P7페이지 배치 정보 저장 확인 팝업 뜸) 이후, 대시보드 메인으로 이동
    */
   stopShift() {
-      this.logger.set({n: 'dashboard.component', m: 'stop shift'}).debug();
+      this.logger.set('dashboard.component', 'stop shift').debug();
   }
 
   /**
@@ -143,7 +143,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (result) {
           if (isloginBatch) {
             this.spinner.show();
-            this.logger.set({n: 'dashboard.component', m: 'pos end, stop batch...'}).debug();
+            this.logger.set('dashboard.component', 'pos end, stop batch...').debug();
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
               this.storage.logout();
               this.storage.removeEmployeeName(); // client 담당자 삭제

@@ -57,7 +57,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   }
 
   ngOnInit() {
-    this.logger.set({n: 'search.account.component', m: `결제 타입 --------------> ${this.paymentType}`}).debug();
+    this.logger.set('search.account.component', `결제 타입 --------------> ${this.paymentType}`).debug();
   }
 
   ngOnDestroy() {

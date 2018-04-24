@@ -83,10 +83,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           this.isLogin = false;
         } else {
           if (type === 'tkn') {
-            this.logger.set({n: 'header component', m: 'access token subscribe ...'}).debug();
+            this.logger.set('header component', 'access token subscribe ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
           } else if (type === 'lck') {
-            this.logger.set({n: 'header component', m: 'screen locktype subscribe ...'}).debug();
+            this.logger.set('header component', 'screen locktype subscribe ...').debug();
             this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
           }
         }
@@ -106,9 +106,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
         result => {
           if (result) {
-            this.logger.set({n: 'header.component', m: 'qz websocket connection is alive!!!'}).debug();
+            this.logger.set('header.component', 'qz websocket connection is alive!!!').debug();
           } else {
-            this.logger.set({n: 'header.component', m: 'qz websocket connection is dead!!!, check qz tray running mode...'}).warn();
+            this.logger.set('header.component', 'qz websocket connection is dead!!!, check qz tray running mode...').warn();
             // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
             this.modal.openMessage({
               title: 'QZ Tray 상태 체크',
@@ -184,7 +184,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             //     message: `터미널 정보가 올바르게 설정되지 않았습니다.<br>관리자에게 문의하시기 바랍니다.`,
             //   }), 50);
             this.posName = '-';
-            this.logger.set({n: 'header.component', m: `Terminal info get fail : ${error.name} - ${error.message}`}).error();
+            this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
           }
         );

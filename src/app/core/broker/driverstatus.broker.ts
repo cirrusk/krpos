@@ -11,7 +11,7 @@ export class DriverReadyBroker {
     private waitNetworkDriver: Subject<any> = new Subject();
 
     constructor(private logger: Logger) {
-        this.logger.set({n: 'driver.ready.broker', m: '0. Broker init...'}).debug();
+        this.logger.set('driver.ready.broker', '0. Broker init...').debug();
     }
 
     public getQzObserver(): Subject<any> {

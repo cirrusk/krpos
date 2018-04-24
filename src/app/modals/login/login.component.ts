@@ -80,7 +80,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
    */
   startWork() {
-    if (this.loginId) { this.logger.set({n: 'login.component', m: `login id : ${this.loginId}`}).debug(); }
+    if (this.loginId) { this.logger.set('login.component', `login id : ${this.loginId}`).debug(); }
     const loginid = this.loginId;
     const loginpwd = this.loginPassword || '';
 
@@ -97,14 +97,14 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     this.authsubscription = this.authService.authentication(loginid, loginpwd).subscribe(
       result => {
-        this.logger.set({n: 'login.component', m: 'get user authentication code...'}).debug();
+        this.logger.set('login.component', 'get user authentication code...').debug();
         this.getAccessToken(result.code); // access token  취득 및 session 저장
       },
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'login.component', m: `authentication error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'login.component', m: `authentication error message : ${errdata.message}`}).error();
+          this.logger.set('login.component', `authentication error type : ${errdata.type}`).error();
+          this.logger.set('login.component', `authentication error message : ${errdata.message}`).error();
         }
         this.spinner.hide();
       },
@@ -133,8 +133,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'login.component', m: `authentication error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'login.component', m: `authentication error message : ${errdata.message}`}).error();
+          this.logger.set('login.component', `authentication error type : ${errdata.type}`).error();
+          this.logger.set('login.component', `authentication error message : ${errdata.message}`).error();
           this.alert.show({
             alertType: AlertType.error,
             title: '오류',
@@ -191,22 +191,22 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
             const batchNo = result.batchNo;
             this.batchService.endExistBatch(batchNo).subscribe(
               data => {
-                this.logger.set({n: 'dashboard.component', m: `end exist batch : ${Utils.stringify(data)}`}).debug();
+                this.logger.set('dashboard.component', `end exist batch : ${Utils.stringify(data)}`).debug();
               }
             );
           } else {
-            this.logger.set({n: 'login.component', m: 'not exist current batch, skip clear batch...'}).debug();
+            this.logger.set('login.component', 'not exist current batch, skip clear batch...').debug();
           }
         },
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set({n: 'login.component', m: `${errdata.message}, skip clear batch...`}).debug();
+            this.logger.set('login.component', `${errdata.message}, skip clear batch...`).debug();
           }
         }
       );
     } else {
-      this.logger.set({n: 'login.component', m: 'not exist session batch, skip clear batch...'}).debug();
+      this.logger.set('login.component', 'not exist session batch, skip clear batch...').debug();
     }
   }
 }

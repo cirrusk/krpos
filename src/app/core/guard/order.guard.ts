@@ -17,11 +17,11 @@ export class OrderGuard implements CanActivate, CanActivateChild {
     const batchinfo = this.storage.getBatchInfo();
     const islogin = this.storage.isLogin();
     if (lockType === LockType.LOCK) {
-      this.logger.set({n: 'order.guard', m: 'pos is locked!!!'}).debug();
+      this.logger.set('order.guard', 'pos is locked!!!').debug();
       redictCheck = true;
     }
     if (batchinfo === null) {
-      this.logger.set({n: 'order.guard', m: 'pos is not start shift!!!'}).debug();
+      this.logger.set('order.guard', 'pos is not start shift!!!').debug();
       redictCheck = true;
     }
     if (islogin && redictCheck === false) {

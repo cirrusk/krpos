@@ -233,8 +233,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Create cart info error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Create cart info error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
@@ -252,13 +252,13 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                                 this.cartInfo.code,
                                                                                 this.accountInfo.uid).subscribe(
       res => {
-        this.logger.set({n: 'cartList.component', m: `update Volume Account status : ${res.status}`}).debug();
+        this.logger.set('cartList.component', `update Volume Account status : ${res.status}`).debug();
       },
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Update Volume Account error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Update Volume Account error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Update Volume Account error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Update Volume Account error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
@@ -302,8 +302,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Add cart error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Add cart error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
@@ -370,8 +370,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Update item quantity error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Update item quantity error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Update item quantity error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
@@ -401,8 +401,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Remove item cart error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Remove item cart error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Remove item cart error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Remove item cart error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
@@ -424,8 +424,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Remove cart error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Remove cart error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Remove cart error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Remove cart error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
@@ -452,8 +452,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set({n: 'cartList.component', m: `Save cart error type : ${errdata.type}`}).error();
-          this.logger.set({n: 'cartList.component', m: `Save cart error message : ${errdata.message}`}).error();
+          this.logger.set('cartList.component', `Save cart error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Save cart error message : ${errdata.message}`).error();
           this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },

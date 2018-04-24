@@ -38,7 +38,7 @@ export class PrinterDriver extends AbstractDriver {
         // Wait QZ Driver
         const waitQz: Subject<any> = this.driverReadyBroker.getQzObserver();
 
-        this.logger.set({n: 'printer.driver', m: 'Printer Driver waiting QZ'}).debug();
+        this.logger.set('printer.driver', 'Printer Driver waiting QZ').debug();
 
         waitQz.subscribe(
             () => {
@@ -67,7 +67,7 @@ export class PrinterDriver extends AbstractDriver {
             this.selectedPrinterName = printerName;
             this.status = Status.Selected;
 
-            this.logger.set({n: 'printer.driver', m: `Default printer was selected. Name is ${this.selectedPrinterName}.`}).debug();
+            this.logger.set('printer.driver', `Default printer was selected. Name is ${this.selectedPrinterName}.`).debug();
 
             waitingForSelection.next();
         })
@@ -80,7 +80,7 @@ export class PrinterDriver extends AbstractDriver {
             () => {
                 this.initPrinterConfig();
 
-                this.logger.set({n: 'printer.driver', m: 'Sending Msg to Printer service'}).debug();
+                this.logger.set('printer.driver', 'Sending Msg to Printer service').debug();
 
                 // Send printer ready signal
                 const notifier: Subject<any> = this.driverReadyBroker.getPrinterObserver();
@@ -111,7 +111,7 @@ export class PrinterDriver extends AbstractDriver {
                 // density: opts.density
             });
         } catch (err) {
-            this.logger.set({n: 'printer.driver', m: `Reconfigure error. ${err}`}).error();
+            this.logger.set('printer.driver', `Reconfigure error. ${err}`).error();
         }
 
         return this.curPrinterConfig;
@@ -124,7 +124,7 @@ export class PrinterDriver extends AbstractDriver {
      */
     private checkReady() {
         const isQzActive = qz.websocket.isActive();
-        this.logger.set({n: 'printer.driver', m: `check ready to printer is active ? ${isQzActive}, status : [${this.status}]`}).debug();
+        this.logger.set('printer.driver', `check ready to printer is active ? ${isQzActive}, status : [${this.status}]`).debug();
         if (!isQzActive && (this.status !== Status.Ready)) {
              throw new Error('Printer driver is not ready');
         }

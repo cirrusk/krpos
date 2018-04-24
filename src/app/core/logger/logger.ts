@@ -10,7 +10,8 @@ const noop = (): any => undefined;
 @Injectable()
 export class Logger {
   confLogLevel: string;
-  params: any;
+  name: string;
+  message: string;
   constructor(private config: Config, private datePipe: DatePipe) {
     this.confLogLevel = this.config.getConfig('logLevel');
   }
@@ -26,9 +27,9 @@ export class Logger {
     const cnfLevel: string = (this.confLogLevel && this.confLogLevel !== '') ? this.confLogLevel.toUpperCase() : 'DEBUG';
     if (Levels[level] >= Levels[cnfLevel]) {
       let nm, msg;
-      if (this.params) {
-        if (this.params.n) { nm = '[' + this.params.n + '] '; } else { nm = ''; }
-        msg = this.params.m ? this.params.m : '';
+      if (this.message) {
+        if (this.name) { nm = '[' + this.name + '] '; } else { nm = ''; }
+        msg = this.message ? this.message : '';
         switch (level) {
           case 'TRACE': { return console.trace.bind(console, `%c[%s] %c%s%s`, 'color:blue', 'TRACE', 'color:blue', nm, msg); }
           case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', 'DEBUG', 'color:teal', nm, msg); }
@@ -56,11 +57,12 @@ export class Logger {
 
   /**
    * 로그를 남길 경우 로그 정보를 설정
-   *
-   * @param params : { n : 소스의 대표 명칭, m : 남길 메시지 }
+   * @param name 소스의 대표 명칭
+   * @param message 남길 메시지
    */
-  set(params: any) {
-    this.params = params;
+  set(name?: string, message?: string) {
+    this.name = name;
+    this.message = message;
     return this;
   }
 

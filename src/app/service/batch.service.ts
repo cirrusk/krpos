@@ -22,7 +22,7 @@ export class BatchService {
    * pickupStore: Store associated with terminal. | (string) e.g 01
    */
   startBatch(): Observable <BatchInfo> {
-    this.logger.set({n: 'batch.service', m: 'Start shift start batch...'}).debug();
+    this.logger.set('batch.service', 'Start shift start batch...').debug();
     const tokeninfo = this.storage.getTokenInfo();
     const terminalinfo = this.storage.getTerminalInfo();
     const tid = terminalinfo && terminalinfo.id;
@@ -38,7 +38,7 @@ export class BatchService {
    * 로그오프 시 배치 저장 후(POS 종료 확인 팝업 -> 배치 정보 저장  팝업 뜸) 대시보드 메인으로 이동
    */
   endBatch(): Observable <BatchInfo> {
-    this.logger.set({n: 'batch.service', m: 'end batch...'}).debug();
+    this.logger.set('batch.service', 'end batch...').debug();
     const batchinfo = this.storage.getBatchInfo();
     const batchid = batchinfo && batchinfo.batchNo;
     const data = new HttpData('batchStop', { batch_id: batchid }, null, {endingBalance: '0'} );
@@ -46,7 +46,7 @@ export class BatchService {
   }
 
   endExistBatch(batchno: string): Observable <BatchInfo> {
-    this.logger.set({n: 'batch.service', m: 'end exist batch...'}).debug();
+    this.logger.set('batch.service', 'end exist batch...').debug();
     const data = new HttpData('batchStop', { batch_id: batchno }, null, {endingBalance: '0'} );
     return this.api.put(data);
   }
@@ -60,7 +60,7 @@ export class BatchService {
    * Batch 시작 안된 상태가 되며, 여기서 Batch 를 시작하면 already exist error 발생.
    */
   getBatch(): Observable <BatchInfo> {
-    this.logger.set({n: 'batch.service', m: 'get current batch...'}).debug();
+    this.logger.set('batch.service', 'get current batch...').debug();
     const terminalinfo = this.storage.getTerminalInfo();
     const tid = terminalinfo && terminalinfo.id;
     const tnm = terminalinfo && terminalinfo.pointOfService.name;
