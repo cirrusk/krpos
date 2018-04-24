@@ -1,8 +1,7 @@
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
-import { StorageService, Config, Logger, ApiService } from './pos';
+import { StorageService, Logger, ApiService } from './pos';
 import { BatchInfo, HttpData } from '../data/model';
 import Utils from '../core/utils';
 
@@ -10,8 +9,6 @@ import Utils from '../core/utils';
 export class BatchService {
 
   constructor(private api: ApiService,
-              private httpClient: HttpClient,
-              private config: Config,
               private storage: StorageService,
               private logger: Logger) { }
 
