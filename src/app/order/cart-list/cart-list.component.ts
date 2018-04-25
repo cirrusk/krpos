@@ -1,5 +1,3 @@
-import { TotalPrice } from './../../data/models/cart/cart-data';
-import { InfoBroker } from './../../broker/info.broker';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,9 +6,11 @@ import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, Ho
 import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger } from '../../core';
 
 import { CartService, PagerService } from '../../service';
-import { SearchBroker, SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker } from '../../broker';
+import { SearchBroker, SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry } from '../../data';
 import { Cart } from '../../data/models/order/cart';
+
+import { TotalPrice } from './../../data/models/cart/cart-data';
 import Utils from '../../core/utils';
 
 @Component({
