@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/observable/empty';
 import { StorageService, Logger, ApiService } from './pos';
 import { BatchInfo, BatchStats, HttpData } from '../data/model';
 import Utils from '../core/utils';
@@ -87,8 +88,12 @@ export class BatchService {
     this.logger.set('batch.service', 'get batch statistics...').debug();
     const batchinfo = this.storage.getBatchInfo();
     const batchid = batchinfo && batchinfo.batchNo;
-    const data = new HttpData('batchStats', {batch_id: batchid}, null, null);
-    return this.api.get(data);
+    if (batchid === null) {
+      return Observable.empty();
+    } else {
+      const data = new HttpData('batchStats', {batch_id: batchid}, null, null);
+      return this.api.get(data);
+    }
   }
 
 }

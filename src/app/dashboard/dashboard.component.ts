@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.statssubscription = this.batch.statsBatch().subscribe(result => {
       if (result) {
         this.orderCount = result.ordersCount;
+        this.logger.set('dashboard.component', `current order count : ${this.orderCount}`).debug();
       }
     });
   }
@@ -97,7 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
-                if (!state.show) { this.router.navigate(['/order']); }  // 닫히면...
+                if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
               }
             );
           }

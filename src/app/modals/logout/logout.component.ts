@@ -34,6 +34,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
     this.statssubscription = this.batch.statsBatch().subscribe(result => {
       if (result) {
         this.orderCount = result.ordersCount;
+        this.logger.set('logout.component', `current order count : ${this.orderCount}`).debug();
       }
     });
   }
