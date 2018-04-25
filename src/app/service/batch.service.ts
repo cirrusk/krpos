@@ -35,19 +35,20 @@ export class BatchService {
 
   /**
    * 근무종료
+   * 배치 아이디가 있으면(getBatch 에서 넘어온 배치 아이디) 그 값으로 배치 종료
+   * 배치 아이디가 없으면 세션의 배치정보 배치 아이디 값으로 배치 종료
    * 로그오프 시 배치 저장 후(POS 종료 확인 팝업 -> 배치 정보 저장  팝업 뜸) 대시보드 메인으로 이동
    */
-  endBatch(): Observable<BatchInfo> {
-    this.logger.set('batch.service', 'end batch...').debug();
-    const batchinfo = this.storage.getBatchInfo();
-    const batchid = batchinfo && batchinfo.batchNo;
+  endBatch(batchno?: string): Observable<BatchInfo> {
+    let batchid: string;
+    if (batchno) {
+      batchid = batchno;
+    } else {
+      const batchinfo = this.storage.getBatchInfo();
+      batchid = batchinfo && batchinfo.batchNo;
+    }
+    this.logger.set('batch.service', `end batch of [${batchid}]`).debug();
     const data = new HttpData('batchStop', { batch_id: batchid }, null, {endingBalance: '0'} );
-    return this.api.put(data);
-  }
-
-  endExistBatch(batchno: string): Observable<BatchInfo> {
-    this.logger.set('batch.service', 'end exist batch...').debug();
-    const data = new HttpData('batchStop', { batch_id: batchno }, null, {endingBalance: '0'} );
     return this.api.put(data);
   }
 
@@ -75,7 +76,7 @@ export class BatchService {
     this.logger.set('batch.service', 'get current batch and clear exist batch start...').debug();
     return this.getBatch()
     .flatMap((batchinfo: BatchInfo) => {
-      return this.endExistBatch(batchinfo.batchNo);
+      return this.endBatch(batchinfo.batchNo);
     });
   }
 
