@@ -64,7 +64,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       } else {
         posmsg = `근무 종료하시겠습니까?<br>배치정보 저장 후, 근무 종료가 진행됩니다.`;
       }
-      this.modalsubscription = this.modal.openConfirm(
+      this.modal.openConfirm(
         {
           title: '근무 종료',
           message: posmsg,
