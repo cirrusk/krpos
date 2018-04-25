@@ -108,12 +108,10 @@ export default class Utils {
    * @param splitter
    */
   public static convertMacAddress(macaddress: string, splitter?: string): string {
-    if (macaddress === undefined) { // macaddress === null || 
-      return 'UNKNOWN';
+    if (macaddress === null || macaddress === undefined) {
+      return null;
     }
-    if (macaddress === null) {
-      return macaddress;
-    }
+
     splitter = splitter || '-';
     let macFormatted = '';
     for (let i = 0; i < macaddress.length; i++) {

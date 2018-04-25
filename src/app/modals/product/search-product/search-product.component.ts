@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
-  ElementRef, ViewContainerRef, QueryList } from '@angular/core';
+  ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
 
 import { ModalComponent } from '../../../core/modal/modal.component';
 import { ModalService } from '../../../service/pos';
@@ -14,12 +14,16 @@ import { SpinnerService } from '../../../core/spinner/spinner.service';
 import { AddCartBroker } from '../../../broker/order/cart/add-cart.broker';
 
 import Utils from '../../../core/utils';
+import { SearchBroker } from '../../../broker/order/search/search.broker';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'pos-search-product',
   templateUrl: './search-product.component.html'
 })
-export class SearchProductComponent extends ModalComponent implements OnInit, AfterViewInit {
+export class SearchProductComponent extends ModalComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  private searchSubscription: Subscription;
 
   @ViewChild('searchValue') private searchValue: ElementRef;
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
@@ -39,6 +43,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private alert: AlertService,
     private spinner: SpinnerService,
     private addCartBroker: AddCartBroker,
+    private searchBroker: SearchBroker,
     private renderer: Renderer2) {
     super(modalService);
     this.basicSearchType = 'sku';
@@ -46,9 +51,25 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     this.productCount = -1;
     this.products = null;
     this.currentPage = 0;
+
+    this.searchSubscription = this.searchBroker.getInfo().subscribe(
+      result => {
+        if (result.data.searchText.trim() && result.type === 'product') {
+          this.searchValue.nativeElement.value = result.data.searchText;
+          // 전달 받은 데이터로 검색
+          this.searchProduct(result.data.searchText);
+        }
+      }
+    );
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewInit() {
@@ -77,8 +98,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * ENDOFSALE         : 단종
    * 인 경우는 재고 수량란에  "일시품절", 단종 으로 텍스트 표시하고, 선택 disable
    */
-  searchProduct() {
-    const val = this.searchValue.nativeElement.value;
+  searchProduct(searchText?: string) {
+    const val = searchText ? searchText : this.searchValue.nativeElement.value;
     if (Utils.isEmpty(val)) {
       this.alert.show({ alertType: AlertType.warn, title: '확인', message: '검색어를 입력하십시오.' });
       return;
@@ -91,12 +112,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
     switch (this.basicSearchType) {
       case 'sku': {
-
-      } break;
-      case 'vps': {
-
-      } break;
-      case 'prd': {
         this.spinner.show();
         this.search.getBasicProductInfo(val, this.currentPage).subscribe(data => {
           this.products = data;
@@ -123,6 +138,12 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         error => {},
         () => { this.spinner.hide(); }
        );
+      } break;
+      case 'vps': {
+
+      } break;
+      case 'prd': {
+
       } break;
     }
   }

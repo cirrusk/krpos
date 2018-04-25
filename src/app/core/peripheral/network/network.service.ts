@@ -44,7 +44,7 @@ export class NetworkService {
         this.macAddress = this.networkDriver.macAddress;
       }
     }
-    this.logger.set('network.service', '3. Local Mac Address received successfully...').debug();
+    this.logger.set('network.service', '3. Local Mac Address received successfully...' + this.macAddress).debug();
     return this.macAddress;
   }
 

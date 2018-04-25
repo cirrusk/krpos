@@ -1,11 +1,14 @@
-import { OrderEntry } from './order-entry';
+import { CartMessage, OrderEntry } from '../../model';
+
 export class CartModification {
     statusCode: string;
-    statusMessage: string;
     quantityAdded: number;
     quantity: number;
     entry: OrderEntry;
     deliveryModeChanged: boolean;
+    statusMessage: string;
+    messages: Array<CartMessage>;
+    bundleDescription: any; // List<AmwayKitProductChildOrderEntryWsDTO>
 
     constructor() {
 

@@ -91,7 +91,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           if (type === 'tkn') {
             this.logger.set('header component', 'access token subscribe ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
-            if (this.isLogin) {
+            if (this.networkService.getLocalMacAddress() && this.isLogin) {
               this.getholdTotalCount();
             }
           } else if (type === 'lck') {
@@ -100,6 +100,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           } else if (type === 'bat') {
             this.logger.set('header.component', 'batch info subscribe ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
+          } else if (type === 'hold') {
+            this.getholdTotalCount();
           }
         }
       }
@@ -217,7 +219,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   getholdTotalCount() {
     this.cartService.getCarts().subscribe(
       result => {
-        console.log({}, result.carts);
         this.holdTotalCount = result.carts.length;
       },
       error => {

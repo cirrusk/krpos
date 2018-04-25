@@ -30,8 +30,4 @@ export class OrderEntry {
     quantityPending: number;
     quantityShipped: number;
     quantityReturned: number;
-
-    constructor() {
-
-    }
 }

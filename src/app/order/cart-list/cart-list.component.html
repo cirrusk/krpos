@@ -61,11 +61,11 @@
         <tbody>
             <tr [class.on]="selectedCartNum == i" *ngFor="let cartEntry of currentCartList; let i = index;" (click)="activeRowCart(i)">
                 <td>{{cartEntry.entryNumber+1}}</td>
-                <td class="al">{{cartEntry.code}}</td>
-                <td class="al"><span class="elips">{{cartEntry.name}}</span></td>
-                <td>{{cartEntry.qty}}</td>
-                <td class="ar">{{cartEntry.price | number}}</td>
-                <td class="ar">{{cartEntry.price*cartEntry.qty | number}}</td>
+                <td class="al">{{cartEntry.product.code}}</td>
+                <td class="al"><span class="elips">{{cartEntry.product.name}}</span></td>
+                <td>{{cartEntry.quantity}}</td>
+                <td class="ar">{{cartEntry.product.price.value | number}}</td>
+                <td class="ar">{{cartEntry.product.price.value*cartEntry.quantity | number}}</td>
                 <td></td>
             </tr>                                   
         </tbody>
@@ -160,11 +160,11 @@
           </li>
           <li>
               <span>할인금액</span>
-              <em class="sale"></em>
+              <em class="sale">0</em>
           </li>
           <li>
               <span class="t01">Total PV/BV</span>
-              <em></em>
+              <em>{{ totalPV |  number }} / {{ totalBV |  number }}</em>
           </li>
       </ul>
       <ul class="calc02">

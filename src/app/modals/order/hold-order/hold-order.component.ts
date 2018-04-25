@@ -11,6 +11,7 @@ import { AlertService } from '../../../core/alert/alert.service';
 import { PagerService } from '../../../service/common/pager.service';
 import { RestoreCartBroker } from '../../../broker/order/cart/restore-cart.broker';
 import { Cart } from '../../../data/models/order/cart';
+import { InfoBroker } from '../../../broker/info.broker';
 
 @Component({
   selector: 'pos-hold-order',
@@ -32,6 +33,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
               private alert: AlertService,
               private pagerService: PagerService,
               private restoreCartBroker: RestoreCartBroker,
+              private infoBroker: InfoBroker,
               private logger: Logger) {
     super(modalService);
     this.cartList = new Array<Cart>();
@@ -46,6 +48,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
   activeRow(index: number): void {
     this.activeNum = index;
     this.restoreCartBroker.sendInfo(this.currentCartList[index]);
+    this.infoBroker.sendInfo('hold', 'add');
     this.close();
   }
 

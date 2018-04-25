@@ -9,9 +9,9 @@ export class SearchBroker {
 
   constructor(private logger: Logger) { }
 
-  sendInfo(message: any) {
-    this.logger.set('search.broker', 'Send info...').debug();
-    this.subject.next(message);
+  sendInfo(type: string, message: any) {
+    const data = {type: type, data: message };
+    this.subject.next(data);
   }
 
   clear() {

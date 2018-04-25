@@ -44,13 +44,13 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
     this.searchSubscription = this.searchBroker.getInfo().subscribe(
       result => {
-        if (result.searchText.trim()) {
+        if (result.data.searchText.trim() && result.type === 'account') {
           // 전달 받은 데이터로 검색
-          this.getAccountList(result.searchType, result.searchText);
+          this.getAccountList(result.data.searchType, result.data.searchText);
 
           // 추후 제거 예정
           this.totalCnt = this.accountList === undefined ? 0 : this.accountList.accounts.length;
-          this.searchText = result.searchText;
+          this.searchText = result.data.searchText;
         }
       }
     );
@@ -104,7 +104,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     // 테스트
     this.account = new Accounts();
     this.account.accountType = 'AMWAY BUSINESS OWNER';
-    this.account.name = '7480003';
+    this.account.name = '암웨이';
     this.account.status = 'ACTIVE';
     this.account.totalBV = 100;
     this.account.totalPV = 200;

@@ -125,13 +125,16 @@ export class CartService {
 
   /**
    * 보류된 장바구니 리스트 가져오기
+   * @param userId
    */
   getCarts(userId?: string): Observable<CartList> {
     const macAddress = this.networkService.getLocalMacAddress('-');
+
     let apiURL = this.config.getApiUrl('getCart', {'macAddress' : macAddress});
     if (userId) {
       apiURL += `?userId=${userId}`;
     }
+
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
     return this.httpClient.get<CartList>(apiURL, { headers : httpHeaders })

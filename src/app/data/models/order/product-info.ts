@@ -24,7 +24,7 @@ export class ProductInfo {
     variantOptions: any; // List<VariantOptionWsDTO>
     baseOptions: any; // List<BaseOptionWsDTO>
     volumePricesFlag: boolean;
-    volumePrices: any; // List<PriceWsDTO>
+    volumePrices: Array<Price>; // List<PriceWsDTO>
     productReferences: any; // List<ProductReferenceWsDTO>
     variantMatrix: any; // List<VariantMatrixElementWsDTO>
     priceRange: any; // PriceRangeWsDTO
