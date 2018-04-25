@@ -263,9 +263,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeButtonLabel: '취소',
         modalId: 'LogoutComponent'
       }
-    ).subscribe(result => {
-      if (!result) { this.router.navigate(['/order']); }
-    });
+    );
   }
 
   /**
