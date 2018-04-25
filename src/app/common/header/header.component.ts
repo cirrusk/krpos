@@ -37,6 +37,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private storagesubscription: Subscription;
   private ordersubscription: Subscription;
   private modalsubscription: Subscription;
+  private holdsubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
@@ -80,7 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.logger.set('header component', 'access token subscribe ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
             if (this.networkService.getLocalMacAddress() && this.isLogin) {
-              this.getholdTotalCount();
+              this.getHoldTotalCount();
             }
           } else if (type === 'lck') {
             this.logger.set('header component', 'screen locktype subscribe ...').debug();
@@ -89,7 +90,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.logger.set('header.component', 'batch info subscribe ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           } else if (type === 'hold') {
-            this.getholdTotalCount();
+            this.getHoldTotalCount();
           }
         }
       }
@@ -140,6 +141,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.storagesubscription) { this.storagesubscription.unsubscribe(); }
     if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
     if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
+    if (this.holdsubscription) { this.holdsubscription.unsubscribe(); }
   }
 
   ngAfterViewInit() {
@@ -205,8 +207,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  getholdTotalCount() {
-    this.cartService.getCarts().subscribe(
+  getHoldTotalCount() {
+    this.holdsubscription = this.cartService.getCarts().subscribe(
       result => {
         this.holdTotalCount = result.carts.length;
       },
