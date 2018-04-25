@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, Renderer2 } from '@angular/core';
-// import { FormControl, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-// import 'rxjs/add/observable/zip';
+import 'rxjs/add/operator/debounceTime';
 import { ModalComponent } from '../../core/modal/modal.component';
 import { AuthService } from '../../service/auth.service';
 import { ModalService, StorageService, Logger } from '../../service/pos';
@@ -35,6 +35,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @ViewChild('loginPasswordTxt') loginPwdInput: ElementRef;
   @Input() loginId: string;
   @Input() loginPassword: string;
+  private regExp: RegExp = new RegExp(/[\ㄱ-ㅎㅏ-ㅣ가-힣`~!@#$%^&*|\\\'\";:\/()_+|<>?{}\[\]]/g);
+  loginIdValid: FormControl = new FormControl('');
   authsubscription: Subscription;
   tokensubscription: Subscription;
   constructor(
@@ -51,6 +53,13 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
 
   ngOnInit() {
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
+    this.loginIdValid.valueChanges
+    .debounceTime(400)
+    .subscribe(v => {
+      if (v) {
+        if (this.regExp.test(v)) { this.loginIdInput.nativeElement.value = v.replace(this.regExp, ''); }
+      }
+    });
   }
 
   /**
@@ -62,11 +71,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   ngOnDestroy() {
     if (this.authsubscription) {this.authsubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
-  }
-
-  idInput(evt: any) {
-    const v = evt.target.value;
-    setTimeout(() => { this.loginIdInput.nativeElement.value = v.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, ''); }, 5);
   }
 
   /**
@@ -132,11 +136,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         if (errdata) {
           this.logger.set('login.component', `authentication error type : ${errdata.type}`).error();
           this.logger.set('login.component', `authentication error message : ${errdata.message}`).error();
-          this.alert.show({
-            alertType: AlertType.error,
-            title: '오류',
-            message: `${errdata.message}`
-          });
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       }
     );

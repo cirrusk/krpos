@@ -1,4 +1,4 @@
-import { Directive, AfterViewInit, Input, ElementRef, Renderer } from '@angular/core';
+import { Directive, AfterViewInit, Input, ElementRef } from '@angular/core';
 
 @Directive({
   selector: '[posFocusBlur]'
@@ -6,7 +6,7 @@ import { Directive, AfterViewInit, Input, ElementRef, Renderer } from '@angular/
 export class FocusBlurDirective implements AfterViewInit {
 
   @Input() posFocusBlur: string;
-  constructor(private element: ElementRef, private renderer: Renderer) { }
+  constructor(private element: ElementRef) { }
 
   ngAfterViewInit() {
     setTimeout(() => {
