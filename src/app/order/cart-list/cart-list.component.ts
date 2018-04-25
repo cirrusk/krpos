@@ -9,7 +9,6 @@ import { CartService, PagerService } from '../../service';
 import { SearchBroker, SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry } from '../../data';
 import { Cart } from '../../data/models/order/cart';
-
 import { TotalPrice } from './../../data/models/cart/cart-data';
 import Utils from '../../core/utils';
 
