@@ -108,7 +108,7 @@ export default class Utils {
    * @param splitter
    */
   public static convertMacAddress(macaddress: string, splitter?: string): string {
-    if (macaddress === null || macaddress === undefined) {
+    if (macaddress === undefined) { // macaddress === null || 
       return 'UNKNOWN';
     }
     splitter = splitter || '-';
