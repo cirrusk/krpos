@@ -107,9 +107,7 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         message: '',
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: true,
+        closeAllModals: false,
         modalId: 'SearchAccountComponent'
       }
     );
@@ -126,10 +124,6 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         message: '',
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'SearchProductComponent'
       }
     );
@@ -143,10 +137,6 @@ export class PriceInfoComponent implements OnInit, OnDestroy {
         message: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'NewAccountComponent'
       }
     );

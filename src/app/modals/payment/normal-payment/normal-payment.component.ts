@@ -32,10 +32,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'CreditCardComponent'
       }
     );
@@ -48,10 +45,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'IcCardComponent'
       }
     );
@@ -64,10 +58,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'IcCardComponent_Amway',
         pointType: 'a'
       }
@@ -81,10 +72,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'IcCardComponent_Member',
         pointType: 'm'
       }
@@ -98,10 +86,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'CashComponent'
       }
     );
@@ -114,10 +99,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'DirectDebitComponent'
       }
     );
@@ -130,10 +112,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'ChecksComponent'
       }
     );
@@ -146,10 +125,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'ReCashComponent'
       }
     );
@@ -162,10 +138,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'CouponComponent'
       }
     );

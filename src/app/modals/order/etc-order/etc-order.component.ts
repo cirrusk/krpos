@@ -43,10 +43,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
         title: '',
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'SearchBerComponent'
       }
     );

@@ -15,7 +15,9 @@ import Utils from '../../core/utils';
 })
 export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy {
 
+  statssubscription: Subscription;
   batchsubscription: Subscription;
+  private orderCount: number;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private router: Router,
@@ -25,13 +27,20 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
     private infobroker: InfoBroker,
     private logger: Logger) {
     super(modalService);
+    this.orderCount = 0;
   }
 
   ngOnInit() {
+    this.statssubscription = this.batch.statsBatch().subscribe(result => {
+      if (result) {
+        this.orderCount = result.ordersCount;
+      }
+    });
   }
 
   ngOnDestroy() {
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
+    if (this.statssubscription) { this.statssubscription.unsubscribe(); }
   }
 
   /**
@@ -47,10 +56,9 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       this.storage.removeEmployeeName(); // client 담당자 삭제
     } else { // Start Shift를 했을 경우
       // 종료시 주문 건수가 1건 이상 있으면 해당 메시지로 변경해야함.
-      const orderCount = 1;
       let posmsg = '';
-      if (orderCount > 0) {
-        posmsg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
+      if (this.orderCount > 0) {
+        posmsg = `주문 수량이 (<em class="fc_red">${this.orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
       } else {
         posmsg = `근무 종료하시겠습니까?<br>배치정보 저장 후, 근무 종료가 진행됩니다.`;
       }
@@ -60,10 +68,6 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
           message: posmsg,
           actionButtonLabel: '계속',
           closeButtonLabel: '취소',
-          closeByEnter: false,
-          closeByEscape: true,
-          closeByClickOutside: true,
-          closeAllModals: false,
           modalId: 'ENDWORK'
         }
       ).subscribe(
@@ -79,10 +83,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
                 message: `배치 정보 저장이 완료되었습니다.`,
                 actionButtonLabel: '확인',
                 closeButtonLabel: '취소',
-                closeByEnter: false,
-                closeByEscape: true,
                 closeByClickOutside: false,
-                closeAllModals: false,
                 modalId: 'ENDWORK_LAST'
               });
             },

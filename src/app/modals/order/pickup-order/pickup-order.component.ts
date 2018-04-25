@@ -163,10 +163,6 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
         message: print,
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'EcpPrintComponent'
       }
     );

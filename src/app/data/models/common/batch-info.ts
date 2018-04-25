@@ -9,3 +9,9 @@ export class BatchInfo {
     startingBalance: number;
     terminal: TerminalInfo;
 }
+
+export class BatchStats {
+    customersCount: number;
+    ordersCount: number;
+    productsCount: number;
+}

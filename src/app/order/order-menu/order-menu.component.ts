@@ -34,10 +34,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'NormalPaymentComponent'
       }
     );
@@ -54,10 +51,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'ComplexPaymentComponent'
       }
     );
@@ -78,10 +72,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         paymentType: 'g',
         modalId: 'SearchAccountComponent'
       }
@@ -100,10 +91,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'PickupOrderComponent'
       }
     );
@@ -121,10 +109,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'CancelOrderComponent'
       }
     );
@@ -142,10 +127,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'PromotionOrderComponent'
       }
     );
@@ -163,10 +145,7 @@ export class OrderMenuComponent implements OnInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'EtcOrderComponent'
       }
     );

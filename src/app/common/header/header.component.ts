@@ -129,9 +129,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
               message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
               closeButtonLabel: '닫기',
               closeByEnter: true,
-              closeByEscape: true,
-              closeByClickOutside: true,
-              closeAllModals: true,
               modalId: 'QZSTATUS'
             });
 
@@ -211,10 +208,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'HoldOrderComponent'
       }
     );
@@ -248,10 +242,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'LoginComponent'
       }
     );
@@ -271,10 +261,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'LogoutComponent'
       }
     ).subscribe(result => {
@@ -310,10 +296,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         title: '화면풀림',
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'PasswordComponent'
       }
     ).subscribe((result) => {

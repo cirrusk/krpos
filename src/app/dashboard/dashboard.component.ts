@@ -22,9 +22,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   tokeninfo: AccessToken;
   batchNo: string;
   tokensubscription: Subscription;
+  statssubscription: Subscription;
   batchsubscription: Subscription;
   alertsubscription: Subscription;
   screenLockType: number;
+  private orderCount: number;
   constructor(
     private modal: Modal,
     private infoBroker: InfoBroker,
@@ -34,6 +36,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private spinner: SpinnerService,
     private logger: Logger,
     private router: Router) {
+    this.orderCount = 0;
+  }
+
+  ngOnInit() {
     this.tokensubscription = this.infoBroker.getInfo().subscribe(
       (result) => {
         const type = result && result.type;
@@ -56,18 +62,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     );
-  }
-
-  ngOnInit() {
     this.tokeninfo = this.storage.getTokenInfo();
     this.batchNo = (this.storage.getBatchInfo()) ? this.storage.getBatchInfo().batchNo : null;
     this.screenLockType = this.storage.getScreenLockType();
+    this.statssubscription = this.batch.statsBatch().subscribe(result => {
+      if (result) {
+        this.orderCount = result.ordersCount;
+      }
+    });
   }
 
   ngOnDestroy() {
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    if (this.statssubscription) { this.statssubscription.unsubscribe(); }
   }
 
   /**
@@ -88,9 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
-                if (!state.show) { // 닫히면...
-                  this.router.navigate(['/order']);
-                }
+                if (!state.show) { this.router.navigate(['/order']); }  // 닫히면...
               }
             );
           }
@@ -118,9 +125,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (isloginBatch) {
       let msg: string;
       let btn: string;
-      const orderCount = 1;
-      if (orderCount > 0) {
-        msg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
+      if (this.orderCount > 0) {
+        msg = `주문 수량이 (<em class="fc_red">${this.orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
         btn = '확인';
       } else {
         msg = `배치를 종료하시겠습니까?<br>배치정보 저장 후, Stop Shift가 진행됩니다.`;
@@ -132,9 +138,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           message: msg,
           actionButtonLabel: btn,
           closeButtonLabel: '취소',
-          closeByEscape: true,
           closeByClickOutside: false,
-          closeAllModals: false,
           modalId: 'STOPSHIFT'
         }
       ).subscribe(result => {
@@ -149,10 +153,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               message: `배치 정보 저장이 완료되었습니다.`,
               actionButtonLabel: '확인',
               closeButtonLabel: '취소',
-              closeByEnter: false,
-              closeByEscape: true,
               closeByClickOutside: false,
-              closeAllModals: false,
               modalId: 'STOPSHIFT_LAST'
             });
           },
@@ -179,9 +180,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const isloginBatch: boolean = this.storage.isLogin() && existbatch;
 
     if (isloginBatch) {
-      const orderCount = 1;
-      if (orderCount > 0) {
-        msg = `주문 수량이 (<em class="fc_red">${orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
+      if (this.orderCount > 0) {
+        msg = `주문 수량이 (<em class="fc_red">${this.orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
         btn = '확인';
       } else {
         msg = `POS를 종료하시겠습니까?<br>배치정보 저장 후, 화면 종료가 진행됩니다.`;
@@ -196,9 +196,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         message: msg,
         actionButtonLabel: btn,
         closeButtonLabel: '취소',
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'POSEND'
       }
     ).subscribe(
@@ -206,7 +204,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (result) {
           if (isloginBatch) {
             this.spinner.show();
-            this.logger.set('dashboard.component', 'pos end, stop batch...').debug();
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
               this.storage.logout();
               this.storage.removeEmployeeName(); // client 담당자 삭제
@@ -215,10 +212,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 message: `배치 정보 저장이 완료되었습니다.`,
                 actionButtonLabel: '확인',
                 closeButtonLabel: '취소',
-                closeByEnter: false,
-                closeByEscape: true,
                 closeByClickOutside: false,
-                closeAllModals: false,
                 modalId: 'POSEND_LAST'
               }).subscribe(ret => {
                 if (ret) {
