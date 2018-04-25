@@ -1,3 +1,4 @@
+import { TotalPrice } from './../../data/models/cart/cart-data';
 import { InfoBroker } from './../../broker/info.broker';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -38,6 +39,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private removeCartSubscription: Subscription;
   private restoreCartSubscription: Subscription;
   private cancleCartSubscription: Subscription;
+  private cartListSubscription: Subscription;
 
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
@@ -86,11 +88,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productSubscription = this.addCartBroker.getInfo().subscribe(
       productInfo => {
         if (productInfo) {
-          if (this.cartList.length === 0) {
-            this.createCartInfo(productInfo.code);
-          } else {
-            this.addCartEntries(productInfo.code);
-          }
+          this.addToCart(productInfo.code);
         }
       }
     );
@@ -121,33 +119,15 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.accountInfoSubscription.unsubscribe();
-    if (this.updateVolumeAccountSubscription) {
-      this.updateVolumeAccountSubscription.unsubscribe();
-    }
-    if (this.addCartSubscription) {
-      this.addCartSubscription.unsubscribe();
-    }
-
-    if (this.removeEntrySubscription) {
-      this.removeEntrySubscription.unsubscribe();
-    }
-
-    if (this.removeCartSubscription) {
-      this.removeCartSubscription.unsubscribe();
-    }
-
-    if (this.updateCartSubscription) {
-      this.updateCartSubscription.unsubscribe();
-    }
-
-    if (this.restoreCartSubscription) {
-      this.restoreCartSubscription.unsubscribe();
-    }
-
-    if (this.cancleCartSubscription) {
-      this.cancleCartSubscription.unsubscribe();
-    }
+    if (this.accountInfoSubscription) { this.accountInfoSubscription.unsubscribe(); }
+    if (this.updateVolumeAccountSubscription) { this.updateVolumeAccountSubscription.unsubscribe(); }
+    if (this.addCartSubscription) { this.addCartSubscription.unsubscribe(); }
+    if (this.removeEntrySubscription) { this.removeEntrySubscription.unsubscribe(); }
+    if (this.removeCartSubscription) { this.removeCartSubscription.unsubscribe(); }
+    if (this.updateCartSubscription) { this.updateCartSubscription.unsubscribe(); }
+    if (this.restoreCartSubscription) { this.restoreCartSubscription.unsubscribe(); }
+    if (this.cancleCartSubscription) { this.cancleCartSubscription.unsubscribe(); }
+    if (this.cartListSubscription) { this.cartListSubscription.unsubscribe(); }
   }
 
   /**
@@ -298,7 +278,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       cartResult => {
         this.cartInfo = cartResult;
         this.updateVolumeAccount(this.cartInfo);
-        this.addCartEntries(productCode);
+        if (productCode) {
+          this.addCartEntries(productCode);
+        }
       },
       error => {
         const errdata = Utils.getError(error);
@@ -334,6 +316,40 @@ export class CartListComponent implements OnInit, OnDestroy {
       },
       () => { this.spinner.hide(); }
     );
+  }
+  /**
+   * 현재 장바구니 조회
+   * @param page
+   */
+  getCartList(page?: number): void {
+    this.spinner.show();
+    this.cartListSubscription = this.cartService.getCartList(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
+      result => {
+        this.cartList = result.entries;
+        this.setPage(page ? page : Math.ceil(this.cartList.length / 10));
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Update item quantity error message : ${errdata.message}`).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
+   * 장바구니 담기 function
+   * @param code
+   */
+  addToCart(code: string): void {
+    if (this.cartList.length === 0) {
+      this.createCartInfo(code);
+    } else {
+      this.addCartEntries(code);
+    }
   }
 
   /**
@@ -401,7 +417,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
     } else {
-        this.cartList[existedIdx].quantity = orderEntry.quantity;
+        this.cartList[existedIdx] = orderEntry;
     }
 
     // 장바구니에 추가한 페이지로 이동
@@ -417,7 +433,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     const index = this.cartList.findIndex(function (obj) {
       return obj.product.code === code;
     });
-
     this.spinner.show();
     this.updateCartSubscription = this.cartService.updateItemQuantityCart(this.cartInfo.user.uid,
                                                                       this.cartInfo.code,
@@ -425,15 +440,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                       code,
                                                                       qty).subscribe(
       result => {
-        this.updateCartModel = result;
-        this.productInfo.entryNumber = this.updateCartModel.entry.entryNumber;
-        this.productInfo.product.code = this.updateCartModel.entry.product.code;
-        this.productInfo.product.name = this.updateCartModel.entry.product.name;
-        this.productInfo.quantity = this.updateCartModel.entry.quantity;
-        this.productInfo.product.price.value = this.updateCartModel.entry.product.price.value;
-        this.productInfo.product.description = this.updateCartModel.entry.product.description;
-
-        this.addCartEntry(this.productInfo);
+        this.addCartEntry(result.entry);
       },
       error => {
         const errdata = Utils.getError(error);
@@ -452,7 +459,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param code
    */
   removeItemCart(code: string): void {
-    let index = this.cartList.findIndex(function (obj) {
+    const index = this.cartList.findIndex(function (obj) {
       return obj.product.code === code;
     });
 
@@ -461,10 +468,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                       this.cartInfo.code,
                                                                       this.cartList[index].entryNumber).subscribe(
       result => {
-        this.cartList.splice(index, 1);
-
-        index = index <= this.cartList.length ? index + 1 : index - 1;
-        this.setPage(Math.ceil(index / 10));
+        this.getCartList(index < 10 ? 1 : Math.ceil(index / 10));
       },
       error => {
         const errdata = Utils.getError(error);
@@ -486,9 +490,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
       result => {
         this.init();
-        // this.cartList.length = 0;
-        // this.currentCartList.length = 0;
-        // this.totalPriceInfo();
       },
       error => {
         const errdata = Utils.getError(error);
@@ -579,19 +580,13 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartList.length = 0;
 
     // 카트 리스트
-    cartData.entries.forEach(entry => {
-      this.cartList.push(cartData.entries[0]);
-    });
+    this.cartList = cartData.entries;
 
     this.cartInfo.code = cartData.code;
     this.cartInfo.user = cartData.user;
     this.cartInfo.volumeABOAccount = cartData.volumeABOAccount;
     this.cartInfo.guid = cartData.guid;
     this.setPage(Math.ceil(this.cartList.length / 10));
-
-    // 총 수량, 총 금액
-    this.totalItem = cartData.totalUnitCount;
-    this.totalPrice = cartData.totalPrice.value;
   }
 
   /**
@@ -621,8 +616,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartList.forEach(entry => {
       sumItem += entry.quantity;
       sumPrice += entry.product.price.value * entry.quantity;
-      sumPV += entry.product.price.amwayValue.pointValue;
-      sumBV += entry.product.price.amwayValue.businessVolume;
+      sumPV += entry.totalPrice.amwayValue.pointValue;
+      sumBV += entry.totalPrice.amwayValue.businessVolume;
     });
 
     this.totalItem = sumItem;

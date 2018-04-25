@@ -17,6 +17,7 @@ export const environment = {
       batchStats: '/{baseSiteId}/orderbatches/{batch_id}/statistics',
       batch: '/{baseSiteId}/orderbatches/currentBatch',
       createCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts',
+      getCartList: '/{baseSiteId}/users/{userId}/carts/{cartId}',
       addToCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
       updateItemQtyCart : '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
       updateVolAcc: '/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',

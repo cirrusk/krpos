@@ -8,6 +8,7 @@ import {
   OrderEntries, OrderEntryList, OrderParams, Product} from '../../data/model';
 import { CartList } from '../../data/models/order/cart-list';
 import { SaveCartResult } from '../../data/models/order/save-cart-result';
+import { Cart } from '../../data/models/order/cart';
 
 @Injectable()
 export class CartService {
@@ -51,6 +52,20 @@ export class CartService {
 
     return this.httpClient.put<HttpResponseBase>(apiURL, httpParams, { headers : httpHeaders, observe: 'response'})
                           .map(data => data as HttpResponseBase);
+  }
+
+  /**
+   * 카트 조회
+   * @param userId
+   * @param cartId
+   */
+  getCartList(userId: string, cartId: string): Observable<Cart> {
+    const apiURL = this.config.getApiUrl('getCartList', {'userId' : userId, 'cartId' : cartId});
+
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+
+    return this.httpClient.get<Cart>(apiURL, { headers : httpHeaders })
+                          .map(data => data as Cart);
   }
 
   /**
