@@ -48,6 +48,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
 
   /**
    * 근무 종료 상단 클릭 시 팝업
+   * 종료시 주문 건수가 1건 이상 있으면 해당 메시지로 변경해야함.
    * 1. POS 종료 확인 팝업
    *
    */
@@ -58,7 +59,6 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       this.storage.logout();
       this.storage.removeEmployeeName(); // client 담당자 삭제
     } else { // Start Shift를 했을 경우
-      // 종료시 주문 건수가 1건 이상 있으면 해당 메시지로 변경해야함.
       let posmsg = '';
       if (this.orderCount > 0) {
         posmsg = `주문 수량이 (<em class="fc_red">${this.orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
