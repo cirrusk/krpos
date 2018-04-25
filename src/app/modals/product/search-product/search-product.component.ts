@@ -94,9 +94,12 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
 
   /**
    * 상품 조회시 saleStatus 가
-   * OUTOFSTOCK       : 일시품절
-   * ENDOFSALE         : 단종
+   * SOLDOUT    : 일시품절
+   * ENDOFSALE  : 단종
+   * OUTOFSTOCK : 재고없음
    * 인 경우는 재고 수량란에  "일시품절", 단종 으로 텍스트 표시하고, 선택 disable
+   * 1) 프로모션은 모두 노출
+   * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    */
   searchProduct(searchText?: string) {
     const val = searchText ? searchText : this.searchValue.nativeElement.value;
@@ -184,9 +187,12 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 상품 선택 시 tr에 on클래스 추가
    * 상품 선택 시 해당 상품 데이터 추가
    * 상품 조회시 saleStatus 가
-   * OUTOFSTOCK       : 일시품절
-   * ENDOFSALE         : 단종
+   * SOLDOUT    : 일시품절
+   * ENDOFSALE  : 단종
+   * OUTOFSTOCK : 재고없음
    * 인 경우는 재고 수량란에  "일시품절", 단종 으로 텍스트 표시하고, 선택 disable
+   * 1) 프로모션은 모두 노출
+   * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    *
    * @param index
    * @param product
