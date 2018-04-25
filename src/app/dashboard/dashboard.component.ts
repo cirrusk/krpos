@@ -25,6 +25,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   statssubscription: Subscription;
   batchsubscription: Subscription;
   alertsubscription: Subscription;
+  modalsubscription: Subscription;
   screenLockType: number;
   private orderCount: number;
   constructor(
@@ -78,6 +79,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
+    if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
   }
 
   /**
@@ -133,7 +135,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         msg = `배치를 종료하시겠습니까?<br>배치정보 저장 후, Stop Shift가 진행됩니다.`;
         btn = '계속';
       }
-      this.modal.openConfirm(
+      this.modalsubscription = this.modal.openConfirm(
         {
           title: 'Stop Shift',
           message: msg,
@@ -179,7 +181,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let btn: string;
     const existbatch: boolean = this.batchNo === null ? false : Utils.isNotEmpty(this.batchNo);
     const isloginBatch: boolean = this.storage.isLogin() && existbatch;
-
     if (isloginBatch) {
       if (this.orderCount > 0) {
         msg = `주문 수량이 (<em class="fc_red">${this.orderCount}</em>)건 입니다.<br>배치 정보를 저장하시겠습니까?`;
@@ -191,7 +192,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       msg = `POS를 종료하시겠습니까?<br>화면 종료가 진행됩니다.`;
     }
-    this.modal.openConfirm(
+    this.modalsubscription = this.modal.openConfirm(
       {
         title: 'POS 종료',
         message: msg,
@@ -208,7 +209,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
               this.storage.logout();
               this.storage.removeEmployeeName(); // client 담당자 삭제
-              this.modal.openConfirm({
+              this.modalsubscription = this.modal.openConfirm({
                 title: 'POS 종료',
                 message: `배치 정보 저장이 완료되었습니다.`,
                 actionButtonLabel: '확인',

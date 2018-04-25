@@ -49,6 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private qzsubscription: Subscription;
   private storagesubscription: Subscription;
   private ordersubscription: Subscription;
+  private modalsubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
@@ -149,6 +150,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.qzCheck && this.qzsubscription) { this.qzsubscription.unsubscribe(); }
     if (this.storagesubscription) { this.storagesubscription.unsubscribe(); }
     if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
+    if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
   }
 
   ngAfterViewInit() {
@@ -289,7 +291,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 비밀번호로 잠금을 해제하면 카트로 이동함.
    */
   screenRelease() {
-    this.modal.openModalByComponent(PasswordComponent,
+    this.modalsubscription = this.modal.openModalByComponent(PasswordComponent,
       {
         title: '화면풀림',
         actionButtonLabel: '확인',
