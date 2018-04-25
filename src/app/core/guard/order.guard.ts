@@ -1,8 +1,8 @@
-import { LockType } from './../../common/header/header.component';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { StorageService, Logger } from '../../service/pos';
+import { StorageService, Logger } from '..';
+import { LockType } from '../../data';
 
 @Injectable()
 export class OrderGuard implements CanActivate, CanActivateChild {

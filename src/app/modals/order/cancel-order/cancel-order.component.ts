@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService } from '../../../service/pos';
-import { AlertService } from '../../../core/alert/alert.service';
+import { ModalComponent, ModalService, AlertService } from '../../../core';
 import { CancleOrderBroker } from '../../../broker/order/cart/cancle-order.broker';
 
 @Component({

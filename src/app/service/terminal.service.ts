@@ -3,10 +3,9 @@ import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/finally';
-
-import { TerminalInfo, HttpData } from '../data/model';
-import { ApiService } from './pos';
+import { ApiService } from '../core';
 import Utils from '../core/utils';
+import { TerminalInfo, HttpData } from '../data';
 
 @Injectable()
 export class TerminalService {

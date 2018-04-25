@@ -1,8 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { InfoBroker } from '../../broker/info.broker';
-import { AccessToken, TerminalInfo, BatchInfo } from '../../data/model';
+import { AccessToken, TerminalInfo, BatchInfo } from '../../data';
 import Utils from '../utils';
+
 
 @Injectable()
 export class StorageService implements OnDestroy {

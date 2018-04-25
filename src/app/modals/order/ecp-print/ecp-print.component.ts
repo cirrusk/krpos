@@ -1,10 +1,5 @@
-import { AlertType } from './../../../core/alert/alert-type.enum';
-import { AlertService } from './../../../core/alert/alert.service';
 import { Component, OnInit } from '@angular/core';
-
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService } from '../../../service/pos';
-import { Modal } from '../../../core/modal/modal';
+import { ModalComponent, ModalService, Modal, AlertService, AlertType } from '../../../core';
 
 @Component({
   selector: 'pos-ecp-print',

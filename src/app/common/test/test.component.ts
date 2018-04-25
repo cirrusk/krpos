@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { PosModalService } from './../../core/modal/pos-modal.service';
-import { Product, OrderParams, OrderEntries } from '../../data/model';
+import { PosModalService } from '../../core';
+import { Product, OrderParams, OrderEntries } from '../../data';
 
 @Component({
   selector: 'pos-test',

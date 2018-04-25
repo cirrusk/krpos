@@ -27,6 +27,8 @@ import { PagerService } from '../service/common/pager.service';
 import { ApiService } from './service/api.service';
 
 
+
+
 @NgModule({
   imports: [
     CommonModule,

@@ -1,4 +1,4 @@
-import { OrderEntry, Accounts, Principal, Price } from '../../model';
+import { OrderEntry, Accounts, Principal, Price } from '../..';
 
 
 export class AbstractOrder {

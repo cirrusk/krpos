@@ -1,21 +1,14 @@
 import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
   ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
 
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService } from '../../../service/pos';
-import { Modal } from '../../../core/modal/modal';
-
+  import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
-import { AlertService } from '../../../core/alert/alert.service';
-import { AlertType } from '../../../core/alert/alert-type.enum';
-import { Products } from '../../../data/models/cart/cart-data';
-import { Product } from '../../../data/models/cart/cart-data';
-import { SpinnerService } from '../../../core/spinner/spinner.service';
-import { AddCartBroker } from '../../../broker/order/cart/add-cart.broker';
-
+import { Product, Products } from '../../../data/models/cart/cart-data';
+import { AddCartBroker } from '../../../broker';
 import Utils from '../../../core/utils';
 import { SearchBroker } from '../../../broker/order/search/search.broker';
 import { Subscription } from 'rxjs/Subscription';
+
 
 @Component({
   selector: 'pos-search-product',

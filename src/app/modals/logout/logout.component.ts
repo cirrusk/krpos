@@ -2,13 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent } from '../../core/modal/modal.component';
-import { ModalService, Logger, StorageService } from '../../service/pos';
-import { BatchService } from '../../service/batch.service';
-import { InfoBroker } from '../../broker/info.broker';
-import { SpinnerService } from '../../core/spinner/spinner.service';
-import { Modal } from '../../core/modal/modal';
+import { ModalComponent, ModalService, Logger, Modal, StorageService, SpinnerService } from '../../core';
+import { BatchService } from '../../service';
+import { InfoBroker } from '../../broker';
 import Utils from '../../core/utils';
+
 
 @Component({
   selector: 'pos-logout',

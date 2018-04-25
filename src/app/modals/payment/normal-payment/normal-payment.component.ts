@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2 } from '@angular/core';
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService, Modal } from '../../../service/pos';
-import { FocusBlurDirective } from '../../../core/modal/focus-blur.directive';
+import { ModalComponent, ModalService, Modal } from '../../../core';
+
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
 import { IcCardComponent } from '../ways/ic-card/ic-card.component';
 import { CashComponent } from '../ways/cash/cash.component';

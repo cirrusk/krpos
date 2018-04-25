@@ -1,4 +1,4 @@
-import { AmwayValue, Price, ProductInfo } from '../../model';
+import { AmwayValue, Price, ProductInfo } from '../..';
 
 export class OrderEntry {
     entryNumber: number;

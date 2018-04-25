@@ -1,4 +1,4 @@
-import { AbstractOrder, Principal } from '../../model';
+import { AbstractOrder, Principal } from '../..';
 
 
 export class Cart extends AbstractOrder {

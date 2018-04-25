@@ -1,9 +1,5 @@
-import { AlertType } from './../../../core/alert/alert-type.enum';
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService } from '../../../service/pos';
-import { OnlyNumberDirective } from '../../../core/common/only-number.directive';
-import { AlertService } from '../../../core/alert/alert.service';
+import { ModalComponent, AlertService, ModalService, AlertType, OnlyNumberDirective } from '../../../core';
 import Utils from '../../../core/utils';
 
 @Component({

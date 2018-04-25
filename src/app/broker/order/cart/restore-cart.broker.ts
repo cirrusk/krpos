@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Logger } from '../../../service/pos';
+import { Logger } from '../../../core';
 
 @Injectable()
 export class RestoreCartBroker {

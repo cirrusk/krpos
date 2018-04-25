@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/empty';
-import { StorageService, Logger, ApiService } from './pos';
-import { BatchInfo, BatchStats, HttpData } from '../data/model';
+
+import { ApiService, StorageService, Logger } from '../core';
+import { BatchInfo, BatchStats, HttpData } from '../data';
 import Utils from '../core/utils';
+
 
 @Injectable()
 export class BatchService {

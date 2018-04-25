@@ -1,12 +1,12 @@
 import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { ApiService, StorageService, NetworkService, CLIENT_SECRET } from './pos';
-import { TerminalInfo, AccessToken, HttpData } from '../data/model';
-import { Error } from '../data/error/error';
+import { CLIENT_SECRET } from '../core/config/config';
+import { NetworkService } from '../core/peripheral/network/network.service';
+import { StorageService } from '../core/service/storage.service';
+import { ApiService } from '../core/service/api.service';
+import { TerminalInfo, AccessToken, HttpData, Error } from '../data';
 import Utils from '../core/utils';
-
-
 
 @Injectable()
 export class AuthService {

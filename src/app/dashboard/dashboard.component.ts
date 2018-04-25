@@ -2,15 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LoginComponent } from '../modals/login/login.component';
-import { Modal, Logger, StorageService } from '../service/pos';
+import { Modal, Logger, StorageService, AlertService, AlertState, AlertType, SpinnerService } from '../core';
+
+import { LoginComponent } from '../modals';
 import { BatchService } from '../service/batch.service';
-import { InfoBroker } from '../broker/info.broker';
-import { AccessToken, BatchInfo } from '../data/model';
-import { AlertService, AlertState } from '../core/alert/alert.service';
-import { AlertType } from '../core/alert/alert-type.enum';
-import { LockType } from '../common/header/header.component';
-import { SpinnerService } from '../core/spinner/spinner.service';
+import { InfoBroker } from '../broker';
+import { AccessToken, BatchInfo, LockType } from '../data';
 import Utils from '../core/utils';
 
 @Component({

@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Config, NetworkService, Logger, StorageService } from '../pos';
+import { NetworkService, StorageService, Config, Logger } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, OrderParams, Product} from '../../data/model';
+  OrderEntries, OrderEntryList, OrderParams, Product} from '../../data';
 import { CartList } from '../../data/models/order/cart-list';
 import { SaveCartResult } from '../../data/models/order/save-cart-result';
 import { Cart } from '../../data/models/order/cart';

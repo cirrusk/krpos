@@ -1,4 +1,4 @@
-import { Price, Stock } from '../../model';
+import { Price, Stock } from '../..';
 
 export class ProductInfo {
     code: string;

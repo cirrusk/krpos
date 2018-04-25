@@ -1,13 +1,11 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent } from '../../core/modal/modal.component';
-import { ModalService, Logger, StorageService } from '../../service/pos';
+import { ModalComponent, ModalService, Modal, Logger, StorageService, AlertService, AlertType, SpinnerService } from '../../core';
+
 import { AuthService } from '../../service/auth.service';
-import { AlertService } from '../../core/alert/alert.service';
-import { AlertType } from '../../core/alert/alert-type.enum';
-import { SpinnerService } from '../../core/spinner/spinner.service';
 import Utils from '../../core/utils';
+
 
 @Component({
   selector: 'pos-password',

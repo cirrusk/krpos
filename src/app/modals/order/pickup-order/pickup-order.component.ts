@@ -1,9 +1,7 @@
-import { EcpPrintComponent } from './../ecp-print/ecp-print.component';
-
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService, Modal } from '../../../service/pos';
-import { FocusBlurDirective } from '../../../core/modal/focus-blur.directive';
+
+import { EcpPrintComponent } from './../ecp-print/ecp-print.component';
+import { ModalComponent, ModalService, Modal } from '../../../core';
 
 @Component({
   selector: 'pos-pickup-order',

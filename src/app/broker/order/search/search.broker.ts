@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
-import { Logger } from '../../../service/pos';
+import { Logger } from '../../../core';
 
 @Injectable()
 export class SearchBroker {

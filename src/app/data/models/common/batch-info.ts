@@ -1,4 +1,4 @@
-import { TerminalInfo } from '../../model';
+import { TerminalInfo } from '../..';
 
 export class BatchInfo {
     batchNo: string;

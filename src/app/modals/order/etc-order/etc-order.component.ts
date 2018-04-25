@@ -1,10 +1,9 @@
 
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService, Modal } from '../../../service/pos';
-import { FocusBlurDirective } from '../../../core/modal/focus-blur.directive';
 import { SearchBerComponent } from './../../account/search-ber/search-ber.component';
+
+import { ModalComponent, ModalService, Modal } from '../../../core';
 
 @Component({
   selector: 'pos-etc-order',

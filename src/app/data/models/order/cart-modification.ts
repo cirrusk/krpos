@@ -1,4 +1,4 @@
-import { CartMessage, OrderEntry } from '../../model';
+import { CartMessage, OrderEntry } from '../..';
 
 export class CartModification {
     statusCode: string;

@@ -1,16 +1,12 @@
-import { Modal } from './../../../core/modal/modal';
 import { Component, OnInit } from '@angular/core';
 
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService, Logger } from '../../../service/pos';
-import { CartService } from '../../../service/order/cart.service';
-import Utils from '../../../core/utils';
-import { AlertType } from '../../../core/alert/alert-type.enum';
-import { SpinnerService } from '../../../core/spinner/spinner.service';
-import { AlertService } from '../../../core/alert/alert.service';
-import { PagerService } from '../../../service/common/pager.service';
-import { RestoreCartBroker } from '../../../broker/order/cart/restore-cart.broker';
+import { ModalComponent, ModalService, Modal, Logger, SpinnerService, AlertService, AlertType } from '../../../core';
+
+import { CartService, PagerService } from '../../../service';
+import { RestoreCartBroker } from '../../../broker';
 import { Cart } from '../../../data/models/order/cart';
+import Utils from '../../../core/utils';
+
 import { InfoBroker } from '../../../broker/info.broker';
 
 @Component({

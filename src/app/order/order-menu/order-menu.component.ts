@@ -1,14 +1,8 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
-
-import { PromotionOrderComponent } from './../../modals/order/promotion-order/promotion-order.component';
-import { EtcOrderComponent } from './../../modals/order/etc-order/etc-order.component';
-import { SearchAccountComponent } from './../../modals/account/search-account/search-account.component';
-import { PickupOrderComponent } from './../../modals/order/pickup-order/pickup-order.component';
-import { NormalPaymentComponent } from '../../modals/payment/normal-payment/normal-payment.component';
-import { ComplexPaymentComponent } from './../../modals/payment/complex-payment/complex-payment.component';
-import { CancelOrderComponent } from '../../modals/order/cancel-order/cancel-order.component';
-import { Modal } from '../../service/pos';
-
+import { Modal } from '../../core';
+import { PromotionOrderComponent, EtcOrderComponent,
+  SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
+  ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
 
 @Component({
   selector: 'pos-order-menu',

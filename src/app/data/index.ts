@@ -1,4 +1,5 @@
 // models define
+export * from './models/lock-type';
 export * from './models/order/account-list';
 export * from './models/order/accounts';
 export * from './models/order/cart-info';
@@ -26,3 +27,7 @@ export * from './models/common/terminal-info';
 export * from './models/common/product-data';
 export * from './models/common/batch-info';
 export * from './models/common/http-data';
+
+export * from './error/error';
+export * from './error/error-info';
+export * from './error/errors';

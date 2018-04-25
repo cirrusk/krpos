@@ -3,16 +3,12 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
-import { ModalComponent } from '../../core/modal/modal.component';
-import { AuthService } from '../../service/auth.service';
-import { ModalService, StorageService, Logger } from '../../service/pos';
-import { InfoBroker } from '../../broker/info.broker';
-import { ErrorInfo } from '../../data/error/error-info';
-import { AlertService } from '../../core/alert/alert.service';
-import { AlertType } from '../../core/alert/alert-type.enum';
-import { SpinnerService } from '../../core/spinner/spinner.service';
-
+import { ModalComponent, ModalService, StorageService, Logger, AlertService, AlertType, SpinnerService } from '../../core';
+import { AuthService } from '../../service';
+import { InfoBroker } from '../../broker';
+import { ErrorInfo } from '../../data';
 import Utils from '../../core/utils';
+
 
 /**
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.

@@ -1,4 +1,3 @@
-import { BatchInfo } from './../../data/models/common/batch-info';
 import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, NavigationStart } from '@angular/router';
@@ -6,26 +5,14 @@ import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
-import { NetworkService, Logger, Modal, QzHealthChecker, StorageService, Config } from '../../service/pos';
+import { InfoBroker } from '../../broker';
+import { AlertService, AlertType, NetworkService, Logger, Modal, QzHealthChecker, StorageService, Config } from '../../core';
+import { HoldOrderComponent, PasswordComponent, LoginComponent, LogoutComponent } from '../../modals';
+import { TerminalService, CartService } from '../../service';
+import { AccessToken, BatchInfo, LockType } from '../../data';
 
-import { InfoBroker } from '../../broker/info.broker';
-
-import { TerminalService } from '../../service/terminal.service';
-import { AlertService } from '../../core/alert/alert.service';
-import { HoldOrderComponent } from '../../modals/order/hold-order/hold-order.component';
-import { PasswordComponent } from '../../modals/password/password.component';
-import { AccessToken } from '../../data/model';
-import { LoginComponent } from '../../modals/login/login.component';
-import { LogoutComponent } from '../../modals/logout/logout.component';
-import { AlertType } from '../../core/alert/alert-type.enum';
 import Utils from '../../core/utils';
-import { CartService } from '../../service/order/cart.service';
 
-export enum LockType {
-  INIT = -1,
-  UNLOCK = 0,
-  LOCK = 1
-}
 /**
  * 1. 보류
  * 2. 근무시작 : 아이콘을 터치하면 비밀번호 입력 페이지로 이동

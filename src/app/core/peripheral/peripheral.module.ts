@@ -5,8 +5,9 @@ import { DriverReadyBroker } from '../broker/driverstatus.broker';
 import { NetworkDriver } from './network/network.driver';
 import { PrinterDriver } from './printer/printer.driver';
 import { QZDriver } from './qz/qz.driver';
-import { NetworkService, PrinterService } from '../../service/pos';
+import { NetworkService, PrinterService } from '..';
 import { FormatReader } from './common/format-reader';
+
 
 @NgModule({
   imports: [

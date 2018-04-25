@@ -1,3 +1,5 @@
+import { Logger } from './../logger/logger';
+import { Config } from './../config/config';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
@@ -5,9 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
-import { HttpData } from '../../data/model';
-import { Config } from '../config/config';
-import { Logger } from '../logger/logger';
+import { HttpData } from '../../data';
 import Utils from '../utils';
 
 @Injectable()

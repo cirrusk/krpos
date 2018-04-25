@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ModalComponent } from '../../../../core/modal/modal.component';
-import { ModalService } from '../../../../service/pos';
-import { FocusBlurDirective } from '../../../../core/modal/focus-blur.directive';
+import { ModalComponent, ModalService } from '../../../../core';
 
 @Component({
   selector: 'pos-checks',

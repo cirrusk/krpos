@@ -1,8 +1,6 @@
 import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
 
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService } from '../../../service/pos';
-import { Modal } from '../../../core/modal/modal';
+import { ModalComponent, Modal, ModalService } from '../../../core';
 
 @Component({
   selector: 'pos-search-ber',

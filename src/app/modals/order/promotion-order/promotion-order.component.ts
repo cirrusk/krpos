@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService } from '../../../service/pos';
-import { FocusBlurDirective } from '../../../core/modal/focus-blur.directive';
+import { ModalComponent, ModalService, Modal } from '../../../core';
 
 @Component({
   selector: 'pos-promotion-order',

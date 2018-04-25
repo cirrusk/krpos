@@ -2,27 +2,16 @@ import { TotalPrice } from './../../data/models/cart/cart-data';
 import { InfoBroker } from './../../broker/info.broker';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-import { SearchAccountComponent } from '../../modals/account/search-account/search-account.component';
-import { NewAccountComponent } from '../../modals/account/new-account/new-account.component';
-import { SearchProductComponent } from '../../modals/product/search-product/search-product.component';
-import { HoldOrderComponent } from '../../modals/order/hold-order/hold-order.component';
-
-import { Modal, StorageService, Logger } from '../../service/pos';
-import { CartService } from '../../service/order/cart.service';
-import { PagerService } from '../../service/common/pager.service';
-import { AlertService } from '../../core/alert/alert.service';
-import { SpinnerService } from '../../core/spinner/spinner.service';
-import { SearchBroker } from '../../broker/order/search/search.broker';
-import { SearchAccountBroker } from '../../broker/order/search/search-account.broker';
-import { AddCartBroker } from '../../broker/order/cart/add-cart.broker';
 import { Subscription } from 'rxjs/Subscription';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry } from '../../data/model';
-import { AlertType } from '../../core/alert/alert-type.enum';
-import Utils from '../../core/utils';
-import { RestoreCartBroker } from '../../broker/order/cart/restore-cart.broker';
-import { CancleOrderBroker } from '../../broker/order/cart/cancle-order.broker';
+
+import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent } from '../../modals';
+import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger } from '../../core';
+
+import { CartService, PagerService } from '../../service';
+import { SearchBroker, SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker } from '../../broker';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry } from '../../data';
 import { Cart } from '../../data/models/order/cart';
+import Utils from '../../core/utils';
 
 @Component({
   selector: 'pos-cart-list',

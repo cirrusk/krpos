@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LockType } from '../common/header/header.component';
+import { LockType } from '../data';
 
 @Component({
   selector: 'pos-order',

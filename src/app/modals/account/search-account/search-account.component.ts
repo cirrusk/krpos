@@ -1,15 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService, Modal, Logger } from '../../../service/pos';
-import { SearchService } from '../../../service/order/search.service';
-import { SearchBroker } from '../../../broker/order/search/search.broker';
-import { SearchAccountBroker } from '../../../broker/order/search/search-account.broker';
-import { CartService } from '../../../service/order/cart.service';
-import { CartInfo, AccountList, Accounts } from '../../../data/model';
-import { AlertService } from '../../../core/alert/alert.service';
-import { AlertType } from '../../../core/alert/alert-type.enum';
+import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType } from '../../../core';
+
+import { SearchService, CartService } from '../../../service';
+import { SearchBroker, SearchAccountBroker } from '../../../broker';
+import { CartInfo, AccountList, Accounts } from '../../../data';
 
 @Component({
   selector: 'pos-search-account',
