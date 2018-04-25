@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Modal, Logger, StorageService, AlertService, AlertState, AlertType, SpinnerService } from '../core';
-
 import { LoginComponent } from '../modals';
 import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker';
