@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private orderCount: number;
   constructor(
     private modal: Modal,
-    private infoBroker: InfoBroker,
+    private info: InfoBroker,
     private batch: BatchService,
     private storage: StorageService,
     private alert: AlertService,
@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.tokensubscription = this.infoBroker.getInfo().subscribe(
+    this.tokensubscription = this.info.getInfo().subscribe(
       (result) => {
         const type = result && result.type;
         const data: any = result && result.data || {};
@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (data && Utils.isNotEmpty(data.batchNo)) {
             this.logger.set('dashboard.component', `start batch info : ${Utils.stringify(data)}`).debug();
             this.storage.setBatchInfo(data);
-            this.infoBroker.sendInfo('bat', data);
+            this.info.sendInfo('bat', data);
             this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
@@ -148,7 +148,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.logger.set('dashboard.component', 'stop shift, stop batch...').debug();
           this.batchsubscription = this.batch.endBatch().subscribe(data => {
             this.storage.removeBatchInfo();
-            this.infoBroker.sendInfo('bat', { batchNo: null });
+            this.info.sendInfo('bat', { batchNo: null });
             this.modal.openConfirm({
               title: 'Stop Shift',
               message: `배치 정보 저장이 완료되었습니다.`,
@@ -240,7 +240,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * 로그인하면 broker를 통해 이벤트를 날리고 이벤트를 받을때 처리하도록 변경.
    */
   private clearExistBatch() {
-    const tk = this.storage.getTokenInfo();
     const isLogin = this.storage.isLogin();
     const batchinfo = this.storage.getBatchInfo();
     const batchno = batchinfo && batchinfo.batchNo;
