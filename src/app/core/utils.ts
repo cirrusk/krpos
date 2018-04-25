@@ -111,6 +111,9 @@ export default class Utils {
     if (macaddress === undefined) { // macaddress === null || 
       return 'UNKNOWN';
     }
+    if (macaddress === null) {
+      return macaddress;
+    }
     splitter = splitter || '-';
     let macFormatted = '';
     for (let i = 0; i < macaddress.length; i++) {
