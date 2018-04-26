@@ -13,7 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
 import { TestModule } from './common/test/test.module';
 
-import { Config, CLIENT_SECRET } from './core/config/config';
+import { Config, CLIENT_SECRET, MESSAGE, langset } from './core/config/config';
 import { OrderComponent } from './order/order.component';
 import { CartListComponent } from './order/cart-list/cart-list.component';
 import { OrderMenuComponent } from './order/order-menu/order-menu.component';
@@ -48,6 +48,7 @@ import { ClientComponent } from './client/client.component';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true },
     { provide: COMPOSITION_BUFFER_MODE, useValue: false },
     { provide: CLIENT_SECRET, useValue: '83d8f684-7a35-47f7-96fd-b6587d3ed736' },
+    { provide: MESSAGE, useValue: langset },
     SearchBroker,
     AddCartBroker
   ],

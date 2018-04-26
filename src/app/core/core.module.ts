@@ -25,6 +25,8 @@ import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { PagerService } from '../service/common/pager.service';
 import { ApiService } from './service/api.service';
+import { MessageService } from './message/message.service';
+import { MessagePipe } from './message/message.pipe';
 
 
 
@@ -58,6 +60,7 @@ import { ApiService } from './service/api.service';
     CartService,
     StorageService,
     PagerService,
+    MessageService,
     InfoBroker,
     SearchAccountBroker,
     RestoreCartBroker,
@@ -66,7 +69,7 @@ import { ApiService } from './service/api.service';
     DatePipe,
     Logger
   ],
-  declarations: []
+  declarations: [MessagePipe]
 })
 export class CoreModule {
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
