@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DatePipe } from '@angular/common';
-
-import { Levels } from './levels.enum';
+import { LogLevels } from '../../data';
 import { Config } from '../config/config';
 import Utils from '../utils';
 
@@ -25,7 +24,7 @@ export class Logger {
    */
   private logger(level: string) {
     const cnfLevel: string = (this.confLogLevel && this.confLogLevel !== '') ? this.confLogLevel.toUpperCase() : 'DEBUG';
-    if (Levels[level] >= Levels[cnfLevel]) {
+    if (LogLevels[level] >= LogLevels[cnfLevel]) {
       let nm, msg;
       if (this.message) {
         if (this.name) { nm = '[' + this.name + '] '; } else { nm = ''; }

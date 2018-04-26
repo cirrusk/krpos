@@ -1,9 +1,7 @@
 import { Injectable, InjectionToken } from '@angular/core';
 import * as format from 'string-format';
-
 import { environment } from '../../../environments/environment';
 import Utils from '../utils';
-
 export const CLIENT_SECRET = new InjectionToken<string>('CLIENT_SECRET');
 
 @Injectable()
@@ -19,8 +17,8 @@ export class Config {
    */
   public getApiUrl(key: string, params?: any) {
     const apiRootUrl = environment.apiRootUrl;
-    const baseSiteId = environment.baseSiteId; //  this.config['baseSiteId'];
-    const cnf = environment.apiUrl; //  this.config['apiUrl'];
+    const baseSiteId = environment.baseSiteId;
+    const cnf = environment.apiUrl;
     let apiUrl = String(cnf[key]);
     if (!apiUrl.startsWith('http') && apiUrl.indexOf(apiRootUrl) === -1) { apiUrl = apiRootUrl + apiUrl; }
     if (params) {

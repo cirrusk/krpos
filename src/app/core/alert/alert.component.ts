@@ -1,9 +1,7 @@
 
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { AlertService } from './alert.service';
-import { AlertState } from './alert.service';
-import { AlertType } from './alert-type.enum';
+import { AlertService, AlertState, AlertType } from '..';
 
 @Component({
   moduleId: module.id,

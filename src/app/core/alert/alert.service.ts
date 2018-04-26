@@ -20,7 +20,7 @@ export class AlertService {
 
   show(params: any) {
     this.alertSubject.next(<AlertState>
-      {
+    {
       show: true,
       alertType: (params.alertType) ? params.alertType : AlertType.warn,
       title: (params.title) ? params.title : '경고',

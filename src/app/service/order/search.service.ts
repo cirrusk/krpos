@@ -1,12 +1,11 @@
-import { ApiService } from './../../core/service/api.service';
-import { Config } from './../../core/config/config';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import Utils from '../../core/utils';
-import { Products } from '../../data/models/cart/cart-data';
+import { ApiService, Config } from '../../core';
 import { AccountList, MemberType, HttpData } from '../../data';
+import { Products } from '../../data/models/cart/cart-data';
+import Utils from '../../core/utils';
 
 @Injectable()
 export class SearchService {
