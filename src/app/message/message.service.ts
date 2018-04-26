@@ -18,7 +18,9 @@ export class MessageService {
   }
 
   /**
-   * 언어를 설정함.
+   * 언어를 설정/변경함.
+   * 변경한 언어를 넘기지 않을 경우 브라우저 언어로 설정함.
+   * msg-[lang].ts 언어를 설정하지 않은 경우 오류 발생에 주의!
    *
    * @param lang 언어
    */
