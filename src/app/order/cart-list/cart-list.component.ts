@@ -290,7 +290,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.spinner.show();
     this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
                                                                                 this.cartInfo.code,
-                                                                                this.accountInfo.uid).subscribe(
+                                                                                this.cartInfo.volumeABOAccount.uid).subscribe(
       res => {
         this.logger.set('cartList.component', `update Volume Account status : ${res.status}`).debug();
       },
@@ -521,7 +521,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.spinner.show();
     this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
       result => {
-        console.log({}, result);
         this.init();
         this.infoBroker.sendInfo('hold', 'add');
       },
@@ -631,22 +630,10 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     }
 
-    // 보류 리스트 업
-    // 임시
-    if (event.keyCode === 38) {
-      this.getCarts();
-    }
-
     // 저장 라이트
     // 임시
     if (event.keyCode === 39) {
       this.saveCart();
-    }
-
-    // 복원 다운
-    // 임시
-    if (event.keyCode === 40) {
-      this.restoreSavedCart();
     }
   }
 }

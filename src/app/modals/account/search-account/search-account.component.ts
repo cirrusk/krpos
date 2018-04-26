@@ -97,17 +97,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   // account 정보 전달
   sendAccountInfo(): void {
-    // 테스트
-    this.account = new Accounts();
-    this.account.accountType = 'AMWAY BUSINESS OWNER';
-    this.account.name = '암웨이';
-    this.account.status = 'ACTIVE';
-    this.account.totalBV = 100;
-    this.account.totalPV = 200;
-    this.account.uid = '7480003';
-    this.searchAccountBroker.sendInfo(this.account);
-    this.modal.clearAllModals(this);
-
     if (this.activeNum > -1) {
       this.account = this.accountList.accounts[this.activeNum];
       this.searchAccountBroker.sendInfo(this.account);
