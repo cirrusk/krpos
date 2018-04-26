@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private api: ApiService,
     private storage: StorageService,
-    private networkService: NetworkService,
+    private network: NetworkService,
     @Inject(CLIENT_SECRET) private clientsecret: string) {
       this.terminalInfo = this.storage.getTerminalInfo();
   }
@@ -31,7 +31,7 @@ export class AuthService {
       return Observable.throw({error: new Error('terminal_error', 'Termianl info is null.')});
     }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-    const param = {clientId: clientid, userId: userid, password: userpassword, mac_address: this.networkService.getLocalMacAddress('-')};
+    const param = {clientId: clientid, userId: userid, password: userpassword, mac_address: this.network.getLocalMacAddress('-')};
     const data = new HttpData('auth', null, null, param);
     return this.api.post(data);
   }
