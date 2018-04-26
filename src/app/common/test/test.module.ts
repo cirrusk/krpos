@@ -9,12 +9,13 @@ import { FormatReader } from './../../core/peripheral/common/format-reader';
 import { PosModalComponent } from './../../core/modal/pos-modal.component';
 import { TestComponent } from './test.component';
 import { PosModalService } from './../../core/modal/pos-modal.service';
-import { ProductSearchService } from './../../service/product.search.service';
+import { ProductSearchService } from './product-search/product.search.service';
+
 import { AddCartBroker } from './../../broker/cart/addcart.broker';
 
 import { ProductSearchComponent } from './product-search/product-search.component';
 
-import { ProductDataProvider } from './../../core/provider/product-data-provider';
+import { ProductDataProvider } from './product-search/product-data-provider';
 import { ReceiptDataProvider } from './../../core/provider/receipt-data-provider';
 
 import { ReceiptService } from '../../service/receipt.service';
@@ -22,6 +23,7 @@ import { CartListComponent } from './order/cart-list/cart-list.component';
 import { PosReceiptPrintComponent } from './order/pos-receipt-print/pos-receipt-print.component';
 import { EscPos } from './../../core/peripheral/printer/helper/escpos/escpos';
 import { ClickObserverComponent } from './study/click-observer/click-observer.component';
+
 
 @NgModule({
     declarations: [

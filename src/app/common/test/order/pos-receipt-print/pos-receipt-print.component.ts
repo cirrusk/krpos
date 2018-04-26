@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ReceiptService } from './../../../../service/receipt.service';
-import { PrinterService } from './../../../../core/peripheral/printer/printer.service';
-import { PrinterCommands } from './../../../../core/peripheral/printer/helper/printer-commands';
+import { ReceiptService } from '../../../../service';
+import { PrinterService, PrinterCommands } from '../../../../core';
 import Utils from '../../../../core/utils';
 
 @Component({

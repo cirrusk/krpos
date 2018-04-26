@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 
-import { ProductSearchService } from './../../../service/product.search.service';
+import { ProductSearchService } from './product.search.service';
 import { AddCartBroker } from './../../../broker/cart/addcart.broker';
 
 @Component({
