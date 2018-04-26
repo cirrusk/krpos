@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
   { path: 'client', component: ClientComponent },
   { path: 'test', component: TestComponent },
-  { path: '**', redirectTo: '/dashboard' }
+  { path: '**', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({

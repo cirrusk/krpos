@@ -162,7 +162,7 @@ export class QZDriver extends AbstractDriver {
 
                     resolve(stob64(hextorstr(signatureHex)));
                 } catch (err) {
-                    this.logger.error(err);
+                    this.logger.set('qz.driver', `${err}`).error();
                     reject(err);
                 }
             };

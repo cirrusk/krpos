@@ -65,27 +65,27 @@ export class Logger {
     return this;
   }
 
-  get trace() {
+  trace() {
     return this.logger('TRACE');
   }
 
-  get debug() {
+  debug() {
     return this.logger('DEBUG');
   }
 
-  get info() {
+  info() {
     return this.logger('INFO');
   }
 
-  get log() {
+  log() {
     return this.logger('LOG');
   }
 
-  get warn() {
+  warn() {
     return this.logger('WARN');
   }
 
-  get error() {
+  error() {
     return this.logger('ERROR');
   }
 }
