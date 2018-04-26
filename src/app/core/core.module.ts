@@ -5,27 +5,17 @@ import { RouterModule } from '@angular/router';
 
 import { PeripheralModule } from './peripheral/peripheral.module';
 import { ModalsModule } from '../modals/modals.module';
-import { CheckComponent } from '../common/check/check.component';
-import { TerminalService } from '../service/terminal.service';
-import { AuthService } from '../service/auth.service';
-import { BatchService } from '../service/batch.service';
+import { AuthService, BatchService, CartService, SearchService, TerminalService, MessageService, PagerService } from '../service';
+import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchBroker, SearchAccountBroker } from '../broker';
+import { ChecksComponent } from '../modals';
 
 import { QzHealthChecker } from './service/qz-health-checker';
 import { Logger } from './logger/logger';
-import { InfoBroker } from '../broker/info.broker';
-import { RestoreCartBroker } from '../broker/order/cart/restore-cart.broker';
-import { CancleOrderBroker } from '../broker/order/cart/cancle-order.broker';
-import { SearchService } from '../service/order/search.service';
-import { SearchAccountBroker } from '../broker/order/search/search-account.broker';
-import { SearchBroker } from '../broker/order/search/search.broker';
-import { CartService } from '../service/order/cart.service';
 import { StorageService } from './service/storage.service';
 import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 import { throwIfAlreadyLoaded } from './module-import-guard';
-import { PagerService } from '../service/common/pager.service';
 import { ApiService } from './service/api.service';
-import { MessageService } from '../message';
 
 @NgModule({
   imports: [
