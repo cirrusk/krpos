@@ -1,15 +1,13 @@
-
 import { Injectable, InjectionToken } from '@angular/core';
 import * as format from 'string-format';
 import { environment } from '../../../environments/environment';
 import Utils from '../utils';
-import { LANG_KO_NAME, LANG_KO_MSGS } from './../message/msg-ko';
-
+// import { LANG_KO_NAME, LANG_KO_MSGS } from '../../message/msg-ko';
 export const CLIENT_SECRET = new InjectionToken<string>('CLIENT_SECRET');
-export const MESSAGE = new InjectionToken<string>('MESSAGE');
-export const langset = {
- [LANG_KO_NAME]: LANG_KO_MSGS
-};
+// export const MESSAGE = new InjectionToken<string>('MESSAGE');
+// export const LANG_SET = {
+//   [LANG_KO_NAME]: LANG_KO_MSGS
+// };
 
 @Injectable()
 export class Config {
