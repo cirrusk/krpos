@@ -18,7 +18,8 @@ const routes: Routes = [
   { path: 'order', component: OrderComponent, canActivate: [OrderGuard]},
   { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
   { path: 'client', component: ClientComponent },
-  { path: 'test', component: TestComponent }
+  { path: 'test', component: TestComponent },
+  { path: '**', redirectTo: '/dashboard' }
 ];
 
 @NgModule({
