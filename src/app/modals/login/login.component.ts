@@ -124,7 +124,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         this.storage.setTokenInfo(result);
         const accesstoken = this.storage.getTokenInfo();
         this.infoBroker.sendInfo('tkn', accesstoken);
-        this.infoBroker.sendInfo('cbt', {act: true});
         this.close();
       },
       error => {

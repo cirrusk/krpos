@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/observable/empty';
+import 'rxjs/add/operator/switchMap';
 
 import { ApiService, StorageService, Logger } from '../core';
 import { BatchInfo, BatchStats, HttpData } from '../data';
@@ -80,6 +81,13 @@ export class BatchService {
     return this.getBatch()
     .flatMap((batchinfo: BatchInfo) => {
       return this.endBatch(batchinfo.batchNo);
+    });
+  }
+
+  startBatchAfterClear(batchno: string): Observable<BatchInfo> {
+    return this.endBatch(batchno)
+    .switchMap((batchinfo: BatchInfo) => {
+      return this.startBatch();
     });
   }
 

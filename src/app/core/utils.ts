@@ -220,6 +220,25 @@ export default class Utils {
   }
 
   /**
+   * 배치 시작 시 기존 배치가 있을 경우
+   * 배치 시작 시 오류가 발생하는데 이를 처리하기 위해
+   * 기존 배치를 먼저 삭제하고 배치를 다시 생성함.
+   * 배치가 없을 경우 바로 배치를 시작하기 위해서
+   * 배치가 없을 경우의 오류를 잡아서 배치를 시작하게함.
+   * @param err 에러 객체
+   */
+  public static isNoOpenBatchByErrors(err: Errors) {
+    if (err) {
+      const errtype = err.type.toLowerCase();
+      const errmsgs = err.message.substring(0, 15).toLowerCase().replace(/(\s*)/g, '');
+      if (errtype === 'unknownidentifiererror' && errmsgs.startsWith('noopenbatch')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * 문자열 날짜를 Date 형식으로 변환
    *
    * @param text 문자열 날짜
