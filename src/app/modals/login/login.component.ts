@@ -31,7 +31,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @ViewChild('loginPasswordTxt') loginPwdInput: ElementRef;
   @Input() loginId: string;
   @Input() loginPassword: string;
-  private regExp: RegExp = new RegExp(/[\ㄱ-ㅎㅏ-ㅣ가-힣`~!@#$%^&*|\\\'\";:\/()_+|<>?{}\[\]]/g);
+  private regExp: RegExp = new RegExp(/[\ㄱ-ㅎㅏ-ㅣ가-힣`~!@#$%^&*|\\\'\";:\/()_+<>?{}\[\]]/g);
+  private regDelExp: RegExp = new RegExp(/[^a-z|^0-9|^\-]/gi);
+  private regHanExp: RegExp = new RegExp(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힝]/);
   loginIdValid: FormControl = new FormControl('');
   authsubscription: Subscription;
   tokensubscription: Subscription;
@@ -53,7 +55,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     .debounceTime(400)
     .subscribe(v => {
       if (v) {
-        if (this.regExp.test(v)) { this.loginIdInput.nativeElement.value = v.replace(this.regExp, ''); }
+        if (this.regDelExp.test(v)) { // 한글 및 특수 문자 입력 문제 개선해야함.!!!
+          // this.loginIdInput.nativeElement.value = v.replace(this.regHanExp, '');
+        }
       }
     });
   }
