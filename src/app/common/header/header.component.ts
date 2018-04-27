@@ -55,7 +55,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private modal: Modal,
     private alert: AlertService,
-    private infoBroker: InfoBroker,
+    private info: InfoBroker,
     private datePipe: DatePipe,
     private qzchecker: QzHealthChecker,
     private logger: Logger,
@@ -70,7 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.getTerminalInfo();
-    this.tokensubscription = this.infoBroker.getInfo().subscribe(
+    this.tokensubscription = this.info.getInfo().subscribe(
       result => {
         const type = result && result.type;
         const data: any = result && result.data || {};
@@ -186,7 +186,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.hasTerminal = false;
           }
         );
-      }
+      },
+      error => {}
     );
   }
 
