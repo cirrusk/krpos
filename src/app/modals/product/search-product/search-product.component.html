@@ -66,7 +66,7 @@
                             <tbody>
                                 <!-- 상품 선택시 tr에 on클래스 추가 -->
                                 <tr #productRows [class.on]='activeNum === i' *ngFor="let product of products.products; let i = index" (click)="activeRow(i, product)">
-                                    <td><span class="tag02_blue">1+1</span></td>
+                                    <td><!--<span class="tag02_blue">1+1</span>--></td>
                                     <td class="tit"><span class="elips">{{product.name}}</span></td>
                                     <td><span class="none">{{product.vpsCode}}</span></td>
                                     <td><span>{{product.code}}</span></td>
