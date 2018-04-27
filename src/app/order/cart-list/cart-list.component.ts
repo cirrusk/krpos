@@ -218,7 +218,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 비회원 가입 팝업
    */
   popupNewAccount() {
-    // this.alert.show( {alertType: AlertType.warn, title: '제목', message: '메시지'} );
+    // this.storage.setLocalItem('nc', 'Y');
     this.modal.openModalByComponent(NewAccountComponent,
       {
         title: '',
