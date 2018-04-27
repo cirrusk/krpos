@@ -51,15 +51,15 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
 
   ngOnInit() {
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
-    this.loginIdValid.valueChanges
-    .debounceTime(400)
-    .subscribe(v => {
-      if (v) {
-        if (this.regDelExp.test(v)) { // 한글 및 특수 문자 입력 문제 개선해야함.!!!
-          // this.loginIdInput.nativeElement.value = v.replace(this.regHanExp, '');
-        }
-      }
-    });
+    // this.loginIdValid.valueChanges
+    // .debounceTime(400)
+    // .subscribe(v => {
+    //   if (v) {
+    //     if (this.regDelExp.test(v)) { // 한글 및 특수 문자 입력 문제 개선해야함.!!!
+    //       // this.loginIdInput.nativeElement.value = v.replace(this.regHanExp, '');
+    //     }
+    //   }
+    // });
   }
 
   /**
