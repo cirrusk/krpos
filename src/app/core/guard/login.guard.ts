@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { StorageService, Logger } from '..';
+import { StorageService } from '../service/storage.service';
+import { Logger } from '../logger/logger';
 
 @Injectable()
 export class LoginGuard implements CanActivate, CanActivateChild {

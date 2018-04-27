@@ -1,16 +1,14 @@
-import { OrderCompleteComponent } from './order/order-complete/order-complete.component';
-import { ClientComponent } from './client/client.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { PreloadAllModules, Routes, RouterModule, Router } from '@angular/router';
 
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { TestComponent } from './common/test/test.component';
-import { OrderComponent } from './order/order.component';
+import { LoginGuard, OrderGuard } from './core';
 
-import { LoginGuard } from './core/guard/login.guard';
-import { OrderGuard } from './core/guard/order.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { OrderComponent } from './order/order.component';
+import { OrderCompleteComponent } from './order/order-complete/order-complete.component';
+import { ClientComponent } from './client/client.component';
+import { TestComponent } from './common/test/test.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },
@@ -18,14 +16,14 @@ const routes: Routes = [
   { path: 'order', component: OrderComponent, canActivate: [OrderGuard]},
   { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
   { path: 'client', component: ClientComponent },
-  { path: 'test', component: TestComponent },
+  { path: 'sample', component: TestComponent },
   { path: '**', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, enableTracing: false })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, enableTracing: true })
   ],
   exports: [RouterModule],
   declarations: [],

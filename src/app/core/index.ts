@@ -8,6 +8,7 @@ export * from './config/config';
 export * from './modal/modal.component';
 export * from './modal/modal';
 export * from './modal/modal.service';
+export * from './modal/pos-modal.component';
 export * from './modal/pos-modal.service';
 export * from './alert/alert-type.enum';
 export * from './common/only-number.directive';
@@ -18,3 +19,6 @@ export * from './peripheral/common/document-format.enum';
 export * from './peripheral/common/format-reader';
 export * from './peripheral/printer/helper/escpos/escpos';
 export * from './peripheral/printer/helper/printer-commands';
+
+export * from './guard/login.guard';
+export * from './guard/order.guard';
