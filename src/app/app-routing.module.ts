@@ -17,7 +17,6 @@ const routes: Routes = [
   { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
   { path: 'client', component: ClientComponent },
   { path: 'test', component: TestComponent },
-  // { path: 'test', loadChildren: 'app/common/test/test.module#TestModule' },
   { path: '**', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 

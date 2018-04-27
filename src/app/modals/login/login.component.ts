@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, Renderer2 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
@@ -31,9 +31,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @ViewChild('loginPasswordTxt') loginPwdInput: ElementRef;
   @Input() loginId: string;
   @Input() loginPassword: string;
-  private regExp: RegExp = new RegExp(/[\ㄱ-ㅎㅏ-ㅣ가-힣`~!@#$%^&*|\\\'\";:\/()_+<>?{}\[\]]/g);
-  private regDelExp: RegExp = new RegExp(/[^a-z|^0-9|^\-]/gi);
-  private regHanExp: RegExp = new RegExp(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힝]/);
+  // private regExp: RegExp = new RegExp(/[\ㄱ-ㅎㅏ-ㅣ가-힣`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]/g);
+  // https://www.regular-expressions.info/javascriptexample.html
   loginIdValid: FormControl = new FormControl('');
   authsubscription: Subscription;
   tokensubscription: Subscription;
@@ -50,16 +49,20 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   ngOnInit() {
+    const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
+    const engExp: RegExp = new RegExp(/[A-Za-z]/g);
+    const numExp: RegExp = new RegExp(/[0-9]/g);
+    const numEngExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
-    // this.loginIdValid.valueChanges
-    // .debounceTime(400)
-    // .subscribe(v => {
-    //   if (v) {
-    //     if (this.regDelExp.test(v)) { // 한글 및 특수 문자 입력 문제 개선해야함.!!!
-    //       // this.loginIdInput.nativeElement.value = v.replace(this.regHanExp, '');
-    //     }
-    //   }
-    // });
+     this.loginIdValid.valueChanges
+     .debounceTime(350)
+     .subscribe(v => {
+       if (v) { // 한글 및 특수 문자 입력 문제 개선해야함.!!!
+        if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
+          this.loginIdInput.nativeElement.value = v.replace(numEngExp, '');
+        }
+       }
+    });
   }
 
   /**
