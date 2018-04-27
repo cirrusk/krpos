@@ -80,6 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   startShift() {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
+      this.spinner.show();
       this.batchsubscription = this.batch.getBatch().subscribe(result => {
         if (result && Utils.isNotEmpty(result.batchNo)) { // 기존 배치가 있으면 삭제하고 시작
           this.batchsubscription = this.batch.startBatchAfterClear(result.batchNo).subscribe(data => {
@@ -120,10 +121,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
                 this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdt.message}` });
               }
-            });
+            },
+            () => { this.spinner.hide(); });
           }
         }
-      });
+      },
+      () => { this.spinner.hide(); });
     }
   }
 
