@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType } from '../../../core';
+import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, SpinnerService } from '../../../core';
 
 import { SearchService, CartService } from '../../../service';
 import { SearchBroker, SearchAccountBroker } from '../../../broker';
 import { CartInfo, AccountList, Accounts } from '../../../data';
+import Utils from '../../../core/utils';
 
 @Component({
   selector: 'pos-search-account',
@@ -30,6 +31,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       private searchService: SearchService,
       private cartService: CartService,
       private alert: AlertService,
+      private spinner: SpinnerService,
       private searchBroker: SearchBroker,
       private searchAccountBroker: SearchAccountBroker
     ) {
@@ -70,6 +72,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   getAccountList(searchMemberType: string, searchText: string): void {
     if (searchText.trim()) {
       this.activeNum = -1;
+      this.spinner.show();
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
                                                       .subscribe(
                                                         result => {this.accountList = result;
@@ -77,13 +80,17 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
                                                         this.totalCnt = this.accountList === undefined ?
                                                                                              0 : this.accountList.accounts.length;
                                                       },
-                                                      err => {
-                                                        this.alert.show( {alertType: AlertType.warn,
-                                                                          title: '경고',
-                                                                          message: err.error.errors[0].message,
-                                                                          timer: true,
-                                                                          interval: 2000 } );
-                                                      });
+                                                      error => {
+                                                        this.spinner.hide();
+                                                        const errdata = Utils.getError(error);
+                                                        if (errdata) {
+                                                          this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
+                                                          this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
+                                                          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+                                                        }
+                                                      },
+                                                      () => { this.spinner.hide(); }
+                                                      );
     } else {
       this.alert.show( {alertType: AlertType.warn, title: '검색어 미입력', message: '메시지', timer: true, interval: 2000 } );
       return;

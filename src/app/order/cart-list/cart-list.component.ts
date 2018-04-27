@@ -260,22 +260,26 @@ export class CartListComponent implements OnInit, OnDestroy {
   createCartInfo(productCode?: string): void {
     const terminalInfo = this.storage.getTerminalInfo();
     this.spinner.show();
-    this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
-                                                                this.accountInfo.uid,
+    this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
+                                                                this.accountInfo ? this.accountInfo.uid : '',
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
       cartResult => {
         this.cartInfo = cartResult;
-        this.updateVolumeAccount(this.cartInfo);
         if (productCode) {
           this.addCartEntries(productCode);
         }
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          if (errdata.type === 'UnknownIdentifierError') {
+            this.alert.show({ alertType: AlertType.error, title: '오류', message: '구매자를 선택해 주세요.' });
+          } else {
+            this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          }
         }
       },
       () => { this.spinner.hide(); }
@@ -295,6 +299,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.logger.set('cartList.component', `update Volume Account status : ${res.status}`).debug();
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Update Volume Account error type : ${errdata.type}`).error();
@@ -317,6 +322,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.setPage(page ? page : Math.ceil(this.cartList.length / 10));
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
@@ -350,20 +356,20 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         this.addCartModel = result;
         if (this.addCartModel[0].statusCode === 'success') {
-        this.addCartModel.forEach(addModel => {
+          this.addCartModel.forEach(addModel => {
           this.productInfo = addModel.entry;
           this.addCartEntry(this.productInfo);
           });
         } else {
           let appendMessage = '';
           this.addCartModel[0].messages.forEach(message => {
-            if (message.severity === 'ERROR') {
+            // if (message.severity === 'ERROR') {
               if (appendMessage === '' ) {
                 appendMessage += message.message;
               } else {
-                appendMessage += '\r\n' + message.message;
+                appendMessage += '<br/>' + message.message;
               }
-            }
+            // }
           });
 
           this.modal.openMessage({
@@ -379,6 +385,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
@@ -603,8 +610,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartList.forEach(entry => {
       sumItem += entry.quantity;
       sumPrice += entry.product.price.value * entry.quantity;
-      sumPV += entry.totalPrice.amwayValue.pointValue;
-      sumBV += entry.totalPrice.amwayValue.businessVolume;
+      sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0 ;
+      sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0 ;
     });
 
     this.totalItem = sumItem;

@@ -1,7 +1,7 @@
 import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
   ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
 
-  import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService } from '../../../core';
+  import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
@@ -37,6 +37,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private spinner: SpinnerService,
     private addCartBroker: AddCartBroker,
     private searchBroker: SearchBroker,
+    private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
     this.basicSearchType = 'sku';
@@ -131,7 +132,15 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
             this.renderer.removeClass(this.searchNext.nativeElement, 'on');
           }
         },
-        error => {},
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
+            this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
+            this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          }
+        },
         () => { this.spinner.hide(); }
        );
       } break;
