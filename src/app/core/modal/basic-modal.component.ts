@@ -29,6 +29,7 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
   ngAfterViewInit() {
     if (this.modalAddClass !== undefined && this.modalAddClass !== '') {
       // this.renderer.setElementClass(this.modalElm.nativeElement, this.modalAddClass, true);
+      this.renderer.removeClass(this.modalElm.nativeElement, 'pop_m'); // 2018.04.30 class 추가 시 기존 class 삭제(width 가 다름)
       this.renderer.addClass(this.modalElm.nativeElement, this.modalAddClass);
     }
     if (this.headerAddClass !== undefined && this.headerAddClass !== '') {
