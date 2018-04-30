@@ -1,5 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/switchMap';
 
 import { NetworkService, StorageService, ApiService, CLIENT_SECRET } from '../core';
 import { TerminalInfo, AccessToken, HttpData, Error } from '../data';
@@ -50,6 +52,18 @@ export class AuthService {
     const param = {code: authCode, client_id: clientid, client_secret: this.clientsecret, grant_type: 'authorization_code'};
     const data = new HttpData('token', null, null, param);
     return this.api.post(data);
+  }
+
+  /**
+   * User authentication and Access Token
+   * @param userid
+   * @param userpassword
+   *//** */
+  public authAndToken(userid: string, userpassword: string): Observable<any> {
+    return this.authentication(userid, userpassword)
+    .flatMap((authinfo: any) => {
+      return this.accessToken(authinfo.code);
+    });
   }
 
 }
