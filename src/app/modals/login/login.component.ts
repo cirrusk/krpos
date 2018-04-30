@@ -31,7 +31,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   @ViewChild('loginPasswordTxt') loginPwdInput: ElementRef;
   @Input() loginId: string;
   @Input() loginPassword: string;
-  // private regExp: RegExp = new RegExp(/[\ㄱ-ㅎㅏ-ㅣ가-힣`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]/g);
   // https://www.regular-expressions.info/javascriptexample.html
   loginIdValid: FormControl = new FormControl('');
   authsubscription: Subscription;
@@ -52,14 +51,14 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
     const engExp: RegExp = new RegExp(/[A-Za-z]/g);
     const numExp: RegExp = new RegExp(/[0-9]/g);
-    const numEngExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
+    const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
      this.loginIdValid.valueChanges
-     .debounceTime(350)
+     .debounceTime(300)
      .subscribe(v => {
-       if (v) { // 한글 및 특수 문자 입력 문제 개선해야함.!!!
+       if (v) {
         if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
-          this.loginIdInput.nativeElement.value = v.replace(numEngExp, '');
+          this.loginIdInput.nativeElement.value = v.replace(numEngDelExp, '');
         }
        }
     });

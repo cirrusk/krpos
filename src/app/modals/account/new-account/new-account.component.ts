@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { ModalComponent, AlertService, ModalService, AlertType, OnlyNumberDirective } from '../../../core';
+import { Component, OnInit, OnDestroy, Input, Renderer2 } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+import { Modal, ModalComponent, ModalService, AlertService, AlertType, OnlyNumberDirective } from '../../../core';
 import Utils from '../../../core/utils';
 
 @Component({
@@ -12,16 +13,28 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   @Input() phonetype: string; // 휴대폰/전화번호 타입 선택
   @Input() agree: boolean;  // 개인정보수집 및 이용동의
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
-  constructor(protected modalService: ModalService, private alert: AlertService) {
+  private modalsubscription: Subscription;
+  private listner: any;
+  constructor(protected modalService: ModalService,
+    private modal: Modal,
+    private alert: AlertService,
+    private renderer: Renderer2) {
     super(modalService);
     this.phonetype = 'm';
     this.agree = true;
     this.guser = false;
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.listner = this.renderer.listen('document', 'keydown:enter', evt => {
+      console.log('ENTER');
+    });
+  }
 
-  ngOnDestroy() { }
+  ngOnDestroy() {
+    this.listner(); // remove listener
+    if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
+  }
 
   /**
    * 신규 사용자 저장
@@ -39,9 +52,24 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
       return;
     }
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
+    if (this.agree) {
+      this.modalsubscription = this.modal.openConfirm(
+        {
+          title: '개인정보 수집 및 이용 동의 확인',
+          message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByClickOutside: false,
+          modalId: 'AGREE'
+        }
+      ).subscribe(result => {
+        if (result) {
+          // API 처리
+          console.log('call new account register api...');
+        }
+      });
+    }
 
-    // API로 보내고 나서 성공 시 close
-    // this.close();
   }
 
   close() {
