@@ -14,7 +14,6 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   @Input() agree: boolean;  // 개인정보수집 및 이용동의
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
   private modalsubscription: Subscription;
-  private listner: any;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private alert: AlertService,
@@ -25,14 +24,9 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
     this.guser = false;
   }
 
-  ngOnInit() {
-    this.listner = this.renderer.listen('document', 'keydown:enter', evt => {
-      console.log('ENTER');
-    });
-  }
+  ngOnInit() { }
 
   ngOnDestroy() {
-    this.listner(); // remove listener
     if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
   }
 
