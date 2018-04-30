@@ -37,9 +37,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   tokensubscription: Subscription;
   constructor(
     protected modalService: ModalService,
-    private authService: AuthService,
+    private auth: AuthService,
     private storage: StorageService,
-    private infoBroker: InfoBroker,
+    private info: InfoBroker,
     private alert: AlertService,
     private spinner: SpinnerService,
     private logger: Logger,
@@ -79,8 +79,17 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 로그인 팝업창의 근무 시작 버튼 클릭
    * AD 계정 입력 형식이 맞지 않은 경우,
    * AD 계정 입력 형식이 맞지 않습니다  Alert 뜸
-   * 비밀번호가 미입력 된 경우,
-   * 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
+   * 비밀번호가 미입력 된 경우, 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
+   *
+   * 2018.04.30 : authorization 과 acesstoken 을 merge
+   * 2018.04.30 : 처리 프로세스 변경
+   * 기존 : Start Shift 할때 배치가 있으면 삭제하고 배치시작
+   * 변경 : 로그인 시 체크 : 프로세스는 아래 참조
+   * 1. 로그인 후 닫지 않은 배치 있는지 체크
+   * 2. 배치가 없으면 : SKIP
+   * 3. 배치가 있으면 : 같은 POS 기기 여부 체크
+   * 4. 같은 POS 기기 : 해당 배치 그냥 사용
+   * 5. 다른 POS 기기 : 메시지 뿌리고 무조건 배치 종료.
    */
   startWork() {
     if (this.loginId) { this.logger.set('login.component', `login id : ${this.loginId}`).debug(); }
@@ -90,58 +99,31 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // 1. AD 계정 Validation 체크
     // 2. 비밀번호 미입력
     if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-      this.alert.show({
-        alertType: AlertType.warn,
-        title: '확인',
-        message: '비밀번호가 공란입니다.'
-      });
+      this.alert.show({ alertType: AlertType.warn, title: '확인', message: '비밀번호가 공란입니다.' });
       return;
     }
-    // authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
-    this.authsubscription = this.authService.authentication(loginid, loginpwd).subscribe(
-      result => {
-        this.logger.set('login.component', 'get user authentication code...').debug();
-        this.getAccessToken(result.code); // access token  취득 및 session 저장
-      },
-      error => {
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('login.component', `authentication error type : ${errdata.type}`).error();
-          this.logger.set('login.component', `authentication error message : ${errdata.message}`).error();
-        }
-        this.spinner.hide();
-      },
-      () => {
-        this.spinner.hide();
+    this.spinner.show();
+    // 1. authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
+    // 2. access token  취득 및 session 저장
+    this.authsubscription = this.auth.authAndToken(loginid, loginpwd).subscribe(result => {
+      this.logger.set('login.component', 'get user auth code and token...').debug();
+      this.storage.setEmployeeName(result.employeeName);
+      this.storage.setEmployeeId(result.employeeId);
+      this.storage.setTokenInfo(result);
+      this.info.sendInfo('tkn', result);
+      this.info.sendInfo('cbt', {act: true}); // 로그인 성공 후 배치 후 처리 진행.
+      this.close();
+    },
+    error => {
+      this.spinner.hide();
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.logger.set('login.component', `auth and token error type : ${errdata.type}`).error();
+        this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
+        this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
       }
-    );
-  }
-
-  /**
-   * Access Token 취득
-   *
-   * @param authcode
-   */
-  private getAccessToken(authcode: string) {
-    this.tokensubscription = this.authService.accessToken(authcode).subscribe(
-      result => {
-        this.storage.setEmployeeName(result.employeeName);
-        this.storage.setEmployeeId(result.employeeId);
-        this.storage.setTokenInfo(result);
-        const accesstoken = this.storage.getTokenInfo();
-        this.infoBroker.sendInfo('tkn', accesstoken);
-        this.close();
-      },
-      error => {
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('login.component', `authentication error type : ${errdata.type}`).error();
-          this.logger.set('login.component', `authentication error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
-        }
-      }
-    );
-
+    },
+    () => { this.spinner.hide(); });
   }
 
   close() {
@@ -164,15 +146,10 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   loginPwdEnter(evt: any) {
     const loginpwd = evt.target.value;
     if (loginpwd) {
-      this.spinner.show();
       this.startWork();
     } else {
       if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-        this.alert.show({
-          alertType: AlertType.warn,
-          title: '확인',
-          message: '비밀번호가 공란입니다.'
-        });
+        this.alert.show({ alertType: AlertType.warn, title: '확인', message: '비밀번호가 공란입니다.' });
       }
     }
   }
