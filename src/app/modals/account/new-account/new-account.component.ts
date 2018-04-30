@@ -62,6 +62,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
         {
           title: '개인정보 수집 및 이용 동의 확인',
           message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
+          modalAddClass: 'pop_s',
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
           closeByClickOutside: false,
