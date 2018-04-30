@@ -6,10 +6,10 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker } from '../../broker';
-import { AlertService, AlertType, NetworkService, Logger, Modal, QzHealthChecker, StorageService, Config } from '../../core';
-import { HoldOrderComponent, PasswordComponent, LoginComponent, LogoutComponent } from '../../modals';
-import { TerminalService, CartService } from '../../service';
-import { AccessToken, BatchInfo, LockType } from '../../data';
+import { AlertService, AlertType, AlertState, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService } from '../../core';
+import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
+import { BatchService, CartService, MessageService, TerminalService } from '../../service';
+import { AccessToken, BatchInfo, LockType, TerminalInfo } from '../../data';
 
 import Utils from '../../core/utils';
 
@@ -38,6 +38,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private ordersubscription: Subscription;
   private modalsubscription: Subscription;
   private holdsubscription: Subscription;
+  private batchsubscription: Subscription;
+  private alertsubscription: Subscription;
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
@@ -49,9 +51,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() isClient: boolean;
   constructor(
     private terminalService: TerminalService,
-    private networkService: NetworkService,
+    private network: NetworkService,
     private cartService: CartService,
     private storage: StorageService,
+    private batch: BatchService,
+    private msg: MessageService,
     private router: Router,
     private modal: Modal,
     private alert: AlertService,
@@ -80,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           if (type === 'tkn') {
             this.logger.set('header component', 'access token subscribe ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
-            if (this.networkService.getLocalMacAddress() && this.isLogin) {
+            if (this.network.getLocalMacAddress() && this.isLogin) {
               this.getHoldTotalCount();
             }
           } else if (type === 'lck') {
@@ -91,6 +95,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           } else if (type === 'hold') {
             this.getHoldTotalCount();
+          } else if (type === 'cbt') {
+            if (result.data.act) { this.checkBatchAfterLogin(); }
           }
         }
       }
@@ -142,6 +148,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
     if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
     if (this.holdsubscription) { this.holdsubscription.unsubscribe(); }
+    if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
+    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
   ngAfterViewInit() {
@@ -170,9 +178,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 가끔씩 이 부분이 늦게 처리되어 로그인 시 terminal 정보가 없어서 에러가 발생 ---> 확인 필요!!!
    */
   private getTerminalInfo() {
-    this.networkService.wait().subscribe(
+    this.network.wait().subscribe(
       () => {
-        const macAddress = this.networkService.getLocalMacAddress('-');
+        const macAddress = this.network.getLocalMacAddress('-');
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
             this.posName = result.id; // pointOfService.displayName;
@@ -184,7 +192,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.posName = '-';
             this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
-            this.alert.show( {alertType: AlertType.error, title: '오류', message: `${error.message}`} );
+            this.alert.show( {alertType: AlertType.error, title: '오류', message: this.msg.get('posNotSet')} );
           }
         );
       },
@@ -209,6 +217,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  /**
+   * 보류 건수 조회하기
+   */
   getHoldTotalCount() {
     this.holdsubscription = this.cartService.getCarts().subscribe(
       result => {
@@ -257,7 +268,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeButtonLabel: '취소',
         modalId: 'LogoutComponent'
       }
-    );
+    ).subscribe(result => {
+      if (!result) {
+        this.storage.setScreenLockType(LockType.INIT);
+      }
+    });
   }
 
   /**
@@ -298,6 +313,55 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         this.screenLockType = LockType.LOCK;
         this.storage.setScreenLockType(LockType.LOCK);
+      }
+    });
+  }
+
+  /**
+   * 로그인 후 배치 처리 상세 조건
+   *
+   * 1. 닫지 않은 배치가 존재
+   * 1-1. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 같으면 동일 POS 기기
+   * 1-2. 닫지 않은 배치 정보를 그대로 사용
+   * 2. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 다르면 다른 POS 기기
+   * 2-1. 배치는 존재하나 다른 POS 이므로 배치를 삭제함.
+   * 3. 닫지 않은 배치가 존재하지 않음.
+   * 3-1. 아무 처리도 하지 않음.
+   */
+  private checkBatchAfterLogin() {
+    this.batchsubscription = this.batch.getBatch().subscribe(result => {
+      if (result && Utils.isNotEmpty(result.batchNo)) { // 닫지 않은 배치가 있으면
+        this.logger.set('header.component', `exist started batch info : ${Utils.stringify(result)}`).debug();
+        const batterm: TerminalInfo = result.terminal;
+        const sesterm: TerminalInfo = this.storage.getTerminalInfo();
+        if ((batterm && sesterm) && batterm.id === sesterm.id) { // 같은 POS 기기, Batch 유지
+          this.logger.set('header.component', 'exist started batch and same pos, load existing batch info!!!').debug();
+          this.storage.setBatchInfo(result);
+          this.info.sendInfo('bat', result);
+        } else { // 다른 POS 기기 - 팝업 출력
+          this.logger.set('header.component', 'exist started batch and different pos, clear and start batch!!!').debug();
+          this.modal.openModalByComponent(BatchComponent, {
+            closeByEnter: false,
+            closeByEscape: false,
+            closeByClickOutside: false,
+            modalId: 'BATCH_CHECK'
+          }).subscribe(rst => { // 무조건 로직을 태워서 배치를 삭제해야 하므로 조건 체크 불필요.
+            this.logger.set('header.component', `end existing batch, batch no : ${result.batchNo}`).debug();
+            this.batchsubscription = this.batch.endBatch(result.batchNo).subscribe(data => {
+              this.logger.set('header.component', `clear and start batch info : ${Utils.stringify(data)}`).debug();
+              this.storage.removeBatchInfo();
+              this.info.sendInfo('bat', { batchNo: null });
+            });
+          });
+        }
+      }
+    },
+    error => {
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.logger.set('dashboard.component', `get batch error message : ${errdata.message}`).debug();
+        this.storage.removeBatchInfo();
+        this.info.sendInfo('bat', { batchNo: null });
       }
     });
   }
