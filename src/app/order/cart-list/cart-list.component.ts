@@ -136,7 +136,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPrice = 0;
     this.totalPV = 0;
     this.totalBV = 0;
-    this.selectedCartNum = 0;
+    this.selectedCartNum = -1;
     this.modifyFlag =  false;
     this.pager = {};
     this.saveCartResult = new SaveCartResult();
@@ -603,6 +603,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
       return;
+    }
+
+    if (pagerFlag) {
+      this.selectedCartNum = -1;
     }
 
     // pagination 생성 데이터 조회
