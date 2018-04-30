@@ -1,0 +1,19 @@
+<div class="pop_wrap pop_m">
+    <div class="pop_header">
+        <h1>배치 확인</h1>
+        <button tabindex="-1" type="button" class="ico_comm pop_close01" (click)="endbatch()">{{closeButtonLabel}}</button>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content">
+            <p class="txt_alert">다른 POS 기기에서 사용하시던 Batch 가 있습니다. 이전 Batch 를 닫겠습니다.</p>
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer line clearfix">
+        <span class="fl"></span>
+        <span class="fr">
+            <a href (click)="!!endbatch()" class="btn01_blue">선택</a>
+        </span>
+    </div>
+</div>
