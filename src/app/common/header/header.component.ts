@@ -184,6 +184,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.posName = '-';
             this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
+            this.alert.show( {alertType: AlertType.error, message: `${error.message}`} );
           }
         );
       },
