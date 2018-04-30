@@ -2,6 +2,7 @@ export * from './account/new-account/new-account.component';
 export * from './account/search-account/search-account.component';
 export * from './account/search-ber/search-ber.component';
 export * from './login/login.component';
+export * from './login/batch.component';
 export * from './logout/logout.component';
 export * from './order/cancel-order/cancel-order.component';
 export * from './order/ecp-print/ecp-print.component';
