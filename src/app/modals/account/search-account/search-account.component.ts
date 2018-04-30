@@ -141,6 +141,10 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       return;
     }
 
+    if (pagerFlag) {
+      this.activeNum = -1;
+    }
+
     // pagination 생성 데이터 조회
     this.pager = this.pagerService.getPager(this.accountList.accounts.length, page);
     // 출력 리스트 생성
