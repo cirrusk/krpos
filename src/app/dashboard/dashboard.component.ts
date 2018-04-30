@@ -97,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('dashboard.component', `get batch error message : ${errdata.message}`).debug();

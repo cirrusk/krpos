@@ -1,12 +1,13 @@
-import { Logger } from './../logger/logger';
-import { Config } from './../config/config';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpRequest, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/shareReplay';
 
+import { Logger } from '../logger/logger';
+import { Config } from '../config/config';
 import { HttpData } from '../../data';
 import Utils from '../utils';
 
@@ -18,10 +19,16 @@ export class ApiService {
   /**
    * API GET METHOD 처리
    *
+   * Avoid Duplicate HTTP Requests
+   * https://blog.angular-university.io/angular-http/
+   *
+   *
+   * https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en
+   *
    * @param data request data
    */
   get(data: HttpData): Observable<any> {
-    return this.callApi('get', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi('GET', data.apikey, data.pathvariables, data.body, data.param, data.headertype).shareReplay();
   }
 
   /**
@@ -30,7 +37,7 @@ export class ApiService {
    * @param data request data
    */
   post(data: HttpData): Observable<any> {
-    return this.callApi('post', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi('POST', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -39,7 +46,7 @@ export class ApiService {
    * @param data request data
    */
   put(data: HttpData): Observable<any> {
-    return this.callApi('put', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi('PUT', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -48,7 +55,7 @@ export class ApiService {
    * @param data request data
    */
   patch(data: HttpData): Observable<any> {
-    return this.callApi('patch', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi('PATCH', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -57,7 +64,7 @@ export class ApiService {
    * @param data request data
    */
   delete(data: HttpData): Observable<any> {
-    return this.callApi('delete', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi('DELETE', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -108,6 +115,8 @@ export class ApiService {
     let headers: HttpHeaders;
     if (headertype === 'b' || headertype === 'json') {
       headers = new HttpHeaders().set('Content-Type', 'application/json');
+    } else if (headertype === 't') {
+      headers = new HttpHeaders().set('Content-Type', 'text/plain');
     } else {
       headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     }
