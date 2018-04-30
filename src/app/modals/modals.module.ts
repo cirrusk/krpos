@@ -30,6 +30,7 @@ import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { CancelOrderComponent } from './order/cancel-order/cancel-order.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
+import { BatchComponent } from './login/batch.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
     PointComponent,
     CouponComponent,
     CancelOrderComponent,
-    PhoneNumberMaskPipe
+    PhoneNumberMaskPipe,
+    BatchComponent
   ],
   imports: [
     CommonModule,
@@ -89,7 +91,8 @@ import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
     ChecksComponent,
     PointComponent,
     CouponComponent,
-    CancelOrderComponent
+    CancelOrderComponent,
+    BatchComponent
   ]
 })
 export class ModalsModule {
