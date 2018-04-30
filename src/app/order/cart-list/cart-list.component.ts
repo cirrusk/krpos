@@ -268,7 +268,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
 
     this.spinner.show();
-    this.cartInfoSubscription = this.cartService.createCartInfo(accountId,
+    this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo.uid,
                                                                 accountId,
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
       cartResult => {
