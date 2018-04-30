@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, Input, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { Modal, ModalComponent, ModalService, AlertService, AlertType, OnlyNumberDirective } from '../../../core';
+import { ModalComponent, AlertService, ModalService, AlertType, OnlyNumberDirective, SpinnerService, Logger, Modal } from '../../../core';
+import { AccountService } from './../../../service/account.service';
+import { SearchAccountBroker } from '../../../broker';
 import Utils from '../../../core/utils';
+import { AccountList } from '../../../data';
 
 @Component({
   selector: 'pos-new-account',
@@ -9,17 +12,24 @@ import Utils from '../../../core/utils';
 })
 export class NewAccountComponent extends ModalComponent implements OnInit, OnDestroy {
 
+  private createAccountSubscription: Subscription;
+  private registerType: string;
+  private account: AccountList;
   @Input() userPhone: string;
   @Input() phonetype: string; // 휴대폰/전화번호 타입 선택
   @Input() agree: boolean;  // 개인정보수집 및 이용동의
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
   private modalsubscription: Subscription;
   constructor(protected modalService: ModalService,
-    private modal: Modal,
-    private alert: AlertService,
-    private renderer: Renderer2) {
+              private modal: Modal,
+              private alert: AlertService,
+              private accountService: AccountService,
+              private spinner: SpinnerService,
+              private searchAccountBroker: SearchAccountBroker,
+              private logger: Logger,
+              private renderer: Renderer2) {
     super(modalService);
-    this.phonetype = 'm';
+    this.phonetype = 'MOBILE';
     this.agree = true;
     this.guser = false;
   }
@@ -28,6 +38,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
 
   ngOnDestroy() {
     if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
+    if (this.createAccountSubscription) { this.createAccountSubscription.unsubscribe(); }
   }
 
   /**
@@ -58,12 +69,32 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
         }
       ).subscribe(result => {
         if (result) {
-          // API 처리
+          this.spinner.show();
+          this.registerType = this.guser ? 'ECP' : 'CONSUMER';
+
+          this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
+            userInfo => {
+              if (userInfo) {
+                this.account = userInfo;
+                this.searchAccountBroker.sendInfo(this.account.accounts[0]);
+                this.close();
+              }
+            },
+            error => {
+              this.spinner.hide();
+              const errdata = Utils.getError(error);
+              if (errdata) {
+                this.logger.set('newAccount.component', `Save new customer error type : ${errdata.type}`).error();
+                this.logger.set('newAccount.component', `Save new customer error message : ${errdata.message}`).error();
+                this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+              }
+            },
+            () => { this.spinner.hide(); }
+          );
           console.log('call new account register api...');
         }
       });
     }
-
   }
 
   close() {

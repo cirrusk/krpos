@@ -27,11 +27,11 @@
                     <span [class.on]="paymentType === 'g'">그룹결제</span>
                 </span>
                 <p class="txt"><strong>총 <span class="fc_red">{{totalCnt}}</span>건</strong>이 검색되었습니다.</p>
-                <span class="btn_wrap">
+                <span class="btn_wrap" *ngIf="accountList && accountList.accounts.length > 10">
                     <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
-                    <a href="javascript:void(0)" class="ico_comm prev03">이전</a>
-                    <a href="javascript:void(0)" class="ico_comm next03 on">다음</a>
-                    <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
+                    <a href="javascript:void(0)" [class.on]="pager.currentPage > pager.startPage" class="ico_comm prev03 " (click)="setPage(pager.currentPage - 1,true)">이전</a>
+                    <a href="javascript:void(0)" [class.on]="pager.currentPage < pager.endPage" class="ico_comm next03 " (click)="setPage(pager.currentPage + 1,true)">다음</a>
+                     <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
                 </span>
                 <!-- 검색결과 : 있음(페이지당 회원 최대 수 10개) -->
                 <div class="tbl_col clearfix" *ngIf="accountList && accountList.accounts.length != 0; else elseEmpty">
@@ -54,11 +54,22 @@
                         </thead>
                         <tbody>
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
-                            <tr [class.on]='activeNum == i' *ngFor="let account of accountList.accounts; let i = index" (click)='activeRow(i)'>
+                            <tr [class.on]='activeNum == i' *ngFor="let account of currentLeftAccountList; let i = index" (click)='activeRow(i, account.uid)'>
                                 <td class="tit"><span class="elips">{{account.name}}</span></td>
                                 <td><span class="bg_bar none">{{account.uid}}</span></td>
-                                <td><span class="bg_bar"></span></td>
-                                <td><span class="bg_bar"></span></td>
+                                <td><span class="bg_bar">{{account.parties[0].dateOfBirth | date:'yyyyMMdd'}}</span></td>
+                                <td *ngIf='account.parties[0].phoneInfos == null; else elseTemplate'>
+                                    <span class="bg_bar"></span>
+                                </td>
+                                <ng-template #elseTemplate>
+                                    <td>                                        
+                                        <div *ngFor="let phoneInfo of account.parties[0].phoneInfos; let last = last">
+                                            <span class="bg_bar" *ngIf="last">
+                                                {{phoneInfo.formattedPhoneNumber | phoneNumberMask}}
+                                            </span>
+                                        </div>
+                                    </td>                                     
+                                </ng-template>
                             </tr>
                         </tbody>
                     </table>
@@ -82,6 +93,23 @@
                         </thead>
                         <tbody>
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
+                            <tr [class.on]='activeNum == (i+4)' *ngFor="let account of currentRightAccountList; let i = index" (click)='activeRow((i+4), account.uid)'>
+                                <td class="tit"><span class="elips">{{account.name}}</span></td>
+                                <td><span class="bg_bar none">{{account.uid}}</span></td>
+                                <td><span class="bg_bar">{{account.parties[0].dateOfBirth | date:'yyyyMMdd'}}</span></td>
+                                <td *ngIf='account.parties[0].phoneInfos == null; else elseTemplate'>
+                                    <span class="bg_bar"></span>
+                                </td>
+                                <ng-template #elseTemplate>
+                                    <td>                                        
+                                        <div *ngFor="let phoneInfo of account.parties[0].phoneInfos; let last = last">
+                                            <span class="bg_bar" *ngIf="last">
+                                                {{phoneInfo.formattedPhoneNumber | phoneNumberMask}
+                                            </span>
+                                        </div>
+                                    </td>                                     
+                                </ng-template>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- //오른쪽테이블 -->

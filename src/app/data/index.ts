@@ -21,6 +21,11 @@ export * from './models/order/stock';
 export * from './models/order/price';
 export * from './models/order/amway-value';
 export * from './models/order/cart-message';
+export * from './models/order/customer';
+export * from './models/order/phone-contact-info';
+export * from './models/order/user';
+
+
 
 export * from './models/common/access-token';
 export * from './models/common/product';

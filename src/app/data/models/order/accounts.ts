@@ -1,3 +1,5 @@
+import { Customer } from './customer';
+
 export class Accounts {
     accountType: string;
     name: string;
@@ -6,7 +8,7 @@ export class Accounts {
     totalPV: number;
     uid: string;
     primaryParty: any; // CustomerWsDTO
-    parties: any; // Set<CustomerWsDTO>
+    parties: Set<Customer>; // Set<CustomerWsDTO>
 
     constructor() {}
 }

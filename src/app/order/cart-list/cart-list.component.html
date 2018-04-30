@@ -80,8 +80,8 @@
       <div class="search_wrap">
           <div class="inner">
               <div class="tab">
-                  <button type="button" [class.on]="searchMode == 'A'" (click)="activeSearchMode('A')">회원</button>
-                  <button type="button" [class.on]="searchMode == 'P'" (click)="activeSearchMode('P')">상품</button>
+                  <button type="button" [class.on]="searchMode == 'A'" (click)="activeSearchMode('A'); searchText.value=''">회원</button>
+                  <button type="button" [class.on]="searchMode == 'P'" (click)="activeSearchMode('P'); searchText.value=''">상품</button>
               </div>
               <div class="search">
                   <input #searchText type="text" (keydown.enter)="!!popupSearch(searchText.value)">
@@ -98,10 +98,10 @@
           <div class="info_top">
               <!-- 비회원시 삭제1 -->
               <em *ngIf="accountInfo;">
-                  {{accountInfo.name}} 회원님
+                  {{accountInfo.accountType === 'CLIENT' ? accountInfo.parties[0].name : accountInfo.name}} 회원님
               </em>                
               
-              <span *ngIf="accountInfo;" class="t01">{{accountInfo.uid}}</span>
+              <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountType === 'CLIENT' ? accountInfo.parties[0].uid : accountInfo.uid}}</span>
               <span class="t02">일반결제</span>
               <!-- //비회원시 삭제1 -->
           </div>
