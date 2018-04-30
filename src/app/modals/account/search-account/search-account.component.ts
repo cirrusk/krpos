@@ -128,6 +128,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.account = this.accountList.accounts[existedIdx];
       this.searchAccountBroker.sendInfo(this.account);
       this.modal.clearAllModals(this);
+    } else {
+      this.alert.show({ alertType: AlertType.warn, title: '확인', message: `회원을 선택해주시기 바랍니다.` });
     }
   }
 
