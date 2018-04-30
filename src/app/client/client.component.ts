@@ -24,19 +24,13 @@ export class ClientComponent implements OnInit, OnDestroy {
                 message: '',
                 actionButtonLabel: '',
                 closeButtonLabel: '',
-                closeByEnter: false,
-                closeByEscape: true,
                 closeByClickOutside: true,
-                closeAllModals: false,
-                modalId: 'NewAccountComponent'
+                modalId: 'NewAccountComponent_CLIENT'
               }
             ).subscribe(data => {
               this.storage.removeLocalItem('nc');
             });
-          } else {
-            console.log('----------------------------------');
           }
-
         }
       }
     });
