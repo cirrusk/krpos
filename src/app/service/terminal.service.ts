@@ -3,14 +3,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/finally';
 
-import { ApiService } from '../core';
+import { ApiService, Config } from '../core';
 import { TerminalInfo, HttpData } from '../data';
 import Utils from '../core/utils';
 
 @Injectable()
 export class TerminalService {
 
-  constructor(private api: ApiService) { }
+  private terminalTimeout: number;
+  constructor(private api: ApiService, private config: Config) {
+    this.terminalTimeout = this.config.getConfig('terminalTimeout');
+  }
 
   /**
    * POS 단말기 인증
@@ -23,7 +26,7 @@ export class TerminalService {
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
     const data = new HttpData('terminal', null, null, {macAddress: macaddress});
-    return this.api.post(data).timeout(1000 * 15).finally(() => {});
+    return this.api.post(data).timeout(1000 * this.terminalTimeout).finally(() => {});
   }
 
 }
