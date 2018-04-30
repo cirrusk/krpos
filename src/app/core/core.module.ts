@@ -8,12 +8,13 @@ import { ModalsModule } from '../modals/modals.module';
 import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 
-import { AuthService, BatchService, CartService, SearchService, TerminalService, MessageService, PagerService } from '../service';
+import { AuthService, BatchService, CartService, SearchService, TerminalService, MessageService, PagerService, AccountService } from '../service';
 import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchBroker, SearchAccountBroker } from '../broker';
 import { ChecksComponent } from '../modals';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { ApiService, StorageService, QzHealthChecker, Logger } from '.';
+import { PhoneNumberMaskPipe } from './pipe/phone-number-mask.pipe';
 
 @NgModule({
   imports: [
@@ -45,6 +46,7 @@ import { ApiService, StorageService, QzHealthChecker, Logger } from '.';
     StorageService,
     PagerService,
     MessageService,
+    AccountService,
     InfoBroker,
     SearchAccountBroker,
     RestoreCartBroker,

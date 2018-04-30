@@ -26,7 +26,8 @@ export const environment = {
       restoreCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/restoresavedcart',
       deleteItemCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
       deleteCart: '/{baseSiteId}/users/{userId}/carts/{cartId}',
-      productSearch: '/{baseSiteId}/products/search'
+      productSearch: '/{baseSiteId}/products/search',
+      createNewAccount: '/{baseSiteId}/pos/accout/create'
   },
   logLevel: 'error',
   qzCheck: false,

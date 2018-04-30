@@ -6,6 +6,7 @@ import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, Ho
 import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger } from '../../core';
 
 import { CartService, PagerService } from '../../service';
+import { MessageService } from './../../message/message.service';
 import { SearchBroker, SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry } from '../../data';
 import { Cart } from '../../data/models/order/cart';
@@ -55,6 +56,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               private alert: AlertService,
               private pagerService: PagerService,
               private spinner: SpinnerService,
+              private messageService: MessageService,
               private searchBroker: SearchBroker,
               private addCartBroker: AddCartBroker,
               private searchAccountBroker: SearchAccountBroker,
@@ -259,9 +261,18 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   createCartInfo(productCode?: string): void {
     const terminalInfo = this.storage.getTerminalInfo();
+    let accountId = '';
+    if (this.accountInfo) {
+      if (this.accountInfo.accountType === 'CLIENT') {
+        accountId = this.accountInfo.parties[0].uid;
+      } else {
+        accountId = this.accountInfo.uid;
+      }
+    }
+
     this.spinner.show();
-    this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
-                                                                this.accountInfo ? this.accountInfo.uid : '',
+    this.cartInfoSubscription = this.cartService.createCartInfo(accountId,
+                                                                accountId,
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
       cartResult => {
         this.cartInfo = cartResult;
@@ -275,11 +286,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
-          if (errdata.type === 'UnknownIdentifierError') {
-            this.alert.show({ alertType: AlertType.error, title: '오류', message: '구매자를 선택해 주세요.' });
-          } else {
-            this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
-          }
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -292,9 +299,9 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   updateVolumeAccount(cartInfo: CartInfo): void {
     this.spinner.show();
-    this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo.user.uid,
-                                                                                this.cartInfo.code,
-                                                                                this.cartInfo.volumeABOAccount.uid).subscribe(
+    this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo ? this.cartInfo.user.uid : '',
+                                                                                this.cartInfo ? this.cartInfo.code : '',
+                                                                                this.cartInfo ? this.cartInfo.volumeABOAccount.uid : '').subscribe(
       res => {
         this.logger.set('cartList.component', `update Volume Account status : ${res.status}`).debug();
       },
@@ -339,10 +346,14 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param code
    */
   addToCart(code: string): void {
-    if (this.cartList.length === 0) {
-      this.createCartInfo(code);
+    if (!this.accountInfo) {
+      this.alert.show({ alertType: AlertType.error, title: '오류', message: this.messageService.get('notSelectedUser') });
     } else {
-      this.addCartEntries(code);
+      if (this.cartList.length === 0) {
+        this.createCartInfo(code);
+      } else {
+        this.addCartEntries(code);
+      }
     }
   }
 
@@ -438,6 +449,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.addCartEntry(result.entry);
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
@@ -466,6 +478,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.getCartList(index < 10 ? 1 : Math.ceil(index / 10));
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Remove item cart error type : ${errdata.type}`).error();
@@ -487,6 +500,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.init();
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Remove cart error type : ${errdata.type}`).error();
@@ -510,6 +524,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Get Carts error type : ${errdata.type}`).error();
@@ -532,6 +547,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.infoBroker.sendInfo('hold', 'add');
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Save cart error type : ${errdata.type}`).error();
@@ -555,6 +571,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.infoBroker.sendInfo('hold', 'add');
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cartList.component', `Restore saved cart error type : ${errdata.type}`).error();

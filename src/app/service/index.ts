@@ -7,4 +7,5 @@ export * from './common/pager.service';
 
 export * from './order/cart.service';
 export * from './order/search.service';
+export * from './account.service';
 export * from '../message/message.service';
