@@ -175,7 +175,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         const macAddress = this.networkService.getLocalMacAddress('-');
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
-            this.posName = result.pointOfService.displayName;
+            this.posName = result.id; // pointOfService.displayName;
             this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
             this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
             this.hasTerminal = true;
