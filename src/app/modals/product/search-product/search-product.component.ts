@@ -161,9 +161,11 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
 
   productSelect() {
     let flag = false;
-    for (const p of this.productItems) {
-      const chk = p.nativeElement.classList.contains('on');
-      if (chk) { flag = true; break; }
+    if (this.productItems) {
+      for (const p of this.productItems) {
+        const chk = p.nativeElement.classList.contains('on');
+        if (chk) { flag = true; break; }
+      }
     }
     if (!flag) {
       this.alert.show({ alertType: AlertType.warn, title: '확인', message: '상품을 선택하십시오.' });
