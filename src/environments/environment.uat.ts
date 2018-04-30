@@ -40,6 +40,7 @@ export const environment = {
       createNewAccount: '/{baseSiteId}/pos/accout/create'
   },
   logLevel: 'debug',
+  terminalTimeout: 10,
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
