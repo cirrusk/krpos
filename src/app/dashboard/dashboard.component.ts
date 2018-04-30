@@ -81,50 +81,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
       this.spinner.show();
-      this.batchsubscription = this.batch.getBatch().subscribe(result => {
-        if (result && Utils.isNotEmpty(result.batchNo)) { // 기존 배치가 있으면 삭제하고 시작
-          this.batchsubscription = this.batch.startBatchAfterClear(result.batchNo).subscribe(data => {
-            this.logger.set('dashboard.component', `clear and start batch info : ${Utils.stringify(data)}`).debug();
-            this.storage.setBatchInfo(data);
-            this.info.sendInfo('bat', data);
-            this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
-            this.alertsubscription = this.alert.alertState.subscribe(
-              (state: AlertState) => {
-                if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
-              }
-            );
-          });
+      this.batchsubscription = this.batch.startBatch().subscribe(result => {
+        if (result && Utils.isNotEmpty(result.batchNo)) {
+          this.logger.set('dashboard.component', `start batch info : ${Utils.stringify(result)}`).debug();
+          this.storage.setBatchInfo(result);
+          this.info.sendInfo('bat', result);
+          this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
+          this.alertsubscription = this.alert.alertState.subscribe(
+            (state: AlertState) => {
+              if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
+            }
+          );
         }
       },
       error => {
         this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('dashboard.component', `get batch error message : ${errdata.message}`).debug();
-          if (Utils.isNoOpenBatchByErrors(errdata)) { // 기존 배치가 없으면 바로 배치 시작
-            this.batchsubscription = this.batch.startBatch().subscribe(result => {
-              if (result && Utils.isNotEmpty(result.batchNo)) {
-                this.logger.set('dashboard.component', `start batch info : ${Utils.stringify(result)}`).debug();
-                this.storage.setBatchInfo(result);
-                this.info.sendInfo('bat', result);
-                this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
-                this.alertsubscription = this.alert.alertState.subscribe(
-                  (state: AlertState) => {
-                    if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
-                  }
-                );
-              }
-            },
-            err => {
-              const errdt = Utils.getError(err);
-              if (errdt) {
-                this.logger.set('dashboard.component', `start batch error type : ${errdt.type}`).error();
-                this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
-                this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdt.message}` });
-              }
-            },
-            () => { this.spinner.hide(); });
-          }
+        const errdt = Utils.getError(error);
+        if (errdt) {
+          this.logger.set('dashboard.component', `start batch error type : ${errdt.type}`).error();
+          this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
+          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdt.message}` });
         }
       },
       () => { this.spinner.hide(); });
@@ -243,7 +219,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             Utils.kioskModeEnd();
           }
         } else {
-          this.router.navigate(['/order']);
+          // this.router.navigate(['/order']); // 2018.04.30 대시보드 유지
         }
       }
     );
