@@ -225,29 +225,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * 종료 시 배치가 중지되지 않고 닫았을 경우 다시 로그인 할 경우 생성되었던 배치를 삭제해야함.
-   * 처음에는 로그인할 경우 처리하고자 했으나 subscribe 가 중첩되어 있어서 get method가 두번 실행되는 오류발생.
-   * 로그인하면 broker를 통해 이벤트를 날리고 이벤트를 받을때 처리하도록 변경.
-   */
-  // private clearExistBatch() {
-  //   const isLogin = this.storage.isLogin();
-  //   const batchinfo = this.storage.getBatchInfo();
-  //   const batchno = batchinfo && batchinfo.batchNo;
-  //   const emptybatch = batchno === null ? true : Utils.isEmpty(batchno);
-  //   if (isLogin && emptybatch) {
-  //     this.batchsubscription = this.batch.clearBatch().subscribe(result => {
-  //       this.logger.set('dashboard.component', `end exist batch : ${Utils.stringify(result)}`).debug();
-  //     },
-  //     error => {
-  //       const errdata = Utils.getError(error);
-  //       if (errdata) {
-  //         this.logger.set('dashboard.component', `${errdata.message}, skip clear batch...`).debug();
-  //       }
-  //     });
-  //   } else {
-  //     this.logger.set('dashboard.component', 'not exist session batch, skip clear batch...').debug();
-  //   }
-  // }
-
 }

@@ -74,17 +74,6 @@ export class BatchService {
   }
 
   /**
-   * 배치 조회와 삭제를 동시에 merge 한다.
-   */
-  clearBatch(): Observable<BatchInfo> {
-    this.logger.set('batch.service', 'get current batch and clear exist batch start...').debug();
-    return this.getBatch()
-    .flatMap((batchinfo: BatchInfo) => {
-      return this.endBatch(batchinfo.batchNo);
-    });
-  }
-
-  /**
    * 배치가 이미 있을 경우 배치를 시작할 경우
    * 배치정보로 기존 배치를 삭제하고 다시 배치를 시작
    *
