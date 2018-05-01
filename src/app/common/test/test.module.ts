@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FormatReader, PosModalComponent, PosModalService, ReceiptDataProvider, EscPos } from '../../core';
@@ -16,7 +16,6 @@ import { ProductDataProvider } from './product-search/product-data-provider';
 import { CartListComponent } from './order/cart-list/cart-list.component';
 import { PosReceiptPrintComponent } from './order/pos-receipt-print/pos-receipt-print.component';
 import { ClickObserverComponent } from './study/click-observer/click-observer.component';
-import { HttpModule } from '@angular/http';
 
 @NgModule({
     declarations: [
