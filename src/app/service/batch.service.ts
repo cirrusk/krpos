@@ -74,19 +74,6 @@ export class BatchService {
   }
 
   /**
-   * 배치가 이미 있을 경우 배치를 시작할 경우
-   * 배치정보로 기존 배치를 삭제하고 다시 배치를 시작
-   *
-   * @param batchno 배치 아이디
-   */
-  startBatchAfterClear(batchno: string): Observable<BatchInfo> {
-    return this.endBatch(batchno)
-    .switchMap((batchinfo: BatchInfo) => {
-      return this.startBatch();
-    });
-  }
-
-  /**
    * 배치 통계 정보 조회
    */
   statsBatch(): Observable<BatchStats> {
