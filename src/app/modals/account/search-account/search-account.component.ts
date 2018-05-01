@@ -94,13 +94,13 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
                                                         if (errdata) {
                                                           this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
                                                           this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
-                                                          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+                                                          this.alert.error({ message: `${errdata.message}` });
                                                         }
                                                       },
                                                       () => { this.spinner.hide(); }
                                                       );
     } else {
-      this.alert.show( {alertType: AlertType.warn, title: '검색어 미입력', message: '검색어를 입력해주세요.', timer: true, interval: 2000 } );
+      this.alert.warn( {title: '검색어 미입력', message: '검색어를 입력해주세요.' } );
       return;
     }
   }
@@ -129,7 +129,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.searchAccountBroker.sendInfo(this.account);
       this.modal.clearAllModals(this);
     } else {
-      this.alert.show({ alertType: AlertType.warn, title: '확인', message: `회원을 선택해주시기 바랍니다.` });
+      this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });
     }
   }
 

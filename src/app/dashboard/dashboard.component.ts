@@ -86,7 +86,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.logger.set('dashboard.component', `start batch info : ${Utils.stringify(result)}`).debug();
           this.storage.setBatchInfo(result);
           this.info.sendInfo('bat', result);
-          this.alert.show({ alertType: AlertType.info, title: '확인', message: '배치가 시작되었습니다.' });
+          this.alert.info({ message: '배치가 시작되었습니다.' });
           this.alertsubscription = this.alert.alertState.subscribe(
             (state: AlertState) => {
               if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
@@ -100,7 +100,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (errdt) {
           this.logger.set('dashboard.component', `start batch error type : ${errdt.type}`).error();
           this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdt.message}` });
+          this.alert.error({ message: `${errdt.message}` });
         }
       },
       () => { this.spinner.hide(); });

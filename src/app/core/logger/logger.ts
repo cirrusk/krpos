@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { LogLevels } from '../../data';
 import { Config } from '../config/config';
 import Utils from '../utils';
@@ -8,10 +7,10 @@ const noop = (): any => undefined;
 
 @Injectable()
 export class Logger {
-  confLogLevel: string;
-  name: string;
-  message: string;
-  constructor(private config: Config, private datePipe: DatePipe) {
+  private confLogLevel: string;
+  private name: string;
+  private message: string;
+  constructor(private config: Config) {
     this.confLogLevel = this.config.getConfig('logLevel');
   }
 
@@ -22,7 +21,7 @@ export class Logger {
    *
    * @param level 로그레벨
    */
-  private logger(level: string) {
+  private logger(level: string, message?: string) {
     const cnfLevel: string = (this.confLogLevel && this.confLogLevel !== '') ? this.confLogLevel.toUpperCase() : 'DEBUG';
     if (LogLevels[level] >= LogLevels[cnfLevel]) {
       let nm, msg;
@@ -69,8 +68,8 @@ export class Logger {
     return this.logger('TRACE');
   }
 
-  debug() {
-    return this.logger('DEBUG');
+  debug(message?: string) {
+     return this.logger('DEBUG', message);
   }
 
   info() {

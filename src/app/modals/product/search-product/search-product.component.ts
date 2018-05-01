@@ -98,7 +98,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   searchProduct(searchText?: string) {
     const val = searchText ? searchText : this.searchValue.nativeElement.value;
     if (Utils.isEmpty(val)) {
-      this.alert.show({ alertType: AlertType.warn, title: '확인', message: '검색어를 입력하십시오.' });
+      this.alert.warn({ message: '검색어를 입력하십시오.' });
       return;
     }
     if (this.productItems) {
@@ -138,7 +138,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
           if (errdata) {
             this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
             this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
-            this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+            this.alert.error({ message: `${errdata.message}` });
           }
         },
         () => { this.spinner.hide(); }
@@ -168,7 +168,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
       }
     }
     if (!flag) {
-      this.alert.show({ alertType: AlertType.warn, title: '확인', message: '상품을 선택하십시오.' });
+      this.alert.warn({ message: '상품을 선택하십시오.' });
       return;
     }
     this.addCartBroker.sendInfo(this.product);

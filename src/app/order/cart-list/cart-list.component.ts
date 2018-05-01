@@ -283,7 +283,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -308,7 +308,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Update Volume Account error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Update Volume Account error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -331,7 +331,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Update item quantity error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -344,7 +344,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   addToCart(code: string): void {
     if (!this.accountInfo) {
-      this.alert.show({ alertType: AlertType.error, title: '오류', message: this.messageService.get('notSelectedUser') });
+      this.alert.error({ message: this.messageService.get('notSelectedUser') });
     } else {
       if (this.cartList.length === 0) {
         this.createCartInfo(code);
@@ -398,7 +398,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -451,7 +451,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Update item quantity error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -480,7 +480,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Remove item cart error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Remove item cart error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -502,7 +502,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Remove cart error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Remove cart error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -526,7 +526,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Get Carts error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Get Carts error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -549,7 +549,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Save cart error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Save cart error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }
@@ -573,7 +573,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('cartList.component', `Restore saved cart error type : ${errdata.type}`).error();
           this.logger.set('cartList.component', `Restore saved cart error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       },
       () => { this.spinner.hide(); }

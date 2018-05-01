@@ -23,11 +23,29 @@ export class AlertService {
     {
       show: true,
       alertType: (params.alertType) ? params.alertType : AlertType.warn,
-      title: (params.title) ? params.title : '경고',
+      title: (params.title) ? params.title : '확인',
       message: params.message,
       timer: (params.timer) ? params.timer : false,
       interval: (params.interval > 0) ? params.interval : 3500
     });
+  }
+
+  info(params: any) {
+    params.alertType = AlertType.info;
+    params.title = (params.title) ? params.title : '확인',
+    this.show(params);
+  }
+
+  warn(params: any) {
+    params.alertType = AlertType.warn;
+    params.title = (params.title) ? params.title : '확인',
+    this.show(params);
+  }
+
+  error(params: any) {
+    params.alertType = AlertType.error;
+    params.title = (params.title) ? params.title : '오류',
+    this.show(params);
   }
 
   hide() {

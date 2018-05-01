@@ -12,11 +12,7 @@ export class EcpPrintComponent extends ModalComponent implements OnInit {
   }
 
   print() {
-    this.alert.show({
-      alertType: AlertType.info,
-      title: 'ECP 컨펌/출력',
-      message: '픽업 주문 영수증 출력이 완료되었습니다.'
-    });
+    this.alert.info({title: 'ECP 컨펌/출력', message: '픽업 주문 영수증 출력이 완료되었습니다.'});
   }
 
   ngOnInit() {

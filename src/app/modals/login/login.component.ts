@@ -99,7 +99,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // 1. AD 계정 Validation 체크
     // 2. 비밀번호 미입력
     if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-      this.alert.show({ alertType: AlertType.warn, title: '확인', message: '비밀번호가 공란입니다.' });
+      this.alert.warn({ message: '비밀번호가 공란입니다.' });
       return;
     }
     this.spinner.show();
@@ -120,7 +120,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       if (errdata) {
         this.logger.set('login.component', `auth and token error type : ${errdata.type}`).error();
         this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
-        this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+        this.alert.error({ message: `${errdata.message}` });
       }
     },
     () => { this.spinner.hide(); });
@@ -149,7 +149,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       this.startWork();
     } else {
       if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-        this.alert.show({ alertType: AlertType.warn, title: '확인', message: '비밀번호가 공란입니다.' });
+        this.alert.warn({ message: '비밀번호가 공란입니다.' });
       }
     }
   }

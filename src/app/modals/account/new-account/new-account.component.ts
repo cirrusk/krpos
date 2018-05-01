@@ -53,7 +53,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   saveNewCustomer(el) {
     if (Utils.isEmpty(this.userPhone) || this.userPhone.length < 11) {
       el.blur(); // 주의) 이렇게 처리해야만 alert 에서 이벤트 동작!
-      this.alert.show( {alertType: AlertType.warn, title: '확인', message: '입력 형식이 맞지 않습니다.'} );
+      this.alert.warn( {message: '입력 형식이 맞지 않습니다.'} );
       return;
     }
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
@@ -87,7 +87,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
               if (errdata) {
                 this.logger.set('newAccount.component', `Save new customer error type : ${errdata.type}`).error();
                 this.logger.set('newAccount.component', `Save new customer error message : ${errdata.message}`).error();
-                this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+                this.alert.error({ message: `${errdata.message}` });
               }
             },
             () => { this.spinner.hide(); }

@@ -192,7 +192,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.posName = '-';
             this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
-            this.alert.show( {alertType: AlertType.error, title: '오류', message: this.msg.get('posNotSet')} );
+            this.alert.error({message: this.msg.get('posNotSet')});
           }
         );
       },
@@ -230,7 +230,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         if (errdata) {
           this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
           this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
-          this.alert.show({ alertType: AlertType.error, title: '오류', message: `${errdata.message}` });
+          this.alert.error({ message: `${errdata.message}` });
         }
       }
     );
