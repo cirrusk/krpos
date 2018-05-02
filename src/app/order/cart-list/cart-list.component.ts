@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -64,8 +64,6 @@ export class CartListComponent implements OnInit, OnDestroy {
               private restoreCartBroker: RestoreCartBroker,
               private cancleOrderBroker: CancleOrderBroker,
               private infoBroker: InfoBroker,
-              private router: Router,
-              private renderer2: Renderer2,
               private logger: Logger) {
     this.init();
 
@@ -516,8 +514,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo ? this.cartInfo.user.uid : '',
                                                               this.cartInfo ? this.cartInfo.code : '').subscribe(
       result => {
-        // this.init();
-        this.router.navigate(['/order']);
+        this.init();
       },
       error => {
         this.spinner.hide();
