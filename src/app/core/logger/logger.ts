@@ -21,7 +21,7 @@ export class Logger {
    *
    * @param level 로그레벨
    */
-  private logger(level: string, message?: string) {
+  private logger(level: string) {
     const cnfLevel: string = (this.confLogLevel && this.confLogLevel !== '') ? this.confLogLevel.toUpperCase() : 'DEBUG';
     if (LogLevels[level] >= LogLevels[cnfLevel]) {
       let nm, msg;
@@ -29,7 +29,6 @@ export class Logger {
         if (this.name) { nm = '[' + this.name + '] '; } else { nm = ''; }
         msg = this.message ? this.message : '';
         switch (level) {
-          case 'TRACE': { return console.trace.bind(console, `%c[%s] %c%s%s`, 'color:blue', 'TRACE', 'color:blue', nm, msg); }
           case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', 'DEBUG', 'color:teal', nm, msg); }
           case 'INFO':
           case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:gray', 'LOG', 'color:gray', nm, msg); }
@@ -40,7 +39,6 @@ export class Logger {
         }
       } else {
         switch (level) {
-          case 'TRACE': { return console.trace.bind(console); }
           case 'DEBUG': { return console.debug.bind(console); }
           case 'INFO':
           case 'LOG':   { return console.log.bind(console); }
@@ -55,36 +53,33 @@ export class Logger {
 
   /**
    * 로그를 남길 경우 로그 정보를 설정
+   *
    * @param name 소스의 대표 명칭
    * @param message 남길 메시지
    */
-  set(name?: string, message?: string) {
+  public set(name?: string, message?: string) {
     this.name = name;
     this.message = message;
     return this;
   }
 
-  trace() {
-    return this.logger('TRACE');
+  get debug() {
+     return this.logger('DEBUG');
   }
 
-  debug(message?: string) {
-     return this.logger('DEBUG', message);
-  }
-
-  info() {
+  get info() {
     return this.logger('INFO');
   }
 
-  log() {
+  get log() {
     return this.logger('LOG');
   }
 
-  warn() {
+  get warn() {
     return this.logger('WARN');
   }
 
-  error() {
+  get error() {
     return this.logger('ERROR');
   }
 }
