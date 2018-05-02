@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -12,6 +12,7 @@ import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, Orde
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import Utils from '../../core/utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pos-cart-list',
@@ -63,12 +64,17 @@ export class CartListComponent implements OnInit, OnDestroy {
               private restoreCartBroker: RestoreCartBroker,
               private cancleOrderBroker: CancleOrderBroker,
               private infoBroker: InfoBroker,
+              private router: Router,
+              private renderer2: Renderer2,
               private logger: Logger) {
     this.init();
 
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         if (result) {
+          if (this.accountInfo) {
+            this.init();
+          }
           this.accountInfo = result;
           this.getCarts();
         }
@@ -86,6 +92,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.restoreCartSubscription = this.restoreCartBroker.getInfo().subscribe(
       result => {
         if (result) {
+          this.accountInfo = new Accounts();
           this.accountInfo.uid = result.user.uid;
           this.accountInfo.name = result.user.name;
           this.cartInfo.code = result.code;
@@ -246,6 +253,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   holdOrder() {
     this.modal.openModalByComponent(HoldOrderComponent,
       {
+        callerData: { userId: this.accountInfo.uid},
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
@@ -508,7 +516,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo ? this.cartInfo.user.uid : '',
                                                               this.cartInfo ? this.cartInfo.code : '').subscribe(
       result => {
-        this.init();
+        // this.init();
+        this.router.navigate(['/order']);
       },
       error => {
         this.spinner.hide();

@@ -34,10 +34,10 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
     super(modalService);
     this.cartList = new Array<Cart>();
     this.activeNum = -1;
-    this.getCarts();
   }
 
   ngOnInit() {
+    this.getCarts(this.callerData ? this.callerData.userId : '');
   }
 
   // 테이블 로우 Class 적용(on)
@@ -51,9 +51,9 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
   /**
    * 보류된 장바구니 리스트 가져오기
    */
-  getCarts() {
-    this.spinner.show();
-    this.cartService.getCarts().subscribe(
+  getCarts(userId?: string) {
+    // this.spinner.show();
+    this.cartService.getCarts(userId).subscribe(
       result => {
         this.cartList = result.carts;
         this.setPage(Math.ceil(this.cartList.length / 5), 5);
@@ -66,7 +66,8 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
           this.alert.error({ message: `${errdata.message}` });
         }
       },
-      () => { this.spinner.hide(); }
+      () => { // this.spinner.hide();
+       }
     );
   }
 
