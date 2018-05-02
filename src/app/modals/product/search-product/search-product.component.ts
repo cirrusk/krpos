@@ -1,3 +1,4 @@
+import { CartInfo } from './../../../data/models/order/cart-info';
 import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
   ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
 
@@ -17,6 +18,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class SearchProductComponent extends ModalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private searchSubscription: Subscription;
+  private cartInfo: CartInfo;
 
   @ViewChild('searchValue') private searchValue: ElementRef;
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
@@ -50,6 +52,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
       result => {
         if (result.data.searchText.trim() && result.type === 'product') {
           this.searchValue.nativeElement.value = result.data.searchText;
+          this.cartInfo = result.data.data;
           // 전달 받은 데이터로 검색
           this.searchProduct(result.data.searchText);
         }
@@ -95,7 +98,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 1) 프로모션은 모두 노출
    * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    */
-  searchProduct(searchText?: string) {
+  searchProduct(searchText?: string, cartInfo?: CartInfo) {
     const val = searchText ? searchText : this.searchValue.nativeElement.value;
     if (Utils.isEmpty(val)) {
       this.alert.warn({ message: '검색어를 입력하십시오.' });
@@ -110,7 +113,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     switch (this.basicSearchType) {
       case 'sku': {
         this.spinner.show();
-        this.search.getBasicProductInfo(val, this.currentPage).subscribe(data => {
+        this.search.getBasicProductInfo(val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
           this.products = data;
           this.productCount = data.pagination.totalResults;
           this.totalPages = data.pagination.totalPages;
@@ -202,8 +205,13 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * @param product
    */
   activeRow(index: number, product: Product): void {
-    this.activeNum = index;
-    this.product = product;
+    if (product.sellableStatus !== '') {
+      this.activeNum = -1;
+      this.product = null;
+    } else {
+      this.activeNum = index;
+      this.product = product;
+    }
   }
 
   close() {
