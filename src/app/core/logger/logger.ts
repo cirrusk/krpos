@@ -3,8 +3,6 @@ import { LogLevels } from '../../data';
 import { Config } from '../config/config';
 import Utils from '../utils';
 
-const noop = (): any => undefined;
-
 @Injectable()
 export class Logger {
   private confLogLevel: string;
@@ -35,7 +33,7 @@ export class Logger {
           case 'WARN':
           case 'ERROR': { return console.error.bind(console, `%c[%s] %c%s%s`, 'color:red', 'ERROR', 'color:red;', nm, msg); }
           case 'OFF':
-          default: return noop;
+          default: return console.log.bind(console); // noop(undefined)로 넘겼을 경우 is not a function error
         }
       } else {
         switch (level) {
@@ -45,9 +43,11 @@ export class Logger {
           case 'WARN':
           case 'ERROR': { return console.error.bind(console); }
           case 'OFF':
-          default: return noop;
+          default: return console.log.bind(console); // noop(undefined)로 넘겼을 경우 is not a function error
         }
       }
+    } else {
+      return console.log.bind(console); // noop(undefined)로 넘겼을 경우 is not a function error
     }
   }
 
