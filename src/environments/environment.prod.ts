@@ -29,7 +29,7 @@ export const environment = {
       productSearch: '/{baseSiteId}/users/{userId}/carts/{cartId}/products/search',
       createNewAccount: '/{baseSiteId}/pos/accout/create'
   },
-  logLevel: 'debug',
+  logLevel: 'error',
   terminalTimeout: 10,
   qzCheck: false,
   healthCheckUse: false,
