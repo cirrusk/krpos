@@ -160,6 +160,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
    * 모달창 닫기
    */
   close() {
-    this.modal.clearAllModals(this);
+    this.closeModal();
   }
 }
