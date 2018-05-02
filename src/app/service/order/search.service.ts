@@ -37,9 +37,10 @@ export class SearchService {
    *
    * @param searchdata
    */
-  getBasicProductInfo(searchdata: string, currentpage: number): Observable<Products> {
+  getBasicProductInfo(searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
     const params = {query: searchdata, fields: 'BASIC', currentPage: currentpage + '', sort: '', pageSize: '5'};
-    const data = new HttpData('productSearch', null, null, params);
+    const pathvariables = {userId : userId, cartId : cartId};
+    const data = new HttpData('productSearch', pathvariables, null, params);
     return this.api.get(data);
   }
 

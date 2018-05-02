@@ -78,7 +78,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productSubscription = this.addCartBroker.getInfo().subscribe(
       productInfo => {
         if (productInfo) {
-          this.addToCart(productInfo.code);
+          this.addToCart(false, productInfo.code);
         }
       }
     );
@@ -86,7 +86,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.restoreCartSubscription = this.restoreCartBroker.getInfo().subscribe(
       result => {
         if (result) {
-          this.accountInfo = result.volumeABOAccount;
+          this.accountInfo.uid = result.user.uid;
+          this.accountInfo.name = result.user.name;
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
@@ -173,8 +174,13 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.searchBroker.sendInfo('account', this.searchParams);
     // 제품 검색
     } else {
-      this.callSearchProduct();
-      this.searchBroker.sendInfo('product', this.searchParams);
+      if (this.cartInfo.code === undefined) {
+        this.addToCart(true);
+      } else {
+        this.callSearchProduct();
+        this.searchParams.data = this.cartInfo;
+        this.searchBroker.sendInfo('product', this.searchParams);
+      }
     }
   }
 
@@ -255,8 +261,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 장바구니 생성
    *  - 제품 추가시 생성
+   *  - 제품 검색전 장바구니 생성시 popupFlag = true
    */
-  createCartInfo(productCode?: string): void {
+  createCartInfo(popupFlag: boolean, productCode?: string): void {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
     if (this.accountInfo) {
@@ -273,9 +280,15 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                 terminalInfo.pointOfService.name , 'POS').subscribe(
       cartResult => {
         this.cartInfo = cartResult;
-        if (productCode) {
+
+        if (!popupFlag && productCode) {
           this.addCartEntries(productCode);
+        } else if (popupFlag) {
+          this.callSearchProduct();
+          this.searchParams.data = this.cartInfo;
+          this.searchBroker.sendInfo('product', this.searchParams);
         }
+
       },
       error => {
         this.spinner.hide();
@@ -342,12 +355,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 담기 function
    * @param code
    */
-  addToCart(code: string): void {
+  addToCart(popupFlag: boolean = false, code?: string): void {
     if (!this.accountInfo) {
       this.alert.error({ message: this.messageService.get('notSelectedUser') });
     } else {
-      if (this.cartList.length === 0) {
-        this.createCartInfo(code);
+      if (this.cartInfo.code === undefined) {
+        this.createCartInfo(popupFlag, code);
       } else {
         this.addCartEntries(code);
       }
@@ -492,7 +505,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   removeCart(): void {
     this.spinner.show();
-    this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
+    this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo ? this.cartInfo.user.uid : '',
+                                                              this.cartInfo ? this.cartInfo.code : '').subscribe(
       result => {
         this.init();
       },
@@ -514,7 +528,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   getCarts() {
     this.spinner.show();
-    this.cartService.getCarts(this.accountInfo.uid).subscribe(
+    this.cartService.getCarts(this.accountInfo.parties[0].uid).subscribe(
       result => {
         if (result.carts.length > 0) {
           this.holdOrder();
@@ -655,7 +669,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     }
 
-    // 저장 라이트
+    // 저장 → 키
     // 임시
     if (event.keyCode === 39) {
       this.saveCart();

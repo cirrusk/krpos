@@ -149,7 +149,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.pager = this.pagerService.getPager(this.accountList.accounts.length, page);
     // 출력 리스트 생성
     if (this.accountList.accounts.length > 5) {
-      this.currentLeftAccountList  = this.accountList.accounts.slice(this.pager.startIndex, this.pager.startIndex + 6);
+      this.currentLeftAccountList  = this.accountList.accounts.slice(this.pager.startIndex, this.pager.startIndex + 5);
       this.currentRightAccountList = this.accountList.accounts.slice(this.pager.startIndex + 5, this.pager.endIndex + 1);
     } else {
       this.currentLeftAccountList  = this.accountList.accounts.slice(this.pager.startIndex, this.pager.endIndex + 1);

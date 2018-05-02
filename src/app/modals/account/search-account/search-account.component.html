@@ -93,18 +93,18 @@
                         </thead>
                         <tbody>
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
-                            <tr [class.on]='activeNum == (i+4)' *ngFor="let account of currentRightAccountList; let i = index" (click)='activeRow((i+4), account.uid)'>
+                            <tr [class.on]='activeNum == (i+5)' *ngFor="let account of currentRightAccountList; let i = index" (click)='activeRow((i+5), account.uid)'>
                                 <td class="tit"><span class="elips">{{account.name}}</span></td>
                                 <td><span class="bg_bar none">{{account.uid}}</span></td>
                                 <td><span class="bg_bar">{{account.parties[0].dateOfBirth | date:'yyyyMMdd'}}</span></td>
-                                <td *ngIf='account.parties[0].phoneInfos == null; else elseTemplate'>
+                                <td *ngIf='account.parties[0].phoneInfos == null; else elseRightTemplate'>
                                     <span class="bg_bar"></span>
                                 </td>
-                                <ng-template #elseTemplate>
+                                <ng-template #elseRightTemplate>
                                     <td>                                        
                                         <div *ngFor="let phoneInfo of account.parties[0].phoneInfos; let last = last">
                                             <span class="bg_bar" *ngIf="last">
-                                                {{phoneInfo.formattedPhoneNumber | phoneNumberMask}
+                                                {{phoneInfo.formattedPhoneNumber | phoneNumberMask}}
                                             </span>
                                         </div>
                                     </td>                                     

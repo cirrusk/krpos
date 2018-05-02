@@ -70,7 +70,17 @@
                                     <td class="tit"><span class="elips">{{product.name}}</span></td>
                                     <td><span class="none">{{product.vpsCode}}</span></td>
                                     <td><span>{{product.code}}</span></td>
-                                    <td><span>재고(총 {{product.stock.stockLevel}}개)</span></td>
+                                    <td [ngSwitch]="product.sellableStatus" >
+                                        <span *ngSwitchCase="'OUTOFSTOCK'">
+                                            재고없음
+                                        </span>
+                                        <span *ngSwitchCase="'ENDOFSALE'">
+                                            단종
+                                        </span>
+                                        <span *ngSwitchDefault>
+                                            재고있음
+                                        </span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
