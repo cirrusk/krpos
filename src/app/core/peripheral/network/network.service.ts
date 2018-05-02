@@ -23,12 +23,14 @@ export class NetworkService {
     waitNetwork.subscribe(
       () => {
           this.logger.set('network.service', '2. Network service ready to receive data from network driver...').debug();
-          // Init 시점 기다리는 모듈에 통보
-          this.waitNWService.next();
+          this.waitNWService.next(); // Init 시점 기다리는 모듈에 통보
       }
     );
   }
 
+  /**
+   * 로컬의 IP 조회하기
+   */
   public getLocalIpAddress(): string {
     if (this.ipAddress === null) {
         this.ipAddress = this.networkDriver.ipAddress;
@@ -36,6 +38,11 @@ export class NetworkService {
     return this.ipAddress;
   }
 
+  /**
+   * 로컬의 Mac Address 조회하기
+   *
+   * @param splitter Mac Address 구분자
+   */
   public getLocalMacAddress(splitter?: string): string {
     if (this.macAddress === null) {
       if (splitter) {
@@ -43,8 +50,8 @@ export class NetworkService {
       } else {
         this.macAddress = this.networkDriver.macAddress;
       }
+      this.logger.set('network.service', '3. Local Mac Address received successfully...').debug();
     }
-    this.logger.set('network.service', '3. Local Mac Address received successfully...').debug();
     return this.macAddress;
   }
 
