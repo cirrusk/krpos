@@ -84,7 +84,8 @@ export class PosReceiptPrintComponent implements OnInit {
             totalPrice: '10000'
         }
     ]
-};
+  };
+
   constructor(private printerService: PrinterService, private receiptService: ReceiptService) {
     this.prtCmd = new PrinterCommands();
   }
@@ -109,9 +110,14 @@ export class PosReceiptPrintComponent implements OnInit {
 public clickRaw() {
     const printMsg: string =
         this.prtCmd.initPrinter() +
-        this.prtCmd.printNVImage() +
-        this.prtCmd.println('Font A (center)') +
-        this.prtCmd.left();
+        this.prtCmd.printBarcodeCodeUAT('100099A') +
+        this.prtCmd.printBarcodeCodeUAT('100331M') +
+        this.prtCmd.printBarcodeCodeUAT('100497M') +
+        this.prtCmd.printBarcodeCodeUAT('100663T') +
+        this.prtCmd.printBarcodeCodeUAT('100957A') +
+        this.prtCmd.printBarcodeCodeUAT('101156M') +
+        this.prtCmd.paperFullCut();
+        
         console.log(printMsg);
 
     this.printerService.printText(printMsg);
@@ -127,10 +133,9 @@ public clickRaw() {
   }
 
   public testReceipt() {
-    const text = this.receiptService.getOrderReceipt(this.receiptTempData);
-    console.log('test receipt : ' + text);
-    console.log('test receipt encode : ' + Utils.utf8ArrayEncode(text));
+    const text = this.receiptService.getOrderReceipt(JSON.stringify(this.receiptTempData));
     this.printerService.printText(text);
+    
   }
 
 }

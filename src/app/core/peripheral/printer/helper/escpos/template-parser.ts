@@ -76,8 +76,8 @@ export class TemplateParser {
     return new XMLParser().parser(xml);
   }
 
-  public vanillaParser(data: string, scope: any): string {
-    const fn = this.handlebars.compile(data);
+  public vanillaParser(template: any, scope: any): string {
+    const fn = this.handlebars.compile(template);
     const parsed = fn(scope);
     return parsed;
   }

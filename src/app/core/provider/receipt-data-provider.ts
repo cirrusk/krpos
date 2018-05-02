@@ -24,7 +24,7 @@ export class ReceiptDataProvider {
     this.formatReader.get(policyUri)
         .subscribe(
             (res) => {
-                waitDownload.next(JSON.parse(res) as ReceiptPolicy);
+                waitDownload.next(JSON.parse(res._body) as ReceiptPolicy);
             }
         );
 
@@ -49,7 +49,8 @@ export class ReceiptDataProvider {
 
         this.formatReader.get(url)
         .subscribe(
-            (unparsedText) => {
+            (res) => {
+                const unparsed = res._body;
                 const canPrecompile = precompileMap.get(templateName);
 
                 if (canPrecompile) {
@@ -57,12 +58,12 @@ export class ReceiptDataProvider {
                     // ESC/POS 명령어 변환 시 명령어 조작 결과에 따라 \0 null character 가 생성됨
                     // ESC/POS 의 data populating 하는 handlebars 가 \0 을 처리 못함
                     // precompile 의 경우만 null escape 필요
-                    const transformed = EscPos.getTransformed(unparsedText);
+                    const transformed = EscPos.getTransformed(unparsed);
                     const nullEscaped = EscPos.escapeNull(transformed);
 
                     this.preparedData.set(templateName, nullEscaped);
                 } else {
-                    this.preparedData.set(templateName, unparsedText);
+                    this.preparedData.set(templateName, unparsed);
                 }
             }
         );
