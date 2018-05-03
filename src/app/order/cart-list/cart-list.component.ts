@@ -69,6 +69,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
+        this.logger.set('cart-list.component', 'search account info subscribe ...').debug();
         if (result) {
           if (this.accountInfo) {
             this.init();
@@ -175,16 +176,16 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     // 회원검색
     if (this.searchMode === 'A') {
-      this.callSearchAccount();
-      this.searchBroker.sendInfo('account', this.searchParams);
+      this.callSearchAccount(this.searchParams);
+      // this.searchBroker.sendInfo('account', this.searchParams);
     // 제품 검색
     } else {
       if (this.cartInfo.code === undefined) {
         this.addToCart(true);
       } else {
-        this.callSearchProduct();
         this.searchParams.data = this.cartInfo;
-        this.searchBroker.sendInfo('product', this.searchParams);
+        this.callSearchProduct(this.searchParams);
+        // this.searchBroker.sendInfo('product', this.searchParams);
       }
     }
   }
@@ -192,11 +193,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 유저정보 검색
    */
-  callSearchAccount(): void {
+  callSearchAccount(params?: any): void {
     this.modal.openModalByComponent(SearchAccountComponent,
       {
-        title: '',
-        message: '',
+        callerData: {data: params},
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
         closeByEscape: true,
@@ -210,12 +210,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 제품 검색
    */
-  callSearchProduct(): void {
+  callSearchProduct(params?: any): void {
     // 추후 지정
     this.modal.openModalByComponent(SearchProductComponent,
       {
-        title: '',
-        message: '',
+        callerData: {data: params},
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
         closeByEnter: false,
@@ -290,9 +289,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (!popupFlag && productCode) {
           this.addCartEntries(productCode);
         } else if (popupFlag) {
-          this.callSearchProduct();
           this.searchParams.data = this.cartInfo;
-          this.searchBroker.sendInfo('product', this.searchParams);
+          this.callSearchProduct(this.searchParams);
+          // this.searchBroker.sendInfo('product', this.searchParams);
         }
 
       },
