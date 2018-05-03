@@ -13,10 +13,9 @@ export class SpinnerComponent implements OnInit, OnDestroy {
   private spinnerState: Subscription;
   constructor(private spinnerSerive: SpinnerService) { }
 
-  ngOnInit() {
+  ngOnInit() { // 2018.05.03 ExpressionChangedAfterItHasBeenCheckedError 처리 delay
     this.spinnerState = this.spinnerSerive.spinnerState.delay(10).subscribe(
       async (state: SpinnerState) => { this.show = state.show; } );
-
   }
 
   ngOnDestroy() {
