@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Modal, Logger, SpinnerService, AlertService, AlertType } from '../../../core';
 
@@ -13,7 +14,7 @@ import { InfoBroker } from '../../../broker/info.broker';
   selector: 'pos-hold-order',
   templateUrl: './hold-order.component.html'
 })
-export class HoldOrderComponent extends ModalComponent  implements OnInit {
+export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDestroy {
 
   private currentPage: number;                    // 현재 페이지 번호
   private pager: any = {};                        // pagination 정보
@@ -22,6 +23,8 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
   cartList: Array<Cart>;
   currentCartList: Array<Cart>;
   activeNum: number;
+
+  private holdsubscription: Subscription;
 
   constructor(modalService: ModalService,
               private cartService: CartService,
@@ -40,6 +43,10 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
     this.getCarts(this.callerData ? this.callerData.userId : '');
   }
 
+  ngOnDestroy() {
+    if (this.holdsubscription) { this.holdsubscription.unsubscribe(); }
+  }
+
   // 테이블 로우 Class 적용(on)
   activeRow(index: number): void {
     this.activeNum = index;
@@ -53,7 +60,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit {
    */
   getCarts(userId?: string) {
     // this.spinner.show();
-    this.cartService.getCarts(userId).subscribe(
+    this.holdsubscription = this.cartService.getCarts(userId).subscribe(
       result => {
         this.cartList = result.carts;
         this.setPage(Math.ceil(this.cartList.length / 5), 5);
