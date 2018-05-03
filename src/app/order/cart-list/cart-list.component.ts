@@ -112,6 +112,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
   }
 
   ngOnDestroy() {
