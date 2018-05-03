@@ -46,24 +46,18 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.activeCode = '';
     this.totalCnt = 0;
     this.paymentType = 'n';
-
-    this.searchSubscription = this.searchBroker.getInfo().subscribe(
-      result => {
-        if (result.data.searchText.trim() && result.type === 'account') {
-          // 전달 받은 데이터로 검색
-          this.getAccountList(result.data.searchType, result.data.searchText);
-          this.searchText = result.data.searchText;
-        }
-      }
-    );
   }
 
   ngOnInit() {
     this.logger.set('search.account.component', `결제 타입 --------------> ${this.paymentType}`).debug();
+    const result = this.callerData.data;
+    if (result.searchText && result.searchText.trim()) {
+      this.getAccountList(result.searchMode, result.searchText);  // 전달 받은 데이터로 검색
+      this.searchText = result.searchText;
+    }
   }
 
   ngOnDestroy() {
-    this.searchSubscription.unsubscribe();
     if (this.searchListSubscription) {
       this.searchListSubscription.unsubscribe();
     }
@@ -127,7 +121,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       );
       this.account = this.accountList.accounts[existedIdx];
       this.searchAccountBroker.sendInfo(this.account);
-      this.modal.clearAllModals(this);
+      this.closeModal();
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });
     }
