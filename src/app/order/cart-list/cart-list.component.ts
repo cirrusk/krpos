@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -50,6 +50,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPrice: number;                             // 총 금액
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
+  @ViewChild('searchText') private searchText: ElementRef; // 입력창
 
   constructor(private modal: Modal,
               private cartService: CartService,
@@ -207,6 +208,10 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 제품 검색
+   * 제품 검색 후 입력창에 포커스가 있어야함.
+   * 이유 : 스캐너가 read 한 값을 올바르게 받음.
+   *
+   * @param params 검색 파라미터값
    */
   callSearchProduct(params?: any): void {
     // 추후 지정
@@ -221,7 +226,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         closeAllModals: false,
         modalId: 'SearchProductComponent'
       }
-    );
+    ).subscribe(result => {
+      this.searchText.nativeElement.focus();
+    });
   }
 
   /**
