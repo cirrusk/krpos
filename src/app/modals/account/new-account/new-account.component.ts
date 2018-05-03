@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, Input, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, AlertService, ModalService, AlertType, OnlyNumberDirective, SpinnerService, Logger, Modal } from '../../../core';
 import { AccountService } from './../../../service/account.service';
@@ -19,6 +20,8 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   @Input() phonetype: string; // 휴대폰/전화번호 타입 선택
   @Input() agree: boolean;  // 개인정보수집 및 이용동의
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
+  @ViewChild('phoneNumText') private phoneNumText: ElementRef;
+  phoneNumInput: FormControl = new FormControl('');
   private modalsubscription: Subscription;
   constructor(protected modalService: ModalService,
               private modal: Modal,
@@ -34,7 +37,21 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
     this.guser = false;
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
+    const engExp: RegExp = new RegExp(/[A-Za-z]/g);
+    const numExp: RegExp = new RegExp(/[0-9]/g);
+    const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
+    this.phoneNumInput.valueChanges
+    .debounceTime(300)
+    .subscribe(v => {
+      if (v) {
+        if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
+          this.phoneNumText.nativeElement.value = v.replace(numEngDelExp, '');
+        }
+      }
+    });
+  }
 
   ngOnDestroy() {
     if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
