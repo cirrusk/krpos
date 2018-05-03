@@ -271,6 +271,16 @@ export class PrinterCommands {
     //     return this.CMD.GSV0_FORMAT.GSV0_NORMAL + bytes;
     // }
 
+    public printBarcodeCodeUAT(text: string) {
+        const barcode: string = this.println(text) +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
+                                this.CMD.BARCODE_FORMAT.BARCODE_CODE93 + String.fromCharCode(text.length) + text +
+                                this.CMD.NUL + this.newline(3);
+        return barcode;
+    }
+
+
     public printBarcodeCode128(text: string) {
         // width
         // height
@@ -293,47 +303,47 @@ export class PrinterCommands {
         // BARCODE_CODE128: '\x1d\x6b\x49', // Barcode type CODE128
 
         const barcode: string = this.println('UPC A') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_UPC_A + String.fromCharCode(text.length) + text
                                 + this.CMD.NUL + this.newline(3) +
                                 this.println('UPC E') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_UPC_E + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('EAN 13') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_EAN13 + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('EAN 8') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_EAN8 + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('Code 39') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_CODE39 + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('Code 93') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_CODE93 + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('Code 128') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_CODE128 + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('ITF') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_ITF + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3) +
                                 this.println('NW7') +
-                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['2'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
+                                this.CMD.BARCODE_FORMAT.BARCODE_WIDTH['3'] + this.CMD.BARCODE_FORMAT.BARCODE_HEIGHT_DEFAULT +
                                 this.CMD.BARCODE_FORMAT.BARCODE_FONT_A + this.CMD.BARCODE_FORMAT.BARCODE_TXT_BLW +
                                 this.CMD.BARCODE_FORMAT.BARCODE_NW7 + String.fromCharCode(text.length) + text +
                                 this.CMD.NUL + this.newline(3);
