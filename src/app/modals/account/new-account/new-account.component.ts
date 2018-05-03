@@ -39,7 +39,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
 
   ngOnInit() {
     const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
-    const engExp: RegExp = new RegExp(/[A-Za-z]/g);
+    const engExp: RegExp = new RegExp(/[a-z]/gi);
     const numExp: RegExp = new RegExp(/[0-9]/g);
     const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
     this.phoneNumInput.valueChanges
