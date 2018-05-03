@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class SearchProductComponent extends ModalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private searchSubscription: Subscription;
+  private spsubscription: Subscription;
   private cartInfo: CartInfo;
 
   @ViewChild('searchValue') private searchValue: ElementRef;
@@ -47,26 +48,20 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     this.productCount = -1;
     this.products = null;
     this.currentPage = 0;
-
-    this.searchSubscription = this.searchBroker.getInfo().subscribe(
-      result => {
-        if (result.data.searchText.trim() && result.type === 'product') {
-          this.searchValue.nativeElement.value = result.data.searchText;
-          this.cartInfo = result.data.data;
-          // 전달 받은 데이터로 검색
-          this.searchProduct(result.data.searchText);
-        }
-      }
-    );
   }
 
   ngOnInit() {
+    const result = this.callerData.data;
+    if (result.searchText && result.searchText.trim()) {
+      this.searchValue.nativeElement.value = result.searchText;
+      this.cartInfo = result.data;
+      this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
+    }
   }
 
   ngOnDestroy() {
-    if (this.searchSubscription) {
-      this.searchSubscription.unsubscribe();
-    }
+    if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
+    if (this.spsubscription) { this.spsubscription.unsubscribe(); }
   }
 
   ngAfterViewInit() {
@@ -113,7 +108,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     switch (this.basicSearchType) {
       case 'sku': {
         this.spinner.show();
-        this.search.getBasicProductInfo(val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
+        this.spsubscription = this.search.getBasicProductInfo(val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
           this.products = data;
           this.productCount = data.pagination.totalResults;
           this.totalPages = data.pagination.totalPages;
@@ -174,6 +169,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
       this.alert.warn({ message: '상품을 선택하십시오.' });
       return;
     }
+    this.logger.set('search-product.component', `send product : ${Utils.stringify(this.product)}`).debug();
     this.addCartBroker.sendInfo(this.product);
     this.close();
   }
