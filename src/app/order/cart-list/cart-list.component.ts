@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent } from '../../modals';
@@ -12,7 +13,6 @@ import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, Orde
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import Utils from '../../core/utils';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'pos-cart-list',
@@ -33,7 +33,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
-  private productInfo: OrderEntry;                 // 제품 정보
+  private productInfo: OrderEntry;                // 제품 정보
   private addCartModel: CartModification[];       // 장바구니 담기 응답모델
   private updateCartModel: CartModification;      // 장바구니 수정 응답모델
   private currentPage: number;                    // 현재 페이지 번호
@@ -44,8 +44,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   accountInfo: Accounts;                          // 사용자 정보
   searchMode: string;                             // 조회 모드
-  cartList: Array<OrderEntry>;                     // 장바구니 리스트
-  currentCartList: Array<OrderEntry>;              // 출력 장바구니 리스트
+  cartList: Array<OrderEntry>;                    // 장바구니 리스트
+  currentCartList: Array<OrderEntry>;             // 출력 장바구니 리스트
   totalItem: number;                              // 총 수량
   totalPrice: number;                             // 총 금액
   totalPV: number;                                // 총 PV
@@ -199,9 +199,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         callerData: {data: params},
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: true,
         modalId: 'SearchAccountComponent'
       }
     );
@@ -221,10 +218,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         callerData: {data: params},
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        closeByEnter: false,
-        closeByEscape: true,
-        closeByClickOutside: true,
-        closeAllModals: false,
         modalId: 'SearchProductComponent'
       }
     ).subscribe(result => {
@@ -239,11 +232,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('nc', 'Y');
     this.modal.openModalByComponent(NewAccountComponent,
       {
-        title: '',
-        message: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
-        closeByClickOutside: true,
         modalId: 'NewAccountComponent'
       }
     );
@@ -257,13 +245,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(HoldOrderComponent,
       {
         callerData: { userId: this.accountInfo.uid},
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
-        closeByEnter: false,
-        closeByEscape: true,
         closeByClickOutside: false,
-        closeAllModals: false,
         modalId: 'HoldOrderComponent'
       }
     );
@@ -412,10 +394,6 @@ export class CartListComponent implements OnInit, OnDestroy {
               title: '확인',
               message: appendMessage,
               closeButtonLabel: '닫기',
-              closeByEnter: false,
-              closeByEscape: true,
-              closeByClickOutside: true,
-              closeAllModals: true,
               modalId: 'ADD_CAR_ERROR'
             });
           }
