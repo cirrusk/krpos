@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import { Logger } from '../../../core';
+import Utils from '../../../core/utils';
 
 @Injectable()
 export class AddCartBroker {
@@ -10,7 +11,7 @@ export class AddCartBroker {
   constructor(private logger: Logger) { }
 
   sendInfo(message: any) {
-    this.logger.set('AddCartBroker', 'Send info...').debug();
+    this.logger.set('add to cart broker', 'Send info... ').debug();
     this.subject.next(message);
   }
 
