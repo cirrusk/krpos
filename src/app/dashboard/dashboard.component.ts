@@ -83,7 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.spinner.show();
       this.batchsubscription = this.batch.startBatch().subscribe(result => {
         if (result && Utils.isNotEmpty(result.batchNo)) {
-          this.logger.set('dashboard.component', `start batch info : ${Utils.stringify(result)}`).debug();
+          this.logger.set('dashboard.component', 'start batch...').debug();
           this.storage.setBatchInfo(result);
           this.info.sendInfo('bat', result);
           this.alert.info({ message: '배치가 시작되었습니다.' });
