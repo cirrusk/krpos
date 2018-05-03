@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/delay';
 import { SpinnerService, SpinnerState } from './spinner.service';
 
 @Component({
@@ -8,16 +9,18 @@ import { SpinnerService, SpinnerState } from './spinner.service';
   templateUrl: './spinner.component.html'
 })
 export class SpinnerComponent implements OnInit, OnDestroy {
-  show: boolean;
+  @Input() show: boolean;
   private spinnerState: Subscription;
   constructor(private spinnerSerive: SpinnerService) { }
 
   ngOnInit() {
-    this.spinnerState = this.spinnerSerive.spinnerState.subscribe(
-      (state: SpinnerState) => { this.show = state.show; } );
+    this.spinnerState = this.spinnerSerive.spinnerState.delay(10).subscribe(
+      async (state: SpinnerState) => { this.show = state.show; } );
+
   }
 
   ngOnDestroy() {
-    this.spinnerState.unsubscribe();
+    if (this.spinnerState) { this.spinnerState.unsubscribe(); }
   }
+
 }
