@@ -59,7 +59,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
    * 보류된 장바구니 리스트 가져오기
    */
   getCarts(userId?: string) {
-    // this.spinner.show();
+    this.spinner.show();
     this.holdsubscription = this.cartService.getCarts(userId).subscribe(
       result => {
         this.cartList = result.carts;
@@ -73,8 +73,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
           this.alert.error({ message: `${errdata.message}` });
         }
       },
-      () => { // this.spinner.hide();
-       }
+      () => { this.spinner.hide(); }
     );
   }
 

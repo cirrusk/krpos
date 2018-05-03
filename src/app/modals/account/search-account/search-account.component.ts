@@ -42,25 +42,30 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       private searchAccountBroker: SearchAccountBroker
     ) {
     super(modalService);
-    this.activeNum = -1;
-    this.activeCode = '';
-    this.totalCnt = 0;
-    this.paymentType = 'n';
+    this.spinner.hide();
+    this.init();
   }
 
   ngOnInit() {
     this.logger.set('search.account.component', `결제 타입 --------------> ${this.paymentType}`).debug();
-    const result = this.callerData.data;
-    if (result.searchText && result.searchText.trim()) {
-      this.getAccountList(result.searchMode, result.searchText);  // 전달 받은 데이터로 검색
-      this.searchText = result.searchText;
+    const searchParams = this.callerData.data;
+
+    if (searchParams.searchText.trim() !== '') {
+      this.getAccountList('A', searchParams.searchText.trim());
+      this.searchText = searchParams.searchText.trim();
     }
   }
 
   ngOnDestroy() {
-    if (this.searchListSubscription) {
-      this.searchListSubscription.unsubscribe();
-    }
+    if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
+    if (this.searchListSubscription) { this.searchListSubscription.unsubscribe(); }
+  }
+
+  init() {
+    this.activeNum = -1;
+    this.activeCode = '';
+    this.totalCnt = 0;
+    this.paymentType = 'n';
   }
 
   // account 검색

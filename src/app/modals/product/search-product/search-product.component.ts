@@ -52,9 +52,10 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
 
   ngOnInit() {
     const result = this.callerData.data;
-    if (result.searchText && result.searchText.trim()) {
-      this.searchValue.nativeElement.value = result.searchText;
-      this.cartInfo = result.data;
+    this.searchValue.nativeElement.value = result.searchText;
+    this.cartInfo = result.data;
+
+    if (result.searchText) {
       this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
     }
   }
@@ -169,7 +170,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
       this.alert.warn({ message: '상품을 선택하십시오.' });
       return;
     }
-    this.logger.set('search-product.component', `send product : ${Utils.stringify(this.product)}`).debug();
     this.addCartBroker.sendInfo(this.product);
     this.close();
   }
