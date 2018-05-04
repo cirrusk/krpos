@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@angular/core';
-import * as format from 'string-format';
 import { MESSAGE } from './message';
 import Utils from '../core/utils';
 
@@ -53,24 +52,37 @@ export class MessageService {
 
   /**
    * 메시지 가져오기
-   * multiple argument 형식이 없으므로 임의로 개수(6개까지)를 정해서 처리하도록 함.
+   * 2018.05.04 multiple argument 지원 수정
    *
    * @param key 메시지 키
-   * @param args0 index0 치환값
-   * @param args1 index1 치환값
-   * @param args2 index2 치환값
-   * @param args3 index3 치환값
-   * @param args4 index4 치환값
-   * @param args5 index5 치환값
+   * @param holders 치환할 값(문자열 또는 문자열 배열)
    */
-  get(key: string, args0?: string, args1?: string, args2?: string, args3?: string, args4?: string, args5?: string): string {
-    if (args1) {
-      return format(this.getMessage(key), args0, args1, args2, args3, args4, args5);
-    } else {
-      return this.getMessage(key);
-    }
+  get(key: string, ...holders: string[]): string {
+    const m = this.getMessage(key);
+    if (!holders) { return m; }
+    return this.replace(m, holders);
   }
 
+  /**
+   * 메시지 치환하기
+   *
+   * @param msg 치환할 메시지
+   * @param holders 치환할 값(문자열 또는 문자열 배열)
+   */
+  private replace(msg: string = '', holders: string | string[] = ''): string {
+    let m: string = msg;
+    const vals: string[] = [].concat(holders);
+    vals.forEach((val, idx) => {
+      m = m.replace('{'.concat(<any> idx).concat('}'), val);
+    });
+    return m;
+  }
+
+  /**
+   * 키값으로 메시지 가져오기
+   *
+   * @param key 메시지 키값
+   */
   private getMessage(key: string): string {
     const msgkey = key;
     if (this.messages[this.lang] && this.messages[this.lang][key]) {
