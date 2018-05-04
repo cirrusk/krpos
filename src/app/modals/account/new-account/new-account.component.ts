@@ -68,7 +68,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
    * @param el 휴대폰/전화번호 INPUT element
    */
   saveNewCustomer(el) {
-    if (Utils.isEmpty(this.userPhone) || this.userPhone.length < 11) {
+    if (Utils.isEmpty(this.userPhone) || (this.userPhone.length < 9 && this.userPhone.length < 11)) {
       el.blur(); // 주의) 이렇게 처리해야만 alert 에서 이벤트 동작!
       this.alert.warn( {message: '입력 형식이 맞지 않습니다.'} );
       return;
