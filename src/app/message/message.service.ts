@@ -41,12 +41,8 @@ export class MessageService {
     }
     let browserLang: any = window.navigator.languages ? window.navigator.languages[0] : null;
     browserLang = browserLang || window.navigator.language || window.navigator.browserLanguage || window.navigator.userLanguage;
-    if (browserLang.indexOf('-') !== -1) {
-      browserLang = browserLang.split('-')[0];
-    }
-    if (browserLang.indexOf('_') !== -1) {
-      browserLang = browserLang.split('_')[0];
-    }
+    if (browserLang.indexOf('-') !== -1) { browserLang = browserLang.split('-')[0]; }
+    if (browserLang.indexOf('_') !== -1) { browserLang = browserLang.split('_')[0]; }
     return browserLang;
   }
 
@@ -72,9 +68,7 @@ export class MessageService {
   private replace(msg: string = '', holders: string | string[] = ''): string {
     let m: string = msg;
     const vals: string[] = [].concat(holders);
-    vals.forEach((val, idx) => {
-      m = m.replace('{'.concat(<any> idx).concat('}'), val);
-    });
+    vals.forEach((val, idx) => { m = m.replace('{'.concat(<any> idx).concat('}'), val); });
     return m;
   }
 
