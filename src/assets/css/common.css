@@ -213,6 +213,9 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 
 /* popup */
 .layer_pop {position:fixed; left:0; right:0; top:0; bottom:0; background-color:rgba(0,0,0,0.8); z-index:99; display:flex; justify-content:center; align-items:center;}
+.layer_pop.up {z-index:199; background-color:rgba(0,0,0,0.7);}
+.layer_pop.up .pop_wrap {z-index:200}
+.layer_pop.down {background-color:rgba(0,0,0,0.3)}
 
 .pop_wrap {position:relative; background-color:#fff; z-index:100;}
 .pop_container {}
@@ -464,20 +467,20 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section01 .list_wrap .paging {}
 .m_cont .section01 .list_wrap .paging .prev01 {position:absolute; top:5px; right:5px}
 .m_cont .section01 .list_wrap .paging .next01 {position:absolute; bottom:5px; right:5px}
-.m_cont .section01 .list_wrap .list {height:335px; background:#fff url(/assets/images/common/bg_board.png) 0 26px repeat; box-shadow: 0px 8px 10px 2px rgba(0, 19, 50, 0.1); overflow:hidden;}
+.m_cont .section01 .list_wrap .list {height:335px; background:#fff url(/assets/images/common/bg_board.png) 0 31px repeat; box-shadow: 0px 8px 10px 2px rgba(0, 19, 50, 0.1); overflow:hidden;}
 .m_cont .section01 .list_wrap .list table {width:100%}
 .m_cont .section01 .list_wrap .list table thead tr {border-bottom:1px solid #b3b3b3}
 .m_cont .section01 .list_wrap .list table tbody tr {border-top:1px solid #cfcfcf}
 .m_cont .section01 .list_wrap .list table tbody tr:first-child {border-top:0}
-.m_cont .section01 .list_wrap .list table th {height:25px; font-size:10px; color:#666}
-.m_cont .section01 .list_wrap .list table td {height:31px; padding:0 10px; box-sizing:border-box; font-size:12px; color:#1a1a1a; text-align:center;}
-.m_cont .section01 .list_wrap .list table td .elips {display:block; max-width:230px}
+.m_cont .section01 .list_wrap .list table th {height:30px; font-size:12px; color:#666}
+.m_cont .section01 .list_wrap .list table td {height:38px; padding:0 10px; box-sizing:border-box; font-size:14px; color:#1a1a1a; text-align:center;}
+.m_cont .section01 .list_wrap .list table td .elips {display:block; max-width:225px}
 .m_cont .section01 .list_wrap .list table td:nth-child(2) {font-size:11px}
 .m_cont .section01 .list_wrap .list table tr.on {border-top-color:#ebf2f7}
 .m_cont .section01 .list_wrap .list table tr.on + tr {border-top-color:#ebf2f7}
-.m_cont .section01 .list_wrap .list table tr.on td {font-family:'NSB'; font-size:12px; color:#11224e; background-color:#ebf2f7}
+.m_cont .section01 .list_wrap .list table tr.on td {font-family:'NSB'; font-size:14px; color:#11224e; background-color:#ebf2f7}
 .m_cont .section01 .list_wrap .list table tr:last-child.on {border-bottom:1px solid #ebf2f7}
-.customer .m_cont .section01 .list_wrap .list table td .elips {max-width:440px}
+.customer .m_cont .section01 .list_wrap .list table td .elips {max-width:420px}
 
 .m_cont .section02 {margin-top:17px}
 .m_cont .section02:after {content:''; display:block; clear:both;}
@@ -496,15 +499,17 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section02 .left .search_wrap .btn.on {background-color:#ebf2f7}
 .m_cont .section02 .left .member_info {height:194px; padding:7px 15px 15px; box-sizing:border-box; overflow:hidden}
 .m_cont .section02 .left .member_info .info_top {height:26px}
-.m_cont .section02 .left .member_info .info_top em {font-family:'NSB'; font-size:18px; color:#21243d}
-.m_cont .section02 .left .member_info .info_top .t01 {margin-left:6px; font-size:12px; font-style:italic; color:#999}
+.m_cont .section02 .left .member_info .info_top em {font-family:'NSB'; font-size:16px; color:#21243d; letter-spacing:-0.09em}
+.m_cont .section02 .left .member_info .info_top .t01 {margin-left:6px; font-size:16px; color:#3d4daf}
 .m_cont .section02 .left .member_info .info_top .t02 {float:right; margin-top:3px; font-family:'NSR'; font-size:11px; color:#21243d}
 .m_cont .section02 .left .member_info .info_cont {position:relative; margin-top:5px}
-.m_cont .section02 .left .member_info .info_cont > * {position:absolute; padding:9px 15px; box-sizing:border-box;}
+.m_cont .section02 .left .member_info .info_cont > * {position:absolute; padding:3px 15px; box-sizing:border-box;}
 .m_cont .section02 .left .member_info .info_cont dl dt {font-size:12px; color:#fff}
-.m_cont .section02 .left .member_info .info_cont dl dd {font-family:'NSB'; font-size:19px; color:#fff; text-align:right;}
-.m_cont .section02 .left .member_info .info_cont .ic01 {top:0; left:0; width:calc(50% - 3px); height:68px; background-color:#5867c3}
-.m_cont .section02 .left .member_info .info_cont .ic02 {top:73px; left:0; width:calc(50% - 3px); height:68px; background-color:#3d4daf}
+.m_cont .section02 .left .member_info .info_cont dl dd {margin-top:-5px;font-family:'NSB'; font-size:19px; color:#fff; text-align:right;}
+.m_cont .section02 .left .member_info .info_cont .ic01 {top:0; left:0; width:calc(50% - 3px); height:52px; background-color:#5867c3}
+.m_cont .section02 .left .member_info .info_cont .ic04 {top:55px; left:0; width:calc(50% - 3px); height:31px; padding-right:13px; background-color:#3d4999}
+.m_cont .section02 .left .member_info .info_cont .ic04 span {display:inline-block; font-size:12px; color:#fff; font-family:'NSB';}
+.m_cont .section02 .left .member_info .info_cont .ic02 {top:89px; left:0; width:calc(50% - 3px); height:52px; background-color:#3d4daf}
 .m_cont .section02 .left .member_info .info_cont .ic03 {top:0; right:0; padding-top:11px; width:calc(50% - 2px); height:141px; background-color:#47b8f2}
 .m_cont .section02 .left .member_info .info_cont .ic03 li {height:20px; color:#fff; font-size:0}
 .m_cont .section02 .left .member_info .info_cont .ic03 li.credit {height:33px}
@@ -515,10 +520,11 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section02 .left .member_info .info_cont .ic03 li > em span {display:block; margin-top:-8px; font-family:'NSM'; font-size:11px}
 .customer .m_cont .section02 .left .member_info .info_top {margin-top:6px; height:31px}
 .customer .m_cont .section02 .left .member_info {height:274px}
-.customer .m_cont .section02 .left .member_info .info_cont > * {padding:15px 20px}
-.customer .m_cont .section02 .left .member_info .info_cont dd {margin-top:20px}
-.customer .m_cont .section02 .left .member_info .info_cont .ic01 {height:103px}
-.customer .m_cont .section02 .left .member_info .info_cont .ic02 {top:108px; height:103px}
+.customer .m_cont .section02 .left .member_info .info_cont > * {padding:9px 20px}
+.customer .m_cont .section02 .left .member_info .info_cont dd {margin-top:9px}
+.customer .m_cont .section02 .left .member_info .info_cont .ic01 {height:80px}
+.customer .m_cont .section02 .left .member_info .info_cont .ic04 {top:85px; height:41px}
+.customer .m_cont .section02 .left .member_info .info_cont .ic02 {top:131px; height:80px}
 .customer .m_cont .section02 .left .member_info .info_cont .ic03 {height:211px; padding:25px 20px 20px}
 .customer .m_cont .section02 .left .member_info .info_cont .ic03 li {height:33px;}
 .customer .m_cont .section02 .left .member_info .info_cont .ic03 li > * {height:33px; line-height:38px;}
@@ -545,7 +551,7 @@ table input[type='text'] {font-family:'NSM';}
 
 .m_right {position:absolute; top:0; right:0; width:190px; height:718px; padding:33px 25px 0; box-sizing:border-box; background-color:#08132f}
 .m_right .nav {}
-.m_right .nav button {position:relative; width:140px; height:50px; box-sizing:border-box; padding-right:15px; line-height:1.7em; font-family:'NSB'; font-size:13px; text-align:right; border-radius:1px; background-color:#fff; color:#21243d}
+.m_right .nav button {position:relative; width:140px; height:50px; box-sizing:border-box; padding-right:15px; line-height:1.7em; font-family:'NSB'; font-size:16px; text-align:right; border-radius:1px; background-color:#fff; color:#21243d}
 .m_right .nav button.on:before {content:''; display:inline-block; position:absolute; top:15px; left:-25px; border-width:10px 0 10px 10px; border-color:transparent transparent transparent #f2f2f5; border-style:solid;}
 .m_right .nav button + button {margin-top:5px}
 .m_right .nav button.blue {background-color:#1265cc; color:#fff}
