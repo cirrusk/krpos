@@ -20,11 +20,6 @@ export class ClientComponent implements OnInit, OnDestroy {
           if (result.value === 'Y') {
             this.modal.openModalByComponent(NewAccountComponent,
               {
-                title: '',
-                message: '',
-                actionButtonLabel: '',
-                closeButtonLabel: '',
-                closeByClickOutside: true,
                 modalId: 'NewAccountComponent_CLIENT'
               }
             ).subscribe(data => {
