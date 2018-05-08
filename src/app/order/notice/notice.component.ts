@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChildren, ElementRef, Input, QueryList, Renderer2, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'pos-notice',
@@ -8,21 +8,20 @@ import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDe
 })
 export class NoticeComponent implements OnInit, OnDestroy {
 
+  @Input() tagmsg: string;
+  @Input() noticeList: string[] = [];
   @ViewChildren ('noticelist') noticelist: QueryList<ElementRef>;
-  public noticeList: string[] = [];
   private intervalid;
   private idx = 0;
   private noticeSize = 0;
 
   constructor(private renderer: Renderer2) { }
 
+  // https://www.bennadel.com/blog/3139-experimenting-with-conditional-enter-leave-animations-in-angular-2-rc-6.htm
+  // https://medium.com/@tanya/angular4-animated-route-transitions-b5b9667cd67c
+  // https://angular.io/api/animations/stagger
+  // * https://stackblitz.com/edit/angular-list-animations
   ngOnInit() {
-    this.noticeList.push('1. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('2. 3월 27일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('3. 3월 28일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('4. 4월 01일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('5. 4월 03일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-
     this.noticeSize = this.noticeList.length;
     this.start();
   }

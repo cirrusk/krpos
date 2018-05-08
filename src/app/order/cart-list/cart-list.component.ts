@@ -52,7 +52,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
   @ViewChild('searchText') private searchText: ElementRef; // 입력창
-
+  public noticeList: string[] = [];
   constructor(private modal: Modal,
               private cartService: CartService,
               private storage: StorageService,
@@ -116,6 +116,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
+    this.loadNotice();
   }
 
   ngOnDestroy() {
@@ -152,6 +153,14 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modifyFlag =  false;
     this.pager = {};
     this.saveCartResult = new SaveCartResult();
+  }
+
+  private loadNotice() {
+    this.noticeList.push('1. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
+    this.noticeList.push('2. 3월 27일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
+    this.noticeList.push('3. 3월 28일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
+    this.noticeList.push('4. 4월 01일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
+    this.noticeList.push('5. 4월 03일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
   }
 
   /**
