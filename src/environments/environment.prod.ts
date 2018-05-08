@@ -34,6 +34,6 @@ export const environment = {
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/'
-
+  hybrisCheckUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/',
+  cartListCount: 8
 };
