@@ -7,8 +7,9 @@ import { LoginGuard, OrderGuard } from './core';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OrderComponent } from './order/order.component';
 import { OrderCompleteComponent } from './order/order-complete/order-complete.component';
-import { ClientComponent } from './client/client.component';
+import { ClientComponent } from './order/client/client.component';
 import { TestComponent } from './common/test/test.component';
+
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },

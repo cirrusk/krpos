@@ -12,13 +12,11 @@ import { CheckComponent } from './common/check/check.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
 import { TestModule } from './common/test/test.module';
-
+import { OrderModule } from './order/order.module';
 import { Config, CLIENT_SECRET } from './core/config/config';
 
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
-import { ClientComponent } from './client/client.component';
 import { MESSAGE_PROVIDER } from './message/message';
-import { OrderModule } from './order/order.module';
 
 @NgModule({
   imports: [
@@ -31,10 +29,9 @@ import { OrderModule } from './order/order.module';
   ],
   declarations: [
     AppComponent,
-    HeaderComponent,
-    DashboardComponent,
     CheckComponent,
-    ClientComponent
+    HeaderComponent,
+    DashboardComponent
   ],
   providers: [
     Config,

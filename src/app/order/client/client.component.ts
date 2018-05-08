@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { StorageService, Modal } from '../core';
-import { NewAccountComponent } from '../modals';
+import { StorageService, Modal } from '../../core';
+import { NewAccountComponent } from '../../modals';
 
 @Component({
   selector: 'pos-client',

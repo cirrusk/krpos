@@ -7,14 +7,18 @@ import { CartListComponent } from './cart-list/cart-list.component';
 import { OrderMenuComponent } from './order-menu/order-menu.component';
 import { OrderCompleteComponent } from './order-complete/order-complete.component';
 import { AddCartBroker, SearchBroker } from '../broker';
+import { NoticeComponent } from './notice/notice.component';
+import { ClientComponent } from './client/client.component';
 
 @NgModule({
   imports: [
     CommonModule
   ],
   declarations: [
-    OrderComponent,
     CartListComponent,
+    ClientComponent,
+    NoticeComponent,
+    OrderComponent,
     OrderMenuComponent,
     OrderCompleteComponent
   ],
