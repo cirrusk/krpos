@@ -153,9 +153,12 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * Search 모드 변경
+   * 상품검색일 경우 입력창에 포커스
+   *
    * @param mode
    */
   activeSearchMode(mode: string): void {
+    if (mode === 'P') { setTimeout(() => { this.searchText.nativeElement.focus(); }, 10); }
     this.searchMode = mode;
   }
 
