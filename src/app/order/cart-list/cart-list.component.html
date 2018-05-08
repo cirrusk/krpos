@@ -29,12 +29,12 @@
 <!-- 상품리스트 -->
 <div class="section01">
 <div class="list_wrap">
-    <!-- 상품이 10개가 넘을 시 노출  -->
-    <div class="paging"  *ngIf="cartList.length > cartListCount">
+    <!-- 상품이 n개가 넘을 시 노출  -->
+    <div class="paging" *ngIf="cartList.length > cartListCount">
         <button type="button" [disabled]="pager.currentPage === pager.startPage" class="ico_comm prev01" (click)="setPage(pager.currentPage - 1,true)">이전</button>
         <button type="button" [disabled]="pager.currentPage === pager.endPage" class="ico_comm next01" (click)="setPage(pager.currentPage + 1,true)">다음</button>
     </div>
-    <!-- //상품이 10개가 넘을 시 노출  -->
+    <!-- //상품이 n개가 넘을 시 노출  -->
     <div class="list click_add">
         <table>
         <caption>상품리스트</caption>
