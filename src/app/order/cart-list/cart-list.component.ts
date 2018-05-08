@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent } from '../../modals';
-import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger } from '../../core';
+import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config } from '../../core';
 
 import { CartService, PagerService } from '../../service';
 import { MessageService } from './../../message/message.service';
@@ -50,6 +50,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPrice: number;                             // 총 금액
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
+  private cartListCount: number;
   @ViewChild('searchText') private searchText: ElementRef; // 입력창
 
   constructor(private modal: Modal,
@@ -64,7 +65,9 @@ export class CartListComponent implements OnInit, OnDestroy {
               private restoreCartBroker: RestoreCartBroker,
               private cancleOrderBroker: CancleOrderBroker,
               private infoBroker: InfoBroker,
+              private config: Config,
               private logger: Logger) {
+    this.cartListCount = this.config.getConfig('cartListCount');
     this.init();
 
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
@@ -335,7 +338,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartListSubscription = this.cartService.getCartList(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
       result => {
         this.cartList = result.entries;
-        this.setPage(page ? page : Math.ceil(this.cartList.length / 10));
+        this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
         this.spinner.hide();
@@ -436,7 +439,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
 
     // 장바구니에 추가한 페이지로 이동
-    this.setPage(Math.ceil(this.cartList.length / 10));
+    this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
   }
 
   /**
@@ -489,7 +492,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                         this.cartInfo.code,
                                                                         this.cartList[index].entryNumber).subscribe(
         result => {
-          this.getCartList(index < 10 ? 1 : Math.ceil(index / 10));
+          this.getCartList(index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
         },
         error => {
           this.spinner.hide();
@@ -627,7 +630,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartInfo.user = cartData.user;
     this.cartInfo.volumeABOAccount = cartData.volumeABOAccount;
     this.cartInfo.guid = cartData.guid;
-    this.setPage(Math.ceil(this.cartList.length / 10));
+    this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
   }
 
   /**
@@ -675,7 +678,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   keyboardInput(event: any, targetElm: HTMLElement) {
     event.stopPropagation();   // event.preventDefault();
 
-    if (this.selectedCartNum !== null && this.selectedCartNum < 10) {
+    if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
       // 수정 이벤트
       // 임시
       if (event.keyCode === 45) {
