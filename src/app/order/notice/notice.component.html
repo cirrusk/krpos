@@ -1,5 +1,5 @@
 <!-- 공지사항 -->
 <dl class="notice">
   <dt class="tag01">공지사항</dt>    
-    <dd>1. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업부에 착오 없으시길 바랍니다. 문의: 1588 - 0000</dd>
+    <dd #noticelist [style.display]="(idx === 0) ? '' : 'none'" *ngFor="let n of noticeList; let idx = index">{{n}}</dd>
 </dl>
