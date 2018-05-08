@@ -50,7 +50,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPrice: number;                             // 총 금액
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
-  public cartListCount: number;
+  public cartListCount: number;                   // 카트 목록 개수
   @ViewChild('searchText') private searchText: ElementRef; // 입력창
 
   constructor(private modal: Modal,
