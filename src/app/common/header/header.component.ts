@@ -208,9 +208,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.screenLockType === LockType.LOCK) { return; }
     this.modal.openModalByComponent(HoldOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'HoldOrderComponent'
       }
@@ -331,7 +328,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private checkBatchAfterLogin() {
     this.batchsubscription = this.batch.getBatch().subscribe(result => {
       if (result && Utils.isNotEmpty(result.batchNo)) { // 닫지 않은 배치가 있으면
-        this.logger.set('header.component', `exist started batch info : ${Utils.stringify(result)}`).debug();
+        this.logger.set('header.component', 'exist started batch').debug();
         const batterm: TerminalInfo = result.terminal;
         const sesterm: TerminalInfo = this.storage.getTerminalInfo();
         if ((batterm && sesterm) && batterm.id === sesterm.id) { // 같은 POS 기기, Batch 유지
@@ -348,7 +345,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           }).subscribe(rst => { // 무조건 로직을 태워서 배치를 삭제해야 하므로 조건 체크 불필요.
             this.logger.set('header.component', `end existing batch, batch no : ${result.batchNo}`).debug();
             this.batchsubscription = this.batch.endBatch(result.batchNo).subscribe(data => {
-              this.logger.set('header.component', `clear and start batch info : ${Utils.stringify(data)}`).debug();
+              this.logger.set('header.component', 'clear and start batch info').debug();
               this.storage.removeBatchInfo();
               this.info.sendInfo('bat', { batchNo: null });
             });
