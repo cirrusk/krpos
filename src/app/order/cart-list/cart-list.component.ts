@@ -444,8 +444,10 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
     } else {
-        this.cartList[existedIdx] = orderEntry;
+      this.cartList[existedIdx] = orderEntry;
     }
+
+    this.storage.setOrderEntry(orderEntry); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
 
     // 장바구니에 추가한 페이지로 이동
     this.setPage(Math.ceil(this.cartList.length / this.cartListCount));

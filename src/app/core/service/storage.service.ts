@@ -332,7 +332,7 @@ export class StorageService implements OnDestroy {
    *
    * @param data 회원정보
    */
-  public setCustomer(data: any) {
+  public setCustomer(data: any): void {
     this.setLocalItem('customer', data);
   }
 
@@ -344,9 +344,24 @@ export class StorageService implements OnDestroy {
     this.removeLocalItem('customer');
   }
 
+  /**
+   * 상품 검색 시 장바구니에 담길 상품 정보 저장
+   * 상품 검색 시 클라이언트에 뿌려줌.
+   *
+   * @param data 상품정보
+   */
+  public setOrderEntry(data: any): void {
+    this.setLocalItem('orderentry', data);
+  }
+
+  public removeOrderEntry(): void {
+    this.removeLocalItem('orderentry');
+  }
+
   public clearClient(): void {
     this.removeEmployeeName();
     this.removeCustomer();
+    this.removeOrderEntry();
     this.clearLocal();
   }
   /**
