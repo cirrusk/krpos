@@ -51,14 +51,13 @@ export class ClientComponent implements OnInit, OnDestroy {
           if (result.value === null) {
             this.init();
           } else {
-console.log('-------->' + result.value);
-              if (result.value instanceof Array) {
-                result.value.forEach(orderentry => {
-                  this.addCartEntry(orderentry);
-                });
-              } else {
-                this.addCartEntry(result.value);
-              }
+            if (result.value instanceof Array) {
+              result.value.forEach(orderentry => {
+                this.addCartEntry(orderentry);
+              });
+            } else {
+              this.addCartEntry(result.value);
+            }
 
           }
         }
