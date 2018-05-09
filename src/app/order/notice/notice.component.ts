@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChildren, ElementRef, Input, QueryList, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, Input, ViewChildren, QueryList, Renderer2 } from '@angular/core';
+import { Config } from '../../core';
 
 @Component({
   selector: 'pos-notice',
-  templateUrl: './notice.component.html',
-  styleUrls: ['./notice.component.css'],
-
+  templateUrl: './notice.component.html'
 })
 export class NoticeComponent implements OnInit, OnDestroy {
 
@@ -14,8 +13,9 @@ export class NoticeComponent implements OnInit, OnDestroy {
   private intervalid;
   private idx = 0;
   private noticeSize = 0;
+  private noticeterm = 7;
 
-  constructor(private renderer: Renderer2) { }
+  constructor(private renderer: Renderer2, private config: Config) { }
 
   // https://www.bennadel.com/blog/3139-experimenting-with-conditional-enter-leave-animations-in-angular-2-rc-6.htm
   // https://medium.com/@tanya/angular4-animated-route-transitions-b5b9667cd67c
@@ -23,6 +23,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
   // * https://stackblitz.com/edit/angular-list-animations
   ngOnInit() {
     this.noticeSize = this.noticeList.length;
+    this.noticeterm = this.config.getConfig('noticeInterval', 7);
     this.start();
   }
 
@@ -30,10 +31,10 @@ export class NoticeComponent implements OnInit, OnDestroy {
     this.end();
   }
 
-   private start() {
+  private start() {
     this.intervalid = setInterval(() => {
       this.noticeRenderStart(this.idx++);
-    }, 1000 * 7);
+    }, 1000 * this.noticeterm);
   }
 
   private end() {

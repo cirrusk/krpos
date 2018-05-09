@@ -37,17 +37,20 @@ export class Config {
    *
    * @param key
    */
-  public getConfig(key: string) {
+  public getConfig(key: string, defaultVal?: any) {
+    let cnf: any;
     // 이 부분 잘 가져올 수 있는 방법 고민!!!
     if (key.indexOf('.') !== -1) {
       const keys = key.split('.');
       if (keys.length === 2) {
-        return environment[keys[0]][keys[1]];
+        cnf = environment[keys[0]][keys[1]];
       } else if (keys.length === 3) {
-        return environment[keys[0]][keys[1]][keys[2]];
+        cnf = environment[keys[0]][keys[1]][keys[2]];
       }
+    } else {
+      cnf = environment[key];
     }
-    return environment[key];
+    return (defaultVal) ? (cnf === null || cnf === '') ? defaultVal : cnf : cnf;
   }
 
 }
