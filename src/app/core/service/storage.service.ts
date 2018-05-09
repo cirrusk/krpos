@@ -347,6 +347,7 @@ export class StorageService implements OnDestroy {
   public clearClient(): void {
     this.removeEmployeeName();
     this.removeCustomer();
+    this.clearLocal();
   }
   /**
    * local storage 전체 삭제

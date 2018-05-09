@@ -272,7 +272,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       // this.storage.removeEmployeeName(); // client 담당자 삭제
       this.storage.clearClient();
-      this.storage.clearLocal();
     });
   }
 
