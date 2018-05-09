@@ -10,8 +10,9 @@ import { PasswordComponent } from './password/password.component';
 import { SearchProductComponent } from './product/search-product/search-product.component';
 import { SearchAccountComponent } from './account/search-account/search-account.component';
 import { NormalPaymentComponent } from './payment/normal-payment/normal-payment.component';
-import { NewAccountComponent } from './account/new-account/new-account.component';
+import { CouponPaymentComponent } from './payment/coupon-payment/coupon-payment.component';
 import { ComplexPaymentComponent } from './payment/complex-payment/complex-payment.component';
+import { NewAccountComponent } from './account/new-account/new-account.component';
 import { PickupOrderComponent } from './order/pickup-order/pickup-order.component';
 import { EtcOrderComponent } from './order/etc-order/etc-order.component';
 import { PromotionOrderComponent } from './order/promotion-order/promotion-order.component';
@@ -41,6 +42,7 @@ import { BatchComponent } from './login/batch.component';
     NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
+    CouponPaymentComponent,
     PickupOrderComponent,
     EtcOrderComponent,
     PromotionOrderComponent,
@@ -75,6 +77,7 @@ import { BatchComponent } from './login/batch.component';
     NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
+    CouponPaymentComponent,
     PickupOrderComponent,
     EtcOrderComponent,
     PromotionOrderComponent,
