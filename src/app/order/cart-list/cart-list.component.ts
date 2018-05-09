@@ -99,6 +99,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.accountInfo = result.volumeABOAccount;
           const jsonData = {'parties' : [result.user]};
           Object.assign(this.accountInfo, jsonData);
+          this.storage.setCustomer(this.accountInfo);
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
@@ -675,7 +676,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     // 카트 리스트
     this.cartList = cartData.entries;
-
+    this.storage.setOrderEntry(cartData.entries);
     this.cartInfo.code = cartData.code;
     this.cartInfo.user = cartData.user;
     this.cartInfo.volumeABOAccount = cartData.volumeABOAccount;

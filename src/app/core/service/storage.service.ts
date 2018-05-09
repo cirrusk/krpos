@@ -350,7 +350,7 @@ export class StorageService implements OnDestroy {
    *
    * @param data 상품정보
    */
-  public setOrderEntry(data: any): void {
+  public setOrderEntry(data: any | any[]): void {
     this.setLocalItem('orderentry', data);
   }
 
