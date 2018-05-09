@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
-import { Accounts, OrderEntry } from '../../data';
+import { Accounts, OrderEntry, Pagination } from '../../data';
 import { PagerService } from '../../service';
 
 @Component({
@@ -21,7 +21,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
-  private pager: any = {};                        // pagination 정보
+  private pager: Pagination;                        // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private config: Config, private pagerService: PagerService ) {
@@ -78,6 +78,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.totalPV = 0;
     this.totalBV = 0;
     this.selectedCartNum = -1;
+    this.pager = new Pagination();
   }
 
   private addCartEntry(orderEntry: OrderEntry) {

@@ -9,7 +9,7 @@ import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger,
 import { CartService, PagerService, SearchService } from '../../service';
 import { MessageService } from './../../message/message.service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import Utils from '../../core/utils';
@@ -38,7 +38,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private addCartModel: CartModification[];       // 장바구니 담기 응답모델
   private updateCartModel: CartModification;      // 장바구니 수정 응답모델
   private currentPage: number;                    // 현재 페이지 번호
-  private pager: any = {};                        // pagination 정보
+  private pager: Pagination;                        // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
   private modifyFlag: boolean;                    // 수정 버튼 플래그
   private saveCartResult: SaveCartResult;         // 장바구니 복원 응답 모델
@@ -156,7 +156,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalBV = 0;
     this.selectedCartNum = -1;
     this.modifyFlag =  false;
-    this.pager = {};
+    this.pager = new Pagination();
     this.saveCartResult = new SaveCartResult();
   }
 

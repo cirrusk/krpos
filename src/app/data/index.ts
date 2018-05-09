@@ -33,6 +33,8 @@ export * from './models/common/terminal-info';
 export * from './models/common/product-data';
 export * from './models/common/batch-info';
 export * from './models/common/http-data';
+export * from './models/common/pagination';
+
 
 export * from './error/error';
 export * from './error/error-info';

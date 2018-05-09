@@ -9,6 +9,7 @@ import { Cart } from '../../../data/models/order/cart';
 import Utils from '../../../core/utils';
 
 import { InfoBroker } from '../../../broker/info.broker';
+import { Pagination } from '../../../data';
 
 @Component({
   selector: 'pos-hold-order',
@@ -17,7 +18,7 @@ import { InfoBroker } from '../../../broker/info.broker';
 export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDestroy {
 
   private currentPage: number;                    // 현재 페이지 번호
-  private pager: any = {};                        // pagination 정보
+  private pager: Pagination;                        // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
 
   cartList: Array<Cart>;
@@ -37,6 +38,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
     super(modalService);
     this.cartList = new Array<Cart>();
     this.activeNum = -1;
+    this.pager = new Pagination();
   }
 
   ngOnInit() {
@@ -66,6 +68,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
         this.setPage(Math.ceil(this.cartList.length / 5), 5);
       },
       error => {
+        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();

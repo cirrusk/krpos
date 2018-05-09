@@ -5,7 +5,7 @@ import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, S
 
 import { SearchService, PagerService } from '../../../service';
 import { SearchBroker, SearchAccountBroker } from '../../../broker';
-import { AccountList, Accounts } from '../../../data';
+import { AccountList, Accounts, Pagination } from '../../../data';
 import Utils from '../../../core/utils';
 import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
 
@@ -23,7 +23,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private searchMemberType: string;          // 회원 유형
 
   private currentPage: number;               // 현재 페이지 번호
-  private pager: any = {};                   // pagination 정보
+  private pager: Pagination;                 // pagination 정보
   currentLeftAccountList: Accounts[];        // 왼쪽 출력 리스트
   currentRightAccountList: Accounts[];       // 오른쪽 출력 리스트
 
@@ -71,6 +71,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.activeCode = '';
     this.totalCnt = 0;
     this.paymentType = 'n';
+    this.pager = new Pagination();
   }
 
   // account 검색

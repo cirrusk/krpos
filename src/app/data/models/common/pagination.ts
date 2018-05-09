@@ -4,4 +4,9 @@ export class Pagination {
     totalPages: number;
     totalResults: number;
     sort: string;
+    totalItems: number;
+    startPage: number;
+    endPage: number;
+    startIndex: number;
+    endIndex: number;
 }
