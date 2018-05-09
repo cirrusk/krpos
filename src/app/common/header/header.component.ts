@@ -270,8 +270,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!result) {
         this.storage.setScreenLockType(LockType.INIT);
       }
-      // this.storage.removeEmployeeName(); // client 담당자 삭제
-      this.storage.clearClient();
     });
   }
 
