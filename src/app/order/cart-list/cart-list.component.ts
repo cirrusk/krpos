@@ -620,6 +620,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           this.init();
           this.infoBroker.sendInfo('hold', 'add');
+          this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
         },
         error => {
           this.spinner.hide();
