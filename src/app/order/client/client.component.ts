@@ -1,7 +1,8 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { StorageService, Modal } from '../../core';
+import { StorageService, Modal, Logger } from '../../core';
 import { NewAccountComponent } from '../../modals';
+import { Accounts } from '../../data';
 
 @Component({
   selector: 'pos-client',
@@ -9,14 +10,16 @@ import { NewAccountComponent } from '../../modals';
 })
 export class ClientComponent implements OnInit, OnDestroy {
 
-  stsubscription: Subscription;
+  private stsubscription: Subscription;
   public noticeList: string[] = [];
-  constructor(private modal: Modal, private storage: StorageService) {
+  accountInfo: Accounts;                          // 사용자 정보
+  constructor(private modal: Modal, private storage: StorageService, private logger: Logger) {
   }
 
   ngOnInit() {
     this.stsubscription = this.storage.storageChanges.subscribe(result => {
       if (result) {
+        this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
         if (result.key === 'nc') {
           if (result.value === 'Y') {
             this.modal.openModalByComponent(NewAccountComponent,
@@ -27,6 +30,8 @@ export class ClientComponent implements OnInit, OnDestroy {
               this.storage.removeLocalItem('nc');
             });
           }
+        } else if (result.key === 'customer') {
+          this.accountInfo = result.value;
         }
       }
     });

@@ -327,14 +327,32 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * 회원 검색 시 회원 정보 저장
+   * 회원 검색 시 클라이언트에 뿌려줌.
+   *
+   * @param data 회원정보
+   */
+  public setCustomer(data: any) {
+    this.setLocalItem('customer', data);
+  }
+
+  public getCustomer(): any {
+    return this.getLocalItem('customer');
+  }
+
+  public removeCustomer(): void {
+    this.removeLocalItem('customer');
+  }
+
+  public clearClient(): void {
+    this.removeEmployeeName();
+    this.removeCustomer();
+  }
+  /**
    * local storage 전체 삭제
    */
   public clearLocal(): void {
     this.lstorage.clear();
-    for (let i = 0, len = this.lstorage.length; i < len; i++) {
-       const key = this.lstorage.key(i);
-       this.storageSubject.next({ key: key, value: null });
-    }
   }
 
   private isSessionStorageSupported(): boolean {

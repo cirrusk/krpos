@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, SpinnerService } from '../../../core';
+import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, SpinnerService, StorageService } from '../../../core';
 
 import { SearchService, PagerService } from '../../../service';
 import { SearchBroker, SearchAccountBroker } from '../../../broker';
@@ -34,6 +34,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   constructor(modalService: ModalService,
       private modal: Modal,
       private logger: Logger,
+      private storage: StorageService,
       private searchService: SearchService,
       private pagerService: PagerService,
       private alert: AlertService,
@@ -126,6 +127,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       );
       this.account = this.accountList.accounts[existedIdx];
       this.searchAccountBroker.sendInfo(this.account);
+      this.storage.setCustomer(this.account);
       this.closeModal();
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });

@@ -198,7 +198,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.spinner.show();
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
               this.storage.logout();
-              this.storage.removeEmployeeName(); // client 담당자 삭제
+              // this.storage.removeEmployeeName(); // client 담당자 삭제
+              this.storage.clearClient();
               this.storage.clearLocal();
               this.modal.openConfirm({
                 title: 'POS 종료',

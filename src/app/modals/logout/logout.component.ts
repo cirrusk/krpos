@@ -55,7 +55,8 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.storage.getBatchInfo() == null) { // Start Shift를 하지 않았으면
       this.logger.set('logout.component', 'not stat shift, only logout...').debug();
       this.storage.logout();
-      this.storage.removeEmployeeName(); // client 담당자 삭제
+      // this.storage.removeEmployeeName(); // client 담당자 삭제
+      this.storage.clearClient();
       this.result = true;
       this.modalResult();
     } else { // Start Shift를 했을 경우
@@ -82,7 +83,8 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
             this.logger.set('logout.component', 'end work, stop batch...').debug();
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
               this.storage.logout();
-              this.storage.removeEmployeeName(); // client 담당자 삭제
+              // this.storage.removeEmployeeName(); // client 담당자 삭제
+              this.storage.clearClient();
               this.modal.openConfirm({
                 title: '근무 종료',
                 message: `배치 정보 저장이 완료되었습니다.`,

@@ -46,8 +46,8 @@
                  <!-- 20180504 수정 -->
                   <div class="info_top">
                       <!-- 비회원시 삭제1 -->
-                      <em>암웨이 한국(플래티넘) 회원님</em>
-                      <span class="t01">KR74800000</span>
+                      <em *ngIf="accountInfo">{{accountInfo.accountType === 'CLIENT' ? accountInfo.parties[0].name : accountInfo.name}}  회원님</em>
+                      <span class="t01" *ngIf="accountInfo">{{accountInfo.accountType === 'CLIENT' ? accountInfo.parties[0].uid : accountInfo.uid}}</span>
                       <span class="t02">일반결제(복합)</span>
                       <!-- //비회원시 삭제1 -->
                   </div>
