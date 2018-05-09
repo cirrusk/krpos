@@ -93,7 +93,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    */
   startWork() {
     if (this.loginId) { this.logger.set('login.component', `login id : ${this.loginId}`).debug(); }
-    const loginid = this.loginId;
+    const loginid = this.loginIdInput.nativeElement.value;
     const loginpwd = this.loginPassword || '';
 
     // 1. AD 계정 Validation 체크
