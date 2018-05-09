@@ -508,7 +508,9 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section02 .left .member_info .info_cont dl dd {margin-top:-5px;font-family:'NSB'; font-size:19px; color:#fff; text-align:right;}
 .m_cont .section02 .left .member_info .info_cont .ic01 {top:0; left:0; width:calc(50% - 3px); height:52px; background-color:#5867c3}
 .m_cont .section02 .left .member_info .info_cont .ic04 {top:55px; left:0; width:calc(50% - 3px); height:31px; padding-right:13px; background-color:#3d4999}
-.m_cont .section02 .left .member_info .info_cont .ic04 span {display:inline-block; font-size:12px; color:#fff; font-family:'NSB';}
+.m_cont .section02 .left .member_info .info_cont .ic04 dt {display:inline-block; font-size:11px; font-family:'NSB';}
+.m_cont .section02 .left .member_info .info_cont .ic04 dd {display:inline-block; width:calc(100% - 42px); font-size:12px; font-family:'NSB';}
+/* .m_cont .section02 .left .member_info .info_cont .ic04 span {display:inline-block; font-size:12px; color:#fff; font-family:'NSB';} */
 .m_cont .section02 .left .member_info .info_cont .ic02 {top:89px; left:0; width:calc(50% - 3px); height:52px; background-color:#3d4daf}
 .m_cont .section02 .left .member_info .info_cont .ic03 {top:0; right:0; padding-top:11px; width:calc(50% - 2px); height:141px; background-color:#47b8f2}
 .m_cont .section02 .left .member_info .info_cont .ic03 li {height:20px; color:#fff; font-size:0}
@@ -524,6 +526,7 @@ table input[type='text'] {font-family:'NSM';}
 .customer .m_cont .section02 .left .member_info .info_cont dd {margin-top:9px}
 .customer .m_cont .section02 .left .member_info .info_cont .ic01 {height:80px}
 .customer .m_cont .section02 .left .member_info .info_cont .ic04 {top:85px; height:41px}
+.customer .m_cont .section02 .left .member_info .info_cont .ic04 dd {margin-top:0; }
 .customer .m_cont .section02 .left .member_info .info_cont .ic02 {top:131px; height:80px}
 .customer .m_cont .section02 .left .member_info .info_cont .ic03 {height:211px; padding:25px 20px 20px}
 .customer .m_cont .section02 .left .member_info .info_cont .ic03 li {height:33px;}
