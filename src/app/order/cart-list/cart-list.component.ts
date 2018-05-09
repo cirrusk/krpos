@@ -531,6 +531,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                 this.cartInfo ? this.cartInfo.code : '').subscribe(
         result => {
           this.init();
+          this.storage.removeOrderEntry();
         },
         error => {
           this.spinner.hide();
