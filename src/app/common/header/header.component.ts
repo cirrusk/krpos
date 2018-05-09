@@ -104,7 +104,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     const batchinfo: BatchInfo = this.storage.getBatchInfo();
     this.batchNo = (batchinfo) ? (Utils.isEmpty(batchinfo.batchNo)) ? null : batchinfo.batchNo : null;
     this.storagesubscription = this.storage.storageChanges.subscribe(data => {
-      if (data.key === 'employeeName') { this.employeeName = data.value; }
+      this.logger.set('header.component', 'storage subscribe ...').debug();
+      if (data.key === 'employeeName') { this.employeeName = (data.value === null) ? '' : data.value; }
     });
     const timer = TimerObservable.create(2000, 1000);
     this.timersubscription = timer.subscribe(
@@ -269,6 +270,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!result) {
         this.storage.setScreenLockType(LockType.INIT);
       }
+      this.storage.removeEmployeeName(); // client 담당자 삭제
+      this.storage.clearLocal();
     });
   }
 

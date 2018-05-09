@@ -331,6 +331,10 @@ export class StorageService implements OnDestroy {
    */
   public clearLocal(): void {
     this.lstorage.clear();
+    for (let i = 0, len = this.lstorage.length; i < len; i++) {
+       const key = this.lstorage.key(i);
+       this.storageSubject.next({ key: key, value: null });
+    }
   }
 
   private isSessionStorageSupported(): boolean {

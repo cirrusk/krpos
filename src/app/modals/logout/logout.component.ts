@@ -56,6 +56,8 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       this.logger.set('logout.component', 'not stat shift, only logout...').debug();
       this.storage.logout();
       this.storage.removeEmployeeName(); // client 담당자 삭제
+      this.result = true;
+      this.modalResult();
     } else { // Start Shift를 했을 경우
       let posmsg = '';
       if (this.orderCount > 0) {
@@ -78,7 +80,6 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
           if (result) {
             this.spinner.show();
             this.logger.set('logout.component', 'end work, stop batch...').debug();
-            if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
             this.batchsubscription = this.batch.endBatch().subscribe(data => {
               this.storage.logout();
               this.storage.removeEmployeeName(); // client 담당자 삭제
