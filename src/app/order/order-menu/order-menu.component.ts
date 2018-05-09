@@ -97,7 +97,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   cancelOrder(evt: any) {
-    this.checkClass(evt);
+    // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
         title: '',
@@ -115,7 +115,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   promotionOrder(evt: any) {
-    this.checkPromotionClass(evt);
+    // this.checkPromotionClass(evt);
     this.modal.openModalByComponent(PromotionOrderComponent,
       {
         title: '',
@@ -133,7 +133,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   etcOrder(evt: any) {
-    this.checkClass(evt);
+    // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
         title: '',
@@ -148,17 +148,17 @@ export class OrderMenuComponent implements OnInit {
   private checkClass(evt: any) {
     evt.stopPropagation();
     this.menus.forEach(menu => {
-      this.renderer.removeClass(menu.nativeElement, 'blue');
+      // this.renderer.removeClass(menu.nativeElement, 'blue');
       this.renderer.removeClass(menu.nativeElement, 'on');
     });
-    this.renderer.addClass(evt.target, 'blue');
+    // this.renderer.addClass(evt.target, 'blue');
     this.renderer.addClass(evt.target, 'on');
   }
 
   private checkPromotionClass(evt: any) {
     evt.stopPropagation();
     this.menus.forEach(menu => {
-      this.renderer.removeClass(menu.nativeElement, 'blue');
+      // this.renderer.removeClass(menu.nativeElement, 'blue');
       this.renderer.removeClass(menu.nativeElement, 'on');
     });
     this.renderer.addClass(evt.target, 'on');

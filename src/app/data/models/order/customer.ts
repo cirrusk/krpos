@@ -6,4 +6,5 @@ export class Customer {
     customerID: string;
     dateOfBirth: Date;
     phoneInfos: Array<PhoneContactInfo>;
+    constructor() {}
 }

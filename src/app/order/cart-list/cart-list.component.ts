@@ -6,10 +6,10 @@ import { Subscription } from 'rxjs/Subscription';
 import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent } from '../../modals';
 import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config } from '../../core';
 
-import { CartService, PagerService } from '../../service';
+import { CartService, PagerService, SearchService } from '../../service';
 import { MessageService } from './../../message/message.service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import Utils from '../../core/utils';
@@ -30,6 +30,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private restoreCartSubscription: Subscription;
   private cancleCartSubscription: Subscription;
   private cartListSubscription: Subscription;
+  private productInfoSubscription: Subscription;
 
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
@@ -55,6 +56,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   public noticeList: string[] = [];
   constructor(private modal: Modal,
               private cartService: CartService,
+              private searchService: SearchService,
               private storage: StorageService,
               private alert: AlertService,
               private pagerService: PagerService,
@@ -94,8 +96,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           this.accountInfo = new Accounts();
-          this.accountInfo.uid = result.user.uid;
-          this.accountInfo.name = result.user.name;
+          this.accountInfo = result.volumeABOAccount;
+          const jsonData = {'parties' : [result.user]};
+          Object.assign(this.accountInfo, jsonData);
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
@@ -131,6 +134,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.restoreCartSubscription) { this.restoreCartSubscription.unsubscribe(); }
     if (this.cancleCartSubscription) { this.cancleCartSubscription.unsubscribe(); }
     if (this.cartListSubscription) { this.cartListSubscription.unsubscribe(); }
+    if (this.productInfoSubscription) { this.productInfoSubscription.unsubscribe(); }
   }
 
   /**
@@ -197,10 +201,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 제품 검색
     } else {
       if (this.cartInfo.code === undefined) {
-        this.createCartInfo(true);
+        this.createCartInfo(true, searchText);
       } else {
-        this.searchParams.data = this.cartInfo;
-        this.callSearchProduct(this.searchParams);
+        this.selectProductInfo(searchText);
       }
     }
   }
@@ -265,6 +268,34 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
   }
+  /**
+   * 제품 검색
+   *  ->  결과 값이 1일 경우 Add to cart
+   */
+  selectProductInfo(productCode?: string): void {
+    this.spinner.show();
+    this.productInfoSubscription = this.searchService.getBasicProductInfo(productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
+      result => {
+        const totalCount = result.pagination.totalResults;
+        if (totalCount === 1 && result.products[0].sellableStatus === '') {
+          this.addCartEntries(productCode);
+        } else {
+          this.searchParams.data = this.cartInfo;
+          this.callSearchProduct(this.searchParams);
+        }
+      },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('cartList.component', `Select product info error type : ${errdata.type}`).error();
+            this.logger.set('cartList.component', `Select product info error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
 
   /**
    * 장바구니 생성
@@ -280,34 +311,40 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         accountId = this.accountInfo.uid;
       }
+
+      this.spinner.show();
+      this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
+                                                                  accountId,
+                                                                  terminalInfo.pointOfService.name , 'POS').subscribe(
+        cartResult => {
+          this.cartInfo = cartResult;
+
+          if (popupFlag) {
+            if (productCode !== undefined) {
+              this.selectProductInfo(productCode);
+            } else {
+              this.searchParams.data = this.cartInfo;
+              this.callSearchProduct(this.searchParams);
+            }
+          } else if (productCode !== undefined) {
+            this.addCartEntries(productCode);
+          }
+
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
+            this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
+    } else {
+      this.alert.error({ message: this.messageService.get('notSelectedUser') });
     }
-
-    this.spinner.show();
-    this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
-                                                                accountId,
-                                                                terminalInfo.pointOfService.name , 'POS').subscribe(
-      cartResult => {
-        this.cartInfo = cartResult;
-
-      if (popupFlag) {
-        this.searchParams.data = this.cartInfo;
-        this.callSearchProduct(this.searchParams);
-      } else if (productCode) {
-        this.addCartEntries(productCode);
-      }
-
-      },
-      error => {
-        this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
-          this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
-        }
-      },
-      () => { this.spinner.hide(); }
-    );
   }
 
   /**
