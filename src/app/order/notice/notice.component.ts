@@ -17,10 +17,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
   constructor(private renderer: Renderer2, private config: Config) { }
 
-  // https://www.bennadel.com/blog/3139-experimenting-with-conditional-enter-leave-animations-in-angular-2-rc-6.htm
-  // https://medium.com/@tanya/angular4-animated-route-transitions-b5b9667cd67c
-  // https://angular.io/api/animations/stagger
-  // * https://stackblitz.com/edit/angular-list-animations
   ngOnInit() {
     this.noticeSize = this.noticeList.length;
     this.noticeterm = this.config.getConfig('noticeInterval', 7);
