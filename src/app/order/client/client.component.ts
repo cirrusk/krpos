@@ -38,8 +38,8 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   private loadNotice() {
-    this.noticeList.push('1. 주차권을 뽑아가 주세요.');
-    this.noticeList.push('2. 쿠폰을 뽑아가 주세요.');
-    this.noticeList.push('3. 영수증을 뽑아가 주세요.');
+    this.noticeList.push('1. 주차권은 고객센터에서 수령하세요!');
+    this.noticeList.push('2. 쿠폰은 계산전에 확인해주시기 바랍니다.');
+    this.noticeList.push('3. 영수증은 꼭 받아가주시기 바랍니다.');
   }
 }
