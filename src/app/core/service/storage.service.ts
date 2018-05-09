@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
 import { AccessToken, TerminalInfo, BatchInfo } from '../../data';
 import Utils from '../utils';
@@ -10,7 +11,7 @@ export class StorageService implements OnDestroy {
 
   /** localStorage event 처리용 subject */
   private storageSubject = new Subject<{ key: string, value: any }>();
-  public storageChanges = this.storageSubject.asObservable(); // .share();
+  public storageChanges = this.storageSubject.asObservable().share();
   sstorage: Storage;
   lstorage: Storage;
   constructor(private infobroker: InfoBroker) {
