@@ -53,7 +53,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
   @ViewChild('searchText') private searchText: ElementRef; // 입력창
-  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   public noticeList: string[] = [];
   constructor(private modal: Modal,
               private cartService: CartService,

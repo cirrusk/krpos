@@ -23,6 +23,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+  /**
+   * cart list 에서 보내준 이벤트를 받음
+   * 
+   * @param data 보내준 데이터
+   */
   setFlag(data) {
     if (data) {
       this.logger.set('order.menu.component', `from cart list to cart menu flag receive, type : ${data.type}`).debug();
