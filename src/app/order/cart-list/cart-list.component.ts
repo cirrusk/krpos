@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -53,6 +53,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
   @ViewChild('searchText') private searchText: ElementRef; // 입력창
+  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();
   public noticeList: string[] = [];
   constructor(private modal: Modal,
               private cartService: CartService,
@@ -75,6 +76,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         if (result) {
+          this.posCart.emit({ type: 'account', flag: true }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           if (this.accountInfo) {
             this.init();
           }
@@ -386,6 +388,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartListSubscription = this.cartService.getCartList(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
       result => {
         this.cartList = result.entries;
+        if (this.cartList.length === 0) {
+          this.posCart.emit({ type: 'product', flag: false }); // 카트가 비었을 경우 메뉴에 이벤트 전송
+        }
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
@@ -482,6 +487,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
+      this.posCart.emit({ type: 'product', flag: true });
     } else {
       this.cartList[existedIdx] = orderEntry;
     }
@@ -570,6 +576,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                 this.cartInfo ? this.cartInfo.code : '').subscribe(
         result => {
           this.init();
+          this.posCart.emit({ type: 'product', flag: false });
           this.storage.clearClient();
         },
         error => {

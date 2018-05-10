@@ -1,11 +1,8 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
 import { Modal, StorageService, Logger } from '../../core';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
   ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
-import { SearchAccountBroker } from '../../broker';
-
 
 @Component({
   selector: 'pos-order-menu',
@@ -14,25 +11,27 @@ import { SearchAccountBroker } from '../../broker';
 export class OrderMenuComponent implements OnInit, OnDestroy {
   promotionItems = [];
   hasAccount = false;
+  hasProduct = false;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
-  private accountsubscription: Subscription ;
   constructor(private modal: Modal, private storage: StorageService,
-    private accountbroker: SearchAccountBroker,
-    private logger: Logger,
-    private element: ElementRef, private renderer: Renderer2) { }
+    private logger: Logger, private element: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit() {
     this.addPromotions();
-    this.accountsubscription = this.accountbroker.getInfo().subscribe(result => {
-      if (result) {
-        this.logger.set('order.menu.component', 'account search info receive...').debug();
-        this.hasAccount = true;
-      }
-    });
   }
 
   ngOnDestroy() {
-    if (this.accountsubscription) { this.accountsubscription.unsubscribe(); }
+  }
+
+  setFlag(data) {
+    if (data) {
+      this.logger.set('order.menu.component', `from cart list to cart menu flag receive, type : ${data.type}`).debug();
+      if (data.type === 'account') {
+        this.hasAccount = data.flag;
+      } else if (data.type === 'product') {
+        this.hasProduct = data.flag;
+      }
+    }
   }
 
   /**
@@ -55,7 +54,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   normalPayment(evt: any) {
-    if (!this.hasAccount) { return; }
+    if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
@@ -73,7 +72,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   complexPayment(evt: any) {
-    if (!this.hasAccount) { return; }
+    if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
@@ -95,7 +94,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   groupPayment(evt: any) {
-    if (!this.hasAccount) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchAccountComponent,
       {
@@ -134,7 +132,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   cancelOrder(evt: any) {
-    if (!this.hasAccount) { return; }
+    if (!this.hasAccount || !this.hasProduct) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
@@ -172,7 +170,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   etcOrder(evt: any) {
-    if (!this.hasAccount) { return; }
+    if (!this.hasAccount || !this.hasProduct) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
