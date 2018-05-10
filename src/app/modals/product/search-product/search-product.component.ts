@@ -52,6 +52,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   }
 
   ngOnInit() {
+    setTimeout(() => { this.barCodeText.nativeElement.focus(); }, 10);
     const result = this.callerData.data;
     this.searchValue.nativeElement.value = result.searchText;
     this.cartInfo = result.data;
@@ -59,7 +60,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     if (result.searchText) {
       this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
     }
-    setTimeout(() => { this.barCodeText.nativeElement.focus(); }, 10);
   }
 
   ngOnDestroy() {
