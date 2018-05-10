@@ -20,12 +20,12 @@ export class PromotionComponent implements OnInit, OnDestroy, AfterViewInit {
   @ContentChildren(PromotionItemDirective) items: QueryList<PromotionItemDirective>;
   @ViewChildren(PromotionItemElementDirective, { read: ElementRef }) private itemsElements: QueryList<ElementRef>;
   @ViewChild('carousel') private carousel: ElementRef;
-  @Input() timing = '0.2s 100ms ease-in-out'; // ease-in-out, ease-out, ease-in, cubic-bezier(.17,.67,.88,.1)
+  @Input() timing = '0.4s 450ms ease-in-out'; // ease-in-out, ease-out, ease-in, cubic-bezier(.17,.67,.88,.1)
   @Input() showControls = true;
   private player: AnimationPlayer;
   private itemWidth: number;
   private intervalid;
-  private pterm = 7;
+  private pterm = 9;
   private pIndex = 0;
   currentSlide = 0;
   carouselWrapperStyle = {};
