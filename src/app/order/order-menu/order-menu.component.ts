@@ -1,5 +1,5 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
-import { Modal } from '../../core';
+import { Modal, StorageService } from '../../core';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
   ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
@@ -9,10 +9,9 @@ import { PromotionOrderComponent, EtcOrderComponent,
   templateUrl: './order-menu.component.html'
 })
 export class OrderMenuComponent implements OnInit {
-  items = [
-  ];
+  promotionItems = [];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
-  constructor(private modal: Modal, private element: ElementRef, private renderer: Renderer2) { }
+  constructor(private modal: Modal, private storage: StorageService, private element: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit() {
     this.addPromotions();
@@ -22,14 +21,14 @@ export class OrderMenuComponent implements OnInit {
    * 프로모션은 최대 8개까지
    */
   private addPromotions() {
-    this.items.push({ title: 'Promotion 1', img: '140x187_01.jpg' });
-    this.items.push({ title: 'Promotion 2', img: '140x187_02.jpg' });
-    this.items.push({ title: 'Promotion 3', img: '140x187_03.jpg' });
-    this.items.push({ title: 'Promotion 4', img: '140x187_04.jpg' });
-    this.items.push({ title: 'Promotion 5', img: '140x187_05.jpg' });
-    this.items.push({ title: 'Promotion 6', img: '140x187_06.jpg' });
-    this.items.push({ title: 'Promotion 7', img: '140x187_07.jpg' });
-    this.items.push({ title: 'Promotion 8', img: '140x187_08.jpg' });
+    this.promotionItems.push({ title: 'Promotion 1', img: '140x187_01.jpg' });
+    this.promotionItems.push({ title: 'Promotion 2', img: '140x187_02.jpg' });
+    this.promotionItems.push({ title: 'Promotion 3', img: '140x187_03.jpg' });
+    this.promotionItems.push({ title: 'Promotion 4', img: '140x187_04.jpg' });
+    this.promotionItems.push({ title: 'Promotion 5', img: '140x187_05.jpg' });
+    this.promotionItems.push({ title: 'Promotion 6', img: '140x187_06.jpg' });
+    this.promotionItems.push({ title: 'Promotion 7', img: '140x187_07.jpg' });
+    this.promotionItems.push({ title: 'Promotion 8', img: '140x187_08.jpg' });
   }
 
   /**
