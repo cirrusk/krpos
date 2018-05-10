@@ -63,9 +63,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'NormalPaymentComponent'
       }
@@ -81,9 +78,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'ComplexPaymentComponent'
       }
@@ -102,9 +96,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchAccountComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         paymentType: 'g',
         modalId: 'SearchAccountComponent'
@@ -122,9 +113,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(PickupOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: true,
         modalId: 'PickupOrderComponent'
       }
@@ -141,7 +129,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
-        title: '',
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: true,
@@ -160,9 +147,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     // this.checkPromotionClass(evt);
     this.modal.openModalByComponent(PromotionOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'PromotionOrderComponent'
       }
@@ -179,9 +163,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'EtcOrderComponent'
       }
