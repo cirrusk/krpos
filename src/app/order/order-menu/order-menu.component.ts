@@ -1,21 +1,38 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
-import { Modal, StorageService } from '../../core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+import { Modal, StorageService, Logger } from '../../core';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
   ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
+import { SearchAccountBroker } from '../../broker';
+
 
 @Component({
   selector: 'pos-order-menu',
   templateUrl: './order-menu.component.html'
 })
-export class OrderMenuComponent implements OnInit {
+export class OrderMenuComponent implements OnInit, OnDestroy {
   promotionItems = [];
   hasAccount = false;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
-  constructor(private modal: Modal, private storage: StorageService, private element: ElementRef, private renderer: Renderer2) { }
+  private accountsubscription: Subscription ;
+  constructor(private modal: Modal, private storage: StorageService,
+    private accountbroker: SearchAccountBroker,
+    private logger: Logger,
+    private element: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit() {
     this.addPromotions();
+    this.accountsubscription = this.accountbroker.getInfo().subscribe(result => {
+      if (result) {
+        this.logger.set('order.menu.component', 'account search info receive...').debug();
+        this.hasAccount = true;
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.accountsubscription) { this.accountsubscription.unsubscribe(); }
   }
 
   /**
@@ -38,6 +55,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   normalPayment(evt: any) {
+    if (!this.hasAccount) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
@@ -55,6 +73,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   complexPayment(evt: any) {
+    if (!this.hasAccount) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
@@ -76,6 +95,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   groupPayment(evt: any) {
+    if (!this.hasAccount) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchAccountComponent,
       {
@@ -95,6 +115,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   pickupOrder(evt: any) {
+    if (!this.hasAccount) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(PickupOrderComponent,
       {
@@ -113,6 +134,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   cancelOrder(evt: any) {
+    if (!this.hasAccount) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
@@ -131,6 +153,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   promotionOrder(evt: any) {
+    if (!this.hasAccount) { return; }
     // this.checkPromotionClass(evt);
     this.modal.openModalByComponent(PromotionOrderComponent,
       {
@@ -149,6 +172,7 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   etcOrder(evt: any) {
+    if (!this.hasAccount) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {

@@ -82,16 +82,16 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           this.isLogin = false;
         } else {
           if (type === 'tkn') {
-            this.logger.set('header component', 'access token subscribe ...').debug();
+            this.logger.set('header component', 'access token receive ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
             if (this.network.getLocalMacAddress() && this.isLogin) {
               this.getHoldTotalCount();
             }
           } else if (type === 'lck') {
-            this.logger.set('header component', 'screen locktype subscribe ...').debug();
+            this.logger.set('header component', 'screen locktype receive ...').debug();
             this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
           } else if (type === 'bat') {
-            this.logger.set('header.component', 'batch info subscribe ...').debug();
+            this.logger.set('header.component', 'batch info receive ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           } else if (type === 'hold') {
             this.getHoldTotalCount();

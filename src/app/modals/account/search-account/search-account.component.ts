@@ -74,7 +74,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.pager = new Pagination();
   }
 
-  // account 검색
   /**
    * account 검색
    * @param searchMemberType
