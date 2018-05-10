@@ -28,7 +28,6 @@ export class PromotionComponent implements OnInit, OnDestroy, AfterViewInit {
   private pterm = 9;
   private pIndex = 0;
   currentSlide = 0;
-  carouselWrapperStyle = {};
   constructor(private builder: AnimationBuilder, private config: Config) { }
 
   ngOnInit() {
@@ -44,7 +43,6 @@ export class PromotionComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       this.itemWidth = this.itemsElements.first.nativeElement.getBoundingClientRect().width;
       this.itemWidth = (this.itemWidth < 100) ? 140 : this.itemWidth;
-      this.carouselWrapperStyle = { width: `${this.itemWidth}px` };
     });
   }
 
