@@ -79,6 +79,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.init();
           }
           this.accountInfo = result;
+          this.searchMode = 'P';
           this.getCarts();
         }
       }
@@ -278,7 +279,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productInfoSubscription = this.searchService.getBasicProductInfo(productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
       result => {
         const totalCount = result.pagination.totalResults;
-        if (totalCount === 1 && result.products[0].sellableStatus === '') {
+        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatus === '') {
           this.addCartEntries(productCode);
         } else {
           this.searchParams.data = this.cartInfo;
@@ -423,7 +424,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
         result => {
           this.addCartModel = result;
           if (this.addCartModel[0].statusCode === 'success') {
