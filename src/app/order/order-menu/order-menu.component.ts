@@ -10,14 +10,26 @@ import { PromotionOrderComponent, EtcOrderComponent,
 })
 export class OrderMenuComponent implements OnInit {
   items = [
-    { title: 'Slide 1', img: '140x187_01.jpg' },
-    { title: 'Slide 2', img: '140x187_02.jpg' },
-    { title: 'Slide 3', img: '140x187_03.jpg' },
+    { title: 'Promotion 1', img: '140x187_01.jpg' },
+    { title: 'Promotion 2', img: '140x187_02.jpg' },
+    { title: 'Promotion 3', img: '140x187_03.jpg' },
   ];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private element: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit() {
+    this.addPromotions();
+  }
+
+  /**
+   * 프로모션은 최대 8개까지
+   */
+  private addPromotions() {
+    this.items.push({ title: 'Promotion 4', img: '140x187_04.jpg' });
+    this.items.push({ title: 'Promotion 5', img: '140x187_05.jpg' });
+    this.items.push({ title: 'Promotion 6', img: '140x187_06.jpg' });
+    this.items.push({ title: 'Promotion 7', img: '140x187_07.jpg' });
+    this.items.push({ title: 'Promotion 8', img: '140x187_08.jpg' });
   }
 
   /**
