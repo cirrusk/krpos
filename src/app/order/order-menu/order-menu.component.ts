@@ -10,9 +10,6 @@ import { PromotionOrderComponent, EtcOrderComponent,
 })
 export class OrderMenuComponent implements OnInit {
   items = [
-    { title: 'Promotion 1', img: '140x187_01.jpg' },
-    { title: 'Promotion 2', img: '140x187_02.jpg' },
-    { title: 'Promotion 3', img: '140x187_03.jpg' },
   ];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private element: ElementRef, private renderer: Renderer2) { }
@@ -25,6 +22,9 @@ export class OrderMenuComponent implements OnInit {
    * 프로모션은 최대 8개까지
    */
   private addPromotions() {
+    this.items.push({ title: 'Promotion 1', img: '140x187_01.jpg' });
+    this.items.push({ title: 'Promotion 2', img: '140x187_02.jpg' });
+    this.items.push({ title: 'Promotion 3', img: '140x187_03.jpg' });
     this.items.push({ title: 'Promotion 4', img: '140x187_04.jpg' });
     this.items.push({ title: 'Promotion 5', img: '140x187_05.jpg' });
     this.items.push({ title: 'Promotion 6', img: '140x187_06.jpg' });
