@@ -81,7 +81,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.init();
           }
           this.accountInfo = result;
-          this.searchMode = 'P';
+          this.activeSearchMode('P');
           this.getCarts();
         }
       }
@@ -623,7 +623,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 저장(보류)
    */
   saveCart() {
-    if (this.cartInfo.code !== undefined) {
+    if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
       this.spinner.show();
       this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
@@ -700,6 +700,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // true 경우 페이지 이동이므로 선택 초기화
     if (pagerFlag) {
       this.selectedCartNum = -1;
     }
