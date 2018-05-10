@@ -1,15 +1,13 @@
 import { CartInfo } from './../../../data/models/order/cart-info';
 import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
   ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
-
-  import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
+import { Subscription } from 'rxjs/Subscription';
+import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
 import Utils from '../../../core/utils';
 import { SearchBroker } from '../../../broker/order/search/search.broker';
-import { Subscription } from 'rxjs/Subscription';
-
 
 @Component({
   selector: 'pos-search-product',
@@ -25,7 +23,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
   @ViewChild('searchNext', {read: ElementRef}) private searchNext: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
-  @ViewChild('barCodeText') private barCodeText: ElementRef; // 바코드 입력창
   basicSearchType: string;
   bcdSearchType: string;
   productCount: number;
@@ -52,11 +49,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   }
 
   ngOnInit() {
-    setTimeout(() => { this.barCodeText.nativeElement.focus(); }, 10);
     const result = this.callerData.data;
     this.searchValue.nativeElement.value = result.searchText;
     this.cartInfo = result.data;
-
     if (result.searchText) {
       this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
     }
@@ -156,7 +151,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
 
   searchProductByBarcode() {
     if (Utils.isNotEmpty(this.bcdSearchType)) {
-
     }
   }
 

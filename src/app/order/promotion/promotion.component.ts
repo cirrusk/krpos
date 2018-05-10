@@ -20,7 +20,7 @@ export class PromotionComponent implements OnInit, OnDestroy, AfterViewInit {
   @ContentChildren(PromotionItemDirective) items: QueryList<PromotionItemDirective>;
   @ViewChildren(PromotionItemElementDirective, { read: ElementRef }) private itemsElements: QueryList<ElementRef>;
   @ViewChild('carousel') private carousel: ElementRef;
-  @Input() timing = '250ms ease-in';
+  @Input() timing = '0.2s 100ms ease-in-out'; // ease-in-out, ease-out, ease-in, cubic-bezier(.17,.67,.88,.1)
   @Input() showControls = true;
   private player: AnimationPlayer;
   private itemWidth: number;
@@ -32,7 +32,7 @@ export class PromotionComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private builder: AnimationBuilder, private config: Config) { }
 
   ngOnInit() {
-    this.pterm = this.config.getConfig('noticeInterval', 7);
+    this.pterm = this.config.getConfig('promotionInterval', 9);
     this.start();
   }
 
