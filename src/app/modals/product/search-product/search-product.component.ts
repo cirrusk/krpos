@@ -25,6 +25,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
   @ViewChild('searchNext', {read: ElementRef}) private searchNext: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
+  @ViewChild('barCodeText') private barCodeText: ElementRef; // 바코드 입력창
   basicSearchType: string;
   bcdSearchType: string;
   productCount: number;
@@ -58,6 +59,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     if (result.searchText) {
       this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
     }
+    setTimeout(() => { this.barCodeText.nativeElement.focus(); }, 10);
   }
 
   ngOnDestroy() {

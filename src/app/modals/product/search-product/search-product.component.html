@@ -10,7 +10,7 @@
             <!-- 바코드 스캐닝 -->
             <label class="inp_rd type01" for="bcd">바코드 스캐닝<input (change)="searchBcdOption()" value="bcd" type="radio" name="barcode" id="bcd"><span class="checkmark"></span></label>
             <div class="mbinfo_search">
-                <input type="text" style="width:480px" (keyup)="resetCurrentPage($event)">
+                <input #barCodeText type="text" style="width:480px" (keyup)="resetCurrentPage($event)">
                 <button type="button" class="btn01_blue" (click)="searchProductByBarcode()">확인</button>
             </div>
             <!-- //바코드 스캐닝 -->
