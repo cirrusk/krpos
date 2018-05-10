@@ -158,22 +158,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
   }
 
-  productSelect() {
-    let flag = false;
-    if (this.productItems) {
-      for (const p of this.productItems) {
-        const chk = p.nativeElement.classList.contains('on');
-        if (chk) { flag = true; break; }
-      }
-    }
-    if (!flag) {
-      this.alert.warn({ message: '상품을 선택하십시오.' });
-      return;
-    }
-    this.addCartBroker.sendInfo(this.product);
-    this.close();
-  }
-
   searchOption(evt: any) {
     this.basicSearchType = evt.target.value;
   }
@@ -207,6 +191,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     } else {
       this.activeNum = index;
       this.product = product;
+      this.addCartBroker.sendInfo(this.product);
+      this.close();
     }
   }
 
