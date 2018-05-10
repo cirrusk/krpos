@@ -10,6 +10,7 @@ import { PromotionOrderComponent, EtcOrderComponent,
 })
 export class OrderMenuComponent implements OnInit {
   promotionItems = [];
+  hasAccount = false;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private storage: StorageService, private element: ElementRef, private renderer: Renderer2) { }
 
