@@ -8,16 +8,10 @@
   <button #menus type="button" (click)="promotionOrder($event)" class="purple">프로모션 상품</button>
   <button #menus type="button" (click)="etcOrder($event)">기타</button>
 </div>
-<div class="promotion">
-  <ul class="img">
-      <li class="on"><a href="#"><img src="/assets/images/temp/140x187_01.jpg" alt=""></a></li>
-  </ul>
-  <span class="controls">
-      <a href="#" class="bx_prev">이전</a>
-      <a href="#" class="bx_next">다음</a>
-  </span>
-  <span class="pager">
-      <!-- 현재 활성화 이미지 번호 on클래스 추가 -->
-      <span class="on">1</span>
-  </span>
-</div>
+<pos-promotion>
+    <ng-container *ngFor="let item of items;">
+        <ng-container *posPromotionItem>
+            <a href="javascript:void(0)"><img src="/assets/images/temp/{{item.img}}" alt="{{item.title}}"></a>
+        </ng-container>
+    </ng-container>
+</pos-promotion>

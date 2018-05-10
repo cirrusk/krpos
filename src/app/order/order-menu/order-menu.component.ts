@@ -9,7 +9,11 @@ import { PromotionOrderComponent, EtcOrderComponent,
   templateUrl: './order-menu.component.html'
 })
 export class OrderMenuComponent implements OnInit {
-
+  items = [
+    { title: 'Slide 1', img: '140x187_01.jpg' },
+    { title: 'Slide 2', img: '140x187_02.jpg' },
+    { title: 'Slide 3', img: '140x187_03.jpg' },
+  ];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private element: ElementRef, private renderer: Renderer2) { }
 
