@@ -192,6 +192,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .txt01 {font-size:13px; font-family:'NSR'; margin-bottom:1px}
 .txt02 {font-size:14px; font-family:'NSR';}
 .txt03 {text-align:center; padding-bottom:25px; font-family:'NSR';}
+.txt04 {font-size:15px; font-family:'NSR';}
 
 /* login */
 .login_wrap {text-align:center; padding:11px 25px 0}
