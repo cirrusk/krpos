@@ -10,7 +10,6 @@ import { OrderCompleteComponent } from './order/order-complete/order-complete.co
 import { ClientComponent } from './order/client/client.component';
 import { TestComponent } from './common/test/test.component';
 
-
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },
   { path: 'dashboard', component: DashboardComponent },
