@@ -455,11 +455,14 @@ export class CartListComponent implements OnInit, OnDestroy {
             <span class="break">뉴트리 라면(259334K)</span>
             <span class="break">뉴트리(259336K)</span></dd>`;
 
+            const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
             this.modal.openModalByComponent(RestrictComponent,
               {
+                callerData: { data: rmsgs },
                 image: '/assets/images/temp/198x198.jpg',
                 desc: desciption,
                 message: appendMessage,
+                closeByEnter: true,
                 modalId: 'RestictComponent'
               }
             );

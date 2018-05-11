@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalComponent, ModalService, Modal } from '../../../core';
+import Utils from '../../../core/utils';
 
 @Component({
   selector: 'pos-restrict',
@@ -12,6 +13,7 @@ export class RestrictComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('restricted data : ' + Utils.stringify(this.callerData.data));
   }
 
   prev() {
