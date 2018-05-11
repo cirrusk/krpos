@@ -1,21 +1,28 @@
-<div class="pop_wrap pop_m">
-  <div class="pop_header">
+<div class="pop_wrap pop_l">
+    <div class="pop_header">
       <h1>구매 제한 안내</h1>
       <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
-  </div>
-  <!-- pop_container -->
-  <div class="pop_container">
-      <div class="pop_content">
-          <div class="limit">
-              <span class="img"><img src="{{image}}" alt=""></span>
-              <span class="txt_info01" [innerHTML]="message"></span>
-              <dl class="kind" [innerHTML]="desc">                  
-              </dl>
-          </div>
-      </div>
-  </div>
-  <!-- //pop_container -->
-  <div class="pop_footer clearfix">
-      <span class="fl">취소 ESC</span>
-  </div>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content">
+            <div class="pn_wrap type02">
+                <span class="paging">
+                    <!-- 이전,다음 리스트가 있을시 on클래스 추가 -->
+                    <a href (click)="!!prev()" class="ico_comm prev03">이전</a>
+                    <a href (click)="!!next()" class="ico_comm next03">다음</a>
+                </span>
+	            <div class="limit">
+	                <span class="img"><img src="{{image}}" alt=""></span>
+	                <span class="txt_info01" [innerHTML]="message"></span>
+	                <dl class="kind" [innerHTML]="desc">
+	                </dl>
+	            </div>
+	        </div>
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer clearfix">
+        <span class="fl">취소 ESC</span>
+    </div>
 </div>

@@ -14,6 +14,14 @@ export class RestrictComponent extends ModalComponent implements OnInit {
   ngOnInit() {
   }
 
+  prev() {
+
+  }
+
+  next() {
+
+  }
+
   close() {
     this.closeModal();
   }
