@@ -49,6 +49,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   }
 
   ngOnInit() {
+    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     const result = this.callerData.data;
     this.searchValue.nativeElement.value = result.searchText;
     this.cartInfo = result.data;
@@ -149,17 +150,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
   }
 
-  searchProductByBarcode() {
-    if (Utils.isNotEmpty(this.bcdSearchType)) {
-    }
-  }
-
   searchOption(evt: any) {
     this.basicSearchType = evt.target.value;
-  }
-
-  searchBcdOption() {
-    this.bcdSearchType = 'bcd';
   }
 
   resetCurrentPage(evt: any) {
