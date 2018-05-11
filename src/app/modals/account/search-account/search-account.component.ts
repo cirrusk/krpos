@@ -67,11 +67,28 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   }
 
   init() {
+    if (this.currentLeftAccountList !== undefined) {
+      this.currentLeftAccountList.length = 0;
+    } else {
+      this.currentLeftAccountList = new Array<Accounts>();
+    }
+    if (this.currentRightAccountList !== undefined) {
+      this.currentRightAccountList.length = 0;
+    } else {
+      this.currentRightAccountList = new Array<Accounts>();
+    }
+    if (this.accountList !== undefined) {
+      this.accountList.accounts.length = 0;
+    } else {
+      this.accountList = new AccountList();
+    }
+
     this.activeNum = -1;
     this.activeCode = '';
     this.totalCnt = 0;
     this.paymentType = 'n';
     this.pager = new Pagination();
+    this.searchText = '';
   }
 
   /**

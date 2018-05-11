@@ -27,14 +27,14 @@
                     <span [class.on]="paymentType === 'g'">그룹결제</span>
                 </span>
                 <p class="txt"><strong>총 <span class="fc_red">{{totalCnt}}</span>건</strong>이 검색되었습니다.</p>
-                <span class="btn_wrap" *ngIf="accountList && accountList.accounts.length > 10">
+                <span class="btn_wrap" *ngIf="accountList && totalCnt > 10">
                     <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
                     <a href="javascript:void(0)" [class.on]="pager.currentPage > pager.startPage" class="ico_comm prev03 " (click)="setPage(pager.currentPage - 1,true)">이전</a>
                     <a href="javascript:void(0)" [class.on]="pager.currentPage < pager.endPage" class="ico_comm next03 " (click)="setPage(pager.currentPage + 1,true)">다음</a>
                      <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
                 </span>
                 <!-- 검색결과 : 있음(페이지당 회원 최대 수 10개) -->
-                <div class="tbl_col clearfix" *ngIf="accountList && accountList.accounts.length != 0; else elseEmpty">
+                <div class="tbl_col clearfix" *ngIf="accountList && totalCnt != 0; else elseEmpty">
                     <!-- 왼쪽테이블 -->
                     <table>
                         <caption>회원조회결과</caption>
@@ -127,7 +127,7 @@
         <span class="fl">취소 ESC</span>
         <span class="fr">
             <a href="javascript:void(0)" class="btn01_blue" (click)="sendAccountInfo()">선택</a>
-            <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
+            <a href="javascript:void(0)" class="btn01_white" (click)="init()">취소</a>
         </span>
     </div>
 </div>
