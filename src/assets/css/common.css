@@ -142,6 +142,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .ico_comm.etc02 {background-position-x:-250px}
 .ico_comm.etc03 {background-position-x:-300px}
 .ico_comm.etc04 {background-position-x:-350px}
+.ico_comm.etc05 {background-position-x:-400px}
 .ico_comm[class*='ecp'] {width:35px; height:35px; background-position-y:-395px}
 .ico_comm.ecp01 {background-position-x:-200px}
 .ico_comm.ecp02 {background-position-x:-250px}
