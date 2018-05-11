@@ -23,8 +23,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
   @ViewChild('searchNext', {read: ElementRef}) private searchNext: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
-  basicSearchType: string;
-  bcdSearchType: string;
+  searchType: string;
   productCount: number;
   products: Products;
   product: Product;
@@ -41,8 +40,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
-    this.basicSearchType = 'sku';
-    this.bcdSearchType = '';
+    this.searchType = 'sku';
     this.productCount = -1;
     this.products = null;
     this.currentPage = 0;
@@ -104,7 +102,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.renderer.removeClass(p.nativeElement, 'on');
       }
     }
-    switch (this.basicSearchType) {
+    switch (this.searchType) {
       case 'sku': {
         this.spinner.show();
         this.spsubscription = this.search.getBasicProductInfo(val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
@@ -151,7 +149,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   }
 
   searchOption(evt: any) {
-    this.basicSearchType = evt.target.value;
+    this.searchType = evt.target.value;
   }
 
   resetCurrentPage(evt: any) {
