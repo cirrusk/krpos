@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, NavigationStart } from '@angular/router';
 @Component({
@@ -19,6 +19,14 @@ export class AppComponent implements OnDestroy {
         }
       }
     });
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleF5KeyEvent(evt: KeyboardEvent) { // 116
+    const key = evt.key.toLowerCase();
+    if (evt.keyCode === 116 || evt.ctrlKey && key === 'r') {
+      evt.preventDefault();
+    }
   }
 
   ngOnDestroy() {
