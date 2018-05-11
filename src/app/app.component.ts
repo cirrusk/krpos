@@ -22,7 +22,7 @@ export class AppComponent implements OnDestroy {
   }
 
   @HostListener('document:keydown', ['$event'])
-  handleF5KeyEvent(evt: KeyboardEvent) { // 116
+  handleF5KeyEvent(evt: KeyboardEvent) {
     const key = evt.key.toLowerCase();
     if (evt.keyCode === 116 || evt.ctrlKey && key === 'r') {
       evt.preventDefault();
