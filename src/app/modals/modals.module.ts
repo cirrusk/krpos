@@ -33,6 +33,8 @@ import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
+import { RfidComponent } from './scan/rfid/rfid.component';
+import { SerialComponent } from './scan/serial/serial.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +65,9 @@ import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
     CancelOrderComponent,
     PhoneNumberMaskPipe,
     BatchComponent,
-    RestrictComponent
+    RestrictComponent,
+    RfidComponent,
+    SerialComponent
   ],
   imports: [
     CommonModule,
@@ -98,7 +102,9 @@ import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
     CouponComponent,
     CancelOrderComponent,
     BatchComponent,
-    RestrictComponent
+    RestrictComponent,
+    RfidComponent,
+    SerialComponent
   ]
 })
 export class ModalsModule {
