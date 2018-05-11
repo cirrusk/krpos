@@ -10,6 +10,7 @@ export * from './order/etc-order/etc-order.component';
 export * from './order/hold-order/hold-order.component';
 export * from './order/pickup-order/pickup-order.component';
 export * from './order/promotion-order/promotion-order.component';
+export * from './order/restrict/restrict.component';
 export * from './password/password.component';
 export * from './payment/complex-payment/complex-payment.component';
 export * from './payment/normal-payment/normal-payment.component';

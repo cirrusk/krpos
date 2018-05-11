@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent } from '../../modals';
+import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent } from '../../modals';
 import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config } from '../../core';
 
 import { CartService, PagerService, SearchService } from '../../service';
@@ -449,12 +449,20 @@ export class CartListComponent implements OnInit, OnDestroy {
               // }
             });
 
-            this.modal.openMessage({
-              title: '확인',
-              message: appendMessage,
-              closeButtonLabel: '닫기',
-              modalId: 'ADD_CAR_ERROR'
-            });
+            const desciption = `<dt>라면류</dt>
+            <dd>
+            <span class="break">뉴트리 라면(259334K)</span>
+            <span class="break">뉴트리 라면(259334K)</span>
+            <span class="break">뉴트리(259336K)</span></dd>`;
+
+            this.modal.openModalByComponent(RestrictComponent,
+              {
+                image: '/assets/images/temp/198x198.jpg',
+                desc: desciption,
+                message: appendMessage,
+                modalId: 'RestictComponent'
+              }
+            );
           }
         },
         error => {

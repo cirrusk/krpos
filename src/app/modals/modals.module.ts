@@ -5,21 +5,24 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from './../core/modal/modal.module';
 import { throwIfAlreadyLoaded } from '../core/module-import-guard';
 
-import { LoginComponent } from './login/login.component';
-import { PasswordComponent } from './password/password.component';
-import { SearchProductComponent } from './product/search-product/search-product.component';
 import { SearchAccountComponent } from './account/search-account/search-account.component';
-import { NormalPaymentComponent } from './payment/normal-payment/normal-payment.component';
-import { CouponPaymentComponent } from './payment/coupon-payment/coupon-payment.component';
-import { ComplexPaymentComponent } from './payment/complex-payment/complex-payment.component';
 import { NewAccountComponent } from './account/new-account/new-account.component';
+import { SearchBerComponent } from './account/search-ber/search-ber.component';
+import { LoginComponent } from './login/login.component';
+import { BatchComponent } from './login/batch.component';
+import { LogoutComponent } from './logout/logout.component';
+import { PasswordComponent } from './password/password.component';
 import { PickupOrderComponent } from './order/pickup-order/pickup-order.component';
 import { EtcOrderComponent } from './order/etc-order/etc-order.component';
 import { PromotionOrderComponent } from './order/promotion-order/promotion-order.component';
-import { SearchBerComponent } from './account/search-ber/search-ber.component';
 import { EcpPrintComponent } from './order/ecp-print/ecp-print.component';
 import { HoldOrderComponent } from './order/hold-order/hold-order.component';
-import { LogoutComponent } from './logout/logout.component';
+import { RestrictComponent } from './order/restrict/restrict.component';
+import { CancelOrderComponent } from './order/cancel-order/cancel-order.component';
+import { SearchProductComponent } from './product/search-product/search-product.component';
+import { NormalPaymentComponent } from './payment/normal-payment/normal-payment.component';
+import { CouponPaymentComponent } from './payment/coupon-payment/coupon-payment.component';
+import { ComplexPaymentComponent } from './payment/complex-payment/complex-payment.component';
 import { CreditCardComponent } from './payment/ways/credit-card/credit-card.component';
 import { CheckCardComponent } from './payment/ways/check-card/check-card.component';
 import { IcCardComponent } from './payment/ways/ic-card/ic-card.component';
@@ -29,9 +32,7 @@ import { ReCashComponent } from './payment/ways/re-cash/re-cash.component';
 import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
-import { CancelOrderComponent } from './order/cancel-order/cancel-order.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
-import { BatchComponent } from './login/batch.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { BatchComponent } from './login/batch.component';
     CouponComponent,
     CancelOrderComponent,
     PhoneNumberMaskPipe,
-    BatchComponent
+    BatchComponent,
+    RestrictComponent
   ],
   imports: [
     CommonModule,
@@ -95,7 +97,8 @@ import { BatchComponent } from './login/batch.component';
     PointComponent,
     CouponComponent,
     CancelOrderComponent,
-    BatchComponent
+    BatchComponent,
+    RestrictComponent
   ]
 })
 export class ModalsModule {

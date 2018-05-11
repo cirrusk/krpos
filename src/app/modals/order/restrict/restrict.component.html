@@ -1,0 +1,21 @@
+<div class="pop_wrap pop_m">
+  <div class="pop_header">
+      <h1>구매 제한 안내</h1>
+      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <div class="limit">
+              <span class="img"><img src="{{image}}" alt=""></span>
+              <span class="txt_info01" [innerHTML]="message"></span>
+              <dl class="kind" [innerHTML]="desc">                  
+              </dl>
+          </div>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer clearfix">
+      <span class="fl">취소 ESC</span>
+  </div>
+</div>
