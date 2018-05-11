@@ -1,5 +1,6 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
 import { Accounts, OrderEntry, Pagination } from '../../data';
@@ -21,7 +22,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
-  private pager: Pagination;                        // pagination 정보
+  private pager: Pagination;                      // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private config: Config, private pagerService: PagerService ) {
