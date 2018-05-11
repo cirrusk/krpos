@@ -349,6 +349,7 @@ table input[type='text'] {font-family:'NSM';}
 
 /* 결제 */
 .pn_wrap {position:relative; padding:0 94px}
+.pn_wrap.type02 {padding:0 60px}
 .pn_wrap .paging {}
 .pn_wrap .paging a {position:absolute; top:50%; margin-top:-10px}
 .pn_wrap .paging .prev03 {left:0}
