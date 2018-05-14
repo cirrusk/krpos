@@ -37,7 +37,8 @@ export const environment = {
       deleteItemCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
       deleteCart: '/{baseSiteId}/users/{userId}/carts/{cartId}',
       productSearch: '/{baseSiteId}/users/{userId}/carts/{cartId}/products/search',
-      createNewAccount: '/{baseSiteId}/pos/accout/create'
+      createNewAccount: '/{baseSiteId}/pos/accout/create',
+      noticeList: 'http://127.0.0.1:4200/assets/notice.json'
   },
   logLevel: 'info',
   terminalTimeout: 10,
