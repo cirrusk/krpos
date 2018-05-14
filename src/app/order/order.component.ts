@@ -17,7 +17,6 @@ export class OrderComponent implements OnInit {
     this.storage.setOrderEntry(null);
     const data = this.route.snapshot.data['notice'];
     this.noticeList = data['notice_ca'];
-    console.log(this.noticeList);
   }
 
 }
