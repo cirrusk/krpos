@@ -12,7 +12,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   hasAccount = false;
   hasProduct = false;
   hasCart = false;
-  @Input() public promotionList: any[] = [];
+  @Input() promotionList: any[] = [];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private element: ElementRef, private renderer: Renderer2) { }
