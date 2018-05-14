@@ -95,10 +95,10 @@ export class ClientComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
-      this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
+      // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
     } else {
-        this.cartList[existedIdx] = orderEntry;
-        this.activeRowCart(existedIdx); // 추가된 row selected
+      this.cartList[existedIdx] = orderEntry;
+      // this.activeRowCart(existedIdx); // 추가된 row selected
     }
 
     // 장바구니에 추가한 페이지로 이동

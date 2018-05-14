@@ -488,11 +488,11 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
-      this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
+      // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
       this.posCart.emit({ type: 'product', flag: true });
     } else {
       this.cartList[existedIdx] = orderEntry;
-      this.activeRowCart(existedIdx); // 추가된 row selected
+      // this.activeRowCart(existedIdx); // 추가된 row selected
     }
 
     this.storage.setOrderEntry(orderEntry); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
