@@ -312,7 +312,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                   terminalInfo.pointOfService.name , 'POS').subscribe(
         cartResult => {
           this.cartInfo = cartResult;
-
+          this.posCart.emit({ type: 'cart', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           if (popupFlag) {
             if (productCode !== undefined) {
               this.selectProductInfo(productCode);
@@ -578,6 +578,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           this.init();
           this.posCart.emit({ type: 'product', flag: false });
+          this.posCart.emit({ type: 'cart', flag: false });
           this.storage.clearClient();
         },
         error => {
