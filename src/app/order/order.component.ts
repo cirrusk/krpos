@@ -9,6 +9,7 @@ import { StorageService } from '../core';
 })
 export class OrderComponent implements OnInit {
   public noticeList: string[] = [];
+  public promotionList: any[] = [];
   constructor(private storage: StorageService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -18,6 +19,7 @@ export class OrderComponent implements OnInit {
     // resolver 에서 전달해준 값을 받아 cart list에 전달하여 공지사항에 뿌림.
     const data = this.route.snapshot.data['notice'];
     this.noticeList = data['notice_ca'];
+    this.promotionList = data['promotion'];
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
 import { Modal, StorageService, Logger } from '../../core';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
@@ -9,20 +9,17 @@ import { PromotionOrderComponent, EtcOrderComponent,
   templateUrl: './order-menu.component.html'
 })
 export class OrderMenuComponent implements OnInit, OnDestroy {
-  promotionItems = [];
   hasAccount = false;
   hasProduct = false;
   hasCart = false;
+  @Input() public promotionList: any[] = [];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private element: ElementRef, private renderer: Renderer2) { }
 
-  ngOnInit() {
-    this.addPromotions();
-  }
+  ngOnInit() { }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() { }
 
   /**
    * cart list 에서 보내준 이벤트를 받음
@@ -40,20 +37,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.hasCart = data.flag;
       }
     }
-  }
-
-  /**
-   * 프로모션은 최대 8개까지
-   */
-  private addPromotions() {
-    this.promotionItems.push({ title: '프로모션 1', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다........' });
-    this.promotionItems.push({ title: '프로모션 2', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
-    this.promotionItems.push({ title: '프로모션 3', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다???????' });
-    this.promotionItems.push({ title: '프로모션 4', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다!!!!!!!' });
-    this.promotionItems.push({ title: '프로모션 5', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.******' });
-    this.promotionItems.push({ title: '프로모션 6', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.-----' });
-    this.promotionItems.push({ title: '프로모션 7', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
-    this.promotionItems.push({ title: '프로모션 8', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
   }
 
   /**

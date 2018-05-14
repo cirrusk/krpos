@@ -9,12 +9,12 @@
   <button #menus type="button" (click)="etcOrder($event)">기타</button>
 </div>
 <pos-promotion>
-    <ng-container *ngFor="let item of promotionItems;">
+    <ng-container *ngFor="let promotion of promotionList;">
         <ng-container *posPromotionItem>
             <a href="javascript:void(0)">
-                <em>{{item.title}}</em>
+                <em>{{promotion.title}}</em>
                 <img src="/assets/images/common/amway_promotion.png" alt="">
-                <span>{{item.desc}}</span>                
+                <span>{{promotion.desc}}</span>                
             </a>
         </ng-container>
     </ng-container>
