@@ -5,6 +5,7 @@ import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
 import { Accounts, OrderEntry, Pagination } from '../../data';
 import { PagerService } from '../../service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'pos-client',
@@ -25,7 +26,9 @@ export class ClientComponent implements OnInit, OnDestroy {
   private pager: Pagination;                      // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
   constructor(private modal: Modal, private storage: StorageService,
-    private logger: Logger, private config: Config, private pagerService: PagerService ) {
+    private logger: Logger, private config: Config,
+    private route: ActivatedRoute,
+    private pagerService: PagerService ) {
     this.cartListCount = this.config.getConfig('cartListCount');
   }
 
@@ -140,8 +143,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   private loadNotice() {
-    this.noticeList.push('1. 주차권은 고객센터에서 수령하세요!');
-    this.noticeList.push('2. 쿠폰은 계산전에 확인해주시기 바랍니다.');
-    this.noticeList.push('3. 영수증은 꼭 받아가주시기 바랍니다.');
+    const data = this.route.snapshot.data['notice'];
+    this.noticeList = data['notice_cl'];
   }
 }
