@@ -35,6 +35,7 @@ import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
 import { RfidComponent } from './scan/rfid/rfid.component';
 import { SerialComponent } from './scan/serial/serial.component';
+import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { SerialComponent } from './scan/serial/serial.component';
     BatchComponent,
     RestrictComponent,
     RfidComponent,
-    SerialComponent
+    SerialComponent,
+    EcpConfirmComponent
   ],
   imports: [
     CommonModule,
@@ -104,7 +106,8 @@ import { SerialComponent } from './scan/serial/serial.component';
     BatchComponent,
     RestrictComponent,
     RfidComponent,
-    SerialComponent
+    SerialComponent,
+    EcpConfirmComponent
   ]
 })
 export class ModalsModule {
