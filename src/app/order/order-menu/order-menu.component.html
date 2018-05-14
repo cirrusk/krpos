@@ -11,7 +11,11 @@
 <pos-promotion>
     <ng-container *ngFor="let item of promotionItems;">
         <ng-container *posPromotionItem>
-            <a href="javascript:void(0)"><img src="/assets/images/temp/{{item.img}}" alt="{{item.title}}"></a>
+            <a href="javascript:void(0)">
+                <em>{{item.title}}</em>
+                <img src="/assets/images/common/amway_promotion.png" alt="">
+                <span>{{item.desc}}</span>                
+            </a>
         </ng-container>
     </ng-container>
 </pos-promotion>

@@ -12,6 +12,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   promotionItems = [];
   hasAccount = false;
   hasProduct = false;
+  hasCart = false;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private element: ElementRef, private renderer: Renderer2) { }
@@ -35,6 +36,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.hasAccount = data.flag;
       } else if (data.type === 'product') {
         this.hasProduct = data.flag;
+      } else if (data.type === 'cart') {
+        this.hasCart = data.flag;
       }
     }
   }
@@ -43,14 +46,14 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * 프로모션은 최대 8개까지
    */
   private addPromotions() {
-    this.promotionItems.push({ title: 'Promotion 1', img: '140x187_01.jpg' });
-    this.promotionItems.push({ title: 'Promotion 2', img: '140x187_02.jpg' });
-    this.promotionItems.push({ title: 'Promotion 3', img: '140x187_03.jpg' });
-    this.promotionItems.push({ title: 'Promotion 4', img: '140x187_04.jpg' });
-    this.promotionItems.push({ title: 'Promotion 5', img: '140x187_05.jpg' });
-    this.promotionItems.push({ title: 'Promotion 6', img: '140x187_06.jpg' });
-    this.promotionItems.push({ title: 'Promotion 7', img: '140x187_07.jpg' });
-    this.promotionItems.push({ title: 'Promotion 8', img: '140x187_08.jpg' });
+    this.promotionItems.push({ title: '프로모션 1', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 2', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 3', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 4', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 5', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 6', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 7', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
+    this.promotionItems.push({ title: '프로모션 8', desc: '더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.' });
   }
 
   /**
@@ -125,7 +128,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   cancelOrder(evt: any) {
-    if (!this.hasAccount || !this.hasProduct) { return; }
+    if (!this.hasAccount || !this.hasCart) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
