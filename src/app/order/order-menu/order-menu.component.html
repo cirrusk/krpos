@@ -12,7 +12,7 @@
     <ng-container *ngFor="let promotion of promotionList;">
         <ng-container *posPromotionItem>
             <a href="javascript:void(0)">
-                <em>{{promotion.title}}</em>
+                <em>{{(promotion.title) ? promotion.title : '프로모션'}}</em>
                 <img src="/assets/images/common/amway_promotion.png" alt="">
                 <span>{{promotion.desc}}</span>                
             </a>
