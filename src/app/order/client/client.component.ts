@@ -142,6 +142,10 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.selectedCartNum = index;
   }
 
+  /**
+   * resolver 에서 가져온 공지사항을
+   * 고객화면에 출력
+   */
   private loadNotice() {
     const data = this.route.snapshot.data['notice'];
     this.noticeList = data['notice_cl'];
