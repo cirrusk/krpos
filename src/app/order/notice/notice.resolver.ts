@@ -7,16 +7,15 @@ import { SearchService } from '../../service';
 export class NoticeResolver implements Resolve<any> {
 
   constructor(private search: SearchService) {}
-  resolve(route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<any> {
-      const name = route.component && (<any>route.component).name;
-      let param = '';
-      if (name === 'ClientComponent') {
-        param = 'cl';
-      } else {
-        param = 'ca';
-      }
-      return this.search.getNoticeList(param);
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
+    const name = route.component && (<any>route.component).name;
+    let param = '';
+    if (name === 'ClientComponent') {
+      param = 'cl';
+    } else {
+      param = 'ca';
+    }
+    return this.search.getNoticeList(param);
   }
 
 }
