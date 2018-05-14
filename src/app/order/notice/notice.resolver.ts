@@ -7,6 +7,13 @@ import { SearchService } from '../../service';
 export class NoticeResolver implements Resolve<any> {
 
   constructor(private search: SearchService) {}
+
+  /**
+   * 공지사항 데이터 조회용 resolver
+   *
+   * @param route Router
+   * @param state State
+   */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
     const name = route.component && (<any>route.component).name;
     let param = '';
