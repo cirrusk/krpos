@@ -301,6 +301,7 @@ table input[type='text'] {font-family:'NSM';}
 .tbl_col tbody td .elips.mx150 {max-width:150px}
 .tbl_col tbody td .elips.mx270 {max-width:270px}
 .tbl_col tbody td .elips.mx315 {max-width:315px}
+.tbl_col tbody td .elips.mx400 {max-width:400px}
 .tbl_col tbody td .elips.mx420 {max-width:420px}
 
  /* 회원정보조회 */
@@ -567,10 +568,12 @@ table input[type='text'] {font-family:'NSM';}
 
 .m_right .promotion {position:relative; margin-top:71px;}
 .m_right .promotion .img {width:140px; height:187px}
-.m_right .promotion .img li {display:none; width:140px; height:187px}
+.m_right .promotion .img li {display:none; width:140px; height:187px; box-sizing:border-box; border:1px solid #fff}
 .m_right .promotion .img li.on {display:block;}
-.m_right .promotion .img li a {}
-.m_right .promotion .img li a img {}
+.m_right .promotion .img li a {display:inline-block; width:138px; height:185px; padding:10px; box-sizing:border-box; color:#fff; text-align:center}
+.m_right .promotion .img li a em {display:block; margin-top:25px; font-size:15px; font-family:'NSB'}
+.m_right .promotion .img li a img {margin-top:2px}
+.m_right .promotion .img li a span {display:block; margin-top:12px; line-height:18px; font-size:12px; font-family:'NSR'; font-style:italic}
 .m_right .promotion .controls {}
 .m_right .promotion .controls a {position:absolute; top:203px; width:16px; height:14px; background:url(/assets/images/common/ico_common.png) -203px 0 no-repeat; text-indent:-999px; overflow:hidden;}
 .m_right .promotion .controls a.bx_prev {left:0}
