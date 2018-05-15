@@ -30,6 +30,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private cancleCartSubscription: Subscription;
   private cartListSubscription: Subscription;
   private productInfoSubscription: Subscription;
+  private copyCartEntriesSubscription: Subscription;
 
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
@@ -66,7 +67,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               private searchAccountBroker: SearchAccountBroker,
               private restoreCartBroker: RestoreCartBroker,
               private cancleOrderBroker: CancleOrderBroker,
-              private infoBroker: InfoBroker,
+              private info: InfoBroker,
               private config: Config,
               private logger: Logger) {
     this.cartListCount = this.config.getConfig('cartListCount');
@@ -77,11 +78,12 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (result) {
           this.posCart.emit({ type: 'account', flag: true }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           if (this.accountInfo) {
-            this.init();
+            this.changeUser(this.accountInfo, this.cartInfo, result);
+          } else {
+            this.accountInfo = result;
+            this.activeSearchMode('P');
+            this.getCarts();
           }
-          this.accountInfo = result;
-          this.activeSearchMode('P');
-          this.getCarts();
         }
       }
     );
@@ -125,18 +127,19 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.cartInfoSubscription) { this.cartInfoSubscription.unsubscribe(); }
-    if (this.accountInfoSubscription) { this.accountInfoSubscription.unsubscribe(); }
-    if (this.productSubscription) { this.productSubscription.unsubscribe(); }
+    if (this.cartInfoSubscription)            { this.cartInfoSubscription.unsubscribe(); }
+    if (this.accountInfoSubscription)         { this.accountInfoSubscription.unsubscribe(); }
+    if (this.productSubscription)             { this.productSubscription.unsubscribe(); }
     if (this.updateVolumeAccountSubscription) { this.updateVolumeAccountSubscription.unsubscribe(); }
-    if (this.addCartSubscription) { this.addCartSubscription.unsubscribe(); }
-    if (this.removeEntrySubscription) { this.removeEntrySubscription.unsubscribe(); }
-    if (this.removeCartSubscription) { this.removeCartSubscription.unsubscribe(); }
-    if (this.updateCartSubscription) { this.updateCartSubscription.unsubscribe(); }
-    if (this.restoreCartSubscription) { this.restoreCartSubscription.unsubscribe(); }
-    if (this.cancleCartSubscription) { this.cancleCartSubscription.unsubscribe(); }
-    if (this.cartListSubscription) { this.cartListSubscription.unsubscribe(); }
-    if (this.productInfoSubscription) { this.productInfoSubscription.unsubscribe(); }
+    if (this.addCartSubscription)             { this.addCartSubscription.unsubscribe(); }
+    if (this.removeEntrySubscription)         { this.removeEntrySubscription.unsubscribe(); }
+    if (this.removeCartSubscription)          { this.removeCartSubscription.unsubscribe(); }
+    if (this.updateCartSubscription)          { this.updateCartSubscription.unsubscribe(); }
+    if (this.restoreCartSubscription)         { this.restoreCartSubscription.unsubscribe(); }
+    if (this.cancleCartSubscription)          { this.cancleCartSubscription.unsubscribe(); }
+    if (this.cartListSubscription)            { this.cartListSubscription.unsubscribe(); }
+    if (this.productInfoSubscription)         { this.productInfoSubscription.unsubscribe(); }
+    if (this.copyCartEntriesSubscription)     { this.copyCartEntriesSubscription.unsubscribe(); }
   }
 
   /**
@@ -262,6 +265,130 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  /**
+   * 사용자 변경시 cart 복제
+   * - 현재 장바구니에 있는 정보를 복제함.
+   * @param currentUserInfo
+   * @param currentCartInfo
+   * @param changeUserInfo
+   */
+  changeUser(currentUserInfo: Accounts, currentCartInfo: CartInfo, changeUserInfo: Accounts) {
+    const msg = this.messageService.get('changeUserAlert');
+    this.modal.openConfirm(
+      {
+        title: '사용자 변경 확인',
+        message: msg,
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByClickOutside: false,
+        modalId: 'CHANGEUSER'
+      }
+    ).subscribe(
+      result => {
+        if (result) {
+          if (this.cartList.length > 0) {
+            this.init();
+            const terminalInfo = this.storage.getTerminalInfo();
+            let accountId = '';
+
+            if (changeUserInfo.accountType === 'CLIENT' || changeUserInfo.accountType === 'EMPLOYEE') {
+              accountId = changeUserInfo.parties[0].uid;
+            } else {
+              accountId = changeUserInfo.uid;
+            }
+
+            this.spinner.show();
+            this.cartInfoSubscription = this.cartService.createCartInfo(changeUserInfo.uid, accountId, terminalInfo.pointOfService.name , 'POS').subscribe(
+              newCartInfo => {
+                this.cartListSubscription = this.cartService.getCartList(currentCartInfo.user.uid, currentCartInfo.code).subscribe(
+                  resultCartList => {
+                    let sourceCartList = new Cart();
+                    this.accountInfo = changeUserInfo;
+                    this.cartInfo = newCartInfo;
+                    sourceCartList = resultCartList;
+                    this.copyCartEntriesSubscription = this.cartService.copyCartEntries(newCartInfo, sourceCartList.entries).subscribe(
+                      saveList => {
+                        this.addCartModel = saveList;
+                        let appendMessage = '';
+                        this.addCartModel.forEach(model => {
+                            if (model.statusCode === 'success') {
+                              this.productInfo = model.entry;
+                              this.addCartEntry(this.productInfo);
+                            } else {
+                              model.messages.forEach(message => {
+                                // if (message.severity === 'ERROR') {
+                                if (appendMessage === '' ) {
+                                  appendMessage += message.message;
+                                } else {
+                                  appendMessage += '<br/>' + message.message;
+                                }
+                              // }
+                              });
+                            }
+                        });
+
+                        if (appendMessage !== '') {
+                          const desciption = `<dt>라면류</dt>
+                          <dd>
+                          <span class="break">뉴트리 라면(259334K)</span>
+                          <span class="break">뉴트리 라면(259334K)</span>
+                          <span class="break">뉴트리(259336K)</span></dd>`;
+
+                          const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+                          this.modal.openModalByComponent(RestrictComponent,
+                            {
+                              callerData: { data: rmsgs },
+                              image: '/assets/images/temp/198x198.jpg',
+                              desc: desciption,
+                              message: appendMessage,
+                              closeByEnter: true,
+                              modalId: 'RestictComponent'
+                            }
+                          );
+                        } else {
+                          this.activeSearchMode('P');
+                          this.getCarts();
+                        }
+                      },
+                      error => {
+                        this.spinner.hide();
+                        const errdata = Utils.getError(error);
+                        if (errdata) {
+                          this.logger.set('cartList.component', `Change User - copy cart error type : ${errdata.type}`).error();
+                          this.logger.set('cartList.component', `Change User - copy cart error message : ${errdata.message}`).error();
+                          this.alert.error({ message: `${errdata.message}` });
+                        }
+                      }
+                    );
+                  },
+                  error => {
+                    this.spinner.hide();
+                    const errdata = Utils.getError(error);
+                    if (errdata) {
+                      this.logger.set('cartList.component', `Change User - get cart error type : ${errdata.type}`).error();
+                      this.logger.set('cartList.component', `Change User - get cart error message : ${errdata.message}`).error();
+                      this.alert.error({ message: `${errdata.message}` });
+                    }
+                  }
+                );
+              },
+                error => {
+                  this.spinner.hide();
+                  const errdata = Utils.getError(error);
+                  if (errdata) {
+                    this.logger.set('cartList.component', `Change User - create cart error type : ${errdata.type}`).error();
+                    this.logger.set('cartList.component', `Change User - create cart error message : ${errdata.message}`).error();
+                    this.alert.error({ message: `${errdata.message}` });
+                  }
+              },
+              () => { this.spinner.hide(); }
+            );
+          }
+        }
+      }
+    );
+  }
   /**
    * 제품 검색
    *  ->  결과 값이 1일 경우 Add to cart
@@ -373,13 +500,17 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 현재 장바구니 조회
    * @param page
    */
-  getCartList(page?: number): void {
+  getCartList(cartInfo: CartInfo, copyFlag: boolean, page?: number): void {
     this.spinner.show();
-    this.cartListSubscription = this.cartService.getCartList(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
+    this.cartListSubscription = this.cartService.getCartList(cartInfo.user.uid, cartInfo.code).subscribe(
       result => {
         this.cartList = result.entries;
         if (this.cartList.length === 0) {
           this.posCart.emit({ type: 'product', flag: false }); // 카트가 비었을 경우 메뉴에 이벤트 전송
+        } else {
+          if (copyFlag) {
+
+          }
         }
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
@@ -387,8 +518,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
-          this.logger.set('cartList.component', `Update item quantity error message : ${errdata.message}`).error();
+          this.logger.set('cartList.component', `Get Cart List error type : ${errdata.type}`).error();
+          this.logger.set('cartList.component', `Get Cart List error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },
@@ -551,7 +682,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                         this.cartInfo.code,
                                                                         this.cartList[index].entryNumber).subscribe(
         result => {
-          this.getCartList(index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
+          this.getCartList(this.cartInfo, false, index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
         },
         error => {
           this.spinner.hide();
@@ -632,7 +763,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
           this.init();
-          this.infoBroker.sendInfo('hold', 'add');
+          this.info.sendInfo('hold', 'add');
           this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
         },
         error => {
@@ -661,7 +792,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           this.saveCartResult = result;
           this.setCartInfo(this.saveCartResult.savedCartData);
-          this.infoBroker.sendInfo('hold', 'add');
+          this.info.sendInfo('hold', 'add');
         },
         error => {
           this.spinner.hide();

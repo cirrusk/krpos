@@ -5,14 +5,15 @@ import { Observable } from 'rxjs/Observable';
 import { NetworkService, StorageService, Config, Logger } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, OrderParams, Product} from '../../data';
+  OrderEntries, OrderEntryList, OrderParams, Product, Accounts, OrderEntry, ProductInfo} from '../../data';
 import { CartList } from '../../data/models/order/cart-list';
 import { SaveCartResult } from '../../data/models/order/save-cart-result';
 import { Cart } from '../../data/models/order/cart';
+import { Utils } from '../../core/utils';
 
 @Injectable()
 export class CartService {
-  private orderEntries: OrderEntryList;
+  // private orderEntries: OrderEntryList;
 
   constructor(private httpClient: HttpClient,
               private config: Config,
@@ -75,16 +76,35 @@ export class CartService {
    * @param code
    */
   addCartEntries(userId: string, cartId: string, code: string): Observable<CartModification[]> {
-    const o1: OrderEntries = new OrderEntries(new Product(code), '1');
-    const oa: OrderEntries[] = [];
-    oa.push(o1);
-    const op = new OrderParams(oa);
+    const orderList = new OrderEntryList();
+    const orderEntries: OrderEntry[] = [];
+    const entry = new OrderEntry(new ProductInfo(code));
+    entry.quantity = 1;
+    orderEntries.push(entry);
+    orderList.orderEntries = orderEntries;
 
     const apiURL = this.config.getApiUrl('addToCart', {'userId' : userId, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(op), { headers : httpHeaders })
+    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(orderList), { headers : httpHeaders })
                           .map(data => data as CartModification[]);
+  }
+
+  /**
+   * 장바구니 복제
+   * @param changeCartInfo
+   * @param orderEntries
+   */
+  copyCartEntries(changeCartInfo: CartInfo,
+                  orderEntries: Array<OrderEntry>): Observable<CartModification[]> {
+    const orderList = new OrderEntryList();
+    orderList.orderEntries = orderEntries;
+
+    const apiURL = this.config.getApiUrl('addToCart', {'userId' : changeCartInfo.user.uid, 'cartId': changeCartInfo.code});
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+
+    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(orderList), { headers : httpHeaders })
+                    .map(data => data as CartModification[]);
   }
 
   /**

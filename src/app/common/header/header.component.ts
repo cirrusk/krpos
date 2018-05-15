@@ -89,7 +89,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           } else if (type === 'lck') {
             this.logger.set('header component', 'screen locktype receive ...').debug();
-            this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
+            this.screenLockType = data.lockType === undefined ? LockType.UNLOCK : data.lockType;
           } else if (type === 'bat') {
             this.logger.set('header.component', 'batch info receive ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
@@ -108,9 +108,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       if (data.key === 'employeeName') { this.employeeName = (data.value === null) ? '' : data.value; }
     });
     const timer = TimerObservable.create(2000, 1000);
-    this.timersubscription = timer.subscribe(
-      t => { this.posTimer = this.getPosTimer(); }
-    );
+    this.timersubscription = timer.subscribe( t => { this.posTimer = this.getPosTimer(); } );
 
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
     // 5분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.

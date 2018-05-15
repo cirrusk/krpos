@@ -40,6 +40,7 @@ export class ProductInfo {
     deliveryModes: any; // List<DeliveryModeWsDTO>
     vpsCode: string;
 
-    constructor() {
+    constructor(_code?: string) {
+        this.code = _code;
     }
 }

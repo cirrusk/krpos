@@ -9,15 +9,16 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const currentUserInfo = this.storage.getTokenInfo();
-
     if (currentUserInfo) {
-      request = request.clone({
-          setHeaders : {
-              Authorization : `${currentUserInfo.token_type} ${currentUserInfo.access_token}`
-          }
+      const authreq = request.clone({
+          // setHeaders : {
+          //     Authorization : `${currentUserInfo.token_type} ${currentUserInfo.access_token}`
+          // }
+          headers: request.headers.set('Authorization', `${currentUserInfo.token_type} ${currentUserInfo.access_token}`)
       });
+      return next.handle(authreq);
+    } else {
+      return next.handle(request);
     }
-
-    return next.handle(request);
   }
 }
