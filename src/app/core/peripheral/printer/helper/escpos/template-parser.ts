@@ -9,6 +9,7 @@ import { TextEncoder, TextDecoder } from 'text-encoding';
 
 import { ReceiptUtils } from './helpers/receipt.utils';
 import { ReceiptProductFieldInterface } from './../../../../../data/receipt/interfaces/productfield.interface';
+import { BonusDataInterface } from './helpers/bonusdata.interface';
 
 export class TemplateParser {
 
@@ -27,8 +28,10 @@ export class TemplateParser {
 
     this.registerMoment();
     this.registerNumeral();
-    this.registerPriceHelper();
+    this.registerPriceFormatHelper();
     this.registerProductListHelper();
+    this.registerBonusDataHelper();
+    this.registerPriceLocaleHelper();
 
     // this.handlebars.registerHelper('null', function() {
     //   return null
@@ -78,13 +81,20 @@ export class TemplateParser {
   }
 
   // 영수증 가격 리스트의 포맷을 양쪽 정렬로 맞추기 위한 Helper
-  private registerPriceHelper() {
-    this.handlebars.registerHelper('priceHelper', (priceName: string, price: string) => {
+  private registerPriceFormatHelper() {
+    this.handlebars.registerHelper('priceFormatHelper', (priceName: string, price: string) => {
       const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(priceName);
       const localePrice: string = ReceiptUtils.convertToLocalePrice(price);
       const blankLenth: number = 42 - utf8ItemLen - localePrice.length;
 
       return new handlebars.SafeString(priceName + ReceiptUtils.spaces(blankLenth) + localePrice);
+    });
+  }
+
+  // 숫자를 3자리마다 , 찍어주는 Helper
+  private registerPriceLocaleHelper() {
+    this.handlebars.registerHelper('priceLocaleHelper', (price: string) => {
+      return new handlebars.SafeString(ReceiptUtils.convertToLocalePrice(price));
     });
   }
 
@@ -107,6 +117,19 @@ export class TemplateParser {
           formatted.push(row.join(''));
         }
       )
+
+      return new handlebars.SafeString(formatted.join(''));
+    });
+  }
+
+  // Bonus 정보를 용지 절반 기준 2단으로 보여주기 위한 Helper
+  private registerBonusDataHelper() {
+    this.handlebars.registerHelper('bonusDataHelper', (title1: string, value1: string, title2: string, value2: string) => {
+      let formatted: Array<string> = [];
+
+      formatted.push('<text-line>');
+      formatted.push(ReceiptUtils.fitTextsEqual(title1 + value1, title2 + value2));
+      formatted.push('</text-line>');
 
       return new handlebars.SafeString(formatted.join(''));
     });

@@ -5,27 +5,35 @@
         "templProductList",
         "templPrices",
         "templBonus",
+        "templPosCashierInfo",
         "templPayments",
         "templBarcode",
         "templNoticeHealthyFood",
-        "templNotice",
+        "templNoticeABO",
+        "templNoticeOthers",
         "templCompanyInfo",
         "templPaperCut",
-        "templDashline"
+        "templDashline",
+        "templMacAndCo",
+        "templAdditionalTitle"
     ],
     "precompile": {
         "templApInfo": true,
         "templOrderSummary": false,
         "templProductList": false,
         "templPrices": false,
-        "templBonus": true,
+        "templBonus": false,
+        "templPosCashierInfo": true,
         "templPayments": false,
-        "templBarcode": true,
+        "templBarcode": false,
         "templNoticeHealthyFood": true,
-        "templNotice": true,
+        "templNoticeABO": true,
+        "templNoticeOthers": true,
         "templCompanyInfo": true,
         "templPaperCut": true,
-        "templDashline": true
+        "templDashline": true,
+        "templMacAndCo": true,
+        "templAdditionalTitle": false
     },
     "downloadUriPrefix": "/assets/template/receipt/",
     "downloadUris": {
@@ -34,23 +42,57 @@
         "templProductList": "productList.xml",
         "templPrices": "prices.xml",
         "templBonus": "bonus.xml",
+        "templPosCashierInfo": "posCashierInfo.xml",
         "templPayments": "payments.xml",
         "templBarcode": "barcode.xml",
         "templNoticeHealthyFood": "noticeHealthyFood.xml",
-        "templNotice": "notice.xml",
+        "templNoticeABO": "noticeABO.xml",
+        "templNoticeOthers": "noticeOthers.xml",
         "templCompanyInfo": "companyInfo.xml",
         "templPaperCut": "papercut.xml",
-        "templDashline": "dashline.xml"
+        "templDashline": "dashline.xml",
+        "templMacAndCo": "macAndCoNum.xml",
+        "templAdditionalTitle": "additionalTitle.xml"
     },
     "receipts": [
-        "ordering_1", "ordering_2"
+        "normalReceiptABO", "normalReceiptMember", "normalReceiptConsumer"
     ],
     "receiptTemplates": {
-        "ordering_1": ["templApInfo", "templOrderSummary",
-                        "templProductList", "templPrices", "templBonus", "templPayments", "templDashline", "templBarcode",
-                        "templNoticeHealthyFood", "templNotice", "templDashline", "templCompanyInfo", "templPaperCut"
+        "normalReceiptABO": [
+            "templApInfo",
+            "templOrderSummary",
+            "templAdditionalTitle",
+            "templProductList", "templDashline",
+            "templPrices", "templDashline",
+            "templPayments", "templDashline",
+            "templBonus", "templPosCashierInfo", "templMacAndCo", "templDashline",
+            "templNoticeHealthyFood", "templNoticeABO", "templDashline",
+            "templBarcode",
+            "templCompanyInfo", "templPaperCut"
         ],
-        "ordering_2": ["templApInfo", "templDashline", "templBarcode", "templDashline", "templPaperCut"
+        "normalReceiptMember": [
+            "templApInfo",
+            "templOrderSummary",
+            "templAdditionalTitle",
+            "templProductList", "templDashline",
+            "templPrices", "templDashline",
+            "templPayments", "templDashline",
+            "templPosCashierInfo", "templDashline",
+            "templNoticeOthers", "templDashline",
+            "templBarcode",
+            "templCompanyInfo", "templPaperCut"
+        ],
+        "normalReceiptConsumer": [
+            "templApInfo",
+            "templOrderSummary",
+            "templAdditionalTitle",
+            "templProductList", "templDashline",
+            "templPrices", "templDashline",
+            "templPayments", "templDashline",
+            "templPosCashierInfo", "templDashline",
+            "templNoticeOthers", "templDashline",
+            "templBarcode",
+            "templCompanyInfo", "templPaperCut"
         ]
     }
 }

@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ReceiptDataProvider, EscPos } from '../core';
-
-enum ReceiptMapper {
-    order = 'ordering_1'
-}
+import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 
 @Injectable()
 export class ReceiptService {
@@ -12,8 +9,20 @@ export class ReceiptService {
 
     }
 
-    public getOrderReceipt(data: any): string {
-        const templateList: Array<string> = this.receitDataProvider.getReceiptTemplates(ReceiptMapper.order);
+    public aboNormal(data: any): string {
+        return this.getReceipt(data, ReceiptTypeEnum.ABONormal);
+    }
+
+    public memberNormal(data: any): string {
+        return this.getReceipt(data, ReceiptTypeEnum.MemberNormal);
+    }
+
+    public consumerNormal(data: any): string {
+        return this.getReceipt(data, ReceiptTypeEnum.ConsumerNormal);
+    }
+
+    private getReceipt(data: any, format: ReceiptTypeEnum): string {
+        const templateList: Array<string> = this.receitDataProvider.getReceiptTemplates(format);
 
         let retText = '';
 

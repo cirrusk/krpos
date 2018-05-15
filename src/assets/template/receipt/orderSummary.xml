@@ -15,7 +15,7 @@
         {{/if}}
     {{/if}}
     <text-line>
-        구매일자: {{moment orderInfo.date format="YYYY/MM/DD HH:mm:ss"}}
+        구매일자: {{orderInfo.date}}
     </text-line>
     <text-line>
         주문번호: {{orderInfo.number}}

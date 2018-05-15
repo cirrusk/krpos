@@ -1,10 +1,11 @@
 import { Command } from './command';
 import { MutableBuffer } from 'mutable-buffer';
+import { PosPrinterConstants } from './posprinter.constants';
 
 export class BufferBuilder {
 
   private buffer: MutableBuffer;
-  private dash: string = '-----------------------------------------';
+  private dash: string = '------------------------------------------';
   
   constructor(private defaultSettings: boolean = true) {
     this.buffer = new MutableBuffer();
@@ -133,7 +134,7 @@ export class BufferBuilder {
       token = chr.substr(0, 1);
     }
 
-    for (let i = 0 ; i < 41 ; i++) {
+    for (let i = 0 ; i < PosPrinterConstants.LineBytes ; i++) {
       token += token;
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <barcode system="UPC_A">
-        123456789
-    </barcode>
+    <align mode="center">
+        <barcode system="CODE_93" labelFont="FONT_B" width="DOT_375" height="70">{{orderInfo.number}}</barcode>
+    </align>
 </document>

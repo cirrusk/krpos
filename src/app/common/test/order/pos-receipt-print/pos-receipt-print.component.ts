@@ -20,7 +20,7 @@ export class PosReceiptPrintComponent implements OnInit {
     },
     orderInfo: {
         posId: 'a1234',
-        orderNumber: '123456789',
+        number: '123456789',
         cashier: {
             ad: 'kr620038',
             lastName: 'Kim',
@@ -38,39 +38,44 @@ export class PosReceiptPrintComponent implements OnInit {
     },
     bonus: {
         ordering: {
-            PV: '1234',
-            BV: '56789'
+            PV: '123',
+            BV: '254'
         },
-        final: {
+        sum: {
             PV: '123456',
             BV: '789456'
         },
         group: {
             PV: '123456789',
             BV: '789456123'
-
         }
     },
     payments: {
         cash: {
+            amount: '300000',
             detail: {
-                received: '100000',
-                changes: '2000'
+                received: '300000',
+                changes: '0'
             }
         },
         creditcard: {
-            amount: '200000'
+            amount: '430000',
+            detail: {
+                cardnumber: '1234***5678',
+                installment: '일시불',
+                authNumber: '74748585'
+            }
         }
     },
     price: {
-        totalQty: '10',
-        amountWithoutVAT: '180000',
-        amountVAT: '20000',
-        totalAmount: '200000',
+        totalQty: '17',
+        amountWithoutVAT: '657000',
+        amountVAT: '73000',
+        totalAmount: '730000',
         discount: {
             total: '0'
         },
-        finalAmount: '20000'
+        finalAmount: '730000'
     },
     productList: [
         {
@@ -180,25 +185,17 @@ export class PosReceiptPrintComponent implements OnInit {
 public clickRaw() {
     const printMsg: string =
         this.prtCmd.initPrinter() +
-        this.prtCmd.fontA() +
-        this.prtCmd.println('Font A 모드') +
-        this.prtCmd.println(' 1  285363L 아티스트리  100,000  1 100,000') +
-        this.prtCmd.println('99 1285363L 인텐시브      1,000 99  99,000') +
-        this.prtCmd.newline(2) +
-        this.prtCmd.println('Font B 모드') +
-        this.prtCmd.fontB() +
-        this.prtCmd.println(' 1  285363L 아티스트리 인텐시브 100,000  1 100,000') +
-        this.prtCmd.println('99 1285363L 인텐시브 스킨케어      1,000 99  99,000') +
-        this.prtCmd.newline(5) +
-        this.prtCmd.paperFullCut();
-
-        // this.prtCmd.printBarcodeCodeUAT('100099A') +
-        // this.prtCmd.printBarcodeCodeUAT('100331M') +
-        // this.prtCmd.printBarcodeCodeUAT('100497M') +
-        // this.prtCmd.printBarcodeCodeUAT('100663T') +
-        // this.prtCmd.printBarcodeCodeUAT('100957A') +
-        // this.prtCmd.printBarcodeCodeUAT('101156M') +
+        // this.prtCmd.
+        // this.prtCmd.newline(5) +
         // this.prtCmd.paperFullCut();
+        this.prtCmd.center() +
+        this.prtCmd.printBarcodeCodeUAT('100099A') +
+        this.prtCmd.printBarcodeCodeUAT('100331M') +
+        this.prtCmd.printBarcodeCodeUAT('100497M') +
+        this.prtCmd.printBarcodeCodeUAT('100663T') +
+        this.prtCmd.printBarcodeCodeUAT('100957A') +
+        this.prtCmd.printBarcodeCodeUAT('101156M') +
+        this.prtCmd.paperFullCut();
     this.printerService.printText(printMsg);
   }
 
@@ -213,8 +210,9 @@ public clickRaw() {
 
   public testReceipt() {
     //const text = this.receiptService.getOrderReceipt(JSON.stringify(this.receiptTempData));
-    const text = this.receiptService.getOrderReceipt(this.receiptTempData);
-    //this.printerService.printText(text);
+    //const text = this.receiptService.getOrderReceipt(this.receiptTempData);
+    const text = this.receiptService.aboNormal(this.receiptTempData);
+    this.printerService.printText(text);
     
   }
 

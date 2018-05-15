@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Precompile 금지 -->
 <document>
-    <text-line>
-    상품명    단가    수량    금액
-    </text-line>
+    <align mode="right">
+        <text-line>
+        상품명        단가  수량  금액
+        </text-line>
+    </align>
     <dash-line />
         <!-- {{idx}} {{skuCode}} {{productName}} {{price}} {{qty}} {{totalPrice}} -->
         {{productListHelper productList}}
-    <dash-line />
 </document>

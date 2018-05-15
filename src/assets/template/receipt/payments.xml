@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     {{#if payments.cash}}
+        <text-line>
+            [현금결제] {{priceLocaleHelper payments.cash.amount}}
+        </text-line>
         {{#if payments.cash.detail}}
             <text-line>
-                [현금결제]
+                받은금액 {{priceLocaleHelper payments.cash.detail.received}}
             </text-line>
             <text-line>
-                받은금액 {{payments.cash.detail.received}}
+                거스름돈 {{priceLocaleHelper payments.cash.detail.changes}}
             </text-line>
-            <text-line>
-                거스름돈 {{payments.cash.detail.changes}}
-            </text-line>
-        {{else}}
-            <text-line>
-                [현금결제] {{payments.cash.amount}}
-            </text-line>
+        {{/if}}
+        {{#if payments.cash.cashreceipt}}
+            <align mode="center">
+                <text-line>
+                    현금영수증 문의는 126 (국세청 콜센터)
+                </text-line>
+            </align>
         {{/if}}
     {{/if}}
     {{#if payments.creditcard}}
-        {{#if payments.creditcard.cancel}}
+        <text-line>
+            [신용카드결제] {{priceLocaleHelper payments.creditcard.amount}}
+        </text-line>
+        {{#if payments.creditcard.detail}}
             <text-line>
-                [신용카드결제]
+                카드번호: {{payments.creditcard.detail.cardnumber}}
             </text-line>
-        {{else}}
             <text-line>
-                [신용카드결제] {{payments.creaditcard.amount}}
+                할부: {{payments.creditcard.detail.installment}} (승인번호: {{payments.creditcard.detail.authNumber}})
             </text-line>
         {{/if}}
     {{/if}}

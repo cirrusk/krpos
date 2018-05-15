@@ -2,6 +2,7 @@ import { Command } from './../command';
 
 import { ProductFieldMaxLen } from './maxlen.interface';
 import { ReceiptProductFieldInterface } from './../../../../../../data/receipt/interfaces/productfield.interface';
+import { PosPrinterConstants } from '../posprinter.constants';
 
 export class ReceiptUtils {
 
@@ -15,7 +16,7 @@ export class ReceiptUtils {
 
     // Convert Price to localed
     public static convertToLocalePrice(price: string): string {
-        return price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return price.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
     // Generate same character sequences
@@ -73,7 +74,7 @@ export class ReceiptUtils {
         return {
             idx: maxLenIdx,
             skuCode: maxLenSkuCode,
-            productName: 42 - maxLenIdx - maxLenSkuCode - maxLenPrice - maxLenQty - maxLenTotal - 5,
+            productName: PosPrinterConstants.LineBytes - maxLenIdx - maxLenSkuCode - maxLenPrice - maxLenQty - maxLenTotal - 5,
             price: maxLenPrice,
             qty: maxLenQty,
             totalPrice: maxLenTotal
@@ -138,5 +139,10 @@ export class ReceiptUtils {
         formatted.push(ReceiptUtils.rightAlignedText(product.totalPrice, maxLengths.totalPrice));;
 
         return formatted.join('');
+    }
+
+    public static fitTextsEqual(text1: string, text2: string): string {
+        const paddedLen = (PosPrinterConstants.LineBytes / 2) - ReceiptUtils.getTextLengthUTF8(text1);
+        return text1 + ReceiptUtils.spaces(paddedLen) + text2;
     }
 }
