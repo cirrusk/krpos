@@ -5,6 +5,10 @@ import 'numeral/locales/pt-br';
 import { cloneDeep } from 'lodash';
 import { XMLParser } from './xml-parser';
 import { BufferBuilder } from './buffer-builder';
+import { TextEncoder, TextDecoder } from 'text-encoding';
+
+import { ReceiptUtils } from './helpers/receipt.utils';
+import { ReceiptProductFieldInterface } from './../../../../../data/receipt/interfaces/productfield.interface';
 
 export class TemplateParser {
 
@@ -20,8 +24,11 @@ export class TemplateParser {
     this.numeral.locale('ko-kr');
 
     this.handlebars = handlebars;
+
     this.registerMoment();
     this.registerNumeral();
+    this.registerPriceHelper();
+    this.registerProductListHelper();
 
     // this.handlebars.registerHelper('null', function() {
     //   return null
@@ -67,6 +74,41 @@ export class TemplateParser {
       }
 
       return this.numeral(context).format(block.hash.format);
+    });
+  }
+
+  // 영수증 가격 리스트의 포맷을 양쪽 정렬로 맞추기 위한 Helper
+  private registerPriceHelper() {
+    this.handlebars.registerHelper('priceHelper', (priceName: string, price: string) => {
+      const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(priceName);
+      const localePrice: string = ReceiptUtils.convertToLocalePrice(price);
+      const blankLenth: number = 42 - utf8ItemLen - localePrice.length;
+
+      return new handlebars.SafeString(priceName + ReceiptUtils.spaces(blankLenth) + localePrice);
+    });
+  }
+
+  // 영수증 상품 리스트를 포맷팅하기 위한 Helper
+  private registerProductListHelper() {
+    this.handlebars.registerHelper('productListHelper', (productList: Array<ReceiptProductFieldInterface>) => {
+      const localedProductList = ReceiptUtils.convertProductListPrices(productList);
+      const maxLengths = ReceiptUtils.findMaxLengths(localedProductList);
+
+      let formatted: Array<string> = [];
+
+      productList.forEach(
+        (product) => {
+          let row: Array<string> = [];
+
+          row.push('<text-line>');
+          row.push(ReceiptUtils.getFormattedProductField(product, maxLengths));
+          row.push('</text-line>');
+
+          formatted.push(row.join(''));
+        }
+      )
+
+      return new handlebars.SafeString(formatted.join(''));
     });
   }
 

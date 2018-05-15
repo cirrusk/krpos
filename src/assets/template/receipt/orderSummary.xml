@@ -3,11 +3,21 @@
     <text-line>
         주문형태: {{orderInfo.type}}
     </text-line>
+    {{#if orderInfo.account.abo}}
+        <text-line>
+            ABO정보: {{orderInfo.account.abo.id}} {{orderInfo.account.abo.name}}
+        </text-line>
+    {{else}}
+        {{#if orderInfo.account.member}}
+            <text-line>
+                구매자정보: {{orderInfo.account.member.id}} {{orderInfo.account.member.name}}
+            </text-line>
+        {{/if}}
+    {{/if}}
     <text-line>
-        회원정보: {{orderInfo.account}}
+        구매일자: {{moment orderInfo.date format="YYYY/MM/DD HH:mm:ss"}}
     </text-line>
     <text-line>
-        구매일자: {{moment orderInfo.date format="DD/MM/YYYY HH:mm:ss"}}
         주문번호: {{orderInfo.number}}
     </text-line>
 </document>

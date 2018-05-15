@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <text-line>
-        상품 수량 {{price.totalQty}}
+        {{priceHelper '상품수량' price.totalQty}}
     </text-line>
     <text-line>
-        과세 물품 {{price.amountWithoutVAT}}
+        {{priceHelper '과세 물품' price.amountWithoutVAT}}
     </text-line>
     <text-line>
-        부 가 세 {{price.amountVAT}}
+        {{priceHelper '부 가 세' price.amountVAT}}
     </text-line>
-    <text-line>
-        <bold>
-            합 계 {{price.totalAmount}}
-        </bold>
-    </text-line>
-    <text-line>
-        <bold>
-            할인금액 {{price.discount.total}}
-        </bold>    
-    </text-line>
-    <text-line>
-        <bold>
-            결제금액 {{price.finalAmount}}
-        </bold>
-    </text-line>
+    <bold>
+        <text-line>
+            {{priceHelper '합 계' price.totalAmount}}
+        </text-line>
+        <text-line>
+            {{priceHelper '할인금액' price.discount.total}}
+        </text-line>
+        <text-line>
+            {{priceHelper '결제금액' price.finalAmount}}
+        </text-line>
+    </bold>
 </document>

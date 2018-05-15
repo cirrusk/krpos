@@ -4,7 +4,8 @@ import { MutableBuffer } from 'mutable-buffer';
 export class BufferBuilder {
 
   private buffer: MutableBuffer;
-  private dash = '-----------------------------------------';
+  private dash: string = '-----------------------------------------';
+  
   constructor(private defaultSettings: boolean = true) {
     this.buffer = new MutableBuffer();
   }
@@ -139,8 +140,6 @@ export class BufferBuilder {
     return this.printTextLine(token);
   }
 
-
-
   public fillDash(): BufferBuilder {
     return this.printTextLine(this.dash);
   }
@@ -194,11 +193,6 @@ export class BufferBuilder {
   }
 
   public buildConv(): Uint8Array {
-    // if (this.defaultSettings) {
-    //   this.lineFeed();
-    //   this.buffer.write(Command.ESC_init);
-    // }
-
     return this.buffer.flush();
   }
 

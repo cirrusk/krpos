@@ -19,7 +19,7 @@ export class ReceiptService {
 
         templateList.forEach((templateName) => {
             const templateText = this.receitDataProvider.getTemplateText(templateName);
-            const parsed = EscPos.getParsed(templateText, data);
+            let parsed = EscPos.getParsed(templateText, data);
 
             const isCompiled = this.receitDataProvider.isPrecompiled(templateName);
 
@@ -32,6 +32,6 @@ export class ReceiptService {
 
         });
 
-        return retText;
+        return EscPos.unescapeLeadingSpace(retText);
     }
 }

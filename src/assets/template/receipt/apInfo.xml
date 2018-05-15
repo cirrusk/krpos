@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <nvimage/>
+    <!--
+    아래 정보는 이미지 처리 예정. <nvimage> 태그에서 출력
     <text-line>
         테스트
     </text-line>
@@ -10,4 +12,5 @@
     <text-line>
         {{shopInfo.address}}
     </text-line>
+    -->
 </document>

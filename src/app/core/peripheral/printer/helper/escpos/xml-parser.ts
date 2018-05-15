@@ -11,23 +11,24 @@ export class XMLParser {
   }
 
   private compile(parsedXML: any): BufferBuilder {
-    let bufferBuilder;
-    bufferBuilder = new BufferBuilder();
-    let rootNode;
-    rootNode = this.adapter(parsedXML.root, null);
+    let bufferBuilder = new BufferBuilder();
+    let rootNode = this.adapter(parsedXML.root, null);
     return rootNode.draw(bufferBuilder);
   }
 
   private adapter(node: any, parentNode): XMLNode {
-    let xmlNode: XMLNode;
-    xmlNode = NodeFactory.create(node.name, node);
-    if (parentNode) { parentNode.addChild(xmlNode); }
+    let xmlNode: XMLNode = NodeFactory.create(node.name, node);
+
+    if (parentNode) {
+       parentNode.addChild(xmlNode);
+    }
+
     if (node.children.length > 0) {
       node.children.forEach(child => {
         this.adapter(child, xmlNode);
       });
     }
+
     return xmlNode;
   }
-
 }

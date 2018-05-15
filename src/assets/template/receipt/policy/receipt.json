@@ -15,9 +15,9 @@
     ],
     "precompile": {
         "templApInfo": true,
-        "templOrderSummary": true,
+        "templOrderSummary": false,
         "templProductList": false,
-        "templPrices": true,
+        "templPrices": false,
         "templBonus": true,
         "templPayments": false,
         "templBarcode": true,

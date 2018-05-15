@@ -12,6 +12,8 @@ export class EscPos {
 
   private static NULL_REPLACE = String.fromCharCode(Command.SO);
 
+  private static LEADING_SPACE_REPLACE = String.fromCharCode(Command.SI);
+
   public static getBufferFromTemplate(template: string, data: any): number[] {
     let templateParser;
     templateParser = new TemplateParser();
@@ -40,43 +42,31 @@ export class EscPos {
     return xmlParser.parser(xml).buildConv();
   }
 
-  public static escapeNull(text: string): string {
-    // let chrArray: Array<string> = text.split('');
+  private static replaceByteArray(text: string, target: string, replacement: string) {
     let chrArray;
     chrArray = text.split('');
     chrArray.forEach( (value, index) => {
-      if (value === EscPos.NULL_CHAR) {
+      if (value === target) {
         const prev = (index - 1) >= 0 ? (index - 1) : 0;
         const next = (index + 1) < chrArray.length ? (index + 1) : (index);
-        // console.log(`found ${chrArray[prev]} ${chrArray[index]} ${chrArray[next]}`);
 
-        chrArray[index] = EscPos.NULL_REPLACE;
+        chrArray[index] = replacement;
       }
     });
-
-    // console.log(`returning ${chrArray.join('')}`)
 
     return chrArray.join('');
   }
 
+  public static escapeNull(text: string): string {
+    return EscPos.replaceByteArray(text, EscPos.NULL_CHAR, EscPos.NULL_REPLACE);
+  }
+
   public static unescapeNull(text: string): string {
-    // let chrArray: Array<string> = text.split('');
-    let chrArray;
-    chrArray = text.split('');
-    chrArray.forEach( (value, index) => {
-      if (value === EscPos.NULL_REPLACE) {
-        const prev = (index - 1) >= 0 ? (index - 1) : 0;
-        const next = (index + 1) < chrArray.length ? (index + 1) : (index);
-        // console.log(`found ${chrArray[prev]} ${chrArray[index]} ${chrArray[next]}`);
+    return EscPos.replaceByteArray(text, EscPos.NULL_REPLACE, EscPos.NULL_CHAR);
+  }
 
-        chrArray[index] = EscPos.NULL_CHAR;
-
-      }
-    });
-
-    // console.log(`returning ${chrArray.join('')}`)
-
-    return chrArray.join('');
+  public static unescapeLeadingSpace(text: string): string | null {
+    return EscPos.replaceByteArray(text, EscPos.LEADING_SPACE_REPLACE, " ");
   }
 
   public static getParsed(text: string, data: any): string {

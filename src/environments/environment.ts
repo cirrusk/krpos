@@ -17,11 +17,11 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  apiRootUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2',
+  apiRootUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2',
   apiUrl: {
       terminal: '/{baseSiteId}/auth/terminal',
       auth: '/{baseSiteId}/auth/authorize',
-      token: 'https://127.0.0.1:9002/authorizationserver/oauth/token',
+      token: 'https://oms-dev.abnkorea.co.kr/authorizationserver/oauth/token',
       batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
       batchStop: '/{baseSiteId}/orderbatches/{batch_id}',
       batchStats: '/{baseSiteId}/orderbatches/{batch_id}/statistics',
@@ -44,7 +44,7 @@ export const environment = {
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/',
+  hybrisCheckUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/',
   cartListCount: 8,
   noticeInterval: 7
 };

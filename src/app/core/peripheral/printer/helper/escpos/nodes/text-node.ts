@@ -19,7 +19,6 @@ export default class TextNode extends XMLNode {
       bufferBuilder.startReverseMode();
     }
 
-    // let text = this.getContent().replace(/&nbsp;/g, ' ');
     bufferBuilder.printText(this.getContent().trim());
 
     return bufferBuilder;

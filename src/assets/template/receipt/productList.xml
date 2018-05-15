@@ -5,10 +5,7 @@
     상품명    단가    수량    금액
     </text-line>
     <dash-line />
-        {{#productList}}
-            <text-line>
-                {{idx}} {{skuCode}} {{productName}} {{price}} {{qty}} {{totalPrice}}
-            </text-line>
-        {{/productList}}
+        <!-- {{idx}} {{skuCode}} {{productName}} {{price}} {{qty}} {{totalPrice}} -->
+        {{productListHelper productList}}
     <dash-line />
 </document>

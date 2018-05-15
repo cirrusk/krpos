@@ -15,6 +15,11 @@ export class PrinterCommands {
         EOT: '\x04',
         NUL: '\x00',
         EOL: '\n',
+        CPI: {
+            DEFAULT_11CPI: '\x1b\xc1\x48',
+            CPI15: '\x1b\xc1\x49',
+            CPI20: '\x1b\xc1\x50'
+        },
         FEED_CONTROL_SEQUENCES: {
             CTL_LF: '\x0a', // Print and line feed
             CTL_MULTI_LF: '\x64', // Print and n lines feed
@@ -167,6 +172,20 @@ export class PrinterCommands {
         }
     };
 
+    public setCpiMode(mode: number): string {
+        switch (mode) {
+            case 0: {
+                return this.CMD.CPI.DEFAULT_11CPI;
+            }
+            case 1: {
+                return this.CMD.CPI.CPI15;
+            }
+            case 2: {
+                return this.CMD.CPI.CPI20;
+            }
+        }
+    }
+
     public initPrinter(): string {
         return this.CMD.HARDWARE.HW_INIT;
     }
@@ -213,6 +232,10 @@ export class PrinterCommands {
         return text + this.CMD.CR + this.CMD.LF;
     }
 
+    public textCustomsize(text: string, height: number, width: number) {
+        return this.CMD.TEXT_FORMAT.TXT_CUSTOM_SIZE(width, height) + text + this.CMD.TEXT_FORMAT.TXT_NORMAL;
+    }
+
     public doubledHeight(text: string): string {
         return this.CMD.TEXT_FORMAT.TXT_2HEIGHT + text + this.CMD.TEXT_FORMAT.TXT_NORMAL;
     }
@@ -241,6 +264,10 @@ export class PrinterCommands {
 
     public fontB(): string {
         return this.CMD.TEXT_FORMAT.TXT_FONT_B;
+    }
+
+    public fontC(): string {
+        return this.CMD.TEXT_FORMAT.TXT_FONT_C;
     }
 
     public center(): string {

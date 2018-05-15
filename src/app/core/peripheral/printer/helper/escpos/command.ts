@@ -47,4 +47,6 @@ export class Command {
   public static FS_p               = (n: number): number[] => [Command.FS, 0x70, n, 0x00]; // FSpn
 
   public static SO         = 0x0E; // Shiftout
+
+  public static SI         = 0x0F; // Exclamination
 }
