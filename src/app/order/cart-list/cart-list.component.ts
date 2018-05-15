@@ -11,7 +11,7 @@ import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroke
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 @Component({
   selector: 'pos-cart-list',

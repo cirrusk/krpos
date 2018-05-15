@@ -4,7 +4,30 @@ import { TextEncoder, TextDecoder } from 'text-encoding';
 import { ErrorInfo } from '../data/error/error-info';
 import { Errors } from '../data/error/errors';
 
-export default class Utils {
+export class StringBuilder {
+  private buffer: any [] = [];
+  append(data: any): StringBuilder {
+    this.buffer.push(data);
+    return this;
+  }
+
+  appendNewLine(): StringBuilder {
+    this.buffer.push('\r\n');
+    return this;
+  }
+
+  clear(): StringBuilder {
+    this.buffer = [];
+    return this;
+  }
+
+  toString(): any {
+    return this.buffer.join('');
+  }
+
+}
+
+export /* default */ class Utils {
 
   /** 텍스트 인코더 정의 */
   private static encoder = new TextEncoder('utf-8');

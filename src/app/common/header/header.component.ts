@@ -11,7 +11,7 @@ import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, Pa
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
 import { AccessToken, BatchInfo, LockType, TerminalInfo } from '../../data';
 
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 /**
  * 1. 보류

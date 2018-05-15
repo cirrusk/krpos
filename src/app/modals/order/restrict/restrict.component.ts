@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalComponent, ModalService, Modal } from '../../../core';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 
 @Component({
   selector: 'pos-restrict',

@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, Modal, Logger, SpinnerService, AlertServi
 import { CartService, PagerService } from '../../../service';
 import { RestoreCartBroker } from '../../../broker';
 import { Cart } from '../../../data/models/order/cart';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 
 import { InfoBroker } from '../../../broker/info.broker';
 import { Pagination } from '../../../data';

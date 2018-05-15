@@ -7,7 +7,7 @@ import { ModalComponent, ModalService, StorageService, Logger, AlertService, Ale
 import { AuthService } from '../../service';
 import { InfoBroker } from '../../broker';
 import { ErrorInfo } from '../../data';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 
 /**

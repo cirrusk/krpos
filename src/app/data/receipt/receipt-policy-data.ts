@@ -1,5 +1,5 @@
 import { ReceiptPolicy } from './receipt-policy';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 export class ReceiptPolicyData {
     private _templateList: Array<string>;

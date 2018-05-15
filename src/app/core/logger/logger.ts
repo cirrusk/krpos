@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LogLevels } from '../../data';
 import { Config } from '../config/config';
-import Utils from '../utils';
+import { Utils } from '../utils';
 
 @Injectable()
 export class Logger {

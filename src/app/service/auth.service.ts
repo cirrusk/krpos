@@ -5,7 +5,7 @@ import 'rxjs/add/operator/switchMap';
 
 import { NetworkService, StorageService, ApiService, CLIENT_SECRET } from '../core';
 import { TerminalInfo, AccessToken, HttpData, Error } from '../data';
-import Utils from '../core/utils';
+import { Utils } from '../core/utils';
 
 
 @Injectable()

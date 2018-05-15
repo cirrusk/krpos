@@ -9,7 +9,7 @@ import 'rxjs/add/operator/shareReplay';
 import { Logger } from '../logger/logger';
 import { Config } from '../config/config';
 import { HttpData } from '../../data';
-import Utils from '../utils';
+import { Utils } from '../utils';
 
 @Injectable()
 export class ApiService {

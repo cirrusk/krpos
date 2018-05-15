@@ -3,7 +3,7 @@ import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
 import { AccessToken, TerminalInfo, BatchInfo } from '../../data';
-import Utils from '../utils';
+import { Utils } from '../utils';
 
 
 @Injectable()

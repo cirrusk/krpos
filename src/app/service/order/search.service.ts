@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { ApiService, Config, StorageService } from '../../core';
 import { AccountList, MemberType, HttpData } from '../../data';
 import { Products } from '../../data/models/cart/cart-data';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 @Injectable()
 export class SearchService {

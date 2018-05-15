@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Modal, Logger, StorageService, AlertService, AlertType, SpinnerService } from '../../core';
 
 import { AuthService } from '../../service/auth.service';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 
 @Component({

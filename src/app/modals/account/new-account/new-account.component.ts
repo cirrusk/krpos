@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, AlertService, ModalService, AlertType, OnlyNumberDirective, SpinnerService, Logger, Modal } from '../../../core';
 import { AccountService } from './../../../service/account.service';
 import { SearchAccountBroker } from '../../../broker';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 import { AccountList } from '../../../data';
 
 @Component({

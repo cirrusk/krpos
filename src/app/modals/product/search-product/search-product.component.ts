@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerSe
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 import { SearchBroker } from '../../../broker/order/search/search.broker';
 
 @Component({

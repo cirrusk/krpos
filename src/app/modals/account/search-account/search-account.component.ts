@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, S
 import { SearchService, PagerService } from '../../../service';
 import { SearchBroker, SearchAccountBroker } from '../../../broker';
 import { AccountList, Accounts, Pagination } from '../../../data';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
 
 @Component({
