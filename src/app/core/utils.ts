@@ -6,6 +6,7 @@ import { Errors } from '../data/error/errors';
 
 export class StringBuilder {
   private buffer: any [] = [];
+  constructor(val?: any) { if (val) { this.buffer.push(val); } }
   append(val: any): StringBuilder {
     this.buffer.push(val);
     return this;
