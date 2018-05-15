@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { MESSAGE } from './message';
-import Utils from '../core/utils';
+import { Utils } from '../core/utils';
 
 declare interface Window {
   navigator: any;

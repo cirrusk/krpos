@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ReceiptService } from '../../../../service';
 import { PrinterService, PrinterCommands } from '../../../../core';
-import Utils from '../../../../core/utils';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-receipt-print',

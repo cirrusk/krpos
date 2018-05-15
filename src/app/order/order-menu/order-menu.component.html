@@ -1,6 +1,6 @@
 <div class="nav">
   <!-- 선택시 class="on" -->
-  <button #menus type="button" (click)="normalPayment($event)" class="blue on">일반결제</button>
+  <button #menus type="button" (click)="normalPayment($event)" class="blue">일반결제</button>
   <button #menus type="button" (click)="complexPayment($event)" class="blue">복합결제</button>
   <button #menus type="button" (click)="groupPayment($event)">그룹주문</button>
   <button #menus type="button" (click)="pickupOrder($event)" class="disabled">픽업주문</button>
@@ -8,16 +8,14 @@
   <button #menus type="button" (click)="promotionOrder($event)" class="purple">프로모션 상품</button>
   <button #menus type="button" (click)="etcOrder($event)">기타</button>
 </div>
-<div class="promotion">
-  <ul class="img">
-      <li class="on"><a href="#"><img src="/assets/images/temp/140x187_01.jpg" alt=""></a></li>
-  </ul>
-  <span class="controls">
-      <a href="#" class="bx_prev">이전</a>
-      <a href="#" class="bx_next">다음</a>
-  </span>
-  <span class="pager">
-      <!-- 현재 활성화 이미지 번호 on클래스 추가 -->
-      <span class="on">1</span>
-  </span>
-</div>
+<pos-promotion>
+    <ng-container *ngFor="let promotion of promotionList;">
+        <ng-container *posPromotionItem>
+            <a href="javascript:void(0)">
+                <em>{{(promotion.title) ? promotion.title : '프로모션'}}</em>
+                <img src="/assets/images/common/amway_promotion.png" alt="">
+                <span>{{promotion.desc}}</span>                
+            </a>
+        </ng-container>
+    </ng-container>
+</pos-promotion>

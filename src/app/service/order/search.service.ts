@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { ApiService, Config } from '../../core';
+import { ApiService, Config, StorageService } from '../../core';
 import { AccountList, MemberType, HttpData } from '../../data';
 import { Products } from '../../data/models/cart/cart-data';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 @Injectable()
 export class SearchService {
 
-  constructor(private api: ApiService, private httpClient: HttpClient, private config: Config) { }
+  constructor(private api: ApiService, private storage: StorageService , private httpClient: HttpClient, private config: Config) { }
 
   // 회원 정보 조회
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
@@ -59,9 +59,15 @@ export class SearchService {
   }
 
   /**
-   * 바코드 스캐닝으로 상품 검색
+   * 캐셔 및 고객용 공지사항 조회
+   * API 적용 시 파라미터 재확인 필요.
+   *
+   * @param noticeType 공지사항 타입(ca : 캐셔, cl : 고객)
    */
-  getProductInfoByBarCode(barcode: string) {
-
+  getNoticeList(noticeType: string): Observable<any> {
+    const terminal = this.storage.getTerminalInfo();
+    const param = { noticeType: noticeType, terminalId: terminal.id };
+    const data = new HttpData('noticeList', null, null, param);
+    return this.api.get(data);
   }
 }

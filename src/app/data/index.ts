@@ -19,14 +19,12 @@ export * from './models/order/cart-list';
 export * from './models/order/save-cart-result';
 export * from './models/order/stock';
 export * from './models/order/price';
-export * from './models/order/amway-value';
 export * from './models/order/cart-message';
 export * from './models/order/customer';
 export * from './models/order/phone-contact-info';
 export * from './models/order/user';
 
-
-
+export * from './models/common/amway-value';
 export * from './models/common/access-token';
 export * from './models/common/product';
 export * from './models/common/terminal-info';
@@ -34,7 +32,6 @@ export * from './models/common/product-data';
 export * from './models/common/batch-info';
 export * from './models/common/http-data';
 export * from './models/common/pagination';
-
 
 export * from './error/error';
 export * from './error/error-info';

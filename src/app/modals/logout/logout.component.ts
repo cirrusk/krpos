@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Logger, Modal, StorageService, SpinnerService } from '../../core';
 import { BatchService } from '../../service';
 import { InfoBroker } from '../../broker';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 
 @Component({

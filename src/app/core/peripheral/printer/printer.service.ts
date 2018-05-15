@@ -7,7 +7,7 @@ import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { PrinterConfigs } from './helper/printer-configs';
 import { Logger } from '../../logger/logger';
 import { EscPos } from './helper/escpos/escpos';
-import Utils from '../../utils';
+import { Utils } from '../../utils';
 
 @Injectable()
 export class PrinterService {

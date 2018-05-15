@@ -1,4 +1,4 @@
-import { Product } from './../common/product';
+import { Product } from '../common/product';
 
 export class OrderEntries {
     product: Product;

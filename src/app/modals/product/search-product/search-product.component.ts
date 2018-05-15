@@ -1,15 +1,13 @@
 import { CartInfo } from './../../../data/models/order/cart-info';
 import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
   ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
-
-  import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
+import { Subscription } from 'rxjs/Subscription';
+import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 import { SearchBroker } from '../../../broker/order/search/search.broker';
-import { Subscription } from 'rxjs/Subscription';
-
 
 @Component({
   selector: 'pos-search-product',
@@ -25,8 +23,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
   @ViewChild('searchNext', {read: ElementRef}) private searchNext: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
-  basicSearchType: string;
-  bcdSearchType: string;
+  searchType: string;
   productCount: number;
   products: Products;
   product: Product;
@@ -43,18 +40,17 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
-    this.basicSearchType = 'sku';
-    this.bcdSearchType = '';
+    this.searchType = 'sku';
     this.productCount = -1;
     this.products = null;
     this.currentPage = 0;
   }
 
   ngOnInit() {
+    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     const result = this.callerData.data;
     this.searchValue.nativeElement.value = result.searchText;
     this.cartInfo = result.data;
-
     if (result.searchText) {
       this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
     }
@@ -106,7 +102,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.renderer.removeClass(p.nativeElement, 'on');
       }
     }
-    switch (this.basicSearchType) {
+    switch (this.searchType) {
       case 'sku': {
         this.spinner.show();
         this.spsubscription = this.search.getBasicProductInfo(val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
@@ -152,34 +148,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
   }
 
-  searchProductByBarcode() {
-    if (Utils.isNotEmpty(this.bcdSearchType)) {
-
-    }
-  }
-
-  productSelect() {
-    let flag = false;
-    if (this.productItems) {
-      for (const p of this.productItems) {
-        const chk = p.nativeElement.classList.contains('on');
-        if (chk) { flag = true; break; }
-      }
-    }
-    if (!flag) {
-      this.alert.warn({ message: '상품을 선택하십시오.' });
-      return;
-    }
-    this.addCartBroker.sendInfo(this.product);
-    this.close();
-  }
-
   searchOption(evt: any) {
-    this.basicSearchType = evt.target.value;
-  }
-
-  searchBcdOption() {
-    this.bcdSearchType = 'bcd';
+    this.searchType = evt.target.value;
   }
 
   resetCurrentPage(evt: any) {
@@ -207,6 +177,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     } else {
       this.activeNum = index;
       this.product = product;
+      this.addCartBroker.sendInfo(this.product);
+      this.close();
     }
   }
 

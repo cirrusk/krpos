@@ -5,7 +5,7 @@ import 'rxjs/add/operator/finally';
 
 import { ApiService, Config } from '../core';
 import { TerminalInfo, HttpData } from '../data';
-import Utils from '../core/utils';
+import { Utils } from '../core/utils';
 
 @Injectable()
 export class TerminalService {

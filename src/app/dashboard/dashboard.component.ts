@@ -7,7 +7,7 @@ import { LoginComponent } from '../modals';
 import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker';
 import { AccessToken, BatchInfo, LockType } from '../data';
-import Utils from '../core/utils';
+import { Utils } from '../core/utils';
 
 @Component({
   selector: 'pos-dashboard',

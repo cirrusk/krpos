@@ -1,5 +1,5 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList } from '@angular/core';
-import { Modal } from '../../core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
+import { Modal, StorageService, Logger } from '../../core';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
   ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
@@ -8,12 +8,35 @@ import { PromotionOrderComponent, EtcOrderComponent,
   selector: 'pos-order-menu',
   templateUrl: './order-menu.component.html'
 })
-export class OrderMenuComponent implements OnInit {
-
+export class OrderMenuComponent implements OnInit, OnDestroy {
+  hasAccount = false;
+  hasProduct = false;
+  hasCart = false;
+  @Input() promotionList: any[] = [];
   @ViewChildren('menus') menus: QueryList<ElementRef>;
-  constructor(private modal: Modal, private element: ElementRef, private renderer: Renderer2) { }
+  constructor(private modal: Modal, private storage: StorageService,
+    private logger: Logger, private element: ElementRef, private renderer: Renderer2) { }
 
-  ngOnInit() {
+  ngOnInit() { }
+
+  ngOnDestroy() { }
+
+  /**
+   * cart list 에서 보내준 이벤트를 받음
+   *
+   * @param data 보내준 데이터
+   */
+  setFlag(data) {
+    if (data) {
+      this.logger.set('order.menu.component', `from cart list to cart menu flag receive, type : ${data.type}`).debug();
+      if (data.type === 'account') {
+        this.hasAccount = data.flag;
+      } else if (data.type === 'product') {
+        this.hasProduct = data.flag;
+      } else if (data.type === 'cart') {
+        this.hasCart = data.flag;
+      }
+    }
   }
 
   /**
@@ -22,12 +45,10 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   normalPayment(evt: any) {
+    if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'NormalPaymentComponent'
       }
@@ -39,12 +60,10 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   complexPayment(evt: any) {
+    if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'ComplexPaymentComponent'
       }
@@ -63,9 +82,6 @@ export class OrderMenuComponent implements OnInit {
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchAccountComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         paymentType: 'g',
         modalId: 'SearchAccountComponent'
@@ -79,12 +95,10 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   pickupOrder(evt: any) {
+    if (!this.hasAccount) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(PickupOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: true,
         modalId: 'PickupOrderComponent'
       }
@@ -97,10 +111,10 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   cancelOrder(evt: any) {
+    if (!this.hasAccount || !this.hasCart) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
-        title: '',
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: true,
@@ -115,12 +129,10 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   promotionOrder(evt: any) {
+    if (!this.hasAccount) { return; }
     // this.checkPromotionClass(evt);
     this.modal.openModalByComponent(PromotionOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'PromotionOrderComponent'
       }
@@ -133,12 +145,10 @@ export class OrderMenuComponent implements OnInit {
    * @param evt
    */
   etcOrder(evt: any) {
+    if (!this.hasAccount || !this.hasProduct) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'EtcOrderComponent'
       }

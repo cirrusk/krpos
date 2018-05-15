@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { NetworkDriver } from './network.driver';
 import { Logger } from '../../logger/logger';
-import Utils from '../../utils';
+import { Utils } from '../../utils';
 
 @Injectable()
 export class NetworkService {

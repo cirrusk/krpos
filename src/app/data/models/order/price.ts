@@ -1,4 +1,4 @@
-import { AmwayValue } from './amway-value';
+import { AmwayValue } from '../..';
 
 export class Price {
     amwayValue: AmwayValue;

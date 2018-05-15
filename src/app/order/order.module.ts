@@ -9,6 +9,8 @@ import { OrderCompleteComponent } from './order-complete/order-complete.componen
 import { AddCartBroker, SearchBroker } from '../broker';
 import { NoticeComponent } from './notice/notice.component';
 import { ClientComponent } from './client/client.component';
+import { PromotionComponent, PromotionItemElementDirective } from './promotion/promotion.component';
+import { PromotionItemDirective } from './promotion/promotion-item.directive';
 
 @NgModule({
   imports: [
@@ -20,7 +22,10 @@ import { ClientComponent } from './client/client.component';
     NoticeComponent,
     OrderComponent,
     OrderMenuComponent,
-    OrderCompleteComponent
+    OrderCompleteComponent,
+    PromotionComponent,
+    PromotionItemDirective,
+    PromotionItemElementDirective
   ],
   providers: [AddCartBroker, SearchBroker]
 })

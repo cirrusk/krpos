@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, S
 import { SearchService, PagerService } from '../../../service';
 import { SearchBroker, SearchAccountBroker } from '../../../broker';
 import { AccountList, Accounts, Pagination } from '../../../data';
-import Utils from '../../../core/utils';
+import { Utils } from '../../../core/utils';
 import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
 
 @Component({
@@ -67,14 +67,30 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   }
 
   init() {
+    if (this.currentLeftAccountList !== undefined) {
+      this.currentLeftAccountList.length = 0;
+    } else {
+      this.currentLeftAccountList = new Array<Accounts>();
+    }
+    if (this.currentRightAccountList !== undefined) {
+      this.currentRightAccountList.length = 0;
+    } else {
+      this.currentRightAccountList = new Array<Accounts>();
+    }
+    if (this.accountList !== undefined) {
+      this.accountList.accounts.length = 0;
+    } else {
+      this.accountList = new AccountList();
+    }
+
     this.activeNum = -1;
     this.activeCode = '';
     this.totalCnt = 0;
     this.paymentType = 'n';
     this.pager = new Pagination();
+    this.searchText = '';
   }
 
-  // account 검색
   /**
    * account 검색
    * @param searchMemberType

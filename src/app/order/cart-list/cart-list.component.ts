@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent } from '../../modals';
+import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent } from '../../modals';
 import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config } from '../../core';
 
 import { CartService, PagerService, SearchService } from '../../service';
@@ -12,7 +11,7 @@ import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroke
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
-import Utils from '../../core/utils';
+import { Utils } from '../../core/utils';
 
 @Component({
   selector: 'pos-cart-list',
@@ -53,7 +52,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
   @ViewChild('searchText') private searchText: ElementRef; // 입력창
-  public noticeList: string[] = [];
+  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
+  @Input() public noticeList: string[] = []; // 캐셔용 공지사항
   constructor(private modal: Modal,
               private cartService: CartService,
               private searchService: SearchService,
@@ -75,10 +75,12 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         if (result) {
+          this.posCart.emit({ type: 'account', flag: true }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           if (this.accountInfo) {
             this.init();
           }
           this.accountInfo = result;
+          this.activeSearchMode('P');
           this.getCarts();
         }
       }
@@ -120,7 +122,6 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
-    this.loadNotice();
   }
 
   ngOnDestroy() {
@@ -158,14 +159,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modifyFlag =  false;
     this.pager = new Pagination();
     this.saveCartResult = new SaveCartResult();
-  }
-
-  private loadNotice() {
-    this.noticeList.push('1. 3월 26일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('2. 3월 27일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('3. 3월 28일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('4. 4월 01일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
-    this.noticeList.push('5. 4월 03일  시스템 점검 시스템 점검 시스템이 예정되어 있으니 업무에 착오 없으시길 바랍니다. 문의: 1588 - 0000');
   }
 
   /**
@@ -278,7 +271,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productInfoSubscription = this.searchService.getBasicProductInfo(productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
       result => {
         const totalCount = result.pagination.totalResults;
-        if (totalCount === 1 && result.products[0].sellableStatus === '') {
+        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatus === '') {
           this.addCartEntries(productCode);
         } else {
           this.searchParams.data = this.cartInfo;
@@ -319,7 +312,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                   terminalInfo.pointOfService.name , 'POS').subscribe(
         cartResult => {
           this.cartInfo = cartResult;
-
+          this.posCart.emit({ type: 'cart', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           if (popupFlag) {
             if (productCode !== undefined) {
               this.selectProductInfo(productCode);
@@ -385,6 +378,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartListSubscription = this.cartService.getCartList(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
       result => {
         this.cartList = result.entries;
+        if (this.cartList.length === 0) {
+          this.posCart.emit({ type: 'product', flag: false }); // 카트가 비었을 경우 메뉴에 이벤트 전송
+        }
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
@@ -423,7 +419,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
         result => {
           this.addCartModel = result;
           if (this.addCartModel[0].statusCode === 'success') {
@@ -443,12 +439,23 @@ export class CartListComponent implements OnInit, OnDestroy {
               // }
             });
 
-            this.modal.openMessage({
-              title: '확인',
-              message: appendMessage,
-              closeButtonLabel: '닫기',
-              modalId: 'ADD_CAR_ERROR'
-            });
+            const desciption = `<dt>라면류</dt>
+            <dd>
+            <span class="break">뉴트리 라면(259334K)</span>
+            <span class="break">뉴트리 라면(259334K)</span>
+            <span class="break">뉴트리(259336K)</span></dd>`;
+
+            const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+            this.modal.openModalByComponent(RestrictComponent,
+              {
+                callerData: { data: rmsgs },
+                image: '/assets/images/temp/198x198.jpg',
+                desc: desciption,
+                message: appendMessage,
+                closeByEnter: true,
+                modalId: 'RestictComponent'
+              }
+            );
           }
         },
         error => {
@@ -481,8 +488,11 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
+      // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
+      this.posCart.emit({ type: 'product', flag: true });
     } else {
       this.cartList[existedIdx] = orderEntry;
+      // this.activeRowCart(existedIdx); // 추가된 row selected
     }
 
     this.storage.setOrderEntry(orderEntry); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
@@ -569,6 +579,8 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                 this.cartInfo ? this.cartInfo.code : '').subscribe(
         result => {
           this.init();
+          this.posCart.emit({ type: 'product', flag: false });
+          this.posCart.emit({ type: 'cart', flag: false });
           this.storage.clearClient();
         },
         error => {
@@ -615,7 +627,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 저장(보류)
    */
   saveCart() {
-    if (this.cartInfo.code !== undefined) {
+    if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
       this.spinner.show();
       this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
@@ -692,6 +704,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // true 경우 페이지 이동이므로 선택 초기화
     if (pagerFlag) {
       this.selectedCartNum = -1;
     }

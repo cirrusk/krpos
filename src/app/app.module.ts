@@ -2,6 +2,7 @@ import { NgModule, InjectionToken } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { COMPOSITION_BUFFER_MODE } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // https://angular.io/api/forms/COMPOSITION_BUFFER_MODE
 // https://blog.redpumpkin.net/2017/08/13/angular-korean-binding/
 
@@ -21,6 +22,7 @@ import { MESSAGE_PROVIDER } from './message/message';
 @NgModule({
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
     CoreModule,

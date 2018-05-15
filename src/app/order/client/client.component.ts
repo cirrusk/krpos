@@ -1,9 +1,11 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
 import { Accounts, OrderEntry, Pagination } from '../../data';
 import { PagerService } from '../../service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'pos-client',
@@ -21,10 +23,12 @@ export class ClientComponent implements OnInit, OnDestroy {
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
   public cartListCount: number;                   // 카트 목록 개수
-  private pager: Pagination;                        // pagination 정보
+  private pager: Pagination;                      // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
   constructor(private modal: Modal, private storage: StorageService,
-    private logger: Logger, private config: Config, private pagerService: PagerService ) {
+    private logger: Logger, private config: Config,
+    private route: ActivatedRoute,
+    private pagerService: PagerService ) {
     this.cartListCount = this.config.getConfig('cartListCount');
   }
 
@@ -91,8 +95,10 @@ export class ClientComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
+      // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
     } else {
-        this.cartList[existedIdx] = orderEntry;
+      this.cartList[existedIdx] = orderEntry;
+      // this.activeRowCart(existedIdx); // 추가된 row selected
     }
 
     // 장바구니에 추가한 페이지로 이동
@@ -138,9 +144,12 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.selectedCartNum = index;
   }
 
+  /**
+   * resolver 에서 가져온 공지사항을
+   * 고객화면에 출력
+   */
   private loadNotice() {
-    this.noticeList.push('1. 주차권은 고객센터에서 수령하세요!');
-    this.noticeList.push('2. 쿠폰은 계산전에 확인해주시기 바랍니다.');
-    this.noticeList.push('3. 영수증은 꼭 받아가주시기 바랍니다.');
+    const data = this.route.snapshot.data['notice'];
+    this.noticeList = data['notice_cl'];
   }
 }

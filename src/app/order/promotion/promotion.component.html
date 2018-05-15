@@ -1,0 +1,14 @@
+<div class="promotion carousel-wrapper">
+  <ul class="img carousel-inner" #carousel>
+      <li *ngFor="let item of items;let pidx = index" class="on posPromotionItemElement">
+        <ng-container [ngTemplateOutlet]="item.tmpl"></ng-container>
+      </li>
+  </ul>
+  <span class="controls" *ngIf="showControls">
+      <a href class="bx_prev" (click)="!!prev()">이전</a>
+      <a href class="bx_next" (click)="!!next()">다음</a>
+  </span>
+  <span class="pager">
+      <span [class.on]="idx === currentSlide" *ngFor="let item of items;let idx = index">{{idx}}</span>
+  </span>
+</div>
