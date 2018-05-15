@@ -6,8 +6,8 @@ import { Errors } from '../data/error/errors';
 
 export class StringBuilder {
   private buffer: any [] = [];
-  append(data: any): StringBuilder {
-    this.buffer.push(data);
+  append(val: any): StringBuilder {
+    this.buffer.push(val);
     return this;
   }
 
@@ -21,7 +21,7 @@ export class StringBuilder {
     return this;
   }
 
-  toString(): any {
+  toString(): string {
     return this.buffer.join('');
   }
 
