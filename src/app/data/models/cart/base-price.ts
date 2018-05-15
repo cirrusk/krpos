@@ -1,4 +1,4 @@
-import { AmwayValue } from './amway-value';
+import { AmwayValue } from '../common/amway-value';
 
 export class BasePrice {
     currencyIso: string;

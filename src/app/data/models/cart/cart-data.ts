@@ -1,6 +1,6 @@
-import { AmwayValue } from './amway-value';
 import { BasePrice } from './base-price';
 import { Pagination } from '../common/pagination';
+import { AmwayValue } from '../common/amway-value';
 
 /**
  * Add to Cart Response 객체 - CartModificationWsDTO
