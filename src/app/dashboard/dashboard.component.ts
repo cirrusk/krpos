@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           } else if (type === 'lck') {
             this.logger.set('dashboard.component', 'screen locktype subscribe ...').debug();
-            this.screenLockType = data.lockType === undefined ? -1 : data.lockType;
+            this.screenLockType = data.lockType === undefined ? LockType.INIT : data.lockType;
           }
         }
       }

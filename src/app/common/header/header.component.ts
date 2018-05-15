@@ -89,7 +89,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           } else if (type === 'lck') {
             this.logger.set('header component', 'screen locktype receive ...').debug();
-            this.screenLockType = data.lockType === undefined ? 0 : data.lockType;
+            this.screenLockType = data.lockType === undefined ? LockType.UNLOCK : data.lockType;
           } else if (type === 'bat') {
             this.logger.set('header.component', 'batch info receive ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;

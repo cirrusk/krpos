@@ -14,7 +14,7 @@ export class StorageService implements OnDestroy {
   public storageChanges = this.storageSubject.asObservable().share();
   sstorage: Storage;
   lstorage: Storage;
-  constructor(private infobroker: InfoBroker) {
+  constructor(private info: InfoBroker) {
     this.sstorage = sessionStorage;
     this.lstorage = localStorage;
     if (!this.isSessionStorageSupported()) {
@@ -76,7 +76,7 @@ export class StorageService implements OnDestroy {
   public setScreenLockType(data: number): void {
     this.removeSessionItem('screenLockType');
     this.setSessionItem('screenLockType', { lockType: data });
-    this.infobroker.sendInfo('lck', { lockType: data });
+    this.info.sendInfo('lck', { lockType: data });
   }
 
   /**
@@ -92,7 +92,7 @@ export class StorageService implements OnDestroy {
    */
   public removeScreenLock(): void {
     this.removeSessionItem('screenLockType');
-    this.infobroker.sendInfo('lck', { lockType: -1 });
+    this.info.sendInfo('lck', { lockType: -1 });
   }
 
   /**
@@ -254,8 +254,8 @@ export class StorageService implements OnDestroy {
     this.removeScreenLock();
     this.removeTokenInfo();
     this.removeBatchInfo();
-    this.infobroker.sendInfo('bat', { batchNo: null });
-    this.infobroker.sendInfo('tkn', null);
+    this.info.sendInfo('bat', { batchNo: null });
+    this.info.sendInfo('tkn', null);
   }
 
   /**

@@ -33,7 +33,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
               private alert: AlertService,
               private pagerService: PagerService,
               private restoreCartBroker: RestoreCartBroker,
-              private infoBroker: InfoBroker,
+              private info: InfoBroker,
               private logger: Logger) {
     super(modalService);
     this.cartList = new Array<Cart>();
@@ -53,7 +53,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
   activeRow(index: number): void {
     this.activeNum = index;
     this.restoreCartBroker.sendInfo(this.currentCartList[index]);
-    this.infoBroker.sendInfo('hold', 'add');
+    this.info.sendInfo('hold', 'add');
     this.close();
   }
 

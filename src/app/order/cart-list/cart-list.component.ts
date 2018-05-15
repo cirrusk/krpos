@@ -66,7 +66,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               private searchAccountBroker: SearchAccountBroker,
               private restoreCartBroker: RestoreCartBroker,
               private cancleOrderBroker: CancleOrderBroker,
-              private infoBroker: InfoBroker,
+              private info: InfoBroker,
               private config: Config,
               private logger: Logger) {
     this.cartListCount = this.config.getConfig('cartListCount');
@@ -632,7 +632,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
           this.init();
-          this.infoBroker.sendInfo('hold', 'add');
+          this.info.sendInfo('hold', 'add');
           this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
         },
         error => {
@@ -661,7 +661,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           this.saveCartResult = result;
           this.setCartInfo(this.saveCartResult.savedCartData);
-          this.infoBroker.sendInfo('hold', 'add');
+          this.info.sendInfo('hold', 'add');
         },
         error => {
           this.spinner.hide();
