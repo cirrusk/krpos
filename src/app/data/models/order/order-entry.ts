@@ -30,4 +30,8 @@ export class OrderEntry {
     quantityPending: number;
     quantityShipped: number;
     quantityReturned: number;
+
+    constructor(_product?: ProductInfo) {
+        this.product = _product;
+    }
 }
