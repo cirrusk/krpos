@@ -23,6 +23,7 @@ export * from './models/order/cart-message';
 export * from './models/order/customer';
 export * from './models/order/phone-contact-info';
 export * from './models/order/user';
+export * from './models/order/copy-cart-entries';
 
 export * from './models/common/amway-value';
 export * from './models/common/access-token';

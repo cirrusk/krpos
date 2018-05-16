@@ -288,101 +288,66 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           if (this.cartList.length > 0) {
-            this.init();
-            const terminalInfo = this.storage.getTerminalInfo();
-            let accountId = '';
-
-            if (changeUserInfo.accountType === 'CLIENT' || changeUserInfo.accountType === 'EMPLOYEE') {
-              accountId = changeUserInfo.parties[0].uid;
-            } else {
-              accountId = changeUserInfo.uid;
-            }
-
             this.spinner.show();
-            this.cartInfoSubscription = this.cartService.createCartInfo(changeUserInfo.uid, accountId, terminalInfo.pointOfService.name , 'POS').subscribe(
-              newCartInfo => {
-                this.cartListSubscription = this.cartService.getCartList(currentCartInfo.user.uid, currentCartInfo.code).subscribe(
-                  resultCartList => {
-                    let sourceCartList = new Cart();
-                    this.accountInfo = changeUserInfo;
-                    this.cartInfo = newCartInfo;
-                    sourceCartList = resultCartList;
-                    this.copyCartEntriesSubscription = this.cartService.copyCartEntries(newCartInfo, sourceCartList.entries).subscribe(
-                      saveList => {
-                        this.addCartModel = saveList;
-                        let appendMessage = '';
-                        this.addCartModel.forEach(model => {
-                            if (model.statusCode === 'success') {
-                              this.productInfo = model.entry;
-                              this.addCartEntry(this.productInfo);
-                            } else {
-                              model.messages.forEach(message => {
-                                // if (message.severity === 'ERROR') {
-                                if (appendMessage === '' ) {
-                                  appendMessage += message.message;
-                                } else {
-                                  appendMessage += '<br/>' + message.message;
-                                }
-                              // }
-                              });
-                            }
-                        });
 
-                        if (appendMessage !== '') {
-                          const desciption = `<dt>라면류</dt>
-                          <dd>
-                          <span class="break">뉴트리 라면(259334K)</span>
-                          <span class="break">뉴트리 라면(259334K)</span>
-                          <span class="break">뉴트리(259336K)</span></dd>`;
+            this.copyCartEntriesSubscription = this.cartService.copyCartEntries(changeUserInfo, this.cartList).subscribe(
+              resultData => {
+                this.init();
+                this.accountInfo = changeUserInfo;
+                this.cartInfo = resultData.cartInfo;
 
-                          const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
-                          this.modal.openModalByComponent(RestrictComponent,
-                            {
-                              callerData: { data: rmsgs },
-                              image: '/assets/images/temp/198x198.jpg',
-                              desc: desciption,
-                              message: appendMessage,
-                              closeByEnter: true,
-                              modalId: 'RestictComponent'
-                            }
-                          );
+                this.addCartModel = resultData.cartModification;
+                let appendMessage = '';
+                this.addCartModel.forEach(model => {
+                    if (model.statusCode === 'success') {
+                      this.productInfo = model.entry;
+                      this.addCartEntry(this.productInfo);
+                    } else {
+                      model.messages.forEach(message => {
+                        // if (message.severity === 'ERROR') {
+                        if (appendMessage === '' ) {
+                          appendMessage += message.message;
                         } else {
-                          this.activeSearchMode('P');
-                          this.getCarts();
+                          appendMessage += '<br/>' + message.message;
                         }
-                      },
-                      error => {
-                        this.spinner.hide();
-                        const errdata = Utils.getError(error);
-                        if (errdata) {
-                          this.logger.set('cartList.component', `Change User - copy cart error type : ${errdata.type}`).error();
-                          this.logger.set('cartList.component', `Change User - copy cart error message : ${errdata.message}`).error();
-                          this.alert.error({ message: `${errdata.message}` });
-                        }
-                      }
-                    );
-                  },
-                  error => {
-                    this.spinner.hide();
-                    const errdata = Utils.getError(error);
-                    if (errdata) {
-                      this.logger.set('cartList.component', `Change User - get cart error type : ${errdata.type}`).error();
-                      this.logger.set('cartList.component', `Change User - get cart error message : ${errdata.message}`).error();
-                      this.alert.error({ message: `${errdata.message}` });
+                      // }
+                      });
                     }
-                  }
-                );
+                });
+
+                if (appendMessage !== '') {
+                  const desciption = `<dt>라면류</dt>
+                  <dd>
+                  <span class="break">뉴트리 라면(259334K)</span>
+                  <span class="break">뉴트리 라면(259334K)</span>
+                  <span class="break">뉴트리(259336K)</span></dd>`;
+
+                  const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+                  this.modal.openModalByComponent(RestrictComponent,
+                    {
+                      callerData: { data: rmsgs },
+                      image: '/assets/images/temp/198x198.jpg',
+                      desc: desciption,
+                      message: appendMessage,
+                      closeByEnter: true,
+                      modalId: 'RestictComponent'
+                    }
+                  );
+                } else {
+                  this.activeSearchMode('P');
+                  this.getCarts();
+                }
               },
-                error => {
-                  this.spinner.hide();
-                  const errdata = Utils.getError(error);
-                  if (errdata) {
-                    this.logger.set('cartList.component', `Change User - create cart error type : ${errdata.type}`).error();
-                    this.logger.set('cartList.component', `Change User - create cart error message : ${errdata.message}`).error();
-                    this.alert.error({ message: `${errdata.message}` });
-                  }
+              error => {
+                this.spinner.hide();
+                const errdata = Utils.getError(error);
+                if (errdata) {
+                  this.logger.set('cartList.component', `Change User error type : ${errdata.type}`).error();
+                  this.logger.set('cartList.component', `Change User error message : ${errdata.message}`).error();
+                  this.alert.error({ message: `${errdata.message}` });
+                }
               },
-              () => { this.spinner.hide(); }
+              () => {this.spinner.hide(); }
             );
           }
         }
@@ -550,7 +515,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      this.addCartSubscription = this.cartService.addCartEntries(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntry(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
         result => {
           this.addCartModel = result;
           if (this.addCartModel[0].statusCode === 'success') {

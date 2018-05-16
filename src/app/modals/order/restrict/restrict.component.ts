@@ -7,6 +7,9 @@ import { Utils } from '../../../core/utils';
   templateUrl: './restrict.component.html'
 })
 export class RestrictComponent extends ModalComponent implements OnInit {
+  image: string;
+  message: string;
+  desc: string;
 
   constructor(protected modalService: ModalService) {
     super(modalService);

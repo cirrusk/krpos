@@ -5,9 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { NetworkService, StorageService, Config, Logger } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, OrderParams, Product, Accounts, OrderEntry, ProductInfo} from '../../data';
-import { CartList } from '../../data/models/order/cart-list';
-import { SaveCartResult } from '../../data/models/order/save-cart-result';
+  OrderEntries, OrderEntryList, OrderParams, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries} from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 
@@ -75,7 +73,7 @@ export class CartService {
    * @param cartId
    * @param code
    */
-  addCartEntries(userId: string, cartId: string, code: string): Observable<CartModification[]> {
+  addCartEntry(userId: string, cartId: string, code: string): Observable<CartModification[]> {
     const orderList = new OrderEntryList();
     const orderEntries: OrderEntry[] = [];
     const entry = new OrderEntry(new ProductInfo(code));
@@ -90,21 +88,37 @@ export class CartService {
                           .map(data => data as CartModification[]);
   }
 
+  addCartEntries(userId: string, cartId: string, orderEntries: Array<OrderEntry>): Observable<CartModification[]> {
+    const orderList = new OrderEntryList();
+    orderList.orderEntries = orderEntries;
+
+    const apiURL = this.config.getApiUrl('addToCart', {'userId' : userId, 'cartId': cartId});
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+
+    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(orderList), { headers : httpHeaders })
+                          .map(data => data as CartModification[]);
+  }
+
   /**
    * 장바구니 복제
    * @param changeCartInfo
    * @param orderEntries
    */
-  copyCartEntries(changeCartInfo: CartInfo,
-                  orderEntries: Array<OrderEntry>): Observable<CartModification[]> {
-    const orderList = new OrderEntryList();
-    orderList.orderEntries = orderEntries;
+  copyCartEntries(changeUserInfo: Accounts,
+                  orderEntries: Array<OrderEntry>): Observable<CopyCartEntries> {
+    const terminalInfo = this.storage.getTerminalInfo();
+    let accountId = '';
 
-    const apiURL = this.config.getApiUrl('addToCart', {'userId' : changeCartInfo.user.uid, 'cartId': changeCartInfo.code});
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(orderList), { headers : httpHeaders })
-                    .map(data => data as CartModification[]);
+    if (changeUserInfo.accountType === 'CLIENT' || changeUserInfo.accountType === 'EMPLOYEE') {
+      accountId = changeUserInfo.parties[0].uid;
+    } else {
+      accountId = changeUserInfo.uid;
+    }
+    return this.createCartInfo(changeUserInfo.uid, accountId, terminalInfo.pointOfService.name , 'POS')
+               .flatMap((cartInfo: CartInfo) => {
+                 return this.addCartEntries(cartInfo.user.uid, cartInfo.code, orderEntries)
+                            .map(addEntries => new CopyCartEntries(cartInfo, addEntries) as CopyCartEntries);
+               });
   }
 
   /**
