@@ -18,7 +18,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
   constructor(private renderer: Renderer2, private config: Config) { }
 
   ngOnInit() {
-    this.noticeSize = this.noticeList.length;
+    this.noticeSize = this.noticeList && this.noticeList.length;
     this.noticeterm = this.config.getConfig('noticeInterval', 7);
     this.start();
   }

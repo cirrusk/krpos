@@ -8,7 +8,7 @@
   <button #menus type="button" (click)="promotionOrder($event)" class="purple">프로모션 상품</button>
   <button #menus type="button" (click)="etcOrder($event)">기타</button>
 </div>
-<pos-promotion>
+<pos-promotion *ngIf="promotionList && promotionList.length > 0">
     <ng-container *ngFor="let promotion of promotionList;">
         <ng-container *posPromotionItem>
             <a href="javascript:void(0)">
