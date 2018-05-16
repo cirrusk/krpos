@@ -52,7 +52,7 @@ export class AlertComponent implements OnInit, OnDestroy {
         // setTimeout(() => this.elm.nativeElement.focus(), 200);
       } else {
         this.renderer.setStyle(this.elm.nativeElement, 'display', 'none');
-        this.elm.nativeElement.blur();
+        // this.elm.nativeElement.blur();
         // setTimeout(() => this.elm.nativeElement.blur(), 200);
       }
     }
@@ -67,6 +67,6 @@ export class AlertComponent implements OnInit, OnDestroy {
   }
 
   private alertHide() {
-      window.setTimeout(() => this.renderer.setStyle(this.elm.nativeElement, 'display', 'none'), 300);
+      window.setTimeout(() => this.renderer.setStyle(this.elm.nativeElement, 'display', 'none'), 10);
   }
 }
