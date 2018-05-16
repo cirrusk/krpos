@@ -30,6 +30,10 @@ export class AlertService {
     });
   }
 
+  hide() {
+    this.alertSubject.next(<AlertState> { show: false });
+  }
+
   info(params: any) {
     params.alertType = AlertType.info;
     params.title = (params.title) ? params.title : '확인',
@@ -46,10 +50,6 @@ export class AlertService {
     params.alertType = AlertType.error;
     params.title = (params.title) ? params.title : '오류',
     this.show(params);
-  }
-
-  hide() {
-    this.alertSubject.next(<AlertState> { show: false });
   }
 
 }
