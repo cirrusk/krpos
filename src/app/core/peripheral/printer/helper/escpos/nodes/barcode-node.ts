@@ -81,13 +81,7 @@ export default class BarcodeNode extends XMLNode {
     }
 
     if (system && this.content) {
-      console.log(
-        '1'
-      );
       bufferBuilder.printBarcode(this.content.trim(), system, width, height, labelFont, labelPosition, leftSpacing);
-      console.log(
-        '2'
-      );
     }
 
     return bufferBuilder;
