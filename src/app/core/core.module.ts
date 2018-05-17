@@ -9,7 +9,7 @@ import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 
 import { AuthService, BatchService, CartService, SearchService, TerminalService, MessageService, PagerService, AccountService } from '../service';
-import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchBroker, SearchAccountBroker } from '../broker';
+import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchBroker, SearchAccountBroker, UpdateItemQtyBroker } from '../broker';
 import { ChecksComponent } from '../modals';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
@@ -51,6 +51,7 @@ import { PhoneNumberMaskPipe } from './pipe/phone-number-mask.pipe';
     SearchAccountBroker,
     RestoreCartBroker,
     CancleOrderBroker,
+    UpdateItemQtyBroker,
     QzHealthChecker,
     DatePipe,
     Logger

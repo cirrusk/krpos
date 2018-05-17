@@ -25,3 +25,4 @@ export * from './payment/ways/ic-card/ic-card.component';
 export * from './payment/ways/point/point.component';
 export * from './payment/ways/re-cash/re-cash.component';
 export * from './product/search-product/search-product.component';
+export * from './cart/update-item-qty/update-item-qty.component';

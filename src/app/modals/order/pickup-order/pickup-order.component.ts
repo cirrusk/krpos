@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
 
 import { EcpPrintComponent } from '../ecp-print/ecp-print.component';
+import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { StringBuilder } from '../../../core/utils';
 
@@ -19,6 +20,16 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
 
   confirmECP(evt: any) {
     this.setSelected(evt);
+
+    this.modal.openModalByComponent(EcpConfirmComponent,
+      {
+        callerData: { 'userId' : '7480001',
+                      'cartId' : '200000001'  },
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        modalId: 'EcpConfirmComponent'
+      }
+    );
   }
 
   printECP(evt: any) {

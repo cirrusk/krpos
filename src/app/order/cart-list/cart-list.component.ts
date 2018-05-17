@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Inpu
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent } from '../../modals';
+import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
 import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config } from '../../core';
 
 import { CartService, PagerService, SearchService } from '../../service';
 import { MessageService } from './../../message/message.service';
-import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
+import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
@@ -31,6 +31,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private cartListSubscription: Subscription;
   private productInfoSubscription: Subscription;
   private copyCartEntriesSubscription: Subscription;
+  private updateItemQtySubscription: Subscription;
 
   private searchParams: SearchParam;              // 조회 파라미터
   private cartInfo: CartInfo;                     // 장바구니 기본정보
@@ -67,6 +68,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               private searchAccountBroker: SearchAccountBroker,
               private restoreCartBroker: RestoreCartBroker,
               private cancleOrderBroker: CancleOrderBroker,
+              private updateItemQtyBroker: UpdateItemQtyBroker,
               private info: InfoBroker,
               private config: Config,
               private logger: Logger) {
@@ -120,6 +122,14 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     );
+
+    this.updateItemQtySubscription = this.updateItemQtyBroker.getInfo().subscribe(
+      result => {
+        if (result) {
+          this.updateItemQtyCart(result.code, result.qty);
+        }
+      }
+    );
   }
 
   ngOnInit() {
@@ -140,6 +150,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.cartListSubscription)            { this.cartListSubscription.unsubscribe(); }
     if (this.productInfoSubscription)         { this.productInfoSubscription.unsubscribe(); }
     if (this.copyCartEntriesSubscription)     { this.copyCartEntriesSubscription.unsubscribe(); }
+    if (this.updateItemQtySubscription)       { this.updateItemQtySubscription.unsubscribe(); }
   }
 
   /**
@@ -238,6 +249,27 @@ export class CartListComponent implements OnInit, OnDestroy {
     ).subscribe(result => {
       this.searchText.nativeElement.focus();
     });
+  }
+
+  /**
+   * 제품 수량 수정 팝업
+   */
+  callUpdateItemQty() {
+    if (this.selectedCartNum === -1 ) {
+      this.alert.warn({message: '수정할 제품을 선택 해 주세요.'});
+    } else {
+      const code = this.currentCartList[this.selectedCartNum].product.code;
+      const qty = this.currentCartList[this.selectedCartNum].quantity;
+
+      this.modal.openModalByComponent(UpdateItemQtyComponent,
+        {
+          callerData: {code: code, qty: qty},
+          actionButtonLabel: '선택',
+          closeButtonLabel: '취소',
+          modalId: 'UpdateItemQtyComponent'
+        }
+      );
+    }
   }
 
   /**
@@ -574,7 +606,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 주문 리스트 추가
    * @param orderEntry
    */
-  addCartEntry(orderEntry: OrderEntry) {
+  addCartEntry(orderEntry: OrderEntry, index?: number) {
     const existedIdx: number = this.cartList.findIndex(
       function (obj) {
         return obj.product.code === orderEntry.product.code;
@@ -594,7 +626,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setOrderEntry(orderEntry); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
 
     // 장바구니에 추가한 페이지로 이동
-    this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
+    const page = index ? index + 1 : this.cartList.length;
+    this.setPage(Math.ceil(page / this.cartListCount));
   }
 
   /**
@@ -614,7 +647,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                         code,
                                                                         qty).subscribe(
         result => {
-          this.addCartEntry(result.entry);
+          this.addCartEntry(result.entry, index);
         },
         error => {
           this.spinner.hide();
@@ -842,8 +875,10 @@ export class CartListComponent implements OnInit, OnDestroy {
       // 수정 이벤트
       // 임시
       if (event.keyCode === 45) {
-        this.modifyFlag = !this.modifyFlag;
-        this.updateItemQtyCart(this.currentCartList[this.selectedCartNum].product.code, event.keyCode);
+        this.callUpdateItemQty();
+
+        // this.modifyFlag = !this.modifyFlag;
+        // this.updateItemQtyCart(this.currentCartList[this.selectedCartNum].product.code, event.keyCode);
       // 개별 삭제 이벤트
       // 임시
       } else if (event.keyCode === 46) {
