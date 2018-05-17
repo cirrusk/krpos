@@ -94,7 +94,7 @@ export class ApiService {
    */
   private callApi(method: string, apikey: string, pathvariables: any, body: object = null, params: any, headertype?: string): Observable<any> {
     const apiUrl = this.getApiUrl(apikey, pathvariables);
-    this.logger.set('api.service', `METHOD : ${method.toUpperCase()}, URL : ${apiUrl}`).debug();
+    this.logger.set('api.service', `[${method.toUpperCase()}] URL : ${apiUrl}`).debug();
     return this.http.request(method, apiUrl,
     {
       body: body,
