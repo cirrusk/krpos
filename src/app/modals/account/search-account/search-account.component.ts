@@ -78,7 +78,9 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.currentRightAccountList = new Array<Accounts>();
     }
     if (this.accountList !== undefined) {
-      this.accountList.accounts.length = 0;
+      if (this.accountList.accounts) {
+        this.accountList.accounts.length = 0;
+      }
     } else {
       this.accountList = new AccountList();
     }
