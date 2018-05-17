@@ -191,7 +191,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.posName = '-';
             this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
-            this.alert.error({message: this.msg.get('posNotSet')});
+            this.alert.error({title: '미등록 기기 알림', message: this.msg.get('posNotSet')});
           }
         );
       },
