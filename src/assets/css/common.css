@@ -458,6 +458,8 @@ table input[type='text'] {font-family:'NSM';}
 
 #container {position:relative; padding-right:190px}
 #container.customer {padding-right:0}
+#container.customer .m_cont .notice dd {width:910px}
+
 .m_cont {position:relative; width:100%; height:718px; padding:45px 25px 0; box-sizing:border-box;}
 .m_cont .member_list {position:absolute; top:0; left:0; width:100%; height:40px; padding:15px 51px 0; box-sizing:border-box; font-size:0; overflow:hidden}
 .m_cont .member_list button {position:absolute; top:17px}
@@ -553,8 +555,8 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section02 .right .calc02 em {width:70%; height:64px; line-height:60px; padding-right:30px; text-align:right; font-size:23px}
 
 .m_cont .notice {margin-top:12px; position:relative;}
-.m_cont .notice dt {display:inline-block; width:61px; height:20px;}
-.m_cont .notice dd {display:inline-block; width:700px; height:20px; padding-left:10px; box-sizing:border-box; line-height:20px; font-family:'NSR'; font-size:12px; font-style:italic; color:#666}
+.m_cont .notice dt {display:inline-block; width:61px; height:20px; vertical-align:middle}
+.m_cont .notice dd {display:inline-block; width:720px; height:26px; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:10px; box-sizing:border-box; line-height:24px; font-family:'NSR'; font-size:12px; font-style:italic; color:#666}
 
 .m_right {position:absolute; top:0; right:0; width:190px; height:718px; padding:33px 25px 0; box-sizing:border-box; background-color:#08132f}
 .m_right .nav {}
