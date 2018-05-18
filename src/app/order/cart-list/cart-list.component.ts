@@ -8,7 +8,7 @@ import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger,
 import { CartService, PagerService, SearchService } from '../../service';
 import { MessageService } from './../../message/message.service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination, CartMessage } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import { Utils } from '../../core/utils';
@@ -647,7 +647,41 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                         code,
                                                                         qty).subscribe(
         result => {
-          this.addCartEntry(result.entry, index);
+          this.updateCartModel = result;
+          if (this.updateCartModel.statusCode === 'success') {
+            this.productInfo = this.updateCartModel.entry;
+            this.addCartEntry(this.productInfo);
+            this.addCartEntry(result.entry, index);
+          } else {
+            let appendMessage = '';
+            this.updateCartModel.messages.forEach(message => {
+              // if (message.severity === 'ERROR') {
+                if (appendMessage === '' ) {
+                  appendMessage += message.message;
+                } else {
+                  appendMessage += '<br/>' + message.message;
+                }
+              // }
+            });
+
+            const desciption = `<dt>라면류</dt>
+            <dd>
+            <span class="break">뉴트리 라면(259334K)</span>
+            <span class="break">뉴트리 라면(259334K)</span>
+            <span class="break">뉴트리(259336K)</span></dd>`;
+
+            const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+            this.modal.openModalByComponent(RestrictComponent,
+              {
+                callerData: { data: rmsgs },
+                image: '/assets/images/temp/198x198.jpg',
+                desc: desciption,
+                message: appendMessage,
+                closeByEnter: true,
+                modalId: 'RestictComponent'
+              }
+            );
+          }
         },
         error => {
           this.spinner.hide();
