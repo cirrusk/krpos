@@ -14,9 +14,9 @@ import { NoticeResolver } from './order/notice/notice.resolver';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'order', component: OrderComponent, canActivate: [OrderGuard] /*, resolve: {notice: NoticeResolver} */},
+  { path: 'order', component: OrderComponent, canActivate: [OrderGuard], resolve: {notice: NoticeResolver} },
   { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
-  { path: 'client', component: ClientComponent /*, resolve: {notice: NoticeResolver} */ },
+  { path: 'client', component: ClientComponent, resolve: {notice: NoticeResolver}  },
   { path: 'test', component: TestComponent },
   { path: '**', redirectTo: '/dashboard', pathMatch: 'full' }
 ];

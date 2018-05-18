@@ -46,5 +46,6 @@ export const environment = {
   healthCheckInterval: 9000,
   hybrisCheckUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/',
   cartListCount: 8,
-  noticeInterval: 7
+  noticeInterval: 7,
+  promotionInterval: 9
 };
