@@ -173,6 +173,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modifyFlag =  false;
     this.pager = new Pagination();
     this.saveCartResult = new SaveCartResult();
+    this.posCart.emit({ type: 'account', flag: false }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+    this.posCart.emit({ type: 'product', flag: false }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+    this.posCart.emit({ type: 'cart', flag: false }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
   }
 
   /**
