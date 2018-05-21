@@ -650,8 +650,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.updateCartModel = result;
           if (this.updateCartModel.statusCode === 'success') {
             this.productInfo = this.updateCartModel.entry;
-            this.addCartEntry(this.productInfo);
-            this.addCartEntry(result.entry, index);
+            this.addCartEntry(this.productInfo, index);
           } else {
             let appendMessage = '';
             this.updateCartModel.messages.forEach(message => {
@@ -916,7 +915,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       // 개별 삭제 이벤트
       // 임시
       } else if (event.keyCode === 46) {
-        this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
+        if (this.selectedCartNum === -1 ) {
+          this.alert.warn({message: '삭제할 제품을 선택 해 주세요.'});
+        } else {
+          this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
+        }
       }
     }
 
