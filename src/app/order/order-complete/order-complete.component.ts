@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pos-order-complete',
@@ -6,9 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrderCompleteComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
+  }
+
+  goOrder() {
+    this.router.navigate(['/order']);
   }
 
 }

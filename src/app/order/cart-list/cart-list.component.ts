@@ -78,7 +78,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         if (result) {
-          this.posCart.emit({ type: 'account', flag: true }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+          this.posCart.emit({ type: 'account', flag: true, data: result }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           if (this.accountInfo) {
             this.changeUser(this.accountInfo, this.cartInfo, result);
           } else {
@@ -259,7 +259,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   callUpdateItemQty() {
     if (this.selectedCartNum === -1 ) {
-      this.alert.warn({message: '수정할 제품을 선택 해 주세요.'});
+      this.alert.warn({message: this.messageService.get('selectProductUpdate')});
     } else {
       const code = this.currentCartList[this.selectedCartNum].product.code;
       const qty = this.currentCartList[this.selectedCartNum].quantity;
@@ -826,6 +826,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           this.saveCartResult = result;
           this.setCartInfo(this.saveCartResult.savedCartData);
+          this.posCart.emit({ type: 'product', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+          this.posCart.emit({ type: 'cart', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           this.info.sendInfo('hold', 'add');
         },
         error => {
@@ -912,14 +914,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       // 임시
       if (event.keyCode === 45) {
         this.callUpdateItemQty();
-
-        // this.modifyFlag = !this.modifyFlag;
-        // this.updateItemQtyCart(this.currentCartList[this.selectedCartNum].product.code, event.keyCode);
-      // 개별 삭제 이벤트
-      // 임시
+        // 개별 삭제 이벤트
+        // 임시
       } else if (event.keyCode === 46) {
         if (this.selectedCartNum === -1 ) {
-          this.alert.warn({message: '삭제할 제품을 선택 해 주세요.'});
+          this.alert.warn({message: this.messageService.get('selectProductDelete')});
         } else {
           this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
         }

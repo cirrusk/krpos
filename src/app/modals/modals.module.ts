@@ -37,6 +37,7 @@ import { RfidComponent } from './scan/rfid/rfid.component';
 import { SerialComponent } from './scan/serial/serial.component';
 import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
+import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.c
     RfidComponent,
     SerialComponent,
     EcpConfirmComponent,
-    UpdateItemQtyComponent
+    UpdateItemQtyComponent,
+    CashReceiptComponent
   ],
   imports: [
     CommonModule,

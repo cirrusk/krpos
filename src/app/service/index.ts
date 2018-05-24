@@ -6,5 +6,6 @@ export * from './receipt.service';
 
 export * from './order/cart.service';
 export * from './order/search.service';
+export * from './order/order.service';
 export * from './account.service';
 export * from '../message/message.service';

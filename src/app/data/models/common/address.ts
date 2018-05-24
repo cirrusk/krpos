@@ -1,9 +1,27 @@
+import { Region, Country } from '../..';
+
 export class Address {
-    defaultAddress: boolean;
     id: string;
+    title: string;
+    titleCode: string;
+    firstName: string;
+    lastName: string;
+    companyName: string;
     line1: string;
     line2: string;
-    phone: string;
-    postalCode: string;
     town: string;
+    region: Region;
+    postalCode: string;
+    phone: string;
+    email: string;
+    country: Country;
+    shippingAddress: boolean;
+    defaultAddress: boolean;
+    visibleInAddressBook: boolean;
+    formattedAddress: string;
+    line3: string;
+    landmark: string;
+    county: string;
+
+    constructor() {}
 }

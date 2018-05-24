@@ -106,13 +106,13 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   checkPayment(evt: any) {
     this.setSelected(evt);
-    this.modal.openModalByComponent(ChecksComponent,
+    this.modal.openModalByComponent(CashComponent,
       {
         title: '',
         actionButtonLabel: '',
         closeButtonLabel: '',
         closeByClickOutside: false,
-        modalId: 'ChecksComponent'
+        modalId: 'CashComponent'
       }
     );
   }

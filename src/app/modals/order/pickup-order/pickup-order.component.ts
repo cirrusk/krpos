@@ -2,8 +2,11 @@ import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } fro
 
 import { EcpPrintComponent } from '../ecp-print/ecp-print.component';
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
-import { ModalComponent, ModalService, Modal } from '../../../core';
-import { StringBuilder } from '../../../core/utils';
+import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService } from '../../../core';
+import { StringBuilder, Utils } from '../../../core/utils';
+import { OrderHistory } from '../../../data';
+import { OrderService } from '../../../service';
+import { Order } from '../../../data/models/order/order';
 
 @Component({
   selector: 'pos-pickup-order',
@@ -11,11 +14,40 @@ import { StringBuilder } from '../../../core/utils';
 })
 export class PickupOrderComponent extends ModalComponent implements OnInit {
   @ViewChildren('ecporders') ecporders: QueryList<ElementRef>;
-  constructor(protected modalService: ModalService, private modal: Modal, private renderer: Renderer2) {
+  private orderInfo: OrderHistory;
+  private order: Order;
+  constructor(protected modalService: ModalService,
+              private orderService: OrderService,
+              private modal: Modal,
+              private spinner: SpinnerService,
+              private logger: Logger,
+              private alert: AlertService,
+              private renderer: Renderer2) {
     super(modalService);
   }
 
   ngOnInit() {
+    if (this.callerData.orderInfo) {
+      this.orderInfo = this.callerData.orderInfo;
+      this.spinner.show();
+      this.orderService.getOrderDetail(this.orderInfo.code).subscribe(
+        orderDetail => {
+          if (orderDetail) {
+            this.order = orderDetail;
+          }
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('pickup-order.component', `Get Order Detail error type : ${errdata.type}`).error();
+            this.logger.set('pickup-order.component', `Get Order Detail error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
+    }
   }
 
   confirmECP(evt: any) {
@@ -23,8 +55,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
 
     this.modal.openModalByComponent(EcpConfirmComponent,
       {
-        callerData: { 'userId' : '7480001',
-                      'cartId' : '200000001'  },
+        callerData: { order: this.order  },
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         modalId: 'EcpConfirmComponent'

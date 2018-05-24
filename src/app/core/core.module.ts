@@ -8,7 +8,7 @@ import { ModalsModule } from '../modals/modals.module';
 import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 
-import { AuthService, BatchService, CartService, SearchService, TerminalService, MessageService, PagerService, AccountService } from '../service';
+import { AuthService, BatchService, CartService, SearchService, TerminalService, MessageService, PagerService, AccountService, OrderService } from '../service';
 import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchBroker, SearchAccountBroker, UpdateItemQtyBroker } from '../broker';
 import { ChecksComponent } from '../modals';
 
@@ -43,6 +43,7 @@ import { PhoneNumberMaskPipe } from './pipe/phone-number-mask.pipe';
     BatchService,
     SearchService,
     CartService,
+    OrderService,
     StorageService,
     PagerService,
     MessageService,
