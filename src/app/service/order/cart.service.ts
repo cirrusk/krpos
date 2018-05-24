@@ -27,7 +27,7 @@ export class CartService {
    * @param cartType
    */
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
-    const macAddress = this.networkService.getLocalMacAddress('-');
+    const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
     const cartParams = new CartParams(pickupStore, cartType, null);
     const apiURL = this.config.getApiUrl('createCart', {'accountId' : accountId, 'userId': userId})
                                        + `?fields=BASIC&mac_address=${macAddress}`;
@@ -177,9 +177,11 @@ export class CartService {
    * @param userId
    */
   getCarts(userId?: string): Observable<CartList> {
-    const macAddress = this.networkService.getLocalMacAddress('-');
+    const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
     let apiURL = this.config.getApiUrl('getCart', {'macAddress' : macAddress});
-    if (userId) { apiURL += `?userId=${userId}`; }
+    if (userId) {
+      apiURL += `?userId=${userId}`;
+    }
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
     return this.httpClient.get<CartList>(apiURL, { headers : httpHeaders })
                           .map(data => data as CartList);
@@ -190,7 +192,7 @@ export class CartService {
    */
   saveCart(accountId: string, userId: string, cartId: string): Observable<SaveCartResult> {
     const cashierId = this.storage.getEmloyeeId();
-    const macAddress = this.networkService.getLocalMacAddress('-');
+    const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
 
     const apiURL = this.config.getApiUrl('saveCart', {'accountId' : accountId, 'userId': userId, 'cashierId': cashierId, 'macAddress': macAddress, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
