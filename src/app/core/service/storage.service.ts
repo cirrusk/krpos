@@ -66,6 +66,30 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * 로컬 맥어드레스 저장(base64 인코딩)
+   *
+   * @param data 맥어드레스
+   */
+  public setMacAddress(data: string): void {
+    this.setSessionItem('macaddress', btoa(data));
+  }
+
+  /**
+   * 로컬 맥어드레스 취득(base64 디코딩)
+   */
+  public getMacAddress(): string {
+    const data = this.getSessionItem('macaddress');
+    return data && atob(data);
+  }
+
+  /**
+   * 로컬 맥어드레스 삭제
+   */
+  public removeMacAddress(): void {
+    this.removeSessionItem('macaddress');
+  }
+
+  /**
    * 화면 잠금 플래그 처리 지정
    * localstorage 로 처리하면 별도의 작업 없이
    * subscribe 할 수 있지만 값이 계속 남아 타 사용자가 들어왔을 경우 적용됨.

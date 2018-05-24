@@ -40,6 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private holdsubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
+  private sessionMacAddress: string;
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
@@ -84,9 +85,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           if (type === 'tkn') {
             this.logger.set('header component', 'access token receive ...').debug();
             this.isLogin = (data.access_token === undefined || data.access_token === null) ? false : this.storage.isLogin();
-            if (this.network.getLocalMacAddress() && this.isLogin) {
-              this.getHoldTotalCount();
-            }
+            this.getHoldTotalCount();
           } else if (type === 'lck') {
             this.logger.set('header component', 'screen locktype receive ...').debug();
             this.screenLockType = data.lockType === undefined ? LockType.UNLOCK : data.lockType;
@@ -101,6 +100,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     );
+    this.getHoldTotalCount();
     const batchinfo: BatchInfo = this.storage.getBatchInfo();
     this.batchNo = (batchinfo) ? (Utils.isEmpty(batchinfo.batchNo)) ? null : batchinfo.batchNo : null;
     this.storagesubscription = this.storage.storageChanges.subscribe(data => {
@@ -175,11 +175,17 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 관련 작업은 이후에 해주어야함.
    * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
    * 가끔씩 이 부분이 늦게 처리되어 로그인 시 terminal 정보가 없어서 에러가 발생 ---> 확인 필요!!!
+   * 처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고 이후에는 세션에서 취득하도록 수정
    */
   private getTerminalInfo() {
-    this.network.wait().subscribe(
-      () => {
-        const macAddress = this.network.getLocalMacAddress('-');
+    const macAddress = this.storage.getMacAddress();
+    if (macAddress && Utils.isNotEmpty(macAddress)) {
+      this.logger.set('header.component', 'exist session macaddress, get session terminal info...').debug();
+      const terminalinfo: TerminalInfo = this.storage.getTerminalInfo();
+      if (terminalinfo) {
+        this.posName = terminalinfo.id; // pointOfService.displayName;
+        this.hasTerminal = true;
+      } else {
         this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
           result => {
             this.posName = result.id; // pointOfService.displayName;
@@ -194,9 +200,31 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.alert.error({title: '미등록 기기 알림', message: this.msg.get('posNotSet')});
           }
         );
-      },
-      error => {}
-    );
+      }
+    } else {
+      this.logger.set('header.component', 'not exist session macaddress, subscribing network driver...').debug();
+      this.network.wait().subscribe(
+        () => {
+          const macAddr = this.network.getLocalMacAddress('-');
+          this.storage.setMacAddress(macAddr); // mac address session storage 저장.
+          this.subscription = this.terminalService.getTerminalInfo(macAddr).subscribe(
+            result => {
+              this.posName = result.id; // pointOfService.displayName;
+              this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
+              this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
+              this.hasTerminal = true;
+            },
+            error => {
+              this.posName = '-';
+              this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
+              this.hasTerminal = false;
+              this.alert.error({title: '미등록 기기 알림', message: this.msg.get('posNotSet')});
+            }
+          );
+        },
+        error => {}
+      );
+    }
   }
 
   /**
@@ -217,19 +245,21 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 보류 건수 조회하기
    */
   getHoldTotalCount() {
-    this.holdsubscription = this.cartService.getCarts().subscribe(
-      result => {
-        this.holdTotalCount = result.carts.length;
-      },
-      error => {
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
-          this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+    if (this.storage.getMacAddress() && this.isLogin) {
+      this.holdsubscription = this.cartService.getCarts().subscribe(
+        result => {
+          this.holdTotalCount = result.carts.length;
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
+            this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   /**

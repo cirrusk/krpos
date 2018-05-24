@@ -178,14 +178,9 @@ export class CartService {
    */
   getCarts(userId?: string): Observable<CartList> {
     const macAddress = this.networkService.getLocalMacAddress('-');
-
     let apiURL = this.config.getApiUrl('getCart', {'macAddress' : macAddress});
-    if (userId) {
-      apiURL += `?userId=${userId}`;
-    }
-
+    if (userId) { apiURL += `?userId=${userId}`; }
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
     return this.httpClient.get<CartList>(apiURL, { headers : httpHeaders })
                           .map(data => data as CartList);
   }
