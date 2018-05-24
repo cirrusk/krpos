@@ -169,12 +169,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Terminal 정보 가져오기
    *
-   * qz tray 와 시간차 때문에 mac address를 조회할때
-   * network service를 waiting 하게 하고 mac address 취득
-   * 그래야 정상적으로 QZ tray web socket established 된후 처리할 수 있음.
-   * 관련 작업은 이후에 해주어야함.
+   * @description
+   * qz tray 와 시간차 때문에 mac address를 조회할때 network service를 waiting 하게 하고 mac address 취득
+   * 그래야 정상적으로 QZ tray web socket established 된후 처리할 수 있음. 관련 작업은 이후에 해주어야함.
    * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
-   * 가끔씩 이 부분이 늦게 처리되어 로그인 시 terminal 정보가 없어서 에러가 발생 ---> 확인 필요!!!
    * 처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고 이후에는 세션에서 취득하도록 수정
    */
   private getTerminalInfo() {
@@ -229,7 +227,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 보류 내역 조회
-   * 보류 건수가 존재 하지 않을 경우 띄우지 않음.
    */
   holdOrder() {
     if (this.screenLockType === LockType.LOCK) { return; }
@@ -265,8 +262,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 헤더 영역 근무 시작
-   * 터미널 인증은 완료되었고 로그인되지 않은 상태
-   * 아이콘을 터치하면 로그인 팝업
    */
   startWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
@@ -281,7 +276,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 근무 종료
-   * 터미널 인증은 완료되었고 로그인된 상태
+   *
+   * @description
    * 1. 근무종료 팝업
    * 2. 배치 정보 저장 팝업
    * 3. 대시보드 메인으로 이동
@@ -304,6 +300,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 화면 잠금
+   *
+   * @description
    * 캐셔 로그인되어 있을 경우만 체크함.
    * 카트 페이지 에서 화면 잠금 버튼 클릭 시 대시보드로 이동
    * 이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
@@ -316,13 +314,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 화면 풀림
+   *
+   * @description
    * 대시보드 에서 화면 풀림 버튼 클릭 시 비밀번호 입력 창뜨게함.
-   * 비밀번호 입력 정상 처리되면 잠금 플래그를 삭제하고 카트 페이지로 이동함.
-   * 카트 페이지로 이동할 경우 header 에서 url을 보고 있다가 /order로 들어올 경우
-   * 잠금버튼을 활성화함.
-   * 이후에는 카트 페이지에서 화면 잠금 버튼을 클릭하면
-   * 잠금 플래그를 설정하고 대시보드로 이동.
-   * 비밀번호로 잠금을 해제하면 카트로 이동함.
+   * 비밀번호 입력 정상 처리되면 잠금 플래그를 삭제.
+   * 카트 페이지로 이동할 경우 header 에서 url을 보고 있다가 /order로 들어올 경우 잠금버튼을 활성화함.
+   * 이후에는 카트 페이지에서 화면 잠금 버튼을 클릭하면 잠금 플래그를 설정하고 대시보드로 이동.
    */
   screenRelease() {
     this.modalsubscription = this.modal.openModalByComponent(PasswordComponent,
@@ -347,6 +344,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * 로그인 후 배치 처리 상세 조건
    *
+   * @description
    * 1. 닫지 않은 배치가 존재
    * 1-1. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 같으면 동일 POS 기기
    * 1-2. 닫지 않은 배치 정보를 그대로 사용
