@@ -430,8 +430,9 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont.type02 .mbinfo_list .next03 {right:92px}
 .m_cont.type02 .btn_bottom {height:75px; padding:20px 0}
 
-.scan {padding-bottom:20px; text-align:center}
-.scan label {display:inline-block; height:35px; line-height:32px; margin-right:10px}
+.scan {padding:20px 0; text-align:center}
+.scan label {display:inline-block; height:35px; line-height:30px; font-family:'NSB'; font-size:16px; color:#21243d; margin-right:10px}
+.scan input {width:370px}
 
 /* tab */
 .tab_type01 {display:block; text-align:center; font-size:0}
