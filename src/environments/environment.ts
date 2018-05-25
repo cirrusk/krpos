@@ -39,7 +39,8 @@ export const environment = {
       productSearch: '/{baseSiteId}/users/{userId}/carts/{cartId}/products/search',
       createNewAccount: '/{baseSiteId}/pos/accout/create',
       orderInfo: '/{baseSiteId}/orders',
-      orderDetail: '/{baseSiteId}/orders/{code}'
+      orderDetail: '/{baseSiteId}/orders/{code}',
+      berSearch: '/{baseSiteId}/business/registration/{aboNum}'
   },
   logLevel: 'debug',
   terminalTimeout: 10,

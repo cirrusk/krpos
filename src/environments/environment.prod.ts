@@ -30,7 +30,8 @@ export const environment = {
       createNewAccount: '/{baseSiteId}/pos/accout/create',
       noticeList: 'http://127.0.0.1:4200/assets/notice.json',
       orderInfo: '/{baseSiteId}/orders',
-      orderDetail: '/{baseSiteId}/orders/{code}'
+      orderDetail: '/{baseSiteId}/orders/{code}',
+      berSearch: '/{baseSiteId}/business/registration/{aboNum}'
   },
   logLevel: 'error',
   terminalTimeout: 10,
