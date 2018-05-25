@@ -1,4 +1,4 @@
-import { AmwayValue, Price, ProductInfo } from '../..';
+import { AmwayValue, Price, ProductInfo, DeliveryMode, PointOfService } from '../..';
 
 export class OrderEntry {
     entryNumber: number;
@@ -7,8 +7,8 @@ export class OrderEntry {
     totalPrice: Price;
     product: ProductInfo;
     updateable: boolean;
-    deliveryMode: any; // DeliveryModeWsDTO
-    deliveryPointOfService: any; // PointOfServiceWsDTO
+    deliveryMode: DeliveryMode; // DeliveryModeWsDTO
+    deliveryPointOfService: PointOfService; // PointOfServiceWsDTO
     url: string;
     retailPrice: Price;
     pickupDateTime: Date;

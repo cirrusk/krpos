@@ -1,4 +1,4 @@
-import { Price, Stock } from '../..';
+import { Price, Stock, Image } from '../..';
 
 export class ProductInfo {
     code: string;
@@ -16,7 +16,7 @@ export class ProductInfo {
     variantType: string;
     price: Price;
     baseProduct: string;
-    images: any; // Collection<ImageWsDTO>
+    images: Array<Image>; // Collection<ImageWsDTO>
     categories: any; // Collection<CategoryWsDTO>
     reviews: any; // Collection<ReviewWsDTO>
     classifications: any; // Collection<ClassificationWsDTO>

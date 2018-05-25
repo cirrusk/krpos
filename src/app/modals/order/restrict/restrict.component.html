@@ -1,21 +1,21 @@
 <div class="pop_wrap pop_l">
     <div class="pop_header">
       <h1>구매 제한 안내</h1>
-      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()"></button>
     </div>
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
-            <div class="pn_wrap type02">
+            <div class="pn_wrap type02" *ngIf="restrictionModel">
                 <span class="paging">
                     <!-- 이전,다음 리스트가 있을시 on클래스 추가 -->
-                    <a href (click)="!!prev()" class="ico_comm prev03">이전</a>
-                    <a href (click)="!!next()" class="ico_comm next03">다음</a>
+                    <a href="javascript:void(0)" class="ico_comm prev03" (click)="setPage(pager.currentPage - 1)" [class.on]="pager.currentPage !== pager.startPage">이전</a>
+                    <a href="javascript:void(0)" class="ico_comm next03" (click)="setPage(pager.currentPage + 1)" [class.on]="pager.currentPage !== pager.endPage">다음</a>
                 </span>
 	            <div class="limit">
-	                <span class="img"><img src="{{image}}" alt=""></span>
-	                <span class="txt_info01" [innerHTML]="message"></span>
-	                <dl class="kind" [innerHTML]="desc">
+	                <span class="img"><img src="{{restrictionModel.image}}" alt=""></span>
+	                <span class="txt_info01" [innerHTML]="restrictionModel.message"></span>
+	                <dl class="kind" [innerHTML]="restrictionModel.desc">
 	                </dl>
 	            </div>
 	        </div>

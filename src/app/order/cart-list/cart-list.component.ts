@@ -8,7 +8,7 @@ import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger,
 import { CartService, PagerService, SearchService } from '../../service';
 import { MessageService } from './../../message/message.service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination, CartMessage } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination, CartMessage, RestrictionModel } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import { Utils } from '../../core/utils';
@@ -44,6 +44,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private selectedCartNum: number;                // 선택된 카트번호
   private modifyFlag: boolean;                    // 수정 버튼 플래그
   private saveCartResult: SaveCartResult;         // 장바구니 복원 응답 모델
+  private restrictionMessageList: Array<RestrictionModel>; // 상품 제한 메시지 모델
 
   accountInfo: Accounts;                          // 사용자 정보
   searchMode: string;                             // 조회 모드
@@ -106,6 +107,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.accountInfo = result.volumeABOAccount;
           const jsonData = {'parties' : [result.user]};
           Object.assign(this.accountInfo, jsonData);
+          this.posCart.emit({ type: 'account', flag: true, data: this.accountInfo }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
           this.storage.setCustomer(this.accountInfo);
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
@@ -561,6 +563,13 @@ export class CartListComponent implements OnInit, OnDestroy {
             });
           } else {
             let appendMessage = '';
+            let imgUrl = '';
+            if (this.restrictionMessageList) {
+              this.restrictionMessageList.length = 0;
+            } else {
+              this.restrictionMessageList = new Array<RestrictionModel>();
+            }
+
             this.addCartModel[0].messages.forEach(message => {
               // if (message.severity === 'ERROR') {
                 if (appendMessage === '' ) {
@@ -571,32 +580,18 @@ export class CartListComponent implements OnInit, OnDestroy {
               // }
             });
 
-            var imgUrl = '';
-
             try {
-              imgUrl = "https://oms-dev.abnkorea.co.kr" + this.addCartModel[0].entry.product.images[1].url;
-            } catch(e) {
+              imgUrl = 'https://oms-dev.abnkorea.co.kr' + (this.addCartModel[0].entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+            } catch (e) {
               imgUrl = '/assets/images/temp/198x198.jpg';
             }
 
-            imgUrl = imgUrl.replace("/amwaycommercewebservices/v2", "");
-            
-            console.log(this.addCartModel[0].entry.product.images[1].url);
-
-            // const desciption = `<dt>라면류</dt>
-            // <dd>
-            // <span class="break">뉴트리 라면(259334K)</span>
-            // <span class="break">뉴트리 라면(259334K)</span>
-            // <span class="break">뉴트리(259336K)</span></dd>`;
-            const desciption = "";
-
-            const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+            const desciption = '';
+            const restrictionModel = new RestrictionModel(imgUrl, appendMessage, desciption);
+            this.restrictionMessageList.push(restrictionModel);
             this.modal.openModalByComponent(RestrictComponent,
               {
-                callerData: { data: rmsgs },
-                image: imgUrl,
-                desc: desciption,
-                message: appendMessage,
+                callerData: { data: this.restrictionMessageList },
                 closeByEnter: true,
                 modalId: 'RestictComponent'
               }
