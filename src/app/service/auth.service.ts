@@ -7,7 +7,6 @@ import { NetworkService, StorageService, ApiService, CLIENT_SECRET } from '../co
 import { TerminalInfo, AccessToken, HttpData, Error } from '../data';
 import { Utils } from '../core/utils';
 
-
 @Injectable()
 export class AuthService {
 
