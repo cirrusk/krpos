@@ -84,7 +84,7 @@ export class CartService {
     const apiURL = this.config.getApiUrl('addToCart', {'userId' : userId, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(orderList), { headers : httpHeaders })
+    return this.httpClient.post<CartModification[]>(apiURL + '?fields=FULL', JSON.stringify(orderList), { headers : httpHeaders })
                           .map(data => data as CartModification[]);
   }
 

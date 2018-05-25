@@ -12,6 +12,7 @@ import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, Orde
 import { Cart } from '../../data/models/order/cart';
 import { TotalPrice } from '../../data/models/cart/cart-data';
 import { Utils } from '../../core/utils';
+import { environment } from '../../../environments/environment.uat';
 
 @Component({
   selector: 'pos-cart-list',
@@ -570,17 +571,30 @@ export class CartListComponent implements OnInit, OnDestroy {
               // }
             });
 
-            const desciption = `<dt>라면류</dt>
-            <dd>
-            <span class="break">뉴트리 라면(259334K)</span>
-            <span class="break">뉴트리 라면(259334K)</span>
-            <span class="break">뉴트리(259336K)</span></dd>`;
+            var imgUrl = '';
+
+            try {
+              imgUrl = "https://oms-dev.abnkorea.co.kr" + this.addCartModel[0].entry.product.images[1].url;
+            } catch(e) {
+              imgUrl = '/assets/images/temp/198x198.jpg';
+            }
+
+            imgUrl = imgUrl.replace("/amwaycommercewebservices/v2", "");
+            
+            console.log(this.addCartModel[0].entry.product.images[1].url);
+
+            // const desciption = `<dt>라면류</dt>
+            // <dd>
+            // <span class="break">뉴트리 라면(259334K)</span>
+            // <span class="break">뉴트리 라면(259334K)</span>
+            // <span class="break">뉴트리(259336K)</span></dd>`;
+            const desciption = "";
 
             const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
             this.modal.openModalByComponent(RestrictComponent,
               {
                 callerData: { data: rmsgs },
-                image: '/assets/images/temp/198x198.jpg',
+                image: imgUrl,
                 desc: desciption,
                 message: appendMessage,
                 closeByEnter: true,

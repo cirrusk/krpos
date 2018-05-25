@@ -240,7 +240,7 @@ export /* default */ class Utils {
     // @grant window.close
     self.close(); // only kiosk mode
     // window.open('', '_self').close();
-    // location.href = '/closekiosk';
+    //location.href = 'http://closekiosk';
   }
 
   /**
