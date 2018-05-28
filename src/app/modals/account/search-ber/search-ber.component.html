@@ -10,15 +10,15 @@
           <label class="inp_rd type01" for="bn1">법인명<input type="radio" name="bn1" id="bn1" checked><span class="checkmark"></span></label>
           <!-- 검색영역 -->
           <div class="mbinfo_search">
-              <input type="text" style="width:480px">
-              <button type="button" class="btn01_blue">확인</button>
+              <input #inputSearchBer autofocus type="text" style="width:480px" (keydown.enter)="getBerList()">
+              <button type="button" class="btn01_blue" (click)="getBerList()">확인</button>
           </div>
           <!-- //검색영역 -->
 
           <div class="mbinfo_list">
-              <p class="txt"><strong>총 <span class="fc_red">5</span>건</strong>의 정보가 있습니다.</p>
+              <p class="txt"><strong>총 <span class="fc_red">{{berCount}}</span>건</strong>의 정보가 있습니다.</p>
               <!-- 검색결과 있음(최대 5개) -->
-              <div class="tbl_col bg_bar">
+              <div class="tbl_col bg_bar" *ngIf="berSeachMarker > 0;">
                   <table>
                       <caption>사업자등록증</caption>
                       <colgroup>
@@ -39,49 +39,20 @@
                       </thead>
                       <tbody>
                           <!-- 등록증 선택시 tr에 on클래스 추가 -->
-                          <tr class="on">
-                              <td><span>1</span></td>
-                              <td class="tit"><span class="elips mx315">데일리라이프 데일리라이프데일리라이프데일리라이프데일리라이프데일리라이프데일리라이프</span></td>
-                              <td><span>10-344_5267900</span></td>
-                              <td class="name"><span class="elips mx110">김길동</span></td>
-                              <td><span>2018/02/19 </span></td>
-                          </tr>
-                          <tr>
-                              <td><span>2</span></td>
-                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
-                              <td><span>10-344_5267900</span></td>
-                              <td class="name"><span class="elips mx110">김길동</span></td>
-                              <td><span>2018/02/19 </span></td>
-                          </tr>
-                          <tr>
-                              <td><span>3</span></td>
-                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
-                              <td><span>10-344_5267900</span></td>
-                              <td class="name"><span class="elips mx110">김길동</span></td>
-                              <td><span>2018/02/19 </span></td>
-                          </tr>
-                          <tr>
-                              <td><span>4</span></td>
-                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
-                              <td><span>10-344_5267900</span></td>
-                              <td class="name"><span class="elips mx110">김길동</span></td>
-                              <td><span>2018/02/19 </span></td>
-                          </tr>
-                          <tr>
-                              <td><span>5</span></td>
-                              <td class="tit"><span class="elips mx315">데일리라이프</span></td>
-                              <td><span>10-344_5267900</span></td>
-                              <td class="name"><span class="elips mx110">김길동</span></td>
-                              <td><span>2018/02/19 </span></td>
+                          <tr [class.on]='activeNum == i' *ngFor="let ber of berList; let i = index" (click)='activeRow(i)'>
+                              <td><span>{{i + 1}}</span></td>
+                              <td class="tit"><span class="elips mx315">{{ber?.company}}</span></td>
+                              <td><span>{{ber?.number}}</span></td>
+                              <td class="name"><span class="elips mx110">{{ber?.name}}</span></td>
+                              <td><span>{{ber?.creationtime | date:'yyyy-MM-dd'}}</span></td>
                           </tr>
                       </tbody>
                   </table>
               </div>
               <!-- //검색결과 있음(최대 5개) -->
-
-              <!-- 검색결과 : 없음
-               <p class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
-              //검색결과 : 없음 -->
+              <!-- 검색결과 : 없음 -->
+               <p *ngIf="berSeachMarker == 0 && berCount == 0" class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
+              <!-- //검색결과 : 없음 -->
           </div>
       </div>
   </div>
@@ -89,8 +60,8 @@
   <div class="pop_footer clearfix">
       <span class="fl">취소 ESC</span>
       <span class="fr">
-          <a href (click)="!!select()" class="btn01_blue">{{actionButtonLabel}}</a>
-          <a href (click)="!!close()" class="btn01_white">{{closeButtonLabel}}</a>
+          <a href (click)="!!close()" class="btn01_blue">{{actionButtonLabel}}</a>
+          <a href (click)="!!reset()" class="btn01_white">{{closeButtonLabel}}</a>
       </span>
   </div>
 </div>

@@ -53,7 +53,7 @@ export * from './models/common/product';
 export * from './models/common/region';
 export * from './models/common/sort';
 export * from './models/common/terminal-info';
-
+export * from './models/common/ber-result';
 
 export * from './error/error';
 export * from './error/error-info';

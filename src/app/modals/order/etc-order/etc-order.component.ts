@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SearchBerComponent } from './../../account/search-ber/search-ber.component';
 
 import { ModalComponent, ModalService, Modal } from '../../../core';
+import { Accounts } from '../../../data';
 
 @Component({
   selector: 'pos-etc-order',
@@ -11,6 +12,7 @@ import { ModalComponent, ModalService, Modal } from '../../../core';
 })
 export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   // private listner: any;
+  private accounts: Accounts;
   @ViewChildren('etcorders') etcorders: QueryList<ElementRef>;
   constructor(
     protected modalService: ModalService,
@@ -24,6 +26,9 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     // this.listner = this.renderer.listen('window', 'keydown.esc', event => {
     //   this.close();
     // });
+
+    this.accounts = this.callerData.account;
+
   }
 
   ngOnDestroy() {
@@ -37,9 +42,10 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
    */
   searchBER(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(SearchBerComponent,
       {
-        title: '',
+        callerData: {aboNum: this.accounts.uid},
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,

@@ -161,6 +161,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
+        callerData: {account: this.account},
         closeByClickOutside: false,
         modalId: 'EtcOrderComponent'
       }
