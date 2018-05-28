@@ -31,7 +31,6 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   ngOnInit() {
     setTimeout(() => { this.inputSearchBer.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.aboNum = this.callerData.aboNum;
-    console.log(this.aboNum);
   }
 
   ngOnDestroy() {
@@ -75,17 +74,6 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
           }
         },
         () => { this.spinner.hide(); });
-  }
-
-  hasNoResult(): boolean {
-    console.log(Utils.isNotEmpty(this.inputSearchBer.nativeElement.value));
-    console.log(this.berCount);
-    console.log(this.berList.length);
-    return Utils.isNotEmpty(this.inputSearchBer.nativeElement.value);
-  }
-
-  select() {
-
   }
 
   close() {

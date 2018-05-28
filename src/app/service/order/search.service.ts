@@ -66,7 +66,8 @@ export class SearchService {
    */
   getNoticeList(noticeType: string): Observable<any> {
     const terminal = this.storage.getTerminalInfo();
-    const param = { noticeType: noticeType, terminalId: terminal.id };
+    const terminalid = (terminal) ? terminal.id : '';
+    const param = { noticeType: noticeType, terminalId: terminalid };
     const data = new HttpData('noticeList', null, null, param);
     return /* this.api.get(data); */ Observable.of({
       notice_ca: [
