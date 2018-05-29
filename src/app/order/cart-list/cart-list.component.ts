@@ -34,30 +34,31 @@ export class CartListComponent implements OnInit, OnDestroy {
   private copyCartEntriesSubscription: Subscription;
   private updateItemQtySubscription: Subscription;
 
-  private searchParams: SearchParam;              // 조회 파라미터
-  private cartInfo: CartInfo;                     // 장바구니 기본정보
-  private productInfo: OrderEntry;                // 제품 정보
-  private addCartModel: CartModification[];       // 장바구니 담기 응답모델
-  private updateCartModel: CartModification;      // 장바구니 수정 응답모델
-  private currentPage: number;                    // 현재 페이지 번호
-  private pager: Pagination;                        // pagination 정보
-  private selectedCartNum: number;                // 선택된 카트번호
-  private modifyFlag: boolean;                    // 수정 버튼 플래그
-  private saveCartResult: SaveCartResult;         // 장바구니 복원 응답 모델
-  private restrictionMessageList: Array<RestrictionModel>; // 상품 제한 메시지 모델
+  private searchParams: SearchParam;                                        // 조회 파라미터
+  private cartInfo: CartInfo;                                               // 장바구니 기본정보
+  private productInfo: OrderEntry;                                          // 제품 정보
+  private addCartModel: CartModification[];                                 // 장바구니 담기 응답모델
+  private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
+  private currentPage: number;                                              // 현재 페이지 번호
+  private pager: Pagination;                                                // pagination 정보
+  private selectedCartNum: number;                                          // 선택된 카트번호
+  private modifyFlag: boolean;                                              // 수정 버튼 플래그
+  private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
+  private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
+  private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
 
-  accountInfo: Accounts;                          // 사용자 정보
-  searchMode: string;                             // 조회 모드
-  cartList: Array<OrderEntry>;                    // 장바구니 리스트
-  currentCartList: Array<OrderEntry>;             // 출력 장바구니 리스트
-  totalItem: number;                              // 총 수량
-  totalPrice: number;                             // 총 금액
-  totalPV: number;                                // 총 PV
-  totalBV: number;                                // 총 Bv
-  public cartListCount: number;                   // 카트 목록 개수
-  @ViewChild('searchText') private searchText: ElementRef; // 입력창
-  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
-  @Input() public noticeList: string[] = []; // 캐셔용 공지사항
+  accountInfo: Accounts;                                                    // 사용자 정보
+  searchMode: string;                                                       // 조회 모드
+  cartList: Array<OrderEntry>;                                              // 장바구니 리스트
+  currentCartList: Array<OrderEntry>;                                       // 출력 장바구니 리스트
+  totalItem: number;                                                        // 총 수량
+  totalPrice: number;                                                       // 총 금액
+  totalPV: number;                                                          // 총 PV
+  totalBV: number;                                                          // 총 Bv
+  public cartListCount: number;                                             // 카트 목록 개수
+  @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
+  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
+  @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
   constructor(private modal: Modal,
               private cartService: CartService,
               private searchService: SearchService,
@@ -80,7 +81,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         if (result) {
-          this.posCart.emit({ type: 'account', flag: true, data: result }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+          this.sendRightMenu('a', true, result);
           if (this.accountInfo) {
             this.changeUser(this.accountInfo, this.cartInfo, result);
           } else {
@@ -107,7 +108,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.accountInfo = result.volumeABOAccount;
           const jsonData = {'parties' : [result.user]};
           Object.assign(this.accountInfo, jsonData);
-          this.posCart.emit({ type: 'account', flag: true, data: this.accountInfo }); // 사용자 검색이 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+          this.sendRightMenu('a', true, this.accountInfo);
           this.storage.setCustomer(this.accountInfo);
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
@@ -176,9 +177,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modifyFlag =  false;
     this.pager = new Pagination();
     this.saveCartResult = new SaveCartResult();
-    this.posCart.emit({ type: 'account', flag: false }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
-    this.posCart.emit({ type: 'product', flag: false }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
-    this.posCart.emit({ type: 'cart', flag: false }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+    this.restrictionModel = new RestrictionModel();
+    this.sendRightMenu('all', false);
   }
 
   /**
@@ -333,40 +333,24 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.init();
                 this.accountInfo = changeUserInfo;
                 this.cartInfo = resultData.cartInfo;
+                this.sendRightMenu('a', true, changeUserInfo);
+                this.sendRightMenu('all', true);
 
                 this.addCartModel = resultData.cartModification;
-                let appendMessage = '';
                 this.addCartModel.forEach(model => {
                     if (model.statusCode === 'success') {
                       this.productInfo = model.entry;
                       this.addCartEntry(this.productInfo);
                     } else {
-                      model.messages.forEach(message => {
-                        // if (message.severity === 'ERROR') {
-                        if (appendMessage === '' ) {
-                          appendMessage += message.message;
-                        } else {
-                          appendMessage += '<br/>' + message.message;
-                        }
-                      // }
-                      });
+                      this.restrictionModel = this.makeRestrictionMessage(model);
+                      this.restrictionMessageList.push(this.restrictionModel);
                     }
                 });
 
-                if (appendMessage !== '') {
-                  const desciption = `<dt>라면류</dt>
-                  <dd>
-                  <span class="break">뉴트리 라면(259334K)</span>
-                  <span class="break">뉴트리 라면(259334K)</span>
-                  <span class="break">뉴트리(259336K)</span></dd>`;
-
-                  const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+                if (this.restrictionMessageList) {
                   this.modal.openModalByComponent(RestrictComponent,
                     {
-                      callerData: { data: rmsgs },
-                      image: '/assets/images/temp/198x198.jpg',
-                      desc: desciption,
-                      message: appendMessage,
+                      callerData: { data: this.restrictionMessageList },
                       closeByEnter: true,
                       modalId: 'RestictComponent'
                     }
@@ -387,6 +371,10 @@ export class CartListComponent implements OnInit, OnDestroy {
               },
               () => {this.spinner.hide(); }
             );
+          } else {
+            this.accountInfo = changeUserInfo;
+            this.activeSearchMode('P');
+            this.getCarts();
           }
         }
       }
@@ -442,7 +430,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                   terminalInfo.pointOfService.name , 'POS').subscribe(
         cartResult => {
           this.cartInfo = cartResult;
-          this.posCart.emit({ type: 'cart', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+          this.sendRightMenu('c', true);
           if (popupFlag) {
             if (productCode !== undefined) {
               this.selectProductInfo(productCode);
@@ -509,7 +497,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         this.cartList = result.entries;
         if (this.cartList.length === 0) {
-          this.posCart.emit({ type: 'product', flag: false }); // 카트가 비었을 경우 메뉴에 이벤트 전송
+          this.sendRightMenu('p', false);
         } else {
           if (copyFlag) {
 
@@ -562,33 +550,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.addCartEntry(this.productInfo);
             });
           } else {
-            let appendMessage = '';
-            let imgUrl = '';
-            if (this.restrictionMessageList) {
-              this.restrictionMessageList.length = 0;
-            } else {
-              this.restrictionMessageList = new Array<RestrictionModel>();
-            }
-
-            this.addCartModel[0].messages.forEach(message => {
-              // if (message.severity === 'ERROR') {
-                if (appendMessage === '' ) {
-                  appendMessage += message.message;
-                } else {
-                  appendMessage += '<br/>' + message.message;
-                }
-              // }
-            });
-
-            try {
-              imgUrl = 'https://oms-dev.abnkorea.co.kr' + (this.addCartModel[0].entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
-            } catch (e) {
-              imgUrl = '/assets/images/temp/198x198.jpg';
-            }
-
-            const desciption = '';
-            const restrictionModel = new RestrictionModel(imgUrl, appendMessage, desciption);
-            this.restrictionMessageList.push(restrictionModel);
+            this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
+            this.restrictionMessageList.push(this.restrictionModel);
             this.modal.openModalByComponent(RestrictComponent,
               {
                 callerData: { data: this.restrictionMessageList },
@@ -629,7 +592,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
       // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
-      this.posCart.emit({ type: 'product', flag: true });
+      this.sendRightMenu('p', true);
     } else {
       this.cartList[existedIdx] = orderEntry;
       // this.activeRowCart(existedIdx); // 추가된 row selected
@@ -664,30 +627,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.productInfo = this.updateCartModel.entry;
             this.addCartEntry(this.productInfo, index);
           } else {
-            let appendMessage = '';
-            this.updateCartModel.messages.forEach(message => {
-              // if (message.severity === 'ERROR') {
-                if (appendMessage === '' ) {
-                  appendMessage += message.message;
-                } else {
-                  appendMessage += '<br/>' + message.message;
-                }
-              // }
-            });
-
-            const desciption = `<dt>라면류</dt>
-            <dd>
-            <span class="break">뉴트리 라면(259334K)</span>
-            <span class="break">뉴트리 라면(259334K)</span>
-            <span class="break">뉴트리(259336K)</span></dd>`;
-
-            const rmsgs = [{ img: '1', msg: '11', desc: '111' }, { img: '2', msg: '22', desc: '222' }];
+            this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
+            this.restrictionMessageList.push(this.restrictionModel);
             this.modal.openModalByComponent(RestrictComponent,
               {
-                callerData: { data: rmsgs },
-                image: '/assets/images/temp/198x198.jpg',
-                desc: desciption,
-                message: appendMessage,
+                callerData: { data: this.restrictionMessageList },
                 closeByEnter: true,
                 modalId: 'RestictComponent'
               }
@@ -753,8 +697,6 @@ export class CartListComponent implements OnInit, OnDestroy {
                                                                 this.cartInfo ? this.cartInfo.code : '').subscribe(
         result => {
           this.init();
-          this.posCart.emit({ type: 'product', flag: false });
-          this.posCart.emit({ type: 'cart', flag: false });
           this.storage.clearClient();
         },
         error => {
@@ -835,8 +777,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           this.saveCartResult = result;
           this.setCartInfo(this.saveCartResult.savedCartData);
-          this.posCart.emit({ type: 'product', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
-          this.posCart.emit({ type: 'cart', flag: true }); // 카트가 생성 되면 메뉴를 열어주기 위해 메뉴 컴포넌트에 이벤트 전송
+          this.sendRightMenu('all', true);
           this.info.sendInfo('hold', 'add');
         },
         error => {
@@ -914,30 +855,81 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalBV = sumBV;
   }
 
+  /**
+   * Restriction Message 생성
+   * @param model
+   */
+  makeRestrictionMessage(model: CartModification) {
+    let appendMessage = '';
+    let imgUrl = '';
+    if (this.restrictionMessageList) {
+      this.restrictionMessageList.length = 0;
+    } else {
+      this.restrictionMessageList = new Array<RestrictionModel>();
+    }
+
+    model.messages.forEach(message => {
+      // if (message.severity === 'ERROR') {
+        if (appendMessage === '' ) {
+          appendMessage += message.message;
+        } else {
+          appendMessage += '<br/>' + message.message;
+        }
+      // }
+    });
+
+    try {
+      imgUrl = 'https://oms-dev.abnkorea.co.kr' + (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+    } catch (e) {
+      imgUrl = '/assets/images/temp/198x198.jpg';
+    }
+
+    const desciption = '';
+    const restrictionModel = new RestrictionModel(imgUrl, appendMessage, desciption);
+    return restrictionModel;
+  }
+
+  sendRightMenu(modelType: string, useflag: boolean, model?: any): void {
+    switch (modelType.toUpperCase()) {
+      case 'A': { this.posCart.emit({ type: 'account', flag: useflag, data: model }); break; }
+      case 'P': { this.posCart.emit({ type: 'product', flag: useflag, data: model }); break; }
+      case 'C': { this.posCart.emit({ type: 'cart'   , flag: useflag, data: model }); break; }
+      default: {
+        this.posCart.emit({ type: 'account', flag: useflag });
+        this.posCart.emit({ type: 'product', flag: useflag });
+        this.posCart.emit({ type: 'cart'   , flag: useflag });
+      }
+    }
+  }
+
   @HostListener('document: keydown', ['$event', '$event.target'])
   keyboardInput(event: any, targetElm: HTMLElement) {
     event.stopPropagation();   // event.preventDefault();
 
-    if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
-      // 수정 이벤트
-      // 임시
-      if (event.keyCode === 45) {
-        this.callUpdateItemQty();
-        // 개별 삭제 이벤트
+    // modal 이 없을때만 동작
+    const modalData = this.storage.getSessionItem('latestModalId');
+    if (modalData === null) {
+      if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
+        // 수정 이벤트
         // 임시
-      } else if (event.keyCode === 46) {
-        if (this.selectedCartNum === -1 ) {
-          this.alert.warn({message: this.messageService.get('selectProductDelete')});
-        } else {
-          this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
+        if (event.keyCode === 45) {
+          this.callUpdateItemQty();
+          // 개별 삭제 이벤트
+          // 임시
+        } else if (event.keyCode === 46) {
+          if (this.selectedCartNum === -1 ) {
+            this.alert.warn({message: this.messageService.get('selectProductDelete')});
+          } else {
+            this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
+          }
         }
       }
-    }
 
-    // 저장 → 키
-    // 임시
-    if (event.keyCode === 39) {
-      this.saveCart();
+      // 저장 → 키
+      // 임시
+      if (event.keyCode === 39) {
+        this.saveCart();
+      }
     }
   }
 }

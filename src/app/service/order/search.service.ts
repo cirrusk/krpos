@@ -21,9 +21,9 @@ export class SearchService {
     if (MemberType.ABO === searchMemberType) {
       apiURL += `/amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
     } else if (MemberType.MEMBER === searchMemberType) {
-      apiURL += `/amwaykorea/accounts/Uid/${searchText}`;
+      apiURL += `/amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
     } else {
-      apiURL += `/amwaykorea/accounts/Uid/${searchText}`;
+      apiURL += `/amwaykorea/customers/Uid/${searchText}?feilds=FULL`;
     }
 
     return this.httpClient.get<AccountList>(apiURL)

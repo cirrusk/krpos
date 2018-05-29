@@ -46,7 +46,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       this.logger.set('order.menu.component', `from cart list to cart menu flag receive, type : ${data.type}`).debug();
       if (data.type === 'account') {
         this.hasAccount = data.flag;
-        this.account = data.data;
+        if (data.data) {
+          this.account = data.data;
+        }
       } else if (data.type === 'product') {
         this.hasProduct = data.flag;
       } else if (data.type === 'cart') {

@@ -64,7 +64,7 @@
                                 <ng-template #elseTemplate>
                                     <td>                                        
                                         <div *ngFor="let phoneInfo of account.parties[0].phoneInfos; let last = last">
-                                            <span class="bg_bar" *ngIf="last">
+                                            <span class="bg_bar" *ngIf="phoneInfo.typeCode === 'MOBILE'">
                                                 {{phoneInfo.formattedPhoneNumber | phoneNumberMask}}
                                             </span>
                                         </div>
@@ -103,7 +103,7 @@
                                 <ng-template #elseRightTemplate>
                                     <td>                                        
                                         <div *ngFor="let phoneInfo of account.parties[0].phoneInfos; let last = last">
-                                            <span class="bg_bar" *ngIf="last">
+                                            <span class="bg_bar" *ngIf="phoneInfo.typeCode === 'MOBILE'">
                                                 {{phoneInfo.formattedPhoneNumber | phoneNumberMask}}
                                             </span>
                                         </div>

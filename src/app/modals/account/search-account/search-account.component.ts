@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import * as format from 'string-format';
 
 import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, SpinnerService, StorageService } from '../../../core';
 
@@ -14,6 +15,7 @@ import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info'
   templateUrl: './search-account.component.html'
 })
 export class SearchAccountComponent extends ModalComponent implements OnInit, OnDestroy {
+  private PAGE_SIZE = 10;
   private searchSubscription: Subscription;
   private searchListSubscription: Subscription;
   private cartInfoSubscription: Subscription;
@@ -102,6 +104,15 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     if (searchText.trim()) {
       this.activeNum = -1;
       this.spinner.show();
+
+      const pattern = /^\d{4}$/;
+      let phoneFlag = '';
+      if (pattern.test(searchText)) {
+        phoneFlag = 'P';
+      } else {
+        phoneFlag = 'U';
+      }
+
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
                                                       .subscribe(
                                                         result => {
@@ -170,7 +181,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     }
 
     // pagination 생성 데이터 조회
-    this.pager = this.pagerService.getPager(this.accountList.accounts.length, page);
+    this.pager = this.pagerService.getPager(this.accountList.accounts.length, page, this.PAGE_SIZE);
     // 출력 리스트 생성
     if (this.accountList.accounts.length > 5) {
       this.currentLeftAccountList  = this.accountList.accounts.slice(this.pager.startIndex, this.pager.startIndex + 5);
