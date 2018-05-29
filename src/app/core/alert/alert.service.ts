@@ -36,19 +36,19 @@ export class AlertService {
 
   info(params: any) {
     params.alertType = AlertType.info;
-    params.title = (params.title) ? params.title : '확인',
+    params.title = (params.title) ? params.title : '확인';
     this.show(params);
   }
 
   warn(params: any) {
     params.alertType = AlertType.warn;
-    params.title = (params.title) ? params.title : '확인',
+    params.title = (params.title) ? params.title : '확인';
     this.show(params);
   }
 
   error(params: any) {
     params.alertType = AlertType.error;
-    params.title = (params.title) ? params.title : '오류',
+    params.title = (params.title) ? params.title : '오류';
     this.show(params);
   }
 
