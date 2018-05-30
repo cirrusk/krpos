@@ -1,3 +1,3 @@
 export enum PosPrinterConstants {
-    LineBytes = 42
+    LineBytes = 42,
 }

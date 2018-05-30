@@ -106,17 +106,13 @@ export class TemplateParser {
 
       let formatted: Array<string> = [];
 
+      formatted.push(ReceiptUtils.getProductListTitle(maxLengths));
+
       productList.forEach(
         (product) => {
-          let row: Array<string> = [];
-
-          row.push('<text-line>');
-          row.push(ReceiptUtils.getFormattedProductField(product, maxLengths));
-          row.push('</text-line>');
-
-          formatted.push(row.join(''));
+          formatted.push(ReceiptUtils.getFormattedProductField(product, maxLengths));
         }
-      )
+      );
 
       return new handlebars.SafeString(formatted.join(''));
     });
@@ -135,15 +131,16 @@ export class TemplateParser {
     });
   }
 
-  public parser(template, scope): BufferBuilder {
+  public parser(template, data): BufferBuilder {
     const fn = this.handlebars.compile(template);
-    const xml = fn(scope);
+    const xml = fn(data);
     return new XMLParser().parser(xml);
   }
 
-  public vanillaParser(template: any, scope: any): string {
+  public vanillaParser(template: any, data: any): string {
     const fn = this.handlebars.compile(template);
-    const parsed = fn(scope);
+    const parsed = fn(data);
+
     return parsed;
   }
 

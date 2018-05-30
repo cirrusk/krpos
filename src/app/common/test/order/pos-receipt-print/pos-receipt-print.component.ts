@@ -211,7 +211,7 @@ public clickRaw() {
   }
 
   public readXmlTemplates() {
-    this.printerService.initXmlTemplates();
+    // Do nothing
   }
 
   public testReceipt() {
@@ -231,18 +231,15 @@ public clickRaw() {
       let productList = new Array<ProductEntryVO>();
 
       let product1 = new ProductEntryVO(1, '123456K', '더블엑스 리필', 80000, 1, 80000);
-      let product2 = new ProductEntryVO(2, '286841K', 'XS 에너지 시리얼 허니 콘플레이크', 6500, 2, 13000);
+      let product2 = new ProductEntryVO(10, '286841K', 'XS 에너지 시리얼 허니 콘플레이크', 6500, 2, 13000);
 
       productList.push(product1);
       productList.push(product2);
 
       let receitVo = new ReceiptVO(orderInfo, bonus, payments, price, productList);
 
-      console.log(JSON.stringify(receitVo));
-
       const text = this.receiptService.aboNormal(receitVo);
-      //this.printerService.printText(text);
-      console.log(text);
+      this.printerService.printText(text);
   }
 
 }

@@ -42,8 +42,6 @@ export class ReceiptDataProvider {
     const precompileMap: Map<string, boolean> = this.getPrecompileMap();
     const downloadUriMap: Map<string, string> = this.getDownloadUriMap();
 
-    console.log(this.policy);
-
     this.getTemplateList().forEach((templateName: string) => {
         const url = this.config.getConfig('occEndpointDomain') +  this.getDownloadUriPrefix() + downloadUriMap.get(templateName);
 
@@ -58,8 +56,8 @@ export class ReceiptDataProvider {
                     // ESC/POS 명령어 변환 시 명령어 조작 결과에 따라 \0 null character 가 생성됨
                     // ESC/POS 의 data populating 하는 handlebars 가 \0 을 처리 못함
                     // precompile 의 경우만 null escape 필요
-                    const transformed = EscPos.getTransformed(unparsed);
-                    const nullEscaped = EscPos.escapeNull(transformed);
+                    const printText = EscPos.escPosCommand(unparsed);
+                    const nullEscaped = EscPos.escapeNull(printText);
 
                     this.preparedData.set(templateName, nullEscaped);
                 } else {
@@ -102,7 +100,7 @@ export class ReceiptDataProvider {
     return this.getReceiptTemplateMap().get(receiptName);
   }
 
-  public getTemplateText(templateName: string): string {
+  public getXmlTemplate(templateName: string): string {
     return this.preparedData.get(templateName);
   }
 

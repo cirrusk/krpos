@@ -6,20 +6,24 @@ import { PosPrinterConstants } from '../posprinter.constants';
 
 export class ReceiptUtils {
 
-    private static LEADING_SPACE_REPLACE = String.fromCharCode(Command.SI);
+    private static SAFE_SPACE_CHAR = String.fromCharCode(Command.SI);
 
-    // UTF8 Text Length in real byte
+    private static START_TEXTLINE = '<text-line>';
+
+    private static END_TEXTLINE = '</text-line>';
+
+    // 유니코드 문자에 대해 바이트 수 구함
     public static getTextLengthUTF8(text: string) : number {
         const b = text.match(/[^\x00-\xff]/g);
         return (text.length + (!b ? 0: b.length)); 
     }
 
-    // Convert Price to localed
+    // 원화에 대해 3자리마다 콤마 찍기
     public static convertToLocalePrice(price: string): string {
         return price.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
-    // Generate same character sequences
+    // symbol 을 length 만큼 생성
     public static sequences(length: number, symbol: string): string {
         let arr: Array<string> = [];
 
@@ -30,7 +34,12 @@ export class ReceiptUtils {
         return arr.join('');
     }
 
-    // Generate Blank sequences
+    // SAFE_SPACE_CHAR 를 length 만큼 생성
+    public static genSafeLeadingSpaces(length: number) {
+        return ReceiptUtils.sequences(length, this.SAFE_SPACE_CHAR);
+    }
+
+    // SPACE 를 length 만큼 생성
     public static spaces(length: number): string {
         return ReceiptUtils.sequences(length, " ");
     }
@@ -45,7 +54,7 @@ export class ReceiptUtils {
         return productList;
     }
 
-    // Find maximum length of each field in productList
+    // 구매 상품 리스트의 각 필드의 최대 길이 값
     public static findMaxLengths(productList): ProductFieldMaxLen {
         let maxLenIdx: number = 0;
         let maxLenSkuCode: number = 0;
@@ -83,17 +92,24 @@ export class ReceiptUtils {
 
     public static rightAlignedText(text: string, maxLen: number, symbol?: string): string {
         if (symbol) {
-            return ReceiptUtils.sequences(maxLen - text.length, symbol) + text;
+            return this.sequences(maxLen - text.length, symbol) + text;
         }
-        return ReceiptUtils.spaces(maxLen - text.length) + text;
+        return this.spaces(maxLen - text.length) + text;
     }
 
-    // substring() for Unicode text
-    public static substrUnicode(text: string, len: number): string {
-        let i: number = 0;
+    // 유니코드 텍스트를 위한 substr()
+    // len 은 바이트 수 (원 substr 은 글자 수)
+    public static substrUnicode(text: string, len: number, startIdx: number): string {
         let c: number = 0;
 
-        for(let b = 0 ; c = text.charCodeAt(i);) {
+        // 첫 글자가 Space (ASCII 32) 이면 한 칸 뒤로
+        if (text.charCodeAt(startIdx) === 32) {
+            startIdx++;
+        }
+
+        let i: number = startIdx;
+
+        for(let b = 0 ; c = text.charCodeAt(i) ;) {
 
             b += c >> 7 ? 2 : 1;
             
@@ -104,45 +120,90 @@ export class ReceiptUtils {
             i++;
         }
         
-        return text.substring(0,i);
+        return text.substring(startIdx, i);
+    }
+
+    public static getProductListTitle(maxLengths: ProductFieldMaxLen): string {
+        let formatted: Array<string> = [];
+        const productName: string = "상품명";
+        const remainings: string = "단가 수량 금액";
+
+        formatted.push(this.START_TEXTLINE);
+
+        let len: number = maxLengths.idx + 1 + maxLengths.skuCode + 1;
+        formatted.push(this.genSafeLeadingSpaces(len));
+        formatted.push(productName);
+
+        len = PosPrinterConstants.LineBytes - len - this.getTextLengthUTF8(productName) - this.getTextLengthUTF8(remainings);
+        formatted.push(this.spaces(len));
+        formatted.push(remainings);
+
+        formatted.push(this.END_TEXTLINE);
+
+        formatted.push('<dash-line/>');
+
+        return formatted.join('');
     }
 
     public static getFormattedProductField(product: ReceiptProductFieldInterface, maxLengths: ProductFieldMaxLen): string {
         let formatted: Array<string> = [];
 
+        // 태그 시작
+        formatted.push(this.START_TEXTLINE);
+
         // 상품 목록 순번
-        formatted.push(ReceiptUtils.rightAlignedText(product.idx, maxLengths.idx, ReceiptUtils.LEADING_SPACE_REPLACE));
-        formatted.push(ReceiptUtils.spaces(1));
+        formatted.push(this.rightAlignedText(product.idx, maxLengths.idx, this.SAFE_SPACE_CHAR));
+        formatted.push(this.spaces(1));
         
         // SKU code
-        formatted.push(ReceiptUtils.rightAlignedText(product.skuCode, maxLengths.skuCode));
-        formatted.push(ReceiptUtils.spaces(1));
+        formatted.push(this.rightAlignedText(product.skuCode, maxLengths.skuCode));
+        formatted.push(this.spaces(1));
 
         // 상품명
-        const croppedProductName: string = ReceiptUtils.substrUnicode(product.productName, maxLengths.productName);
+        const croppedProductName: string = this.substrUnicode(product.productName, maxLengths.productName, 0);
         formatted.push(croppedProductName);
+
+        const croppedLen: number = this.getTextLengthUTF8(croppedProductName);
         
+        // 개행 여부 판단
+        // 상품명이 긴 경우 2라인에 출력하자는 요건
+        if (product.productName.length > maxLengths.productName) {
+            // 개행
+            formatted.push(this.END_TEXTLINE);
+            formatted.push(this.START_TEXTLINE);
+
+            formatted.push(this.genSafeLeadingSpaces(maxLengths.idx + 1 + maxLengths.skuCode + 1));
+
+            // substr 은 한글과 영/숫자를 바이트 위치가 아니라 글자 위치 자체로 계산
+            const startPos: number = croppedProductName.length;
+
+            const nextLine: string = this.substrUnicode(product.productName, maxLengths.productName, startPos);
+            formatted.push(nextLine);
+        }
+
         // 잘린 상품명에 모자란 바이트를 " " 로 채움. 끝의 1 은 단가와 띄어쓰기
-        const croppedLen: number = ReceiptUtils.getTextLengthUTF8(croppedProductName);
         const paddedLen: number = maxLengths.productName - croppedLen;
-        formatted.push(ReceiptUtils.spaces(paddedLen + 1));
+        formatted.push(this.spaces(paddedLen + 1));
 
         // 상품 단가
-        formatted.push(ReceiptUtils.rightAlignedText(product.price, maxLengths.price));
-        formatted.push(ReceiptUtils.spaces(1));
+        formatted.push(this.rightAlignedText(product.price, maxLengths.price));
+        formatted.push(this.spaces(1));
 
         // 수량
-        formatted.push(ReceiptUtils.rightAlignedText(product.qty, maxLengths.qty));
-        formatted.push(ReceiptUtils.spaces(1));
+        formatted.push(this.rightAlignedText(product.qty, maxLengths.qty));
+        formatted.push(this.spaces(1));
 
         // 가격
-        formatted.push(ReceiptUtils.rightAlignedText(product.totalPrice, maxLengths.totalPrice));;
+        formatted.push(this.rightAlignedText(product.totalPrice, maxLengths.totalPrice));;
+
+        // 태그 끝
+        formatted.push(this.END_TEXTLINE);
 
         return formatted.join('');
     }
 
     public static fitTextsEqual(text1: string, text2: string): string {
-        const paddedLen = (PosPrinterConstants.LineBytes / 2) - ReceiptUtils.getTextLengthUTF8(text1);
-        return text1 + ReceiptUtils.spaces(paddedLen) + text2;
+        const paddedLen = (PosPrinterConstants.LineBytes / 2) - this.getTextLengthUTF8(text1);
+        return text1 + this.spaces(paddedLen) + text2;
     }
 }

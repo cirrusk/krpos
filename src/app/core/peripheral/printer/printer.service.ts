@@ -75,38 +75,4 @@ export class PrinterService {
   public openCashDrawer() {
 
   }
-
-  public initXmlTemplates() {
-    this.formatReaderService.readFormat('assets/template/receipt/test/test2.xml')
-    .subscribe(
-        (text) => {
-            console.log(`===== Original : \n${text}`);
-            // let build: number[] = EscPos.getBufferFromXML(text);
-            const raw: Uint8Array = EscPos.getTransformedRaw(text);
-            console.log(`===== Raw data : \n${raw}`);
-
-            const converted: string = Utils.utf8ArrayDecode(raw);
-            console.log(`===== convertedToString : \n${converted}\n${converted.split('')}`);
-
-            const escaped = EscPos.escapeNull(converted);
-            console.log(`===== Null Escaped :\n ${escaped}\n${escaped.split('')}`);
-
-            const parsed = EscPos.getParsed(escaped, {
-                'subtitle': 'MJMJ'
-            });
-            console.log(`===== Parsed : \n${parsed}`);
-
-            const unescaped = EscPos.unescapeNull(parsed);
-            console.log(`===== Unescaped : \n${unescaped}`);
-
-            const encoded = Utils.utf8ArrayEncode(converted);
-            console.log(`==== Encoded : \n${encoded}`);
-
-            // let same = (encoded === org) ? true : false;
-
-            // console.log(`==== Check : \n${same}`);
-        }
-    );
-  }
-
 }

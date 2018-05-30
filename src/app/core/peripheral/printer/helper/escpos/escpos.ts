@@ -30,13 +30,13 @@ export class EscPos {
     return new BufferBuilder();
   }
 
-  public static getTransformed(xml: string): string {
+  public static escPosCommand(xml: string): string {
     let xmlParser;
     xmlParser = new XMLParser();
     return Utils.utf8ArrayDecode(xmlParser.parser(xml).buildConv());
   }
 
-  public static getTransformedRaw(xml: string): Uint8Array {
+  public static escPosCommandRaw(xml: string): Uint8Array {
     let xmlParser;
     xmlParser = new XMLParser();
     return xmlParser.parser(xml).buildConv();
@@ -69,7 +69,7 @@ export class EscPos {
     return EscPos.replaceByteArray(text, EscPos.LEADING_SPACE_REPLACE, " ");
   }
 
-  public static getParsed(text: string, data: any): string {
+  public static fillData(text: string, data: any): string {
     let templateParser;
     templateParser = new TemplateParser();
     return templateParser.vanillaParser(text, data);

@@ -27,15 +27,15 @@ export class ReceiptService {
         let retText = '';
 
         templateList.forEach((templateName) => {
-            const templateText = this.receitDataProvider.getTemplateText(templateName);
-            let parsed = EscPos.getParsed(templateText, data);
+            const templateText = this.receitDataProvider.getXmlTemplate(templateName);
+            let parsed = EscPos.fillData(templateText, data);
 
             const isCompiled = this.receitDataProvider.isPrecompiled(templateName);
 
             if (isCompiled) {
                 retText += EscPos.unescapeNull(parsed);
             } else {
-                const transformed = EscPos.getTransformed(parsed);
+                const transformed = EscPos.escPosCommand(parsed);
                 retText += transformed;
             }
 
