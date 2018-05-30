@@ -10,6 +10,8 @@ export const environment = {
   hybrisEndpointDomain: 'www.abnkorea.co.kr',
   hybrisEndpointPort: 80,
 
+  phytoCafeUserId: '8000003',
+
   // 임시 - 추후 삭제
   occEndpointDomain: '',
 

@@ -15,6 +15,8 @@ export const environment = {
 
   receitPolicyFile: '/assets/template/receipt/policy/receipt.json',
 
+  phytoCafeUserId: '8000003',
+
   // pos configurations
   baseSiteId: 'amwaykorea',
   apiRootUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2',
