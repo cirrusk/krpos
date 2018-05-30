@@ -25,7 +25,7 @@ export class TerminalService {
    * @param macaddress
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
-    const data = new HttpData('terminal', null, null, {macAddress: macaddress});
+    const data = new HttpData('terminal', null, null, {macAddress: macaddress, fields: 'BASIC'});
     return this.api.post(data).timeout(1000 * this.terminalTimeout).finally(() => {});
   }
 
