@@ -5,9 +5,7 @@ import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 @Injectable()
 export class ReceiptService {
 
-    constructor(private receitDataProvider: ReceiptDataProvider) {
-
-    }
+    constructor(private receitDataProvider: ReceiptDataProvider) { }
 
     public aboNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.ABONormal);
@@ -28,7 +26,7 @@ export class ReceiptService {
 
         templateList.forEach((templateName) => {
             const templateText = this.receitDataProvider.getTemplateText(templateName);
-            let parsed = EscPos.getParsed(templateText, data);
+            const parsed = EscPos.getParsed(templateText, data);
 
             const isCompiled = this.receitDataProvider.isPrecompiled(templateName);
 
