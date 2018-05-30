@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2 } from '@angular/core';
 import { ModalComponent, ModalService } from '../../../core';
+import { OrderEntry, Accounts } from '../../../data';
 
 @Component({
   selector: 'pos-complex-payment',
@@ -7,11 +8,16 @@ import { ModalComponent, ModalService } from '../../../core';
 })
 export class ComplexPaymentComponent extends ModalComponent implements OnInit {
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
+
+  private accountInfo: Accounts;
+  private cartList: Array<OrderEntry>;
   constructor(protected modalService: ModalService, private renderer: Renderer2) {
     super(modalService);
   }
 
   ngOnInit() {
+    this.accountInfo = this.callerData.accountInfo;
+    this.cartList = this.callerData.cartList;
   }
 
   creditCard(evt: any) {
