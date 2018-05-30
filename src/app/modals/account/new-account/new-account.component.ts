@@ -38,6 +38,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   }
 
   ngOnInit() {
+    setTimeout(() => { this.phoneNumText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
     const engExp: RegExp = new RegExp(/[a-z]/gi);
     const numExp: RegExp = new RegExp(/[0-9]/g);

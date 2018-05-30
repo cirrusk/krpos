@@ -19,11 +19,14 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
+  apiDomain: 'https://oms-dev.abnkorea.co.kr',
   apiRootUrl: 'https://oms-dev.abnkorea.co.kr/amwaycommercewebservices/v2',
   apiUrl: {
       terminal: '/{baseSiteId}/auth/terminal',
       auth: '/{baseSiteId}/auth/authorize',
       token: 'https://oms-dev.abnkorea.co.kr/authorizationserver/oauth/token',
+      userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
+      customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
       batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
       batchStop: '/{baseSiteId}/orderbatches/{batch_id}',
       batchStats: '/{baseSiteId}/orderbatches/{batch_id}/statistics',

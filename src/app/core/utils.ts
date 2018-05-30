@@ -92,7 +92,6 @@ export /* default */ class Utils {
    */
   public static handleError(error: Response | any) {
     return Observable.throw(error); // error.message ||
-
   }
 
   /**

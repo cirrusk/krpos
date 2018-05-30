@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import { ApiService, Config, StorageService } from '../../core';
@@ -10,45 +9,43 @@ import { Utils } from '../../core/utils';
 @Injectable()
 export class SearchService {
 
-  constructor(private api: ApiService, private storage: StorageService, private httpClient: HttpClient, private config: Config) { }
+  constructor(private api: ApiService, private storage: StorageService, private config: Config) { }
 
-  // 회원 정보 조회
+  /**
+   * 회원 정보 조회
+   *
+   * @param searchMemberType 멤버 타입
+   * @param searchText 검색어(4자리 : 전화번호, 그 외 : 사용자 아이디)
+   */
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
-    // API ROOT URL
-    let apiURL = this.config.getConfig('apiRootUrl');
-
     // 회원 타입별로 URL 셋팅
+    let apiUrl;
     if (MemberType.ABO === searchMemberType) {
-      apiURL += `/amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
+      apiUrl = 'userSearch';
     } else if (MemberType.MEMBER === searchMemberType) {
-      apiURL += `/amwaykorea/accounts/Uid/${searchText}?feilds=FULL`;
+      apiUrl = 'userSearch';
     } else {
-      apiURL += `/amwaykorea/customers/Uid/${searchText}?feilds=FULL`;
+      apiUrl = 'customerSearch';
     }
-
-    return this.httpClient.get<AccountList>(apiURL)
-      .map(data => data as AccountList)
-      .catch(Utils.handleError);
+    const params = { feilds: 'FULL' };
+    const pathvariables = { userId: searchText };
+    const data = new HttpData(apiUrl, pathvariables, null, params);
+    return this.api.get(data);
   }
 
   /**
    * 기본 상품 검색
-   * 프로모션 정보/ 상품명 / KPS번호 / 상품 SKU ID /재고수량 순으로 노출
    *
-   * @param searchdata
+   * @param searchdata 검색어
+   * @param userId 사용자아이디
+   * @param cartId 카트 아이디
+   * @param currentpage 현재페이지
    */
   getBasicProductInfo(searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
     const params = { query: searchdata, fields: 'FULL', currentPage: currentpage + '', sort: '', pageSize: '5' };
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('productSearch', pathvariables, null, params);
     return this.api.get(data);
-  }
-
-  /**
-   * SKU ID로 상품 검색
-   */
-  getProductInfoBySkuId(skuid: string) {
-
   }
 
   /**

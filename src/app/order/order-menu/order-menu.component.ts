@@ -1,9 +1,10 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
 import { Modal, StorageService, Logger, SpinnerService, AlertService } from '../../core';
+import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
   ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
-import { Accounts, OrderHistoryList } from '../../data';
+import { Accounts, OrderHistoryList, OrderEntry } from '../../data';
 import { OrderService, MessageService } from '../../service';
 import { Utils } from '../../core/utils';
 import { Router } from '@angular/router';
@@ -13,7 +14,10 @@ import { Router } from '@angular/router';
   templateUrl: './order-menu.component.html'
 })
 export class OrderMenuComponent implements OnInit, OnDestroy {
+  private orderInfoSubscribetion: Subscription;
+
   private account: Accounts;
+  private cartList: Array<OrderEntry>;
   private orderInfoList: OrderHistoryList;
   hasAccount = false;
   hasProduct = false;
@@ -34,7 +38,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   ngOnInit() { }
 
-  ngOnDestroy() { }
+  ngOnDestroy() {
+    if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
+  }
 
   /**
    * cart list 에서 보내준 이벤트를 받음
@@ -51,8 +57,14 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         }
       } else if (data.type === 'product') {
         this.hasProduct = data.flag;
+        if (data.data) {
+          // this.account = data.data;
+        }
       } else if (data.type === 'cart') {
         this.hasCart = data.flag;
+        if (data.data) {
+          this.cartList = data.data;
+        }
       }
     }
   }
@@ -67,6 +79,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
+        callerData : {accountInfo: this.account, cartList: this.cartList},
         closeByClickOutside: false,
         modalId: 'NormalPaymentComponent'
       }
@@ -82,6 +95,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
+        callerData : {accountInfo: this.account, cartList: this.cartList},
         closeByClickOutside: false,
         modalId: 'ComplexPaymentComponent'
       }
@@ -192,7 +206,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private getOrderInfo(account: Accounts): void {
     if (account) {
       this.spinner.show();
-      this.orderService.getOrderInfo('NO', account.uid, 'A').subscribe(
+      this.orderInfoSubscribetion = this.orderService.getOrderInfo('NO', account.uid, 'A').subscribe(
         orderInfo => {
           this.spinner.hide();
           this.orderInfoList = orderInfo;

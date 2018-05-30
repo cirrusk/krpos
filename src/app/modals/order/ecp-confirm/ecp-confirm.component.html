@@ -1,20 +1,20 @@
 <div class="pop_wrap pop_l">
   <div class="pop_header">
       <h1>ECP 컨펌 확인</h1>
-      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()"></button>
   </div>
   <!-- pop_container -->
   <div class="pop_container">
       <div class="pop_content">
           <div class="mbinfo_list type03">
-              <p class="txt"><strong>총 <span class="fc_red">5</span>건</strong>의 정보가 있습니다.</p>
+              <p class="txt"><strong>총 <span class="fc_red">{{totalCount}}</span>건</strong>의 정보가 있습니다.</p>
               <span class="btn_wrap">
                   <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
-                  <a href="#" class="ico_comm prev03">이전</a>
-                  <a href="#" class="ico_comm next03 on">다음</a>
+                  <a href="javascript:void(0)" [class.on]="pager.currentPage > pager.startPage" class="ico_comm prev03 " (click)="setPage(pager.currentPage - 1,true)">이전</a>
+                  <a href="javascript:void(0)" [class.on]="pager.currentPage < pager.endPage" class="ico_comm next03 " (click)="setPage(pager.currentPage + 1,true)">다음</a>
               </span>
               <!-- 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
-              <div class="tbl_col bg_bar">
+              <div class="tbl_col bg_bar" *ngIf="totalCount > 0">
                   <table>
                       <caption>보류내역</caption>
                       <colgroup>
@@ -35,46 +35,24 @@
                       </thead>
                       <tbody>
                           <!-- 내역 선택시 tr에 on클래스 추가 -->
-                          <tr class="on">
-                              <td><span>1</span></td>
-                              <td><span>100394K19</span></td>
-                              <td class="tit"><span class="elips mx400">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이 스프레이</span></td>
-                              <td><span>1</span></td>
-                              <td><span>O</span></td>
-                          </tr>
-                          <tr>
-                              <td><span>2</span></td>
-                              <td><span>100394K19</span></td>
-                              <td class="tit"><span class="elips mx400">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이</span></td>
-                              <td><span>1</span></td>
-                              <td><span>X</span></td>
-                          </tr>
-                          <tr>
-                              <td><span>3</span></td>
-                              <td><span>100394K19</span></td>
-                              <td class="tit"><span class="elips mx400">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이</span></td>
-                              <td><span>1</span></td>
-                              <td><span>X</span></td>
-                          </tr>
-                          <tr>
-                              <td><span>4</span></td>
-                              <td><span>100394K19</span></td>
-                              <td class="tit"><span class="elips mx400">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이</span></td>
-                              <td><span>1</span></td>
-                              <td><span>X</span></td>
-                          </tr>
-                          <tr>
-                              <td><span>5</span></td>
-                              <td><span>100394K19</span></td>
-                              <td class="tit"><span class="elips mx400">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이</span></td>
-                              <td><span>1</span></td>
+                          <tr *ngFor="let orderEntry of currentOrderList; let i = index;">
+                              <td><span>{{orderEntry.entryNumber}}</span></td>
+                              <td><span>{{orderEntry.product.code}}</span></td>
+                              <td class="tit"><span class="elips mx400">{{orderEntry.product.name}}</span></td>
+                              <td><span>{{orderEntry.quantity}}</span></td>
                               <td><span>X</span></td>
                           </tr>
                       </tbody>
                   </table>
-              </div>
-              <!-- // 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
-          </div>
+                </div>
+                <!-- // 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
+            </div>
+             <!-- 바코드스캔 수정 20180524 -->
+             <div class="scan">
+                <label for="bcs">바코드 스캔</label>
+                <input #barcode autofocus type="text" id="bcs">
+            </div>
+            <!-- //바코드스캔 수정 20180524 -->
       </div>
   </div>
   <!-- //pop_container -->
