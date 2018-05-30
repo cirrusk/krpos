@@ -3,6 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { ReceiptService } from '../../../../service';
 import { PrinterService, PrinterCommands } from '../../../../core';
 import { Utils } from '../../../../core/utils';
+import { OrderInfoVO } from '../../../../data/models/receipt/order.info';
+import { BonusInfoVO } from '../../../../data/models/receipt/bonus.info';
+import { PaymentsVO } from '../../../../data/models/receipt/payments';
+import { PriceVO } from '../../../../data/models/receipt/price';
+import { ProductEntryVO } from '../../../../data/models/receipt/product';
+import { ReceiptVO } from '../../../../data/models/receipt/receipt.vo';
 
 @Component({
   selector: 'pos-receipt-print',
@@ -185,17 +191,17 @@ export class PosReceiptPrintComponent implements OnInit {
 public clickRaw() {
     const printMsg: string =
         this.prtCmd.initPrinter() +
-        // this.prtCmd.
-        // this.prtCmd.newline(5) +
-        // this.prtCmd.paperFullCut();
-        this.prtCmd.center() +
-        this.prtCmd.printBarcodeCodeUAT('100099A') +
-        this.prtCmd.printBarcodeCodeUAT('100331M') +
-        this.prtCmd.printBarcodeCodeUAT('100497M') +
-        this.prtCmd.printBarcodeCodeUAT('100663T') +
-        this.prtCmd.printBarcodeCodeUAT('100957A') +
-        this.prtCmd.printBarcodeCodeUAT('101156M') +
+        this.prtCmd.printNVImage() +
+        this.prtCmd.newline(5) +
         this.prtCmd.paperFullCut();
+        // this.prtCmd.center() +
+        // this.prtCmd.printBarcodeCodeUAT('100099A') +
+        // this.prtCmd.printBarcodeCodeUAT('100331M') +
+        // this.prtCmd.printBarcodeCodeUAT('100497M') +
+        // this.prtCmd.printBarcodeCodeUAT('100663T') +
+        // this.prtCmd.printBarcodeCodeUAT('100957A') +
+        // this.prtCmd.printBarcodeCodeUAT('101156M') +
+        // this.prtCmd.paperFullCut();
     this.printerService.printText(printMsg);
   }
 
@@ -211,9 +217,32 @@ public clickRaw() {
   public testReceipt() {
     //const text = this.receiptService.getOrderReceipt(JSON.stringify(this.receiptTempData));
     //const text = this.receiptService.getOrderReceipt(this.receiptTempData);
-    const text = this.receiptService.aboNormal(this.receiptTempData);
-    this.printerService.printText(text);
+    //const text = this.receiptService.aboNormal(this.receiptTempData);
+    //this.printerService.printText(text);
+
     
+  }
+
+  public testReceiptwithVO() {
+      let orderInfo = new OrderInfoVO('MJ PC', 'kr620038', 'MJ Kim', '7480003', '암돌이');
+      let bonus = new BonusInfoVO(200, 300);
+      let payments = new PaymentsVO(93000);
+      let price = new PriceVO(3, 93000);
+      let productList = new Array<ProductEntryVO>();
+
+      let product1 = new ProductEntryVO(1, '123456K', '더블엑스 리필', 80000, 1, 80000);
+      let product2 = new ProductEntryVO(2, '286841K', 'XS 에너지 시리얼 허니 콘플레이크', 6500, 2, 13000);
+
+      productList.push(product1);
+      productList.push(product2);
+
+      let receitVo = new ReceiptVO(orderInfo, bonus, payments, price, productList);
+
+      console.log(JSON.stringify(receitVo));
+
+      const text = this.receiptService.aboNormal(receitVo);
+      //this.printerService.printText(text);
+      console.log(text);
   }
 
 }
