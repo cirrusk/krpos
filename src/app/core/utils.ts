@@ -273,4 +273,13 @@ export /* default */ class Utils {
     return null;
   }
 
+  /**
+   * HTML 태그 삭제하기
+   *
+   * @param html HTML 문자열
+   */
+  public static stripHtml(html: string): string {
+    return html.replace(/<.*?>/g, '');
+  }
+
 }
