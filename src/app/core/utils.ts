@@ -5,7 +5,7 @@ import { ErrorInfo } from '../data/error/error-info';
 import { Errors } from '../data/error/errors';
 
 export class StringBuilder {
-  private buffer: any [] = [];
+  private buffer: any[] = [];
   constructor(val?: any) { if (val) { this.buffer.push(val); } }
   append(val: any): StringBuilder {
     this.buffer.push(val);
@@ -64,11 +64,10 @@ export /* default */ class Utils {
     let map;
     map = new Map<string, V>();
     Object.keys(obj).forEach((key) => {
-        map.set(key, obj[key]);
+      map.set(key, obj[key]);
     });
-
     return map;
-}
+  }
 
   /**
    * HttpClient 데이터 추출
@@ -134,12 +133,11 @@ export /* default */ class Utils {
     if (macaddress === null || macaddress === undefined) {
       return null;
     }
-
     splitter = splitter || '-';
     let macFormatted = '';
     for (let i = 0; i < macaddress.length; i++) {
       macFormatted += macaddress[i];
-      if ( i % 2 === 1 && i < macaddress.length - 1 ) {
+      if (i % 2 === 1 && i < macaddress.length - 1) {
         macFormatted += splitter;
       }
     }
@@ -165,7 +163,7 @@ export /* default */ class Utils {
    *
    * @param obj
    */
-  public static isNotEmpty(obj: any): boolean  {
+  public static isNotEmpty(obj: any): boolean {
     return !this.isEmpty(obj);
   }
 
