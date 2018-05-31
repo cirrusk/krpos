@@ -55,7 +55,7 @@
                         <tbody>
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
                             <tr [class.on]='activeNum == i' *ngFor="let account of currentLeftAccountList; let i = index" (click)='activeRow(i, account.uid)'>
-                                <td class="tit"><span class="elips">{{account.name}}</span></td>
+                                <td class="tit" title="{{account.name}}"><span class="elips">{{account.name}}</span></td>
                                 <td><span class="bg_bar none">{{account.uid}}</span></td>
                                 <td><span class="bg_bar">{{account.parties[0].dateOfBirth | date:'yyyyMMdd'}}</span></td>
                                 <td *ngIf='account.parties[0].phoneInfos == null; else elseTemplate'>
