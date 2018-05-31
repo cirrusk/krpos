@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
-import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config } from '../../core';
+import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
 // import { MessageService } from './../../message/message.service';
@@ -78,6 +78,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private updateItemQtyBroker: UpdateItemQtyBroker,
     private info: InfoBroker,
     private config: Config,
+    private printerService: PrinterService,
     private logger: Logger) {
     this.cartListCount = this.config.getConfig('cartListCount');
     this.domain = this.config.getConfig('apiDomain');
