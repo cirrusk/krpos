@@ -8,7 +8,7 @@ import { Config } from '../../core';
 export class NoticeComponent implements OnInit, OnDestroy {
 
   @Input() tagmsg: string;
-  @Input() noticeList: string[] = [];
+  @Input() noticeList: any ;
   @ViewChildren ('noticelist') noticelist: QueryList<ElementRef>;
   private intervalid;
   private idx = 0;
@@ -18,7 +18,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
   constructor(private renderer: Renderer2, private config: Config) { }
 
   ngOnInit() {
-    this.noticeSize = this.noticeList && this.noticeList.length;
+    this.noticeSize = this.noticeList.results && this.noticeList.results.length;
     this.noticeterm = this.config.getConfig('noticeInterval', 7);
     this.start();
   }

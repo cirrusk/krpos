@@ -18,10 +18,12 @@ export class OrderComponent implements OnInit {
     this.storage.setOrderEntry(null);
     // resolver 에서 전달해준 값을 받아 cart list에 전달하여 공지사항 출력
     const data = this.route.snapshot.data['notice'];
-    this.noticeList = data['notice_ca'];
+    // 일반 공지
+    this.noticeList = data[0];
     // resolver 에서 전달해준 값을 받아 cart menu에 전달하여 프로모션 출력
     // api 가 다른 경우 resolver를 하나 더 만듬.
-    this.promotionList = data['promotion'];
+    // 프로모션 공지
+    this.promotionList = data[1];
   }
 
 }

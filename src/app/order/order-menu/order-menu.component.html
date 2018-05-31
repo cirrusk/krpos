@@ -8,13 +8,13 @@
   <button #menus type="button" (click)="promotionOrder($event)" [class.disabled] = "!hasAccount" class="purple">프로모션 상품</button>
   <button #menus type="button" (click)="etcOrder($event)" [class.disabled] = "!hasAccount">기타</button>
 </div>
-<pos-promotion *ngIf="promotionList && promotionList.length > 0">
-    <ng-container *ngFor="let promotion of promotionList;">
+<pos-promotion *ngIf="promotionList && promotionList.results.length > 0">
+    <ng-container *ngFor="let promotion of promotionList.results;">
         <ng-container *posPromotionItem>
             <a href="javascript:void(0)">
                 <em>{{(promotion.title) ? promotion.title : '프로모션'}}</em>
                 <img src="/assets/images/common/amway_promotion.png" alt="">
-                <span>{{promotion.desc}}</span>                
+                <span>{{promotion.longDescription}}</span>                
             </a>
         </ng-container>
     </ng-container>

@@ -150,6 +150,6 @@ export class ClientComponent implements OnInit, OnDestroy {
    */
   private loadNotice() {
     const data = this.route.snapshot.data['notice'];
-    this.noticeList = data['notice_cl'];
+    this.noticeList = data;
   }
 }
