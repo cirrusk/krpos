@@ -922,7 +922,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
 
     const desciption = '';
-    const restrictionModel = new RestrictionModel(imgUrl, appendMessage, desciption);
+    const restrictionModel = new RestrictionModel(imgUrl, appendMessage.replace(/\\n/g, '<br>'), desciption);
     return restrictionModel;
   }
 
