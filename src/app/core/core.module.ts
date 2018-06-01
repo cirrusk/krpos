@@ -14,7 +14,6 @@ import { ChecksComponent } from '../modals';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { ApiService, StorageService, QzHealthChecker, Logger } from '.';
-import { PhoneNumberMaskPipe } from './pipe/phone-number-mask.pipe';
 
 @NgModule({
   imports: [

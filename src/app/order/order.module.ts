@@ -11,6 +11,7 @@ import { NoticeComponent } from './notice/notice.component';
 import { ClientComponent } from './client/client.component';
 import { PromotionComponent, PromotionItemElementDirective } from './promotion/promotion.component';
 import { PromotionItemDirective } from './promotion/promotion-item.directive';
+import { StripHtmlPipe } from '../core/pipe/strip-html.pipe';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { PromotionItemDirective } from './promotion/promotion-item.directive';
     OrderCompleteComponent,
     PromotionComponent,
     PromotionItemDirective,
-    PromotionItemElementDirective
+    PromotionItemElementDirective,
+    StripHtmlPipe
   ],
   providers: [AddCartBroker, SearchBroker]
 })

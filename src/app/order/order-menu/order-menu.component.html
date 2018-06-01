@@ -1,12 +1,12 @@
 <div class="nav">
-  <!-- 선택시 class="on" -->
-  <button #menus type="button" (click)="normalPayment($event)" [class.disabled] = "!(hasAccount && hasProduct)" class="blue">일반결제</button>
-  <button #menus type="button" (click)="complexPayment($event)" [class.disabled] = "!(hasAccount && hasProduct)" class="blue">복합결제</button>
-  <button #menus type="button" (click)="groupPayment($event)" >그룹주문</button>
-  <button #menus type="button" (click)="pickupOrder($event)" [class.disabled] = "!hasAccount">픽업주문</button>
-  <button #menus type="button" (click)="cancelOrder($event)" [class.disabled] = "!(hasAccount && hasCart)">주문취소</button>
-  <button #menus type="button" (click)="promotionOrder($event)" [class.disabled] = "!hasAccount" class="purple">프로모션 상품</button>
-  <button #menus type="button" (click)="etcOrder($event)" [class.disabled] = "!hasAccount">기타</button>
+    <!-- 선택시 class="on" -->
+    <button #menus type="button" (click)="normalPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">일반결제</button>
+    <button #menus type="button" (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">복합결제</button>
+    <button #menus type="button" (click)="groupPayment($event)">그룹주문</button>
+    <button #menus type="button" (click)="pickupOrder($event)" [class.disabled]="!hasAccount">픽업주문</button>
+    <button #menus type="button" (click)="cancelOrder($event)" [class.disabled]="!(hasAccount && hasCart)">주문취소</button>
+    <button #menus type="button" (click)="promotionOrder($event)" [class.disabled]="!hasAccount" class="purple">프로모션 상품</button>
+    <button #menus type="button" (click)="etcOrder($event)" [class.disabled]="!hasAccount">기타</button>
 </div>
 <pos-promotion *ngIf="promotionList && promotionList.results.length > 0">
     <ng-container *ngFor="let promotion of promotionList.results;">
@@ -14,7 +14,7 @@
             <a href="javascript:void(0)">
                 <em>{{(promotion.title) ? promotion.title : '프로모션'}}</em>
                 <img src="/assets/images/common/amway_promotion.png" alt="">
-                <span>{{promotion.longDescription}}</span>                
+                <span>{{promotion?.longDescription | stripHtml}}</span>
             </a>
         </ng-container>
     </ng-container>
