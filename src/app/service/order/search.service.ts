@@ -43,7 +43,7 @@ export class SearchService {
    * @param currentpage 현재페이지
    */
   getBasicProductInfo(searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
-    const params = { query: searchdata, fields: 'FULL', /*searchQueryContext: 'barcode',*/ currentPage: currentpage + '', sort: '', pageSize: '5' };
+    const params = { query: searchdata, fields: 'FULL', searchQueryContext: 'BARCODE', currentPage: currentpage + '', sort: '', pageSize: '5' };
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('productSearch', pathvariables, null, params);
     return this.api.get(data);
