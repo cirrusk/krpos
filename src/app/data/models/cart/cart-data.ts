@@ -91,7 +91,7 @@ export class Product {
     kitPrice: number; // double
     retailPrice: RetailPrice; // PriceWsDTO
     deliveryModes: any; // List<DeliveryModeWsDTO>
-    sellableStatusForStock: string;
+    sellableStatusForStock: string; // 2018.06.01 sellableStatus 에서 POS 용으로 수정(for 세션카트)
 }
 
 export class Stock {
