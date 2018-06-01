@@ -91,7 +91,7 @@ export class Product {
     kitPrice: number; // double
     retailPrice: RetailPrice; // PriceWsDTO
     deliveryModes: any; // List<DeliveryModeWsDTO>
-    sellableStatus: string;
+    sellableStatusForStock: string;
 }
 
 export class Stock {

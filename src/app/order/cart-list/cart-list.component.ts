@@ -185,7 +185,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.updateItemQtySubscription) { this.updateItemQtySubscription.unsubscribe(); }
     if (this.phytoCafeSubscription) { this.phytoCafeSubscription.unsubscribe(); }
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
-    if (this.infoSubscription)                { this.infoSubscription.unsubscribe(); }
+    if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
   }
 
   /**
@@ -418,10 +418,10 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   selectProductInfo(productCode?: string): void {
     this.spinner.show();
-    this.productInfoSubscription = this.searchService.getBasicProductInfo(productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
+    this.productInfoSubscription = this.searchService.getBasicProductInfo('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
       result => {
         const totalCount = result.pagination.totalResults;
-        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatus === '') {
+        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatusForStock === '') {
           this.addCartEntries(productCode);
         } else {
           this.searchParams.data = this.cartInfo;
@@ -700,22 +700,22 @@ export class CartListComponent implements OnInit, OnDestroy {
 
       this.spinner.show();
       this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
-                                                                        this.cartInfo.code,
-                                                                        this.cartList[index].entryNumber).subscribe(
-        result => {
-          this.getCartList(this.cartInfo, index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
-        },
-        error => {
-          this.spinner.hide();
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('cartList.component', `Remove item cart error type : ${errdata.type}`).error();
-            this.logger.set('cartList.component', `Remove item cart error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        },
-        () => { this.spinner.hide(); }
-      );
+        this.cartInfo.code,
+        this.cartList[index].entryNumber).subscribe(
+          result => {
+            this.getCartList(this.cartInfo, index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
+          },
+          error => {
+            this.spinner.hide();
+            const errdata = Utils.getError(error);
+            if (errdata) {
+              this.logger.set('cartList.component', `Remove item cart error type : ${errdata.type}`).error();
+              this.logger.set('cartList.component', `Remove item cart error message : ${errdata.message}`).error();
+              this.alert.error({ message: `${errdata.message}` });
+            }
+          },
+          () => { this.spinner.hide(); }
+        );
     } else {
       this.alert.error({ message: this.messageService.get('noCartInfo') });
     }

@@ -37,23 +37,22 @@ export class SearchService {
   /**
    * 기본 상품 검색
    *
-   * @param searchdata 검색어 (SKU ID, BARCODE)
+   * @param searchtype 검색유형(sku, vps : 일치 검색, 그외(상품명) : 유사검색)
+   * @param searchdata 검색어 (SKU ID, BARCODE, 상품명)
    * @param userId 사용자아이디
    * @param cartId 카트 아이디
    * @param currentpage 현재페이지
    */
-  getBasicProductInfo(searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
-    const params = { query: searchdata, fields: 'FULL', searchQueryContext: 'BARCODE', currentPage: currentpage + '', sort: '', pageSize: '5' };
+  getBasicProductInfo(searchtype: string, searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
+    let params: any;
+    if (searchtype === 'sku' || searchtype === 'vps') {
+      params = { query: searchdata, fields: 'FULL', searchQueryContext: 'BARCODE', currentPage: currentpage + '', sort: '', pageSize: '5' };
+    } else {
+      params = { query: searchdata, fields: 'FULL', currentPage: currentpage + '', sort: '', pageSize: '5' };
+    }
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('productSearch', pathvariables, null, params);
     return this.api.get(data);
-  }
-
-  /**
-   * VPS CODE로 상품 검색
-   */
-  getProductInfoByVpsCode(vpscode: string) {
-
   }
 
   /**

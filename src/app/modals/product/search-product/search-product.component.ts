@@ -1,6 +1,8 @@
 import { CartInfo } from './../../../data/models/order/cart-info';
-import { Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
-  ElementRef, ViewContainerRef, QueryList, OnDestroy } from '@angular/core';
+import {
+  Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
+  ElementRef, ViewContainerRef, QueryList, OnDestroy
+} from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
@@ -20,8 +22,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   private cartInfo: CartInfo;
 
   @ViewChild('searchValue') private searchValue: ElementRef;
-  @ViewChild('searchPrev', {read: ElementRef}) private searchPrev: ElementRef;
-  @ViewChild('searchNext', {read: ElementRef}) private searchNext: ElementRef;
+  @ViewChild('searchPrev', { read: ElementRef }) private searchPrev: ElementRef;
+  @ViewChild('searchNext', { read: ElementRef }) private searchNext: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
   searchType: string;
   productCount: number;
@@ -102,50 +104,41 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.renderer.removeClass(p.nativeElement, 'on');
       }
     }
-    switch (this.searchType) {
-      case 'sku': {
-        this.spinner.show();
-        this.spsubscription = this.search.getBasicProductInfo(val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
-          this.products = data;
-          this.productCount = data.pagination.totalResults;
-          this.totalPages = data.pagination.totalPages;
-          if (this.totalPages > 1) {
-            if (this.currentPage === 0) { // 첫페이지
-              this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
-              this.renderer.addClass(this.searchNext.nativeElement, 'on');
-            } else {
-              if ((this.totalPages - 1) === this.currentPage) { // 마지막 페이지
-                this.renderer.addClass(this.searchPrev.nativeElement, 'on');
-                this.renderer.removeClass(this.searchNext.nativeElement, 'on');
-              } else {
-                this.renderer.addClass(this.searchPrev.nativeElement, 'on');
-                this.renderer.addClass(this.searchNext.nativeElement, 'on');
-              }
-            }
-          } else {
-            this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
+
+    this.spinner.show();
+    this.spsubscription = this.search.getBasicProductInfo(this.searchType, val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
+      this.products = data;
+      this.productCount = data.pagination.totalResults;
+      this.totalPages = data.pagination.totalPages;
+      if (this.totalPages > 1) {
+        if (this.currentPage === 0) { // 첫페이지
+          this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
+          this.renderer.addClass(this.searchNext.nativeElement, 'on');
+        } else {
+          if ((this.totalPages - 1) === this.currentPage) { // 마지막 페이지
+            this.renderer.addClass(this.searchPrev.nativeElement, 'on');
             this.renderer.removeClass(this.searchNext.nativeElement, 'on');
+          } else {
+            this.renderer.addClass(this.searchPrev.nativeElement, 'on');
+            this.renderer.addClass(this.searchNext.nativeElement, 'on');
           }
-        },
-        error => {
-          this.spinner.hide();
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
-            this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        },
-        () => { this.spinner.hide(); }
-       );
-      } break;
-      case 'vps': {
-
-      } break;
-      case 'prd': {
-
-      } break;
-    }
+        }
+      } else {
+        this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
+        this.renderer.removeClass(this.searchNext.nativeElement, 'on');
+      }
+    },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
+          this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
   }
 
   searchOption(evt: any) {
@@ -171,7 +164,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * @param product
    */
   activeRow(index: number, product: Product): void {
-    if (product.sellableStatus !== '') {
+    if (product.sellableStatusForStock !== '') {
       this.activeNum = -1;
       this.product = null;
     } else {
