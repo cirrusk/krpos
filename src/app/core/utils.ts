@@ -279,6 +279,10 @@ export /* default */ class Utils {
    * @param html HTML 문자열
    */
   public static stripHtml(html: string): string {
+    if (this.isEmpty(html)) {
+      return '';
+    }
+
     return html.replace(/<.*?>/g, '');
   }
 

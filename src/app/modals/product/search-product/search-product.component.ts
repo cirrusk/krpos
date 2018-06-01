@@ -164,7 +164,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * @param product
    */
   activeRow(index: number, product: Product): void {
-    if (product.sellableStatusForStock !== '') {
+    if (product.sellableStatusForStock !== undefined) {
       this.activeNum = -1;
       this.product = null;
     } else {

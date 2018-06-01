@@ -421,7 +421,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productInfoSubscription = this.searchService.getBasicProductInfo('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
       result => {
         const totalCount = result.pagination.totalResults;
-        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatusForStock === '') {
+
+        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatusForStock === undefined) {
           this.addCartEntries(productCode);
         } else {
           this.searchParams.data = this.cartInfo;
