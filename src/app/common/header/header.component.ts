@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker } from '../../broker';
-import { AlertService, AlertType, AlertState, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService } from '../../core';
+import { AlertService, AlertType, AlertState, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService } from '../../core';
 import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
 import { AccessToken, BatchInfo, LockType, TerminalInfo } from '../../data';
@@ -57,6 +57,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private storage: StorageService,
     private batch: BatchService,
     private msg: MessageService,
+    private printer: PrinterService,
     private router: Router,
     private modal: Modal,
     private alert: AlertService,
