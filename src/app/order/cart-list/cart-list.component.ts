@@ -211,11 +211,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.restrictionModel = new RestrictionModel();
     this.restrictionMessageList = Array<RestrictionModel>();
     this.sendRightMenu('all', false);
-    // client 초기화
+    // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
-    // this.storage.removeOrderEntry();
-    // this.storage.removeCustomer();
   }
 
   /**
