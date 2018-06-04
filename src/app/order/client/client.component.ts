@@ -65,6 +65,10 @@ export class ClientComponent implements OnInit, OnDestroy {
             }
 
           }
+        } else if (result.key === 'clearclient') {
+          this.init();
+          this.storage.removeOrderEntry();
+          this.storage.removeCustomer();
         }
       }
     });
