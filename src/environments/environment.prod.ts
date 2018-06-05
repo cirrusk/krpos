@@ -10,7 +10,7 @@ export const environment = {
   // pos configurations
   baseSiteId: 'amwaykorea',
   apiDomain: 'https://127.0.0.1:9002',
-  apiRootUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/v2',
+  apiRootUrl: 'https://127.0.0.1:9002/api/v2',
   apiUrl: {
       terminal: '/{baseSiteId}/auth/terminal',
       auth: '/{baseSiteId}/auth/authorize',
@@ -43,7 +43,7 @@ export const environment = {
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://127.0.0.1:9002/amwaycommercewebservices/',
+  hybrisCheckUrl: 'https://127.0.0.1:9002/api/',
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9
