@@ -84,7 +84,7 @@
                   <button type="button" [class.on]="searchMode == 'P'" (click)="activeSearchMode('P'); searchText.value=''">상품</button>
               </div>
               <div class="search">
-                  <input #searchText type="text" (keydown.enter)="!!popupSearch(searchText.value); searchText.value=''">
+                  <input #searchText type="text" style="text-transform:uppercase;" (keydown.enter)="!!popupSearch(searchText.value); searchText.value=''">
                   <button type="button" class="ico_comm search01" (click)="!!popupSearch(searchText.value); searchText.value=''">검색</button>
               </div>
           </div>

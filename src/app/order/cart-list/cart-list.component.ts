@@ -240,25 +240,24 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param searchText
    */
   popupSearch(searchText: string): void {
-    // param 설정
+    const searchKey = searchText.toUpperCase();
     this.searchParams.searchMode = this.searchMode;
-    this.searchParams.searchText = searchText;
+    this.searchParams.searchText = searchKey; // 2018.06.07 대문자로 변경
 
-    // 회원검색
-    if (this.searchMode === 'A') {
+    if (this.searchMode === 'A') { // 회원검색
       this.callSearchAccount(this.searchParams);
-      // 제품 검색
-    } else {
-      if (this.cartInfo.code === undefined) {
-        this.createCartInfo(true, searchText);
+    } else { // 제품 검색
+      if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
+        this.createCartInfo(true, searchKey);
       } else {
-        this.selectProductInfo(searchText);
+        this.selectProductInfo(searchKey);
       }
     }
   }
 
   /**
-   * 유저정보 검색
+   * 유저 정보 검색
+   * @param params 검색 파라미터값
    */
   callSearchAccount(params?: any): void {
     this.modal.openModalByComponent(SearchAccountComponent,
@@ -279,7 +278,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param params 검색 파라미터값
    */
   callSearchProduct(params?: any): void {
-    // 추후 지정
     this.modal.openModalByComponent(SearchProductComponent,
       {
         callerData: { data: params },
@@ -317,7 +315,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 비회원 가입 팝업
    */
   popupNewAccount() {
-    this.storage.setLocalItem('nc', 'Y');
+    this.storage.setLocalItem('nc', 'Y'); // 클라이언트 화면에 팝업 띄우기 위해 이벤트 전달
     this.modal.openModalByComponent(NewAccountComponent,
       {
         modalId: 'NewAccountComponent'
@@ -387,7 +385,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                     {
                       callerData: { data: this.restrictionMessageList },
                       closeByEnter: true,
-                      modalId: 'RestictComponent'
+                      modalId: 'RestictComponent_User'
                     }
                   );
                 } else {
@@ -415,11 +413,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
   }
+
   /**
    * 제품 검색
    *  ->  결과 값이 1일 경우 Add to cart
    */
-  selectProductInfo(productCode?: string): void {
+  private selectProductInfo(productCode?: string): void {
     this.spinner.show();
     this.productInfoSubscription = this.searchService.getBasicProductInfo('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
       result => {
@@ -449,6 +448,9 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 생성
    *  - 제품 추가시 생성
    *  - Productcode 가 없을 경우 카트 생성 후 조회
+   *
+   * @param popupFlag 팝업플래그
+   * @param productCode  상품 코드
    */
   createCartInfo(popupFlag: boolean, productCode?: string): void {
     const terminalInfo = this.storage.getTerminalInfo();
@@ -477,7 +479,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             } else if (productCode !== undefined) {
               this.addCartEntries(productCode);
             }
-
           },
           error => {
             this.spinner.hide();
@@ -497,6 +498,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * Update VolumeAccount
+   *
    * @param cartInfo
    */
   updateVolumeAccount(cartInfo: CartInfo): void {
@@ -527,7 +529,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 현재 장바구니 조회
    * @param cartInfo 카트 정보
-   * @param copyFlag 복사 플래그
    * @param page 페이지
    */
   getCartList(cartInfo: CartInfo, page?: number): void {
@@ -538,7 +539,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (this.cartList.length === 0) {
           this.sendRightMenu('p', false);
         }
-
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
@@ -592,7 +592,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               {
                 callerData: { data: this.restrictionMessageList },
                 closeByEnter: true,
-                modalId: 'RestictComponent'
+                modalId: 'RestictComponent_Cart'
               }
             );
           }
@@ -671,7 +671,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 {
                   callerData: { data: this.restrictionMessageList },
                   closeByEnter: true,
-                  modalId: 'RestictComponent'
+                  modalId: 'RestictComponent_Qty'
                 }
               );
             }
@@ -962,18 +962,16 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   @HostListener('document: keydown', ['$event', '$event.target'])
   keyboardInput(event: any, targetElm: HTMLElement) {
-    event.stopPropagation();   // event.preventDefault();
+    event.stopPropagation();
 
     // modal 이 없을때만 동작
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
       if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
-        // 수정 이벤트
-        // 임시
+        // 임시 수정 이벤트
         if (event.keyCode === 45) {
           this.callUpdateItemQty();
-          // 개별 삭제 이벤트
-          // 임시
+          // 임시 개별 삭제 이벤트
         } else if (event.keyCode === 46) {
           if (this.selectedCartNum === -1) {
             this.alert.warn({ message: this.messageService.get('selectProductDelete') });
@@ -983,8 +981,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
 
-      // 저장 → 키
-      // 임시
+      // 임시 저장 → 키
       if (event.keyCode === 39) {
         this.saveCart();
       }
