@@ -11,8 +11,6 @@ import { Cart } from '../../data/models/order/cart';
 
 @Injectable()
 export class CartService {
-  // private orderEntries: OrderEntryList;
-
   constructor(private httpClient: HttpClient,
               private config: Config,
               // private networkService: NetworkService,
@@ -31,12 +29,6 @@ export class CartService {
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
     const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
     const cartParams = new CartParams(pickupStore, cartType, null);
-    // const apiURL = this.config.getApiUrl('createCart', {'accountId' : accountId, 'userId': userId})
-    //                                    + `?fields=BASIC&mac_address=${macAddress}`;
-    // const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    // return this.httpClient.post<CartInfo>(apiURL, JSON.stringify(cartParams), { headers : httpHeaders })
-    //                       .map(data => data as CartInfo);
     const param = {fields: 'BASIC', mac_address: macAddress};
     const pathvariables = {accountId : accountId, userId: userId};
     const data = new HttpData('createCart', pathvariables, cartParams, param, 'json');
@@ -57,10 +49,6 @@ export class CartService {
 
     return this.httpClient.put<HttpResponseBase>(apiURL, httpParams, { headers : httpHeaders, observe: 'response'})
                           .map(data => data as HttpResponseBase);
-    // const param = {volumeAccount: volumeAccount};
-    // const pathvariables = {userId : userId, cartId: cartId};
-    // const data = new HttpData('updateVolAcc', pathvariables, null, param);
-    // return this.api.put(data);
   }
 
   /**
@@ -69,12 +57,6 @@ export class CartService {
    * @param cartId
    */
   getCartList(userId: string, cartId: string): Observable<Cart> {
-    // const apiURL = this.config.getApiUrl('getCartList', {'userId' : userId, 'cartId' : cartId});
-
-    // const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    // return this.httpClient.get<Cart>(apiURL, { headers : httpHeaders })
-    //                       .map(data => data as Cart);
     const pathvariables = {userId : userId, cartId: cartId};
     const data = new HttpData('getCartList', pathvariables, null, null, 'json');
     return this.api.get(data);
@@ -94,11 +76,6 @@ export class CartService {
     orderEntries.push(entry);
     orderList.orderEntries = orderEntries;
 
-    // const apiURL = this.config.getApiUrl('addToCart', {'userId' : userId, 'cartId': cartId});
-    // const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    // return this.httpClient.post<CartModification[]>(apiURL + '?fields=FULL', JSON.stringify(orderList), { headers : httpHeaders })
-    //                       .map(data => data as CartModification[]);
     const pathvariables = {userId : userId, cartId: cartId};
     const data = new HttpData('addToCart', pathvariables, orderList, null, 'json');
     return this.api.post(data);
@@ -108,11 +85,6 @@ export class CartService {
     const orderList = new OrderEntryList();
     orderList.orderEntries = orderEntries;
 
-    // const apiURL = this.config.getApiUrl('addToCart', {'userId' : userId, 'cartId': cartId});
-    // const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    // return this.httpClient.post<CartModification[]>(apiURL, JSON.stringify(orderList), { headers : httpHeaders })
-    //                       .map(data => data as CartModification[]);
     const pathvariables = {userId : userId, cartId: cartId};
     const data = new HttpData('addToCart', pathvariables, orderList, null, 'json');
     return this.api.post(data);
@@ -154,15 +126,6 @@ export class CartService {
     oa.push(o1);
     const op = new OrderParams(oa);
 
-    // const apiURL = this.config.getApiUrl('updateItemQtyCart', {'userId' : userId, 'cartId': cartId, 'entryNumber': entryNumber});
-    // const httpHeaders = new HttpHeaders().set('content-type', 'application/x-www-form-urlencoded');
-
-    // const httpParams = new HttpParams().set('qty', qty.toString())
-    //                                    .set('product', JSON.stringify(op));
-
-    // return this.httpClient.put<CartModification>(apiURL, httpParams, { headers : httpHeaders })
-    //                       .map(data => data as CartModification);
-
     const param = {qty: qty.toString(), product: JSON.stringify(op)};
     const pathvariables = {userId : userId, cartId: cartId, entryNumber: entryNumber};
     const data = new HttpData('updateItemQtyCart', pathvariables, null, param);
@@ -201,17 +164,13 @@ export class CartService {
    * @param userId
    */
   getCarts(userId?: string): Observable<CartList> {
-    const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
-    // let apiURL = this.config.getApiUrl('getCart', {'macAddress' : macAddress});
-    // if (userId) {
-    //   apiURL += `?userId=${userId}`;
-    // }
-    // const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-    // return this.httpClient.get<CartList>(apiURL, { headers : httpHeaders })
-    //                       .map(data => data as CartList);
+    const macAddress = this.storage.getMacAddress();
+
     let param = {};
     if (userId) {
-      param = {userId: userId};
+      param = {userId: userId, fields: 'FULL'};
+    } else {
+      param = {fields: 'FULL'};
     }
     const pathvariables = {macAddress : macAddress};
     const data = new HttpData('getCart', pathvariables, null, param, 'json');
@@ -224,16 +183,13 @@ export class CartService {
   saveCart(accountId: string, userId: string, cartId: string): Observable<SaveCartResult> {
     const tokenInfo = this.storage.getTokenInfo();
     const cashierId = tokenInfo.employeeId;
-    const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
+    const macAddress = this.storage.getMacAddress();
 
     const apiURL = this.config.getApiUrl('saveCart', {'accountId' : accountId, 'userId': userId, 'cashierId': cashierId, 'macAddress': macAddress, 'cartId': cartId});
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
     return this.httpClient.patch<SaveCartResult>(apiURL, { headers : httpHeaders, observe: 'response' })
                           .map(data => data as SaveCartResult);
-    // const pathvariables = {accountId : accountId, userId: userId, cashierId: cashierId, macAddress: macAddress, cartId: cartId};
-    // const data = new HttpData('saveCart', pathvariables, null, null, 'json');
-    // return this.api.patch(data);
   }
 
   /**
@@ -245,8 +201,5 @@ export class CartService {
 
     return this.httpClient.patch<SaveCartResult>(apiURL, { headers : httpHeaders, observe: 'response' })
                           .map(data => data as SaveCartResult);
-    // const pathvariables = {userId : userId, cartId: cartId};
-    // const data = new HttpData('restoreCart', pathvariables, null, null, 'json');
-    // return this.api.patch(data);
   }
 }
