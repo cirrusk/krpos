@@ -132,7 +132,7 @@ export class ClientComponent implements OnInit, OnDestroy {
 
     this.cartList.forEach(entry => {
       sumItem += entry.quantity;
-      sumPrice += entry.product.price.value * entry.quantity;
+      sumPrice += (entry.product.price === null ? 0 : entry.product.price.value) * entry.quantity;
       sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0 ;
       sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0 ;
     });

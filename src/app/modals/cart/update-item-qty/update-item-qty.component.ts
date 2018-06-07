@@ -18,10 +18,9 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => { this.quantity.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.code = this.callerData.code;
     this.quantity.nativeElement.value = this.callerData.qty;
-    setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 50); // 숫자를 지우고 입력해야해서 불편, 바로 수정가능하도록 수정
+    setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 100); // 숫자를 지우고 입력해야해서 불편, 바로 수정가능하도록 수정
   }
 
   updateItemQty(quantity: number) {

@@ -1,18 +1,14 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
-// import { MessageService } from './../../message/message.service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel } from '../../data';
 import { Cart } from '../../data/models/order/cart';
-// import { TotalPrice } from '../../data/models/cart/cart-data';
 import { Utils } from '../../core/utils';
-// import { environment } from '../../../environments/environment.uat';
 
 @Component({
   selector: 'pos-cart-list',
@@ -883,7 +879,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     this.cartList.forEach(entry => {
       sumItem += entry.quantity;
-      sumPrice += entry.product.price.value * entry.quantity;
+      sumPrice += (entry.product.price === null ? 0 : entry.product.price.value) * entry.quantity;
       sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0;
       sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0;
     });
@@ -969,11 +965,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
       if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
-        // 임시 수정 이벤트
-        if (event.keyCode === 45) {
+        if (event.keyCode === 45) { // 임시 건수 수정 이벤트(Insert key)
           this.callUpdateItemQty();
-          // 임시 개별 삭제 이벤트
-        } else if (event.keyCode === 46) {
+        } else if (event.keyCode === 46) { // 임시 개별 삭제 이벤트(Delete key)
           if (this.selectedCartNum === -1) {
             this.alert.warn({ message: this.messageService.get('selectProductDelete') });
           } else {
@@ -981,9 +975,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           }
         }
       }
-
-      // 임시 저장 → 키
-      if (event.keyCode === 39) {
+      if (event.keyCode === 39) { // 임시 저장 → 키
         this.saveCart();
       }
     }
