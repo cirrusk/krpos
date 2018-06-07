@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchBerComponent } from './../../account/search-ber/search-ber.component';
-
+import { InfoBroker } from '../../../broker';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { Accounts } from '../../../data';
 
@@ -17,22 +17,17 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
   constructor(
     protected modalService: ModalService,
     private modal: Modal,
+    private info: InfoBroker,
     private renderer: Renderer2,
     private router: Router) {
     super(modalService);
   }
 
   ngOnInit() {
-    // this.listner = this.renderer.listen('window', 'keydown.esc', event => {
-    //   this.close();
-    // });
-
     this.accounts = this.callerData.account;
-
   }
 
   ngOnDestroy() {
-    // this.listner();
   }
 
   /**
@@ -45,7 +40,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     this.close();
     this.modal.openModalByComponent(SearchBerComponent,
       {
-        callerData: {aboNum: this.accounts.uid},
+        callerData: { aboNum: this.accounts.uid },
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
@@ -83,6 +78,15 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     this.setSelected(evt);
   }
 
+  phytoCafeOrder() {
+    this.info.sendInfo('pyt', { action: true }); // order 에 이벤트 전송 파이토 유저로 변경
+    this.close();
+  }
+
+  dashboard() {
+    this.router.navigate(['/dashboard']);
+    setTimeout(() => { this.close(); }, 270);
+  }
 
   close() {
     this.closeModal();

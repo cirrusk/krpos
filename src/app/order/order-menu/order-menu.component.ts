@@ -139,7 +139,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   cancelOrder(evt: any) {
-    if (!this.hasAccount || !this.hasCart) { return; }
+    if (!this.hasAccount) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(CancelOrderComponent,
       {
@@ -173,7 +173,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   etcOrder(evt: any) {
-    if (!this.hasAccount) { return; }
+    // if (!this.hasAccount) { return; }
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
@@ -194,14 +194,14 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.renderer.addClass(evt.target, 'on');
   }
 
-  private checkPromotionClass(evt: any) {
-    evt.stopPropagation();
-    this.menus.forEach(menu => {
-      // this.renderer.removeClass(menu.nativeElement, 'blue');
-      this.renderer.removeClass(menu.nativeElement, 'on');
-    });
-    this.renderer.addClass(evt.target, 'on');
-  }
+  // private checkPromotionClass(evt: any) {
+  //   evt.stopPropagation();
+  //   this.menus.forEach(menu => {
+  //     // this.renderer.removeClass(menu.nativeElement, 'blue');
+  //     this.renderer.removeClass(menu.nativeElement, 'on');
+  //   });
+  //   this.renderer.addClass(evt.target, 'on');
+  // }
 
   private getOrderInfo(account: Accounts): void {
     if (account) {

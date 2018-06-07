@@ -4,9 +4,9 @@
     <button #menus type="button" (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">복합결제</button>
     <button #menus type="button" (click)="groupPayment($event)">그룹주문</button>
     <button #menus type="button" (click)="pickupOrder($event)" [class.disabled]="!hasAccount">픽업주문</button>
-    <button #menus type="button" (click)="cancelOrder($event)" [class.disabled]="!(hasAccount && hasCart)">주문취소</button>
+    <button #menus type="button" (click)="cancelOrder($event)" [class.disabled]="!hasAccount">주문취소</button>
     <button #menus type="button" (click)="promotionOrder($event)" [class.disabled]="!hasAccount" class="purple">프로모션 상품</button>
-    <button #menus type="button" (click)="etcOrder($event)" [class.disabled]="!hasAccount">기타</button>
+    <button #menus type="button" (click)="etcOrder($event)">기타</button>
 </div>
 <pos-promotion *ngIf="promotionList && promotionList.results.length > 0">
     <ng-container *ngFor="let promotion of promotionList.results;">

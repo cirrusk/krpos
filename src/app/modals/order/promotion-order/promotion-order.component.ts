@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
-import { ModalComponent, ModalService, Modal } from '../../../core';
-import { InfoBroker } from '../../../broker';
+import { ModalComponent, ModalService } from '../../../core';
 
 @Component({
   selector: 'pos-promotion-order',
@@ -9,7 +8,7 @@ import { InfoBroker } from '../../../broker';
 export class PromotionOrderComponent extends ModalComponent implements OnInit {
 
   @ViewChildren('promotions') promotions: QueryList<ElementRef>;
-  constructor(protected modalService: ModalService, private renderer: Renderer2, private info: InfoBroker) {
+  constructor(protected modalService: ModalService, private renderer: Renderer2) {
     super(modalService);
   }
 
@@ -18,11 +17,6 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
 
   promotionBasic(evt: any) {
     this.setSelected(evt);
-  }
-
-  phytoCafeOrder(evt: any) {
-    this.info.sendInfo('pyt', { action: true }); // order 에 이벤트 전송 파이토 유저로 변경
-    this.close();
   }
 
   promotion(evt: any, productcode: string) {
