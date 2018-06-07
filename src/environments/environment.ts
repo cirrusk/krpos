@@ -49,7 +49,7 @@ export const environment = {
     berSearch: '/{baseSiteId}/business/registration/{aboNum}'
   },
   logLevel: 'debug',
-  terminalTimeout: 10,
+  terminalTimeout: 20,
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
