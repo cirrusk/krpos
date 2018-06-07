@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+// import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { ApiService, Config, StorageService } from '../../core';
-import { Utils } from '../../core/utils';
+import { ApiService, StorageService } from '../../core';
+// import { Utils } from '../../core/utils';
 import { HttpData, OrderSearchParameters, OrderHistoryList } from '../../data';
 import { Order } from '../../data/models/order/order';
 
 @Injectable()
 export class OrderService {
 
-  constructor(private api: ApiService, private storage: StorageService , private httpClient: HttpClient, private config: Config) { }
+  constructor(private api: ApiService, private storage: StorageService) { }
 
   getOrderInfo(searchType: string, searchText: string, memberType: string): Observable<OrderHistoryList> {
     const orderParameters = new OrderSearchParameters();

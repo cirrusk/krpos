@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { NetworkService, StorageService, Config, Logger, ApiService } from '../../core';
+import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
   OrderEntries, OrderEntryList, OrderParams, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData} from '../../data';
 import { Cart } from '../../data/models/order/cart';
-import { Utils } from '../../core/utils';
+// import { Utils } from '../../core/utils';
 
 @Injectable()
 export class CartService {
@@ -15,10 +15,11 @@ export class CartService {
 
   constructor(private httpClient: HttpClient,
               private config: Config,
-              private networkService: NetworkService,
+              // private networkService: NetworkService,
               private storage: StorageService,
-              private api: ApiService,
-              private logger: Logger) { }
+              private api: ApiService
+              // private logger: Logger
+            ) { }
 
   /**
    * 장바구니 생성

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Pagination } from '../../data';
 
-
 @Injectable()
 export class PagerService {
   private pagination: Pagination;

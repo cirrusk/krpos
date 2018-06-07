@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
-import { ApiService, Config, StorageService } from '../../core';
+import { ApiService, StorageService } from '../../core';
 import { AccountList, MemberType, HttpData, BerResult } from '../../data';
 import { Products } from '../../data/models/cart/cart-data';
-import { Utils } from '../../core/utils';
+// import { Utils } from '../../core/utils';
 
 
 @Injectable()
 export class SearchService {
 
-  constructor(private api: ApiService, private storage: StorageService, private config: Config) { }
+  constructor(private api: ApiService, private storage: StorageService) { }
 
   /**
    * 회원 정보 조회

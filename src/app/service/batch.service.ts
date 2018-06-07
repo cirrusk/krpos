@@ -6,7 +6,7 @@ import 'rxjs/add/operator/switchMap';
 
 import { ApiService, StorageService, Logger } from '../core';
 import { BatchInfo, BatchStats, HttpData } from '../data';
-import { Utils } from '../core/utils';
+// import { Utils } from '../core/utils';
 
 
 @Injectable()

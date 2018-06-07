@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+// import { Observable } from 'rxjs/Observable';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 import { Subscription } from 'rxjs/Subscription';
 

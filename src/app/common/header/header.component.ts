@@ -6,10 +6,10 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker } from '../../broker';
-import { AlertService, AlertType, AlertState, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService } from '../../core';
+import { AlertService, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService } from '../../core';
 import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
-import { AccessToken, BatchInfo, LockType, TerminalInfo } from '../../data';
+import { BatchInfo, LockType, TerminalInfo } from '../../data';
 
 import { Utils } from '../../core/utils';
 
@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private holdsubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
-  private sessionMacAddress: string;
+  // private sessionMacAddress: string;
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
@@ -75,6 +75,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.printer.init();
     this.getTerminalInfo();
     this.tokensubscription = this.info.getInfo().subscribe(
       result => {
