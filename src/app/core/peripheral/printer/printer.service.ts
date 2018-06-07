@@ -2,77 +2,80 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { PrinterDriver } from './printer.driver';
-import { FormatReader } from '../common/format-reader';
+// import { FormatReader } from '../common/format-reader';
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { PrinterConfigs } from './helper/printer-configs';
 import { Logger } from '../../logger/logger';
-import { EscPos } from './helper/escpos/escpos';
-import { Utils } from '../../utils';
+// import { EscPos } from './helper/escpos/escpos';
+// import { Utils } from '../../utils';
 
 @Injectable()
 export class PrinterService {
 
-  // 프린터 설정 override
-  private printerOpts: PrinterConfigs;
-  constructor(private printerDriver: PrinterDriver,
-    private dirverReadyBroker: DriverReadyBroker,
-    private formatReaderService: FormatReader,
-    private logger: Logger) {
-    // Wait
-    const waitPrinterDriver: Subject<any> = this.dirverReadyBroker.getPrinterObserver();
-    waitPrinterDriver.subscribe(
-      () => {
-          this.printerOpts = {
-              size: {width: 79, height: null},
-              units: 'mm',
-              colorType: 'grayscale',
-              interpolation: 'bilinear'
-              // scaleContent: false
-          };
+    // 프린터 설정 override
+    private printerOpts: PrinterConfigs;
+    constructor(private printerDriver: PrinterDriver,
+        private dirverReadyBroker: DriverReadyBroker,
+        // private formatReaderService: FormatReader,
+        private logger: Logger) {
+        // Wait
+        const waitPrinterDriver: Subject<any> = this.dirverReadyBroker.getPrinterObserver();
+        waitPrinterDriver.subscribe(
+            () => {
+                this.printerOpts = {
+                    size: { width: 79, height: null },
+                    units: 'mm',
+                    colorType: 'grayscale',
+                    interpolation: 'bilinear'
+                    // scaleContent: false
+                };
 
-          this.logger.set('printer.service', 'Printer driver is ready').debug();
+                this.logger.set('printer.service', 'Printer driver is ready').debug();
 
-          this.printerDriver.overridePrinterConfig(this.printerOpts);
-      }
-    );
-  }
-  public closeConnection(): void {
-    this.printerDriver.close();
-  }
+                this.printerDriver.overridePrinterConfig(this.printerOpts);
+            }
+        );
+    }
 
-  public printInlineHTML(html: string) {
-    this.printerDriver.printPixelModeHTML(html).subscribe(
-        (result) => {
+    public init(): void { }
 
-        },
-        (err) => {
-            throw err;
-        },
-        () => {
-            this.logger.set('printer.service', 'Printing[HTML] is complete').debug();
-        }
-    );
-  }
+    public closeConnection(): void {
+        this.printerDriver.close();
+    }
 
-  public printText(rawData: string) {
-    this.printerDriver.printRawModeText(rawData).subscribe(
-        () => {
+    public printInlineHTML(html: string) {
+        this.printerDriver.printPixelModeHTML(html).subscribe(
+            (result) => {
 
-        },
-        (err) => {
-            throw err;
-        },
-        () => {
-            this.logger.set('printer.service', 'Printing[Text] is complete').debug();
-        }
-    );
-  }
+            },
+            (err) => {
+                throw err;
+            },
+            () => {
+                this.logger.set('printer.service', 'Printing[HTML] is complete').debug();
+            }
+        );
+    }
 
-  public sendCommand(cmd: string) {
-    this.printText(cmd);
-  }
+    public printText(rawData: string) {
+        this.printerDriver.printRawModeText(rawData).subscribe(
+            () => {
 
-  public openCashDrawer() {
+            },
+            (err) => {
+                throw err;
+            },
+            () => {
+                this.logger.set('printer.service', 'Printing[Text] is complete').debug();
+            }
+        );
+    }
 
-  }
+    public sendCommand(cmd: string) {
+        this.printText(cmd);
+    }
+
+    public openCashDrawer() {
+
+    }
 }

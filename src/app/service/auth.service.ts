@@ -3,9 +3,9 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/switchMap';
 
-import { NetworkService, StorageService, ApiService, CLIENT_SECRET } from '../core';
+import { StorageService, ApiService, CLIENT_SECRET } from '../core';
 import { TerminalInfo, AccessToken, HttpData, Error } from '../data';
-import { Utils } from '../core/utils';
+// import { Utils } from '../core/utils';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private api: ApiService,
     private storage: StorageService,
-    private network: NetworkService,
+    // private network: NetworkService,
     @Inject(CLIENT_SECRET) private clientsecret: string) {
       this.terminalInfo = this.storage.getTerminalInfo();
   }

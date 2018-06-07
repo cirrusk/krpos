@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+// import { Observable } from 'rxjs/Observable';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
 import { Accounts, OrderEntry, Pagination } from '../../data';
@@ -63,7 +63,6 @@ export class ClientComponent implements OnInit, OnDestroy {
             } else {
               this.addCartEntry(result.value);
             }
-
           }
         } else if (result.key === 'clearclient') {
           this.init();
@@ -144,7 +143,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.totalBV = sumBV;
   }
 
-  private activeRowCart(index: number): void {
+  activeRowCart(index: number): void {
     this.selectedCartNum = index;
   }
 

@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Modal, Logger, StorageService, AlertService, AlertState, AlertType, SpinnerService } from '../core';
-import { LoginComponent } from '../modals';
+import { Modal, Logger, StorageService, AlertService, AlertState, SpinnerService } from '../core';
+// import { LoginComponent } from '../modals';
 import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker';
 import { AccessToken, BatchInfo, LockType } from '../data';
@@ -17,11 +17,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   tokeninfo: AccessToken;
   batchNo: string;
-  tokensubscription: Subscription;
-  statssubscription: Subscription;
-  batchsubscription: Subscription;
-  alertsubscription: Subscription;
   screenLockType: number;
+  private tokensubscription: Subscription;
+  private statssubscription: Subscription;
+  private batchsubscription: Subscription;
+  private alertsubscription: Subscription;
   private orderCount: number;
   constructor(
     private modal: Modal,

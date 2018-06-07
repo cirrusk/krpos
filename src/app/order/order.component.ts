@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LockType } from '../data';
+// import { LockType } from '../data';
 import { StorageService } from '../core';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
-import { Modal, StorageService, Logger, SpinnerService, AlertService } from '../../core';
+import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
@@ -25,13 +25,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal,
-              private storage: StorageService,
+              // private storage: StorageService,
               private orderService: OrderService,
               private messageService: MessageService,
               private alert: AlertService,
               private spinner: SpinnerService,
               private logger: Logger,
-              private element: ElementRef,
+              // private element: ElementRef,
               private renderer: Renderer2,
               private router: Router
               ) { }

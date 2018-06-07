@@ -1,18 +1,18 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+// import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
-import { Modal, StorageService, AlertService, AlertType, SpinnerService, Logger, Config, PrinterService } from '../../core';
+import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
 // import { MessageService } from './../../message/message.service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Customer, Pagination, CartMessage, RestrictionModel } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel } from '../../data';
 import { Cart } from '../../data/models/order/cart';
-import { TotalPrice } from '../../data/models/cart/cart-data';
+// import { TotalPrice } from '../../data/models/cart/cart-data';
 import { Utils } from '../../core/utils';
-import { environment } from '../../../environments/environment.uat';
+// import { environment } from '../../../environments/environment.uat';
 
 @Component({
   selector: 'pos-cart-list',
@@ -42,10 +42,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   private productInfo: OrderEntry;                                          // 제품 정보
   private addCartModel: CartModification[];                                 // 장바구니 담기 응답모델
   private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
-  private currentPage: number;                                              // 현재 페이지 번호
+  // private currentPage: number;                                              // 현재 페이지 번호
   private pager: Pagination;                                                // pagination 정보
   private selectedCartNum: number;                                          // 선택된 카트번호
-  private modifyFlag: boolean;                                              // 수정 버튼 플래그
+  // private modifyFlag: boolean;                                              // 수정 버튼 플래그
   private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
   private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
@@ -157,6 +157,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.printerService.init();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
     this.phytoCafeSubscription = this.info.getInfo().subscribe(
       result => {
@@ -199,13 +200,13 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productInfo = new OrderEntry();
     this.currentCartList = new Array<OrderEntry>();
     this.searchMode = 'A';
-    this.currentPage = 0;
+    // this.currentPage = 0;
     this.totalItem = 0;
     this.totalPrice = 0;
     this.totalPV = 0;
     this.totalBV = 0;
     this.selectedCartNum = -1;
-    this.modifyFlag = false;
+    // this.modifyFlag = false;
     this.pager = new Pagination();
     this.saveCartResult = new SaveCartResult();
     this.restrictionModel = new RestrictionModel();
