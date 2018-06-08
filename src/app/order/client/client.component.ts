@@ -1,11 +1,10 @@
-import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-// import { Observable } from 'rxjs/Observable';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
 import { Accounts, OrderEntry, Pagination } from '../../data';
 import { PagerService } from '../../service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'pos-client',
@@ -13,8 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ClientComponent implements OnInit, OnDestroy {
 
-  private stsubscription: Subscription;
-  public noticeList: string[] = [];
+  noticeList: string[] = [];
   accountInfo: Accounts;                          // 사용자 정보
   cartList: Array<OrderEntry>;                    // 장바구니 리스트
   currentCartList: Array<OrderEntry>;             // 출력 장바구니 리스트
@@ -22,13 +20,12 @@ export class ClientComponent implements OnInit, OnDestroy {
   totalPrice: number;                             // 총 금액
   totalPV: number;                                // 총 PV
   totalBV: number;                                // 총 Bv
-  public cartListCount: number;                   // 카트 목록 개수
+  cartListCount: number;                          // 카트 목록 개수
+  selectedCartNum: number;                        // 선택된 카트번호
   private pager: Pagination;                      // pagination 정보
-  private selectedCartNum: number;                // 선택된 카트번호
+  private stsubscription: Subscription;
   constructor(private modal: Modal, private storage: StorageService,
-    private logger: Logger, private config: Config,
-    private route: ActivatedRoute,
-    private pagerService: PagerService ) {
+    private logger: Logger, private config: Config, private route: ActivatedRoute, private pagerService: PagerService) {
     this.cartListCount = this.config.getConfig('cartListCount');
   }
 
@@ -57,6 +54,9 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.init();
           } else {
             if (result.value instanceof Array) {
+              if (result.value.length === 0) { // 단건 삭제 시 빈 배열이므로 여기서 초기화
+                this.init();
+              }
               result.value.forEach(orderentry => {
                 this.addCartEntry(orderentry);
               });
@@ -133,8 +133,8 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.cartList.forEach(entry => {
       sumItem += entry.quantity;
       sumPrice += (entry.product.price === null ? 0 : entry.product.price.value) * entry.quantity;
-      sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0 ;
-      sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0 ;
+      sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0;
+      sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0;
     });
 
     this.totalItem = sumItem;

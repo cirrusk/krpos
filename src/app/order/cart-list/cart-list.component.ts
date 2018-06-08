@@ -536,6 +536,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (this.cartList.length === 0) {
           this.sendRightMenu('p', false);
         }
+        this.storage.setOrderEntry(result.entries); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다.
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
