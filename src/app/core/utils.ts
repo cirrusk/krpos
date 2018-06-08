@@ -238,6 +238,8 @@ export /* default */ class Utils {
     self.close(); // only kiosk mode
     // window.open('', '_self').close();
     // location.href = 'http://closekiosk';
+    // location.href = 'http://exitkiosk';
+    try { location.href = '/closekiosk'; } catch (e) {}
   }
 
   /**

@@ -46,7 +46,8 @@ export const environment = {
     noticeList: '/{baseSiteId}/pos/notification/search',
     orderInfo: '/{baseSiteId}/orders',
     orderDetail: '/{baseSiteId}/orders/{code}',
-    berSearch: '/{baseSiteId}/business/registration/{aboNum}'
+    berSearch: '/{baseSiteId}/business/registration/{aboNum}',
+    paymentModes: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes'
   },
   logLevel: 'info',
   terminalTimeout: 20,

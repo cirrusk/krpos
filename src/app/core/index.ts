@@ -3,6 +3,7 @@ export * from './service/api.service';
 export * from './service/qz-health-checker';
 export * from './spinner/spinner.service';
 export * from './alert/alert.service';
+export * from './service/ws.service';
 export * from './logger/logger';
 export * from './config/config';
 export * from './modal/modal.component';
