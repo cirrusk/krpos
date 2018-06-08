@@ -31,6 +31,8 @@ export * from './models/order/search-param';
 export * from './models/order/stock';
 export * from './models/order/user';
 
+export * from './models/payment/payment-mode';
+export * from './models/payment/payment-base';
 
 export * from './models/common/access-token';
 export * from './models/common/address';
