@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, Logger, StorageService, AlertService, AlertType, SpinnerService } from '../../core';
+import { ModalComponent, ModalService, Modal, Logger, StorageService, AlertService, SpinnerService } from '../../core';
 
 import { AuthService } from '../../service/auth.service';
 import { Utils } from '../../core/utils';
-
 
 @Component({
   selector: 'pos-password',

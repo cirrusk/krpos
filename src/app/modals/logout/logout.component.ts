@@ -1,11 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, Modal, StorageService, SpinnerService } from '../../core';
 import { BatchService } from '../../service';
-import { InfoBroker } from '../../broker';
-import { Utils } from '../../core/utils';
 
 
 @Component({
@@ -20,11 +17,9 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
   private orderCount: number;
   constructor(protected modalService: ModalService,
     private modal: Modal,
-    private router: Router,
     private storage: StorageService,
     private spinner: SpinnerService,
     private batch: BatchService,
-    private infobroker: InfoBroker,
     private logger: Logger) {
     super(modalService);
     this.orderCount = 0;
@@ -94,8 +89,8 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
                 modalId: 'ENDWORK_LAST'
               });
             },
-            (error) => {},
-            () => { this.spinner.hide(); });
+              (error) => { },
+              () => { this.spinner.hide(); });
           } else {
             // this.router.navigate(['/order']);
           }

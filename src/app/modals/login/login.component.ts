@@ -1,12 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, Renderer2 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
-import { ModalComponent, ModalService, StorageService, Logger, AlertService, AlertType, SpinnerService } from '../../core';
+import { ModalComponent, ModalService, StorageService, Logger, AlertService, SpinnerService } from '../../core';
 import { AuthService } from '../../service';
 import { InfoBroker } from '../../broker';
-import { ErrorInfo } from '../../data';
 import { Utils } from '../../core/utils';
 
 
@@ -42,8 +40,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     private info: InfoBroker,
     private alert: AlertService,
     private spinner: SpinnerService,
-    private logger: Logger,
-    private renderer: Renderer2) {
+    private logger: Logger) {
     super(modalService);
   }
 

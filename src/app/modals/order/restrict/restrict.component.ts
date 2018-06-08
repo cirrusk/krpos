@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalComponent, ModalService, Modal } from '../../../core';
-import { Utils } from '../../../core/utils';
 import { RestrictionModel, Pagination } from '../../../data';
 import { PagerService } from '../../../service';
 
