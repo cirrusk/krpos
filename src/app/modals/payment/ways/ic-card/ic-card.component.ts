@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 import { ModalComponent, ModalService } from '../../../../core';
 
@@ -17,6 +17,14 @@ export class IcCardComponent extends ModalComponent implements OnInit {
 
   close() {
     this.closeModal();
+  }
+
+  @HostListener('document: keydown', ['$event', '$event.target'])
+  icCardAction(event: KeyboardEvent, targetElm: HTMLElement) {
+    event.stopPropagation();
+    if (event.keyCode === 13) {
+      alert('enter event...');
+    }
   }
 
 }

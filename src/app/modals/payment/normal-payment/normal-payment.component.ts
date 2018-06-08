@@ -63,9 +63,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.setSelected(evt);
     this.modal.openModalByComponent(IcCardComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
+        closeByEnter: false,
         closeByClickOutside: false,
         modalId: 'IcCardComponent'
       }
