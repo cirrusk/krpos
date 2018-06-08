@@ -127,7 +127,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   pickupOrder(evt: any) {
-    if (!this.hasAccount) { return; }
+    // if (!this.hasAccount) { return; }
     this.checkClass(evt);
 
     this.getOrderInfo(this.account);
