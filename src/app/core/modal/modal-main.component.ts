@@ -1,6 +1,7 @@
-
-import { Component, ElementRef, ViewChild, ViewContainerRef, ComponentFactoryResolver,
-  Type, ReflectiveInjector, HostListener } from '@angular/core';
+import {
+  Component, ElementRef, ViewChild, ViewContainerRef, ComponentFactoryResolver,
+  Type, ReflectiveInjector, HostListener
+} from '@angular/core';
 
 import { ModalComponent } from './modal.component';
 import { ModalConfig } from './modal-config';
