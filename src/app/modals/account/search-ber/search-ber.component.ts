@@ -1,6 +1,6 @@
-import { Component, OnInit, Renderer2, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, Modal, ModalService, SpinnerService, Logger, AlertService } from '../../../core';
+import { ModalComponent, ModalService, SpinnerService, Logger, AlertService } from '../../../core';
 import { SearchService } from '../../../service';
 import { BerData } from '../../../data/models/common/ber-result';
 import { Utils } from '../../../core/utils';
@@ -21,8 +21,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
     private search: SearchService,
     private spinner: SpinnerService,
     private alert: AlertService,
-    private logger: Logger,
-    private renderer: Renderer2) {
+    private logger: Logger) {
     super(modalService);
     this.berCount = 0;
     this.berSeachMarker = -1;

@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, Input, Renderer2, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, AlertService, ModalService, AlertType, OnlyNumberDirective, SpinnerService, Logger, Modal } from '../../../core';
+import { ModalComponent, AlertService, ModalService, SpinnerService, Logger, Modal } from '../../../core';
 import { AccountService } from './../../../service/account.service';
 import { SearchAccountBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
@@ -29,8 +29,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
               private accountService: AccountService,
               private spinner: SpinnerService,
               private searchAccountBroker: SearchAccountBroker,
-              private logger: Logger,
-              private renderer: Renderer2) {
+              private logger: Logger) {
     super(modalService);
     this.phonetype = 'MOBILE';
     this.agree = true;

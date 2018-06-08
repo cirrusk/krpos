@@ -29,7 +29,7 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
     } else {
       const data = { code: this.code, qty: quantity };
       this.updateItemQtyBroker.sendInfo(data);
-      this.closeModal();
+      this.close();
     }
   }
 

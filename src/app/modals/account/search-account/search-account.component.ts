@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import * as format from 'string-format';
+// import * as format from 'string-format';
 
-import { ModalComponent, ModalService, Modal, Logger, AlertService, AlertType, SpinnerService, StorageService } from '../../../core';
+import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService } from '../../../core';
 
 import { SearchService, PagerService } from '../../../service';
-import { SearchBroker, SearchAccountBroker } from '../../../broker';
+import { SearchAccountBroker } from '../../../broker';
 import { AccountList, Accounts, Pagination } from '../../../data';
 import { Utils } from '../../../core/utils';
-import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
+// import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
 
 @Component({
   selector: 'pos-search-account',
@@ -18,13 +18,13 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private PAGE_SIZE = 10;
   private searchSubscription: Subscription;
   private searchListSubscription: Subscription;
-  private cartInfoSubscription: Subscription;
+  // private cartInfoSubscription: Subscription;
   private account: Accounts;                 // 회원 정보
   private activeNum: number;                 // 선택 로우 번호
   private activeCode: string;                // 선택 코드
-  private searchMemberType: string;          // 회원 유형
+  // private searchMemberType: string;          // 회원 유형
 
-  private currentPage: number;               // 현재 페이지 번호
+  // private currentPage: number;               // 현재 페이지 번호
   private pager: Pagination;                 // pagination 정보
   currentLeftAccountList: Accounts[];        // 왼쪽 출력 리스트
   currentRightAccountList: Accounts[];       // 오른쪽 출력 리스트
@@ -34,16 +34,16 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   paymentType: string;
   searchText: string;                        // 검색어
   constructor(modalService: ModalService,
-      private modal: Modal,
-      private logger: Logger,
-      private storage: StorageService,
-      private searchService: SearchService,
-      private pagerService: PagerService,
-      private alert: AlertService,
-      private spinner: SpinnerService,
-      private searchBroker: SearchBroker,
-      private searchAccountBroker: SearchAccountBroker
-    ) {
+    // private modal: Modal,
+    private logger: Logger,
+    private storage: StorageService,
+    private searchService: SearchService,
+    private pagerService: PagerService,
+    private alert: AlertService,
+    private spinner: SpinnerService,
+    // private searchBroker: SearchBroker,
+    private searchAccountBroker: SearchAccountBroker
+  ) {
     super(modalService);
     this.spinner.hide();
     this.init();
@@ -114,27 +114,27 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       }
 
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
-                                                      .subscribe(
-                                                        result => {
-                                                          if (result) {
-                                                            this.accountList = result;
-                                                            this.totalCnt = this.accountList.accounts.length;
-                                                            this.setPage(1);
-                                                          }
-                                                      },
-                                                      error => {
-                                                        this.spinner.hide();
-                                                        const errdata = Utils.getError(error);
-                                                        if (errdata) {
-                                                          this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
-                                                          this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
-                                                          this.alert.error({ message: `${errdata.message}` });
-                                                        }
-                                                      },
-                                                      () => { this.spinner.hide(); }
-                                                      );
+        .subscribe(
+          result => {
+            if (result) {
+              this.accountList = result;
+              this.totalCnt = this.accountList.accounts.length;
+              this.setPage(1);
+            }
+          },
+          error => {
+            this.spinner.hide();
+            const errdata = Utils.getError(error);
+            if (errdata) {
+              this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
+              this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
+              this.alert.error({ message: `${errdata.message}` });
+            }
+          },
+          () => { this.spinner.hide(); }
+        );
     } else {
-      this.alert.warn( {title: '검색어 미입력', message: '검색어를 입력해주세요.' } );
+      this.alert.warn({ title: '검색어 미입력', message: '검색어를 입력해주세요.' });
       return;
     }
   }
@@ -184,10 +184,10 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.pager = this.pagerService.getPager(this.accountList.accounts.length, page, this.PAGE_SIZE);
     // 출력 리스트 생성
     if (this.accountList.accounts.length > 5) {
-      this.currentLeftAccountList  = this.accountList.accounts.slice(this.pager.startIndex, this.pager.startIndex + 5);
+      this.currentLeftAccountList = this.accountList.accounts.slice(this.pager.startIndex, this.pager.startIndex + 5);
       this.currentRightAccountList = this.accountList.accounts.slice(this.pager.startIndex + 5, this.pager.endIndex + 1);
     } else {
-      this.currentLeftAccountList  = this.accountList.accounts.slice(this.pager.startIndex, this.pager.endIndex + 1);
+      this.currentLeftAccountList = this.accountList.accounts.slice(this.pager.startIndex, this.pager.endIndex + 1);
     }
   }
 
