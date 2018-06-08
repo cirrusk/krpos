@@ -1,10 +1,10 @@
 import { PaymentMode } from './payment-mode';
 
 export class PaymentModeList {
-    paymentModes: PaymentBase[];
+    paymentModes: PaymentModeBase[];
 }
 
-export class PaymentBase {
+export class PaymentModeBase {
     code: string;
     paymentModes: PaymentMode[];
 }
