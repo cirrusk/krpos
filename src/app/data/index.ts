@@ -1,7 +1,7 @@
 // models define
 export * from './models/log-levels';
 export * from './models/lock-type';
-
+export * from './models/key-code';
 
 export * from './models/order/abstract-order';
 export * from './models/order/account-list';
