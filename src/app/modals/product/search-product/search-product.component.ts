@@ -1,10 +1,10 @@
 import { CartInfo } from './../../../data/models/order/cart-info';
 import {
   Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
-  ElementRef, ViewContainerRef, QueryList, OnDestroy
+  ElementRef, QueryList, OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, ModalService, Modal, AlertService, AlertType, SpinnerService, Logger } from '../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
@@ -38,7 +38,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private alert: AlertService,
     private spinner: SpinnerService,
     private addCartBroker: AddCartBroker,
-    private searchBroker: SearchBroker,
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
@@ -93,8 +92,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    */
   searchProduct(searchText?: string, cartInfo?: CartInfo) {
-    const val = searchText ? searchText : this.searchValue.nativeElement.value;
-    if (Utils.isEmpty(val)) {
+    const val: string = searchText ? searchText : this.searchValue.nativeElement.value;
+    const sval = val.toUpperCase();
+    if (Utils.isEmpty(sval)) {
       this.alert.warn({ message: '검색어를 입력하십시오.' });
       return;
     }
@@ -106,7 +106,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
 
     this.spinner.show();
-    this.spsubscription = this.search.getBasicProductInfo(this.searchType, val, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
+    this.spsubscription = this.search.getBasicProductInfo(this.searchType, sval, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
       this.products = data;
       this.productCount = data.pagination.totalResults;
       this.totalPages = data.pagination.totalPages;
