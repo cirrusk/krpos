@@ -6,6 +6,7 @@ import {
 import { ModalComponent } from './modal.component';
 import { ModalConfig } from './modal-config';
 import { StorageService } from '../service/storage.service';
+import { KeyCode } from '../../data/models/key-code';
 
 @Component({
   moduleId: module.id,
@@ -93,8 +94,8 @@ export class ModalMainComponent {
     event.stopPropagation();   // event.preventDefault();
     const modalid = this.content.modalId;
     const latestmodalid = this.storage.getLatestModalId();
-    if ((this.content.closeByEnter && event.keyCode === 13) ||
-      (this.content.closeByEscape && event.keyCode === 27)) {
+    if ((this.content.closeByEnter && event.keyCode === KeyCode.ENTER) ||
+      (this.content.closeByEscape && event.keyCode === KeyCode.ESCAPE)) {
       if (modalid && latestmodalid) { // 모달 찾는 값들이 있어야만 처리
         if (modalid === latestmodalid) { // session 의 마지막 모달 아이디와 전송한 모달 아이디가 같을 경우
           // this.storage.removeLatestModalId();

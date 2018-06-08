@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 
 import { ModalComponent, ModalService } from '../../../../core';
+import { KeyCode } from '../../../../data';
 
 @Component({
   selector: 'pos-ic-card',
@@ -22,7 +23,7 @@ export class IcCardComponent extends ModalComponent implements OnInit {
   @HostListener('document: keydown', ['$event', '$event.target'])
   icCardAction(event: KeyboardEvent, targetElm: HTMLElement) {
     event.stopPropagation();
-    if (event.keyCode === 13) {
+    if (event.keyCode === KeyCode.ENTER) {
       alert('enter event...');
     }
   }

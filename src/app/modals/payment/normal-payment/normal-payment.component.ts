@@ -29,13 +29,13 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   private cartList: Array<OrderEntry>;
   private accountInfo: Accounts;
   constructor(protected modalService: ModalService,
-              private alertService: AlertService,
-              private storageService: StorageService,
-              private receiptService: ReceiptService,
-              private printerService: PrinterService,
-              private modal: Modal,
-              private info: InfoBroker,
-              private renderer: Renderer2) {
+    private alertService: AlertService,
+    private storageService: StorageService,
+    private receiptService: ReceiptService,
+    private printerService: PrinterService,
+    private modal: Modal,
+    private info: InfoBroker,
+    private renderer: Renderer2) {
     super(modalService);
   }
 
@@ -44,9 +44,13 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.cartList = this.callerData.cartList;
   }
 
+  /**
+   * 신용카드
+   * @param evt 키이벤트
+   */
   creditCard(evt: any) {
-    // this.modal.clearAllModals(this.modal.getModalArray()[0]); // 앞서 열려있던 창 닫기
     this.setSelected(evt);
+    // this.close();
     // this.modal.openModalByComponent(CreditCardComponent,
     //   {
     //     title: '',
@@ -56,27 +60,33 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     //     modalId: 'CreditCardComponent'
     //   }
     // );
-    this.makeReceipt(this.accountInfo, this.cartList);
+    this.makeReceipt(this.accountInfo, this.cartList); // 영수증 인쇄 테스트 용으로 임시 적용
   }
 
+  /**
+   * 현금 IC 카드
+   * @param evt 키이벤트
+   */
   icCard(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(IcCardComponent,
       {
-        closeByEnter: false,
         closeByClickOutside: false,
         modalId: 'IcCardComponent'
       }
     );
   }
 
+  /**
+   * A포인트
+   * @param evt 키이벤트
+   */
   amwayPoint(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(PointComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'IcCardComponent_Amway',
         pointType: 'a'
@@ -84,13 +94,15 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
+  /**
+   * 멤버포인트
+   * @param evt 키이벤트
+   */
   memberPoint(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(PointComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'IcCardComponent_Member',
         pointType: 'm'
@@ -98,65 +110,75 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     );
   }
 
+  /**
+   * 현금
+   * @param evt 키이벤트
+   */
   cashPayment(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(CashComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'CashComponent'
       }
     );
   }
 
+  /**
+   * 수표
+   * @param evt 키이벤트
+   */
+  checkPayment(evt: any) {
+    this.setSelected(evt);
+    this.close();
+    this.modal.openModalByComponent(ChecksComponent,
+      {
+        closeByClickOutside: false,
+        modalId: 'CashComponent'
+      }
+    );
+  }
+
+  /**
+   * 자동이체
+   * @param evt 키이벤트
+   */
   directDebitPayment(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(DirectDebitComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'DirectDebitComponent'
       }
     );
   }
 
-  checkPayment(evt: any) {
-    this.setSelected(evt);
-    this.modal.openModalByComponent(CashComponent,
-      {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
-        closeByClickOutside: false,
-        modalId: 'CashComponent'
-      }
-    );
-  }
-
+  /**
+   * Re-Cash(A/P)
+   * @param evt 키이벤트
+   */
   reCashPayment(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(ReCashComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'ReCashComponent'
       }
     );
   }
 
+  /**
+   * 쿠폰 : 결제하기 전에 반드시 먼저 선택되어야함.
+   * @param evt 키이벤트
+   */
   couponPayment(evt: any) {
     this.setSelected(evt);
+    this.close();
     this.modal.openModalByComponent(CouponComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
         closeByClickOutside: false,
         modalId: 'CouponComponent'
       }
@@ -196,12 +218,14 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     let totalPrice = 0;
     let totalQty = 0;
     this.cartList.forEach(entry => {
-      productList.push({'idx': entry.entryNumber,
-                        'skuCode': entry.product.code,
-                        'productName': entry.product.name,
-                        'price': entry.product.price.value.toString(),
-                        'qty': entry.quantity.toString(),
-                        'totalPrice': entry.totalPrice.value.toString()});
+      productList.push({
+        'idx': entry.entryNumber,
+        'skuCode': entry.product.code,
+        'productName': entry.product.name,
+        'price': entry.product.price.value.toString(),
+        'qty': entry.quantity.toString(),
+        'totalPrice': entry.totalPrice.value.toString()
+      });
       if (entry.totalPrice.amwayValue) {
         totalPV += entry.totalPrice.amwayValue.pointValue;
         totalBV += entry.totalPrice.amwayValue.businessVolume;
@@ -221,11 +245,11 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     try {
       this.printerService.printText(text);
       this.info.sendInfo('orderClear', 'clear');
-      this.alertService.info({message: '주문이 완료되었습니다.'});
+      this.alertService.info({ message: '주문이 완료되었습니다.' });
       this.close();
     } catch (e) {
       console.log(text);
-      this.alertService.info({message: '주문이 실패되었습니다.'});
+      this.alertService.info({ message: '주문이 실패되었습니다.' });
     }
   }
 }

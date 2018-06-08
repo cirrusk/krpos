@@ -6,7 +6,7 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel, KeyCode } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 
@@ -95,7 +95,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (result) {
           this.sendRightMenu('a', true, result);
           if (this.accountInfo) {
-            this.changeUser(this.accountInfo, this.cartInfo, result);
+            // this.changeUser(this.accountInfo, this.cartInfo, result);
+            this.changeUser(result);
           } else {
             this.accountInfo = result;
             this.activeSearchMode('P');
@@ -341,7 +342,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param currentCartInfo
    * @param changeUserInfo
    */
-  changeUser(currentUserInfo: Accounts, currentCartInfo: CartInfo, changeUserInfo: Accounts) {
+  // changeUser(currentUserInfo: Accounts, currentCartInfo: CartInfo, changeUserInfo: Accounts) {
+  private changeUser(changeUserInfo: Accounts) {
     const msg = this.messageService.get('changeUserAlert');
     this.modal.openConfirm(
       {
@@ -961,14 +963,14 @@ export class CartListComponent implements OnInit, OnDestroy {
   @HostListener('document: keydown', ['$event', '$event.target'])
   keyboardInput(event: any, targetElm: HTMLElement) {
     event.stopPropagation();
-
+    this.logger.set('cart.list component', `event target : ${targetElm}`).debug();
     // modal 이 없을때만 동작
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
       if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
-        if (event.keyCode === 45) { // 임시 건수 수정 이벤트(Insert key)
+        if (event.keyCode === KeyCode.INSERT) { // 임시 건수 수정 이벤트
           this.callUpdateItemQty();
-        } else if (event.keyCode === 46) { // 임시 개별 삭제 이벤트(Delete key)
+        } else if (event.keyCode === KeyCode.DELETE) { // 임시 개별 삭제 이벤트
           if (this.selectedCartNum === -1) {
             this.alert.warn({ message: this.messageService.get('selectProductDelete') });
           } else {
@@ -976,7 +978,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           }
         }
       }
-      if (event.keyCode === 39) { // 임시 저장 → 키
+      if (event.keyCode === KeyCode.RIGHT_ARROW) { // 임시 저장 이벤트
         this.saveCart();
       }
     }

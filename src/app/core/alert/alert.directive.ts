@@ -1,10 +1,7 @@
 import { Directive, HostListener, Renderer2, ElementRef } from '@angular/core';
 import { AlertService } from './alert.service';
+import { KeyCode } from '../../data/models/key-code';
 
-export enum KEY_CODE {
-  ENTER = 13,
-  ESC = 27
-}
 @Directive({
   selector: '[posAlert]'
 })
@@ -17,7 +14,7 @@ export class AlertDirective {
   onAlertKeyDown(event: any) {
     event.stopPropagation(); // event.preventDefault();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KEY_CODE.ENTER || event.keyCode === KEY_CODE.ESC) { // 13:enter, 27 : esc
+    if (event.keyCode === KeyCode.ENTER || event.keyCode === KeyCode.ESCAPE) { // 13:enter, 27 : esc
       // this.renderer.setStyle(this.element.nativeElement, 'display', 'none');
       this.alertService.hide();
     }
