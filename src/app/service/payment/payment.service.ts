@@ -11,7 +11,7 @@ export class PaymentService {
 
   /**
    * AP 별 결제 방법
-   * 
+   *
    * @param storeid AP Name
    */
   getPaymentModes(storeid?: string): Observable<PaymentModeList> {
