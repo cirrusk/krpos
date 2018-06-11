@@ -50,6 +50,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
           } else if (type === 'lck') {
             this.logger.set('dashboard.component', 'screen locktype subscribe ...').debug();
             this.screenLockType = data.lockType === undefined ? LockType.INIT : data.lockType;
+          } else if (type === 'ewk') {
+            this.tokeninfo = null;
+          } else if (type === 'swk') {
+            console.log('----------------------------');
+            this.tokeninfo = this.storage.getTokenInfo();
           }
         }
       }

@@ -110,7 +110,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       if (data.key === 'employeeName') { this.employeeName = (data.value === null) ? '' : data.value; }
     });
     const timer = TimerObservable.create(2000, 1000);
-    this.timersubscription = timer.subscribe( t => { this.posTimer = this.getPosTimer(); } );
+    this.timersubscription = timer.subscribe(t => { this.posTimer = this.getPosTimer(); });
 
     // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
     // 5분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
@@ -197,7 +197,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.posName = '-';
             this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
             this.hasTerminal = false;
-            this.alert.error({title: '미등록 기기 알림', message: this.msg.get('posNotSet')});
+            this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
           }
         );
       }
@@ -218,11 +218,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
               this.posName = '-';
               this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
               this.hasTerminal = false;
-              this.alert.error({title: '미등록 기기 알림', message: this.msg.get('posNotSet')});
+              this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
             }
           );
         },
-        error => {}
+        error => { }
       );
     }
   }
@@ -273,7 +273,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         closeButtonLabel: '취소',
         modalId: 'LoginComponent'
       }
-    );
+    ).subscribe(result => {
+      this.info.sendInfo('swk', { message: result });
+    });
   }
 
   /**
@@ -296,6 +298,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     ).subscribe(result => {
       if (!result) {
         this.storage.setScreenLockType(LockType.INIT);
+      } else {
+        this.info.sendInfo('ewk', {});
       }
     });
   }
@@ -383,14 +387,14 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     },
-    error => {
-      const errdata = Utils.getError(error);
-      if (errdata) {
-        this.logger.set('dashboard.component', `get batch error message : ${errdata.message}`).debug();
-        this.storage.removeBatchInfo();
-        this.info.sendInfo('bat', { batchNo: null });
-      }
-    });
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('dashboard.component', `get batch error message : ${errdata.message}`).debug();
+          this.storage.removeBatchInfo();
+          this.info.sendInfo('bat', { batchNo: null });
+        }
+      });
   }
 
 }
