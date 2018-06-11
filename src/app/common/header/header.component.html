@@ -18,7 +18,7 @@
           <button type="button" class="type02" [class.button-disabled]="screenLockType === 1">근무 시작</button>
         </ng-template>
       </ng-template>
-      <button type="button" class="type02" *ngIf="(screenLockType === null || screenLockType === -1)">화면 풀림</button><!-- 대시보드 로그인 전 -->
+      <button type="button" class="type02" [class.button-disabled]="screenLockType === null || screenLockType === -1" *ngIf="(screenLockType === null || screenLockType === -1)">화면 풀림</button><!-- 대시보드 로그인 전 -->
       <button type="button" class="type02" (click)="screenRelease()" *ngIf="(screenLockType === 1)">화면 풀림</button><!-- 대시보드 에서 -->
       <button type="button" class="type02" (click)="screenLock()" *ngIf="(screenLockType === 0)">화면 잠금</button><!-- 장바구니에서 -->
   </div>
