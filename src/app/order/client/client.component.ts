@@ -54,9 +54,10 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.init();
           } else {
             if (result.value instanceof Array) {
-              if (result.value.length === 0) { // 단건 삭제 시 빈 배열이므로 여기서 초기화
-                this.init();
-              }
+              // if (result.value.length === 0) { // 단건 삭제 시 빈 배열이므로 여기서 초기화
+              //   this.init();
+              // }
+              this.init(); // 장바구니 담긴 정보 전체가 넘어오므로 무조건 전체삭제후 입력
               result.value.forEach(orderentry => {
                 this.addCartEntry(orderentry);
               });
