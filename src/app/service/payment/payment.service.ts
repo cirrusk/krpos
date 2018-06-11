@@ -28,11 +28,11 @@ export class PaymentService {
    * @param userid 사용자아이디
    * @param cartid 카트아이디
    */
-  getPaymentModesByCart(userid: string, cartid: string): Observable<PaymentModeListByMainPayment> {
+  getPaymentModesByMainPayment(userid: string, cartid: string): Observable<PaymentModeListByMainPayment> {
     const macAddress = this.storage.getMacAddress();
     const params = { macAddress: macAddress, feilds: 'DEFAULT' };
     const pathvariables = { userId: userid, cartId: cartid };
     const data = new HttpData('paymentModesByMainPayment', pathvariables, null, params);
-    return this.api.get(data);
+    return this.api.post(data);
   }
 }
