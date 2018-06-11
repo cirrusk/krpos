@@ -37,7 +37,8 @@ export const environment = {
     orderInfo: '/{baseSiteId}/orders',
     orderDetail: '/{baseSiteId}/orders/{code}',
     berSearch: '/{baseSiteId}/business/registration/{aboNum}',
-    paymentModes: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes'
+    paymentModes: '/{baseSiteId}/stores/{storeId}/supportedPaymentModes',
+    paymentModesByCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes'
   },
   logLevel: 'error',
   terminalTimeout: 20,

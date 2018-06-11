@@ -1,4 +1,3 @@
-import { CartInfo } from './../../../data/models/order/cart-info';
 import {
   Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
   ElementRef, QueryList, OnDestroy
@@ -9,7 +8,7 @@ import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
-import { SearchBroker } from '../../../broker/order/search/search.broker';
+import { CartInfo } from './../../../data/models/order/cart-info';
 
 @Component({
   selector: 'pos-search-product',

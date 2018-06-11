@@ -965,7 +965,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   @HostListener('document: keydown', ['$event', '$event.target'])
   keyboardInput(event: any, targetElm: HTMLElement) {
     event.stopPropagation();
-    this.logger.set('cart.list component', `event target : ${targetElm}`).debug();
     // modal 이 없을때만 동작
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
