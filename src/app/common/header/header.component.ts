@@ -24,7 +24,8 @@ import { Utils } from '../../core/utils';
  */
 @Component({
   selector: 'pos-header',
-  templateUrl: './header.component.html'
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   isClientScreen: boolean;
