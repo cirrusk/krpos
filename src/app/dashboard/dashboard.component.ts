@@ -11,7 +11,8 @@ import { Utils } from '../core/utils';
 
 @Component({
   selector: 'pos-dashboard',
-  templateUrl: './dashboard.component.html'
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
