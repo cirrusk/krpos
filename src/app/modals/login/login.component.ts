@@ -109,6 +109,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       this.storage.setTokenInfo(result);
       this.info.sendInfo('tkn', result);
       this.info.sendInfo('cbt', {act: true}); // 로그인 성공 후 배치 후 처리 진행.
+      this.result = true;
+      this.modalResult();
       this.close();
     },
     error => {

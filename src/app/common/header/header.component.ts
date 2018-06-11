@@ -275,7 +275,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         modalId: 'LoginComponent'
       }
     ).subscribe(result => {
-      this.info.sendInfo('swk', { message: result });
+      if (result) {
+        this.info.sendInfo('swk', { message: result });
+      }
     });
   }
 
