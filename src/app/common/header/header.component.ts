@@ -28,9 +28,6 @@ import { Utils } from '../../core/utils';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
-  isClientScreen: boolean;
-  posName: string;
-  posTimer: string;
   private subscription: Subscription;
   private timersubscription: Subscription;
   private tokensubscription: Subscription;
@@ -41,7 +38,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private holdsubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
-  // private sessionMacAddress: string;
+  isClientScreen: boolean;
+  posName: string;
+  posTimer: string;
   timer_id: any;
   qzCheck: boolean;
   isLogin: boolean;
