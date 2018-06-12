@@ -33,7 +33,6 @@ import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
-import { RfidComponent } from './scan/rfid/rfid.component';
 import { SerialComponent } from './scan/serial/serial.component';
 import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
@@ -69,7 +68,6 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     PhoneNumberMaskPipe,
     BatchComponent,
     RestrictComponent,
-    RfidComponent,
     SerialComponent,
     EcpConfirmComponent,
     UpdateItemQtyComponent,
@@ -109,7 +107,6 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     CancelOrderComponent,
     BatchComponent,
     RestrictComponent,
-    RfidComponent,
     SerialComponent,
     EcpConfirmComponent,
     UpdateItemQtyComponent

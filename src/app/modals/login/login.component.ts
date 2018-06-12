@@ -7,7 +7,6 @@ import { AuthService } from '../../service';
 import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
 
-
 /**
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.
  * 별도의 UI를 가지는 경우 ModalComponent를 상속받아 사용.
