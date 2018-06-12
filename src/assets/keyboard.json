@@ -1,0 +1,70 @@
+{
+  "hotkeys": {
+    "escape": [
+      "this.escapetest"
+    ],
+    "alt+right": [
+      "this.alt-right"
+    ],
+    "alt+left": [
+      "this.alt-left"
+    ],
+    "ctrl+right": [
+      "this.ctrl-right"
+    ],
+    "ctrl+left": [
+      "this.ctrl-left"
+    ],
+    "shift+right": [
+      "this.shift-right"
+    ],
+    "shift+left": [
+      "this.shift-left"
+    ],    
+    "right": [
+      "this.right"
+    ],
+    "left": [
+      "this.left"
+    ],
+    "up": [
+      "this.up"
+    ],
+    "down": [
+      "this.down"
+    ],
+    "ctrl+up": [
+      "this.ctrl+up"
+    ],
+    "ctrl+down": [
+      "this.ctrl+down"
+    ],
+    "ins": [
+      "this.insert"
+    ],
+    "pageup": [
+      "this.pageup"
+    ],
+    "pagedown": [
+      "this.pagedown"
+    ],
+    "del": [
+      "this.del"
+    ],
+    "plus": [
+      "this.plus"
+    ],
+    "/": [
+      "this.slash"
+    ],
+    "backspace": [
+      "this.backspace"
+    ],
+    "end": [
+      "this.end"
+    ],
+    "home": [
+      "this.home"
+    ]
+  }
+}

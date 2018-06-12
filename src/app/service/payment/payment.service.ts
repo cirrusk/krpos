@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { ApiService, StorageService } from '../../core';
-import { PaymentModeList, HttpData, PaymentModeListByMainPayment } from '../../data';
+import { PaymentModeList, HttpData, PaymentModeListByMainPayment, PaymentDetails, PaymentCapture } from '../../data';
 
 @Injectable()
 export class PaymentService {
@@ -10,7 +10,7 @@ export class PaymentService {
   constructor(private api: ApiService, private storage: StorageService) { }
 
   /**
-   * AP 별 결제 방법
+   * AP 별 결제 수단 조회하기
    *
    * @param storeid AP Name
    */
@@ -22,8 +22,7 @@ export class PaymentService {
   }
 
   /**
-   * 결제방법 조회하기
-   * 주결제 수단에 대한 사용가능한 결제 수단 조회
+   * 주결제 수단에 대한 사용가능한 결제 수단 조회하기
    *
    * @param userid 사용자아이디
    * @param cartid 카트아이디
@@ -33,6 +32,20 @@ export class PaymentService {
     const params = { macAddress: macAddress, feilds: 'DEFAULT' };
     const pathvariables = { userId: userid, cartId: cartid };
     const data = new HttpData('paymentModesByMainPayment', pathvariables, null, params);
+    return this.api.post(data);
+  }
+
+  /**
+   * Payment Capture 실행하기
+   *
+   * @param userid 사용자아이디
+   * @param cartid 카트아이디
+   * @param paymentcapture Payment Mode 별 PaymentCapture 정보
+   */
+  paymentCapture(userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<PaymentDetails> {
+    const pathvariables = { userId: userid, cartId: cartid };
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
     return this.api.post(data);
   }
 }

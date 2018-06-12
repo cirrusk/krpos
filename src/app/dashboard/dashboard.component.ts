@@ -2,11 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Modal, Logger, StorageService, AlertService, AlertState, SpinnerService } from '../core';
-// import { LoginComponent } from '../modals';
+import { Modal, Logger, StorageService, AlertService, AlertState, SpinnerService, KeyboardService, KeyCommand } from '../core';
 import { BatchService } from '../service/batch.service';
 import { InfoBroker } from '../broker';
-import { AccessToken, BatchInfo, LockType } from '../data';
+import { AccessToken, LockType } from '../data';
 import { Utils } from '../core/utils';
 
 @Component({
@@ -23,6 +22,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private statssubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
+  private keyboardsubscription: Subscription;
   private orderCount: number;
   constructor(
     private modal: Modal,
@@ -31,12 +31,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private alert: AlertService,
     private spinner: SpinnerService,
+    private keyboard: KeyboardService,
     private logger: Logger,
     private router: Router) {
     this.orderCount = 0;
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleCommand(c);
+    });
     this.tokensubscription = this.info.getInfo().subscribe(
       (result) => {
         const type = result && result.type;
@@ -75,6 +79,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   /**
@@ -230,6 +235,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  escapetest() {
+    console.log('****** escape test key event...');
+  }
+
+  keya() {
+    console.log('****** a key event...');
+  }
+
+  handleCommand(command: KeyCommand) {
+
+    this.logger.set('dashboard.component', 'handle keyboard command ' + JSON.stringify(command)).debug();
+
+    switch (command.combo) {
+      case 'escape': { /* eval(command.name); */ this.escapetest(); } break;
+      case 'a': { this.keya(); } break;
+    }
+
+    // window['HeaderComponent.escapetest']();
+    // window['this.escapetest']();
+    // window['HeaderComponent.prototype.escapetest']();
+    // window['escapetest']();
+    // window['headercomponent.escapetest']();
+    // const fnstr = command.name;
+    // const fn = window[fnstr];
+
+    // if (typeof fn === 'function') {
+    //   fn();
+    // } else {
+    //   console.log('!!!!!!!!!!!!!!!!!!!!!! not a function');
+    //   try {
+    //   new Function('this.test1')();
+    //   } catch (e) {
+    //     alert(e.description);
+    //   }
+    // }
+
   }
 
 }

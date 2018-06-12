@@ -2,6 +2,7 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HotkeyModule } from 'angular2-hotkeys';
 
 import { PeripheralModule } from './peripheral/peripheral.module';
 import { ModalsModule } from '../modals/modals.module';
@@ -13,10 +14,9 @@ import {
   PagerService, AccountService, OrderService, PaymentService
 } from '../service';
 import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchAccountBroker, UpdateItemQtyBroker } from '../broker';
-// import { ChecksComponent } from '../modals';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
-import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheService } from '.';
+import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheService, KeyboardService } from '.';
 
 @NgModule({
   imports: [
@@ -27,7 +27,8 @@ import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheSe
     PeripheralModule,
     ModalsModule,
     SpinnerModule,
-    AlertModule
+    AlertModule,
+    HotkeyModule.forRoot()
   ],
   exports: [
     CommonModule,
@@ -53,6 +54,7 @@ import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheSe
     AccountService,
     WsService,
     CacheService,
+    KeyboardService,
     InfoBroker,
     SearchAccountBroker,
     RestoreCartBroker,
