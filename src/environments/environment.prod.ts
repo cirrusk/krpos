@@ -39,7 +39,7 @@ export const environment = {
     berSearch: '/{baseSiteId}/business/registration/{aboNum}',
     paymentModes: '/{baseSiteId}/stores/{storeId}/supportedPaymentModes',
     paymentModesByMainPayment: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes',
-    paymentCapure: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails'
+    paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails'
   },
   logLevel: 'error',
   terminalTimeout: 20,
