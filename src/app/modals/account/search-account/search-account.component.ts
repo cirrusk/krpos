@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, Sto
 
 import { SearchService, PagerService } from '../../../service';
 import { SearchAccountBroker } from '../../../broker';
-import { AccountList, Accounts, Pagination } from '../../../data';
+import { AccountList, Accounts, Pagination, MemberType } from '../../../data';
 import { Utils } from '../../../core/utils';
 // import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
 
@@ -105,14 +105,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.activeNum = -1;
       this.spinner.show();
 
-      const pattern = /^\d{4}$/;
-      let phoneFlag = '';
-      if (pattern.test(searchText)) {
-        phoneFlag = 'P';
-      } else {
-        phoneFlag = 'U';
-      }
-
       this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
         .subscribe(
           result => {
@@ -156,7 +148,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       const uid = this.activeCode;
       const existedIdx: number = this.accountList.accounts.findIndex(
         function (obj) {
-          return obj.uid === uid;
+          return obj.parties[0].uid === uid;
         }
       );
       this.account = this.accountList.accounts[existedIdx];
@@ -188,6 +180,9 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.currentRightAccountList = this.accountList.accounts.slice(this.pager.startIndex + 5, this.pager.endIndex + 1);
     } else {
       this.currentLeftAccountList = this.accountList.accounts.slice(this.pager.startIndex, this.pager.endIndex + 1);
+      if (this.currentRightAccountList !== undefined) {
+        this.currentRightAccountList.length = 0;
+      }
     }
   }
 

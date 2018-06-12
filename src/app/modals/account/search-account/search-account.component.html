@@ -54,9 +54,9 @@
                         </thead>
                         <tbody>
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
-                            <tr [class.on]='activeNum == i' *ngFor="let account of currentLeftAccountList; let i = index" (click)='activeRow(i, account.uid)'>
-                                <td class="tit" title="{{account.name}}"><span class="elips">{{account.name}}</span></td>
-                                <td><span class="bg_bar none">{{account.uid}}</span></td>
+                            <tr [class.on]='activeNum == i' *ngFor="let account of currentLeftAccountList; let i = index" (click)='activeRow(i, account.parties[0].uid)'>
+                                <td class="tit" title="{{account.name}}"><span class="elips">{{account.parties[0].name}}</span></td>
+                                <td><span class="bg_bar none">{{account.parties[0].uid}}</span></td>
                                 <td><span class="bg_bar">{{account.parties[0].dateOfBirth | date:'yyyyMMdd'}}</span></td>
                                 <td *ngIf='account.parties[0].phoneInfos == null; else elseTemplate'>
                                     <span class="bg_bar"></span>
@@ -93,9 +93,9 @@
                         </thead>
                         <tbody>
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
-                            <tr [class.on]='activeNum == (i+5)' *ngFor="let account of currentRightAccountList; let i = index" (click)='activeRow((i+5), account.uid)'>
-                                <td class="tit"><span class="elips">{{account.name}}</span></td>
-                                <td><span class="bg_bar none">{{account.uid}}</span></td>
+                            <tr [class.on]='activeNum == (i+5)' *ngFor="let account of currentRightAccountList; let i = index" (click)='activeRow((i+5), account.parties[0].uid)'>
+                                <td class="tit"><span class="elips">{{account.parties[0].name}}</span></td>
+                                <td><span class="bg_bar none">{{account.parties[0].uid}}</span></td>
                                 <td><span class="bg_bar">{{account.parties[0].dateOfBirth | date:'yyyyMMdd'}}</span></td>
                                 <td *ngIf='account.parties[0].phoneInfos == null; else elseRightTemplate'>
                                     <span class="bg_bar"></span>

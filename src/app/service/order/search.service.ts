@@ -19,18 +19,19 @@ export class SearchService {
    * @param searchText 검색어(4자리 : 전화번호, 그 외 : 사용자 아이디)
    */
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
-    // 회원 타입별로 URL 셋팅
-    let apiUrl;
-    if (MemberType.ABO === searchMemberType) {
-      apiUrl = 'userSearch';
-    } else if (MemberType.MEMBER === searchMemberType) {
-      apiUrl = 'userSearch';
+    let memberType = '';
+
+    if (searchMemberType === 'A') {
+      memberType = MemberType.ABO;
+    } else if (searchMemberType === 'M') {
+      memberType = MemberType.MEMBER;
     } else {
-      apiUrl = 'customerSearch';
+      memberType = MemberType.CONSUMER;
     }
-    const params = { feilds: 'FULL' };
+
+    const params = { amwayBusinessNature: memberType, feilds: 'FULL' };
     const pathvariables = { userId: searchText };
-    const data = new HttpData(apiUrl, pathvariables, null, params);
+    const data = new HttpData('userSearch', pathvariables, null, params);
     return this.api.get(data);
   }
 
