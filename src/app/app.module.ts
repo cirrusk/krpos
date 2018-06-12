@@ -1,11 +1,8 @@
-import { NgModule, InjectionToken } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { COMPOSITION_BUFFER_MODE } from '@angular/forms';
+import { COMPOSITION_BUFFER_MODE } from '@angular/forms'; // https://angular.io/api/forms/COMPOSITION_BUFFER_MODE, https://blog.redpumpkin.net/2017/08/13/angular-korean-binding/
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// https://angular.io/api/forms/COMPOSITION_BUFFER_MODE
-// https://blog.redpumpkin.net/2017/08/13/angular-korean-binding/
-
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './common/header/header.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
