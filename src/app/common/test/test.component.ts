@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { PosModalService } from '../../core';
 import { Product, OrderParams, OrderEntries } from '../../data';
 
 @Component({
@@ -11,7 +10,7 @@ import { Product, OrderParams, OrderEntries } from '../../data';
 export class TestComponent implements OnInit {
   private macAddress: string;
   bodyText: string;
-  constructor(private modalService: PosModalService) { }
+  constructor() { }
 
   ngOnInit() {
 
@@ -34,14 +33,6 @@ export class TestComponent implements OnInit {
   }
 
   private getMACAddress() {
-  }
-
-  public openModal(id: string) {
-    this.modalService.open(id);
-  }
-
-  public closeModal(id: string ) {
-    this.modalService.close(id);
   }
 
   public loadMacAddress() {

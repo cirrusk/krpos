@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { FormatReader, PosModalComponent, PosModalService, ReceiptDataProvider, EscPos } from '../../core';
+import { FormatReader, ReceiptDataProvider, EscPos } from '../../core';
 import { ReceiptService } from '../../service';
 import { TestComponent } from './test.component';
 import { ProductSearchService } from './product-search/product.search.service';
@@ -21,7 +21,6 @@ import { ClickObserverComponent } from './study/click-observer/click-observer.co
     declarations: [
     TestComponent,
     ProductSearchComponent,
-    PosModalComponent,
     CartListComponent,
     PosReceiptPrintComponent,
     ClickObserverComponent,
@@ -36,7 +35,6 @@ import { ClickObserverComponent } from './study/click-observer/click-observer.co
     AddCartBroker,
     ProductSearchService,
     ProductDataProvider,
-    PosModalService,
     EscPos,
     FormatReader,
     ReceiptDataProvider,

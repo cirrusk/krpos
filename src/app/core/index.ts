@@ -12,8 +12,6 @@ export * from './config/config';
 export * from './modal/modal.component';
 export * from './modal/modal';
 export * from './modal/modal.service';
-export * from './modal/pos-modal.component';
-export * from './modal/pos-modal.service';
 export * from './alert/alert-type.enum';
 export * from './common/only-number.directive';
 export * from './provider/receipt-data-provider';
