@@ -54,7 +54,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPrice: number;                                                       // 총 금액
   totalPV: number;                                                          // 총 PV
   totalBV: number;                                                          // 총 Bv
-  public cartListCount: number;                                             // 카트 목록 개수
+  cartListCount: number;                                                    // 카트 목록 개수
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
@@ -952,7 +952,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private searchPhytoCafeAccount() {
     const phytoUserId = this.config.getConfig('phytoCafeUserId');
     if (phytoUserId) {
-      this.searchSubscription = this.searchService.getAccountList('A', phytoUserId).subscribe(
+      this.searchSubscription = this.searchService.getAccountList('C', phytoUserId).subscribe(
         result => {
           const account = result.accounts[0];
           this.searchAccountBroker.sendInfo(account);
