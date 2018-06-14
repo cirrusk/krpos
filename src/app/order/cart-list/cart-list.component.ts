@@ -229,7 +229,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 현재 선택한 로우
    * @param index
    */
-  private activeRowCart(index: number): void {
+  activeRowCart(index: number): void {
     this.selectedCartNum = index;
   }
 

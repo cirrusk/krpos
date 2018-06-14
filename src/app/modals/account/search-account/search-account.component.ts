@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-// import * as format from 'string-format';
 
 import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService } from '../../../core';
 
@@ -8,7 +7,6 @@ import { SearchService, PagerService } from '../../../service';
 import { SearchAccountBroker } from '../../../broker';
 import { AccountList, Accounts, Pagination, MemberType } from '../../../data';
 import { Utils } from '../../../core/utils';
-// import { PhoneContactInfo } from '../../../data/models/order/phone-contact-info';
 
 @Component({
   selector: 'pos-search-account',
@@ -154,7 +152,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       this.account = this.accountList.accounts[existedIdx];
       this.searchAccountBroker.sendInfo(this.account);
       this.storage.setCustomer(this.account);
-      this.closeModal();
+      this.close();
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });
     }
