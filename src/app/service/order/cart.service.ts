@@ -60,7 +60,7 @@ export class CartService {
   }
 
   /**
-   * 제품 추가
+   * 장바구니에 제품 추가
    * @param userId
    * @param cartId
    * @param code
@@ -79,6 +79,13 @@ export class CartService {
     return this.addCartEntries(userId, cartId, orderList.orderEntries);
   }
 
+  /**
+   * 장바구니 복제 시 사용
+   *
+   * @param userId
+   * @param cartId
+   * @param orderEntries
+   */
   addCartEntries(userId: string, cartId: string, orderEntries: Array<OrderEntry>): Observable<CartModification[]> {
     const orderList = new OrderEntryList();
     orderList.orderEntries = orderEntries;
