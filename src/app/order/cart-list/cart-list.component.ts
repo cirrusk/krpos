@@ -864,11 +864,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.selectedCartNum = -1;
     }
 
-    // pagination 생성 데이터 조회
-    this.pager = this.pagerService.getPager(this.cartList.length, page);
-    // 출력 리스트 생성
+    this.pager = this.pagerService.getPager(this.cartList.length, page); // pagination 생성 데이터 조회
     this.totalPriceInfo();
-    this.currentCartList = this.cartList.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    this.currentCartList = this.cartList.slice(this.pager.startIndex, this.pager.endIndex + 1); // 출력 리스트 생성
   }
 
   /**

@@ -104,32 +104,20 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
 }
 
 /** 현금결제 */
-export class CashPaymentInfo extends AmwayPaymentInfoData {
-
-}
+export class CashPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 자동이체 */
-export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
-
-}
+export class DirectDebitPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 쿠폰결제 */
-export class VoucherPaymentInfo extends AmwayPaymentInfoData {
-
-}
+export class VoucherPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 포인트결제 */
-export class PointPaymentInfo extends AmwayPaymentInfoData {
-
-}
+export class PointPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 미수금결제 */
-export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData {
-
-}
+export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 현금IC카드결제 */
-export class ICCardPaymentInfo extends AmwayPaymentInfoData {
-
-}
+export class ICCardPaymentInfo extends AmwayPaymentInfoData { }
 

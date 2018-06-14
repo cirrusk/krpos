@@ -15,6 +15,7 @@ export class PaymentMode {
     name: string;
     paymentInfoType: string;
     repeatableCount: number;
+    overpaymentThreshold: number;
     usedCount: number;
 }
 
