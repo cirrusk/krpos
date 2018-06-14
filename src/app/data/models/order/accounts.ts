@@ -7,7 +7,7 @@ export class Accounts {
     totalBV: number;
     totalPV: number;
     uid: string;
-    primaryParty: any; // CustomerWsDTO
+    primaryParty: Customer; // CustomerWsDTO
     parties: Set<Customer>; // Set<CustomerWsDTO>
 
     constructor() {}
