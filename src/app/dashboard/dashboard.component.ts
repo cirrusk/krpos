@@ -39,7 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
-      this.handleCommand(c);
+      this.handleKeyboardCommand(c);
     });
     this.tokensubscription = this.info.getInfo().subscribe(
       (result) => {
@@ -57,7 +57,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           } else if (type === 'ewk') {
             this.tokeninfo = null;
           } else if (type === 'swk') {
-            console.log('----------------------------');
             this.tokeninfo = this.storage.getTokenInfo();
           }
         }
@@ -245,7 +244,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log('****** a key event...');
   }
 
-  handleCommand(command: KeyCommand) {
+  /**
+   * 키보드 이벤트 명령어 실행
+   *
+   * 명령어 문자열을 함수로 전환할 수 없는 구조이므로 아래와 같이 처리 진행
+   * 1) BackOffice 에서 키보드 콤보 이벤트 와 명령어 모음(셀렉트 박스)에서 선택하여 프로그래머블 키보드 매핑.
+   * 2) POS에서는 각각의 Component에서 처리할 이벤트를 지정하고 명령어 모음에서 찾는 함수를 구현하여 실행할 함수를 매핑.
+   *
+   * @param command 키보드 이벤트 명령어
+   */
+  handleKeyboardCommand(command: KeyCommand) {
 
     this.logger.set('dashboard.component', 'handle keyboard command ' + JSON.stringify(command)).debug();
 
@@ -253,25 +261,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       case 'escape': { /* eval(command.name); */ this.escapetest(); } break;
       case 'a': { this.keya(); } break;
     }
-
-    // window['HeaderComponent.escapetest']();
-    // window['this.escapetest']();
-    // window['HeaderComponent.prototype.escapetest']();
-    // window['escapetest']();
-    // window['headercomponent.escapetest']();
-    // const fnstr = command.name;
-    // const fn = window[fnstr];
-
-    // if (typeof fn === 'function') {
-    //   fn();
-    // } else {
-    //   console.log('!!!!!!!!!!!!!!!!!!!!!! not a function');
-    //   try {
-    //   new Function('this.test1')();
-    //   } catch (e) {
-    //     alert(e.description);
-    //   }
-    // }
 
   }
 

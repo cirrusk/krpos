@@ -20,7 +20,7 @@
     ],
     "shift+left": [
       "this.shift-left"
-    ],    
+    ],
     "right": [
       "this.right"
     ],
@@ -65,6 +65,12 @@
     ],
     "home": [
       "this.home"
+    ],
+    "1": [
+      "this.number1"
+    ],
+    "ctrl+0": [
+      "this.number-double-zero"
     ]
   }
 }
