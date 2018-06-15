@@ -1,76 +1,76 @@
 {
   "hotkeys": {
     "escape": [
-      "this.escapetest"
+      "escapetest"
     ],
     "alt+right": [
-      "this.alt-right"
+      "alt-right"
     ],
     "alt+left": [
-      "this.alt-left"
+      "alt-left"
     ],
     "ctrl+right": [
-      "this.ctrl-right"
+      "ctrl-right"
     ],
     "ctrl+left": [
-      "this.ctrl-left"
+      "ctrl-left"
     ],
     "shift+right": [
-      "this.shift-right"
+      "shift-right"
     ],
     "shift+left": [
-      "this.shift-left"
+      "shift-left"
     ],
     "right": [
-      "this.right"
+      "right"
     ],
     "left": [
-      "this.left"
+      "left"
     ],
     "up": [
-      "this.up"
+      "up"
     ],
     "down": [
-      "this.down"
+      "down"
     ],
     "ctrl+up": [
-      "this.ctrl+up"
+      "ctrl+up"
     ],
     "ctrl+down": [
-      "this.ctrl+down"
+      "ctrl+down"
     ],
     "ins": [
-      "this.insert"
+      "insert"
     ],
     "pageup": [
-      "this.pageup"
+      "pageup"
     ],
     "pagedown": [
-      "this.pagedown"
+      "pagedown"
     ],
     "del": [
-      "this.del"
+      "del"
     ],
     "plus": [
-      "this.plus"
+      "plus"
     ],
     "/": [
-      "this.slash"
+      "slash"
     ],
     "backspace": [
-      "this.backspace"
+      "backspace"
     ],
     "end": [
-      "this.end"
+      "end"
     ],
     "home": [
-      "this.home"
+      "home"
     ],
     "1": [
-      "this.number1"
+      "number1"
     ],
     "ctrl+0": [
-      "this.number-double-zero"
+      "number-double-zero"
     ]
   }
 }

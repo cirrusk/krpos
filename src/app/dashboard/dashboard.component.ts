@@ -104,16 +104,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           );
         }
       },
-      error => {
-        this.spinner.hide();
-        const errdt = Utils.getError(error);
-        if (errdt) {
-          this.logger.set('dashboard.component', `start batch error type : ${errdt.type}`).error();
-          this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
-          this.alert.error({ message: `${errdt.message}` });
-        }
-      },
-      () => { this.spinner.hide(); });
+        error => {
+          this.spinner.hide();
+          const errdt = Utils.getError(error);
+          if (errdt) {
+            this.logger.set('dashboard.component', `start batch error type : ${errdt.type}`).error();
+            this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
+            this.alert.error({ message: `${errdt.message}` });
+          }
+        },
+        () => { this.spinner.hide(); });
     }
   }
 
@@ -160,8 +160,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
               modalId: 'STOPSHIFT_LAST'
             });
           },
-          error => {},
-           () => { this.spinner.hide(); });
+            error => { },
+            () => { this.spinner.hide(); });
         }
       });
     }
@@ -224,8 +224,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 }
               });
             },
-            (error) => {},
-            () => { this.spinner.hide(); });
+              (error) => { },
+              () => { this.spinner.hide(); });
           } else {
             Utils.kioskModeEnd();
           }
@@ -237,11 +237,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   escapetest() {
-    console.log('****** escape test key event...');
+    console.log('****** escape key press event...');
   }
 
-  keya() {
-    console.log('****** a key event...');
+  right() {
+    console.log('****** right arrow key press event...');
   }
 
   /**
@@ -256,10 +256,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   handleKeyboardCommand(command: KeyCommand) {
 
     this.logger.set('dashboard.component', 'handle keyboard command ' + JSON.stringify(command)).debug();
-
     switch (command.combo) {
-      case 'escape': { /* eval(command.name); */ this.escapetest(); } break;
-      case 'a': { this.keya(); } break;
+      case 'escape': { this[command.name](); /* eval(command.name);  this.escapetest(); */ } break;
+      case 'right': { this[command.name](); } break;
     }
 
   }
