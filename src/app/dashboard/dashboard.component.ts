@@ -254,11 +254,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
    * @param command 키보드 이벤트 명령어
    */
   handleKeyboardCommand(command: KeyCommand) {
+    try {
+      // 1. 정의된 키 이벤트 중 지정한 키 이벤트에 대해서만 함수 호출
+      // switch (command.combo) {
+      //   case 'escape': { this[command.name](); } break;
+      //   case 'right': { this[command.name](); } break;
+      // }
 
-    this.logger.set('dashboard.component', 'handle keyboard command ' + JSON.stringify(command)).debug();
-    switch (command.combo) {
-      case 'escape': { this[command.name](); /* eval(command.name);  this.escapetest(); */ } break;
-      case 'right': { this[command.name](); } break;
+      // 2. 전체 정의된 키 이벤트에 대해서 함수 호출
+      this[command.name]();
+    } catch (e) {
+      this.logger.set('dashboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }
 
   }
