@@ -160,7 +160,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
               modalId: 'STOPSHIFT_LAST'
             });
           },
-            error => { },
             () => { this.spinner.hide(); });
         }
       });
@@ -266,7 +265,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } catch (e) {
       this.logger.set('dashboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }
-
   }
 
 }
