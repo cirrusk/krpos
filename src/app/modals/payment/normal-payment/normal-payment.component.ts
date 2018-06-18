@@ -28,6 +28,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   private cartList: Array<OrderEntry>;
   private accountInfo: Accounts;
+  accountType: string;
   constructor(protected modalService: ModalService,
     private alertService: AlertService,
     private storageService: StorageService,
@@ -41,6 +42,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
+    this.accountType = this.accountInfo.accountType;
     this.cartList = this.callerData.cartList;
   }
 
@@ -70,6 +72,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   icCard(evt: any) {
     this.setSelected(evt);
     this.close();
+    // console.log('------------------->' + evt.target.getAttribute('data-ptype'));
     this.modal.openModalByComponent(IcCardComponent,
       {
         closeByClickOutside: false,
