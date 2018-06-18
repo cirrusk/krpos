@@ -32,7 +32,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.init();
     this.loadNotice();
-    this.accountInfo = this.storage.getCustomer();
+    // this.accountInfo = this.storage.getCustomer();
     this.stsubscription = this.storage.storageChanges.subscribe(result => {
       if (result) {
         this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
