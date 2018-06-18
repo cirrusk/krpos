@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SearchAccountComponent, NewAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
+import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
@@ -319,9 +319,9 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   popupNewAccount() {
     this.storage.setLocalItem('nc', 'Y'); // 클라이언트 화면에 팝업 띄우기 위해 이벤트 전달
-    this.modal.openModalByComponent(NewAccountComponent,
+    this.modal.openModalByComponent(ClientAccountComponent,
       {
-        modalId: 'NewAccountComponent'
+        modalId: 'ClientAccountComponent'
       }
     );
   }

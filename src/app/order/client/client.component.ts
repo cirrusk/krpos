@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
-import { NewAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination, ResCartInfo } from '../../data';
+import { ClientAccountComponent } from '../../modals';
+import { Accounts, OrderEntry, Pagination } from '../../data';
 import { PagerService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 
@@ -40,9 +40,9 @@ export class ClientComponent implements OnInit, OnDestroy {
         this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
         if (result.key === 'nc') {
           if (result.value === 'Y') {
-            this.modal.openModalByComponent(NewAccountComponent,
+            this.modal.openModalByComponent(ClientAccountComponent,
               {
-                modalId: 'NewAccountComponent_CLIENT'
+                modalId: 'ClientAccountComponent_CLIENT'
               }
             ).subscribe(data => {
               this.storage.removeLocalItem('nc');

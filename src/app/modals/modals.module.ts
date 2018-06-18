@@ -2,11 +2,10 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ModalModule } from './../core/modal/modal.module';
+import { ModalModule } from '../core/modal/modal.module';
 import { throwIfAlreadyLoaded } from '../core/module-import-guard';
 
 import { SearchAccountComponent } from './account/search-account/search-account.component';
-import { NewAccountComponent } from './account/new-account/new-account.component';
 import { SearchBerComponent } from './account/search-ber/search-ber.component';
 import { LoginComponent } from './login/login.component';
 import { BatchComponent } from './login/batch.component';
@@ -37,6 +36,7 @@ import { SerialComponent } from './scan/serial/serial.component';
 import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
 import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.component';
+import { ClientAccountComponent } from './account/client-account/client-account.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +44,6 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     PasswordComponent,
     SearchAccountComponent,
     SearchProductComponent,
-    NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
     CouponPaymentComponent,
@@ -71,7 +70,8 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     SerialComponent,
     EcpConfirmComponent,
     UpdateItemQtyComponent,
-    CashReceiptComponent
+    CashReceiptComponent,
+    ClientAccountComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +84,6 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     PasswordComponent,
     SearchAccountComponent,
     SearchProductComponent,
-    NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
     CouponPaymentComponent,
@@ -109,7 +108,8 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     RestrictComponent,
     SerialComponent,
     EcpConfirmComponent,
-    UpdateItemQtyComponent
+    UpdateItemQtyComponent,
+    ClientAccountComponent
   ]
 })
 export class ModalsModule {
