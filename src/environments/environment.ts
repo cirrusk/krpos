@@ -10,7 +10,11 @@ export const environment = {
   hybrisEndpointDomain: 'www.abnkorea.co.kr',
   hybrisEndpointPort: 80,
 
+  foreignerUserId: '8000000',
+  memberUserId: '8000001',
+  upChargeUserId: '8000002',
   phytoCafeUserId: '8000003',
+  serviceUserId: '8000004',
 
   // 임시 - 추후 삭제
   occEndpointDomain: 'http://localhost:4200',

@@ -15,7 +15,11 @@ export const environment = {
 
   receitPolicyFile: '/assets/template/receipt/policy/receipt.json',
 
+  foreignerUserId: '8000000',
+  memberUserId: '8000001',
+  upChargeUserId: '8000002',
   phytoCafeUserId: '8000003',
+  serviceUserId: '8000004',
 
   // pos configurations
   baseSiteId: 'amwaykorea',
