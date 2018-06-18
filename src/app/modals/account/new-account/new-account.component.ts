@@ -88,13 +88,14 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
       ).subscribe(result => {
         if (result) {
           this.spinner.show();
-          this.registerType = this.guser ? 'ECP' : 'CONSUMER';
+          // this.registerType = this.guser ? 'ECP' : 'CONSUMER';
+          this.registerType = 'CONSUMER';
 
           this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
             userInfo => {
               if (userInfo) {
                 this.account = userInfo;
-                this.searchAccountBroker.sendInfo(this.account.accounts[0]);
+                this.searchAccountBroker.sendInfo('n', this.account.accounts[0]);
                 this.close();
               }
             },

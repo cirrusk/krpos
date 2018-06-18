@@ -3,8 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { NewAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination } from '../../data';
+import { Accounts, OrderEntry, Pagination, ResCartInfo } from '../../data';
 import { PagerService } from '../../service';
+import { Cart } from '../../data/models/order/cart';
 
 @Component({
   selector: 'pos-client',
@@ -23,6 +24,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   cartListCount: number;                          // 카트 목록 개수
   selectedCartNum: number;                        // 선택된 카트번호
   private pager: Pagination;                      // pagination 정보
+  private resCart: Cart;
   private stsubscription: Subscription;
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private config: Config, private route: ActivatedRoute, private pagerService: PagerService) {
@@ -53,16 +55,17 @@ export class ClientComponent implements OnInit, OnDestroy {
           if (result.value === null) {
             this.init();
           } else {
-            if (result.value instanceof Array) {
+            this.resCart = result.value;
+            if (this.resCart.entries instanceof Array) {
               // if (result.value.length === 0) { // 단건 삭제 시 빈 배열이므로 여기서 초기화
               //   this.init();
               // }
               this.init(); // 장바구니 담긴 정보 전체가 넘어오므로 무조건 전체삭제후 입력
-              result.value.forEach(orderentry => {
+              this.resCart.entries.forEach(orderentry => {
                 this.addCartEntry(orderentry);
               });
             } else {
-              this.addCartEntry(result.value);
+              this.addCartEntry(this.resCart.entries);
             }
           }
         } else if (result.key === 'clearclient') {
@@ -126,24 +129,10 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   private totalPriceInfo(): void {
-    let sumItem = 0;
-    let sumPrice = 0;
-    let sumPV = 0;
-    let sumBV = 0;
-
-    this.cartList.forEach(entry => {
-      sumItem += entry.quantity;
-      sumPrice += (entry.product.price === null ? 0 : entry.product.price.value) * entry.quantity;
-      sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0;
-      sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0;
-      // sumPV += entry.value ? entry.value.pointValue : 0;
-      // sumBV += entry.value ? entry.value.businessVolume : 0;
-    });
-
-    this.totalItem = sumItem;
-    this.totalPrice = sumPrice;
-    this.totalPV = sumPV;
-    this.totalBV = sumBV;
+    this.totalItem = this.resCart ? this.resCart.totalUnitCount : 0;
+    this.totalPrice = this.resCart ? this.resCart.totalPrice.value : 0;
+    this.totalPV = this.resCart ? this.resCart.totalPrice.amwayValue.pointValue : 0;
+    this.totalBV = this.resCart ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
   }
 
   activeRowCart(index: number): void {

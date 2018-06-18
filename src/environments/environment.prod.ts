@@ -30,7 +30,7 @@ export const environment = {
     addToCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
     updateItemQtyCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
     updateVolAcc: '/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
-    getCart: '/{baseSiteId}/terminal/{macAddress}/carts',
+    getSaveCart: '/{baseSiteId}/terminal/{macAddress}/carts',
     saveCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cashier/{cashierId}/terminal/{macAddress}/carts/{cartId}/save',
     restoreCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/restoresavedcart',
     deleteItemCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',

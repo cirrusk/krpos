@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData
+  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -65,7 +65,7 @@ export class CartService {
    * @param cartId
    * @param code
    */
-  addCartEntry(userId: string, cartId: string, code: string): Observable<CartModification[]> {
+  addCartEntry(userId: string, cartId: string, code: string): Observable<ResCartInfo> {
     const orderList = new OrderEntryList();
     const orderEntries: OrderEntry[] = [];
     const entry = new OrderEntry(new ProductInfo(code));
@@ -86,13 +86,16 @@ export class CartService {
    * @param cartId
    * @param orderEntries
    */
-  addCartEntries(userId: string, cartId: string, orderEntries: Array<OrderEntry>): Observable<CartModification[]> {
+  addCartEntries(userId: string, cartId: string, orderEntries: Array<OrderEntry>): Observable<ResCartInfo> {
     const orderList = new OrderEntryList();
     orderList.orderEntries = orderEntries;
 
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('addToCart', pathvariables, orderList, null, 'json');
-    return this.api.post(data);
+    return this.api.post(data).flatMap((cartModification: CartModification[]) => {
+      return this.getCartList(userId, cartId)
+      .map(cart => new ResCartInfo(cart, cartModification) as ResCartInfo);
+    });
   }
 
   /**
@@ -125,11 +128,16 @@ export class CartService {
    * @param code
    * @param qty
    */
-  updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number): Observable<CartModification> {
+  updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number): Observable<ResCartInfo> {
     const o1: OrderEntries = new OrderEntries(new Product(code), qty.toString());
     const pathvariables = { userId: userId, cartId: cartId, entryNumber: entryNumber };
     const data = new HttpData('updateItemQtyCart', pathvariables, o1, null, 'json');
-    return this.api.put(data);
+    return this.api.put(data).flatMap((cartModification: CartModification) => {
+      const arrayCart = new Array<CartModification>();
+      arrayCart.push(cartModification);
+      return this.getCartList(userId, cartId)
+      .map(cart => new ResCartInfo(cart, arrayCart) as ResCartInfo);
+    });
   }
 
   /**
@@ -138,12 +146,14 @@ export class CartService {
    * @param cartId
    * @param entryNumber
    */
-  deleteCartEntries(userId: string, cartId: string, entryNumber: number): Observable<HttpResponseBase> {
+  deleteCartEntries(userId: string, cartId: string, entryNumber: number): Observable<ResCartInfo> {
     const apiURL = this.config.getApiUrl('deleteItemCart', { 'userId': userId, 'cartId': cartId, 'entryNumber': entryNumber });
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
 
-    return this.httpClient.delete<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response' })
-      .map(data => data as HttpResponseBase);
+    return this.httpClient.delete<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response' }).flatMap((httpRes: HttpResponseBase) => {
+      return this.getCartList(userId, cartId)
+      .map(cart => new ResCartInfo(cart) as ResCartInfo);
+    });
   }
 
   /**
@@ -163,7 +173,7 @@ export class CartService {
    * 보류된 장바구니 리스트 가져오기
    * @param userId
    */
-  getCarts(userId?: string): Observable<CartList> {
+  getSaveCarts(userId?: string): Observable<CartList> {
     const macAddress = this.storage.getMacAddress();
 
     let param = {};
@@ -173,7 +183,7 @@ export class CartService {
       param = { fields: 'FULL' };
     }
     const pathvariables = { macAddress: macAddress };
-    const data = new HttpData('getCart', pathvariables, null, param, 'json');
+    const data = new HttpData('getSaveCart', pathvariables, null, param, 'json');
     return this.api.get(data);
   }
 

@@ -25,6 +25,7 @@ export * from './models/order/phone-contact-info';
 export * from './models/order/price';
 export * from './models/order/principal';
 export * from './models/order/product-info';
+export * from './models/order/res-cart-info';
 export * from './models/order/restriction-model';
 export * from './models/order/save-cart-result';
 export * from './models/order/search-param';

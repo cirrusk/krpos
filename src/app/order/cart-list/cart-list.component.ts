@@ -6,7 +6,7 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel, KeyCode } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 
@@ -43,6 +43,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
   private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
+  private resCartInfo: ResCartInfo;
 
   accountInfo: Accounts;                                                    // 사용자 정보
   searchMode: string;                                                       // 조회 모드
@@ -57,6 +58,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
   private domain: string;
+  private paymentType: string;
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -91,14 +93,19 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       result => {
         if (result) {
-          this.sendRightMenu('a', true, result);
+          if (this.paymentType === '') {
+            this.paymentType = result.type;
+          }
+
+          this.sendRightMenu('a', true, result.data);
           if (this.accountInfo) {
             // this.changeUser(this.accountInfo, this.cartInfo, result);
-            this.changeUser(result);
+            this.changeUser(result.data);
           } else {
-            this.accountInfo = result;
+            this.accountInfo = result.data;
+            this.storage.setCustomer(this.accountInfo);
             this.activeSearchMode('P');
-            this.getCarts();
+            this.getSaveCarts();
           }
         }
       }
@@ -195,13 +202,15 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productInfo = new OrderEntry();
     this.currentCartList = new Array<OrderEntry>();
     this.searchMode = 'A';
+    this.paymentType = '';
+    // this.currentPage = 0;
     this.totalItem = 0;
     this.totalPrice = 0;
     this.totalPV = 0;
     this.totalBV = 0;
     this.selectedCartNum = -1;
     this.pager = new Pagination();
-    this.saveCartResult = new SaveCartResult();
+    this.resCartInfo = new ResCartInfo();
     this.restrictionModel = new RestrictionModel();
     this.restrictionMessageList = Array<RestrictionModel>();
     this.sendRightMenu('all', false);
@@ -360,11 +369,13 @@ export class CartListComponent implements OnInit, OnDestroy {
               resultData => {
                 this.init();
                 this.accountInfo = changeUserInfo;
+                this.storage.setCustomer(this.accountInfo);
                 this.cartInfo = resultData.cartInfo;
                 this.sendRightMenu('a', true, changeUserInfo);
                 this.sendRightMenu('all', true);
 
-                this.addCartModel = resultData.cartModification;
+                this.resCartInfo = resultData.resCartInfo;
+                this.addCartModel = resultData.resCartInfo.cartModification;
                 this.addCartModel.forEach(model => {
                   if (model.statusCode === 'success') {
                     this.productInfo = model.entry;
@@ -385,7 +396,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   );
                 } else {
                   this.activeSearchMode('P');
-                  this.getCarts();
+                  this.getSaveCarts();
                 }
               },
               error => {
@@ -401,8 +412,9 @@ export class CartListComponent implements OnInit, OnDestroy {
             );
           } else {
             this.accountInfo = changeUserInfo;
+            this.storage.setCustomer(this.accountInfo);
             this.activeSearchMode('P');
-            this.getCarts();
+            this.getSaveCarts();
           }
         }
       }
@@ -530,11 +542,12 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.spinner.show();
     this.cartListSubscription = this.cartService.getCartList(cartInfo.user.uid, cartInfo.code).subscribe(
       result => {
+        this.resCartInfo.cartList = result;
         this.cartList = result.entries;
         if (this.cartList.length === 0) {
           this.sendRightMenu('p', false);
         }
-        this.storage.setOrderEntry(result.entries); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다.
+        this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다.
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
@@ -575,7 +588,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.spinner.show();
       this.addCartSubscription = this.cartService.addCartEntry(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
         result => {
-          this.addCartModel = result;
+          this.resCartInfo = result;
+
+          this.addCartModel = this.resCartInfo.cartModification;
           if (this.addCartModel[0].statusCode === 'success') {
             this.addCartModel.forEach(addModel => {
               this.productInfo = addModel.entry;
@@ -632,7 +647,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       // this.activeRowCart(existedIdx); // 추가된 row selected
     }
 
-    this.storage.setOrderEntry(orderEntry); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
+    this.storage.setOrderEntry(this.resCartInfo.cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
 
     // 장바구니에 추가한 페이지로 이동
     const page = index ? index + 1 : this.cartList.length;
@@ -656,7 +671,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         code,
         qty).subscribe(
           result => {
-            this.updateCartModel = result;
+            this.resCartInfo = result;
+
+            this.updateCartModel = this.resCartInfo.cartModification[0];
             if (this.updateCartModel.statusCode === 'success') {
               this.productInfo = this.updateCartModel.entry;
               this.addCartEntry(this.productInfo, index);
@@ -702,7 +719,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
         this.cartInfo.code,
         this.cartList[index].entryNumber).subscribe(
-          () => {
+          result => {
+            this.resCartInfo.cartList = result.cartList;
             this.getCartList(this.cartInfo, index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
           },
           error => {
@@ -745,16 +763,18 @@ export class CartListComponent implements OnInit, OnDestroy {
           () => { this.spinner.hide(); }
         );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.init();
+      this.storage.clearClient();
+      // this.alert.error({ message: this.messageService.get('noCartInfo') });
     }
   }
 
   /**
    * 보류된 장바구니 리스트 가져오기
    */
-  getCarts() {
+  getSaveCarts() {
     this.spinner.show();
-    this.cartService.getCarts(this.accountInfo.parties[0].uid).subscribe(
+    this.cartService.getSaveCarts(this.accountInfo.parties[0].uid).subscribe(
       result => {
         if (result.carts.length > 0) {
           this.holdOrder();
@@ -809,8 +829,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.spinner.show();
       this.cartService.restoreSavedCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
-          this.saveCartResult = result;
-          this.setCartInfo(this.saveCartResult.savedCartData);
+          this.resCartInfo.cartList = result.savedCartData;
+          this.setCartInfo(this.resCartInfo.cartList);
           this.sendRightMenu('all', true);
           this.info.sendInfo('hold', 'add');
         },
@@ -839,7 +859,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     // 카트 리스트
     this.cartList = cartData.entries;
-    this.storage.setOrderEntry(cartData.entries);
+    this.storage.setOrderEntry(cartData);
     this.cartInfo.code = cartData.code;
     this.cartInfo.user = cartData.user;
     this.cartInfo.volumeABOAccount = cartData.volumeABOAccount;
@@ -869,27 +889,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 가격정보 계산
    */
   totalPriceInfo(): void {
-    let sumItem = 0;
-    let sumPrice = 0;
-    let sumPV = 0;
-    let sumBV = 0;
-
-    this.cartList.forEach(entry => {
-      sumItem += entry.quantity;
-      sumPrice += (entry.product.price === null ? 0 : entry.product.price.value) * entry.quantity;
-      sumPV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.pointValue : 0;
-      sumBV += entry.totalPrice.amwayValue ? entry.totalPrice.amwayValue.businessVolume : 0;
-      // sumPV += entry.value ? entry.value.pointValue : 0;
-      // sumBV += entry.value ? entry.value.businessVolume : 0;
-    });
-
-    this.totalItem = sumItem;
-    this.totalPrice = sumPrice;
-    this.totalPV = sumPV;
-    this.totalBV = sumBV;
+    this.totalItem = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalUnitCount : 0;
+    this.totalPrice = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalPrice.value : 0;
+    this.totalPV = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalPrice.amwayValue.pointValue : 0;
+    this.totalBV = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalPrice.amwayValue.businessVolume : 0;
 
     this.sendRightMenu('c', true, this.cartList);
-
   }
 
   /**
@@ -949,7 +954,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.searchSubscription = this.searchService.getAccountList('C', phytoUserId).subscribe(
         result => {
           const account = result.accounts[0];
-          this.searchAccountBroker.sendInfo(account);
+          this.searchAccountBroker.sendInfo('n', account);
           this.storage.setCustomer(account);
         }
       );

@@ -246,7 +246,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   getHoldTotalCount() {
     if (this.storage.getMacAddress() && this.isLogin) {
-      this.holdsubscription = this.cartService.getCarts().subscribe(
+      this.holdsubscription = this.cartService.getSaveCarts().subscribe(
         result => {
           this.holdTotalCount = result.carts.length;
         },

@@ -97,6 +97,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       {
         callerData : {accountInfo: this.account, cartList: this.cartList},
         closeByClickOutside: false,
+        closeByEnter: false,
         modalId: 'ComplexPaymentComponent'
       }
     );

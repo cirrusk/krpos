@@ -42,7 +42,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
   }
 
   ngOnInit() {
-    this.getCarts(this.callerData ? this.callerData.userId : '');
+    this.getSaveCarts(this.callerData ? this.callerData.userId : '');
   }
 
   ngOnDestroy() {
@@ -60,9 +60,9 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
   /**
    * 보류된 장바구니 리스트 가져오기
    */
-  getCarts(userId?: string) {
+  getSaveCarts(userId?: string) {
     this.spinner.show();
-    this.holdsubscription = this.cartService.getCarts(userId).subscribe(
+    this.holdsubscription = this.cartService.getSaveCarts(userId).subscribe(
       result => {
         this.cartList = result.carts;
         this.setPage(Math.ceil(this.cartList.length / 5), 5);
