@@ -94,7 +94,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
             userInfo => {
               if (userInfo) {
                 this.account = userInfo;
-                this.searchAccountBroker.sendInfo(this.account.accounts[0]);
+                this.searchAccountBroker.sendInfo('n', this.account.accounts[0]);
                 this.close();
               }
             },
