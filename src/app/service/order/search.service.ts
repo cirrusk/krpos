@@ -72,17 +72,17 @@ export class SearchService {
     let clientData;
 
     if (noticeType === 'ca') {
-      const newsParam = { noticeTypes: 'NEWS', pageSize: 20 };
-      const promotionParam = { noticeTypes: 'PROMOTION', pageSize: 10 };
-      // const newsParam      = { noticeTypes: 'PROMOTION', posNames: terminalName, pageSize: 20};
-      // const promotionParam = { noticeTypes: 'PROMOTION', posNames: terminalName, pageSize: 10};
+      // const newsParam = { noticeTypes: 'NEWS', pageSize: 20 };
+      // const promotionParam = { noticeTypes: 'PROMOTION', pageSize: 10 };
+      const newsParam      = { noticeTypes: 'NEWS', posNames: terminalName, pageSize: 20};
+      const promotionParam = { noticeTypes: 'PROMOTION', posNames: terminalName, pageSize: 10};
       newsData = new HttpData('noticeList', null, null, newsParam);
       promotionData = new HttpData('noticeList', null, null, promotionParam);
 
       return Observable.forkJoin(this.api.get(newsData), this.api.get(promotionData));
     } else {
-      const clientParam = { noticeTypes: 'NEWS', pageSize: 20 };
-      // const clientParam = { noticeTypes: 'NEWS', posNames: terminalName, pageSize: 20};
+      // const clientParam = { noticeTypes: 'NEWS', pageSize: 20 };
+      const clientParam = { noticeTypes: 'BUSINESS', posNames: terminalName, pageSize: 20};
       clientData = new HttpData('noticeList', null, null, clientParam);
 
       return this.api.get(clientData);
