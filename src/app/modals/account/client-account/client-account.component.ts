@@ -22,7 +22,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
   @ViewChild('phoneNumText') private phoneNumText: ElementRef;
   phoneNumInput: FormControl = new FormControl('');
-  private modalsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private alert: AlertService,
@@ -54,7 +53,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   }
 
   ngOnDestroy() {
-    if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
     if (this.createAccountSubscription) { this.createAccountSubscription.unsubscribe(); }
   }
 
@@ -75,7 +73,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     }
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
     if (this.agree) {
-      this.modalsubscription = this.modal.openConfirm(
+      this.modal.openConfirm(
         {
           title: '개인정보 수집 및 이용 동의 확인',
           message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
@@ -109,7 +107,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
             },
             () => { this.spinner.hide(); }
           );
-          console.log('call new account register api...');
         }
       });
     }
