@@ -55,7 +55,8 @@ export class CartService {
    */
   getCartList(userId: string, cartId: string): Observable<Cart> {
     const pathvariables = { userId: userId, cartId: cartId };
-    const data = new HttpData('getCartList', pathvariables, null, null, 'json');
+    const param = { fields: 'FULL'};
+    const data = new HttpData('getCartList', pathvariables, null, param, 'json');
     return this.api.get(data);
   }
 
