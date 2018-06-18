@@ -32,9 +32,10 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.accountInfo = this.storage.getCustomer();
     this.init();
     this.loadNotice();
-    // this.accountInfo = this.storage.getCustomer();
+    this.accountInfo = new Accounts();
     this.stsubscription = this.storage.storageChanges.subscribe(result => {
       if (result) {
         this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
@@ -44,7 +45,7 @@ export class ClientComponent implements OnInit, OnDestroy {
               {
                 modalId: 'ClientAccountComponent_CLIENT'
               }
-            ).subscribe(data => {
+            ).subscribe(() => {
               this.storage.removeLocalItem('nc');
             });
           }
