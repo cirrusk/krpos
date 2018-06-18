@@ -6,7 +6,7 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, SaveCartResult, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 
@@ -40,7 +40,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
   private pager: Pagination;                                                // pagination 정보
   private selectedCartNum: number;                                          // 선택된 카트번호
-  private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
+  // private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
   private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
   private resCartInfo: ResCartInfo;
@@ -203,7 +203,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.currentCartList = new Array<OrderEntry>();
     this.searchMode = 'A';
     this.paymentType = '';
-    // this.currentPage = 0;
     this.totalItem = 0;
     this.totalPrice = 0;
     this.totalPV = 0;
