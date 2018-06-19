@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { ApiService, StorageService } from '../../core';
-import { PaymentModeList, HttpData, PaymentModeListByMainPayment, PaymentDetails, PaymentCapture } from '../../data';
+import {
+  PaymentModeList, HttpData,
+  PaymentModeListByMainPayment, PaymentDetails, PaymentCapture,
+  BankInfo, Balance, CouponList, VoucherList
+} from '../../data';
 
 @Injectable()
 export class PaymentService {
@@ -46,6 +50,69 @@ export class PaymentService {
     const pathvariables = { userId: userid, cartId: cartid };
     const params = { feilds: 'DEFAULT' };
     const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
+    return this.api.post(data);
+  }
+
+  /**
+   * 신용카드 무이자 할부 정보 조회
+   *
+   * @param code 카드사코드
+   */
+  getInstallmentPlan(cardcode: string, userid: string): Observable<BankInfo> {
+    const pathvariables = { userId: userid };
+    const params = { code: cardcode, feilds: 'DEFAULT' };
+    const data = new HttpData('intallmentPlan', pathvariables, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * 회원의 가용 포인트 조회
+   *
+   * @param userid 회원아이디
+   */
+  getBalance(userid: string): Observable<Balance> {
+    const pathvariables = { userId: userid };
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('balance', pathvariables, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * 회원의 Re-Cash 조회
+   *
+   * @param userid 회원아이디
+   */
+  getRecash(userid: string): Observable<Balance> {
+    const pathvariables = { userId: userid };
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('recash', pathvariables, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * 쿠폰 목록 조회
+   *
+   * @param accountid 회원 아이디
+   * @param userid 회원 아이디
+   */
+  searchCoupon(accountid: string, userid: string): Observable<CouponList> {
+    const pathvariables = { accountId: accountid, userId: userid };
+    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' };
+    const data = new HttpData('searchCoupon', pathvariables, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * 쿠폰 적용
+   *
+   * @param userid 회원 아이디
+   * @param cartid 카트 아이디
+   * @param couponcode 쿠폰 코드
+   */
+  applyCoupon(userid: string, cartid: string, couponcode: string): Observable<VoucherList> {
+    const pathvariables = { userId: userid, cartId: cartid };
+    const param = { voucherId: couponcode };
+    const data = new HttpData('applyCoupon', pathvariables, param, null);
     return this.api.post(data);
   }
 }

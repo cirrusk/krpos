@@ -6,8 +6,10 @@ export class Price {
     formattedValue: string;
     maxQuantity: number;
     minQuantity: number;
-    priceType: String;
+    priceType: any;
     value: number;
     constructor() {}
 }
+
+
 

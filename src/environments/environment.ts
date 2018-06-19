@@ -53,6 +53,11 @@ export const environment = {
     berSearch: '/{baseSiteId}/business/registration/{aboNum}',
     paymentModes: '/{baseSiteId}/stores/{storeId}/supportedPaymentModes',
     paymentModesByMainPayment: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes',
+    intallmentPlan: '/{baseSiteId}/users/{userId}/installmentPlan',
+    balance: '/{baseSiteId}/users/{userId}/balance',
+    recash: '/{baseSiteId}/users/{userId}/recash',
+    searchCoupon: '/{baseSiteId}/accounts/{accountId}/users/{userId}/coupons',
+    applyCoupon: '/{baseSiteId}/users/{userId}/carts/{cartId}/vouchers',
     paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails'
   },
   logLevel: 'debug',
