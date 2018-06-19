@@ -1,9 +1,9 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 import { ModalComponent, ModalService, Modal } from '../../../../core';
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
-import { Accounts, OrderEntry } from '../../../../data';
+import { Accounts, OrderEntry, KeyCode } from '../../../../data';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
 
 @Component({
@@ -58,6 +58,15 @@ export class CouponComponent extends ModalComponent implements OnInit {
 
   close() {
     this.closeModal();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onAlertKeyDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ESCAPE) { // 27 : esc
+      this.openComplexPayment();
+    }
   }
 
 }

@@ -28,6 +28,7 @@ export class CouponCheckComponent extends ModalComponent implements OnInit {
         callerData: { accountInfo: this.account, cartList: this.cartList },
         closeByClickOutside: false,
         closeByEnter: false,
+        closeByEscape: false,
         modalId: 'CouponComponent'
       }
     );
