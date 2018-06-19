@@ -1,56 +1,71 @@
 <div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
-  <div class="pop_header">
-      <h1>Re-Cash</h1>
-      <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
-  </div>
-  <!-- pop_container -->
-  <div class="pop_container">
-      <div class="pop_content">
-          <!-- 결제내역 -->
-          <div class="tbl_row">
-              <table>
-                  <caption>Re-Cash</caption>
-                  <colgroup>
-                      <col style="width:120px">
-                      <col>
-                  </colgroup>
-                  <tbody>
-                      <tr>
-                          <th scope="row">총 결제금액</th>
-                          <td colspan="3"><span class="won">100,000</span></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">사용 가능한 Re-Cash</th>
-                          <td colspan="3"><span class="won">100,000</span></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">사용할 금액</th>
-                          <td colspan="3">
-                              <input type="text" class="w110 ar" title="사용할 금액">
-                              <label class="inp_rd mgl10" for="fg1">일부금액<input type="radio" name="fg" id="fg1" checked><span class="checkmark"></span></label>
-                              <label class="inp_rd" for="fg2">전체금액<input type="radio" name="fg" id="fg2"><span class="checkmark"></span></label>
-                          </td>
-                      </tr>
-                      <tr>
-                          <th scope="row">잔여 Re-Cash</th>
-                          <td colspan="3"><span class="won">100,000</span></td>
-                      </tr>
+    <div class="pop_header">
+        <h1>Re-Cash</h1>
+        <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content">
+            <!-- 결제내역 -->
+            <div class="tbl_row">
+                <table>
+                    <caption>Re-Cash</caption>
+                    <colgroup>
+                        <col style="width:120px">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th scope="row">총 결제금액</th>
+                            <td colspan="3">
+                                <span class="won">100,000</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">사용 가능한 Re-Cash</th>
+                            <td colspan="3">
+                                <span class="won">100,000</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">사용할 금액</th>
+                            <td colspan="3">
+                                <input type="number" class="w110" title="사용할 금액" [readonly]="isAllPay" #usePoint (keydown.enter)="payPoint()">
+                                <label class="inp_rd mgl10" for="fg1">일부금액
+                                    <input #partPay type="radio" name="fg" id="fg1" checked (click)="checkPay(1)">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="inp_rd" for="fg2">전체금액
+                                    <input #allPay type="radio" name="fg" id="fg2" (click)="checkPay(0)">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">잔여 Re-Cash</th>
+                            <td colspan="3">
+                                <span class="won">100,000</span>
+                            </td>
+                        </tr>
 
-                  </tbody>
-              </table>
-          </div>
+                    </tbody>
+                </table>
+            </div>
 
-          <dl class="caution">
-              <dt><span class="tag01">주의</span></dt>
-              <dd>매월 보너스 지급일인 15일에 보너스 계좌로 입금 될 수 있습니다.<br>(계좌 오류 시 재 적립 됨)</dd>
-              <dd>환불을 원하시는 경우 고객센터 1588-0080번으로 연락을 주십시오.</dd>
-              <dd class="star">전체 금액 사용 체크 시 1원을 제외한 최종 결제 금액이 적용됩니다.</dd>
-          </dl>
-          <!-- //결제내역 -->
-      </div>
-  </div>
-  <!-- //pop_container -->
-  <div class="pop_footer clearfix">
-      <span class="fl">취소 ESC</span>
-  </div>
+            <dl class="caution">
+                <dt>
+                    <span class="tag01">주의</span>
+                </dt>
+                <dd>매월 보너스 지급일인 15일에 보너스 계좌로 입금 될 수 있습니다.
+                    <br>(계좌 오류 시 재 적립 됨)</dd>
+                <dd>환불을 원하시는 경우 고객센터 1588-0080번으로 연락을 주십시오.</dd>
+                <dd class="star">전체 금액 사용 체크 시 1원을 제외한 최종 결제 금액이 적용됩니다.</dd>
+            </dl>
+            <!-- //결제내역 -->
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer clearfix">
+        <span class="fl">취소 ESC</span>
+    </div>
 </div>

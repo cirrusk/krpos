@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 
 import { ModalComponent, ModalService } from '../../../../core';
+import { KeyCode } from '../../../../data';
 
 @Component({
   selector: 'pos-point',
@@ -8,10 +9,13 @@ import { ModalComponent, ModalService } from '../../../../core';
 })
 export class PointComponent extends ModalComponent implements OnInit {
 
-  pointType: string;
+  pointType: string; // modal component 호출 시 전달 받은 포인트 타입
   pointTypeText: string;
+  isAllPay: boolean;
+  @ViewChild('usePoint') usePoint: ElementRef;
   constructor(protected modalService: ModalService) {
     super(modalService);
+    this.isAllPay = true;
   }
 
   ngOnInit() {
@@ -23,8 +27,36 @@ export class PointComponent extends ModalComponent implements OnInit {
     }
   }
 
+  payPoint() {
+    if (this.isAllPay) {
+      console.log('*** use point : all point');
+    } else {
+      console.log('*** use point : ' + this.usePoint.nativeElement.value);
+    }
+    // action pay....
+  }
+
+  checkPay(type: number) {
+    if (type === 0) {
+      this.isAllPay = true;
+    } else {
+      this.isAllPay = false;
+      this.usePoint.nativeElement.value = '';
+      this.usePoint.nativeElement.focus();
+    }
+  }
+
   close() {
     this.closeModal();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onAlertKeyDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ENTER) {
+      this.payPoint();
+    }
   }
 
 }

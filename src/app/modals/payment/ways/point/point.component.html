@@ -9,7 +9,7 @@
           <!-- 결제내역 -->
           <div class="tbl_row">
               <table>
-                  <caption>A포인트 결제내역</caption>
+                  <caption>{{pointTypeText}} 결제내역</caption>
                   <colgroup>
                       <col style="width:110px">
                       <col>
@@ -26,9 +26,9 @@
                       <tr>
                           <th scope="row">사용 포인트</th>
                           <td>
-                              <input type="text" class="w110" title="할부개월">
-                              <label class="inp_rd mgl10" for="se1">전체금액<input type="radio" name="se" id="se1" checked><span class="checkmark"></span></label>
-                              <label class="inp_rd" for="se2">일부금액<input type="radio" name="se" id="se2"><span class="checkmark"></span></label>
+                              <input type="number" class="w110" title="사용 포인트" [readonly]="isAllPay" #usePoint (keydown.enter)="payPoint()">
+                              <label class="inp_rd mgl10" for="se1">전체금액<input #allCheck type="radio" name="se" id="se1" checked (click)="checkPay(0)"><span class="checkmark"></span></label>
+                              <label class="inp_rd" for="se2">일부금액<input #partCheck type="radio" name="se" id="se2" (click)="checkPay(1)"><span class="checkmark"></span></label>
                           </td>
                       </tr>
                       <tr>
