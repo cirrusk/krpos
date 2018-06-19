@@ -35,7 +35,7 @@ export class PaymentService {
     const params = { macAddress: macAddress, feilds: 'DEFAULT' };
     const pathvariables = { userId: userid, cartId: cartid };
     const data = new HttpData('paymentModesByMain', pathvariables, null, params);
-    return this.api.post(data);
+    return this.api.get(data);
   }
 
   /**

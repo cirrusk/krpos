@@ -462,7 +462,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
     if (this.accountInfo) {
-      if (this.accountInfo.accountType === 'CLIENT' || this.accountInfo.accountType === 'EMPLOYEE') {
+      if (this.accountInfo.accountType === 'CLIENT' || this.accountInfo.accountType === 'AMWAY MEMBER') {
         accountId = this.accountInfo.parties[0].uid;
       } else {
         accountId = this.accountInfo.uid;
@@ -893,7 +893,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPV = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalPrice.amwayValue.pointValue : 0;
     this.totalBV = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalPrice.amwayValue.businessVolume : 0;
 
-    this.sendRightMenu('c', true, this.cartList);
+    this.sendRightMenu('c', true, this.resCartInfo.cartList);
   }
 
   /**

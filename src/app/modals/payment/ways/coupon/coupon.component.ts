@@ -14,7 +14,7 @@ import { PaymentService } from '../../../../service';
   templateUrl: './coupon.component.html'
 })
 export class CouponComponent extends ModalComponent implements OnInit, OnDestroy {
-  private account: Accounts;
+  account: Accounts;
   private cartList: Array<OrderEntry>;
   private couponubscription: Subscription;
   private coupon: Coupon;
