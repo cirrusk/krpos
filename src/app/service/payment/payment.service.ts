@@ -3,9 +3,8 @@ import { Observable } from 'rxjs/Observable';
 
 import { ApiService, StorageService } from '../../core';
 import {
-  PaymentModeList, HttpData,
-  PaymentModeListByMainPayment, PaymentDetails, PaymentCapture,
-  BankInfo, Balance, CouponList, VoucherList
+  BankInfo, Balance, CouponList, HttpData,
+  PaymentModeList, PaymentModeListByMainPayment, PaymentDetails, PaymentCapture, VoucherList
 } from '../../data';
 
 @Injectable()
