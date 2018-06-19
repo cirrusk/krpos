@@ -109,7 +109,7 @@ export class CartService {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
 
-    if (changeUserInfo.accountType === 'CLIENT' || changeUserInfo.accountType === 'EMPLOYEE') {
+    if (changeUserInfo.accountType === 'CLIENT' || changeUserInfo.accountType === 'AMWAY MEMBER') {
       accountId = changeUserInfo.parties[0].uid;
     } else {
       accountId = changeUserInfo.uid;

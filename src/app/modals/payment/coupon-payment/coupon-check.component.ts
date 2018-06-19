@@ -4,6 +4,7 @@ import { ModalComponent, ModalService, Modal } from '../../../core';
 import { ComplexPaymentComponent } from '../complex-payment/complex-payment.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
 import { Accounts, OrderEntry, KeyCode } from '../../../data';
+import { Cart } from '../../../data/models/order/cart';
 
 @Component({
   selector: 'pos-coupon-check',
@@ -11,21 +12,21 @@ import { Accounts, OrderEntry, KeyCode } from '../../../data';
 })
 export class CouponCheckComponent extends ModalComponent implements OnInit {
   private account: Accounts;
-  private cartList: Array<OrderEntry>;
+  private cartInfo: Cart;
   constructor(protected modalService: ModalService, private modal: Modal) {
     super(modalService);
   }
 
   ngOnInit() {
     this.account = this.callerData.accountInfo;
-    this.cartList = this.callerData.cartList;
+    this.cartInfo = this.callerData.cartInfo;
   }
 
   includeCoupon() {
     this.close();
     this.modal.openModalByComponent(CouponComponent,
       {
-        callerData: { accountInfo: this.account, cartList: this.cartList },
+        callerData: { accountInfo: this.account, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
@@ -38,7 +39,7 @@ export class CouponCheckComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        callerData: { accountInfo: this.account, cartList: this.cartList },
+        callerData: { accountInfo: this.account, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
