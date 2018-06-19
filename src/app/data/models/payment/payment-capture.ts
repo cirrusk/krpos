@@ -66,10 +66,10 @@ export class PaymentModeData {
  */
 export class AmwayPaymentInfoData {
     requesttoken: string;
-    transactionid: string;
+    transactionid: string; // 거래 번호
     transactionCode: string;
     referenceNumber: string;
-    amount: number;
+    amount: number; // 지불금액
     currency: CurrencyData;
     status: string;
     comments: string;
@@ -83,6 +83,7 @@ export class AmwayPaymentInfoData {
     paymentInfoLine2: string;
     paymentInfoLine3: string;
     paymentInfoLine4: string;
+    issuer: any; // 은행/카드사 BankInfoModel 은행코드
 }
 
 /** 신용카드 */
@@ -92,47 +93,56 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     validfrom: string;
     cardtype: string;
     subscriptionID: string;
-    paymentType: string;
-    memberType: string;
+    paymentType: string; // 카드 결제 유형 CreditCardPaymentType
+    memberType: string; // 카드 회원 유형 CreditCardMemberType(일반결제인 경우만 생성)
     cardCompanyCode: string;
     cardNumber: string;
     cardPassword: string;
     cardAuthNumber: string;
-    validToMonth: string;
-    validToYear: string;
-    installmentPlan: string;
+    installmentPlan: string; // 할부기간 InstallmentPlanModel
     cardTransactionId: string;
     cardAcquirerCode: string;
     cardApprovalNumber: string;
     cardMerchantNumber: string;
     cardRequestDate: Date;
+    ccOwner: string; // 신용 카드 소유자
+    number: string; // 카드번호(필수값(카드번호 뒤 4자리))
+    type: any; // 카드 타입 CreditCardType없는 경우 임의설정(필수값)
+    validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
+    validFromYear: string; // 유효기간 시작 년 필수값 임의설정
+    validToMonth: string; // 유효기간 종료 월 필수값 임의설정
+    validToYear: string; // 유효기간 종료 년 필수값 임의설정
 }
 
 /** 현금결제 */
-export class CashPaymentInfo extends AmwayPaymentInfoData { }
+export class CashPaymentInfo extends AmwayPaymentInfoData {
+    cashType: any; // 현금유형 CashType (CASH, CHECK)
+}
 
 /** 자동이체 */
 export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
-    accountNumber: string;
-    baOwner: string;
+    accountNumber: string; // 계좌번호
+    baOwner: string; // 예금주명
     bankIDNumber: string;
-    bank: string;
+    bank: string; // 은행 명
 }
 
 /** 쿠폰결제 */
 export class VoucherPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 포인트결제 */
-export class PointPaymentInfo extends AmwayPaymentInfoData { }
+export class PointPaymentInfo extends AmwayPaymentInfoData {
+    pointType: any; // BalanceReferenceTypeModel (BR030 - 전환포인트, BR033 - 멤버포인트)
+ }
 
 /** 미수금결제 */
 export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 현금IC카드결제 */
 export class ICCardPaymentInfo extends AmwayPaymentInfoData {
-    accountNumber: string;
-    baOwner: string;
+    accountNumber: string; // 계좌번호
+    baOwner: string; // 예금주명
     bankIDNumber: string;
-    bank: string;
+    bank: string; // 은행 명
 }
 
