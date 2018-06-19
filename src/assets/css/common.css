@@ -241,6 +241,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .pop_wrap.pop_s {width:380px}
 .pop_wrap.pop_m {width:550px}
 .pop_wrap.pop_l {width:800px}
+.pop_wrap.pop_xl {width:950px}
 
 .pop_header {height:60px; padding:18px 30px 0; box-sizing: border-box; background-color:#11224e;}
 .pop_header h1 {font-family:'NSR'; font-size:20px; color:#fff;}
@@ -286,7 +287,7 @@ table input[type='text'] {font-family:'NSM';}
 .tbl_col thead tr th {color:#21243d}
 .tbl_col tbody tr {border-top:5px solid #f2f2f5}
 .tbl_col tbody tr td {height:40px; background-color:#fff}
-.tbl_col tbody tr.on td {background-color:#1265cc; color:#fff}
+.tbl_col tbody tr.on td, .tbl_col thead tr.on th {background-color:#1265cc; color:#fff}
 .tbl_col tbody tr.on [class*='tag0'] {border:1px solid #fff}
 .tbl_col tbody tr.on .elips {font-family:'NSM';}
 .tbl_col tbody td {text-align:center;}
@@ -304,8 +305,11 @@ table input[type='text'] {font-family:'NSM';}
 .tbl_col tbody td .elips.mx150 {max-width:150px}
 .tbl_col tbody td .elips.mx270 {max-width:270px}
 .tbl_col tbody td .elips.mx315 {max-width:315px}
+.tbl_col tbody td .elips.mx320 {max-width:320px}
 .tbl_col tbody td .elips.mx400 {max-width:400px}
 .tbl_col tbody td .elips.mx420 {max-width:420px}
+.tbl_col .chk:before {content:''; position:static !important; display:inline-block !important; width:18px !important; height:18px !important; background:url(/assets/images/common/ico_common.png) -358px -83px no-repeat !important; vertical-align:middle; margin:-2px 14px 0 0}
+.tbl_col .on .chk:before {background-position:-408px -83px !important}
 
  /* 회원정보조회 */
 .mbinfo_search {margin-top:8px; width:740px}
@@ -328,6 +332,20 @@ table input[type='text'] {font-family:'NSM';}
 .mbinfo_list.type02 .tbl_col table {float:left; width:368px}
 .mbinfo_list.type02 .tbl_col table + table {float:right}
 .mbinfo_list.type02 .tbl_col .elips {max-width:85px; padding-left:20px}
+
+.mbinfo_list.type04 {padding-top:0; height:333px; box-sizing:border-box} /* ECP픽업 주문리스트 */
+.mbinfo_list.type04 .tbl_col {position:relative}
+.mbinfo_list.type04 .tbl_col.fl {width:437px; margin-top:60px}
+.mbinfo_list.type04 .tbl_col.fr {width:422px}
+.mbinfo_list.type04 .tbl_col th.ar {padding-right:25px}
+.mbinfo_list.type04 .tbl_col .al {padding-left:15px}
+.mbinfo_list.type04 .tbl_col .ar {padding-right:18px}
+.mbinfo_list.type04 .tbl_col .elips {max-width:63px; padding:0 8px; text-align:center}
+.mbinfo_list.type04 .tbl_col .txt {height:60px; line-height:57px;}
+.mbinfo_list.type04 .tbl_col .paging > button {position:absolute; right:5px; z-index:10}
+.mbinfo_list.type04 .tbl_col .paging .prev01 {bottom:207px;}
+.mbinfo_list.type04 .tbl_col .paging .next01 {bottom:5px;}
+.mbinfo_list.type04 .tbl_col .no_data {background-color:transparent; border:0}
 
 .mbinfo_list.type03 {} /* 보류내역 조회 */
 .mbinfo_list.type03 {margin-top:-30px; padding-bottom:0}
@@ -373,7 +391,7 @@ table input[type='text'] {font-family:'NSM';}
 .chc_wrap a.chc_type03 {background-color:#1265cc}
 .chc_wrap a.chc_type04 {background-color:#47b8f2}
 
-.caution {position:relative; padding-left:55px; margin-top:29px}
+.caution {position:relative; padding-left:55px; margin-top:29px; min-height:25px}
 .caution dt {position:absolute; top:-2px; left:0}
 .caution dd {padding-left:13px; margin-top:2px; line-height:18px; font-size:13px}
 .caution dd:before {content:''; display:inline-block; width:3px; height:4px; background:url(/assets/images/common/ico_common.png) -258px -89px no-repeat; margin:-2px 6px 0 -9px; vertical-align:middle;}
