@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 
 import { ModalComponent, ModalService } from '../../../../core';
-import { KeyCode, ICCardPaymentInfo, PaymentModeData, CurrencyData } from '../../../../data';
+import { KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData } from '../../../../data';
 
 @Component({
   selector: 'pos-ic-card',
@@ -40,7 +40,10 @@ export class IcCardComponent extends ModalComponent implements OnInit {
     currencydata.symbol = 'won';
     iccard.currency = currencydata;
 
-    console.log(JSON.stringify(iccard));
+    const paymentcapture = new PaymentCapture();
+    paymentcapture.icCardPayment = iccard;
+    console.log('IC CARD : ' + JSON.stringify(iccard));
+    console.log('PAYMENT CAPTURE : ' + JSON.stringify(paymentcapture));
     return iccard;
   }
 

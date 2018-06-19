@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2 } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, StorageService, PrinterService } from '../../../core';
 
-import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
+// import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
 import { IcCardComponent } from '../ways/ic-card/ic-card.component';
 import { CashComponent } from '../ways/cash/cash.component';
 import { DirectDebitComponent } from '../ways/direct-debit/direct-debit.component';

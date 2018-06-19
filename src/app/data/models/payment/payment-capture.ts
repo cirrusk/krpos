@@ -101,13 +101,23 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     validToMonth: string;
     validToYear: string;
     installmentPlan: string;
+    cardTransactionId: string;
+    cardAcquirerCode: string;
+    cardApprovalNumber: string;
+    cardMerchantNumber: string;
+    cardRequestDate: Date;
 }
 
 /** 현금결제 */
 export class CashPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 자동이체 */
-export class DirectDebitPaymentInfo extends AmwayPaymentInfoData { }
+export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
+    accountNumber: string;
+    baOwner: string;
+    bankIDNumber: string;
+    bank: string;
+}
 
 /** 쿠폰결제 */
 export class VoucherPaymentInfo extends AmwayPaymentInfoData { }
@@ -119,5 +129,10 @@ export class PointPaymentInfo extends AmwayPaymentInfoData { }
 export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData { }
 
 /** 현금IC카드결제 */
-export class ICCardPaymentInfo extends AmwayPaymentInfoData { }
+export class ICCardPaymentInfo extends AmwayPaymentInfoData {
+    accountNumber: string;
+    baOwner: string;
+    bankIDNumber: string;
+    bank: string;
+}
 
