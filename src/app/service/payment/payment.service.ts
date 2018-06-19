@@ -97,7 +97,7 @@ export class PaymentService {
    */
   searchCoupon(accountid: string, userid: string): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
-    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' };
+    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' }; // , 'EXPIRED', 'DELETED', 'FREEZED'
     const data = new HttpData('searchCoupon', pathvariables, null, params);
     return this.api.get(data);
   }
