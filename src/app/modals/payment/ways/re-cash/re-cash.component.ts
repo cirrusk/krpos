@@ -1,22 +1,35 @@
-import { Component, OnInit, ViewChild, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService } from '../../../../core';
-import { KeyCode } from '../../../../data';
+import { KeyCode, Balance, Accounts } from '../../../../data';
+import { PaymentService } from '../../../../service';
 
 @Component({
   selector: 'pos-re-cash',
   templateUrl: './re-cash.component.html'
 })
-export class ReCashComponent extends ModalComponent implements OnInit {
+export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy {
   isAllPay: boolean;
+  private accounts: Accounts;
   @ViewChild('usePoint') usePoint: ElementRef;
-  constructor(protected modalService: ModalService) {
+  balance: Balance;
+  private paymentSubscription: Subscription;
+  constructor(protected modalService: ModalService, private payment: PaymentService) {
     super(modalService);
     this.isAllPay = false;
   }
 
   ngOnInit() {
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
+    this.accounts = this.callerData.account;
+    this.paymentSubscription = this.payment.getRecash(this.accounts.uid).subscribe(result => {
+      this.balance = result;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
   }
 
   payPoint() {

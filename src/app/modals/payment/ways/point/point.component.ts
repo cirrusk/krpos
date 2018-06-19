@@ -1,19 +1,24 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService } from '../../../../core';
-import { KeyCode } from '../../../../data';
+import { KeyCode, Accounts, Balance } from '../../../../data';
+import { PaymentService } from '../../../../service';
 
 @Component({
   selector: 'pos-point',
   templateUrl: './point.component.html'
 })
-export class PointComponent extends ModalComponent implements OnInit {
+export class PointComponent extends ModalComponent implements OnInit, OnDestroy {
 
   pointType: string; // modal component 호출 시 전달 받은 포인트 타입
   pointTypeText: string;
   isAllPay: boolean;
+  private accounts: Accounts;
+  balance: Balance;
   @ViewChild('usePoint') usePoint: ElementRef;
-  constructor(protected modalService: ModalService) {
+  private paymentSubscription: Subscription;
+  constructor(protected modalService: ModalService, private payment: PaymentService) {
     super(modalService);
     this.isAllPay = true;
   }
@@ -25,6 +30,15 @@ export class PointComponent extends ModalComponent implements OnInit {
     } else {
       this.pointTypeText = 'Member 포인트';
     }
+    this.accounts = this.callerData.account;
+
+    this.paymentSubscription = this.payment.getBalance(this.accounts.uid).subscribe(result => {
+      this.balance = result;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
   }
 
   payPoint() {

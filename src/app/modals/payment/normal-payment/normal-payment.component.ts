@@ -90,8 +90,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(PointComponent,
       {
+        callerData: { account: this.accountInfo },
         closeByClickOutside: false,
-        modalId: 'IcCardComponent_Amway',
+        modalId: 'PointComponent',
         pointType: 'a'
       }
     );
@@ -106,8 +107,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(PointComponent,
       {
+        callerData: { account: this.accountInfo },
         closeByClickOutside: false,
-        modalId: 'IcCardComponent_Member',
+        modalId: 'PointComponent_MEM',
         pointType: 'm'
       }
     );
@@ -167,6 +169,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ReCashComponent,
       {
+        callerData: { account: this.accountInfo },
         closeByClickOutside: false,
         modalId: 'ReCashComponent'
       }
