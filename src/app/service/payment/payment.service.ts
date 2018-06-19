@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { ApiService, StorageService } from '../../core';
 import {
   BankInfo, Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMainPayment, PaymentDetails, PaymentCapture, VoucherList
+  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList
 } from '../../data';
 
 @Injectable()
@@ -30,11 +30,11 @@ export class PaymentService {
    * @param userid 사용자아이디
    * @param cartid 카트아이디
    */
-  getPaymentModesByMainPayment(userid: string, cartid: string): Observable<PaymentModeListByMainPayment> {
+  getPaymentModesByMain(userid: string, cartid: string): Observable<PaymentModeListByMain> {
     const macAddress = this.storage.getMacAddress();
     const params = { macAddress: macAddress, feilds: 'DEFAULT' };
     const pathvariables = { userId: userid, cartId: cartid };
-    const data = new HttpData('paymentModesByMainPayment', pathvariables, null, params);
+    const data = new HttpData('paymentModesByMain', pathvariables, null, params);
     return this.api.post(data);
   }
 

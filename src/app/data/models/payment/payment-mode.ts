@@ -4,8 +4,8 @@ export class PaymentModeList {
 }
 
 /** 결제 방법 : cart 주결제 방법 기준 사용 가능한 결제 방법  */
-export class PaymentModeListByMainPayment {
-    paymentModes: PaymentModeByMainPayment[];
+export class PaymentModeListByMain {
+    paymentModes: PaymentModeByMain[];
 }
 
 export class PaymentMode {
@@ -19,7 +19,7 @@ export class PaymentMode {
     usedCount: number;
 }
 
-export class PaymentModeByMainPayment {
+export class PaymentModeByMain {
     code: string;
     paymentModes: PaymentModeList;
 }

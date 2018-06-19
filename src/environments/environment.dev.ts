@@ -52,7 +52,7 @@ export const environment = {
     orderDetail: '/{baseSiteId}/orders/{code}',
     berSearch: '/{baseSiteId}/business/registration/{aboNum}',
     paymentModes: '/{baseSiteId}/stores/{storeId}/supportedPaymentModes',
-    paymentModesByMainPayment: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes',
+    paymentModesByMain: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes',
     intallmentPlan: '/{baseSiteId}/users/{userId}/installmentPlan',
     balance: '/{baseSiteId}/users/{userId}/balance',
     recash: '/{baseSiteId}/users/{userId}/recash',
