@@ -3,7 +3,7 @@ import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
-  ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
+  CancelOrderComponent, CouponCheckComponent } from '../../modals';
 import { Accounts, OrderHistoryList, OrderEntry } from '../../data';
 import { OrderService, MessageService } from '../../service';
 import { Utils } from '../../core/utils';
@@ -93,6 +93,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   complexPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
+    this.modal.openModalByComponent(CouponCheckComponent,
+      {
+        callerData : {accountInfo: this.account, cartList: this.cartList},
+        closeByClickOutside: false,
+        closeByEnter: false,
+        modalId: 'CouponCheckComponent'
+      }
+    );
+
+/*
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
         callerData : {accountInfo: this.account, cartList: this.cartList},
@@ -100,7 +110,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         closeByEnter: false,
         modalId: 'ComplexPaymentComponent'
       }
-    );
+    );*/
   }
 
   /**

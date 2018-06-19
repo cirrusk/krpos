@@ -15,6 +15,7 @@ export * from './password/password.component';
 export * from './payment/complex-payment/complex-payment.component';
 export * from './payment/normal-payment/normal-payment.component';
 export * from './payment/coupon-payment/coupon-payment.component';
+export * from './payment/coupon-payment/coupon-check.component';
 export * from './payment/ways/cash/cash.component';
 export * from './payment/ways/check-card/check-card.component';
 export * from './payment/ways/checks/checks.component';

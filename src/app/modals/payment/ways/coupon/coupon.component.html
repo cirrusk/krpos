@@ -1,57 +1,76 @@
 <div class="pop_wrap pop_l" tabindex="1" [posFocusBlur]="'focus'">
-  <div class="pop_header">
-      <h1>쿠폰 정보 조회</h1>
-      <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
-  </div>
-  <!-- pop_container -->
-  <div class="pop_container">
-      <div class="pop_content">
-          <div class="mbinfo_list type03">
-              <p class="txt">김*영 회원님(KR7480****) 적용 가능한 쿠폰 <strong>총 <span class="fc_red">4</span>개</strong></p>
-              <!-- 쿠폰이 없을시 삭제 -->
-              <span class="btn_wrap">
-                  <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
-                  <a href="#" class="ico_comm prev03">이전</a>
-                  <a href="#" class="ico_comm next03 on">다음</a>
-              </span>
-              <!-- //쿠폰이 없을시 삭제 -->
-              <!-- 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
-              <div class="tbl_col bg_bar">
-                  <table>
-                      <caption>쿠폰 내역</caption>
-                      <colgroup>
-                          <col>
-                          <col style="width:130px">
-                          <col style="width:180px">
-                      </colgroup>
-                      <thead>
-                          <tr>
-                              <th scope="col">프로모션</th>
-                              <th scope="col">쿠폰명</th>
-                              <th scope="col">쿠폰 번호</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <!-- 내역 선택시 tr에 on클래스 추가 -->
-                          <tr class="on">
-                              <td class="tit" (click)="selectCoupon($event)"><span class="elips mx420">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이 리후레셔 스프레이</span></td>
-                              <td><span>5% 할인 쿠폰</span></td>
-                              <td><span>1093050-QR6-204-092K</span></td>
-                          </tr>
-                          <tr>
-                              <td class="tit"><span class="elips mx420">글리스터 리후레셔</span></td>
-                              <td><span>10,000원 할인 쿠폰</span></td>
-                              <td><span>1093050-QR6-204-092K</span></td>
-                          </tr>
-                      </tbody>
-                  </table>
-              </div>
-              <!-- // 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
-          </div>
-      </div>
-  </div>
-  <!-- //pop_container -->
-  <div class="pop_footer clearfix">
-      <span class="fl">취소 ESC</span>
-  </div>
+    <div class="pop_header">
+        <h1>쿠폰 정보 조회</h1>
+        <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content">
+            <div class="mbinfo_list type03">
+                <p class="txt">김*영 회원님(KR7480****) 적용 가능한 쿠폰
+                    <strong>총
+                        <span class="fc_red">4</span>개</strong>
+                </p>
+                <!-- 쿠폰이 없을시 삭제 -->
+                <span class="btn_wrap">
+                    <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
+                    <a href="#" class="ico_comm prev03">이전</a>
+                    <a href="#" class="ico_comm next03 on">다음</a>
+                </span>
+                <!-- //쿠폰이 없을시 삭제 -->
+                <!-- 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
+                <div class="tbl_col bg_bar">
+                    <table>
+                        <caption>쿠폰 내역</caption>
+                        <colgroup>
+                            <col>
+                            <col style="width:130px">
+                            <col style="width:180px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col">프로모션</th>
+                                <th scope="col">쿠폰명</th>
+                                <th scope="col">쿠폰 번호</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 내역 선택시 tr에 on클래스 추가 -->
+                            <tr class="on">
+                                <td class="tit" (click)="selectCoupon($event)">
+                                    <span class="elips mx420">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이 리후레셔 스프레이</span>
+                                </td>
+                                <td>
+                                    <span>5% 할인 쿠폰</span>
+                                </td>
+                                <td>
+                                    <span>1093050-QR6-204-092K</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tit">
+                                    <span class="elips mx420">글리스터 리후레셔</span>
+                                </td>
+                                <td>
+                                    <span>10,000원 할인 쿠폰</span>
+                                </td>
+                                <td>
+                                    <span>1093050-QR6-204-092K</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- // 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
+            </div>
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer clearfix">
+        <span class="fl">취소 ESC</span>
+        <span class="fr">
+            <a href class="btn01_blue" (click)="!!paymentCoupon()">쿠폰결제 하기</a>
+            <a href class="btn01_white" (click)="!!openComplexPayment()">취소</a>
+        </span>
+    </div>
 </div>

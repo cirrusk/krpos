@@ -37,6 +37,7 @@ import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
 import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.component';
 import { ClientAccountComponent } from './account/client-account/client-account.component';
+import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { ClientAccountComponent } from './account/client-account/client-account.
     EcpConfirmComponent,
     UpdateItemQtyComponent,
     CashReceiptComponent,
-    ClientAccountComponent
+    ClientAccountComponent,
+    CouponCheckComponent
   ],
   imports: [
     CommonModule,
@@ -109,7 +111,8 @@ import { ClientAccountComponent } from './account/client-account/client-account.
     SerialComponent,
     EcpConfirmComponent,
     UpdateItemQtyComponent,
-    ClientAccountComponent
+    ClientAccountComponent,
+    CouponCheckComponent
   ]
 })
 export class ModalsModule {
