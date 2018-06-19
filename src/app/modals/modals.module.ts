@@ -32,6 +32,7 @@ import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
+import { MaskPipe } from '../core/pipe/mask.pipe';
 import { SerialComponent } from './scan/serial/serial.component';
 import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
@@ -66,6 +67,7 @@ import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.comp
     CouponComponent,
     CancelOrderComponent,
     PhoneNumberMaskPipe,
+    MaskPipe,
     BatchComponent,
     RestrictComponent,
     SerialComponent,

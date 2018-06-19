@@ -7,19 +7,19 @@
     <div class="pop_container">
         <div class="pop_content">
             <div class="mbinfo_list type03">
-                <p class="txt">김*영 회원님(KR7480****) 적용 가능한 쿠폰
+                <p class="txt">{{account?.name | mask: 'name'}} 회원님(KR{{account?.uid | mask: 'uid'}}) 적용 가능한 쿠폰
                     <strong>총
-                        <span class="fc_red">4</span>개</strong>
+                        <span class="fc_red">{{couponCount}}</span>개</strong>
                 </p>
                 <!-- 쿠폰이 없을시 삭제 -->
-                <span class="btn_wrap">
+                <span class="btn_wrap" *ngIf="couponCount > 0">
                     <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
                     <a href="#" class="ico_comm prev03">이전</a>
                     <a href="#" class="ico_comm next03 on">다음</a>
                 </span>
                 <!-- //쿠폰이 없을시 삭제 -->
                 <!-- 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
-                <div class="tbl_col bg_bar">
+                <div class="tbl_col bg_bar" *ngIf="couponlist && couponCount != 0; else elseEmpty">
                     <table>
                         <caption>쿠폰 내역</caption>
                         <colgroup>
@@ -36,32 +36,24 @@
                         </thead>
                         <tbody>
                             <!-- 내역 선택시 tr에 on클래스 추가 -->
-                            <tr class="on">
-                                <td class="tit" (click)="selectCoupon($event)">
-                                    <span class="elips mx420">글리스터 리후레셔 스프레이 리후레셔 스프레이 스프레이 리후레셔 스프레이 리후레셔 스프레이</span>
-                                </td>
-                                <td>
-                                    <span>5% 할인 쿠폰</span>
-                                </td>
-                                <td>
-                                    <span>1093050-QR6-204-092K</span>
-                                </td>
-                            </tr>
-                            <tr>
+                            <tr [class.on]="activeNum === i" *ngFor="let coupon of couponlist; let i = index" (click)="activeRow(i, coupon)">
                                 <td class="tit">
-                                    <span class="elips mx420">글리스터 리후레셔</span>
+                                    <span class="elips mx420">{{coupon?.description}}</span>
                                 </td>
                                 <td>
-                                    <span>10,000원 할인 쿠폰</span>
+                                    <span>{{coupon?.value}}</span>
                                 </td>
                                 <td>
-                                    <span>1093050-QR6-204-092K</span>
+                                    <span>{{coupon?.code}}</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <!-- // 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
+                <ng-template #elseEmpty>
+                    <p class="no_data">해당 하는 쿠폰이 존재하지 않습니다.</p>
+                </ng-template>
             </div>
         </div>
     </div>
