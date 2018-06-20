@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from '../../core';
-import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, Order, OrderList } from '../../data';
+import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData } from '../../data';
+import { Order, OrderList } from '../../data/models/order/order';
 
 @Injectable()
 export class OrderService {
