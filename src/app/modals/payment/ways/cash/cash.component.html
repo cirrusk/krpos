@@ -17,7 +17,7 @@
                     <tbody>
                         <tr>
                             <th scope="row">내신금액</th>
-                            <td><input #paid type="text" class="w110 ar" title="내신금액" value=""(keydown.enter)="nextStep()"></td>
+                            <td><input #paid type="text" class="w110 ar" title="내신금액" value="" (keydown.enter)="nextStep()"></td>
                         </tr>
                         <tr>
                             <th scope="row">결제금액</th>
@@ -29,7 +29,7 @@
                         </tr>
                         <tr>
                             <th scope="row">결제일자</th>
-                            <td></td>
+                            <td>{{paidDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         </tr>
                     </tbody>
                 </table>

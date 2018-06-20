@@ -8,8 +8,10 @@
               <label class="inp_rd type01" for="sk2">아이디<input type="radio" name="sk" id="sk2"><span class="checkmark"></span></label>
               <label class="inp_rd type01" for="sk3">휴대폰 번호<input type="radio" name="sk" id="sk3"><span class="checkmark"></span></label>
               <div class="mbinfo_search">
-                  <select title="회원구분">
-                      <option>ABO회원</option>
+                  <select #searchMemberType title="회원구분">
+                    <option value="A">ABO회원</option>
+                    <option value="M">일반회원</option>
+                    <option value="C">소비자</option>
                   </select>
                   <input type="text" style="width:480px">
                   <button type="button" class="btn01_blue">확인</button>
