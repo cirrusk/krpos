@@ -14,6 +14,8 @@ export * from './models/order/cart-params';
 export * from './models/order/copy-cart-entries';
 export * from './models/order/customer';
 export * from './models/order/member-type.enum';
+export * from './models/order/order';
+export * from './models/order/order-data';
 export * from './models/order/order-entries';
 export * from './models/order/order-entry';
 export * from './models/order/order-history-list';
