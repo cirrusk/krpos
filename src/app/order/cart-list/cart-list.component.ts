@@ -6,7 +6,7 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 
@@ -57,6 +57,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
+  public memberType = MemberType;
   private domain: string;
   private paymentType: string;
   constructor(private modal: Modal,
@@ -462,7 +463,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
     if (this.accountInfo) {
-      if (this.accountInfo.accountType === 'CLIENT' || this.accountInfo.accountType === 'AMWAY MEMBER') {
+      if (this.accountInfo.accountTypeCode === this.memberType.CONSUMER || this.accountInfo.accountTypeCode === this.memberType.MEMBER) {
         accountId = this.accountInfo.parties[0].uid;
       } else {
         accountId = this.accountInfo.uid;

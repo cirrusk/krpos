@@ -2,6 +2,7 @@ import { Customer } from './customer';
 
 export class Accounts {
     accountType: string;
+    accountTypeCode: string;
     name: string;
     status: string;
     totalBV: number;
