@@ -94,7 +94,7 @@ export class AmwayPaymentInfoData {
     paymentInfoLine2: string;
     paymentInfoLine3: string;
     paymentInfoLine4: string;
-    issuer: any; // 은행/카드사 BankInfoModel 은행코드
+    issuer: string; // 은행/카드사 BankInfoModel 은행코드
     constructor(amount: number, paymentProvider?: string, status?: string) {
         this.amount = amount;
         this.paymentProvider = paymentProvider || 'akl';
