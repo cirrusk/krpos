@@ -1,10 +1,11 @@
+import { CashPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../../../../core/alert/alert.service';
 import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal } from '../../../../core';
-import { MessageService } from '../../../../service';
-import { Accounts } from '../../../../data';
+import { MessageService, PaymentService } from '../../../../service';
+import { Accounts, PaymentCapture } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
 
@@ -18,13 +19,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   @ViewChild('payment') private payment: ElementRef; // 결제금액
   finishStatus: string;                              // 결제완료 상태
   private cartInfo: Cart;
-  private accountInfo: Accounts;
+  private account: Accounts;
   private paymentType: string;
   paidDate: Date;
   private keyboardsubscription: Subscription;
+  private paymentsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
+    private payments: PaymentService,
     private alert: AlertService,
     private keyboard: KeyboardService,
     private logger: Logger,
@@ -36,7 +39,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
       this.handleKeyboardCommand(c);
     });
-    this.accountInfo = this.callerData.account;
+    this.account = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
     setTimeout(() => {
       this.paid.nativeElement.value = 0;
@@ -55,20 +58,42 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
+    if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
   pay(paidAmount: number, payAmount: number) {
+    const change = this.paid.nativeElement.value - this.payment.nativeElement.value;
     if (paidAmount < 1) {
       this.alert.warn({ message: this.message.get('notinputPaid') });
+    } else if (change < 0) {
+      this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
       if (this.paymentType === 'n') {
         // payment capture 실행
         // 현금 결제 완료 후, POS는 자동으로 cash drawer 오픈
+
+        if (paidAmount >= payAmount) {
+          const paymentcapture = this.makeCapture(paidAmount);
+          console.log('payment capture : ' + JSON.stringify(paymentcapture, null, 2));
+          this.paymentsubscription = this.payments.paymentCapture(this.account.uid, this.cartInfo.code, paymentcapture).subscribe(result => {
+            console.log('payment capture result : ' + JSON.stringify(result, null, 2));
+          });
+        }
+
         this.paidDate = new Date();
         this.finishStatus = 'ok';
       } else {
       }
     }
+  }
+
+  private makeCapture(paidamount: number): PaymentCapture {
+    const cash = new CashPaymentInfo('CASH', paidamount);
+    cash.paymentMode = new PaymentModeData('cash');
+    cash.currency = new CurrencyData('KRW');
+    const paymentcapture = new PaymentCapture();
+    paymentcapture.cashPayment = cash;
+    return paymentcapture;
   }
 
   nextStep() {
@@ -84,7 +109,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   popupCashReceipt() {
     this.modal.openModalByComponent(CashReceiptComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { account: this.account, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'CashReceiptComponent',
         paymentType: this.paymentType
