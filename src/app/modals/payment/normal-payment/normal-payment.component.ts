@@ -9,7 +9,7 @@ import { ChecksComponent } from '../ways/checks/checks.component';
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
 import { PointComponent } from '../ways/point/point.component';
-import { OrderEntry, Accounts } from '../../../data';
+import { OrderEntry, Accounts, MemberType } from '../../../data';
 import { OrderInfoVO } from '../../../data/models/receipt/order.info';
 import { BonusInfoVO } from '../../../data/models/receipt/bonus.info';
 import { PaymentsVO } from '../../../data/models/receipt/payments';
@@ -18,6 +18,7 @@ import { ProductEntryVO } from '../../../data/models/receipt/product';
 import { ReceiptVO } from '../../../data/models/receipt/receipt.vo';
 import { ReceiptService } from '../../../service';
 import { InfoBroker } from '../../../broker';
+import { Cart } from '../../../data/models/order/cart';
 
 @Component({
   selector: 'pos-normal-payment',
@@ -26,9 +27,10 @@ import { InfoBroker } from '../../../broker';
 export class NormalPaymentComponent extends ModalComponent implements OnInit {
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
-  private cartList: Array<OrderEntry>;
-  private accountInfo: Accounts;
-  accountType: string;
+
+  private cartInfo: Cart;
+  accountInfo: Accounts;
+  public memberType = MemberType;
   constructor(protected modalService: ModalService,
     private alertService: AlertService,
     private storageService: StorageService,
@@ -42,8 +44,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
-    this.accountType = this.accountInfo.accountType;
-    this.cartList = this.callerData.cartList;
+    this.cartInfo = this.callerData.cartInfo;
   }
 
   /**
@@ -62,7 +63,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     //     modalId: 'CreditCardComponent'
     //   }
     // );
-    this.makeReceipt(this.accountInfo, this.cartList); // 영수증 인쇄 테스트 용으로 임시 적용
+    this.makeReceipt(this.accountInfo, this.cartInfo); // 영수증 인쇄 테스트 용으로 임시 적용
   }
 
   /**
@@ -75,6 +76,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     // console.log('------------------->' + evt.target.getAttribute('data-ptype'));
     this.modal.openModalByComponent(IcCardComponent,
       {
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'IcCardComponent'
       }
@@ -90,7 +92,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(PointComponent,
       {
-        callerData: { account: this.accountInfo },
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'PointComponent',
         pointType: 'a'
@@ -107,7 +109,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(PointComponent,
       {
-        callerData: { account: this.accountInfo },
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'PointComponent_MEM',
         pointType: 'm'
@@ -124,8 +126,10 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(CashComponent,
       {
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'CashComponent'
+        modalId: 'CashComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -139,8 +143,10 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ChecksComponent,
       {
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'CashComponent'
+        modalId: 'ChecksComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -154,6 +160,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(DirectDebitComponent,
       {
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'DirectDebitComponent'
       }
@@ -169,7 +176,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ReCashComponent,
       {
-        callerData: { account: this.accountInfo },
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'ReCashComponent'
       }
@@ -212,7 +219,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
    * @param accountInfo
    * @param cartList
    */
-  private makeReceipt(accountInfo: Accounts, cartList: Array<OrderEntry>): void {
+  private makeReceipt(accountInfo: Accounts, cartInfo: Cart): void {
     const posId = this.storageService.getTerminalInfo().id;
     const tokenInfo = this.storageService.getTokenInfo();
     const productEntryList = new Array<ProductEntryVO>();
@@ -223,7 +230,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     let totalBV = 0;
     let totalPrice = 0;
     let totalQty = 0;
-    this.cartList.forEach(entry => {
+    this.cartInfo.entries.forEach(entry => {
       productList.push({
         'idx': entry.entryNumber,
         'skuCode': entry.product.code,

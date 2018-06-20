@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { ClientAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination } from '../../data';
+import { Accounts, OrderEntry, Pagination, MemberType } from '../../data';
 import { PagerService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 
@@ -26,6 +26,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
+  public memberType: MemberType;
   constructor(private modal: Modal, private storage: StorageService,
     private logger: Logger, private config: Config, private route: ActivatedRoute, private pagerService: PagerService) {
     this.cartListCount = this.config.getConfig('cartListCount');

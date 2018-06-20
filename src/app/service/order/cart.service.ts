@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo
+  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -109,7 +109,7 @@ export class CartService {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
 
-    if (changeUserInfo.accountType === 'CLIENT' || changeUserInfo.accountType === 'AMWAY MEMBER') {
+    if (changeUserInfo.accountTypeCode.toUpperCase() === MemberType.CONSUMER || changeUserInfo.accountTypeCode.toUpperCase() === MemberType.MEMBER) {
       accountId = changeUserInfo.parties[0].uid;
     } else {
       accountId = changeUserInfo.uid;

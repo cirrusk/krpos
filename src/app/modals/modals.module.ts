@@ -113,6 +113,7 @@ import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.comp
     SerialComponent,
     EcpConfirmComponent,
     UpdateItemQtyComponent,
+    CashReceiptComponent,
     ClientAccountComponent,
     CouponCheckComponent
   ]

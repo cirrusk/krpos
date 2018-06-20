@@ -4,6 +4,7 @@ import { Subject } from 'rxjs/Subject';
 import { PrinterDriver } from './printer.driver';
 // import { FormatReader } from '../common/format-reader';
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
+import { PrinterCommands } from './helper/printer-commands';
 import { PrinterConfigs } from './helper/printer-configs';
 import { Logger } from '../../logger/logger';
 // import { EscPos } from './helper/escpos/escpos';
@@ -14,6 +15,7 @@ export class PrinterService {
 
     // 프린터 설정 override
     private printerOpts: PrinterConfigs;
+    prtCmd: PrinterCommands;
     constructor(private printerDriver: PrinterDriver,
         private dirverReadyBroker: DriverReadyBroker,
         // private formatReaderService: FormatReader,
@@ -76,6 +78,6 @@ export class PrinterService {
     }
 
     public openCashDrawer() {
-
+        this.sendCommand(this.prtCmd.initPrinter() + this.prtCmd.openCashDrawer());
     }
 }

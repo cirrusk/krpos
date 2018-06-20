@@ -72,6 +72,7 @@
     "ctrl+0": [
       "number-double-zero"
     ],
+    "ctrl+r": ["popupCashReceipt"],
     "tab": ["tab"]
   }
 }

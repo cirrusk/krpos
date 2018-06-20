@@ -16,7 +16,6 @@ export class PaymentCapture {
     pointPaymentInfo: PointPaymentInfo; /** 포인트결제 */
     monetaryPaymentInfo: AmwayMonetaryPaymentInfo; /** 미수금결제(AR) */
     icCardPaymentInfo: ICCardPaymentInfo; /** 현금IC카드결제 */
-    /** 체크카드결제 */
 
     public set ccPayment(ccPaymentInfo: CreditCardPaymentInfo) {
         this.ccPaymentInfo = ccPaymentInfo;
@@ -52,6 +51,12 @@ export class CurrencyData {
     name: string;
     active: boolean;
     symbol: string;
+    constructor(isocode?: string, name?: string, active?: boolean, symbol?: string) {
+        this.isocode = isocode || 'KRW';
+        this.name = name;
+        this.active = active || false;
+        this.symbol = symbol;
+    }
 }
 
 export class PaymentModeData {
@@ -59,6 +64,12 @@ export class PaymentModeData {
     name: string;
     description: string;
     active: boolean;
+    constructor(code: string, name?: string, description?: string, active?: boolean) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.active = active || false;
+    }
 }
 
 /**
@@ -83,7 +94,12 @@ export class AmwayPaymentInfoData {
     paymentInfoLine2: string;
     paymentInfoLine3: string;
     paymentInfoLine4: string;
-    issuer: any; // 은행/카드사 BankInfoModel 은행코드
+    issuer: string; // 은행/카드사 BankInfoModel 은행코드
+    constructor(amount: number, paymentProvider?: string, status?: string) {
+        this.amount = amount;
+        this.paymentProvider = paymentProvider || 'akl';
+        this.status = status || 'ACCEPTED';
+    }
 }
 
 /** 신용카드 */
@@ -93,13 +109,13 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     validfrom: string;
     cardtype: string;
     subscriptionID: string;
-    paymentType: string; // 카드 결제 유형 CreditCardPaymentType
-    memberType: string; // 카드 회원 유형 CreditCardMemberType(일반결제인 경우만 생성)
+    paymentType: string; // 카드 결제 유형 CreditCardPaymentType GENERAL, SAFE
+    memberType: string; // 카드 회원 유형 CreditCardMemberType(일반결제인 경우만 생성) PERSONAL, LEGAL
     cardCompanyCode: string;
     cardNumber: string;
     cardPassword: string;
     cardAuthNumber: string;
-    installmentPlan: string; // 할부기간 InstallmentPlanModel
+    installmentPlan: string; // 할부기간 InstallmentPlanModel 0 - 일시불
     cardTransactionId: string;
     cardAcquirerCode: string;
     cardApprovalNumber: string;
@@ -107,16 +123,32 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     cardRequestDate: Date;
     ccOwner: string; // 신용 카드 소유자
     number: string; // 카드번호(필수값(카드번호 뒤 4자리))
-    type: any; // 카드 타입 CreditCardType없는 경우 임의설정(필수값)
+    type: string; // 카드 타입 CreditCardType없는 경우 임의설정(필수값)
     validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
     validFromYear: string; // 유효기간 시작 년 필수값 임의설정
     validToMonth: string; // 유효기간 종료 월 필수값 임의설정
     validToYear: string; // 유효기간 종료 년 필수값 임의설정
+    constructor(amount: number, transactionid: string, ccOwner: string, issuer: string, number: string,
+        paymentType?: string, memberType?: string, type?: string, installmentPlan?: string) {
+        super(amount);
+        this.transactionid = transactionid;
+        this.ccOwner = ccOwner;
+        this.issuer = issuer; // 은행/카드사 B - 국민카드
+        this.number = number;
+        this.paymentType = paymentType || 'GENERAL';
+        this.memberType = memberType || 'PERSONAL';
+        this.type = type || 'visa';
+        this.installmentPlan = installmentPlan || '0';
+    }
 }
 
 /** 현금결제 */
 export class CashPaymentInfo extends AmwayPaymentInfoData {
-    cashType: any; // 현금유형 CashType (CASH, CHECK)
+    cashType: string; // 현금유형 CashType (CASH, CHECK)
+    constructor(cashType: string, amount: number, paymentProvider?: string, status?: string) {
+        super(amount, paymentProvider, status);
+        this.cashType = cashType;
+    }
 }
 
 /** 자동이체 */
@@ -125,18 +157,36 @@ export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
     baOwner: string; // 예금주명
     bankIDNumber: string;
     bank: string; // 은행 명
+    constructor(amount: number, accountNumber: string, baOwner: string, bank: string) {
+        super(amount);
+        this.accountNumber = accountNumber;
+        this.baOwner = baOwner;
+        this.bank = bank;
+    }
 }
 
 /** 쿠폰결제 */
-export class VoucherPaymentInfo extends AmwayPaymentInfoData { }
+export class VoucherPaymentInfo extends AmwayPaymentInfoData {
+    constructor(amount: number) {
+        super(amount);
+    }
+}
 
 /** 포인트결제 */
 export class PointPaymentInfo extends AmwayPaymentInfoData {
-    pointType: any; // BalanceReferenceTypeModel (BR030 - 전환포인트, BR033 - 멤버포인트)
- }
+    pointType: string; // BalanceReferenceTypeModel (BR030 - 전환포인트, BR033 - 멤버포인트)
+    constructor(pointType: string, amount: number) {
+        super(amount);
+        this.pointType = pointType;
+    }
+}
 
 /** 미수금결제 */
-export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData { }
+export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData {
+    constructor(amount: number) {
+        super(amount);
+    }
+}
 
 /** 현금IC카드결제 */
 export class ICCardPaymentInfo extends AmwayPaymentInfoData {
@@ -144,5 +194,11 @@ export class ICCardPaymentInfo extends AmwayPaymentInfoData {
     baOwner: string; // 예금주명
     bankIDNumber: string;
     bank: string; // 은행 명
+    constructor(amount: number, accountNumber: string, baOwner: string, bank: string) {
+        super(amount);
+        this.accountNumber = accountNumber;
+        this.baOwner = baOwner;
+        this.bank = bank;
+    }
 }
 
