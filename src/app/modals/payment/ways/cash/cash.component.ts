@@ -49,7 +49,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
     if (this.paymentType === 'n') {
       this.payment.nativeElement.value = this.cartInfo.totalPrice.value;
-      setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly'); }, 5);
+      // setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly'); }, 5);
     } else {
       this.payment.nativeElement.value = 0;
     }
