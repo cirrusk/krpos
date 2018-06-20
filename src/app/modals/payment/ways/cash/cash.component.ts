@@ -1,14 +1,12 @@
-import { CashPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
-import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../../../../core/alert/alert.service';
 import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal, PrinterService } from '../../../../core';
 import { MessageService, PaymentService } from '../../../../service';
-import { Accounts, PaymentCapture, PaymentModes, CashType } from '../../../../data';
+import { Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData, CurrencyData, KeyCode } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
-
 
 @Component({
   selector: 'pos-cash',
@@ -71,11 +69,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
       if (this.paymentType === 'n') {
-        // payment capture 실행
-
-
-        if (paidAmount >= payAmount) {
-          const paymentcapture = this.makePaymentCaptureData(paidAmount);
+        if (paidAmount >= payAmount) { // payment capture 실행
+          const paymentcapture = this.makePaymentCaptureData(payAmount);
           console.log('payment capture : ' + JSON.stringify(paymentcapture, null, 2));
           this.paymentsubscription = this.payments.paymentCapture(this.account.uid, this.cartInfo.code, paymentcapture).subscribe(
             result => {
@@ -94,6 +89,11 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Payment Capture 데이터 생성
+   *
+   * @param paidamount 지불 금액
+   */
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
     const cash = new CashPaymentInfo(CashType.CASH, paidamount);
     cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
@@ -113,7 +113,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   /**
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
-  popupCashReceipt() {
+  protected popupCashReceipt() {
     this.modal.openModalByComponent(CashReceiptComponent,
       {
         callerData: { account: this.account, cartInfo: this.cartInfo },
@@ -126,6 +126,29 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   close() {
     this.closeModal();
+  }
+
+  /**
+   * 결제완료 후 Enter Key 치면 팝업 닫힘
+   * 일반결제 : 카트 및 클라이언트 초기화
+   * 복합결제 : 카트 및 클라이언트 갱신
+   */
+  cartInitAndClose() {
+    if (this.paymentType === 'n' && this.finishStatus === 'ok') {
+      console.log('카트를 초기화하고...');
+      this.close();
+    } else {
+      console.log('복합결제일 경우...');
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyBoardDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ENTER) {
+      this.cartInitAndClose();
+    }
   }
 
   /**

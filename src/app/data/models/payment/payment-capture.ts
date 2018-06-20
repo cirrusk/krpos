@@ -9,14 +9,13 @@
  * </code>
  */
 export class PaymentCapture {
-    ccPaymentInfo: CreditCardPaymentInfo = null; /** 신용카드 */
-    cashPaymentInfo: CashPaymentInfo = null; /** 현금결제 */
-    directDebitPaymentInfo: DirectDebitPaymentInfo = null; /** 자동이체 */
-    voucherPaymentInfo: VoucherPaymentInfo = null; /** 쿠폰결제 */
-    pointPaymentInfo: PointPaymentInfo = null; /** 포인트결제 */
-    monetaryPaymentInfo: AmwayMonetaryPaymentInfo = null; /** 미수금결제(AR) */
-    icCardPaymentInfo: ICCardPaymentInfo = null; /** 현금IC카드결제 */
-    /** 체크카드결제 */
+    ccPaymentInfo: CreditCardPaymentInfo; /** 신용카드 */
+    cashPaymentInfo: CashPaymentInfo; /** 현금결제 */
+    directDebitPaymentInfo: DirectDebitPaymentInfo; /** 자동이체 */
+    voucherPaymentInfo: VoucherPaymentInfo; /** 쿠폰결제 */
+    pointPaymentInfo: PointPaymentInfo; /** 포인트결제 */
+    monetaryPaymentInfo: AmwayMonetaryPaymentInfo; /** 미수금결제(AR) */
+    icCardPaymentInfo: ICCardPaymentInfo; /** 현금IC카드결제 */
 
     public set ccPayment(ccPaymentInfo: CreditCardPaymentInfo) {
         this.ccPaymentInfo = ccPaymentInfo;
@@ -54,9 +53,9 @@ export class CurrencyData {
     symbol: string;
     constructor(isocode?: string, name?: string, active?: boolean, symbol?: string) {
         this.isocode = isocode || 'KRW';
-        this.name = name || '';
+        this.name = name;
         this.active = active || false;
-        this.symbol = symbol || '';
+        this.symbol = symbol;
     }
 }
 
@@ -67,8 +66,8 @@ export class PaymentModeData {
     active: boolean;
     constructor(code: string, name?: string, description?: string, active?: boolean) {
         this.code = code;
-        this.name = name || '';
-        this.description = description || '';
+        this.name = name;
+        this.description = description;
         this.active = active || false;
     }
 }
