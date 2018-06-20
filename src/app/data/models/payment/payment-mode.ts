@@ -1,11 +1,13 @@
 /** 결제 방법 : store 기준 결제 방법 */
 export class PaymentModeList {
     paymentModes: PaymentMode[];
+    constructor() {}
 }
 
 /** 결제 방법 : cart 주결제 방법 기준 사용 가능한 결제 방법  */
-export class PaymentModeListByMainPayment {
-    paymentModes: PaymentModeByMainPayment[];
+export class PaymentModeListByMain {
+    paymentModes: PaymentModeByMain[];
+    constructor() {}
 }
 
 export class PaymentMode {
@@ -17,9 +19,12 @@ export class PaymentMode {
     repeatableCount: number;
     overpaymentThreshold: number;
     usedCount: number;
+
+    constructor() {}
 }
 
-export class PaymentModeByMainPayment {
+export class PaymentModeByMain {
     code: string;
-    paymentModes: PaymentModeList;
+    paymentModes: PaymentMode[];
+    constructor() {}
 }

@@ -19,3 +19,7 @@ export class Order extends AbstractOrder {
         super();
     }
 }
+
+export class OrderList {
+    orders: Array<Order>;
+}

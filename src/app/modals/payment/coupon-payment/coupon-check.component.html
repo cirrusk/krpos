@@ -1,0 +1,20 @@
+<div class="pop_wrap pop_m">
+  <div class="pop_header">
+      <h1>쿠폰확인</h1>
+      <button type="button" class="ico_comm pop_close01" (click)="excludeCoupon()">복합결재이동</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <p class="txt_info02 type02">쿠폰 결제가 포함되어 있습니까?</p>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer line02 clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href class="btn01_blue" (click)="!!includeCoupon()">포함</a>
+          <a href class="btn01_white" (click)="!!excludeCoupon()">미 포함</a>
+      </span>
+  </div>
+</div>

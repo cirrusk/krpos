@@ -9,7 +9,7 @@
       <!-- <button type="button" class="type01 dp01"><i class="ico_comm keyboard"></i>키보드</button> -->
       <button type="button" class="type01 dp02" [class.button-disabled]="screenLockType === 1" (click)="holdOrder()" *ngIf="(isLogin && batchNo && holdTotalCount > 0); else holdPopup"><span class="count">{{holdTotalCount}}</span>보류</button>
       <ng-template #holdPopup>
-        <button type="button" class="type01 dp02" [class.button-disabled]="screenLockType === 1"><span class="count">0</span>보류</button>
+        <button type="button" class="type01 dp02" [class.button-disabled]="screenLockType === 1 || holdTotalCount === 0"><span class="count">0</span>보류</button>
       </ng-template>
       <button type="button" class="type02" [class.button-disabled]="screenLockType === 1" (click)="endWork()" *ngIf="isLogin === true; else workStart">근무 종료</button>
       <ng-template #workStart>

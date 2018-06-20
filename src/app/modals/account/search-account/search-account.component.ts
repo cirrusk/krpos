@@ -150,8 +150,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         }
       );
       this.account = this.accountList.accounts[existedIdx];
-      this.searchAccountBroker.sendInfo(this.account);
-      this.storage.setCustomer(this.account);
+      this.searchAccountBroker.sendInfo(this.paymentType, this.account);
       this.close();
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2 } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, StorageService, PrinterService } from '../../../core';
 
-import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
+// import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
 import { IcCardComponent } from '../ways/ic-card/ic-card.component';
 import { CashComponent } from '../ways/cash/cash.component';
 import { DirectDebitComponent } from '../ways/direct-debit/direct-debit.component';
@@ -28,6 +28,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   private cartList: Array<OrderEntry>;
   private accountInfo: Accounts;
+  accountType: string;
   constructor(protected modalService: ModalService,
     private alertService: AlertService,
     private storageService: StorageService,
@@ -41,6 +42,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
+    this.accountType = this.accountInfo.accountType;
     this.cartList = this.callerData.cartList;
   }
 
@@ -70,6 +72,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   icCard(evt: any) {
     this.setSelected(evt);
     this.close();
+    // console.log('------------------->' + evt.target.getAttribute('data-ptype'));
     this.modal.openModalByComponent(IcCardComponent,
       {
         closeByClickOutside: false,
@@ -87,8 +90,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(PointComponent,
       {
+        callerData: { account: this.accountInfo },
         closeByClickOutside: false,
-        modalId: 'IcCardComponent_Amway',
+        modalId: 'PointComponent',
         pointType: 'a'
       }
     );
@@ -103,8 +107,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(PointComponent,
       {
+        callerData: { account: this.accountInfo },
         closeByClickOutside: false,
-        modalId: 'IcCardComponent_Member',
+        modalId: 'PointComponent_MEM',
         pointType: 'm'
       }
     );
@@ -164,6 +169,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ReCashComponent,
       {
+        callerData: { account: this.accountInfo },
         closeByClickOutside: false,
         modalId: 'ReCashComponent'
       }

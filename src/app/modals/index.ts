@@ -1,4 +1,4 @@
-export * from './account/new-account/new-account.component';
+export * from './account/client-account/client-account.component';
 export * from './account/search-account/search-account.component';
 export * from './account/search-ber/search-ber.component';
 export * from './login/login.component';
@@ -15,6 +15,7 @@ export * from './password/password.component';
 export * from './payment/complex-payment/complex-payment.component';
 export * from './payment/normal-payment/normal-payment.component';
 export * from './payment/coupon-payment/coupon-payment.component';
+export * from './payment/coupon-payment/coupon-check.component';
 export * from './payment/ways/cash/cash.component';
 export * from './payment/ways/check-card/check-card.component';
 export * from './payment/ways/checks/checks.component';

@@ -1,5 +1,5 @@
 <!-- 공지사항 -->
 <dl class="notice">
   <dt class="tag01">{{tagmsg}}</dt>
-  <dd #noticelist [style.display]="(idx === 0) ? '' : 'none'" *ngFor="let notice of noticeList.results; let idx = index">{{notice?.title | stripHtml}}</dd>
+  <dd #noticelist [style.display]="(idx === 0) ? '' : 'none'" *ngFor="let notice of noticeList.results; let idx = index">{{notice?.longDescription | stripHtml}}</dd>
 </dl>

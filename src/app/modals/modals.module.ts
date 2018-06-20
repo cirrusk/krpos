@@ -2,11 +2,10 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { ModalModule } from './../core/modal/modal.module';
+import { ModalModule } from '../core/modal/modal.module';
 import { throwIfAlreadyLoaded } from '../core/module-import-guard';
 
 import { SearchAccountComponent } from './account/search-account/search-account.component';
-import { NewAccountComponent } from './account/new-account/new-account.component';
 import { SearchBerComponent } from './account/search-ber/search-ber.component';
 import { LoginComponent } from './login/login.component';
 import { BatchComponent } from './login/batch.component';
@@ -33,10 +32,13 @@ import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { PointComponent } from './payment/ways/point/point.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { PhoneNumberMaskPipe } from '../core/pipe/phone-number-mask.pipe';
+import { MaskPipe } from '../core/pipe/mask.pipe';
 import { SerialComponent } from './scan/serial/serial.component';
 import { EcpConfirmComponent } from './order/ecp-confirm/ecp-confirm.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
 import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.component';
+import { ClientAccountComponent } from './account/client-account/client-account.component';
+import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,6 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     PasswordComponent,
     SearchAccountComponent,
     SearchProductComponent,
-    NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
     CouponPaymentComponent,
@@ -66,12 +67,15 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     CouponComponent,
     CancelOrderComponent,
     PhoneNumberMaskPipe,
+    MaskPipe,
     BatchComponent,
     RestrictComponent,
     SerialComponent,
     EcpConfirmComponent,
     UpdateItemQtyComponent,
-    CashReceiptComponent
+    CashReceiptComponent,
+    ClientAccountComponent,
+    CouponCheckComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +88,6 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     PasswordComponent,
     SearchAccountComponent,
     SearchProductComponent,
-    NewAccountComponent,
     NormalPaymentComponent,
     ComplexPaymentComponent,
     CouponPaymentComponent,
@@ -109,7 +112,9 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
     RestrictComponent,
     SerialComponent,
     EcpConfirmComponent,
-    UpdateItemQtyComponent
+    UpdateItemQtyComponent,
+    ClientAccountComponent,
+    CouponCheckComponent
   ]
 })
 export class ModalsModule {

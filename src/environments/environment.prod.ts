@@ -5,7 +5,11 @@ export const environment = {
   hybrisEndpointDomain: 'www.abnkorea.co.kr',
   hybrisEndpointPort: 80,
 
+  foreignerUserId: '8000000',
+  memberUserId: '8000001',
+  upChargeUserId: '8000002',
   phytoCafeUserId: '8000003',
+  serviceUserId: '8000004',
 
   // pos configurations
   baseSiteId: 'amwaykorea',
@@ -26,7 +30,7 @@ export const environment = {
     addToCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries',
     updateItemQtyCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
     updateVolAcc: '/{baseSiteId}/users/{userId}/carts/{cartId}/volumeaccount',
-    getCart: '/{baseSiteId}/terminal/{macAddress}/carts',
+    getSaveCart: '/{baseSiteId}/terminal/{macAddress}/carts',
     saveCart: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cashier/{cashierId}/terminal/{macAddress}/carts/{cartId}/save',
     restoreCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/restoresavedcart',
     deleteItemCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/entries/{entryNumber}',
@@ -38,8 +42,16 @@ export const environment = {
     orderDetail: '/{baseSiteId}/orders/{code}',
     berSearch: '/{baseSiteId}/business/registration/{aboNum}',
     paymentModes: '/{baseSiteId}/stores/{storeId}/supportedPaymentModes',
-    paymentModesByMainPayment: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes',
-    paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails'
+    paymentModesByMain: '/{baseSiteId}/users/{userId}/carts/{cartId}/supportedPaymentModes',
+    intallmentPlan: '/{baseSiteId}/users/{userId}/installmentPlan',
+    balance: '/{baseSiteId}/users/{userId}/balance',
+    recash: '/{baseSiteId}/users/{userId}/recash',
+    searchCoupon: '/{baseSiteId}/accounts/{accountId}/users/{userId}/coupons',
+    applyCoupon: '/{baseSiteId}/users/{userId}/carts/{cartId}/vouchers',
+    paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails',
+    searchCheque: '/{baseSiteId}/validateCheckNumber',
+    orderList: '/{baseSiteId}/users/{userId}/orders',
+    orderDetails: '/{baseSiteId}/users/{userId}/order-details'
   },
   logLevel: 'error',
   terminalTimeout: 20,

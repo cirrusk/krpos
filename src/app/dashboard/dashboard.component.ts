@@ -235,12 +235,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  escapetest() {
-    console.log('****** escape key press event...');
+  escapetest(evt: KeyboardEvent) {
+    console.log('****** escape key press event... ' + evt.keyCode);
   }
 
-  right() {
-    console.log('****** right arrow key press event...');
+  right(evt: KeyboardEvent) {
+    console.log('****** right arrow key press event... ' + evt.keyCode);
+  }
+
+  tab(evt: KeyboardEvent) {
+    console.log('****** tab... ' + evt.keyCode);
+    evt.preventDefault();
+  }
+
+  up(evt: KeyboardEvent) {
+    console.log('***** page up... ' + evt.keyCode);
+  }
+
+  down(evt: KeyboardEvent) {
+    console.log('***** page down... ' + evt.keyCode);
+  }
+
+  backspace(evt: KeyboardEvent) {
+    console.log('***** backspace... ' + evt.keyCode);
+  }
+
+  del(evt: KeyboardEvent) {
+    console.log('***** delete... ' + evt.keyCode);
   }
 
   /**
@@ -261,7 +282,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // }
 
       // 2. 전체 정의된 키 이벤트에 대해서 함수 호출
-      this[command.name]();
+      this[command.name](command.ev);
     } catch (e) {
       this.logger.set('dashboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }

@@ -2,16 +2,16 @@ import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@ang
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, AlertService, ModalService, SpinnerService, Logger, Modal } from '../../../core';
-import { AccountService } from './../../../service/account.service';
 import { SearchAccountBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 import { AccountList } from '../../../data';
+import { AccountService } from '../../../service';
 
 @Component({
-  selector: 'pos-new-account',
-  templateUrl: './new-account.component.html'
+  selector: 'pos-client-account',
+  templateUrl: './client-account.component.html'
 })
-export class NewAccountComponent extends ModalComponent implements OnInit, OnDestroy {
+export class ClientAccountComponent extends ModalComponent implements OnInit, OnDestroy {
 
   private createAccountSubscription: Subscription;
   private registerType: string;
@@ -22,14 +22,13 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
   @ViewChild('phoneNumText') private phoneNumText: ElementRef;
   phoneNumInput: FormControl = new FormControl('');
-  private modalsubscription: Subscription;
   constructor(protected modalService: ModalService,
-              private modal: Modal,
-              private alert: AlertService,
-              private accountService: AccountService,
-              private spinner: SpinnerService,
-              private searchAccountBroker: SearchAccountBroker,
-              private logger: Logger) {
+    private modal: Modal,
+    private alert: AlertService,
+    private accountService: AccountService,
+    private spinner: SpinnerService,
+    private searchAccountBroker: SearchAccountBroker,
+    private logger: Logger) {
     super(modalService);
     this.phonetype = 'MOBILE';
     this.agree = true;
@@ -43,18 +42,17 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
     const numExp: RegExp = new RegExp(/[0-9]/g);
     const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
     this.phoneNumInput.valueChanges
-    .debounceTime(300)
-    .subscribe(v => {
-      if (v) {
-        if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
-          this.phoneNumText.nativeElement.value = v.replace(numEngDelExp, '');
+      .debounceTime(300)
+      .subscribe(v => {
+        if (v) {
+          if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
+            this.phoneNumText.nativeElement.value = v.replace(numEngDelExp, '');
+          }
         }
-      }
-    });
+      });
   }
 
   ngOnDestroy() {
-    if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
     if (this.createAccountSubscription) { this.createAccountSubscription.unsubscribe(); }
   }
 
@@ -70,12 +68,12 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
   saveNewCustomer(el) {
     if (Utils.isEmpty(this.userPhone) || (this.userPhone.length < 9 && this.userPhone.length < 11)) {
       el.blur(); // 주의) 이렇게 처리해야만 alert 에서 이벤트 동작!
-      this.alert.warn( {message: '입력 형식이 맞지 않습니다.'} );
+      this.alert.warn({ message: '입력 형식이 맞지 않습니다.' });
       return;
     }
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
     if (this.agree) {
-      this.modalsubscription = this.modal.openConfirm(
+      this.modal.openConfirm(
         {
           title: '개인정보 수집 및 이용 동의 확인',
           message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
@@ -94,7 +92,7 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
             userInfo => {
               if (userInfo) {
                 this.account = userInfo;
-                this.searchAccountBroker.sendInfo(this.account.accounts[0]);
+                this.searchAccountBroker.sendInfo('n', this.account.accounts[0]);
                 this.close();
               }
             },
@@ -109,14 +107,13 @@ export class NewAccountComponent extends ModalComponent implements OnInit, OnDes
             },
             () => { this.spinner.hide(); }
           );
-          console.log('call new account register api...');
         }
       });
     }
   }
 
   close() {
-     this.closeModal();
+    this.closeModal();
   }
 
 }

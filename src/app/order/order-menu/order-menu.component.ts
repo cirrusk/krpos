@@ -3,11 +3,12 @@ import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
-  ComplexPaymentComponent, CancelOrderComponent } from '../../modals';
+  CancelOrderComponent, CouponCheckComponent } from '../../modals';
 import { Accounts, OrderHistoryList, OrderEntry } from '../../data';
 import { OrderService, MessageService } from '../../service';
 import { Utils } from '../../core/utils';
 import { Router } from '@angular/router';
+import { Cart } from '../../data/models/order/cart';
 
 @Component({
   selector: 'pos-order-menu',
@@ -17,7 +18,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private orderInfoSubscribetion: Subscription;
 
   private account: Accounts;
-  private cartList: Array<OrderEntry>;
+  private cartInfo: Cart;
   private orderInfoList: OrderHistoryList;
   hasAccount = false;
   hasProduct = false;
@@ -63,7 +64,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       } else if (data.type === 'cart') {
         this.hasCart = data.flag;
         if (data.data) {
-          this.cartList = data.data;
+          this.cartInfo = data.data;
         }
       }
     }
@@ -79,7 +80,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
-        callerData : {accountInfo: this.account, cartList: this.cartList},
+        callerData : {accountInfo: this.account, cartInfo: this.cartInfo},
         closeByClickOutside: false,
         modalId: 'NormalPaymentComponent'
       }
@@ -93,13 +94,24 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   complexPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
-    this.modal.openModalByComponent(ComplexPaymentComponent,
+    this.modal.openModalByComponent(CouponCheckComponent,
       {
-        callerData : {accountInfo: this.account, cartList: this.cartList},
+        callerData : {accountInfo: this.account, cartInfo: this.cartInfo},
         closeByClickOutside: false,
-        modalId: 'ComplexPaymentComponent'
+        closeByEnter: false,
+        modalId: 'CouponCheckComponent'
       }
     );
+
+/*
+    this.modal.openModalByComponent(ComplexPaymentComponent,
+      {
+        callerData : {accountInfo: this.account, cartInfo: this.cartInfo},
+        closeByClickOutside: false,
+        closeByEnter: false,
+        modalId: 'ComplexPaymentComponent'
+      }
+    );*/
   }
 
   /**
