@@ -3,7 +3,7 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy } from '
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../../../../core/alert/alert.service';
-import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal } from '../../../../core';
+import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal, PrinterService } from '../../../../core';
 import { MessageService, PaymentService } from '../../../../service';
 import { Accounts, PaymentCapture, PaymentModes, CashType } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
@@ -28,6 +28,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
+    private printer: PrinterService,
     private payments: PaymentService,
     private alert: AlertService,
     private keyboard: KeyboardService,
@@ -71,14 +72,19 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     } else {
       if (this.paymentType === 'n') {
         // payment capture 실행
-        // 현금 결제 완료 후, POS는 자동으로 cash drawer 오픈
+
 
         if (paidAmount >= payAmount) {
-          const paymentcapture = this.makeCapture(paidAmount);
+          const paymentcapture = this.makePaymentCaptureData(paidAmount);
           console.log('payment capture : ' + JSON.stringify(paymentcapture, null, 2));
-          this.paymentsubscription = this.payments.paymentCapture(this.account.uid, this.cartInfo.code, paymentcapture).subscribe(result => {
-            console.log('payment capture result : ' + JSON.stringify(result, null, 2));
-          });
+          this.paymentsubscription = this.payments.paymentCapture(this.account.uid, this.cartInfo.code, paymentcapture).subscribe(
+            result => {
+              console.log('payment capture result : ' + JSON.stringify(result, null, 2));
+              this.printer.openCashDrawer(); // 현금 결제 완료 후, cash drawer 오픈
+            },
+            error => {
+              console.log('error... ' + error);
+            });
         }
 
         this.paidDate = new Date();
@@ -88,7 +94,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  private makeCapture(paidamount: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number): PaymentCapture {
     const cash = new CashPaymentInfo(CashType.CASH, paidamount);
     cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
     cash.currency = new CurrencyData();
