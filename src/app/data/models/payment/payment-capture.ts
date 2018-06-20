@@ -52,8 +52,8 @@ export class CurrencyData {
     name: string;
     active: boolean;
     symbol: string;
-    constructor(isocode: string, name?: string, active?: boolean, symbol?: string) {
-        this.isocode = isocode;
+    constructor(isocode?: string, name?: string, active?: boolean, symbol?: string) {
+        this.isocode = isocode || 'KRW';
         this.name = name || '';
         this.active = active || false;
         this.symbol = symbol || '';

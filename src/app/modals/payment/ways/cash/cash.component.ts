@@ -5,9 +5,10 @@ import { Subscription } from 'rxjs/Subscription';
 import { AlertService } from '../../../../core/alert/alert.service';
 import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal } from '../../../../core';
 import { MessageService, PaymentService } from '../../../../service';
-import { Accounts, PaymentCapture } from '../../../../data';
+import { Accounts, PaymentCapture, PaymentModes, CashType } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
+
 
 @Component({
   selector: 'pos-cash',
@@ -88,9 +89,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   private makeCapture(paidamount: number): PaymentCapture {
-    const cash = new CashPaymentInfo('CASH', paidamount);
-    cash.paymentMode = new PaymentModeData('cash');
-    cash.currency = new CurrencyData('KRW');
+    const cash = new CashPaymentInfo(CashType.CASH, paidamount);
+    cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
+    cash.currency = new CurrencyData();
     const paymentcapture = new PaymentCapture();
     paymentcapture.cashPayment = cash;
     return paymentcapture;
