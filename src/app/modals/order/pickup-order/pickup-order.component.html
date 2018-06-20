@@ -1,20 +1,202 @@
-<div class="pop_wrap pop_m">
+<div class="pop_wrap pop_xl">
     <div class="pop_header">
-        <h1>ECP 컨펌 / 출력</h1>
-        <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
+        <h1>ECP픽업 주문리스트</h1>
+        <button type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">닫기</button>
     </div>
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
-            <div class="chc_wrap ac">
-                <!-- 항목 선택시 on클래스 추가 -->
-                <a #ecporders href (click)="!!printECP($event)" class="chc_type03"><span>ECP 출력</span><i class="ico_comm ecp02"></i></a>
-                <a #ecporders href (click)="!!confirmECP($event)" class="chc_type04 on"><span>ECP 컨펌</span><i class="ico_comm ecp01"></i></a>
+            <p class="txt01">ECP픽업 주문리스트 정보 조회 시 아래의 타입으로 조회 가능합니다.</p>
+            <label class="inp_rd type01" for="ps1">ABO회원<input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label>
+            <!-- 회원검색영역 -->
+            <div class="mbinfo_search">
+                <select title="회원구분">
+                    <option>ABO회원</option>
+                    <option>주문번호</option>
+                </select>
+                <input type="text" style="width:480px">
+                <button type="button" class="btn01_blue">확인</button>
             </div>
+            <!-- //회원검색영역 -->
+
+            <!-- 검색결과 영역 : 검색 후-->
+            <div class="mbinfo_list type04 clearfix">
+                <!-- 왼쪽테이블 -->
+                <div class="tbl_col fl bg_bar">
+                    <!-- 5줄이 넘을 시 노출  -->
+                    <div class="paging">
+                        <button type="button" class="ico_comm prev01">이전</button>
+                        <button type="button" class="ico_comm next01">다음</button>
+                    </div>
+                    <!-- //5줄이 넘을 시 노출  -->
+                    <table>
+                        <caption>ABO 주문정보</caption>
+                        <colgroup>
+                            <col>
+                            <col style="width:63px">
+                            <col style="width:68px">
+                            <col style="width:76px">
+                            <col style="width:114px">
+                        </colgroup>
+                        <thead>
+                            <!-- 전체 선택 : 선택시 tr에 on클래스 추가 -->
+                            <tr>
+                                <th scope="col" class="al chk">주문번호</th>
+                                <th scope="col">ABO번호</th>
+                                <th scope="col">성명</th>
+                                <th scope="col">실주문일자</th>
+                                <th scope="col">금액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 선택시 tr에 on클래스 추가 -->
+                            <tr class="on">
+                                <td class="al"><span class="chk">23232017</span></td>
+                                <td><span>748002</span></td>
+                                <td class="tit"><span class="elips">김영희</span></td>
+                                <td><span>18/05/31</span></td>
+                                <td class="ar"><span>999,999,000원</span></td>
+                            </tr>
+                            <tr class="on">
+                                <td class="al"><span class="chk">23232017</span></td>
+                                <td><span>748002</span></td>
+                                <td class="tit"><span class="elips">김영희</span></td>
+                                <td><span>18/05/31</span></td>
+                                <td class="ar"><span>999,999,000원</span></td>
+                            </tr>
+                            <tr>
+                                <td class="al"><span class="chk">23232017</span></td>
+                                <td><span>748002</span></td>
+                                <td class="tit"><span class="elips">김영희</span></td>
+                                <td><span>18/05/31</span></td>
+                                <td class="ar"><span>999,999,000원</span></td>
+                            </tr>
+                            <tr>
+                                <td class="al"><span class="chk">23232017</span></td>
+                                <td><span>748002</span></td>
+                                <td class="tit"><span class="elips">김영나나희</span></td>
+                                <td><span>18/05/31</span></td>
+                                <td class="ar"><span>999,999,000원</span></td>
+                            </tr>
+                            <tr>
+                                <td class="al"><span class="chk">23232017</span></td>
+                                <td><span>748002</span></td>
+                                <td class="tit"><span class="elips">김영나나희</span></td>
+                                <td><span>18/05/31</span></td>
+                                <td class="ar"><span>999,999,000원</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- //왼쪽테이블 -->
+                <!-- 오른쪽테이블 -->
+                <div class="tbl_col fr bg_bar">
+                    <p class="txt"><strong><span class="fc_red">1</span>명</strong> ABO의 <strong><span class="fc_red">1</span>건</strong>의 주문정보가 선택되었습니다.</p>
+                    <!-- 5줄이 넘을 시 노출 
+                    <div class="paging">
+                        <button type="button" class="ico_comm prev01">이전</button>
+                        <button type="button" class="ico_comm next01">다음</button>
+                    </div>
+                     //5줄이 넘을 시 노출  -->
+                    <table>
+                        <caption>선택된 ABO 주문정보</caption>
+                        <colgroup>
+                            <col>
+                            <col style="width:63px">
+                            <col style="width:68px">
+                            <col style="width:76px">
+                            <col style="width:114px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="ar">주문번호</th>
+                                <th scope="col">ABO번호</th>
+                                <th scope="col">성명</th>
+                                <th scope="col">실주문일자</th>
+                                <th scope="col">금액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ar"><span>23232017</span></td>
+                                <td><span>748002</span></td>
+                                <td class="tit"><span class="elips">김영나나희</span></td>
+                                <td><span>18/05/31</span></td>
+                                <td class="ar"><span>999,999,000원</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- //오른쪽테이블 -->
+            </div>
+            <!-- //검색결과 영역 : 검색 후 -->
+            
+            <!-- 검색결과 영역 : 검색 전 
+            <div class="mbinfo_list type04 clearfix">
+                <div class="tbl_col fl bg_bar">
+                    <table>
+                        <caption>ABO 주문정보</caption>
+                        <colgroup>
+                            <col>
+                            <col style="width:63px">
+                            <col style="width:68px">
+                            <col style="width:76px">
+                            <col style="width:114px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="al chk">주문번호</th>
+                                <th scope="col">ABO번호</th>
+                                <th scope="col">성명</th>
+                                <th scope="col">실주문일자</th>
+                                <th scope="col">금액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="no_data"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tbl_col fr bg_bar">
+                    <p class="txt"><strong><span class="fc_red">0</span>명</strong> ABO의 <strong><span class="fc_red">0</span>건</strong>의 주문정보가 선택되었습니다.</p>
+                    <table>
+                        <caption>선택된 ABO 주문정보</caption>
+                        <colgroup>
+                            <col>
+                            <col style="width:63px">
+                            <col style="width:68px">
+                            <col style="width:76px">
+                            <col style="width:114px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="ar">주문번호</th>
+                                <th scope="col">ABO번호</th>
+                                <th scope="col">성명</th>
+                                <th scope="col">실주문일자</th>
+                                <th scope="col">금액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="no_data"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+             //검색결과 영역 : 검색 전 -->
         </div>
     </div>
     <!-- //pop_container -->
     <div class="pop_footer clearfix">
         <span class="fl">취소 ESC</span>
+        <span class="fr">
+            <a href="javascript:void(0)" class="btn01_blue" (click)="printECP($event)">출력</a>
+            <a href="javascript:void(0)" class="btn01_blue" (click)="confirmECP($event)">컨펌</a>
+            <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
+        </span>
     </div>
 </div>
