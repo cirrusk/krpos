@@ -9,7 +9,7 @@ import { ChecksComponent } from '../ways/checks/checks.component';
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
 import { PointComponent } from '../ways/point/point.component';
-import { OrderEntry, Accounts } from '../../../data';
+import { OrderEntry, Accounts, MemberType } from '../../../data';
 import { OrderInfoVO } from '../../../data/models/receipt/order.info';
 import { BonusInfoVO } from '../../../data/models/receipt/bonus.info';
 import { PaymentsVO } from '../../../data/models/receipt/payments';
@@ -29,8 +29,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
 
   private cartInfo: Cart;
-  private accountInfo: Accounts;
-  accountType: string;
+  accountInfo: Accounts;
+  public memberType = MemberType;
   constructor(protected modalService: ModalService,
     private alertService: AlertService,
     private storageService: StorageService,
@@ -44,7 +44,6 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
-    this.accountType = this.accountInfo.accountType;
     this.cartInfo = this.callerData.cartInfo;
   }
 

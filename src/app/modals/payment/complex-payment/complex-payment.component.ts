@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService } from '../../../core';
-import { OrderEntry, Accounts, PaymentModeListByMain } from '../../../data';
+import { OrderEntry, Accounts, PaymentModeListByMain, MemberType } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -41,6 +41,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private paymentComponent: any;
   private paymentModeListByMain: PaymentModeListByMain;
   enableMenu: Array<string>;
+  public memberType = MemberType;
 
   constructor(protected modalService: ModalService,
               private paymentService: PaymentService,
@@ -156,6 +157,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       // this.paymentSubscription =
       this.modal.openModalByComponent(this.paymentComponent,
         {
+          callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
           title: '',
           actionButtonLabel: '',
           closeButtonLabel: '',
@@ -179,15 +181,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       result => {
         if (result) {
           this.paymentModeListByMain = result;
-          console.log({}, this.paymentModeListByMain);
         }
       },
       error => {
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('complex-payment.component', `get Payment Modes By Main Payment error type : ${errdata.type}`).error();
-          this.logger.set('complex-payment.component', `get Payment Modes By Main Payment error message : ${errdata.message}`).error();
+          this.logger.set('complex-payment.component', `get Payment Modes By Main error type : ${errdata.type}`).error();
+          this.logger.set('complex-payment.component', `get Payment Modes By Main error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },

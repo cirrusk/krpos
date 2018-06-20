@@ -98,31 +98,31 @@
           <div class="info_top">
               <!-- 비회원시 삭제1 -->
               <em *ngIf="accountInfo;">
-                  {{accountInfo.accountType === 'CLIENT' ? accountInfo.parties[0].name : accountInfo.name}} 회원님
+                  {{accountInfo.accountTypeCode === memberType.CONSUMER ? accountInfo.parties[0].name : accountInfo.name}} 회원님
               </em>                
               
-              <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountType === 'CLIENT' ? accountInfo.parties[0].uid : accountInfo.uid}}</span>
+              <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountTypeCode === memberType.CONSUMER ? accountInfo.parties[0].uid : accountInfo.uid}}</span>
               <span class="t02">일반결제</span>
               <!-- //비회원시 삭제1 -->
           </div>
           <div class="info_cont">
               <div class="ic01">
                   <!-- 비회원시 삭제2 -->
-                  <dl>
+                  <dl *ngIf="accountInfo && accountInfo.accountTypeCode === memberType.ABO">
                       <dt>A 포인트</dt>
                       <dd></dd>
                   </dl>
-                  <!-- <dl>
+                  <dl *ngIf="accountInfo && accountInfo.accountTypeCode === memberType.MEMBER">
                         <dt>Member 포인트</dt>
-                        <dd>100,000P</dd>
-                    </dl>-->
+                        <dd></dd>
+                  </dl>
                   <!-- //비회원시 삭제2 -->
               </div>
               <div class="ic04">
                 <!-- 비회원시 삭제5 -->
                 <dl>
                     <dt>프로모션</dt>
-                    <dd>신규 ABO 적용대상</dd>
+                    <dd></dd>
                 </dl>
                 <!-- //비회원시 삭제5 -->
               </div>
