@@ -463,7 +463,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
     if (this.accountInfo) {
-      if (this.accountInfo.accountTypeCode === this.memberType.CONSUMER || this.accountInfo.accountTypeCode === this.memberType.MEMBER) {
+      if (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.CONSUMER || this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.MEMBER) {
         accountId = this.accountInfo.parties[0].uid;
       } else {
         accountId = this.accountInfo.uid;

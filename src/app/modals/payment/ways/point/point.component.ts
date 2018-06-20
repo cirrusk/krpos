@@ -32,7 +32,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     this.accounts = this.callerData.account;
 
-    this.paymentSubscription = this.payment.getBalance(this.accounts.uid).subscribe(result => {
+    this.paymentSubscription = this.payment.getBalance(this.accounts.parties[0].uid).subscribe(result => {
       this.balance = result;
     });
   }

@@ -109,7 +109,7 @@ export class CartService {
     const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
 
-    if (changeUserInfo.accountTypeCode === MemberType.CONSUMER || changeUserInfo.accountTypeCode === MemberType.MEMBER) {
+    if (changeUserInfo.accountTypeCode.toUpperCase() === MemberType.CONSUMER || changeUserInfo.accountTypeCode.toUpperCase() === MemberType.MEMBER) {
       accountId = changeUserInfo.parties[0].uid;
     } else {
       accountId = changeUserInfo.uid;
