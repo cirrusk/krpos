@@ -216,69 +216,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   // }
 
   private getOrderInfo(account: Accounts): void {
-    if (account) {
-      this.spinner.show();
-      this.orderInfoSubscribetion = this.orderService.getOrderInfo('NO', account.uid, 'A').subscribe(
-        orderInfo => {
-          this.spinner.hide();
-          this.orderInfoList = orderInfo;
-          const orderCount = this.orderInfoList.orders.length;
-          // 주문데이터가 없을때
-          if (orderCount === 0) {
-            this.modal.openConfirm(
-              {
-                title: 'ECP 컨펌/출력',
-                message: this.messageService.get('noECPOrder'),
-                actionButtonLabel: '확인',
-                closeButtonLabel: '취소',
-                closeByClickOutside: false,
-                modalId: 'ORDERCONFIRM'
-              }
-            );
-          // 주문데이터가 1 일때
-          } else if (orderCount === 1) {
-            this.modal.openModalByComponent(PickupOrderComponent,
-              {
-                callerData : {orderInfo : this.orderInfoList},
-                closeByClickOutside: true,
-                modalId: 'PickupOrderComponent'
-              }
-            );
-          // 주문데이터가 2 이상일때
-          } else {
-            const msg = '';
-            this.modal.openConfirm(
-              {
-                title: 'ECP 컨펌/출력',
-                message: this.messageService.get('limitECPOrder'),
-                actionButtonLabel: '확인',
-                closeButtonLabel: '취소',
-                closeByClickOutside: false,
-                modalId: 'ORDERCONFIRM'
-              }
-            ).subscribe(
-              result => {
-                if (result) {
-                  this.router.navigate(['/order-complete']);
-                }
-              }
-            );
-          }
-        },
-        error => {
-          this.spinner.hide();
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('order-menu.component', `Get Order Info error type : ${errdata.type}`).error();
-            this.logger.set('order-menu.component', `Get Order Info error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        },
-        () => { this.spinner.hide(); }
-      );
-    } else {
-      this.alert.error({ message: this.messageService.get('notSelectedUser') });
-    }
+    this.modal.openModalByComponent(PickupOrderComponent,
+      {
+        callerData : {orderInfo : this.orderInfoList},
+        closeByClickOutside: true,
+        modalId: 'PickupOrderComponent'
+      }
+    );
   }
 
 }
