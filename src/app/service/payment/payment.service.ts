@@ -5,7 +5,7 @@ import 'rxjs/add/observable/forkJoin';
 import { ApiService, StorageService } from '../../core';
 import {
   BankInfo, Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, Response
+  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 
@@ -115,9 +115,9 @@ export class PaymentService {
 
   /**
    * 수표 조회
-   * @param checknumber 수표번호
+   * @param checknumber 수표번호(42 자리, 0으로 right padding)
    */
-  searchCheque(checknumber: string): Observable<Response> {
+  searchCheque(checknumber: string): Observable<ResponseData> {
     const params = { checkNumber: checknumber };
     const data = new HttpData('searchCheque', null, null, params);
     return this.api.get(data);
@@ -126,6 +126,8 @@ export class PaymentService {
   /**
    * Payment Capture 실행하기
    *
+   * @deprecated Payment Capture와 Place Order를 진행하도록 변경
+   * @see placeOrder 참조
    * @param userid 사용자아이디
    * @param cartid 카트아이디
    * @param paymentcapture Payment Mode 별 PaymentCapture 정보
