@@ -16,6 +16,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
   @ViewChildren('ecporders') ecporders: QueryList<ElementRef>;
   private orderInfo: OrderHistory;
   private order: Order;
+  private orderType: string;
+
+  searchType: string;
+
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
               private modal: Modal,
@@ -28,8 +32,14 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.callerData.orderInfo) {
-      this.orderInfo = this.callerData.orderInfo;
+    this.searchType = this.callerData.type;
+
+    if (this.searchType === 'e') {
+      this.orderType = '간편선물';
+    } else if (this.searchType === 'i') {
+      this.orderType = '설치주문';
+    } else {
+      this.orderType = '픽업예약주문';
     }
   }
 
