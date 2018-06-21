@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener, ElementRef, ViewChild, Renderer2, OnDe
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService, AlertState } from '../../../../core/alert/alert.service';
-import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal, PrinterService } from '../../../../core';
+import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal, PrinterService, SpinnerService } from '../../../../core';
 import { MessageService, PaymentService } from '../../../../service';
 import { Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData, CurrencyData, KeyCode } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
@@ -31,6 +31,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private printer: PrinterService,
     private payments: PaymentService,
     private alert: AlertService,
+    private spinner: SpinnerService,
     private keyboard: KeyboardService,
     private logger: Logger,
     private renderer: Renderer2) {
@@ -90,6 +91,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     } else {
       if (this.paymentType === 'n') {
         if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
+          this.spinner.show();
           const paymentcapture = this.makePaymentCaptureData(payAmount);
           this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(paymentcapture)).debug();
           this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
@@ -113,7 +115,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
             },
             error => {
               console.log('error... ' + error);
-            });
+            },
+            () => { this.spinner.hide(); });
         }
       } else {
       }
