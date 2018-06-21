@@ -92,9 +92,12 @@ export class PaymentService {
    * @param accountid 회원 아이디
    * @param userid 회원 아이디
    */
-  searchCoupon(accountid: string, userid: string): Observable<CouponList> {
+  searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 10, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
-    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' }; // 'EXPIRED', 'DELETED', 'FREEZED'
+    const params = {
+      currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc,
+      couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT'
+    }; // 'EXPIRED', 'DELETED', 'FREEZED'
     const data = new HttpData('searchCoupon', pathvariables, null, params);
     return this.api.get(data);
   }
