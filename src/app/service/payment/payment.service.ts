@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 import { ApiService, StorageService } from '../../core';
 import {
@@ -62,6 +63,16 @@ export class PaymentService {
     const params = { code: cardcode, feilds: 'DEFAULT' };
     const data = new HttpData('intallmentPlan', pathvariables, null, params);
     return this.api.get(data);
+  }
+
+  /**
+   * 회원의 포인트 정보와 Recash 정보 조회
+   * 장바구니에 회원 검색 시 사용
+   *
+   * @param userid 회원아이디
+   */
+  getBalanceAndRecash(userid: string): Observable<Balance[]> {
+    return Observable.forkJoin(this.getBalance(userid), this.getRecash(userid));
   }
 
   /**

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
-import { CartService, PagerService, SearchService, MessageService } from '../../service';
+import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
@@ -32,6 +32,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private phytoCafeSubscription: Subscription;
   private searchSubscription: Subscription;
   private infoSubscription: Subscription;
+  private paymentsubscription: Subscription;
 
   private searchParams: SearchParam;                                        // 조회 파라미터
   private cartInfo: CartInfo;                                               // 장바구니 기본정보
@@ -40,7 +41,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
   private pager: Pagination;                                                // pagination 정보
   private selectedCartNum: number;                                          // 선택된 카트번호
-  // private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
   private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
   private resCartInfo: ResCartInfo;                                         // Cart 정보
@@ -56,6 +56,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPV: number;                                                          // 총 PV
   totalBV: number;                                                          // 총 Bv
   cartListCount: number;                                                    // 카트 목록 개수
+  balance: number;                                                          // 회원 포인트
+  recash: number;                                                           // 회원 Re-Cash
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
@@ -68,6 +70,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private alert: AlertService,
     private pagerService: PagerService,
     private spinner: SpinnerService,
+    private payment: PaymentService,
     private messageService: MessageService,
     private addCartBroker: AddCartBroker,
     private searchAccountBroker: SearchAccountBroker,
@@ -110,6 +113,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.activeSearchMode('P');
             this.getSaveCarts();
           }
+          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회
         }
       }
     );
@@ -192,6 +196,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.phytoCafeSubscription) { this.phytoCafeSubscription.unsubscribe(); }
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
+    if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
   /**
@@ -961,6 +966,20 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+
+  private getBalanceInfo() {
+    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.uid).subscribe(
+      result => {
+        if (result) {
+          this.balance = result[0].amount;
+          this.recash = result[1].amount;
+          const jsonData = { 'balance': result };
+          Object.assign(this.accountInfo, jsonData);
+          this.storage.setCustomer(this.accountInfo);
+        }
+      }
+    );
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])

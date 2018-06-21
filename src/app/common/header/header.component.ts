@@ -105,10 +105,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getHoldTotalCount();
     const batchinfo: BatchInfo = this.storage.getBatchInfo();
     this.batchNo = (batchinfo) ? (Utils.isEmpty(batchinfo.batchNo)) ? null : batchinfo.batchNo : null;
-    this.storagesubscription = this.storage.storageChanges.subscribe(data => {
-      this.logger.set('header.component', `storage subscribe ... ${data.key}`).debug();
-      if (data.key === 'employeeName') { this.employeeName = (data.value === null) ? '' : data.value; }
-    });
+    if (this.isClient) {
+      this.storagesubscription = this.storage.storageChanges.subscribe(data => {
+        this.logger.set('header.component', `storage subscribe ... ${data.key}`).debug();
+        if (data.key === 'employeeName') { this.employeeName = (data.value === null) ? '' : data.value; }
+      });
+    }
     const timer = TimerObservable.create(2000, 1000);
     this.timersubscription = timer.subscribe(t => { this.posTimer = this.getPosTimer(); });
 

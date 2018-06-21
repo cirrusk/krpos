@@ -23,20 +23,25 @@ export class ClientComponent implements OnInit, OnDestroy {
   totalBV: number;                                // 총 Bv
   cartListCount: number;                          // 카트 목록 개수
   selectedCartNum: number;                        // 선택된 카트번호
+  balance: number;                                // 회원 포인트
+  recash: number;                                 // 회원 Re-Cash
+  accountType: string;                            // 회원 타입
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
-  public memberType: MemberType;
+  public memberType = MemberType;
   constructor(private modal: Modal, private storage: StorageService,
-    private logger: Logger, private config: Config, private route: ActivatedRoute, private pagerService: PagerService) {
+    private logger: Logger, private config: Config, private route: ActivatedRoute,
+    private pagerService: PagerService) {
     this.cartListCount = this.config.getConfig('cartListCount');
   }
 
   ngOnInit() {
     this.accountInfo = this.storage.getCustomer();
+    this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
     this.init();
     this.loadNotice();
-    this.accountInfo = new Accounts();
+    this.accountInfo = null; // new Accounts();
     this.stsubscription = this.storage.storageChanges.subscribe(result => {
       if (result) {
         this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
@@ -52,7 +57,14 @@ export class ClientComponent implements OnInit, OnDestroy {
           }
         } else if (result.key === 'customer') {
           if (this.accountInfo) { this.init(); }
-          this.accountInfo = result.value;
+          if (result.value) {
+            this.accountInfo = result.value;
+          }
+          this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
+          if (this.accountInfo.balance) {
+            this.balance = this.accountInfo.balance[0].amount;
+            this.recash = this.accountInfo.balance[1].amount;
+          }
         } else if (result.key === 'orderentry') {
           if (result.value === null) {
             this.init();
@@ -149,4 +161,5 @@ export class ClientComponent implements OnInit, OnDestroy {
     const data = this.route.snapshot.data['notice'];
     this.noticeList = data;
   }
+
 }
