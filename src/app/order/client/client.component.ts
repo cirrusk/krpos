@@ -61,7 +61,7 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.accountInfo = result.value;
           }
           this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
-          if (this.accountInfo.balance) {
+          if (this.accountInfo.balance && typeof this.accountInfo.balance !== 'undefined') {
             this.balance = this.accountInfo.balance[0].amount;
             this.recash = this.accountInfo.balance[1].amount;
           }

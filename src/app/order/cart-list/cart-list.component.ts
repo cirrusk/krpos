@@ -108,7 +108,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.changeUser(result.data);
           } else {
             this.accountInfo = result.data;
-            this.storage.setCustomer(this.accountInfo);
+            // this.storage.setCustomer(this.accountInfo);
             this.activeSearchMode('P');
             this.getSaveCarts();
           }
@@ -135,7 +135,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           const jsonData = { 'parties': [result.user] };
           Object.assign(this.accountInfo, jsonData);
           this.sendRightMenu('a', true, this.accountInfo);
-          this.storage.setCustomer(this.accountInfo);
+          // this.storage.setCustomer(this.accountInfo);
+          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
@@ -376,7 +377,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               resultData => {
                 this.init();
                 this.accountInfo = changeUserInfo;
-                this.storage.setCustomer(this.accountInfo);
+                // this.storage.setCustomer(this.accountInfo);
                 this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
                 this.cartInfo = resultData.cartInfo;
                 this.sendRightMenu('a', true, changeUserInfo);
