@@ -15,6 +15,7 @@ import { PaymentService } from '../../../service';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
 import { RecursiveTemplateAstVisitor } from '@angular/compiler';
+import { CompletePaymentComponent } from '../complete-payment/complete-payment.component';
 
 @Component({
   selector: 'pos-complex-payment',
@@ -142,6 +143,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   openPopup() {
     this.popupList.sort();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        closeByClickOutside: false,
+        modalId: 'CashComponent',
+        paymentType: 'n'
+      }
+    );
     // this.activePopup = this.popupList.slice(0, this.popupList.length);
     // this.selectPopup(this.activePopup[0]);
   }

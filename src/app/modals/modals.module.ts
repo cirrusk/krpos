@@ -39,6 +39,7 @@ import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.c
 import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.component';
 import { ClientAccountComponent } from './account/client-account/client-account.component';
 import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.component';
+import { CompletePaymentComponent } from './payment/complete-payment/complete-payment.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.comp
     UpdateItemQtyComponent,
     CashReceiptComponent,
     ClientAccountComponent,
-    CouponCheckComponent
+    CouponCheckComponent,
+    CompletePaymentComponent
   ],
   imports: [
     CommonModule,
@@ -115,7 +117,8 @@ import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.comp
     UpdateItemQtyComponent,
     CashReceiptComponent,
     ClientAccountComponent,
-    CouponCheckComponent
+    CouponCheckComponent,
+    CompletePaymentComponent
   ]
 })
 export class ModalsModule {
