@@ -77,15 +77,16 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
               console.log('payment capture result : ' + JSON.stringify(result, null, 2));
               console.log('status = ' + result.status);
               console.log('status display = ' + result.statusDisplay);
+
+              this.paidDate = new Date();
+              this.finishStatus = 'ok';
+
               this.printer.openCashDrawer(); // 현금 결제 완료 후, cash drawer 오픈
             },
             error => {
               console.log('error... ' + error);
             });
         }
-
-        this.paidDate = new Date();
-        this.finishStatus = 'ok';
       } else {
       }
     }

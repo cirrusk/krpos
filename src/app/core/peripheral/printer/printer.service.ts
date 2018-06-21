@@ -15,11 +15,12 @@ export class PrinterService {
 
     // 프린터 설정 override
     private printerOpts: PrinterConfigs;
-    prtCmd: PrinterCommands;
+    private prtCmd: PrinterCommands;
     constructor(private printerDriver: PrinterDriver,
         private dirverReadyBroker: DriverReadyBroker,
         // private formatReaderService: FormatReader,
         private logger: Logger) {
+        this.prtCmd = new PrinterCommands();
         // Wait
         const waitPrinterDriver: Subject<any> = this.dirverReadyBroker.getPrinterObserver();
         waitPrinterDriver.subscribe(
