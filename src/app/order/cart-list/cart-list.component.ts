@@ -421,7 +421,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             );
           } else {
             this.accountInfo = changeUserInfo;
-            this.storage.setCustomer(this.accountInfo);
+            // this.storage.setCustomer(this.accountInfo);
+            this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
             this.activeSearchMode('P');
             this.getSaveCarts();
           }
@@ -963,6 +964,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           const account = result.accounts[0];
           this.searchAccountBroker.sendInfo('n', account);
+          const jsonData = { 'balance': [{amount: 0}, {amount: 0}] };
+          Object.assign(account, jsonData);
           this.storage.setCustomer(account);
         }
       );

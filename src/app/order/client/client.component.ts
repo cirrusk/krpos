@@ -37,8 +37,8 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.accountInfo = this.storage.getCustomer();
-    this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
+    // this.accountInfo = this.storage.getCustomer();
+    // this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
     this.init();
     this.loadNotice();
     this.accountInfo = null; // new Accounts();
@@ -61,7 +61,7 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.accountInfo = result.value;
           }
           this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
-          if (this.accountInfo.balance && typeof this.accountInfo.balance !== 'undefined') {
+          if (this.accountInfo && typeof this.accountInfo.balance !== 'undefined') {
             this.balance = this.accountInfo.balance[0].amount;
             this.recash = this.accountInfo.balance[1].amount;
           }
