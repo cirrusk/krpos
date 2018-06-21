@@ -95,6 +95,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     this.modal.openModalByComponent(PickupOrderComponent,
       {
         title: '간편 선물 리스트',
+        callerData : {searchType : 'e'},
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
@@ -109,6 +110,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     this.modal.openModalByComponent(PickupOrderComponent,
       {
         title: '설치 주문 리스트',
+        callerData : {searchType : 'i'},
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
