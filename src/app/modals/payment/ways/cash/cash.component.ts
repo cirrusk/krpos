@@ -71,6 +71,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param payAmount 결제금액
    */
   pay(paidAmount: number, payAmount: number) {
+    // 유효성체크 실패 시 포커스 이동 처리
     this.alertsubscription = this.alert.alertState.subscribe(
       (state: AlertState) => {
         if (!state.show) {
@@ -99,7 +100,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
               this.paidDate = new Date();
               this.finishStatus = 'ok';
 
-              setTimeout(() => {
+              setTimeout(() => { // 결제 성공, 변경못하도록 처리
                 this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                 this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
               }, 5);
