@@ -1,12 +1,13 @@
 import { Component, OnInit, HostListener, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AlertService } from '../../../../core/alert/alert.service';
+import { AlertService, AlertState } from '../../../../core/alert/alert.service';
 import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal, PrinterService } from '../../../../core';
 import { MessageService, PaymentService } from '../../../../service';
 import { Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData, CurrencyData, KeyCode } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-cash',
@@ -23,6 +24,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paidDate: Date;
   private keyboardsubscription: Subscription;
   private paymentsubscription: Subscription;
+  private alertsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
@@ -59,9 +61,26 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
+  /**
+   * 현금 결제 처리
+   *
+   * @param paidAmount 내신금액
+   * @param payAmount 결제금액
+   */
   pay(paidAmount: number, payAmount: number) {
+    this.alertsubscription = this.alert.alertState.subscribe(
+      (state: AlertState) => {
+        if (!state.show) {
+          setTimeout(() => {
+            this.paid.nativeElement.focus();
+            this.paid.nativeElement.select();
+          });
+        }
+      }
+    );
     const change = this.paid.nativeElement.value - this.payment.nativeElement.value;
     if (paidAmount < 1) {
       this.alert.warn({ message: this.message.get('notinputPaid') });
@@ -71,15 +90,19 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       if (this.paymentType === 'n') {
         if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
           const paymentcapture = this.makePaymentCaptureData(payAmount);
-          console.log('payment capture : ' + JSON.stringify(paymentcapture, null, 2));
+          this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(paymentcapture)).debug();
           this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
             result => {
-              console.log('payment capture result : ' + JSON.stringify(result, null, 2));
               console.log('status = ' + result.status);
               console.log('status display = ' + result.statusDisplay);
 
               this.paidDate = new Date();
               this.finishStatus = 'ok';
+
+              setTimeout(() => {
+                this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
+                this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
+              }, 5);
 
               this.printer.openCashDrawer(); // 현금 결제 완료 후, cash drawer 오픈
             },
@@ -90,20 +113,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       } else {
       }
     }
-  }
-
-  /**
-   * Payment Capture 데이터 생성
-   *
-   * @param paidamount 지불 금액
-   */
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
-    const cash = new CashPaymentInfo(CashType.CASH, paidamount);
-    cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
-    cash.currency = new CurrencyData();
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.cashPayment = cash;
-    return paymentcapture;
   }
 
   nextStep() {
@@ -125,6 +134,20 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         paymentType: this.paymentType
       }
     );
+  }
+
+  /**
+   * Payment Capture 데이터 생성
+   *
+   * @param paidamount 지불 금액
+   */
+  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+    const cash = new CashPaymentInfo(CashType.CASH, paidamount);
+    cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
+    cash.currency = new CurrencyData();
+    const paymentcapture = new PaymentCapture();
+    paymentcapture.cashPayment = cash;
+    return paymentcapture;
   }
 
   close() {
