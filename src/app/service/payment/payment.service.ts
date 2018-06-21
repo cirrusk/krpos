@@ -5,8 +5,9 @@ import 'rxjs/add/observable/forkJoin';
 import { ApiService, StorageService } from '../../core';
 import {
   BankInfo, Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList
+  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, Response
 } from '../../data';
+import { Order } from '../../data/models/order/order';
 
 @Injectable()
 export class PaymentService {
@@ -37,20 +38,6 @@ export class PaymentService {
     const pathvariables = { userId: userid, cartId: cartid };
     const data = new HttpData('paymentModesByMain', pathvariables, null, params);
     return this.api.get(data);
-  }
-
-  /**
-   * Payment Capture 실행하기
-   *
-   * @param userid 사용자아이디
-   * @param cartid 카트아이디
-   * @param paymentcapture Payment Mode 별 PaymentCapture 정보
-   */
-  paymentCapture(userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<PaymentDetails> {
-    const pathvariables = { userId: userid, cartId: cartid };
-    const params = { feilds: 'DEFAULT' };
-    const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
-    return this.api.post(data);
   }
 
   /**
@@ -107,7 +94,7 @@ export class PaymentService {
    */
   searchCoupon(accountid: string, userid: string): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
-    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' }; // , 'EXPIRED', 'DELETED', 'FREEZED'
+    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' }; // 'EXPIRED', 'DELETED', 'FREEZED'
     const data = new HttpData('searchCoupon', pathvariables, null, params);
     return this.api.get(data);
   }
@@ -125,4 +112,43 @@ export class PaymentService {
     const data = new HttpData('applyCoupon', pathvariables, param, null);
     return this.api.post(data);
   }
+
+  /**
+   * 수표 조회
+   * @param checknumber 수표번호
+   */
+  searchCheque(checknumber: string): Observable<Response> {
+    const params = { checkNumber: checknumber };
+    const data = new HttpData('searchCheque', null, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * Payment Capture 실행하기
+   *
+   * @param userid 사용자아이디
+   * @param cartid 카트아이디
+   * @param paymentcapture Payment Mode 별 PaymentCapture 정보
+   */
+  paymentCapture(userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<PaymentDetails> {
+    const pathvariables = { userId: userid, cartId: cartid };
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
+    return this.api.post(data);
+  }
+
+  /**
+   * Payment Capture와 Place Order를 진행
+   *
+   * @param accountid 회원 아이디
+   * @param userid 회원 아이디
+   * @param cartid 카트 아이디
+   */
+  placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
+    const pathvariables = { accountId: accountid, userId: userid, cartId: cartid };
+    const param = { fields: 'DEFAULT' };
+    const data = new HttpData('placeOrder', pathvariables, paymentcapture, param);
+    return this.api.post(data);
+  }
+
 }

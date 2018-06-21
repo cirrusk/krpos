@@ -964,7 +964,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           const account = result.accounts[0];
           this.searchAccountBroker.sendInfo('n', account);
-          const jsonData = { 'balance': [{amount: 0}, {amount: 0}] };
+          const jsonData = { 'balance': [{ amount: 0 }, { amount: 0 }] };
           Object.assign(account, jsonData);
           this.storage.setCustomer(account);
         }

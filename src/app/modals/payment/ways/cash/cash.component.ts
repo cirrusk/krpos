@@ -69,12 +69,14 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
       if (this.paymentType === 'n') {
-        if (paidAmount >= payAmount) { // payment capture 실행
+        if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
           const paymentcapture = this.makePaymentCaptureData(payAmount);
           console.log('payment capture : ' + JSON.stringify(paymentcapture, null, 2));
-          this.paymentsubscription = this.payments.paymentCapture(this.account.uid, this.cartInfo.code, paymentcapture).subscribe(
+          this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
             result => {
               console.log('payment capture result : ' + JSON.stringify(result, null, 2));
+              console.log('status = ' + result.status);
+              console.log('status display = ' + result.statusDisplay);
               this.printer.openCashDrawer(); // 현금 결제 완료 후, cash drawer 오픈
             },
             error => {
