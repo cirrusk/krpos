@@ -15,7 +15,7 @@ import { Utils } from '../../../../core/utils';
 })
 export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
-  @ViewChild('paid') private paid: ElementRef;    // 내신금액
+  @ViewChild('paid') private paid: ElementRef;       // 내신금액
   @ViewChild('payment') private payment: ElementRef; // 결제금액
   finishStatus: string;                              // 결제완료 상태
   private cartInfo: Cart;
@@ -104,8 +104,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
                 this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                 this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
               }, 5);
-
-              this.printer.openCashDrawer(); // 현금 결제 완료 후, cash drawer 오픈
+              
+              if (change > 0) { // 현금 결제 완료 후 거스름돈이 있을 경우, cash drawer 오픈
+                this.printer.openCashDrawer();
+              }
             },
             error => {
               console.log('error... ' + error);
