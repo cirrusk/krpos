@@ -104,8 +104,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
                 this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                 this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
               }, 5);
-              
+
               if (change > 0) { // 현금 결제 완료 후 거스름돈이 있을 경우, cash drawer 오픈
+                this.logger.set('cash.component', `open cash drawer, change : ${change}`);
                 this.printer.openCashDrawer();
               }
             },
