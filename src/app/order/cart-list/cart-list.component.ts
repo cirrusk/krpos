@@ -105,7 +105,6 @@ export class CartListComponent implements OnInit, OnDestroy {
 
           this.sendRightMenu('a', true, result.data);
           if (this.accountInfo) {
-            // this.changeUser(this.accountInfo, this.cartInfo, result);
             this.changeUser(result.data);
           } else {
             this.accountInfo = result.data;
@@ -113,7 +112,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.activeSearchMode('P');
             this.getSaveCarts();
           }
-          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회
+          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
         }
       }
     );
@@ -378,6 +377,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.init();
                 this.accountInfo = changeUserInfo;
                 this.storage.setCustomer(this.accountInfo);
+                this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
                 this.cartInfo = resultData.cartInfo;
                 this.sendRightMenu('a', true, changeUserInfo);
                 this.sendRightMenu('all', true);
