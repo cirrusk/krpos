@@ -218,6 +218,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private getOrderInfo(account: Accounts): void {
     this.modal.openModalByComponent(PickupOrderComponent,
       {
+        title: 'ECP픽업 주문리스트',
         callerData : {orderInfo : this.orderInfoList},
         closeByClickOutside: true,
         modalId: 'PickupOrderComponent'

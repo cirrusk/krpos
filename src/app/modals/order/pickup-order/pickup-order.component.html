@@ -1,12 +1,12 @@
 <div class="pop_wrap pop_xl">
     <div class="pop_header">
-        <h1>ECP픽업 주문리스트</h1>
+        <h1>{{title}}</h1>
         <button type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">닫기</button>
     </div>
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
-            <p class="txt01">ECP픽업 주문리스트 정보 조회 시 아래의 타입으로 조회 가능합니다.</p>
+            <p class="txt01">{{title}} 정보 조회 시 아래의 타입으로 조회 가능합니다.</p>
             <label class="inp_rd type01" for="ps1">ABO회원<input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label>
             <!-- 회원검색영역 -->
             <div class="mbinfo_search">

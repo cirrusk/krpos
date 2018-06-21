@@ -1,11 +1,11 @@
 <!-- 고객리스트 : 그룹결제시 노출 -->
-<div class="member_list" [hidden]="true">
+<div class="member_list" [hidden]="paymentType !== 'g'">
   <span>
       <button type="button" class="ico_comm prev02">이전</button>
       <button type="button" class="ico_comm next02">다음</button>
   </span>
   <span>
-      <a href="javascript:void(0)" class="on" (click)="removeCart()">홍길동</a>
+      <a href="javascript:void(0)" class="on">홍길동</a>
       <a href="javascript:void(0)">박보검</a>        
       <a href="javascript:void(0)">조쉬하트넷</a>
       <a href="javascript:void(0)">박보영</a>

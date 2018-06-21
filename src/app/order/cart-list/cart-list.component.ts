@@ -43,7 +43,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   // private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
   private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
-  private resCartInfo: ResCartInfo;
+  private resCartInfo: ResCartInfo;                                         // Cart 정보
+  private domain: string;                                                   // api root 도메인
+  private paymentType: string;                                              // 결제타입(일반 = n, 그룹 = g)
 
   accountInfo: Accounts;                                                    // 사용자 정보
   searchMode: string;                                                       // 조회 모드
@@ -57,9 +59,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
-  public memberType = MemberType;
-  private domain: string;
-  private paymentType: string;
+  public memberType = MemberType;                                           // HTML 사용(enum)
+
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -81,6 +82,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.domain = this.config.getConfig('apiDomain');
     this.init();
 
+    // 주문 완료 후 화면 초기화
     this.infoSubscription = this.info.getInfo().subscribe(
       result => {
         const type = result && result.type;
@@ -196,12 +198,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 변수 초기화
    */
   private init() {
-    this.cartList = new Array<OrderEntry>();
-    this.cartInfo = new CartInfo();
     this.accountInfo = null;
-    this.searchParams = new SearchParam();
-    this.productInfo = new OrderEntry();
+    this.cartInfo = new CartInfo();
+    this.cartList = new Array<OrderEntry>();
     this.currentCartList = new Array<OrderEntry>();
+    this.productInfo = new OrderEntry();
+    this.searchParams = new SearchParam();
     this.searchMode = 'A';
     this.paymentType = '';
     this.totalItem = 0;
@@ -268,6 +270,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         callerData: { data: params },
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
+        paymentType: this.paymentType !== '' ? this.paymentType : 'n',
         modalId: 'SearchAccountComponent'
       }
     );
@@ -765,7 +768,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       this.init();
       this.storage.clearClient();
-      // this.alert.error({ message: this.messageService.get('noCartInfo') });
     }
   }
 
