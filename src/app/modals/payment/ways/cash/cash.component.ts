@@ -73,7 +73,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param paidAmount 내신금액
    * @param payAmount 결제금액
    */
-  pay(paidAmount: number, payAmount: number) {
+  pay(evt: KeyboardEvent, paidAmount: number, payAmount: number) {
+    evt.preventDefault();
     // setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'disabled', 'disabled'); }, 5);
     // 유효성체크 실패 시 포커스 이동 처리
     this.alertsubscription = this.alert.alertState.subscribe(
