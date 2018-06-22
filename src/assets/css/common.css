@@ -146,6 +146,8 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .ico_comm.etc03 {background-position-x:-300px}
 .ico_comm.etc04 {background-position-x:-350px}
 .ico_comm.etc05 {background-position-x:-400px}
+.ico_comm.etc06 {background-position-x:-450px}
+.ico_comm.etc07 {background-position-x:-500px}
 .ico_comm[class*='ecp'] {width:35px; height:35px; background-position-y:-395px}
 .ico_comm.ecp01 {background-position-x:-200px}
 .ico_comm.ecp02 {background-position-x:-250px}
@@ -311,6 +313,13 @@ table input[type='text'] {font-family:'NSM';}
 .tbl_col .chk:before {content:''; position:static !important; display:inline-block !important; width:18px !important; height:18px !important; background:url(/assets/images/common/ico_common.png) -358px -83px no-repeat !important; vertical-align:middle; margin:-2px 14px 0 0}
 .tbl_col .on .chk:before {background-position:-408px -83px !important}
 
+/* 무이자 할부 정보 */
+.scrl_area {border:1px solid #08132f; height:250px; padding:15px 20px; overflow-y:scroll}
+.scrl_area dt {}
+.scrl_area dd {margin-top:-2px}
+.scrl_area dd span + span {margin-left:20px}
+.scrl_area dd + dt {margin-top:20px}
+
  /* 회원정보조회 */
 .mbinfo_search {margin-top:8px; width:740px}
 .mbinfo_search .btn01_blue {min-width:88px}
@@ -386,7 +395,7 @@ table input[type='text'] {font-family:'NSM';}
 .chc_wrap a.on:before {content:''; z-index:2; position:absolute; top:15px; right:15px; display:inline-block; width:22px; height:22px; background:url(/assets/images/common/ico_common.png) 0 -137px no-repeat;}
 .chc_wrap a span {position:absolute; top:14px; left:19px; z-index:2}
 .chc_wrap a i {position:absolute; bottom:15px; right:15px; z-index:2}
-.chc_wrap a.chc_type01 {background-color:#0a4b89}
+.chc_wrap a.chc_type01 {background-color:#0e51a3}
 .chc_wrap a.chc_type02 {background-color:#5867c3}
 .chc_wrap a.chc_type03 {background-color:#1265cc}
 .chc_wrap a.chc_type04 {background-color:#47b8f2}

@@ -1,7 +1,7 @@
 <div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
   <div class="pop_header">
       <h1>현금영수증</h1>
-      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()"></button>
+      <button type="button" class="ico_comm pop_close01" (click)="close()"></button>
   </div>
   <!-- pop_container -->
   <div class="pop_container">
@@ -22,13 +22,13 @@
                       <tr>
                           <th scope="row">발행구분</th>
                           <td>
-                              <label class="inp_rd mgl10" for="fg1">소득공제<input type="radio" name="fg" id="fg1" checked><span class="checkmark"></span></label>
-                              <label class="inp_rd" for="fg2">지출증빙<input type="radio" name="fg" id="fg2"><span class="checkmark"></span></label>
+                              <label class="inp_rd mgl10" for="fg1">소득공제<input #income type="radio" name="fg" id="fg1" checked (click)="selectDiv('i')"><span class="checkmark"></span></label>
+                              <label class="inp_rd" for="fg2">지출증빙<input #outcome type="radio" name="fg" id="fg2" (click)="selectDiv('o')"><span class="checkmark"></span></label>
                           </td>
                       </tr>
                       <tr>
                         <th scope="row">고객번호</th>
-                        <!-- 20180620 수정 --><td><input type="number" class="w200" title="고객번호"></td><!-- //20180620 수정 -->
+                        <td><input type="number" #clientnum class="w200" title="고객번호" (keydown.enter)="requestReceipt()"></td><!-- //20180620 수정 -->
                       </tr>
                       <tr>
                           <th scope="row">영수증발행일자</th>

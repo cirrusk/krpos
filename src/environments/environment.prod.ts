@@ -49,6 +49,7 @@ export const environment = {
     searchCoupon: '/{baseSiteId}/accounts/{accountId}/users/{userId}/coupons',
     applyCoupon: '/{baseSiteId}/users/{userId}/carts/{cartId}/vouchers',
     paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails',
+    placeOrder: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts/{cartId}/paymentCaptureAndPlaceOrder',
     searchCheque: '/{baseSiteId}/validateCheckNumber',
     orderList: '/{baseSiteId}/users/{userId}/orders',
     orderDetails: '/{baseSiteId}/users/{userId}/order-details'

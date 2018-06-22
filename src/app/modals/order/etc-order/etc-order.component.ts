@@ -5,6 +5,7 @@ import { SearchBerComponent } from './../../account/search-ber/search-ber.compon
 import { InfoBroker } from '../../../broker';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { Accounts } from '../../../data';
+import { PickupOrderComponent } from '../pickup-order/pickup-order.component';
 
 @Component({
   selector: 'pos-etc-order',
@@ -86,6 +87,36 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
   dashboard() {
     this.router.navigate(['/dashboard']);
     setTimeout(() => { this.close(); }, 270);
+  }
+
+  easyPickup(evt: any) {
+    this.setSelected(evt);
+    this.close();
+    this.modal.openModalByComponent(PickupOrderComponent,
+      {
+        title: '간편 선물 리스트',
+        callerData : {searchType : 'e'},
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByClickOutside: false,
+        modalId: 'PickupOrderComponent'
+      }
+    );
+  }
+
+  installationOrder(evt: any) {
+    this.setSelected(evt);
+    this.close();
+    this.modal.openModalByComponent(PickupOrderComponent,
+      {
+        title: '설치 주문 리스트',
+        callerData : {searchType : 'i'},
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByClickOutside: false,
+        modalId: 'PickupOrderComponent'
+      }
+    );
   }
 
   close() {

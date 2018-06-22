@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 import { ApiService, StorageService } from '../../core';
 import {
   BankInfo, Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList
+  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData
 } from '../../data';
+import { Order } from '../../data/models/order/order';
 
 @Injectable()
 export class PaymentService {
@@ -39,20 +41,6 @@ export class PaymentService {
   }
 
   /**
-   * Payment Capture 실행하기
-   *
-   * @param userid 사용자아이디
-   * @param cartid 카트아이디
-   * @param paymentcapture Payment Mode 별 PaymentCapture 정보
-   */
-  paymentCapture(userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<PaymentDetails> {
-    const pathvariables = { userId: userid, cartId: cartid };
-    const params = { feilds: 'DEFAULT' };
-    const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
-    return this.api.post(data);
-  }
-
-  /**
    * 신용카드 무이자 할부 정보 조회
    *
    * @param code 카드사코드
@@ -62,6 +50,16 @@ export class PaymentService {
     const params = { code: cardcode, feilds: 'DEFAULT' };
     const data = new HttpData('intallmentPlan', pathvariables, null, params);
     return this.api.get(data);
+  }
+
+  /**
+   * 회원의 포인트 정보와 Recash 정보 조회
+   * 장바구니에 회원 검색 시 사용
+   *
+   * @param userid 회원아이디
+   */
+  getBalanceAndRecash(userid: string): Observable<Balance[]> {
+    return Observable.forkJoin(this.getBalance(userid), this.getRecash(userid));
   }
 
   /**
@@ -94,9 +92,12 @@ export class PaymentService {
    * @param accountid 회원 아이디
    * @param userid 회원 아이디
    */
-  searchCoupon(accountid: string, userid: string): Observable<CouponList> {
+  searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 10, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
-    const params = { couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT' }; // , 'EXPIRED', 'DELETED', 'FREEZED'
+    const params = {
+      currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc,
+      couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT'
+    }; // 'EXPIRED', 'DELETED', 'FREEZED'
     const data = new HttpData('searchCoupon', pathvariables, null, params);
     return this.api.get(data);
   }
@@ -114,4 +115,45 @@ export class PaymentService {
     const data = new HttpData('applyCoupon', pathvariables, param, null);
     return this.api.post(data);
   }
+
+  /**
+   * 수표 조회
+   * @param checknumber 수표번호(42 자리, 0으로 right padding)
+   */
+  searchCheque(checknumber: string): Observable<ResponseData> {
+    const params = { checkNumber: checknumber };
+    const data = new HttpData('searchCheque', null, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * Payment Capture 실행하기
+   *
+   * @deprecated Payment Capture와 Place Order를 진행하도록 변경
+   * @see placeOrder 참조
+   * @param userid 사용자아이디
+   * @param cartid 카트아이디
+   * @param paymentcapture Payment Mode 별 PaymentCapture 정보
+   */
+  paymentCapture(userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<PaymentDetails> {
+    const pathvariables = { userId: userid, cartId: cartid };
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
+    return this.api.post(data);
+  }
+
+  /**
+   * Payment Capture와 Place Order를 진행
+   *
+   * @param accountid 회원 아이디
+   * @param userid 회원 아이디
+   * @param cartid 카트 아이디
+   */
+  placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
+    const pathvariables = { accountId: accountid, userId: userid, cartId: cartid };
+    const param = { fields: 'DEFAULT' };
+    const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'b');
+    return this.api.post(data);
+  }
+
 }

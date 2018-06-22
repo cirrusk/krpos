@@ -139,10 +139,15 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param evt
    */
   pickupOrder(evt: any) {
-    // if (!this.hasAccount) { return; }
     this.checkClass(evt);
-
-    this.getOrderInfo(this.account);
+    this.modal.openModalByComponent(PickupOrderComponent,
+      {
+        title: 'ECP픽업 주문리스트',
+        callerData : {searchType : 'p'},
+        closeByClickOutside: true,
+        modalId: 'PickupOrderComponent'
+      }
+    );
   }
 
   /**
@@ -214,15 +219,4 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   //   });
   //   this.renderer.addClass(evt.target, 'on');
   // }
-
-  private getOrderInfo(account: Accounts): void {
-    this.modal.openModalByComponent(PickupOrderComponent,
-      {
-        callerData : {orderInfo : this.orderInfoList},
-        closeByClickOutside: true,
-        modalId: 'PickupOrderComponent'
-      }
-    );
-  }
-
 }

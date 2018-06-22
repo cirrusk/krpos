@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
-import { CartService, PagerService, SearchService, MessageService } from '../../service';
+import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
@@ -32,6 +32,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private phytoCafeSubscription: Subscription;
   private searchSubscription: Subscription;
   private infoSubscription: Subscription;
+  private paymentsubscription: Subscription;
 
   private searchParams: SearchParam;                                        // 조회 파라미터
   private cartInfo: CartInfo;                                               // 장바구니 기본정보
@@ -40,10 +41,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
   private pager: Pagination;                                                // pagination 정보
   private selectedCartNum: number;                                          // 선택된 카트번호
-  // private saveCartResult: SaveCartResult;                                   // 장바구니 복원 응답 모델
   private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
-  private resCartInfo: ResCartInfo;
+  private resCartInfo: ResCartInfo;                                         // Cart 정보
+  private domain: string;                                                   // api root 도메인
+  private paymentType: string;                                              // 결제타입(일반 = n, 그룹 = g)
 
   accountInfo: Accounts;                                                    // 사용자 정보
   searchMode: string;                                                       // 조회 모드
@@ -54,12 +56,13 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPV: number;                                                          // 총 PV
   totalBV: number;                                                          // 총 Bv
   cartListCount: number;                                                    // 카트 목록 개수
+  balance: number;                                                          // 회원 포인트
+  recash: number;                                                           // 회원 Re-Cash
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
-  public memberType = MemberType;
-  private domain: string;
-  private paymentType: string;
+  public memberType = MemberType;                                           // HTML 사용(enum)
+
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -67,6 +70,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private alert: AlertService,
     private pagerService: PagerService,
     private spinner: SpinnerService,
+    private payment: PaymentService,
     private messageService: MessageService,
     private addCartBroker: AddCartBroker,
     private searchAccountBroker: SearchAccountBroker,
@@ -81,6 +85,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.domain = this.config.getConfig('apiDomain');
     this.init();
 
+    // 주문 완료 후 화면 초기화
     this.infoSubscription = this.info.getInfo().subscribe(
       result => {
         const type = result && result.type;
@@ -100,14 +105,14 @@ export class CartListComponent implements OnInit, OnDestroy {
 
           this.sendRightMenu('a', true, result.data);
           if (this.accountInfo) {
-            // this.changeUser(this.accountInfo, this.cartInfo, result);
             this.changeUser(result.data);
           } else {
             this.accountInfo = result.data;
-            this.storage.setCustomer(this.accountInfo);
+            // this.storage.setCustomer(this.accountInfo);
             this.activeSearchMode('P');
             this.getSaveCarts();
           }
+          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
         }
       }
     );
@@ -130,7 +135,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           const jsonData = { 'parties': [result.user] };
           Object.assign(this.accountInfo, jsonData);
           this.sendRightMenu('a', true, this.accountInfo);
-          this.storage.setCustomer(this.accountInfo);
+          // this.storage.setCustomer(this.accountInfo);
+          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
           this.cartInfo.code = result.code;
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
@@ -190,18 +196,19 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.phytoCafeSubscription) { this.phytoCafeSubscription.unsubscribe(); }
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
+    if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
   /**
    * 변수 초기화
    */
   private init() {
-    this.cartList = new Array<OrderEntry>();
-    this.cartInfo = new CartInfo();
     this.accountInfo = null;
-    this.searchParams = new SearchParam();
-    this.productInfo = new OrderEntry();
+    this.cartInfo = new CartInfo();
+    this.cartList = new Array<OrderEntry>();
     this.currentCartList = new Array<OrderEntry>();
+    this.productInfo = new OrderEntry();
+    this.searchParams = new SearchParam();
     this.searchMode = 'A';
     this.paymentType = '';
     this.totalItem = 0;
@@ -226,7 +233,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param mode
    */
   activeSearchMode(mode: string): void {
-    if (mode === 'P') { setTimeout(() => { this.searchText.nativeElement.focus(); }, 10); }
+    setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
     this.searchMode = mode;
   }
 
@@ -268,6 +275,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         callerData: { data: params },
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
+        paymentType: this.paymentType !== '' ? this.paymentType : 'n',
         modalId: 'SearchAccountComponent'
       }
     );
@@ -369,7 +377,8 @@ export class CartListComponent implements OnInit, OnDestroy {
               resultData => {
                 this.init();
                 this.accountInfo = changeUserInfo;
-                this.storage.setCustomer(this.accountInfo);
+                // this.storage.setCustomer(this.accountInfo);
+                this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
                 this.cartInfo = resultData.cartInfo;
                 this.sendRightMenu('a', true, changeUserInfo);
                 this.sendRightMenu('all', true);
@@ -412,7 +421,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             );
           } else {
             this.accountInfo = changeUserInfo;
-            this.storage.setCustomer(this.accountInfo);
+            // this.storage.setCustomer(this.accountInfo);
+            this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
             this.activeSearchMode('P');
             this.getSaveCarts();
           }
@@ -765,7 +775,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       this.init();
       this.storage.clearClient();
-      // this.alert.error({ message: this.messageService.get('noCartInfo') });
     }
   }
 
@@ -955,10 +964,26 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           const account = result.accounts[0];
           this.searchAccountBroker.sendInfo('n', account);
+          const jsonData = { 'balance': [{ amount: 0 }, { amount: 0 }] };
+          Object.assign(account, jsonData);
           this.storage.setCustomer(account);
         }
       );
     }
+  }
+
+  private getBalanceInfo() {
+    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.uid).subscribe(
+      result => {
+        if (result) {
+          this.balance = result[0].amount;
+          this.recash = result[1].amount;
+          const jsonData = { 'balance': result };
+          Object.assign(this.accountInfo, jsonData);
+          this.storage.setCustomer(this.accountInfo);
+        }
+      }
+    );
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])
