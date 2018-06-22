@@ -45,7 +45,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
   private resCartInfo: ResCartInfo;                                         // Cart 정보
   private domain: string;                                                   // api root 도메인
-  private paymentType: string;                                              // 결제타입(일반 = n, 그룹 = g)
+  paymentType: string;                                                      // 결제타입(일반 = n, 그룹 = g)
 
   accountInfo: Accounts;                                                    // 사용자 정보
   searchMode: string;                                                       // 조회 모드
