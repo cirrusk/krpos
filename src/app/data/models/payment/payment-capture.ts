@@ -148,7 +148,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
 }
 
-/** 현금결제 */
+/** 현금/수표 결제 */
 export class CashPaymentInfo extends AmwayPaymentInfoData {
     cashType: string; // 현금유형 CashType (CASH, CHECK)
     constructor(amount: number, cashType: string, paymentProvider?: string, status?: string) {
