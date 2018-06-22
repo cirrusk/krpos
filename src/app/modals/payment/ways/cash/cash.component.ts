@@ -74,6 +74,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param payAmount 결제금액
    */
   pay(paidAmount: number, payAmount: number) {
+    // setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'disabled', 'disabled'); }, 5);
     // 유효성체크 실패 시 포커스 이동 처리
     this.alertsubscription = this.alert.alertState.subscribe(
       (state: AlertState) => {
@@ -85,7 +86,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         }
       }
     );
-    const change = this.paid.nativeElement.value - this.payment.nativeElement.value;
+    const change = paidAmount - payAmount;
     if (paidAmount < 1) {
       this.alert.warn({ message: this.message.get('notinputPaid') });
     } else if (change < 0) {
@@ -165,7 +166,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param paidamount 지불 금액
    */
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
-    const cash = new CashPaymentInfo(CashType.CASH, paidamount);
+    const cash = new CashPaymentInfo(paidamount, CashType.CASH);
     cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
     cash.currency = new CurrencyData();
     const paymentcapture = new PaymentCapture();

@@ -22,7 +22,7 @@ export class IcCardComponent extends ModalComponent implements OnInit {
   }
 
   private makeIcCardData(): ICCardPaymentInfo {
-    const iccard = new ICCardPaymentInfo(0, 'accnum', 'baowner', 'bank');
+    const iccard = new ICCardPaymentInfo(0, 'accnum', 'baowner', '71', 'bank');
     iccard.paymentMode = new PaymentModeData(PaymentModes.ICCARD);
     iccard.currency = new CurrencyData('KRW');
     const paymentcapture = new PaymentCapture();
