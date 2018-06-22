@@ -4,8 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Logger, AlertService, SpinnerService } from '../../../core';
 
 import { SearchService, PagerService } from '../../../service';
-import { SearchAccountBroker } from '../../../broker';
-import { AccountList, Accounts, Pagination, MemberType } from '../../../data';
+import { AccountList, Accounts, Pagination } from '../../../data';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -16,7 +15,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private PAGE_SIZE = 10;
   private searchSubscription: Subscription;
   private searchListSubscription: Subscription;
-  private account: Accounts;                 // 회원 정보
   private activeNum: number;                 // 선택 로우 번호
   private activeCode: string;                // 선택 코드
   private pager: Pagination;                 // pagination 정보
@@ -31,8 +29,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     private searchService: SearchService,
     private pagerService: PagerService,
     private alert: AlertService,
-    private spinner: SpinnerService,
-    private searchAccountBroker: SearchAccountBroker
+    private spinner: SpinnerService
   ) {
     super(modalService);
     this.spinner.hide();
@@ -44,7 +41,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
     if (this.callerData) {
       const searchParams = this.callerData.data;
-
       if (searchParams.searchText.trim() !== '') {
         this.getAccountList('A', searchParams.searchText.trim());
         this.searchText = searchParams.searchText.trim();
@@ -141,9 +137,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
           return obj.parties[0].uid === uid;
         }
       );
-      // this.account = this.accountList.accounts[existedIdx];
-      this.result = this.accountList.accounts[existedIdx]; // result로 본창에 전송
-      // this.searchAccountBroker.sendInfo(this.paymentType, this.account);
+      this.result = this.accountList.accounts[existedIdx]; // result로 본창에 전송(broker 삭제!)
       this.close();
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });
