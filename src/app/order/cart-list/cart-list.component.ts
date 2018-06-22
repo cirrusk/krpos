@@ -238,9 +238,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   popupSearch(searchText: string): void {
     const searchKey = searchText.toUpperCase();
-    // this.searchParams.searchMode = this.searchMode;
-    // this.searchParams.searchText = searchKey; // 2018.06.07 대문자로 변경
-
     if (this.searchMode === 'A') { // 회원검색
       this.selectAccountInfo(searchText);
     } else { // 제품 검색
@@ -379,54 +376,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           if (this.cartList.length > 0) {
-            this.spinner.show();
-
-            this.copyCartEntriesSubscription = this.cartService.copyCartEntries(changeUserInfo, this.cartList).subscribe(
-              resultData => {
-                this.init();
-                this.accountInfo = changeUserInfo;
-                // this.storage.setCustomer(this.accountInfo);
-                this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
-                this.cartInfo = resultData.cartInfo;
-                this.sendRightMenu('a', true, changeUserInfo);
-                this.sendRightMenu('all', true);
-
-                this.resCartInfo = resultData.resCartInfo;
-                this.addCartModel = resultData.resCartInfo.cartModification;
-                this.addCartModel.forEach(model => {
-                  if (model.statusCode === 'success') {
-                    this.productInfo = model.entry;
-                    this.addCartEntry(this.productInfo);
-                  } else {
-                    this.restrictionModel = this.makeRestrictionMessage(model);
-                    this.restrictionMessageList.push(this.restrictionModel);
-                  }
-                });
-
-                if (this.restrictionMessageList.length > 0) {
-                  this.modal.openModalByComponent(RestrictComponent,
-                    {
-                      callerData: { data: this.restrictionMessageList },
-                      closeByEnter: true,
-                      modalId: 'RestictComponent_User'
-                    }
-                  );
-                } else {
-                  this.activeSearchMode('P');
-                  this.getSaveCarts();
-                }
-              },
-              error => {
-                this.spinner.hide();
-                const errdata = Utils.getError(error);
-                if (errdata) {
-                  this.logger.set('cartList.component', `Change User error type : ${errdata.type}`).error();
-                  this.logger.set('cartList.component', `Change User error message : ${errdata.message}`).error();
-                  this.alert.error({ message: `${errdata.message}` });
-                }
-              },
-              () => { this.spinner.hide(); }
-            );
+            this.copyCartByEntries(changeUserInfo, this.cartList);
           } else {
             this.accountInfo = changeUserInfo;
             // this.storage.setCustomer(this.accountInfo);
@@ -437,6 +387,52 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  /**
+   * entry 정보를 이용하여 Cart를 복제
+   *
+   * @param account 사용자 정보
+   * @param cartList 카트 엔트리 정보
+   */
+  private copyCartByEntries(account: Accounts, cartList: Array<OrderEntry>) {
+    this.spinner.show();
+    this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
+      this.init();
+      this.accountInfo = account;
+      // this.storage.setCustomer(this.accountInfo);
+      this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
+      this.cartInfo = resultData.cartInfo;
+      this.sendRightMenu('a', true, account);
+      this.sendRightMenu('all', true);
+      this.resCartInfo = resultData.resCartInfo;
+      this.addCartModel = resultData.resCartInfo.cartModification;
+      this.addCartModel.forEach(model => {
+        if (model.statusCode === 'success') {
+          this.productInfo = model.entry;
+          this.addCartEntry(this.productInfo);
+        } else {
+          this.restrictionModel = this.makeRestrictionMessage(model);
+          this.restrictionMessageList.push(this.restrictionModel);
+        }
+      });
+      if (this.restrictionMessageList.length > 0) {
+        this.modal.openModalByComponent(RestrictComponent, {
+          callerData: { data: this.restrictionMessageList },
+          closeByEnter: true,
+          modalId: 'RestictComponent_User'
+        });
+      } else {
+        this.activeSearchMode('P');
+        this.getSaveCarts();
+      }
+    }, error => {
+      this.spinner.hide();
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.alert.error({ message: `${errdata.message}` });
+      }
+    }, () => { this.spinner.hide(); });
   }
 
   /**
@@ -486,8 +482,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('cartList.component', `Select product info error type : ${errdata.type}`).error();
-            this.logger.set('cartList.component', `Select product info error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         },
@@ -539,8 +533,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.logger.set('cartList.component', `Create cart info error type : ${errdata.type}`).error();
-              this.logger.set('cartList.component', `Create cart info error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
           },
@@ -569,8 +561,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.logger.set('cartList.component', `Update Volume Account error type : ${errdata.type}`).error();
-              this.logger.set('cartList.component', `Update Volume Account error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
           },
@@ -602,8 +592,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('cartList.component', `Get Cart List error type : ${errdata.type}`).error();
-          this.logger.set('cartList.component', `Get Cart List error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },
@@ -637,7 +625,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.addCartSubscription = this.cartService.addCartEntry(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
         result => {
           this.resCartInfo = result;
-
           this.addCartModel = this.resCartInfo.cartModification;
           if (this.addCartModel[0].statusCode === 'success') {
             this.addCartModel.forEach(addModel => {
@@ -660,8 +647,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
-            this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         },
@@ -720,7 +705,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         qty).subscribe(
           result => {
             this.resCartInfo = result;
-
             this.updateCartModel = this.resCartInfo.cartModification[0];
             if (this.updateCartModel.statusCode === 'success') {
               this.productInfo = this.updateCartModel.entry;
@@ -741,8 +725,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.logger.set('cartList.component', `Update item quantity error type : ${errdata.type}`).error();
-              this.logger.set('cartList.component', `Update item quantity error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
           },
@@ -775,8 +757,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.logger.set('cartList.component', `Remove item cart error type : ${errdata.type}`).error();
-              this.logger.set('cartList.component', `Remove item cart error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
           },
@@ -795,7 +775,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.spinner.show();
       this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo ? this.cartInfo.user.uid : '',
         this.cartInfo ? this.cartInfo.code : '').subscribe(
-          result => {
+          () => {
             this.init();
             this.storage.clearClient();
           },
@@ -803,8 +783,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.logger.set('cartList.component', `Remove cart error type : ${errdata.type}`).error();
-              this.logger.set('cartList.component', `Remove cart error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
           },
@@ -831,8 +809,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('cartList.component', `Get Carts error type : ${errdata.type}`).error();
-          this.logger.set('cartList.component', `Get Carts error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },
@@ -847,7 +823,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
       this.spinner.show();
       this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
-        result => {
+        () => {
           this.init();
           this.info.sendInfo('hold', 'add');
           this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
@@ -856,8 +832,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('cartList.component', `Save cart error type : ${errdata.type}`).error();
-            this.logger.set('cartList.component', `Save cart error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         },
@@ -885,8 +859,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('cartList.component', `Restore saved cart error type : ${errdata.type}`).error();
-            this.logger.set('cartList.component', `Restore saved cart error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         },
@@ -916,6 +888,9 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 출력 데이터 생성
+   *
+   * @param page 페이지 번호
+   * @param pagerFlag 페이징 여부
    */
   setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
@@ -982,6 +957,13 @@ export class CartListComponent implements OnInit, OnDestroy {
     return restrictionModel;
   }
 
+  /**
+   * 오른쪽 메뉴에 이벤트 전달하기
+   *
+   * @param modelType 모델타입
+   * @param useflag 사용플래그
+   * @param model 모델객체
+   */
   private sendRightMenu(modelType: string, useflag: boolean, model?: any): void {
     switch (modelType.toUpperCase()) {
       case 'A': { this.posCart.emit({ type: 'account', flag: useflag, data: model }); break; }
@@ -995,6 +977,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 파이토 카페 사용자 조회 - 기타에서 파이토 카페 상품 메뉴 선택했을 경우
+   */
   private searchPhytoCafeAccount() {
     const phytoUserId = this.config.getConfig('phytoCafeUserId');
     if (phytoUserId) {
@@ -1010,6 +995,10 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 회원의 balance(point, re-cash) 정보 조회
+   * 조회후 account 정보에 balance merge
+   */
   private getBalanceInfo() {
     this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.uid).subscribe(
       result => {
