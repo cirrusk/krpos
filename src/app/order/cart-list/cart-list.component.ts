@@ -71,7 +71,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private pagerService: PagerService,
     private spinner: SpinnerService,
     private payment: PaymentService,
-    private messageService: MessageService,
+    private message: MessageService,
     private addCartBroker: AddCartBroker,
     private searchAccountBroker: SearchAccountBroker,
     private restoreCartBroker: RestoreCartBroker,
@@ -143,13 +143,13 @@ export class CartListComponent implements OnInit, OnDestroy {
     );
 
     // 수량 변경
-    this.updateItemQtySubscription = this.updateItemQtyBroker.getInfo().subscribe(
-      result => {
-        if (result) {
-          this.updateItemQtyCart(result.code, result.qty);
-        }
-      }
-    );
+    // this.updateItemQtySubscription = this.updateItemQtyBroker.getInfo().subscribe(
+    //   result => {
+    //     if (result) {
+    //       this.updateItemQtyCart(result.code, result.qty);
+    //     }
+    //   }
+    // );
   }
 
   ngOnInit() {
@@ -238,6 +238,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   popupSearch(searchText: string): void {
     const searchKey = searchText.toUpperCase();
+    this.searchParams.searchMode = this.searchMode;
+    this.searchParams.searchText = searchKey;
     if (this.searchMode === 'A') { // 회원검색
       this.selectAccountInfo(searchText);
     } else { // 제품 검색
@@ -264,7 +266,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     ).subscribe(result => {
       if (result) {
-        this.getAccountAndCartInfo(result);
+        this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
       }
     });
   }
@@ -294,7 +296,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   callUpdateItemQty() {
     if (this.selectedCartNum === -1) {
-      this.alert.warn({ message: this.messageService.get('selectProductUpdate') });
+      this.alert.warn({ message: this.message.get('selectProductUpdate') });
     } else {
       const code = this.currentCartList[this.selectedCartNum].product.code;
       const qty = this.currentCartList[this.selectedCartNum].quantity;
@@ -306,7 +308,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           closeButtonLabel: '취소',
           modalId: 'UpdateItemQtyComponent'
         }
-      );
+      ).subscribe(result => {
+        if (result) {
+          this.updateItemQtyCart(result.code, result.qty);
+        }
+      });
     }
   }
 
@@ -341,7 +347,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    *
    * @param account 회원정보
    */
-  private getAccountAndCartInfo(account: Accounts) {
+  private getAccountAndSaveCart(account: Accounts) {
     this.sendRightMenu('a', true, account);
     if (this.accountInfo) {
       this.changeUser(account);
@@ -362,7 +368,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param changeUserInfo
    */
   private changeUser(changeUserInfo: Accounts) {
-    const msg = this.messageService.get('changeUserAlert');
+    const msg = this.message.get('changeUserAlert');
     this.modal.openConfirm(
       {
         title: '사용자 변경 확인',
@@ -441,15 +447,13 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param accountid 회원아이디(ABO검색 기본)
    */
   private selectAccountInfo(accountid?: string): void {
-    this.searchParams.searchMode = this.searchMode;
-    this.searchParams.searchText = accountid;
     if (accountid) {
       this.spinner.show();
       this.searchSubscription = this.searchService.getAccountList('A', accountid).subscribe(
         result => {
           const accountsize = result.accounts.length;
           if (accountsize === 1) {
-            this.getAccountAndCartInfo(result.accounts[0]);
+            this.getAccountAndSaveCart(result.accounts[0]);
           } else {
             this.callSearchAccount(this.searchParams);
           }
@@ -539,7 +543,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           () => { this.spinner.hide(); }
         );
     } else {
-      this.alert.error({ message: this.messageService.get('notSelectedUser') });
+      this.alert.error({ message: this.message.get('notSelectedUser') });
     }
   }
 
@@ -567,7 +571,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           () => { this.spinner.hide(); }
         );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo') });
     }
   }
 
@@ -605,7 +609,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   addToCart(code?: string): void {
     if (!this.accountInfo) {
-      this.alert.error({ message: this.messageService.get('notSelectedUser') });
+      this.alert.error({ message: this.message.get('notSelectedUser') });
     } else {
       if (this.cartInfo.code === undefined) {
         this.createCartInfo(false, code);
@@ -653,7 +657,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         () => { this.spinner.hide(); }
       );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo') });
     }
   }
 
@@ -731,7 +735,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           () => { this.spinner.hide(); }
         );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo') });
     }
   }
 
@@ -763,7 +767,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           () => { this.spinner.hide(); }
         );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo') });
     }
   }
 
@@ -838,7 +842,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         () => { this.spinner.hide(); }
       );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo') });
     }
   }
 
@@ -865,7 +869,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         () => { this.spinner.hide(); }
       );
     } else {
-      this.alert.error({ message: this.messageService.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo') });
     }
   }
 
@@ -1024,7 +1028,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.callUpdateItemQty();
         } else if (event.keyCode === KeyCode.DELETE) { // 임시 개별 삭제 이벤트
           if (this.selectedCartNum === -1) {
-            this.alert.warn({ message: this.messageService.get('selectProductDelete') });
+            this.alert.warn({ message: this.message.get('selectProductDelete') });
           } else {
             this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
           }
