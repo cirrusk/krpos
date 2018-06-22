@@ -38,6 +38,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
+    this.finishStatus = null;
   }
 
   ngOnInit() {
@@ -99,24 +100,23 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
             result => {
               this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                if (result.statusDisplay === StatusDisplay.CREATED) {
-                  this.paidDate = new Date();
-                  this.finishStatus = 'ok';
+                this.finishStatus = result.statusDisplay;
+                if (this.finishStatus === StatusDisplay.CREATED) {
+                  this.paidDate = result.created ? result.created : new Date();
 
                   setTimeout(() => { // 결제 성공, 변경못하도록 처리
-                    this.payment.nativeElement.blur();
+                    this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
                     this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                     this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
                   }, 5);
 
-                  this.printer.openCashDrawer();
-                } else if (result.statusDisplay === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태
-                  this.finishStatus = 'fail'; // 다른 지불 수단으로 처리
+                  this.printer.openCashDrawer(); // 캐셔 drawer 오픈
+                } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+
                 } else { // CART 삭제된 상태
-                  this.finishStatus = 'fail';
+
                 }
               } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-                this.finishStatus = 'fail';
                 // cart-list.component에 재생성 이벤트 보내서 처리
               }
             },
@@ -183,9 +183,11 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * 복합결제 : 카트 및 클라이언트 갱신
    */
   cartInitAndClose() {
-    if (this.paymentType === 'n' && this.finishStatus === 'ok') { // 일반결제
-      this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-      this.info.sendInfo('orderClear', 'clear');
+    if (this.paymentType === 'n') { // 일반결제
+      if (this.finishStatus === 'ok') {
+        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
+      }
       this.close();
     } else {
       console.log('복합결제일 경우...');
