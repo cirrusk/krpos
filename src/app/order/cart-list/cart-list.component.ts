@@ -152,19 +152,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getAccountAndCartInfo(account: Accounts) {
-    this.sendRightMenu('a', true, account);
-    if (this.accountInfo) {
-      this.changeUser(account);
-    } else {
-      this.accountInfo = account;
-      // this.storage.setCustomer(this.accountInfo);
-      this.activeSearchMode('P');
-      this.getSaveCarts();
-    }
-    this.getBalanceInfo();
-  }
-
   ngOnInit() {
     this.printerService.init();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
@@ -255,7 +242,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     // this.searchParams.searchText = searchKey; // 2018.06.07 대문자로 변경
 
     if (this.searchMode === 'A') { // 회원검색
-      // this.callSearchAccount(this.searchParams);
       this.selectAccountInfo(searchText);
     } else { // 제품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
@@ -354,13 +340,30 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 회원 검색 결과를 받아 화면에 설정하고 Cart 생성
+   *
+   * @param account 회원정보
+   */
+  private getAccountAndCartInfo(account: Accounts) {
+    this.sendRightMenu('a', true, account);
+    if (this.accountInfo) {
+      this.changeUser(account);
+    } else {
+      this.accountInfo = account;
+      // this.storage.setCustomer(this.accountInfo); // getBalanceInfo로 이동
+      this.activeSearchMode('P');
+      this.getSaveCarts();
+    }
+    this.getBalanceInfo();
+  }
+
+  /**
    * 사용자 변경시 cart 복제
    * - 현재 장바구니에 있는 정보를 복제함.
    * @param currentUserInfo
    * @param currentCartInfo
    * @param changeUserInfo
    */
-  // changeUser(currentUserInfo: Accounts, currentCartInfo: CartInfo, changeUserInfo: Accounts) {
   private changeUser(changeUserInfo: Accounts) {
     const msg = this.messageService.get('changeUserAlert');
     this.modal.openConfirm(
@@ -445,6 +448,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = accountid;
     if (accountid) {
+      this.spinner.show();
       this.searchSubscription = this.searchService.getAccountList('A', accountid).subscribe(
         result => {
           const accountsize = result.accounts.length;
@@ -453,7 +457,9 @@ export class CartListComponent implements OnInit, OnDestroy {
           } else {
             this.callSearchAccount(this.searchParams);
           }
-        }
+        },
+        error => { this.logger.set('cart.list.component', `${error}`).error(); },
+        () => { this.spinner.hide(); }
       );
     } else {
       this.callSearchAccount(this.searchParams);
