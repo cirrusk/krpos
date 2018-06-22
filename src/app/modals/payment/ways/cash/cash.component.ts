@@ -184,7 +184,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    */
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === 'ok') {
+      if (this.finishStatus === StatusDisplay.CREATED) {
         this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
         this.info.sendInfo('orderClear', 'clear');
       }
@@ -212,7 +212,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private handleKeyboardCommand(command: KeyCommand) {
     try {
       switch (command.combo) {
-        case 'ctrl+r': { if (this.finishStatus === 'ok') { this[command.name](); } } break;
+        case 'ctrl+r': { if (this.finishStatus === StatusDisplay.CREATED) { this[command.name](); } } break;
       }
     } catch (e) {
       this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
