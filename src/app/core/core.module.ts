@@ -13,7 +13,7 @@ import {
   AuthService, BatchService, CartService, SearchService, TerminalService, MessageService,
   PagerService, AccountService, OrderService, PaymentService
 } from '../service';
-import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchAccountBroker, UpdateItemQtyBroker } from '../broker';
+import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchAccountBroker } from '../broker';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheService, KeyboardService } from '.';
@@ -59,7 +59,6 @@ import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheSe
     SearchAccountBroker,
     RestoreCartBroker,
     CancleOrderBroker,
-    UpdateItemQtyBroker,
     QzHealthChecker,
     DatePipe,
     Logger

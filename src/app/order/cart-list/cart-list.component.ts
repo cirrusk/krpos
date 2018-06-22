@@ -5,7 +5,7 @@ import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
-import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, UpdateItemQtyBroker } from '../../broker';
+import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
@@ -76,7 +76,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     private searchAccountBroker: SearchAccountBroker,
     private restoreCartBroker: RestoreCartBroker,
     private cancleOrderBroker: CancleOrderBroker,
-    private updateItemQtyBroker: UpdateItemQtyBroker,
     private info: InfoBroker,
     private config: Config,
     private printerService: PrinterService,
