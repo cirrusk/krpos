@@ -75,7 +75,7 @@ export const environment = {
   promotionInterval: 9,
 
   // NICE 단말기 설정
-  niceTermBase: "ws://localhost",
-  niceTermPort: "8088",
-  niceTermType: "PCAT"
+  niceTermBase: 'ws://localhost',
+  niceTermPort: '8088',
+  niceTermType: 'PCAT'
 };
