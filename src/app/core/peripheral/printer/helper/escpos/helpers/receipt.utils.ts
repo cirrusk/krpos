@@ -154,36 +154,44 @@ export class ReceiptUtils {
         // 상품 목록 순번
         formatted.push(this.rightAlignedText(product.idx, maxLengths.idx, this.SAFE_SPACE_CHAR));
         formatted.push(this.spaces(1));
+
+        // 상품명 (한줄 자르기)
+        const idxLen = maxLengths.idx + 1;
+        const croppedProductName: string = this.substrUnicode(product.productName, PosPrinterConstants.LineBytes - idxLen, 0);
+        formatted.push(croppedProductName);
+
+        // 개행
+        formatted.push(this.END_TEXTLINE);
+        formatted.push(this.START_TEXTLINE);
+
+        // 순번 컬럼 비우기
+        formatted.push(this.spaces(idxLen));
         
         // SKU code
         formatted.push(this.rightAlignedText(product.skuCode, maxLengths.skuCode));
         formatted.push(this.spaces(1));
 
-        // 상품명
-        const croppedProductName: string = this.substrUnicode(product.productName, maxLengths.productName, 0);
-        formatted.push(croppedProductName);
-
-        const croppedLen: number = this.getTextLengthUTF8(croppedProductName);
+        // const croppedLen: number = this.getTextLengthUTF8(croppedProductName);
         
-        // 개행 여부 판단
-        // 상품명이 긴 경우 2라인에 출력하자는 요건
-        if (product.productName.length > maxLengths.productName) {
-            // 개행
-            formatted.push(this.END_TEXTLINE);
-            formatted.push(this.START_TEXTLINE);
+        // // 개행 여부 판단
+        // // 상품명이 긴 경우 2라인에 출력하자는 요건
+        // if (product.productName.length > maxLengths.productName) {
+        //     // 개행
+        //     formatted.push(this.END_TEXTLINE);
+        //     formatted.push(this.START_TEXTLINE);
 
-            formatted.push(this.genSafeLeadingSpaces(maxLengths.idx + 1 + maxLengths.skuCode + 1));
+        //     formatted.push(this.genSafeLeadingSpaces(maxLengths.idx + 1 + maxLengths.skuCode + 1));
 
-            // substr 은 한글과 영/숫자를 바이트 위치가 아니라 글자 위치 자체로 계산
-            const startPos: number = croppedProductName.length;
+        //     // substr 은 한글과 영/숫자를 바이트 위치가 아니라 글자 위치 자체로 계산
+        //     const startPos: number = croppedProductName.length;
 
-            const nextLine: string = this.substrUnicode(product.productName, maxLengths.productName, startPos);
-            formatted.push(nextLine);
-        }
+        //     const nextLine: string = this.substrUnicode(product.productName, maxLengths.productName, startPos);
+        //     formatted.push(nextLine);
+        // }
 
-        // 잘린 상품명에 모자란 바이트를 " " 로 채움. 끝의 1 은 단가와 띄어쓰기
-        const paddedLen: number = maxLengths.productName - croppedLen;
-        formatted.push(this.spaces(paddedLen + 1));
+        // // 잘린 상품명에 모자란 바이트를 " " 로 채움. 끝의 1 은 단가와 띄어쓰기
+        // const paddedLen: number = maxLengths.productName - croppedLen;
+        // formatted.push(this.spaces(paddedLen + 1));
 
         // 상품 단가
         formatted.push(this.rightAlignedText(product.price, maxLengths.price));

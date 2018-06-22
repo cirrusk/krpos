@@ -18,10 +18,21 @@
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
     <!--button (click)="clickHtml()">Print</button-->
-    <a href class="btn02_blue" (click)="!!clickRaw()">Print Test (Debug)</a><br>
-    <a href class="btn02_blue" (click)="!!openCashDrawer()">Open Cashdrawer</a><br>
-    <a href class="btn02_blue" (click)="!!readXmlTemplates()">XML Read</a><br>
+    <a href class="btn02_blue" (click)="!!clickRaw()">Print Test (Debug)</a>&nbsp;
+    <a href class="btn02_blue" (click)="!!openCashDrawer()">Open Cashdrawer</a>&nbsp;
+    <a href class="btn02_blue" (click)="!!readXmlTemplates()">XML Read</a>&nbsp;
     <a href class="btn02_blue" (click)="!!testReceiptwithVO()">Show!!!</a>
           </td>
       </tr>
-    </table> 
+    </table>
+    금액 : <input type="text" [(ngModel)]="amount" text="10000"/><br>
+    할부기간 : <input type="text" [(ngModel)]="installment" text="0"/><br>
+    <input type="button" value="결제" (click)="!!niceApproval()"/>
+    <input type="text" value="{{approvalResult}}"/><br>
+    <br>
+    승인번호 : <input type="text" value="{{approvalNumber}}"/><br>
+    결제일시 : <input type="text" value="{{approvalDateTime}}"/><br>
+    <input type="button" value="취소" (click)="!!niceCancel()"/>
+    <input type="text" value="{{cancelResult}}"/><br>
+
+

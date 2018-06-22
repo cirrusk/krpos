@@ -62,5 +62,10 @@ export const environment = {
   hybrisCheckUrl: 'https://127.0.0.1:9002/api/',
   cartListCount: 8,
   noticeInterval: 7,
-  promotionInterval: 9
+  promotionInterval: 9,
+
+  // NICE 단말기 설정
+  niceTermBase: "ws://localhost",
+  niceTermPort: "8088",
+  niceTermType: "PCAT"
 };
