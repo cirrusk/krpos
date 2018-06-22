@@ -1003,7 +1003,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 조회후 account 정보에 balance merge
    */
   private getBalanceInfo() {
-    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.uid).subscribe(
+    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
       result => {
         if (result) {
           this.balance = result[0].amount;
