@@ -111,11 +111,11 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
                   this.printer.openCashDrawer();
                 } else if (result.statusDisplay === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태
-                  this.finishStatus = 'fail';
+                  this.finishStatus = 'fail'; // 다른 지불 수단으로 처리
                 } else { // CART 삭제된 상태
                   this.finishStatus = 'fail';
                 }
-              } else { // 결제정보 없는 경우
+              } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                 this.finishStatus = 'fail';
               }
             },
