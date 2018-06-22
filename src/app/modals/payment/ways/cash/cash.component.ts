@@ -99,8 +99,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
             result => {
               this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+              this.finishStatus = result.statusDisplay;
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                this.finishStatus = result.statusDisplay;
                 if (this.finishStatus === StatusDisplay.CREATED) {
                   this.paidDate = result.created ? result.created : new Date();
 
