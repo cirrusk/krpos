@@ -440,7 +440,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 회원 검색
+   * 회원 검색 ->  결과 값이 1일 경우 display and create cart
    *
    * @param accountid 회원아이디(ABO검색 기본)
    */
@@ -467,8 +467,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 제품 검색
-   *  ->  결과 값이 1일 경우 Add to cart
+   * 제품 검색 ->  결과 값이 1일 경우 Add to cart
    */
   private selectProductInfo(productCode?: string): void {
     if (productCode) {
