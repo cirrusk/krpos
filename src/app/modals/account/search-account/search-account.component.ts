@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService } from '../../../core';
+import { ModalComponent, ModalService, Logger, AlertService, SpinnerService } from '../../../core';
 
 import { SearchService, PagerService } from '../../../service';
 import { SearchAccountBroker } from '../../../broker';
@@ -16,30 +16,22 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private PAGE_SIZE = 10;
   private searchSubscription: Subscription;
   private searchListSubscription: Subscription;
-  // private cartInfoSubscription: Subscription;
   private account: Accounts;                 // 회원 정보
   private activeNum: number;                 // 선택 로우 번호
   private activeCode: string;                // 선택 코드
-  // private searchMemberType: string;          // 회원 유형
-
-  // private currentPage: number;               // 현재 페이지 번호
   private pager: Pagination;                 // pagination 정보
   currentLeftAccountList: Accounts[];        // 왼쪽 출력 리스트
   currentRightAccountList: Accounts[];       // 오른쪽 출력 리스트
-
   accountList: AccountList;                  // 회원 정보 리스트
   totalCnt: number;                          // 검색 총 합계
   paymentType: string;
   searchText: string;                        // 검색어
   constructor(modalService: ModalService,
-    // private modal: Modal,
     private logger: Logger,
-    private storage: StorageService,
     private searchService: SearchService,
     private pagerService: PagerService,
     private alert: AlertService,
     private spinner: SpinnerService,
-    // private searchBroker: SearchBroker,
     private searchAccountBroker: SearchAccountBroker
   ) {
     super(modalService);
@@ -149,8 +141,9 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
           return obj.parties[0].uid === uid;
         }
       );
-      this.account = this.accountList.accounts[existedIdx];
-      this.searchAccountBroker.sendInfo(this.paymentType, this.account);
+      // this.account = this.accountList.accounts[existedIdx];
+      this.result = this.accountList.accounts[existedIdx]; // result로 본창에 전송
+      // this.searchAccountBroker.sendInfo(this.paymentType, this.account);
       this.close();
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });

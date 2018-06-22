@@ -95,27 +95,14 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // 사용자 선택
-    this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
-      result => {
-        if (result) {
-          if (this.paymentType === '') {
-            this.paymentType = result.type;
-          }
-
-          this.sendRightMenu('a', true, result.data);
-          if (this.accountInfo) {
-            this.changeUser(result.data);
-          } else {
-            this.accountInfo = result.data;
-            // this.storage.setCustomer(this.accountInfo);
-            this.activeSearchMode('P');
-            this.getSaveCarts();
-          }
-          this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
-        }
-      }
-    );
+    // 사용자 선택 : 팝업에서 처리된 결과를 받음.
+    // this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
+    //   result => {
+    //     if (result) {
+    //       this.getAccountAndCartInfo(result);
+    //     }
+    //   }
+    // );
 
     // 제품 선택
     this.productSubscription = this.addCartBroker.getInfo().subscribe(
@@ -163,6 +150,19 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  private getAccountAndCartInfo(account: Accounts) {
+    this.sendRightMenu('a', true, account);
+    if (this.accountInfo) {
+      this.changeUser(account);
+    } else {
+      this.accountInfo = account;
+      // this.storage.setCustomer(this.accountInfo);
+      this.activeSearchMode('P');
+      this.getSaveCarts();
+    }
+    this.getBalanceInfo();
   }
 
   ngOnInit() {
@@ -251,11 +251,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   popupSearch(searchText: string): void {
     const searchKey = searchText.toUpperCase();
-    this.searchParams.searchMode = this.searchMode;
-    this.searchParams.searchText = searchKey; // 2018.06.07 대문자로 변경
+    // this.searchParams.searchMode = this.searchMode;
+    // this.searchParams.searchText = searchKey; // 2018.06.07 대문자로 변경
 
     if (this.searchMode === 'A') { // 회원검색
-      this.callSearchAccount(this.searchParams);
+      // this.callSearchAccount(this.searchParams);
+      this.selectAccountInfo(searchText);
     } else { // 제품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
         this.createCartInfo(true, searchKey);
@@ -278,7 +279,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         paymentType: this.paymentType !== '' ? this.paymentType : 'n',
         modalId: 'SearchAccountComponent'
       }
-    );
+    ).subscribe(result => {
+      if (result) {
+        this.getAccountAndCartInfo(result);
+      }
+    });
   }
 
   /**
@@ -432,33 +437,61 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 회원 검색
+   *
+   * @param accountid 회원아이디(ABO검색 기본)
+   */
+  private selectAccountInfo(accountid?: string): void {
+    this.searchParams.searchMode = this.searchMode;
+    this.searchParams.searchText = accountid;
+    if (accountid) {
+      this.searchSubscription = this.searchService.getAccountList('A', accountid).subscribe(
+        result => {
+          const accountsize = result.accounts.length;
+          if (accountsize === 1) {
+            this.getAccountAndCartInfo(result.accounts[0]);
+          } else {
+            this.callSearchAccount(this.searchParams);
+          }
+        }
+      );
+    } else {
+      this.callSearchAccount(this.searchParams);
+    }
+  }
+
+  /**
    * 제품 검색
    *  ->  결과 값이 1일 경우 Add to cart
    */
   private selectProductInfo(productCode?: string): void {
-    this.spinner.show();
-    this.productInfoSubscription = this.searchService.getBasicProductInfo('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
-      result => {
-        const totalCount = result.pagination.totalResults;
-
-        if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatusForStock === undefined) {
-          this.addCartEntries(productCode);
-        } else {
-          this.searchParams.data = this.cartInfo;
-          this.callSearchProduct(this.searchParams);
-        }
-      },
-      error => {
-        this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('cartList.component', `Select product info error type : ${errdata.type}`).error();
-          this.logger.set('cartList.component', `Select product info error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
-        }
-      },
-      () => { this.spinner.hide(); }
-    );
+    if (productCode) {
+      this.spinner.show();
+      this.productInfoSubscription = this.searchService.getBasicProductInfo('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
+        result => {
+          const totalCount = result.pagination.totalResults;
+          if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatusForStock === undefined) {
+            this.addCartEntries(productCode);
+          } else {
+            this.searchParams.data = this.cartInfo;
+            this.callSearchProduct(this.searchParams);
+          }
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('cartList.component', `Select product info error type : ${errdata.type}`).error();
+            this.logger.set('cartList.component', `Select product info error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
+    } else { // 검색어가 없을 경우는 바로 검색팝업
+      this.searchParams.data = this.cartInfo;
+      this.callSearchProduct(this.searchParams);
+    }
   }
 
   /**
