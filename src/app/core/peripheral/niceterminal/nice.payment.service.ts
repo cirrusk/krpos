@@ -60,7 +60,7 @@ export class NicePaymentService {
         if (approvalDate.length > 6) {
             approvalDate = approvalDate.slice(0, 6);
         }
-        
+
         const requestVO: CardCancelRequest = CardPopulator.fillCancelReqVO(amount, approvalNumber, approvalDate);
 
         // 로깅 -> 추후 Persistence 고려
