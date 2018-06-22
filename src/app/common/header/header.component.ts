@@ -223,8 +223,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
               this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
             }
           );
-        },
-        error => { }
+        }
       );
     }
   }
@@ -255,8 +254,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
-            this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         }
@@ -364,33 +361,34 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 3-1. 아무 처리도 하지 않음.
    */
   private checkBatchAfterLogin() {
-    this.batchsubscription = this.batch.getBatch().subscribe(result => {
-      if (result && Utils.isNotEmpty(result.batchNo)) { // 닫지 않은 배치가 있으면
-        this.logger.set('header.component', 'exist started batch').debug();
-        const batterm: TerminalInfo = result.terminal;
-        const sesterm: TerminalInfo = this.storage.getTerminalInfo();
-        if ((batterm && sesterm) && batterm.id === sesterm.id) { // 같은 POS 기기, Batch 유지
-          this.logger.set('header.component', 'exist started batch and same pos, load existing batch info!!!').debug();
-          this.storage.setBatchInfo(result);
-          this.info.sendInfo('bat', result);
-        } else { // 다른 POS 기기 - 팝업 출력
-          this.logger.set('header.component', 'exist started batch and different pos, clear and start batch!!!').debug();
-          this.modal.openModalByComponent(BatchComponent, {
-            closeByEnter: false,
-            closeByEscape: false,
-            closeByClickOutside: false,
-            modalId: 'BATCH_CHECK'
-          }).subscribe(rst => { // 무조건 로직을 태워서 배치를 삭제해야 하므로 조건 체크 불필요.
-            this.logger.set('header.component', `end existing batch, batch no : ${result.batchNo}`).debug();
-            this.batchsubscription = this.batch.endBatch(result.batchNo).subscribe(data => {
-              this.logger.set('header.component', 'clear and start batch info').debug();
-              this.storage.removeBatchInfo();
-              this.info.sendInfo('bat', { batchNo: null });
+    this.batchsubscription = this.batch.getBatch().subscribe(
+      result => {
+        if (result && Utils.isNotEmpty(result.batchNo)) { // 닫지 않은 배치가 있으면
+          this.logger.set('header.component', 'exist started batch').debug();
+          const batterm: TerminalInfo = result.terminal;
+          const sesterm: TerminalInfo = this.storage.getTerminalInfo();
+          if ((batterm && sesterm) && batterm.id === sesterm.id) { // 같은 POS 기기, Batch 유지
+            this.logger.set('header.component', 'exist started batch and same pos, load existing batch info!!!').debug();
+            this.storage.setBatchInfo(result);
+            this.info.sendInfo('bat', result);
+          } else { // 다른 POS 기기 - 팝업 출력
+            this.logger.set('header.component', 'exist started batch and different pos, clear and start batch!!!').debug();
+            this.modal.openModalByComponent(BatchComponent, {
+              closeByEnter: false,
+              closeByEscape: false,
+              closeByClickOutside: false,
+              modalId: 'BATCH_CHECK'
+            }).subscribe(() => { // 무조건 로직을 태워서 배치를 삭제해야 하므로 조건 체크 불필요.
+              this.logger.set('header.component', `end existing batch, batch no : ${result.batchNo}`).debug();
+              this.batchsubscription = this.batch.endBatch(result.batchNo).subscribe(data => {
+                this.logger.set('header.component', 'clear and start batch info').debug();
+                this.storage.removeBatchInfo();
+                this.info.sendInfo('bat', { batchNo: null });
+              });
             });
-          });
+          }
         }
-      }
-    },
+      },
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {

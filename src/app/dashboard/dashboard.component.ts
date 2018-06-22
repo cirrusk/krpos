@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Modal, Logger, StorageService, AlertService, AlertState, SpinnerService, KeyboardService, KeyCommand } from '../core';
-import { BatchService } from '../service/batch.service';
+import { Modal, Logger, StorageService, AlertService, AlertState, SpinnerService } from '../core';
+import { BatchService } from '../service';
 import { InfoBroker } from '../broker';
 import { AccessToken, LockType } from '../data';
 import { Utils } from '../core/utils';
@@ -22,7 +22,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private statssubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
-  private keyboardsubscription: Subscription;
   private orderCount: number;
   constructor(
     private modal: Modal,
@@ -31,16 +30,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private alert: AlertService,
     private spinner: SpinnerService,
-    private keyboard: KeyboardService,
     private logger: Logger,
     private router: Router) {
     this.orderCount = 0;
   }
 
   ngOnInit() {
-    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
-      this.handleKeyboardCommand(c);
-    });
     this.tokensubscription = this.info.getInfo().subscribe(
       (result) => {
         const type = result && result.type;
@@ -78,7 +73,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
-    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   /**
@@ -108,8 +102,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.spinner.hide();
           const errdt = Utils.getError(error);
           if (errdt) {
-            this.logger.set('dashboard.component', `start batch error type : ${errdt.type}`).error();
-            this.logger.set('dashboard.component', `start batch error message : ${errdt.message}`).error();
             this.alert.error({ message: `${errdt.message}` });
           }
         },
@@ -148,18 +140,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (result) {
           this.spinner.show();
           this.logger.set('dashboard.component', 'stop shift, stop batch...').debug();
-          this.batchsubscription = this.batch.endBatch().subscribe(data => {
-            this.storage.removeBatchInfo();
-            this.info.sendInfo('bat', { batchNo: null });
-            this.modal.openConfirm({
-              title: 'Stop Shift',
-              message: `배치 정보 저장이 완료되었습니다.`,
-              actionButtonLabel: '확인',
-              closeButtonLabel: '취소',
-              closeByClickOutside: false,
-              modalId: 'STOPSHIFT_LAST'
-            });
-          },
+          this.batchsubscription = this.batch.endBatch().subscribe(
+            () => {
+              this.storage.removeBatchInfo();
+              this.info.sendInfo('bat', { batchNo: null });
+              this.modal.openConfirm({
+                title: 'Stop Shift',
+                message: `배치 정보 저장이 완료되었습니다.`,
+                actionButtonLabel: '확인',
+                closeButtonLabel: '취소',
+                closeByClickOutside: false,
+                modalId: 'STOPSHIFT_LAST'
+              });
+            },
             () => { this.spinner.hide(); });
         }
       });
@@ -205,24 +198,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (result) {
           if (isloginBatch) {
             this.spinner.show();
-            this.batchsubscription = this.batch.endBatch().subscribe(data => {
-              this.storage.logout();
-              // this.storage.removeEmployeeName(); // client 담당자 삭제
-              this.storage.clearClient();
-              this.modal.openConfirm({
-                title: 'POS 종료',
-                message: `배치 정보 저장이 완료되었습니다.`,
-                actionButtonLabel: '확인',
-                closeButtonLabel: '취소',
-                closeByClickOutside: false,
-                modalId: 'POSEND_LAST'
-              }).subscribe(ret => {
-                if (ret) {
-                  this.storage.logout();
-                  Utils.kioskModeEnd();
-                }
-              });
-            },
+            this.batchsubscription = this.batch.endBatch().subscribe(
+              () => {
+                this.storage.logout();
+                // this.storage.removeEmployeeName(); // client 담당자 삭제
+                this.storage.clearClient();
+                this.modal.openConfirm({
+                  title: 'POS 종료',
+                  message: `배치 정보 저장이 완료되었습니다.`,
+                  actionButtonLabel: '확인',
+                  closeButtonLabel: '취소',
+                  closeByClickOutside: false,
+                  modalId: 'POSEND_LAST'
+                }).subscribe(ret => {
+                  if (ret) {
+                    this.storage.logout();
+                    Utils.kioskModeEnd();
+                  }
+                });
+              },
               (error) => { },
               () => { this.spinner.hide(); });
           } else {
@@ -233,59 +227,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     );
-  }
-
-  escapetest(evt: KeyboardEvent) {
-    console.log('****** escape key press event... ' + evt.keyCode);
-  }
-
-  right(evt: KeyboardEvent) {
-    console.log('****** right arrow key press event... ' + evt.keyCode);
-  }
-
-  tab(evt: KeyboardEvent) {
-    console.log('****** tab... ' + evt.keyCode);
-    evt.preventDefault();
-  }
-
-  up(evt: KeyboardEvent) {
-    console.log('***** page up... ' + evt.keyCode);
-  }
-
-  down(evt: KeyboardEvent) {
-    console.log('***** page down... ' + evt.keyCode);
-  }
-
-  backspace(evt: KeyboardEvent) {
-    console.log('***** backspace... ' + evt.keyCode);
-  }
-
-  del(evt: KeyboardEvent) {
-    console.log('***** delete... ' + evt.keyCode);
-  }
-
-  /**
-   * 키보드 이벤트 명령어 실행
-   *
-   * 명령어 문자열을 함수로 전환할 수 없는 구조이므로 아래와 같이 처리 진행
-   * 1) BackOffice 에서 키보드 콤보 이벤트 와 명령어 모음(셀렉트 박스)에서 선택하여 프로그래머블 키보드 매핑.
-   * 2) POS에서는 각각의 Component에서 처리할 이벤트를 지정하고 명령어 모음에서 찾는 함수를 구현하여 실행할 함수를 매핑.
-   *
-   * @param command 키보드 이벤트 명령어
-   */
-  handleKeyboardCommand(command: KeyCommand) {
-    try {
-      // 1. 정의된 키 이벤트 중 지정한 키 이벤트에 대해서만 함수 호출
-      // switch (command.combo) {
-      //   case 'escape': { this[command.name](); } break;
-      //   case 'right': { this[command.name](); } break;
-      // }
-
-      // 2. 전체 정의된 키 이벤트에 대해서 함수 호출
-      this[command.name](command.ev);
-    } catch (e) {
-      this.logger.set('dashboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
-    }
   }
 
 }
