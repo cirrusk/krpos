@@ -16,6 +16,8 @@ import { ProductDataProvider } from './product-search/product-data-provider';
 import { CartListComponent } from './order/cart-list/cart-list.component';
 import { PosReceiptPrintComponent } from './order/pos-receipt-print/pos-receipt-print.component';
 import { ClickObserverComponent } from './study/click-observer/click-observer.component';
+import { NicePaymentService } from '../../core/peripheral/niceterminal/nice.payment.service';
+import { NiceDriver } from '../../core/peripheral/niceterminal/nice.driver';
 
 @NgModule({
     declarations: [
@@ -38,7 +40,9 @@ import { ClickObserverComponent } from './study/click-observer/click-observer.co
     EscPos,
     FormatReader,
     ReceiptDataProvider,
-    ReceiptService
+    ReceiptService,
+    NiceDriver,
+    NicePaymentService
   ]
 })
 export class TestModule { }

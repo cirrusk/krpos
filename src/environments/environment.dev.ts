@@ -75,6 +75,6 @@ export const environment = {
 
   // NICE 단말기 설정
   niceTermBase: "ws://localhost",
-  niceTermPort: "18081",
+  niceTermPort: "8088",
   niceTermType: "PCAT"
 };

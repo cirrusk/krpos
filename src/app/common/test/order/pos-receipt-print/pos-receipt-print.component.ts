@@ -9,6 +9,11 @@ import { PaymentsVO } from '../../../../data/models/receipt/payments';
 import { PriceVO } from '../../../../data/models/receipt/price';
 import { ProductEntryVO } from '../../../../data/models/receipt/product';
 import { ReceiptVO } from '../../../../data/models/receipt/receipt.vo';
+import { NicePaymentService } from '../../../../core/peripheral/niceterminal/nice.payment.service';
+import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/card.approval.result';
+import { Subject } from 'rxjs';
+import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
+import { CardCancelRequest } from '../../../../core/peripheral/niceterminal/vo/card.cancel.reqeust';
 
 @Component({
     selector: 'pos-receipt-print',
@@ -18,6 +23,13 @@ import { ReceiptVO } from '../../../../data/models/receipt/receipt.vo';
 export class PosReceiptPrintComponent implements OnInit {
     printingText: string;
     prtCmd: PrinterCommands;
+    amount: string;
+    installment: string;
+    approvalResult: string;
+    approvalNumber: string;
+    approvalDateTime: string;
+    cancelResult: string;
+
     receiptTempData: any = {
         shopInfo: {
             name: '강서 AP',
@@ -167,7 +179,8 @@ export class PosReceiptPrintComponent implements OnInit {
         ]
     };
 
-    constructor(private printerService: PrinterService, private receiptService: ReceiptService) {
+    constructor(private printerService: PrinterService, private receiptService: ReceiptService,
+                private paymentService: NicePaymentService) {
         this.prtCmd = new PrinterCommands();
     }
 
@@ -238,6 +251,32 @@ export class PosReceiptPrintComponent implements OnInit {
 
         const text = this.receiptService.aboNormal(receitVo);
         this.printerService.printText(text);
+    }
+
+    public niceApproval() {
+        const resultNotifier: Subject<CardApprovalResult> = this.paymentService.cardApproval(this.amount, this.installment);
+        console.log("Component Listening on : " + resultNotifier);
+        resultNotifier.subscribe(
+            (res: CardApprovalResult) => {
+                this.approvalResult = res.stringify();
+                this.approvalNumber = res.approvalNumber;
+                this.approvalDateTime = res.approvalDateTime;
+            }
+        );
+        // console.log("Disconnecting : " + resultNotifier);
+        // resultNotifier.unsubscribe();
+    }
+
+    public niceCancel() {
+        const resultNotifier: Subject<CardCancelResult> = this.paymentService.cardCancel(this.amount, this.approvalNumber, this.approvalDateTime);
+
+        resultNotifier.subscribe(
+            (res: CardCancelResult) => {
+                console.log(res.stringify);
+                this.cancelResult = res.stringify();
+            }
+        );
+        // resultNotifier.unsubscribe();
     }
 
 }

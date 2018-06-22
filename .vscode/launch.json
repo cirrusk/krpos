@@ -4,16 +4,18 @@
     // 자세한 내용을 보려면 https://go.microsoft.com/fwlink/?linkid=830387을(를) 방문하세요.
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "chrome",
             "request": "launch",
             "name": "크롬 디버그",
-            "url": "http://localhost:4200",
+            "url": "http://localhost:4200/test",
             "webRoot": "${workspaceRoot}",
-            "runtimeExecutable": "C://Program Files (x86)//Google//Chrome Beta//Application//chrome.exe",
+            "runtimeExecutable": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
             "runtimeArgs": [
                 "--nolazy",
                 "--user-data-dir",
+                "-no-sandbox",
                 //"--remote-debugging-port=9222"
             ],
             "port": 9222,

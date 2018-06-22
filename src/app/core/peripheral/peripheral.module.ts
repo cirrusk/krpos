@@ -7,6 +7,8 @@ import { PrinterDriver } from './printer/printer.driver';
 import { QZDriver } from './qz/qz.driver';
 import { NetworkService, PrinterService } from '..';
 import { FormatReader } from './common/format-reader';
+import { NiceDriver } from './niceterminal/nice.driver';
+import { NicePaymentService } from './niceterminal/nice.payment.service';
 
 
 @NgModule({
@@ -20,7 +22,9 @@ import { FormatReader } from './common/format-reader';
     NetworkDriver,
     PrinterService,
     NetworkService,
-    FormatReader
+    FormatReader,
+    NiceDriver,
+    NicePaymentService
   ],
   declarations: []
 })
