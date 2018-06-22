@@ -40,6 +40,7 @@ import { CashReceiptComponent } from './payment/ways/cash-receipt/cash-receipt.c
 import { ClientAccountComponent } from './account/client-account/client-account.component';
 import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.component';
 import { CompletePaymentComponent } from './payment/complete-payment/complete-payment.component';
+import { OrderDetailComponent } from './order/order-detail/order-detail.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { CompletePaymentComponent } from './payment/complete-payment/complete-pa
     CashReceiptComponent,
     ClientAccountComponent,
     CouponCheckComponent,
-    CompletePaymentComponent
+    CompletePaymentComponent,
+    OrderDetailComponent
   ],
   imports: [
     CommonModule,
@@ -118,7 +120,8 @@ import { CompletePaymentComponent } from './payment/complete-payment/complete-pa
     CashReceiptComponent,
     ClientAccountComponent,
     CouponCheckComponent,
-    CompletePaymentComponent
+    CompletePaymentComponent,
+    OrderDetailComponent
   ]
 })
 export class ModalsModule {

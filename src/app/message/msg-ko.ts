@@ -9,5 +9,6 @@ export const LANG_KO_MSGS = {
     'selectProductDelete' : '삭제할 제품을 선택 해 주세요.',
     'selectProductUpdate' : '수정할 제품을 선택 해 주세요.',
     'notinputPaid' : '내신 금액을 입력해 주세요.',
-    'notEnoughPaid' : '내신 금액이 결제금액보다 작습니다.'
+    'notEnoughPaid' : '내신 금액이 결제금액보다 작습니다.',
+    'noSearchText' : '검색어를 입력해주세요.'
 };

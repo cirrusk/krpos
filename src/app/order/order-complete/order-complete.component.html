@@ -4,32 +4,32 @@
           <div class="srch_wrap">
               <h1 class="tit_h1">주문완료 내역</h1>
               <p class="txt01">현 ABC에서는 현재 인식된 고객의 60일간 픽업/예약주문에 대한 조회만 가능합니다.</p>
-              <label class="inp_rd type01" for="sk1">ABO 번호<input type="radio" name="sk" id="sk1" checked><span class="checkmark"></span></label>
-              <label class="inp_rd type01" for="sk2">아이디<input type="radio" name="sk" id="sk2"><span class="checkmark"></span></label>
-              <label class="inp_rd type01" for="sk3">휴대폰 번호<input type="radio" name="sk" id="sk3"><span class="checkmark"></span></label>
+              <label class="inp_rd type01" for="sk1">ABO 번호<input #searchType1 type="radio" name="sk" id="sk1" value="abo" checked (change)="setSearchType(searchType1.value)"><span class="checkmark"></span></label>
+              <label class="inp_rd type01" for="sk2">아이디<input #searchType2 type="radio" name="sk" id="sk2" value="id" (change)="setSearchType(searchType2.value)"><span class="checkmark"></span></label>
+              <label class="inp_rd type01" for="sk3">휴대폰 번호<input #searchType3 type="radio" name="sk" id="sk3" value="phone" (change)="setSearchType(searchType3.value)"><span class="checkmark"></span></label>
               <div class="mbinfo_search">
                   <select #searchMemberType title="회원구분">
                     <option value="A">ABO회원</option>
                     <option value="M">일반회원</option>
                     <option value="C">소비자</option>
                   </select>
-                  <input type="text" style="width:480px">
-                  <button type="button" class="btn01_blue">확인</button>
+                  <input #inputSearchText type="text" style="width:480px" (keydown.enter)="searchOrder(searchMemberType.value,inputSearchText.value)">
+                  <button type="button" class="btn01_blue" (click)="searchOrder(searchMemberType.value,inputSearchText.value)">확인</button>
               </div>
           </div>
           <!-- //검색영역 -->
 
           <!-- 검색결과 영역 : 검색 후-->
           <div class="mbinfo_list">
-              <p class="txt"><strong>총 <span class="fc_red">35</span>건</strong>이 검색되었습니다.</p>
+              <p class="txt"><strong>총 <span class="fc_red">{{orderHistoryList.orders.length}}</span>건</strong>이 검색되었습니다.</p>
               <span class="btn_wrap">
                   <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
-                  <a href="#" class="ico_comm prev03">이전</a>
-                  <a href="#" class="ico_comm next03 on">다음</a>
+                  <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== 0" class="ico_comm prev03">이전</a>
+                  <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== orderHistoryList.pagination.totalPages - 1" class="ico_comm next03">다음</a>
                   <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
               </span>
               <!-- 검색결과 : 있음(페이지당 회원 최대 수 7개) -->
-              <div class="tbl_col bg_bar">
+              <div class="tbl_col bg_bar" *ngIf="orderHistoryList.orders.length > 0; else elseTemplate">
                   <table>
                       <caption>조회결과</caption>
                       <colgroup>
@@ -56,84 +56,26 @@
                       </thead>
                       <tbody>
                           <!-- 회원 선택시 tr에 on클래스 추가 -->
-                          <tr class="on">
-                              <td><span>1</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동</span></td>
-                              <td class="ar"><span>999,120,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>일반</span></td>
-                              <td><span>결제완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
-                          <tr>
-                              <td><span>2</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동동동동동동</span></td>
-                              <td class="ar"><span>20,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>픽업</span></td>
-                              <td><span>주문완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
-                          <tr>
-                              <td><span>3</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동동동동동동</span></td>
-                              <td class="ar"><span>20,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>픽업</span></td>
-                              <td><span>주문완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
-                          <tr>
-                              <td><span>4</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동동동동동동</span></td>
-                              <td class="ar"><span>20,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>픽업</span></td>
-                              <td><span>주문완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
-                          <tr>
-                              <td><span>5</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동동동동동동</span></td>
-                              <td class="ar"><span>20,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>픽업</span></td>
-                              <td><span>주문완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
-                          <tr>
-                              <td><span>6</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동동동동동동</span></td>
-                              <td class="ar"><span>20,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>픽업</span></td>
-                              <td><span>주문완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
-                          <tr>
-                              <td><span>7</span></td>
-                              <td><span>23232017</span></td>
-                              <td><span>748002</span></td>
-                              <td><span class="elips mx90 ac">김길동동동동동동</span></td>
-                              <td class="ar"><span>20,000원</span></td>
-                              <td><span>18/01/30  15:53:55</span></td>
-                              <td><span>픽업</span></td>
-                              <td><span>주문완료 <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
-                          </tr>
+                          <tr [class.on]="selectedOrderNum == i" *ngFor="let order of orderHistoryList.orders; let i = index;" (click)="activeRowCart(i, order.code, order.user.uid)">
+                              <td><span>{{i+1}}</span></td>
+                              <td><span>{{order.code}}</span></td>
+                              <td><span>{{order.user.uid}}</span></td>
+                              <td><span class="elips mx90 ac">{{order.user.name}}</span></td>
+                              <td class="ar"><span>{{order.total.value | number}}원</span></td>
+                              <td><span>{{order.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>
+                              <td><span>{{order.deliveryMode.code}}</span></td>
+                              <td><span>{{order.status}} <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
+                          </tr>                         
                       </tbody>
                   </table>
               </div>
               <!-- // 검색결과 : 있음(페이지당 회원 최대 수 7개) -->
 
-              <!-- 검색결과 : 없음
-               <p class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
-              //검색결과 : 없음 -->
+              <!-- 검색결과 : 없음 -->
+              <ng-template #elseTemplate>
+                <p class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
+              </ng-template>              
+              <!-- 검색결과 : 없음 -->
 
               <div class="btn_bottom">
                   <span class="fr">

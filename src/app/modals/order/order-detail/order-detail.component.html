@@ -1,0 +1,105 @@
+<div class="pop_wrap pop_l">
+    <div class="pop_header">
+        <h1>주문완료 상세 내역</h1>
+        <button type="button" class="ico_comm pop_close01" (click)="close()">닫기</button>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content type02">
+            <p class="txt02">선택된 주문 상세 정보는 아래와 같습니다.</p>
+            <div class="bill_wrap clearfix" *ngIf="orderDetail">
+                <!-- 왼쪽 -->
+                <div class="bill fl">
+                    <div class="inner">
+                        <span class="logo"><img src="/assets/images/common/bill_logo.png" alt="Amway"></span>
+                        <ul class="list">
+                            <li><span>주문형태</span><em>{{orderDetail.orders[0].orderType.code}}</em></li>
+                            <li><span>ABO정보</span><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></li>
+                            <li><span>구매일자</span><em>{{orderDetail.orders[0].created | date:'yyyy/MM/dd  HH:mm:ss'}}</em></li>
+                            <li><span>주문번호</span><em>{{orderDetail.orders[0].code}}</em></li>
+                            <li><span>출력일자</span><em></em></li>
+                            <li><span>인수자</span><em></em></li>
+                        </ul>
+                        <div class="scroll_tbl">
+                            <div>
+                                <table>
+                                    <caption>주문내역</caption>
+                                    <colgroup>
+                                        <col style="width:20px">
+                                        <col>
+                                        <col style="width:70px">
+                                        <col style="width:30px">
+                                        <col style="width:70px">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">번호</th>
+                                            <th scope="col">상품명</th>
+                                            <th scope="col">단가</th>
+                                            <th scope="col">수량</th>
+                                            <th scope="col">금액</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let entry of orderDetail.orders[0].entries;">
+                                            <td>{{ entry.entryNumber + 1}}</td>
+                                            <td><span class="blck">{{entry.product.code}}</span></td>
+                                            <td>{{ entry.basePrice.value }}</td>
+                                            <td>{{ entry.quantity }}</td>
+                                            <td>{{ entry.totalPrice.value }}</td>
+                                        </tr>                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- //왼쪽 -->
+                <!-- 오른쪽 -->
+                <div class="bill fr">
+                    <div class="inner">
+                        <ul class="list">
+                            <li><span>상품수량</span><em>{{ orderDetail.orders[0].totalUnitCount | number }}</em></li>
+                            <li><span>과세물품</span><em>{{ orderDetail.orders[0].totalPrice.value | number }}</em></li>
+                            <li><span>부&nbsp; 가&nbsp; 세</span><em>{{ orderDetail.orders[0].totalPriceWithTax.value - orderDetail.orders[0].totalPrice.value | number }}</em></li>
+                            <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{ orderDetail.orders[0].totalPriceWithTax.value | number }}</em></li>
+                            <li class="txt_b"><span>할인금액</span><em></em></li>
+                            <li><span>할인 쿠폰(신규 5%)</span><em></em></li>
+                            <li><span>포인트차감(A포인트)</span><em></em></li>
+                            <li class="txt_b"><span>결제금액</span><em></em></li>
+                        </ul>
+                        <ul class="list">
+                            <li>[신용카드결제]</li>
+                            <li>카드번호:32458****504</li>
+                            <li>할부: 일시불 (승인번호: 37360868)</li>
+                        </ul>
+                        <ul class="list">
+                            <li class="fx"><span>PV</span><em></em></li>
+                            <li class="fx"><span>BV</span><em></em></li>
+                            <li class="fx"><span>PV SUM</span><em></em></li>
+                            <li class="fx"><span>BV SUM</span><em></em></li>
+                            <li class="fx"><span>GROUP PV</span><em></em></li>
+                            <li class="fx"><span>GROUP BV</span><em></em></li>
+                            <li><span>잔여 A 포인트</span><em>00</em></li>
+                            <li>POS번호 및 캐셔 정보<br>POS No. KR141022 / Lee, YunSeo</li>
+                            <li><span>공제번호</span><em>8645571</em></li>
+                        </ul>
+                        <p class="txt">*** 정상 승인 완료 ***</p>
+                    </div>
+                </div>
+                <!-- //오른쪽 -->
+            </div>
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer clearfix">
+        <span class="fl">취소 ESC</span>
+        <a href="javascript:void(0)" class="fl mgl20" (click)= "close()">이전<i class="ico_comm prev"></i></a>
+        <span class="fr">
+            <a href="javascript:void(0)" class="btn01_blue">주문취소</a>
+            <a href="javascript:void(0)" class="btn01_blue">영수증재발행</a>
+            <a href="javascript:void(0)" class="btn01_blue">결제수단변경/재결제</a>
+            <a href="javascript:void(0)" class="btn01_blue">ECP 주문</a>
+        </span>
+    </div>
+</div>

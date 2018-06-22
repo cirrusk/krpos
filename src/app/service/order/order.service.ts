@@ -28,18 +28,39 @@ export class OrderService {
    * 주문 목록 조회
    *
    * @param userid 회원 아이디
-   * @param orderdata 주문 Data Parameter
+   * @param orderType 주문 타입 (NORMAL_ORDER) 복수의 경우 ,(콤마) 구분
+   * @param channels 채널 (Web,WebMobile,pos) 복수의 경우 ,(콤마) 구분
+   * @param deliveryModes 배송모드 (delivery,install, pickup) 복수의 경우 ,(콤마) 구분
    * @param sort 정렬조건값
    * @param asc asc 정렬 여부
    */
-  orderList(userid: string, orderdata: OrderData, sort = 'date', asc = true): Observable<OrderHistoryList> {
+  orderList(userid: string, orderTypes: string, channels: string, deliveryModes: string, currentPage = 0, pageSize = 10, sort = 'date', asc = true): Observable<OrderHistoryList> {
+    const arrOrderTypes = new Array<string>(); // NORMAL_ORDER
+    const arrChannels = new Array<string>(); // Web,WebMobile
+    const arrDeliveryModes = new Array<string>(); // delivery,install
+
+    orderTypes.split(',').forEach( orderType => {
+      arrOrderTypes.push(orderType.trim());
+    });
+
+    channels.split(',').forEach( channel => {
+      arrChannels.push(channel.trim());
+    });
+
+    deliveryModes.split(',').forEach( deliveryMode => {
+      arrDeliveryModes.push(deliveryMode.trim());
+    });
+
+    const orderData = new OrderData(arrOrderTypes, arrChannels, arrDeliveryModes, currentPage, pageSize);
+
     const param = {
-      currentPage: orderdata.currentPage ? orderdata.currentPage : 0,
-      pageSize: orderdata.pageSize ? orderdata.pageSize : 10,
+      currentPage: orderData.currentPage,
+      pageSize: orderData.pageSize,
       sort: sort, asc: asc, fields: 'FULL'
     };
+
     const pathvariables = { userId: userid };
-    const data = new HttpData('orderList', pathvariables, orderdata, param);
+    const data = new HttpData('orderList', pathvariables, orderData, param);
     return this.api.get(data);
   }
 
@@ -50,7 +71,7 @@ export class OrderService {
    * @param ordercodes 주문코드 배열
    */
   orderDetails(userid: string, ordercodes: Array<string>): Observable<OrderList> {
-    const param = { fields: 'DEFAULT' };
+    const param = { codes: ordercodes, fields: 'DEFAULT' };
     const pathvariables = { userId: userid };
     const body = { codes: ordercodes };
     const data = new HttpData('orderDetails', pathvariables, body, param);
