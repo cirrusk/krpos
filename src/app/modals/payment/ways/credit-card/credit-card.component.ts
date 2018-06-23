@@ -34,10 +34,19 @@ export class CreditCardComponent extends ModalComponent implements OnInit {
 
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
     const ccard = new CreditCardPaymentInfo(paidamount);
-    ccard.paymentMode = new PaymentModeData(PaymentModes.CREDITCARD);
-    ccard.currency = new CurrencyData();
+    ccard.setCardAuthNumber = '';
+    ccard.setCardCompayCode = '';
+    ccard.setCardAuthNumber = '';
+    ccard.setCardPassword = '';
+    ccard.setInstallmentPlan = '';
+    ccard.setMemberType = '';
+    ccard.setPaymentType = '';
+    ccard.setValidToMonth = '';
+    ccard.setValidToYear = '';
+    ccard.setPaymentModeData = new PaymentModeData(PaymentModes.CREDITCARD);
+    ccard.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();
-    paymentcapture.ccPaymentInfo = ccard;
+    paymentcapture.setCcPaymentInfo = ccard;
     return paymentcapture;
   }
 

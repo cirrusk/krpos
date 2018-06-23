@@ -1,3 +1,4 @@
+import { VoucherPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
 
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 
@@ -5,7 +6,7 @@ import { ModalComponent, ModalService, Modal } from '../../../../core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
-import { Accounts, OrderEntry, KeyCode, CouponList, Coupon } from '../../../../data';
+import { Accounts, OrderEntry, KeyCode, CouponList, Coupon, PaymentCapture, PaymentModes } from '../../../../data';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
 import { PaymentService } from '../../../../service';
 
@@ -71,6 +72,15 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
         modalId: 'ComplexPaymentComponent_Pop'
       }
     );
+  }
+
+  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+    const coupon = new VoucherPaymentInfo(paidamount);
+    coupon.setPaymentModeData = new PaymentModeData(PaymentModes.COUPON);
+    coupon.setCurrencyData = new CurrencyData();
+    const paymentcapture = new PaymentCapture();
+    paymentcapture.setVoucherPaymentInfo = coupon;
+    return paymentcapture;
   }
 
   activeRow(index: number, coupon: Coupon) {
