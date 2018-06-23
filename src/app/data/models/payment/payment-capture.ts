@@ -17,31 +17,31 @@ export class PaymentCapture {
     monetaryPaymentInfo: AmwayMonetaryPaymentInfo; /** 미수금결제(AR) */
     icCardPaymentInfo: ICCardPaymentInfo; /** 현금IC카드결제 */
 
-    public set ccPayment(ccPaymentInfo: CreditCardPaymentInfo) {
+    public set setCcPaymentInfo(ccPaymentInfo: CreditCardPaymentInfo) {
         this.ccPaymentInfo = ccPaymentInfo;
     }
 
-    public set cashPayment(cashPaymentInfo: CashPaymentInfo) {
+    public set setCashPaymentInfo(cashPaymentInfo: CashPaymentInfo) {
         this.cashPaymentInfo = cashPaymentInfo;
     }
 
-    public set directDebitPayment(directDebitPaymentInfo: DirectDebitPaymentInfo) {
+    public set setDirectDebitPaymentInfo(directDebitPaymentInfo: DirectDebitPaymentInfo) {
         this.directDebitPaymentInfo = directDebitPaymentInfo;
     }
 
-    public set voucherPayment(voucherPaymentInfo: VoucherPaymentInfo) {
+    public set setVoucherPaymentInfo(voucherPaymentInfo: VoucherPaymentInfo) {
         this.voucherPaymentInfo = voucherPaymentInfo;
     }
 
-    public set pointPayment(pointPaymentInfo: PointPaymentInfo) {
+    public set setPointPaymentInfo(pointPaymentInfo: PointPaymentInfo) {
         this.pointPaymentInfo = pointPaymentInfo;
     }
 
-    public set monetaryPayment(monetaryPaymentInfo: AmwayMonetaryPaymentInfo) {
+    public set setMonetaryPaymentInfo(monetaryPaymentInfo: AmwayMonetaryPaymentInfo) {
         this.monetaryPaymentInfo = monetaryPaymentInfo;
     }
 
-    public set icCardPayment(icCardPaymentInfo: ICCardPaymentInfo) {
+    public set setIcCardPaymentInfo(icCardPaymentInfo: ICCardPaymentInfo) {
         this.icCardPaymentInfo = icCardPaymentInfo;
     }
 }
@@ -51,6 +51,15 @@ export class CurrencyData {
     name: string;
     active: boolean;
     symbol: string;
+    public set setIsoCode(isocode: string) {
+        this.isocode = isocode;
+    }
+    public set setActive(active: boolean) {
+        this.active = active;
+    }
+    public set setSymbol(symbol: string) {
+        this.symbol = symbol;
+    }
     constructor(isocode?: string, name?: string, active?: boolean, symbol?: string) {
         this.isocode = isocode || 'KRW';
         this.name = name;
@@ -64,6 +73,15 @@ export class PaymentModeData {
     name: string;
     description: string;
     active: boolean;
+    public set setCode(code: string) {
+        this.code = code;
+    }
+    public set setDiscription(description: string) {
+        this.description = description;
+    }
+    public set setActive(active: boolean) {
+        this.active = active;
+    }
     constructor(code: string, name?: string, description?: string, active?: boolean) {
         this.code = code;
         this.name = name;
@@ -132,6 +150,33 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
     validFromYear: string; // 유효기간 시작 년 필수값 임의설정
     xPayResponseData: any; // 안심결제
+    public set setPaymentType(paymentType: string) {
+        this.paymentType = paymentType;
+    }
+    public set setCardCompayCode(cardCompanyCode: string) {
+        this.cardCompanyCode = cardCompanyCode;
+    }
+    public set setInstallmentPlan(installmentPlan: string) {
+        this.installmentPlan = installmentPlan;
+    }
+    public set setMemberType(memberType: string) {
+        this.memberType = memberType;
+    }
+    public set setCardNumber(cardNumber: string) {
+        this.cardNumber = cardNumber;
+    }
+    public set setCardPassword(cardPassword: string) {
+        this.cardPassword = cardPassword;
+    }
+    public set setCardAuthNumber(cardAuthNumber: string) {
+        this.cardAuthNumber = cardAuthNumber;
+    }
+    public set setValidToMonth(validToMonth: string) {
+        this.validToMonth = validToMonth;
+    }
+    public set setValidToYear(validToYear: string) {
+        this.validToYear = validToYear;
+    }
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,
         validToMonth?: string, validToYear?: string) {
@@ -151,6 +196,9 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
 /** 현금/수표 결제 */
 export class CashPaymentInfo extends AmwayPaymentInfoData {
     cashType: string; // 현금유형 CashType (CASH, CHECK)
+    public set setCashType(cashType: string) {
+        this.cashType = cashType;
+    }
     constructor(amount: number, cashType: string, paymentProvider?: string, status?: string) {
         super(amount, 'cash', paymentProvider, status);
         this.cashType = cashType;
@@ -163,6 +211,18 @@ export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
     baOwner: string; // 예금주명
     bankIDNumber: string;
     bank: string; // 은행 명
+    public set setAccountNumber(accountNumber: string) {
+        this.accountNumber = accountNumber;
+    }
+    public set setBaOwner(baOwner: string) {
+        this.baOwner = baOwner;
+    }
+    public set setBankIDNumber(bankIDNumber: string) {
+        this.bankIDNumber = bankIDNumber;
+    }
+    public set setBank(bank: string) {
+        this.bank = bank;
+    }
     constructor(amount: number, accountNumber: string, baOwner: string, bankIDNumber: string, bank: string) {
         super(amount, 'directdebit');
         this.accountNumber = accountNumber;
@@ -175,6 +235,9 @@ export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
 /** 포인트결제 */
 export class PointPaymentInfo extends AmwayPaymentInfoData {
     pointType: string; // BalanceReferenceTypeModel (BR030 - 전환포인트, BR033 - 멤버포인트)
+    public set setPointType(pointType: string) {
+        this.pointType = pointType;
+    }
     constructor(amount: number, pointType: string) {
         super(amount, 'point');
         this.pointType = pointType;
@@ -194,6 +257,18 @@ export class ICCardPaymentInfo extends AmwayPaymentInfoData {
     baOwner: string; // 예금주명
     bankIDNumber: string;
     bank: string; // 은행 명
+    public set setAccountNumber(accountNumber: string) {
+        this.accountNumber = accountNumber;
+    }
+    public set setBaOwner(baOwner: string) {
+        this.baOwner = baOwner;
+    }
+    public set setBankIDNumber(bankIDNumber: string) {
+        this.bankIDNumber = bankIDNumber;
+    }
+    public set setBank(bank: string) {
+        this.bank = bank;
+    }
     constructor(amount: number, accountNumber: string, baOwner: string, bankIDNumber: string, bank: string) {
         super(amount, 'cashiccard');
         this.accountNumber = accountNumber;

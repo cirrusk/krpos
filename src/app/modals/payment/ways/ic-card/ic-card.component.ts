@@ -26,7 +26,7 @@ export class IcCardComponent extends ModalComponent implements OnInit {
     iccard.paymentMode = new PaymentModeData(PaymentModes.ICCARD);
     iccard.currency = new CurrencyData('KRW');
     const paymentcapture = new PaymentCapture();
-    paymentcapture.icCardPayment = iccard;
+    paymentcapture.setIcCardPaymentInfo = iccard;
     console.log('IC CARD : ' + JSON.stringify(iccard));
     console.log('PAYMENT CAPTURE : ' + JSON.stringify(paymentcapture));
     return iccard;

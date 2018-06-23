@@ -140,7 +140,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     point.paymentMode = new PaymentModeData(PaymentModes.POINT);
     point.currency = new CurrencyData();
     const paymentcapture = new PaymentCapture();
-    paymentcapture.pointPayment = point;
+    paymentcapture.setPointPaymentInfo = point;
     return paymentcapture;
   }
 

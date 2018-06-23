@@ -173,7 +173,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     cash.paymentMode = new PaymentModeData(PaymentModes.CASH);
     cash.currency = new CurrencyData();
     const paymentcapture = new PaymentCapture();
-    paymentcapture.cashPayment = cash;
+    paymentcapture.setCashPaymentInfo = cash;
     return paymentcapture;
   }
 
