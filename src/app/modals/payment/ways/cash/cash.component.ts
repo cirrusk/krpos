@@ -16,9 +16,10 @@ import { InfoBroker } from '../../../../broker';
 })
 export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
-  @ViewChild('paid') private paid: ElementRef;       // 내신금액
-  @ViewChild('payment') private payment: ElementRef; // 결제금액
-  finishStatus: string;                              // 결제완료 상태
+  @ViewChild('paid') private paid: ElementRef;         // 내신금액
+  @ViewChild('payment') private payment: ElementRef;   // 결제금액
+  @ViewChild('paycheck') private paycheck: ElementRef; // 결제확인버튼
+  finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   private cartInfo: Cart;
   private account: Accounts;
@@ -75,7 +76,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    */
   pay(evt: KeyboardEvent, paidAmount: number, payAmount: number) {
     evt.preventDefault();
-    // setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'disabled', 'disabled'); }, 5);
+    setTimeout(() => { this.paycheck.nativeElement.blur(); this.renderer.setAttribute(this.paycheck.nativeElement, 'disabled', 'disabled'); }, 5);
     // 유효성체크 실패 시 포커스 이동 처리
     this.alertsubscription = this.alert.alertState.subscribe(
       (state: AlertState) => {
@@ -83,7 +84,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.paid.nativeElement.focus();
             this.paid.nativeElement.select();
-          });
+            this.renderer.setAttribute(this.paycheck.nativeElement, 'disabled', '');
+          }, 5);
         }
       }
     );

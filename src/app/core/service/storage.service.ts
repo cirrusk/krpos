@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
-import { AccessToken, TerminalInfo, BatchInfo } from '../../data';
+import { AccessToken, TerminalInfo, BatchInfo, Accounts } from '../../data';
 import { Utils } from '../utils';
 
 
@@ -357,11 +357,11 @@ export class StorageService implements OnDestroy {
    *
    * @param data 회원정보
    */
-  public setCustomer(data: any): void {
+  public setCustomer(data: Accounts): void {
     this.setLocalItem('customer', data);
   }
 
-  public getCustomer(): any {
+  public getCustomer(): Accounts {
     return this.getLocalItem('customer');
   }
 

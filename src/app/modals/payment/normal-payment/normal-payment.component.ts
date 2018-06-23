@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2 } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, StorageService, PrinterService } from '../../../core';
 
-// import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
+import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
 import { IcCardComponent } from '../ways/ic-card/ic-card.component';
 import { CashComponent } from '../ways/cash/cash.component';
 import { DirectDebitComponent } from '../ways/direct-debit/direct-debit.component';
@@ -9,7 +9,7 @@ import { ChecksComponent } from '../ways/checks/checks.component';
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
 import { PointComponent } from '../ways/point/point.component';
-import { OrderEntry, Accounts, MemberType } from '../../../data';
+import { Accounts, MemberType } from '../../../data';
 import { OrderInfoVO } from '../../../data/models/receipt/order.info';
 import { BonusInfoVO } from '../../../data/models/receipt/bonus.info';
 import { PaymentsVO } from '../../../data/models/receipt/payments';
@@ -53,17 +53,17 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
    */
   creditCard(evt: any) {
     this.setSelected(evt);
-    // this.close();
-    // this.modal.openModalByComponent(CreditCardComponent,
-    //   {
-    //     title: '',
-    //     actionButtonLabel: '',
-    //     closeButtonLabel: '',
-    //     closeByClickOutside: false,
-    //     modalId: 'CreditCardComponent'
-    //   }
-    // );
-    this.makeReceipt(this.accountInfo, this.cartInfo); // 영수증 인쇄 테스트 용으로 임시 적용
+    this.close();
+    this.modal.openModalByComponent(CreditCardComponent,
+      {
+        title: '',
+        actionButtonLabel: '',
+        closeButtonLabel: '',
+        closeByClickOutside: false,
+        modalId: 'CreditCardComponent'
+      }
+    );
+    // this.makeReceipt(this.accountInfo, this.cartInfo); // 영수증 인쇄 테스트 용으로 임시 적용
   }
 
   /**
