@@ -165,7 +165,7 @@ export class ReceiptUtils {
         formatted.push(this.START_TEXTLINE);
 
         // 순번 컬럼 비우기
-        formatted.push(this.spaces(idxLen));
+        formatted.push(this.genSafeLeadingSpaces(idxLen));
         
         // SKU code
         formatted.push(this.rightAlignedText(product.skuCode, maxLengths.skuCode));
