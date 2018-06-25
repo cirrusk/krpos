@@ -1,4 +1,4 @@
-import { NiceConstants } from "../nice.constants";
+import { NiceConstants } from '../nice.constants';
 
 export class ICCardApprovalRequest {
     // 서비스 코드
@@ -35,66 +35,66 @@ export class ICCardApprovalRequest {
      * Getter serviceCode
      * @return {string}
      */
-	public get serviceCode(): string {
-		return this._serviceCode;
-	}
+    public get serviceCode(): string {
+        return this._serviceCode;
+    }
 
     /**
      * Getter installment
      * @return {string}
      */
-	public get installment(): string {
-		return this._installment;
-	}
+    public get installment(): string {
+        return this._installment;
+    }
 
     /**
      * Getter amount
      * @return {string}
      */
-	public get amount(): string {
-		return this._amount;
-	}
+    public get amount(): string {
+        return this._amount;
+    }
 
     /**
      * Getter approvalNumber
      * @return {string}
      */
-	public get approvalNumber(): string {
-		return this._approvalNumber;
-	}
+    public get approvalNumber(): string {
+        return this._approvalNumber;
+    }
 
     /**
      * Getter approvalDate
      * @return {string}
      */
-	public get approvalDate(): string {
-		return this._approvalDate;
-	}
+    public get approvalDate(): string {
+        return this._approvalDate;
+    }
 
     /**
      * Getter catId
      * @return {string}
      */
-	public get catId(): string {
-		return this._catId;
-	}
+    public get catId(): string {
+        return this._catId;
+    }
 
     /**
      * Getter signData
      * @return {string}
      */
-	public get signData(): string {
-		return this._signData;
-	}
+    public get signData(): string {
+        return this._signData;
+    }
 
     /**
      * Setter amount
      * @param {string} value
      */
-	public set amount(value: string) {
-		this._amount = value;
+    public set amount(value: string) {
+        this._amount = value;
     }
-    
+
     public stringify() {
         return JSON.stringify(this);
     }

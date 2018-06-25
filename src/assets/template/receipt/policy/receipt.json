@@ -41,6 +41,7 @@
         "templOrderSummary": "orderSummary.xml",
         "templProductList": "productList.xml",
         "templPrices": "prices.xml",
+        "templPosCashierInfo": "posCashierInfo.xml",
         "templBonus": "bonus.xml",
         "templPayments": "payments.xml",
         "templBarcode": "barcode.xml",

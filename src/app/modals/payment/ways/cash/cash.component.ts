@@ -204,21 +204,13 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.PAID) {
-        // 포인트 다시 취득 후 영수증 출력
-        this.payments.getBalance(this.account.parties[0].uid).subscribe(
-          data => {
-            this.point = data.amount;
-          },
-          error => { this.logger.set('cash.component', `${error}`).error(); },
-          () => {
-            const rtn = this.receipt.print(this.account, this.cartInfo, this.orderInfo, this.paymentcapture, this.point);
-            if (rtn) {
-              this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-              this.info.sendInfo('orderClear', 'clear');
-            } else {
-              this.alert.show({ message: '실패' });
-            }
-          });
+        const rtn = this.receipt.print(this.account, this.cartInfo, this.orderInfo, this.paymentcapture);
+        if (rtn) {
+          this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+          this.info.sendInfo('orderClear', 'clear');
+        } else {
+          this.alert.show({ message: '실패' });
+        }
       }
       this.close();
     } else {

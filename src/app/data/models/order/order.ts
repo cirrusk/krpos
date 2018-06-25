@@ -2,6 +2,7 @@ import { AbstractOrder, Consignment, OrderEntry, Address, Enumeration } from '..
 
 export class Order extends AbstractOrder {
     created: Date;
+    date: Date;
     status: string;
     statusDisplay: string;
     guestCustomer: boolean;

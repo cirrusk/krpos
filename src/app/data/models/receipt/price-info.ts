@@ -12,6 +12,7 @@ export class PriceInfo {
     constructor(totalQty: number, amountWithoutVAT: number, amountVAT: number, totalAmount: number, totalDiscount: number, finalAmount: number, discount?: Discount) {
         this.totalQty = String(totalQty);
         this.amountWithoutVAT = String(amountWithoutVAT);
+        this.amountVAT = String(amountVAT);
         this.totalAmount = String(totalAmount);
         this.totalDiscount = String(totalDiscount);
         this.finalAmount = String(finalAmount);

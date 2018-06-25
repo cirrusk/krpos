@@ -34,7 +34,6 @@ export class ReceiptService {
         templateList.forEach((templateName) => {
             const templateText = this.receitDataProvider.getXmlTemplate(templateName);
             const parsed = EscPos.fillData(templateText, data);
-
             const isCompiled = this.receitDataProvider.isPrecompiled(templateName);
 
             if (isCompiled) {
@@ -43,7 +42,6 @@ export class ReceiptService {
                 const transformed = EscPos.escPosCommand(parsed);
                 retText += transformed;
             }
-
         });
 
         return EscPos.unescapeLeadingSpace(retText);
@@ -60,7 +58,7 @@ export class ReceiptService {
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      */
-    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, point: number, type?: string, macAndCoNum?: string): boolean {
+    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, type?: string, macAndCoNum?: string): boolean {
         let rtn = true;
         const posId = this.storage.getTerminalInfo().id;
         const token = this.storage.getTokenInfo();
@@ -75,7 +73,7 @@ export class ReceiptService {
         // 주문번호: {{orderInfo.number}}
         const orderInfo = new OrderInfo(posId, order.code);
         orderInfo.setCashier = new Cashier(token.employeeId, token.employeeName);
-        if (account.accountType === MemberType.ABO) {
+        if (account.accountTypeCode === MemberType.ABO) {
             const abo = new Account();
             abo.setAbo = new AccountInfo(account.parties[0].uid, account.parties[0].name);
             orderInfo.setAccount = abo;
@@ -92,6 +90,7 @@ export class ReceiptService {
         // 공제번호 : {{orderInfo.macAndCoNum}}
         orderInfo.setMacAndCoNum = macAndCoNum || '123456789';
         // macAndCoNum - END
+
         // productList - START
         const productList = Array<any>();
         let totalPV = 0;
@@ -116,6 +115,7 @@ export class ReceiptService {
         const data = productList;
         Object.assign(productEntryList, data);
         // productList - END
+
         // bonus - START
         // {{bonusDataHelper 'PV:' bonus.ordering.PV 'BV:' bonus.ordering.BV}}
         // {{bonusDataHelper 'PV SUM:' bonus.sum.PV 'BV SUM:' bonus.sum.BV}}
@@ -131,13 +131,14 @@ export class ReceiptService {
 
         bonus.setSum = new Bonus(String(totalPV), String(totalBV));
         bonus.setGroup = new Bonus('그룹 PV합', '그룹 BV합');
-
-        if (account.accountType === MemberType.ABO) {
+        const point = 0;
+        if (account.accountTypeCode === MemberType.ABO) {
             bonus.setAPoint = point <= 0 ? '' : String(point);
-        } else if (account.accountType === MemberType.MEMBER) {
+        } else if (account.accountTypeCode === MemberType.MEMBER) {
             bonus.setMemberPoint = point <= 0 ? '' : String(point);
         }
         // bonus - END
+
         // payments - START
         // [현금결제] {{priceLocaleHelper payments.cash.amount}}
         // 받은금액 {{priceLocaleHelper payments.cash.detail.received}}
@@ -191,9 +192,9 @@ export class ReceiptService {
         if (paymentCapture.getPointPaymentInfo) {
             const pointinfo = paymentCapture.getPointPaymentInfo;
             let pointname = '';
-            if (account.accountType === MemberType.ABO) {
+            if (account.accountTypeCode === MemberType.ABO) {
                 pointname = '포인트차감(A포인트)';
-            } else if (account.accountType === MemberType.MEMBER) {
+            } else if (account.accountTypeCode === MemberType.MEMBER) {
                 pointname = '포인트차감(멤버포인트)';
             }
             discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
@@ -213,13 +214,14 @@ export class ReceiptService {
         receiptInfo.setPrice = price;
         receiptInfo.setProductList = productEntryList;
         let text = '';
-        if (account.accountType === MemberType.ABO) { // ABO
+        if (account.accountTypeCode === MemberType.ABO) { // ABO
             text = this.aboNormal(receiptInfo);
-        } else if (account.accountType === MemberType.MEMBER) {
+        } else if (account.accountTypeCode === MemberType.MEMBER) {
             text = this.memberNormal(receiptInfo);
         } else {
             text = this.consumerNormal(receiptInfo);
         }
+        console.log('print ' + text);
         // 최종 영수증 데이터 구성 - END
 
         try {

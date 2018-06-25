@@ -3,8 +3,8 @@
  * 신용카드          ; creditcard         ; CreditCardPaymentInfo
  * 현금결제         ; cash               ; AmwayCashPaymentInfo
  * 자동이체          ; directdebit        ; DirectDebitPaymentInfo
- * 쿠폰결제         ; creditvoucher      ; VoucherPaymentInfo
- * 포인트            ; point              ; PointPaymentInfo
+ * 쿠폰결제(price 영역에 포함)         ; creditvoucher      ; VoucherPaymentInfo
+ * 포인트(price 영역에 포함)            ; point              ; PointPaymentInfo
  * 미수금결제       ; arCredit           ; AmwayMonetaryPaymentInfo
  * 현금/IC카드결제  ; cashiccard         ; ICCardPaymentInfo
  *

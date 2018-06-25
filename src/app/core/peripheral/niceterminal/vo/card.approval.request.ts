@@ -1,4 +1,4 @@
-import { NiceConstants } from "../nice.constants";
+import { NiceConstants } from '../nice.constants';
 
 export class CardApprovalRequest {
     // 서비스 코드
@@ -28,130 +28,130 @@ export class CardApprovalRequest {
      * Getter serviceCode
      * @return {string}
      */
-	public get serviceCode(): string {
-		return this._serviceCode;
-	}
+    public get serviceCode(): string {
+        return this._serviceCode;
+    }
 
     /**
      * Getter reqSignData
      * @return {string}
      */
-	public get reqSignData(): string {
-		return this._reqSignData;
-	}
+    public get reqSignData(): string {
+        return this._reqSignData;
+    }
 
     /**
      * Getter cancelNumber
      * @return {string}
      */
-	public get cancelNumber(): string {
-		return this._cancelNumber;
-	}
+    public get cancelNumber(): string {
+        return this._cancelNumber;
+    }
 
     /**
      * Getter installment
      * @return {string}
      */
-	public get installment(): string {
-		return this._installment;
-	}
+    public get installment(): string {
+        return this._installment;
+    }
 
     /**
      * Getter dutyFreeAmt
      * @return {string}
      */
-	public get dutyFreeAmt(): string {
-		return this._dutyFreeAmt;
-	}
+    public get dutyFreeAmt(): string {
+        return this._dutyFreeAmt;
+    }
 
     /**
      * Getter dutyAmount
      * @return {string}
      */
-	public get dutyAmount(): string {
-		return this._dutyAmount;
-	}
+    public get dutyAmount(): string {
+        return this._dutyAmount;
+    }
 
     /**
      * Getter totalAmount
      * @return {string}
      */
-	public get totalAmount(): string {
-		return this._totalAmount;
-	}
+    public get totalAmount(): string {
+        return this._totalAmount;
+    }
 
     /**
      * Getter vat
      * @return {string}
      */
-	public get vat(): string {
-		return this._vat;
-	}
+    public get vat(): string {
+        return this._vat;
+    }
 
     /**
      * Getter serviceFee
      * @return {string}
      */
-	public get serviceFee(): string {
-		return this._serviceFee;
-	}
+    public get serviceFee(): string {
+        return this._serviceFee;
+    }
 
     /**
      * Getter catId
      * @return {string}
      */
-	public get catId(): string {
-		return this._catId;
-	}
+    public get catId(): string {
+        return this._catId;
+    }
 
     /**
      * Getter signData
      * @return {string}
      */
-	public get signData(): string {
-		return this._signData;
-	}
+    public get signData(): string {
+        return this._signData;
+    }
 
     /**
      * Setter reqSignData
      * @param {string} value
      */
-	public set reqSignData(value: string) {
-		this._reqSignData = value;
-	}
+    public set reqSignData(value: string) {
+        this._reqSignData = value;
+    }
 
     /**
      * Setter installment
      * @param {string} value
      */
-	public set installment(value: string) {
-		this._installment = value;
-	}
+    public set installment(value: string) {
+        this._installment = value;
+    }
 
     /**
      * Setter dutyAmount
      * @param {string} value
      */
-	public set dutyAmount(value: string) {
-		this._dutyAmount = value;
-	}
+    public set dutyAmount(value: string) {
+        this._dutyAmount = value;
+    }
 
     /**
      * Setter totalAmount
      * @param {string} value
      */
-	public set totalAmount(value: string) {
-		this._totalAmount = value;
-	}
+    public set totalAmount(value: string) {
+        this._totalAmount = value;
+    }
 
     /**
      * Setter vat
      * @param {string} value
      */
-	public set vat(value: string) {
-		this._vat = value;
-	}
-    
+    public set vat(value: string) {
+        this._vat = value;
+    }
+
     constructor() {
         this._serviceCode = NiceConstants.CODE.CARD_APPROVAL;
         this._cancelNumber = '';

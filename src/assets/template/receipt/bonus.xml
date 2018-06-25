@@ -6,9 +6,9 @@
     <text-line>
        {{#if bonus.aPoint}}
         잔여 A 포인트 : {{aPoint}}
-       {{#if}}
+       {{/if}}
        {{#if bonus.memberPoint}}
         잔여 Member 포인트 : {{memberPoint}}
-       {{#if}}       
+       {{/if}}       
     </text-line>
 </document>

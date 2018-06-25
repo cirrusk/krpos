@@ -1,21 +1,24 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { Subject, Observable, BehaviorSubject } from "rxjs";
+// import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { NiceDriver } from "./nice.driver";
-import { Logger } from "../../logger/logger";
-import { CardApprovalResult } from "./vo/card.approval.result";
-import { CardPopulator } from "./populator/card.populator";
-import { CardApprovalRequest } from "./vo/card.approval.request";
-import { CardCancelResult } from "./vo/card.cancel.result";
-import { CardCancelRequest } from "./vo/card.cancel.reqeust";
-import { ICCardApprovalResult } from "./vo/iccard.approval.result";
-import { ICCardPopulator } from "./populator/iccard.populator";
-import { ICCardApprovalRequest } from "./vo/iccard.approval.request";
-import { ICCardCancelRequest } from "./vo/iccard.cancel.request";
-import { ICCardCancelResult } from "./vo/iccard.cancel.result";
-import { NiceConstants } from "./nice.constants";
-import { WebsocketResult } from "./vo/result.common";
+import { NiceDriver } from './nice.driver';
+import { Logger } from '../../logger/logger';
+import { CardApprovalResult } from './vo/card.approval.result';
+import { CardPopulator } from './populator/card.populator';
+import { CardApprovalRequest } from './vo/card.approval.request';
+import { CardCancelResult } from './vo/card.cancel.result';
+import { CardCancelRequest } from './vo/card.cancel.reqeust';
+import { ICCardApprovalResult } from './vo/iccard.approval.result';
+import { ICCardPopulator } from './populator/iccard.populator';
+import { ICCardApprovalRequest } from './vo/iccard.approval.request';
+import { ICCardCancelRequest } from './vo/iccard.cancel.request';
+import { ICCardCancelResult } from './vo/iccard.cancel.result';
+import { NiceConstants } from './nice.constants';
+import { WebsocketResult } from './vo/result.common';
 
 @Injectable()
 export class NicePaymentService {
@@ -25,30 +28,30 @@ export class NicePaymentService {
 
     public cardApproval(amount: string, installment: string): Subject<CardApprovalResult> {
         if (this.isNotValidAmount(amount) || this.isNotValidInstallment(installment)) {
-            let errResult: CardApprovalResult = new CardApprovalResult();
+            const errResult: CardApprovalResult = new CardApprovalResult();
             return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
         }
-        
+
         const requestVO: CardApprovalRequest = CardPopulator.fillApprovalReqVO(amount, installment);
 
-        let notifier: Subject<CardApprovalResult> = new Subject();
+        const notifier: Subject<CardApprovalResult> = new Subject();
 
         // 로깅 -> 추후 Persistence 고려
-        console.log("Card Approval Request");
+        console.log('Card Approval Request');
         console.log(requestVO.stringify());
 
         const body: string = CardPopulator.generateApprovalReq(requestVO);
 
-        let obs: Observable<any> = this.niceDriver.send(body);  
-        
+        const obs: Observable<any> = this.niceDriver.send(body);
+
         obs.first().subscribe(
             (res) => {
-                let raw: string = res;
+                const raw: string = res;
 
-                let resultVO: CardApprovalResult = CardPopulator.parseApprovalResult(raw);
+                const resultVO: CardApprovalResult = CardPopulator.parseApprovalResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                console.log("Card Approval Result");
+                console.log('Card Approval Result');
                 console.log(resultVO.stringify());
 
                 notifier.next(resultVO);
@@ -63,11 +66,11 @@ export class NicePaymentService {
 
     public cardCancel(amount: string, approvalNumber: string, approvalDate: string, installment: string): Subject<CardCancelResult> {
         if (this.isNotValidAmount(amount) || this.isNotValidInstallment(installment)) {
-            let errResult: CardCancelResult = new CardCancelResult();
+            const errResult: CardCancelResult = new CardCancelResult();
             return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
         }
-        
-        let notifier: Subject<CardCancelResult> = new Subject();
+
+        const notifier: Subject<CardCancelResult> = new Subject();
 
         // if (approvalDate.length > 6) {
         //     approvalDate = approvalDate.slice(0, 6);
@@ -76,21 +79,21 @@ export class NicePaymentService {
         const requestVO: CardCancelRequest = CardPopulator.fillCancelReqVO(amount, approvalNumber, approvalDate, installment);
 
         // 로깅 -> 추후 Persistence 고려
-        console.log("Card Cancel Request");
+        console.log('Card Cancel Request');
         console.log(requestVO.stringify());
 
         const body: string = CardPopulator.generateCancelReq(requestVO);
 
-        let obs: Observable<any> = this.niceDriver.send(body);
+        const obs: Observable<any> = this.niceDriver.send(body);
 
         obs.first().subscribe(
             (res) => {
-                let raw: string = res;
+                const raw: string = res;
 
-                let resultVO: CardCancelResult = CardPopulator.parseCancelResult(raw);
+                const resultVO: CardCancelResult = CardPopulator.parseCancelResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                console.log("Card Cancel Result");
+                console.log('Card Cancel Result');
                 console.log(resultVO.stringify());
 
                 notifier.next(resultVO);
@@ -105,30 +108,30 @@ export class NicePaymentService {
 
     public icCardApproval(amount: string): Subject<ICCardApprovalResult> {
         if (this.isNotValidAmount(amount)) {
-            let errResult: ICCardApprovalResult = new ICCardApprovalResult();
+            const errResult: ICCardApprovalResult = new ICCardApprovalResult();
             return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
         }
 
-        let notifier: Subject<ICCardApprovalResult> = new Subject();
+        const notifier: Subject<ICCardApprovalResult> = new Subject();
 
         const requestVO: ICCardApprovalRequest = ICCardPopulator.fillApprovalReqVO(amount);
 
         // 로깅 -> 추후 Persistence 고려
-        console.log("IC Card Approval Request");
+        console.log('IC Card Approval Request');
         console.log(requestVO.stringify());
 
         const body: string = ICCardPopulator.generateApprovalReq(requestVO);
 
-        let obs: Observable<any> = this.niceDriver.send(body);
+        const obs: Observable<any> = this.niceDriver.send(body);
 
         obs.first().subscribe(
             (res) => {
-                let raw: string = res;
+                const raw: string = res;
 
-                let resultVO: ICCardApprovalResult = ICCardPopulator.parseApprovalResult(raw);
+                const resultVO: ICCardApprovalResult = ICCardPopulator.parseApprovalResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                console.log("IC Card Approval Result");
+                console.log('IC Card Approval Result');
                 console.log(resultVO.stringify());
 
                 notifier.next(resultVO);
@@ -143,30 +146,30 @@ export class NicePaymentService {
 
     public icCardCancel(amount: string, approvalNumber: string, approvalDate: string): Subject<ICCardCancelResult> {
         if (this.isNotValidAmount(amount)) {
-            let errResult: ICCardCancelResult = new ICCardCancelResult();
+            const errResult: ICCardCancelResult = new ICCardCancelResult();
             return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
         }
 
-        let notifier: Subject<ICCardCancelResult> = new Subject();
+        const notifier: Subject<ICCardCancelResult> = new Subject();
 
         const requestVO: ICCardCancelRequest = ICCardPopulator.fillCancenReqVO(amount, approvalNumber, approvalDate);
 
         // 로깅 -> 추후 Persistence 고려
-        console.log("IC Card Cancel Request");
+        console.log('IC Card Cancel Request');
         console.log(requestVO.stringify());
 
         const body: string = ICCardPopulator.generateCancelReq(requestVO);
 
-        let obs: Observable<any> = this.niceDriver.send(body);
+        const obs: Observable<any> = this.niceDriver.send(body);
 
         obs.first().subscribe(
             (res) => {
-                let raw: string = res;
+                const raw: string = res;
 
-                let resultVO: ICCardCancelResult = ICCardPopulator.parseCancelResult(raw);
+                const resultVO: ICCardCancelResult = ICCardPopulator.parseCancelResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                console.log("IC Card Cancel Result");
+                console.log('IC Card Cancel Result');
                 console.log(resultVO.stringify());
 
                 notifier.next(resultVO);
