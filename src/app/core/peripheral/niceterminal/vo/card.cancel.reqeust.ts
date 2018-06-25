@@ -26,11 +26,10 @@ export class CardCancelRequest {
 
     constructor() {
         this._serviceCode = NiceConstants.CODE.CARD_CANCCEL;
-        this._installment = '00';
         this._reqSignData = '';
         this._dutyFreeAmt = '0';
         this._signData = '';
-        this._catId = '';
+        this._catId = '2393300001';
     }
 
     /**
@@ -63,6 +62,14 @@ export class CardCancelRequest {
      */
 	public get installment(): string {
 		return this._installment;
+    }
+
+    /**
+     * Setter installment
+     * @param {string} value
+     */
+	public set installment(value: string) {
+		this._installment = value;
 	}
 
     /**
@@ -95,7 +102,9 @@ export class CardCancelRequest {
      */
 	public get approvalNumber(): string {
 		return this._approvalNumber;
-	}
+    }
+    
+
 
     /**
      * Getter catId
@@ -151,6 +160,10 @@ export class CardCancelRequest {
      */
 	public set approvalDate(value: string) {
 		this._approvalDate = value;
+    }
+
+    public get approvalDate(): string {
+        return this._approvalDate;
     }
     
     public stringify(): string {

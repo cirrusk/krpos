@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 
-import { Subject, Observable } from "rxjs";
+import { Subject, Observable, BehaviorSubject } from "rxjs";
 
 import { NiceDriver } from "./nice.driver";
 import { Logger } from "../../logger/logger";
@@ -14,6 +14,8 @@ import { ICCardPopulator } from "./populator/iccard.populator";
 import { ICCardApprovalRequest } from "./vo/iccard.approval.request";
 import { ICCardCancelRequest } from "./vo/iccard.cancel.request";
 import { ICCardCancelResult } from "./vo/iccard.cancel.result";
+import { NiceConstants } from "./nice.constants";
+import { WebsocketResult } from "./vo/result.common";
 
 @Injectable()
 export class NicePaymentService {
@@ -22,7 +24,14 @@ export class NicePaymentService {
     }
 
     public cardApproval(amount: string, installment: string): Subject<CardApprovalResult> {
+        if (this.isNotValidAmount(amount) || this.isNotValidInstallment(installment)) {
+            let errResult: CardApprovalResult = new CardApprovalResult();
+            return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
+        }
+        
         const requestVO: CardApprovalRequest = CardPopulator.fillApprovalReqVO(amount, installment);
+
+        let notifier: Subject<CardApprovalResult> = new Subject();
 
         // 로깅 -> 추후 Persistence 고려
         console.log("Card Approval Request");
@@ -30,11 +39,9 @@ export class NicePaymentService {
 
         const body: string = CardPopulator.generateApprovalReq(requestVO);
 
-        let obs: Observable<any> = this.niceDriver.send(body);
-
-        let notifier: Subject<CardApprovalResult> = new Subject();
+        let obs: Observable<any> = this.niceDriver.send(body);  
         
-        obs.subscribe(
+        obs.first().subscribe(
             (res) => {
                 let raw: string = res;
 
@@ -54,14 +61,19 @@ export class NicePaymentService {
         return notifier;
     }
 
-    public cardCancel(amount: string, approvalNumber: string, approvalDate: string): Subject<CardCancelResult> {
+    public cardCancel(amount: string, approvalNumber: string, approvalDate: string, installment: string): Subject<CardCancelResult> {
+        if (this.isNotValidAmount(amount) || this.isNotValidInstallment(installment)) {
+            let errResult: CardCancelResult = new CardCancelResult();
+            return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
+        }
+        
         let notifier: Subject<CardCancelResult> = new Subject();
 
-        if (approvalDate.length > 6) {
-            approvalDate = approvalDate.slice(0, 6);
-        }
+        // if (approvalDate.length > 6) {
+        //     approvalDate = approvalDate.slice(0, 6);
+        // }
 
-        const requestVO: CardCancelRequest = CardPopulator.fillCancelReqVO(amount, approvalNumber, approvalDate);
+        const requestVO: CardCancelRequest = CardPopulator.fillCancelReqVO(amount, approvalNumber, approvalDate, installment);
 
         // 로깅 -> 추후 Persistence 고려
         console.log("Card Cancel Request");
@@ -71,7 +83,7 @@ export class NicePaymentService {
 
         let obs: Observable<any> = this.niceDriver.send(body);
 
-        obs.subscribe(
+        obs.first().subscribe(
             (res) => {
                 let raw: string = res;
 
@@ -92,6 +104,11 @@ export class NicePaymentService {
     }
 
     public icCardApproval(amount: string): Subject<ICCardApprovalResult> {
+        if (this.isNotValidAmount(amount)) {
+            let errResult: ICCardApprovalResult = new ICCardApprovalResult();
+            return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
+        }
+
         let notifier: Subject<ICCardApprovalResult> = new Subject();
 
         const requestVO: ICCardApprovalRequest = ICCardPopulator.fillApprovalReqVO(amount);
@@ -104,7 +121,7 @@ export class NicePaymentService {
 
         let obs: Observable<any> = this.niceDriver.send(body);
 
-        obs.subscribe(
+        obs.first().subscribe(
             (res) => {
                 let raw: string = res;
 
@@ -125,6 +142,11 @@ export class NicePaymentService {
     }
 
     public icCardCancel(amount: string, approvalNumber: string, approvalDate: string): Subject<ICCardCancelResult> {
+        if (this.isNotValidAmount(amount)) {
+            let errResult: ICCardCancelResult = new ICCardCancelResult();
+            return this.genArgumentErrorNotifier(errResult, NiceConstants.ERROR_CODE.APPROVAL_ARG_ERROR);
+        }
+
         let notifier: Subject<ICCardCancelResult> = new Subject();
 
         const requestVO: ICCardCancelRequest = ICCardPopulator.fillCancenReqVO(amount, approvalNumber, approvalDate);
@@ -137,7 +159,7 @@ export class NicePaymentService {
 
         let obs: Observable<any> = this.niceDriver.send(body);
 
-        obs.subscribe(
+        obs.first().subscribe(
             (res) => {
                 let raw: string = res;
 
@@ -156,4 +178,35 @@ export class NicePaymentService {
 
         return notifier;
     }
+
+    private isNotValidAmount(amount: string): boolean {
+        const numAmt: number = Number.parseInt(amount);
+
+        if (isNaN(numAmt) || numAmt <= 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private isNotValidInstallment(installment: string): boolean {
+        if (!installment) {
+            return false;
+        }
+
+        const numAmt: number = Number.parseInt(installment);
+
+        if (isNaN(numAmt) || numAmt < 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private genArgumentErrorNotifier<T extends WebsocketResult>(obj: T, errCode: string): Subject<T> {
+        obj.code = errCode;
+        obj.msg = NiceConstants.ERROR_MESSAGE[errCode];
+        return new BehaviorSubject<T>(obj);
+    }
+
 }

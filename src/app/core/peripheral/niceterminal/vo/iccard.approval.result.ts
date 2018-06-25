@@ -5,13 +5,13 @@ export class ICCardApprovalResult extends WebsocketResult {
     private _serviceCode: string;
 
     // 승인 여부
-    private _isApproved: boolean;
+    private _approved: boolean;
 
     // 거절 시 메시지 1
-    private _rejectMsg1: string;
+    private _resultMsg1: string;
 
     // 거절 시 메시지 2
-    private _rejectMsg2: string;
+    private _resultMsg2: string;
 
     // 승인 일시(YYMMDDhhmmss)
     private _approvalDateTime: string;
@@ -107,27 +107,19 @@ export class ICCardApprovalResult extends WebsocketResult {
 	}
 
     /**
-     * Getter isApproved
-     * @return {boolean}
-     */
-	public get isApproved(): boolean {
-		return this._isApproved;
-	}
-
-    /**
      * Getter rejectMsg1
      * @return {string}
      */
-	public get rejectMsg1(): string {
-		return this._rejectMsg1;
+	public get resultMsg1(): string {
+		return this._resultMsg1;
 	}
 
     /**
      * Getter rejectMsg2
      * @return {string}
      */
-	public get rejectMsg2(): string {
-		return this._rejectMsg2;
+	public get resultMsg2(): string {
+		return this._resultMsg2;
 	}
 
     /**
@@ -323,27 +315,19 @@ export class ICCardApprovalResult extends WebsocketResult {
 	}
 
     /**
-     * Setter isApproved
-     * @param {boolean} value
-     */
-	public set isApproved(value: boolean) {
-		this._isApproved = value;
-	}
-
-    /**
      * Setter rejectMsg1
      * @param {string} value
      */
-	public set rejectMsg1(value: string) {
-		this._rejectMsg1 = value;
+	public set resultMsg1(value: string) {
+		this._resultMsg1 = value;
 	}
 
     /**
      * Setter rejectMsg2
      * @param {string} value
      */
-	public set rejectMsg2(value: string) {
-		this._rejectMsg2 = value;
+	public set resultMsg2(value: string) {
+		this._resultMsg2 = value;
 	}
 
     /**
@@ -607,7 +591,19 @@ export class ICCardApprovalResult extends WebsocketResult {
      */
 	public set processingNumber(value: string) {
 		this._processingNumber = value;
-	}
+    }
+
+    /**
+     * Getter approved
+     * @return {boolean}
+     */
+	public get approved(): boolean {
+		return this._approved;
+    }
+    
+    public set approved(approved: boolean) {
+        this._approved = approved;
+    }
 
     public stringify() {
         return JSON.stringify(this);

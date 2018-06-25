@@ -30,8 +30,8 @@
     <input type="button" value="결제" (click)="!!niceApproval()"/>
     <input type="text" value="{{approvalResult}}"/><br>
     <br>
-    승인번호 : <input type="text" value="{{approvalNumber}}"/><br>
-    결제일시 : <input type="text" value="{{approvalDateTime}}"/><br>
+    승인번호 : <input type="text" [(ngModel)]="approvalNumber"/><br>
+    결제일시 : <input type="text" [(ngModel)]="approvalDateTime"/><br>
     <input type="button" value="취소" (click)="!!niceCancel()"/>
     <input type="text" value="{{cancelResult}}"/><br>
 

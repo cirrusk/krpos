@@ -65,9 +65,9 @@ export class ICCardPopulator {
             // }
 
             result.serviceCode = tokens[0];
-            result.isApproved = tokens[1] === 'A' ? true : false;
-            result.rejectMsg1 = tokens[2];
-            result.rejectMsg2 = tokens[3];
+            result.approved = tokens[1] === 'A' ? true : false;
+            result.resultMsg1 = tokens[2].trim();
+            result.resultMsg2 = tokens[3].trim();
             result.approvalDateTime = tokens[4];
             result.amount = tokens[5];
             result.vat = tokens[6];
@@ -163,9 +163,9 @@ export class ICCardPopulator {
             // }
 
             result.serviceCode = tokens[0];
-            result.isApproved = tokens[1] === 'A' ? true : false;
-            result.rejectMsg1 = tokens[2];
-            result.rejectMsg2 = tokens[3];
+            result.approved = tokens[1] === 'A' ? true : false;
+            result.resultMsg1 = tokens[2].trim();
+            result.resultMsg2 = tokens[3].trim();
             result.approvalDateTime = tokens[4];
             result.amount = tokens[5];
             result.vat = tokens[6];

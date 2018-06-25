@@ -268,11 +268,11 @@ export class PosReceiptPrintComponent implements OnInit {
     }
 
     public niceCancel() {
-        const resultNotifier: Subject<CardCancelResult> = this.paymentService.cardCancel(this.amount, this.approvalNumber, this.approvalDateTime);
+        const resultNotifier: Subject<CardCancelResult> = this.paymentService.cardCancel(this.amount, this.approvalNumber, this.approvalDateTime, this.installment);
 
         resultNotifier.subscribe(
             (res: CardCancelResult) => {
-                console.log(res.stringify);
+                console.log(res.stringify());
                 this.cancelResult = res.stringify();
             }
         );

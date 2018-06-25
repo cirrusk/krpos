@@ -1,3 +1,5 @@
+import { NiceConstants } from "../nice.constants";
+
 export class NiceUtils {
     public static padding(num: string, width: number): string {
         const padded: string = num.padStart(width, "0");
@@ -29,5 +31,17 @@ export class NiceUtils {
         const bodyLen: number = Number.parseInt(raw.substr(12, 4));
         const body: string = raw.substr(16, bodyLen);
         return body;
+    }
+
+    public static genErrMessage(errCode: string): string {
+        if (errCode.length === 4) {
+            errCode = "-" + errCode;
+        }
+        const errMsg: string = NiceConstants.ERROR_MESSAGE[errCode];
+        const bodyLen: number = NiceUtils.byteLen(errMsg);
+        const PCAT: string = 'PCAT';
+        const totalLen: number = NiceUtils.byteLen(PCAT) + bodyLen;
+
+        return NiceUtils.padding(totalLen.toString(), 4) + PCAT + errCode.slice(1) + NiceUtils.padding(bodyLen.toString(), 4) + errMsg;
     }
 }

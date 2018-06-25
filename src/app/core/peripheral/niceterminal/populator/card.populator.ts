@@ -13,7 +13,13 @@ export class CardPopulator {
 
         // 서명데이터가 채워져서 보내지면 잘못된 전문으로 인식 됨
         //reqVO.reqSignData = CardPopulator.isSignatureRequired(amount);
-        reqVO.installment = NiceUtils.padding(installment, 2);
+
+        if (!installment) {
+            reqVO.installment = '00';
+        } else {
+            reqVO.installment = NiceUtils.padding(installment, 2);
+        }
+
         reqVO.dutyAmount = amount;
         reqVO.totalAmount = amount;
         reqVO.vat = CardPopulator.calVat(amount);
@@ -103,8 +109,8 @@ export class CardPopulator {
             // slice() --> 1번째 바이트 제거
             result.serviceCode = tokens[0].slice(1);
             result.approved = tokens[1] === 'A' ? true : false;
-            result.resultMsg1 = tokens[2];
-            result.resultMsg2 = tokens[3];
+            result.resultMsg1 = tokens[2].trim();
+            result.resultMsg2 = tokens[3].trim();
             result.approvalDateTime = tokens[4];
             result.totalAmount = tokens[5];
             result.vat = tokens[6];
@@ -124,7 +130,7 @@ export class CardPopulator {
         return result;
     }
 
-    public static fillCancelReqVO(amount: string, approvalNumber: string, approvalDate: string): CardCancelRequest {
+    public static fillCancelReqVO(amount: string, approvalNumber: string, approvalDate: string, installment: string): CardCancelRequest {
         let req: CardCancelRequest = new CardCancelRequest();
 
         req.approvalNumber = approvalNumber;
@@ -132,6 +138,12 @@ export class CardPopulator {
         req.cancelNumber ='';
         req.dutyAmount = amount;
         req.totalAmount = amount;
+
+        if (!installment) {
+            req.installment = '00';
+        } else {
+            req.installment = NiceUtils.padding(installment, 2);
+        }
 
         return req;
     }
@@ -207,8 +219,8 @@ export class CardPopulator {
             // slice() --> 1번째 바이트 제거
             result.serviceCode = tokens[0].slice(1);
             result.approved = tokens[1] === 'A' ? true : false;
-            result.resultMsg1 = tokens[2];
-            result.resultMsg2 = tokens[3];
+            result.resultMsg1 = tokens[2].trim();
+            result.resultMsg2 = tokens[3].trim();
             result.approvalDate = tokens[4];
             result.totalAmount = tokens[5];
             result.vat = tokens[6];
