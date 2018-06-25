@@ -27,7 +27,6 @@ import { Cart } from '../../../data/models/order/cart';
 export class NormalPaymentComponent extends ModalComponent implements OnInit {
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
-
   private cartInfo: Cart;
   accountInfo: Accounts;
   public memberType = MemberType;
@@ -73,7 +72,6 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   icCard(evt: any) {
     this.setSelected(evt);
     this.close();
-    // console.log('------------------->' + evt.target.getAttribute('data-ptype'));
     this.modal.openModalByComponent(IcCardComponent,
       {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },

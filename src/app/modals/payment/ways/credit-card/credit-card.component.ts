@@ -20,10 +20,6 @@ import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.con
 export class CreditCardComponent extends ModalComponent implements OnInit, OnDestroy {
 
   private installment: number;
-  payprice: number;
-  change: number;
-  finishStatus: string;                                // 결제완료 상태
-  paidDate: Date;
   private orderInfo: Order;
   private cartInfo: Cart;
   private account: Accounts;
@@ -32,6 +28,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private cardresult: CardApprovalResult;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  payprice: number;
+  change: number;
+  finishStatus: string;                                // 결제완료 상태
+  paidDate: Date;
   cardnumber: string; // 카드번호
   cardcompay: string; // 카드사명
   cardperiod: string; // 유효기간
