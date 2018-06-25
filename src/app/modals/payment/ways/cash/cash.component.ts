@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { AlertService, AlertState } from '../../../../core/alert/alert.service';
 import {
   ModalComponent, ModalService, KeyCommand, KeyboardService,
-  PrinterService, SpinnerService, StorageService, Logger, Modal
+  PrinterService, SpinnerService, Logger, Modal
 } from '../../../../core';
 import { MessageService, PaymentService, ReceiptService } from '../../../../service';
 import {
@@ -40,7 +40,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
-    private storage: StorageService,
     private printer: PrinterService,
     private receipt: ReceiptService,
     private payments: PaymentService,

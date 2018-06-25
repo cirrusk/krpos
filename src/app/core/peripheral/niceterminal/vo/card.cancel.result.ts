@@ -1,4 +1,4 @@
-import { WebsocketResult } from "./result.common";
+import { WebsocketResult } from './result.common';
 
 export class CardCancelResult extends WebsocketResult {
     // 서비스 코드
@@ -63,290 +63,290 @@ export class CardCancelResult extends WebsocketResult {
      * Getter serviceCode
      * @return {string}
      */
-	public get serviceCode(): string {
-		return this._serviceCode;
-	}
+    public get serviceCode(): string {
+        return this._serviceCode;
+    }
 
     /**
      * Getter approved
      * @return {boolean}
      */
-	public get approved(): boolean {
-		return this._approved;
-	}
+    public get approved(): boolean {
+        return this._approved;
+    }
 
     /**
      * Getter resultMsg1
      * @return {string}
      */
-	public get resultMsg1(): string {
-		return this._resultMsg1;
-	}
+    public get resultMsg1(): string {
+        return this._resultMsg1;
+    }
 
     /**
      * Getter resultMsg2
      * @return {string}
      */
-	public get resultMsg2(): string {
-		return this._resultMsg2;
-	}
+    public get resultMsg2(): string {
+        return this._resultMsg2;
+    }
 
     /**
      * Getter approvalDate
      * @return {string}
      */
-	public get approvalDate(): string {
-		return this._approvalDate;
-	}
+    public get approvalDate(): string {
+        return this._approvalDate;
+    }
 
     /**
      * Getter vat
      * @return {string}
      */
-	public get vat(): string {
-		return this._vat;
-	}
+    public get vat(): string {
+        return this._vat;
+    }
 
     /**
      * Getter totalAmount
      * @return {string}
      */
-	public get totalAmount(): string {
-		return this._totalAmount;
-	}
+    public get totalAmount(): string {
+        return this._totalAmount;
+    }
 
     /**
      * Getter approvalNumber
      * @return {string}
      */
-	public get approvalNumber(): string {
-		return this._approvalNumber;
-	}
+    public get approvalNumber(): string {
+        return this._approvalNumber;
+    }
 
     /**
      * Getter issuerCode
      * @return {string}
      */
-	public get issuerCode(): string {
-		return this._issuerCode;
-	}
+    public get issuerCode(): string {
+        return this._issuerCode;
+    }
 
     /**
      * Getter issuerName
      * @return {string}
      */
-	public get issuerName(): string {
-		return this._issuerName;
-	}
+    public get issuerName(): string {
+        return this._issuerName;
+    }
 
     /**
      * Getter merchantCode
      * @return {string}
      */
-	public get merchantCode(): string {
-		return this._merchantCode;
-	}
+    public get merchantCode(): string {
+        return this._merchantCode;
+    }
 
     /**
      * Getter merchantName
      * @return {string}
      */
-	public get merchantName(): string {
-		return this._merchantName;
-	}
+    public get merchantName(): string {
+        return this._merchantName;
+    }
 
     /**
      * Getter salerNumber
      * @return {string}
      */
-	public get salerNumber(): string {
-		return this._salerNumber;
-	}
+    public get salerNumber(): string {
+        return this._salerNumber;
+    }
 
     /**
      * Getter maskedCardNumber
      * @return {string}
      */
-	public get maskedCardNumber(): string {
-		return this._maskedCardNumber;
-	}
+    public get maskedCardNumber(): string {
+        return this._maskedCardNumber;
+    }
 
     /**
      * Getter installmentMonth
      * @return {string}
      */
-	public get installmentMonth(): string {
-		return this._installmentMonth;
-	}
+    public get installmentMonth(): string {
+        return this._installmentMonth;
+    }
 
     /**
      * Getter processingNumber
      * @return {string}
      */
-	public get processingNumber(): string {
-		return this._processingNumber;
-	}
+    public get processingNumber(): string {
+        return this._processingNumber;
+    }
 
     /**
      * Getter catId
      * @return {string}
      */
-	public get catId(): string {
-		return this._catId;
-	}
+    public get catId(): string {
+        return this._catId;
+    }
 
     /**
      * Getter signData
      * @return {string}
      */
-	public get signData(): string {
-		return this._signData;
-	}
+    public get signData(): string {
+        return this._signData;
+    }
 
     /**
      * Setter serviceCode
      * @param {string} value
      */
-	public set serviceCode(value: string) {
-		this._serviceCode = value;
-	}
+    public set serviceCode(value: string) {
+        this._serviceCode = value;
+    }
 
     /**
      * Setter approved
      * @param {boolean} value
      */
-	public set approved(value: boolean) {
-		this._approved = value;
-	}
+    public set approved(value: boolean) {
+        this._approved = value;
+    }
 
     /**
      * Setter resultMsg1
      * @param {string} value
      */
-	public set resultMsg1(value: string) {
-		this._resultMsg1 = value;
-	}
+    public set resultMsg1(value: string) {
+        this._resultMsg1 = value;
+    }
 
     /**
      * Setter resultMsg2
      * @param {string} value
      */
-	public set resultMsg2(value: string) {
-		this._resultMsg2 = value;
-	}
+    public set resultMsg2(value: string) {
+        this._resultMsg2 = value;
+    }
 
     /**
      * Setter approvalDate
      * @param {string} value
      */
-	public set approvalDate(value: string) {
-		this._approvalDate = value;
-	}
+    public set approvalDate(value: string) {
+        this._approvalDate = value;
+    }
 
     /**
      * Setter vat
      * @param {string} value
      */
-	public set vat(value: string) {
-		this._vat = value;
-	}
+    public set vat(value: string) {
+        this._vat = value;
+    }
 
     /**
      * Setter totalAmount
      * @param {string} value
      */
-	public set totalAmount(value: string) {
-		this._totalAmount = value;
-	}
+    public set totalAmount(value: string) {
+        this._totalAmount = value;
+    }
 
     /**
      * Setter approvalNumber
      * @param {string} value
      */
-	public set approvalNumber(value: string) {
-		this._approvalNumber = value;
-	}
+    public set approvalNumber(value: string) {
+        this._approvalNumber = value;
+    }
 
     /**
      * Setter issuerCode
      * @param {string} value
      */
-	public set issuerCode(value: string) {
-		this._issuerCode = value;
-	}
+    public set issuerCode(value: string) {
+        this._issuerCode = value;
+    }
 
     /**
      * Setter issuerName
      * @param {string} value
      */
-	public set issuerName(value: string) {
-		this._issuerName = value;
-	}
+    public set issuerName(value: string) {
+        this._issuerName = value;
+    }
 
     /**
      * Setter merchantCode
      * @param {string} value
      */
-	public set merchantCode(value: string) {
-		this._merchantCode = value;
-	}
+    public set merchantCode(value: string) {
+        this._merchantCode = value;
+    }
 
     /**
      * Setter merchantName
      * @param {string} value
      */
-	public set merchantName(value: string) {
-		this._merchantName = value;
-	}
+    public set merchantName(value: string) {
+        this._merchantName = value;
+    }
 
     /**
      * Setter salerNumber
      * @param {string} value
      */
-	public set salerNumber(value: string) {
-		this._salerNumber = value;
-	}
+    public set salerNumber(value: string) {
+        this._salerNumber = value;
+    }
 
     /**
      * Setter maskedCardNumber
      * @param {string} value
      */
-	public set maskedCardNumber(value: string) {
-		this._maskedCardNumber = value;
-	}
+    public set maskedCardNumber(value: string) {
+        this._maskedCardNumber = value;
+    }
 
     /**
      * Setter installmentMonth
      * @param {string} value
      */
-	public set installmentMonth(value: string) {
-		this._installmentMonth = value;
-	}
+    public set installmentMonth(value: string) {
+        this._installmentMonth = value;
+    }
 
     /**
      * Setter processingNumber
      * @param {string} value
      */
-	public set processingNumber(value: string) {
-		this._processingNumber = value;
-	}
+    public set processingNumber(value: string) {
+        this._processingNumber = value;
+    }
 
     /**
      * Setter catId
      * @param {string} value
      */
-	public set catId(value: string) {
-		this._catId = value;
-	}
+    public set catId(value: string) {
+        this._catId = value;
+    }
 
     /**
      * Setter signData
      * @param {string} value
      */
-	public set signData(value: string) {
-		this._signData = value;
+    public set signData(value: string) {
+        this._signData = value;
     }
-    
+
     public stringify(): string {
         return JSON.stringify(this);
     }

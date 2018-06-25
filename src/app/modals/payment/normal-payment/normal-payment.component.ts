@@ -56,11 +56,11 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(CreditCardComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
+        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'CreditCardComponent'
+        closeByEscape: false,
+        modalId: 'CreditCardComponent',
+        paymentType: 'n'
       }
     );
     // this.makeReceipt(this.accountInfo, this.cartInfo); // 영수증 인쇄 테스트 용으로 임시 적용
@@ -78,7 +78,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
       {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'IcCardComponent'
+        closeByEscape: false,
+        modalId: 'IcCardComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -95,7 +97,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'PointComponent',
-        pointType: 'a'
+        pointType: 'a',
+        paymentType: 'n'
       }
     );
   }
@@ -112,7 +115,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'PointComponent_MEM',
-        pointType: 'm'
+        pointType: 'm',
+        paymentType: 'n'
       }
     );
   }
@@ -162,7 +166,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
       {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'DirectDebitComponent'
+        modalId: 'DirectDebitComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -178,7 +183,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
       {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'ReCashComponent'
+        modalId: 'ReCashComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -193,7 +199,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.modal.openModalByComponent(CouponComponent,
       {
         closeByClickOutside: false,
-        modalId: 'CouponComponent'
+        modalId: 'CouponComponent',
+        paymentType: 'n'
       }
     );
   }

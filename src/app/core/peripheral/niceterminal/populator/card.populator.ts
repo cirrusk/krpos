@@ -1,18 +1,18 @@
-import { NiceConstants } from "../nice.constants";
-import { CardApprovalResult } from "../vo/card.approval.result";
-import { CardApprovalRequest } from "../vo/card.approval.request";
-import { NiceUtils } from "../utils/nice.utils";
-import { CardCancelRequest } from "../vo/card.cancel.reqeust";
-import { CardCancelResult } from "../vo/card.cancel.result";
+import { NiceConstants } from '../nice.constants';
+import { CardApprovalResult } from '../vo/card.approval.result';
+import { CardApprovalRequest } from '../vo/card.approval.request';
+import { NiceUtils } from '../utils/nice.utils';
+import { CardCancelRequest } from '../vo/card.cancel.reqeust';
+import { CardCancelResult } from '../vo/card.cancel.result';
 
 export class CardPopulator {
     public static fillApprovalReqVO(amount: string, installment: string): CardApprovalRequest {
-        let reqVO: CardApprovalRequest = new CardApprovalRequest();
+        const reqVO: CardApprovalRequest = new CardApprovalRequest();
 
         // 5만원 이상인 경우 세팅해서 보낸다
 
         // 서명데이터가 채워져서 보내지면 잘못된 전문으로 인식 됨
-        //reqVO.reqSignData = CardPopulator.isSignatureRequired(amount);
+        // reqVO.reqSignData = CardPopulator.isSignatureRequired(amount);
 
         if (!installment) {
             reqVO.installment = '00';
@@ -28,7 +28,7 @@ export class CardPopulator {
     }
 
     public static generateApprovalReq(data: CardApprovalRequest): string {
-        let strBuilder: Array<string> = new Array();
+        const strBuilder: Array<string> = new Array();
 
         // 순서/필드를 반드시 지켜야 한다.
 
@@ -89,9 +89,9 @@ export class CardPopulator {
     }
 
     public static parseApprovalResult(raw: string): CardApprovalResult {
-        let result: CardApprovalResult = new CardApprovalResult();
+        const result: CardApprovalResult = new CardApprovalResult();
 
-        console.log("Start to parse this message : " + raw);
+        console.log('Start to parse this message : ' + raw);
 
         const resultCode: string = NiceUtils.extractResultCode(raw);
         const resultMsg: string = NiceConstants.ERROR_MESSAGE[resultCode];
@@ -100,7 +100,7 @@ export class CardPopulator {
         result.msg = resultMsg;
 
         if (resultCode === NiceConstants.REQEUST_SUCCESSFUL) {
-            let tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
+            const tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
 
             // if (tokens.length !== 18) {
             //     throw new Error('NICE result is malformed');
@@ -131,11 +131,11 @@ export class CardPopulator {
     }
 
     public static fillCancelReqVO(amount: string, approvalNumber: string, approvalDate: string, installment: string): CardCancelRequest {
-        let req: CardCancelRequest = new CardCancelRequest();
+        const req: CardCancelRequest = new CardCancelRequest();
 
         req.approvalNumber = approvalNumber;
         req.approvalDate = approvalDate;
-        req.cancelNumber ='';
+        req.cancelNumber = '';
         req.dutyAmount = amount;
         req.totalAmount = amount;
 
@@ -149,7 +149,7 @@ export class CardPopulator {
     }
 
     public static generateCancelReq(reqVO: CardCancelRequest): string {
-        let strBuilder: Array<string> = new Array();
+        const strBuilder: Array<string> = new Array();
 
         // 순서/필드를 반드시 지켜야 한다.
 
@@ -201,7 +201,7 @@ export class CardPopulator {
     }
 
     public static parseCancelResult(raw: string): CardCancelResult {
-        let result: CardCancelResult = new CardCancelResult();
+        const result: CardCancelResult = new CardCancelResult();
 
         const resultCode: string = NiceUtils.extractResultCode(raw);
         const resultMsg: string = NiceConstants.ERROR_MESSAGE[resultCode];
@@ -210,7 +210,7 @@ export class CardPopulator {
         result.msg = resultMsg;
 
         if (resultCode === NiceConstants.REQEUST_SUCCESSFUL) {
-            let tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
+            const tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
 
             // if (tokens.length !== 18) {
             //     throw new Error('NICE result is malformed');

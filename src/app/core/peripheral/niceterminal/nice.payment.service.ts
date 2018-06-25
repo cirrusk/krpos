@@ -26,6 +26,10 @@ export class NicePaymentService {
     constructor(private niceDriver: NiceDriver, private logger: Logger) {
     }
 
+    public init() {
+        this.logger.set('nice.payment.service', 'init...').debug();
+    }
+
     public cardApproval(amount: string, installment: string): Subject<CardApprovalResult> {
         if (this.isNotValidAmount(amount) || this.isNotValidInstallment(installment)) {
             const errResult: CardApprovalResult = new CardApprovalResult();

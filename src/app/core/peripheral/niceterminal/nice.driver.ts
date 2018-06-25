@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { WebSocketSubject } from 'rxjs/observable/dom/WebSocketSubject';
+// import { WebSocketSubject } from 'rxjs/observable/dom/WebSocketSubject';
 // import { Subject, Observable, BehaviorSubject } from 'rxjs/Rx';
 // import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -11,6 +11,7 @@ import { Config } from '../../config/config';
 import { Logger } from '../../logger/logger';
 import { NiceUtils } from './utils/nice.utils';
 import { NiceConstants } from './nice.constants';
+import { Utils } from '../../utils';
 
 @Injectable()
 export class NiceDriver extends AbstractDriver {
@@ -58,23 +59,23 @@ export class NiceDriver extends AbstractDriver {
         const req: string = this.makeupRequest(data);
 
         // 메시지 전달
-        this.logger.set('nice.driver', `NICE approval Send Request : ${req}`).debug();
+        this.logger.set('nice.driver', `NICE approval Send Request : ${Utils.stringify(req)}`).debug();
 
         this.ws.send(req);
 
         // 응답 대기
         this.driverMsgHandler.subscribe(
             (res) => {
-                this.logger.set('nice.driver', `NICE approval Response : ${res}`).debug();
+                this.logger.set('nice.driver', `NICE approval Response : ${Utils.stringify(res)}`).debug();
                 resNoti.next(res);
             },
             (err) => {
                 console.log('NICE error : ' + err);
-                this.logger.set('nice.driver', `NICE approval catch error : ${err}`).error();
+                this.logger.set('nice.driver', `NICE approval catch error : ${Utils.stringify(err)}`).error();
             },
             () => {
                 console.log('NICE completed');
-                this.logger.set('nice.driver', 'NICE approval completed').error();
+                this.logger.set('nice.driver', 'NICE approval completed').debug();
             }
         );
 
@@ -101,10 +102,10 @@ export class NiceDriver extends AbstractDriver {
         const _ws = new WebSocket(this.connInfo);
 
         _ws.onopen = () => {
-            this.logger.set('nice.driver', `NICE webSocket.onConnect : ${this.connInfo}`).debug();
+            this.logger.set('nice.driver', `NICE webSocket.onConnect : ${Utils.stringify(this.connInfo)}`).debug();
         };
         _ws.onmessage = (event) => {
-            this.logger.set('nice.driver', `NICE webSocket.onMessage : ${event.data}`).debug();
+            this.logger.set('nice.driver', `NICE webSocket.onMessage : ${Utils.stringify(event.data)}`).debug();
             this.driverMsgHandler.next(event.data);
         };
         _ws.onerror = (event) => {
