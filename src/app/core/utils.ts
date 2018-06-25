@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
+import * as moment from 'moment';
 import { TextEncoder, TextDecoder } from 'text-encoding';
 import { ErrorInfo } from '../data/error/error-info';
 import { Errors } from '../data/error/errors';
@@ -273,6 +274,16 @@ export /* default */ class Utils {
       return new Date(text);
     }
     return null;
+  }
+
+  /**
+   * Date 형 날짜를 문자형으로 변환
+   * @param date Date 형
+   * @param format 변환할 포맷(default : YYYY-MM-DD HH:mm:ss)
+   */
+  public static convertDateToString(date: Date, format?: string): string {
+    const dateformat = format || 'YYYY-MM-DD HH:mm:ss';
+    return moment(date).format(dateformat);
   }
 
   /**

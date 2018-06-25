@@ -18,6 +18,12 @@
         구매일자: {{orderInfo.date}}
     </text-line>
     <text-line>
+        POS번호: {{orderInfo.posId}}
+    </text-line>
+    <text-line>
+        캐셔정보: {{orderInfo.cashier.firstName}}
+    </text-line>
+    <text-line>
         주문번호: {{orderInfo.number}}
     </text-line>
 </document>

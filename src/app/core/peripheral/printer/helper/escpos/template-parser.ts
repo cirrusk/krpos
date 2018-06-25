@@ -5,11 +5,11 @@ import 'numeral/locales/pt-br';
 import { cloneDeep } from 'lodash';
 import { XMLParser } from './xml-parser';
 import { BufferBuilder } from './buffer-builder';
-import { TextEncoder, TextDecoder } from 'text-encoding';
+// import { TextEncoder, TextDecoder } from 'text-encoding';
 
 import { ReceiptUtils } from './helpers/receipt.utils';
-import { ReceiptProductFieldInterface } from './../../../../../data/receipt/interfaces/productfield.interface';
-import { BonusDataInterface } from './helpers/bonusdata.interface';
+import { ReceiptProductFieldInterface } from '../../../../../data/receipt/interfaces/productfield.interface';
+// import { BonusDataInterface } from './helpers/bonusdata.interface';
 
 export class TemplateParser {
 
@@ -104,7 +104,7 @@ export class TemplateParser {
       const localedProductList = ReceiptUtils.convertProductListPrices(productList);
       const maxLengths = ReceiptUtils.findMaxLengths(localedProductList);
 
-      let formatted: Array<string> = [];
+      const formatted: Array<string> = [];
 
       formatted.push(ReceiptUtils.getProductListTitle(maxLengths));
 
@@ -121,7 +121,7 @@ export class TemplateParser {
   // Bonus 정보를 용지 절반 기준 2단으로 보여주기 위한 Helper
   private registerBonusDataHelper() {
     this.handlebars.registerHelper('bonusDataHelper', (title1: string, value1: string, title2: string, value2: string) => {
-      let formatted: Array<string> = [];
+      const formatted: Array<string> = [];
 
       formatted.push('<text-line>');
       formatted.push(ReceiptUtils.fitTextsEqual(title1 + value1, title2 + value2));

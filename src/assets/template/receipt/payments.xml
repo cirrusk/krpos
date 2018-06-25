@@ -4,13 +4,15 @@
         <text-line>
             [현금결제] {{priceLocaleHelper payments.cash.amount}}
         </text-line>
-        {{#if payments.cash.detail}}
-            <text-line>
-                받은금액 {{priceLocaleHelper payments.cash.detail.received}}
-            </text-line>
-            <text-line>
-                거스름돈 {{priceLocaleHelper payments.cash.detail.changes}}
-            </text-line>
+        {{#if payments.cash.received}}
+        <text-line>
+            받은금액 {{priceLocaleHelper payments.cash.received}}
+        </text-line>
+        {{/if}}
+        {{#if payments.cash.changes}}
+        <text-line>
+            거스름돈 {{priceLocaleHelper payments.cash.changes}}
+        </text-line>
         {{/if}}
         {{#if payments.cash.cashreceipt}}
             <align mode="center">
@@ -24,13 +26,11 @@
         <text-line>
             [신용카드결제] {{priceLocaleHelper payments.creditcard.amount}}
         </text-line>
-        {{#if payments.creditcard.detail}}
-            <text-line>
-                카드번호: {{payments.creditcard.detail.cardnumber}}
-            </text-line>
-            <text-line>
-                할부: {{payments.creditcard.detail.installment}} (승인번호: {{payments.creditcard.detail.authNumber}})
-            </text-line>
-        {{/if}}
+        <text-line>
+            카드번호: {{payments.creditcard.cardnumber}}
+        </text-line>
+        <text-line>
+            할부: {{payments.creditcard.installment}} (승인번호: {{payments.creditcard.authNumber}})
+        </text-line>
     {{/if}}
 </document>

@@ -2,13 +2,20 @@ import { Component, OnInit, HostListener, ElementRef, ViewChild, Renderer2, OnDe
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService, AlertState } from '../../../../core/alert/alert.service';
-import { ModalComponent, ModalService, KeyCommand, KeyboardService, Logger, Modal, PrinterService, SpinnerService } from '../../../../core';
-import { MessageService, PaymentService } from '../../../../service';
-import { Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData, CurrencyData, KeyCode, StatusDisplay } from '../../../../data';
+import {
+  ModalComponent, ModalService, KeyCommand, KeyboardService,
+  PrinterService, SpinnerService, StorageService, Logger, Modal
+} from '../../../../core';
+import { MessageService, PaymentService, ReceiptService } from '../../../../service';
+import {
+  Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
+  CurrencyData, KeyCode, StatusDisplay
+} from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
 import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
+import { Order } from '../../../../data/models/order/order';
 
 @Component({
   selector: 'pos-cash',
@@ -21,16 +28,21 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   @ViewChild('paycheck') private paycheck: ElementRef; // 결제확인버튼
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
+  private orderInfo: Order;
   private cartInfo: Cart;
   private account: Accounts;
+  private paymentcapture: PaymentCapture;
   private paymentType: string;
+  private point; number;
   private keyboardsubscription: Subscription;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
+    private storage: StorageService,
     private printer: PrinterService,
+    private receipt: ReceiptService,
     private payments: PaymentService,
     private alert: AlertService,
     private spinner: SpinnerService,
@@ -98,14 +110,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       if (this.paymentType === 'n') {
         if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
           this.spinner.show();
-          const paymentcapture = this.makePaymentCaptureData(payAmount);
-          this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
+          this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
+          this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
+          this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
             result => {
+              this.orderInfo = result;
               this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
               this.finishStatus = result.statusDisplay;
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                if (this.finishStatus === StatusDisplay.CREATED) {
+                if (this.finishStatus === StatusDisplay.PAID) {
                   this.paidDate = result.created ? result.created : new Date();
 
                   setTimeout(() => { // 결제 성공, 변경못하도록 처리
@@ -155,7 +168,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   protected popupCashReceipt() {
     this.modal.openModalByComponent(CashReceiptComponent,
       {
-        callerData: { account: this.account, cartInfo: this.cartInfo },
+        callerData: { account: this.account, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
         closeByClickOutside: false,
         modalId: 'CashReceiptComponent',
         paymentType: this.paymentType
@@ -168,8 +181,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    *
    * @param paidamount 지불 금액
    */
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number, received: number, change: number): PaymentCapture {
     const cash = new CashPaymentInfo(paidamount, CashType.CASH);
+    cash.setReceived = received;
+    cash.setChange = change;
     cash.setPaymentModeData = new PaymentModeData(PaymentModes.CASH);
     cash.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();
@@ -188,15 +203,29 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    */
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.CREATED) {
-        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
+      if (this.finishStatus === StatusDisplay.PAID) {
+        // 포인트 다시 취득 후 영수증 출력
+        this.payments.getBalance(this.account.parties[0].uid).subscribe(
+          data => {
+            this.point = data.amount;
+          },
+          error => { this.logger.set('cash.component', `${error}`).error(); },
+          () => {
+            const rtn = this.receipt.print(this.account, this.cartInfo, this.orderInfo, this.paymentcapture, this.point);
+            if (rtn) {
+              this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+              this.info.sendInfo('orderClear', 'clear');
+            } else {
+              this.alert.show({ message: '실패' });
+            }
+          });
       }
       this.close();
     } else {
       console.log('복합결제일 경우...');
     }
   }
+
 
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {

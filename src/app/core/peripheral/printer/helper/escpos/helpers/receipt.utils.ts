@@ -13,21 +13,21 @@ export class ReceiptUtils {
     private static END_TEXTLINE = '</text-line>';
 
     // 유니코드 문자에 대해 바이트 수 구함
-    public static getTextLengthUTF8(text: string) : number {
+    public static getTextLengthUTF8(text: string): number {
         const b = text.match(/[^\x00-\xff]/g);
-        return (text.length + (!b ? 0: b.length)); 
+        return (text.length + (!b ? 0 : b.length));
     }
 
     // 원화에 대해 3자리마다 콤마 찍기
     public static convertToLocalePrice(price: string): string {
-        return price.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        return price.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     }
 
     // symbol 을 length 만큼 생성
     public static sequences(length: number, symbol: string): string {
-        let arr: Array<string> = [];
+        const arr: Array<string> = [];
 
-        for (let i: number = 0 ; i < length ; i++) {
+        for (let i = 0; i < length; i++) {
             arr.push(symbol);
         }
 
@@ -41,7 +41,7 @@ export class ReceiptUtils {
 
     // SPACE 를 length 만큼 생성
     public static spaces(length: number): string {
-        return ReceiptUtils.sequences(length, " ");
+        return ReceiptUtils.sequences(length, ' ');
     }
 
     public static convertProductListPrices(productList): any {
@@ -56,12 +56,12 @@ export class ReceiptUtils {
 
     // 구매 상품 리스트의 각 필드의 최대 길이 값
     public static findMaxLengths(productList): ProductFieldMaxLen {
-        let maxLenIdx: number = 0;
-        let maxLenSkuCode: number = 0;
-        let maxLenPrice: number = 0;
-        let maxLenQty: number = 0;
-        let maxLenTotal: number = 0;
-        
+        let maxLenIdx = 0;
+        let maxLenSkuCode = 0;
+        let maxLenPrice = 0;
+        let maxLenQty = 0;
+        let maxLenTotal = 0;
+
         productList.forEach((item) => {
             if (item.idx.length > maxLenIdx) {
                 maxLenIdx = item.idx.length;
@@ -100,7 +100,7 @@ export class ReceiptUtils {
     // 유니코드 텍스트를 위한 substr()
     // len 은 바이트 수 (원 substr 은 글자 수)
     public static substrUnicode(text: string, len: number, startIdx: number): string {
-        let c: number = 0;
+        let c = 0;
 
         // 첫 글자가 Space (ASCII 32) 이면 한 칸 뒤로
         if (text.charCodeAt(startIdx) === 32) {
@@ -109,24 +109,24 @@ export class ReceiptUtils {
 
         let i: number = startIdx;
 
-        for(let b = 0 ; c = text.charCodeAt(i) ;) {
+        for (let b = 0; c = text.charCodeAt(i);) {
 
             b += c >> 7 ? 2 : 1;
-            
+
             if (b > len) {
                 break;
             }
-            
+
             i++;
         }
-        
+
         return text.substring(startIdx, i);
     }
 
     public static getProductListTitle(maxLengths: ProductFieldMaxLen): string {
-        let formatted: Array<string> = [];
-        const productName: string = "상품명";
-        const remainings: string = "단가 수량 금액";
+        const formatted: Array<string> = [];
+        const productName = '상품명';
+        const remainings = '단가 수량 금액';
 
         formatted.push(this.START_TEXTLINE);
 
@@ -146,7 +146,7 @@ export class ReceiptUtils {
     }
 
     public static getFormattedProductField(product: ReceiptProductFieldInterface, maxLengths: ProductFieldMaxLen): string {
-        let formatted: Array<string> = [];
+        const formatted: Array<string> = [];
 
         // 태그 시작
         formatted.push(this.START_TEXTLINE);
@@ -166,13 +166,13 @@ export class ReceiptUtils {
 
         // 순번 컬럼 비우기
         formatted.push(this.genSafeLeadingSpaces(idxLen));
-        
+
         // SKU code
         formatted.push(this.rightAlignedText(product.skuCode, maxLengths.skuCode));
         formatted.push(this.spaces(1));
 
         // const croppedLen: number = this.getTextLengthUTF8(croppedProductName);
-        
+
         // // 개행 여부 판단
         // // 상품명이 긴 경우 2라인에 출력하자는 요건
         // if (product.productName.length > maxLengths.productName) {
@@ -202,7 +202,7 @@ export class ReceiptUtils {
         formatted.push(this.spaces(1));
 
         // 가격
-        formatted.push(this.rightAlignedText(product.totalPrice, maxLengths.totalPrice));;
+        formatted.push(this.rightAlignedText(product.totalPrice, maxLengths.totalPrice));
 
         // 태그 끝
         formatted.push(this.END_TEXTLINE);

@@ -23,7 +23,7 @@
         "templProductList": false,
         "templPrices": false,
         "templBonus": false,
-        "templPosCashierInfo": true,
+        "templPosCashierInfo": false,
         "templPayments": false,
         "templBarcode": false,
         "templNoticeHealthyFood": true,
@@ -42,7 +42,6 @@
         "templProductList": "productList.xml",
         "templPrices": "prices.xml",
         "templBonus": "bonus.xml",
-        "templPosCashierInfo": "posCashierInfo.xml",
         "templPayments": "payments.xml",
         "templBarcode": "barcode.xml",
         "templNoticeHealthyFood": "noticeHealthyFood.xml",
@@ -65,7 +64,7 @@
             "templProductList", "templDashline",
             "templPrices", "templDashline",
             "templPayments", "templDashline",
-            "templBonus", "templPosCashierInfo", "templMacAndCo", "templDashline",
+            "templBonus", "templMacAndCo", "templDashline",
             "templNoticeHealthyFood", "templNoticeABO", "templDashline",
             "templBarcode",
             "templCompanyInfo", "templPaperCut"
@@ -77,7 +76,6 @@
             "templProductList", "templDashline",
             "templPrices", "templDashline",
             "templPayments", "templDashline",
-            "templPosCashierInfo", "templDashline",
             "templNoticeOthers", "templDashline",
             "templBarcode",
             "templCompanyInfo", "templPaperCut"
@@ -89,7 +87,6 @@
             "templProductList", "templDashline",
             "templPrices", "templDashline",
             "templPayments", "templDashline",
-            "templPosCashierInfo", "templDashline",
             "templNoticeOthers", "templDashline",
             "templBarcode",
             "templCompanyInfo", "templPaperCut"

@@ -1,5 +1,7 @@
 import { OrderEntry, Accounts, Principal, Price } from '../..';
-
+import { Voucher } from '../payment/voucher';
+import { PaymentDetails, PaymentDetailInfo } from '../payment/payment-details';
+import { AmwayValue } from '../common/amway-value';
 
 export class AbstractOrder {
     code: string;
@@ -13,7 +15,7 @@ export class AbstractOrder {
     totalItems: number;
     deliveryMode: any; // DeliveryModeWsDTO
     deliveryAddress: any; // AddressWsDTO
-    paymentInfo: any; // PaymentDetailsWsDTO
+    paymentInfo: PaymentDetailInfo; // PaymentDetailsWsDTO
     appliedOrderPromotions: any; // List<PromotionResultWsDTO>
     appliedProductPromotions: any; // List<PromotionResultWsDTO>
     productDiscounts: Price;
@@ -23,7 +25,7 @@ export class AbstractOrder {
     store: string;
     guid: string;
     calculated: boolean;
-    appliedVouchers: any; // List<VoucherWsDTO>
+    appliedVouchers: Array<Voucher>; // List<VoucherWsDTO>
     user: Principal;
     pickupOrderGroups: any; // List<PickupOrderEntryGroupWsDTO>
     deliveryOrderGroups: any; // List<DeliveryOrderEntryGroupWsDTO>
@@ -39,9 +41,9 @@ export class AbstractOrder {
     orderPeriod: any; // AmwayOrderPeriodWsDTO
     bonusPeriod: any; // AmwayBonusPeriodWsDTO
     margin: any; // AmwayOrderMarginWsDTO
-    value: any; // AmwayValueWsDTO
+    value: AmwayValue; // AmwayValueWsDTO
     totalWeight: number;
-    paymentDetails: any; // AmwayPaymentDetailsWsDTO
+    paymentDetails: PaymentDetails; // AmwayPaymentDetailsWsDTO
 
     constructor() {}
 }
