@@ -6,6 +6,9 @@ export class BankAccount {
 }
 
 export class BankInfo {
+    bin: string;
     code: string;
+    extraCode: string;
     name: string;
+    orgCode: string;
 }

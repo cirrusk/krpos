@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode
@@ -23,6 +23,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private paymentsubscription: Subscription;
+  private alertsubscription: Subscription;
   paidamount: number;
   accountnumber: string;
   bank: string;
@@ -42,10 +43,20 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     this.cartInfo = this.callerData.cartInfo;
     this.paidamount = this.cartInfo.totalPrice.value;
     this.setDirectDebitInfo();
+    if (!this.accountnumber) {
+      this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
+      setTimeout(() => {
+        this.ddpassword.nativeElement.blur();
+        this.renderer.setAttribute(this.ddpassword.nativeElement, 'disabled', 'disabled');
+      }, 50);
+    } else {
+      setTimeout(() => { this.ddpassword.nativeElement.focus(); }, 50);
+    }
   }
 
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
   private setDirectDebitInfo() {
@@ -87,7 +98,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
             this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
             this.finishStatus = result.statusDisplay;
             if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-              if (this.finishStatus === StatusDisplay.CREATED) {
+              if (this.finishStatus === StatusDisplay.PAID) {
                 this.paidDate = result.created ? result.created : new Date();
 
                 setTimeout(() => { // 결제 성공, 변경못하도록 처리
@@ -117,6 +128,15 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       }
     } else {
       this.alert.show({ message: '비밀번호가 공란입니다.' });
+      this.alertsubscription = this.alert.alertState.subscribe(
+        (state: AlertState) => {
+          if (!state.show) {
+            setTimeout(() => {
+              this.ddpassword.nativeElement.focus();
+            }, 50);
+          }
+        }
+      );
     }
 
   }
@@ -127,7 +147,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.CREATED) {
+      if (this.finishStatus === StatusDisplay.PAID) {
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
           this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
@@ -147,7 +167,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.finishStatus === StatusDisplay.CREATED) {
+      if (this.finishStatus === StatusDisplay.PAID) {
         this.cartInitAndClose();
       }
     }

@@ -68,7 +68,7 @@
     <!-- //pop_container -->
     <div class="pop_footer clearfix">
         <span class="fl">취소 ESC</span>
-        <em *ngIf="finishStatus === 'created'; else payFail" class="finish ok">결제가 완료되었습니다.</em>
+        <em *ngIf="finishStatus === 'paid'; else payFail" class="finish ok">결제가 완료되었습니다.</em>
         <ng-template #payFail>
             <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">결제에 실패했습니다.</em>
         </ng-template>
