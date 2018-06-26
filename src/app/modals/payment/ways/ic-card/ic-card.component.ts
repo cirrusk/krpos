@@ -24,7 +24,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentType: string;
   private cardresult: ICCardApprovalResult;
   private paymentsubscription: Subscription;
-  private enterCounter: number;
   payprice: number;
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
@@ -38,7 +37,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
-    this.enterCounter = 0;
   }
 
   ngOnInit() {

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/timeout';
 
-import { ApiService, StorageService } from '../../core';
+import { ApiService, StorageService, Config } from '../../core';
 import {
   BankInfo, Balance, CouponList, HttpData,
   PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData
@@ -12,7 +13,10 @@ import { Order } from '../../data/models/order/order';
 @Injectable()
 export class PaymentService {
 
-  constructor(private api: ApiService, private storage: StorageService) { }
+  private directdebitTimeout: number;
+  constructor(private api: ApiService, private storage: StorageService, private config: Config) {
+    this.directdebitTimeout = this.config.getConfig('directdebitTimeout');
+  }
 
   /**
    * AP 별 결제 수단 조회하기
@@ -148,6 +152,7 @@ export class PaymentService {
    * @param accountid 회원 아이디
    * @param userid 회원 아이디
    * @param cartid 카트 아이디
+   * @param paymentcapture Payment Capture 정보
    */
   placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
     const pathvariables = { accountId: accountid, userId: userid, cartId: cartid };
@@ -156,4 +161,16 @@ export class PaymentService {
     return this.api.post(data);
   }
 
+  /**
+   * Payment Capture와 Place Order를 진행
+   * 타임아웃 지정(자동이체 등)
+   *
+   * @param accountid 회원 아이디
+   * @param userid 회원 아이디
+   * @param cartid 카트 아이디
+   * @param paymentcapture Payment Capture 정보
+   */
+  placeOrderWithTimeout(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
+   return this.placeOrder(accountid, userid, cartid, paymentcapture).timeout(1000 * this.directdebitTimeout);
+  }
 }

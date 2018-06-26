@@ -66,6 +66,7 @@ export const environment = {
   },
   logLevel: 'info',
   terminalTimeout: 20,
+  directdebitTimeout: 60,
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,

@@ -17,11 +17,11 @@
                   <tbody>
                       <tr>
                           <th scope="row">결제금액</th>
-                          <td><span class="won">100,000,000</span></td>
+                          <td><span class="won">{{paidamount | number}}</span></td>
                       </tr>
                       <tr>
                           <th scope="row">비밀번호</th>
-                          <td><input #ddpassword type="password" class="w110" title="비밀번호"></td>
+                          <td><input #ddpassword type="password" class="w110" title="비밀번호" (keydown.enter)="pay($event)"></td>
                       </tr>
                       <tr>
                           <th scope="row">계좌번호</th>

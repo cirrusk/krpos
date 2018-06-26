@@ -222,7 +222,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      this.cartInitAndClose();
+      if (this.finishStatus === StatusDisplay.CREATED) {
+        this.cartInitAndClose();
+      }
     }
   }
 
