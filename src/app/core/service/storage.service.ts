@@ -207,6 +207,18 @@ export class StorageService implements OnDestroy {
     return (terminalinfo !== null && Utils.isNotEmpty(terminalinfo.id));
   }
 
+  public getPay(): number {
+    return this.getSessionItem('pay');
+  }
+
+  public setPay(data: number): void {
+    this.setSessionItem('pay', data);
+  }
+
+  public removePay() {
+    this.removeSessionItem('pay');
+  }
+  
   /**
    * Access Token 정보 가져오기
    */

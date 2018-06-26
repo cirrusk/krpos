@@ -4,7 +4,7 @@ import { Subject } from 'rxjs/Subject';
 
 import {
   ModalComponent, ModalService, NicePaymentService,
-  Logger, AlertService, SpinnerService, AlertState, Modal
+  Logger, AlertService, SpinnerService, AlertState, Modal, StorageService
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
@@ -47,7 +47,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
-    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal,
+    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
     private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = '00';
@@ -224,7 +224,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 카드결제만 진행
    */
   private approval() {
-    const paidprice = this.paid.nativeElement.value;
+    const paidprice: number = this.paid.nativeElement.value;
+    this.storage.setPay(paidprice); // 실결제금액을 세션에 저장
     this.spinner.show();
     const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
