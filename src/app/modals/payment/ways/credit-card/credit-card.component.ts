@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener, OnDe
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
-import { ModalComponent, ModalService, NicePaymentService, Logger, AlertService, SpinnerService, AlertState, Modal } from '../../../../core';
+import {
+  ModalComponent, ModalService, NicePaymentService,
+  Logger, AlertService, SpinnerService, AlertState, Modal
+} from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
   Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType
@@ -14,7 +17,6 @@ import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/
 import { Utils } from '../../../../core/utils';
 import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
 import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
-// import { InstallmentPlanComponent } from '../../..';
 import { InfoBroker } from '../../../../broker';
 import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
 
