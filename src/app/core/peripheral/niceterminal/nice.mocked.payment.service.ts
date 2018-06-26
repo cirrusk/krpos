@@ -21,10 +21,10 @@ export class NiceMockedPaymentService {
         result.vat = '0';
         result.approvalNumber = '12208603';
         result.issuerCode = '02';
-        result.merchantCode = '02';
+        result.acquireCode = '02';
         result.issuerName = 'KB국민실버카드';
-        result.merchantName = 'KB국민카드';
-        result.salerNumber = '00023451613';
+        result.acquireName = 'KB국민카드';
+        result.merchantNumber = '00023451613';
         result.maskedCardNumber = '457972******8003';
         result.installmentMonth = installment;
         result.processingNumber = '0029';
