@@ -151,7 +151,7 @@ export class PaymentService {
    */
   placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
     const pathvariables = { accountId: accountid, userId: userid, cartId: cartid };
-    const param = { fields: 'DEFAULT' };
+    const param = { fields: 'FULL' };
     const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'b');
     return this.api.post(data);
   }

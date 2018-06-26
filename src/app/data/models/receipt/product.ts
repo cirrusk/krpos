@@ -6,7 +6,7 @@ export class ProductEntryVO {
     qty: string;
     totalPrice: string;
 
-    constructor(idx: number, skuCode:string, productName: string,
+    constructor(idx: number, skuCode: string, productName: string,
                 price: number, qty: number, totalPrice: number) {
         this.idx = String(idx);
         this.skuCode = skuCode;

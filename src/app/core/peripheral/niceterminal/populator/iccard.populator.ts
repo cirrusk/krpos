@@ -1,13 +1,13 @@
-import { ICCardApprovalRequest } from "../vo/iccard.approval.request";
-import { NiceConstants } from "../nice.constants";
-import { ICCardApprovalResult } from "../vo/iccard.approval.result";
-import { NiceUtils } from "../utils/nice.utils";
-import { ICCardCancelRequest } from "../vo/iccard.cancel.request";
-import { ICCardCancelResult } from "../vo/iccard.cancel.result";
+import { ICCardApprovalRequest } from '../vo/iccard.approval.request';
+import { NiceConstants } from '../nice.constants';
+import { ICCardApprovalResult } from '../vo/iccard.approval.result';
+import { NiceUtils } from '../utils/nice.utils';
+import { ICCardCancelRequest } from '../vo/iccard.cancel.request';
+import { ICCardCancelResult } from '../vo/iccard.cancel.result';
 
 export class ICCardPopulator {
     public static fillApprovalReqVO(amount: string): ICCardApprovalRequest {
-        let req: ICCardApprovalRequest = new ICCardApprovalRequest();
+        const req: ICCardApprovalRequest = new ICCardApprovalRequest();
 
         req.amount = amount;
 
@@ -15,7 +15,7 @@ export class ICCardPopulator {
     }
 
     public static generateApprovalReq(data: ICCardApprovalRequest): string {
-        let strBuilder: Array<string> = new Array();
+        const strBuilder: Array<string> = new Array();
 
         // 서비스 코드
         strBuilder.push(data.serviceCode);
@@ -49,7 +49,7 @@ export class ICCardPopulator {
     }
 
     public static parseApprovalResult(raw: string): ICCardApprovalResult {
-        let result: ICCardApprovalResult = new ICCardApprovalResult();
+        const result: ICCardApprovalResult = new ICCardApprovalResult();
 
         const resultCode: string = NiceUtils.extractResultCode(raw);
         const resultMsg: string = NiceConstants.ERROR_MESSAGE[resultCode];
@@ -58,7 +58,7 @@ export class ICCardPopulator {
         result.msg = resultMsg;
 
         if (resultCode === NiceConstants.REQEUST_SUCCESSFUL) {
-            let tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
+            const tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
 
             // if (tokens.length !== 31) {
             //     throw new Error('NICE result is malformed');
@@ -101,7 +101,7 @@ export class ICCardPopulator {
     }
 
     public static fillCancenReqVO(amount: string, approvalNumber: string, approvalDate: string): ICCardCancelRequest {
-        let req: ICCardCancelRequest = new ICCardCancelRequest();
+        const req: ICCardCancelRequest = new ICCardCancelRequest();
 
         req.approvalNumber = approvalNumber;
         req.approvalDate = approvalDate;
@@ -111,7 +111,7 @@ export class ICCardPopulator {
     }
 
     public static generateCancelReq(reqVO: ICCardCancelRequest): string {
-        let strBuilder: Array<string> = new Array();
+        const strBuilder: Array<string> = new Array();
 
         // 순서/필드를 반드시 지켜야 한다.
 
@@ -126,19 +126,19 @@ export class ICCardPopulator {
         // 금액
         strBuilder.push(reqVO.amount);
         strBuilder.push(NiceConstants.DELIMITER);
-        
+
         // 승인번호
         strBuilder.push(reqVO.approvalNumber);
         strBuilder.push(NiceConstants.DELIMITER);
-        
+
         // 거래일자(승인일자)
         strBuilder.push(reqVO.approvalDate);
         strBuilder.push(NiceConstants.DELIMITER);
-        
+
         // CAT ID
         strBuilder.push(reqVO.catId);
         strBuilder.push(NiceConstants.DELIMITER);
-        
+
         // Sign Data
         strBuilder.push(reqVO.signData);
         strBuilder.push(NiceConstants.DELIMITER);
@@ -147,7 +147,7 @@ export class ICCardPopulator {
     }
 
     public static parseCancelResult(raw: string): ICCardCancelResult {
-        let result: ICCardCancelResult = new ICCardCancelResult();
+        const result: ICCardCancelResult = new ICCardCancelResult();
 
         const resultCode: string = NiceUtils.extractResultCode(raw);
         const resultMsg: string = NiceConstants.ERROR_MESSAGE[resultCode];
@@ -156,7 +156,7 @@ export class ICCardPopulator {
         result.msg = resultMsg;
 
         if (resultCode === NiceConstants.REQEUST_SUCCESSFUL) {
-            let tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
+            const tokens: Array<string> = raw.split(NiceConstants.DELIMITER);
 
             // if (tokens.length !== 31) {
             //     throw new Error('NICE result is malformed');

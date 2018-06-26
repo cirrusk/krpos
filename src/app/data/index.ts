@@ -42,6 +42,13 @@ export * from './models/payment/coupon';
 export * from './models/payment/voucher';
 export * from './models/payment/payment.enum';
 
+export * from './models/receipt/bonus-info';
+export * from './models/receipt/order-info';
+export * from './models/receipt/payment-info';
+export * from './models/receipt/price-info';
+export * from './models/receipt/receipt-info';
+export * from './models/receipt/products-entry-info';
+
 export * from './models/common/access-token';
 export * from './models/common/address';
 export * from './models/common/amway-value';

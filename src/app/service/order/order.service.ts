@@ -71,7 +71,7 @@ export class OrderService {
    * @param ordercodes 주문코드 배열
    */
   orderDetails(userid: string, ordercodes: Array<string>): Observable<OrderList> {
-    const param = { codes: ordercodes, fields: 'DEFAULT' };
+    const param = { codes: ordercodes, fields: 'FULL' };
     const pathvariables = { userId: userid };
     const body = { codes: ordercodes };
     const data = new HttpData('orderDetails', pathvariables, body, param);

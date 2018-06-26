@@ -22,6 +22,7 @@ export * from './payment/ways/check-card/check-card.component';
 export * from './payment/ways/checks/checks.component';
 export * from './payment/ways/coupon/coupon.component';
 export * from './payment/ways/credit-card/credit-card.component';
+export * from './payment/ways/credit-card/installment-plan/installment-plan.component';
 export * from './payment/ways/direct-debit/direct-debit.component';
 export * from './payment/ways/ic-card/ic-card.component';
 export * from './payment/ways/point/point.component';

@@ -13,7 +13,7 @@ import { PickupOrderComponent } from '../pickup-order/pickup-order.component';
 })
 export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   // private listner: any;
-  private accounts: Accounts;
+  private accountInfo: Accounts;
   @ViewChildren('etcorders') etcorders: QueryList<ElementRef>;
   constructor(
     protected modalService: ModalService,
@@ -25,7 +25,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
   }
 
   ngOnInit() {
-    this.accounts = this.callerData.account;
+    this.accountInfo = this.callerData.accountInfo;
   }
 
   ngOnDestroy() {
@@ -41,7 +41,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     this.close();
     this.modal.openModalByComponent(SearchBerComponent,
       {
-        callerData: { aboNum: this.accounts.uid },
+        callerData: { aboNum: this.accountInfo.uid },
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,

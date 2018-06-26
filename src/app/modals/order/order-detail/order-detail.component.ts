@@ -29,7 +29,6 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   }
 
   init() {
-    // this.orderDetail = new OrderList();
   }
 
   getOrderDetail(userId: string, orderCode: string) {
@@ -46,8 +45,8 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('pickup-order.component', `Get Order Detail error type : ${errdata.type}`).error();
-          this.logger.set('pickup-order.component', `Get Order Detail error message : ${errdata.message}`).error();
+          this.logger.set('order-detail.component', `Get Order Detail error type : ${errdata.type}`).error();
+          this.logger.set('order-detail.component', `Get Order Detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },

@@ -6,31 +6,35 @@
     <text-line>
         {{priceFormatHelper '과세 물품' price.amountWithoutVAT}}
     </text-line>
+    {{#if price.amountVAT}}
     <text-line>
         {{priceFormatHelper '부 가 세' price.amountVAT}}
     </text-line>
+    {{/if}}
     <bold>
         <text-line>
             {{priceFormatHelper '합 계' price.totalAmount}}
         </text-line>
+        {{#if price.totalDiscount}}
         <text-line>
-            {{priceFormatHelper '할인금액' price.discount.total}}
+            {{priceFormatHelper '할인금액' price.totalDiscount}}
         </text-line>
-        {{#if price.discount.detail}}
+        {{/if}}
+        {{#if price.discount}}
             </bold>
-            {{#if price.discount.detail.coupon}}
+            {{#if price.discount.coupon}}
                 <text-line>
-                    {{priceFormatHelper price.discount.detail.coupon.name price.discount.detail.coupon.amount}}
+                    {{priceFormatHelper price.discount.coupon.name price.discount.coupon.amount}}
                 </text-line>
             {{/if}}
-            {{#if price.discount.detail.point}}
+            {{#if price.discount.point}}
                 <text-line>
-                    {{priceFormatHelper price.discount.detail.point.name price.discount.detail.point.amount}}
+                    {{priceFormatHelper price.discount.point.name price.discount.point.amount}}
                 </text-line>
             {{/if}}
-            {{#if price.discount.detail.recash}}
+            {{#if price.discount.recash}}
                 <text-line>
-                    {{priceFormatHelper 'Recash' price.discount.detail.recash.amount}}
+                    {{priceFormatHelper 'Recash' price.discount.recash.amount}}
                 </text-line>
             {{/if}}
         {{/if}}

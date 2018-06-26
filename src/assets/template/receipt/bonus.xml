@@ -4,6 +4,11 @@
     {{bonusDataHelper 'PV SUM:' bonus.sum.PV 'BV SUM:' bonus.sum.BV}}
     {{bonusDataHelper 'GROUP PV:' bonus.group.PV 'GROUP BV:' bonus.group.BV}}
     <text-line>
+       {{#if bonus.aPoint}}
         잔여 A 포인트 : {{aPoint}}
+       {{/if}}
+       {{#if bonus.memberPoint}}
+        잔여 Member 포인트 : {{memberPoint}}
+       {{/if}}       
     </text-line>
 </document>

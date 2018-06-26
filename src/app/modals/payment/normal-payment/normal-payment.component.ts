@@ -27,7 +27,6 @@ import { Cart } from '../../../data/models/order/cart';
 export class NormalPaymentComponent extends ModalComponent implements OnInit {
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
-
   private cartInfo: Cart;
   accountInfo: Accounts;
   public memberType = MemberType;
@@ -56,11 +55,11 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(CreditCardComponent,
       {
-        title: '',
-        actionButtonLabel: '',
-        closeButtonLabel: '',
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'CreditCardComponent'
+        closeByEscape: false,
+        modalId: 'CreditCardComponent',
+        paymentType: 'n'
       }
     );
     // this.makeReceipt(this.accountInfo, this.cartInfo); // 영수증 인쇄 테스트 용으로 임시 적용
@@ -73,12 +72,13 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   icCard(evt: any) {
     this.setSelected(evt);
     this.close();
-    // console.log('------------------->' + evt.target.getAttribute('data-ptype'));
     this.modal.openModalByComponent(IcCardComponent,
       {
         callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'IcCardComponent'
+        closeByEscape: false,
+        modalId: 'IcCardComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -89,15 +89,16 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
    */
   amwayPoint(evt: any) {
     this.setSelected(evt);
-    this.close();
-    this.modal.openModalByComponent(PointComponent,
-      {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        modalId: 'PointComponent',
-        pointType: 'a'
-      }
-    );
+    // sprint 6차로 주석처리
+    // this.close();
+    // this.modal.openModalByComponent(PointComponent,
+    //   {
+    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+    //     closeByClickOutside: false,
+    //     modalId: 'PointComponent',
+    //     pointType: 'a'
+    //   }
+    // );
   }
 
   /**
@@ -106,15 +107,16 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
    */
   memberPoint(evt: any) {
     this.setSelected(evt);
-    this.close();
-    this.modal.openModalByComponent(PointComponent,
-      {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        modalId: 'PointComponent_MEM',
-        pointType: 'm'
-      }
-    );
+    // sprint 6차로 주석처리
+    // this.close();
+    // this.modal.openModalByComponent(PointComponent,
+    //   {
+    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+    //     closeByClickOutside: false,
+    //     modalId: 'PointComponent_MEM',
+    //     pointType: 'm'
+    //   }
+    // );
   }
 
   /**
@@ -126,7 +128,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(CashComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'CashComponent',
         paymentType: 'n'
@@ -143,7 +145,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ChecksComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'ChecksComponent',
         paymentType: 'n'
@@ -160,9 +162,10 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(DirectDebitComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'DirectDebitComponent'
+        modalId: 'DirectDebitComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -176,9 +179,10 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ReCashComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'ReCashComponent'
+        modalId: 'ReCashComponent',
+        paymentType: 'n'
       }
     );
   }
@@ -193,7 +197,8 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.modal.openModalByComponent(CouponComponent,
       {
         closeByClickOutside: false,
-        modalId: 'CouponComponent'
+        modalId: 'CouponComponent',
+        paymentType: 'n'
       }
     );
   }

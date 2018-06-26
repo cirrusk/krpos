@@ -1,4 +1,4 @@
-import { WebsocketResult } from "./result.common";
+import { WebsocketResult } from './result.common';
 
 export class CardApprovalResult extends WebsocketResult {
     // 서비스 코드
@@ -59,17 +59,17 @@ export class CardApprovalResult extends WebsocketResult {
      * Getter approvalNumber
      * @return {string}
      */
-	public get approvalNumber(): string {
-		return this._approvalNumber;
-	}
+    public get approvalNumber(): string {
+        return this._approvalNumber;
+    }
 
     /**
      * Setter approvalNumber
      * @param {string} value
      */
-	public set approvalNumber(value: string) {
-		this._approvalNumber = value;
-	}
+    public set approvalNumber(value: string) {
+        this._approvalNumber = value;
+    }
 
     /**
      * Getter serviceCode

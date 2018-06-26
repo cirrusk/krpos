@@ -1,12 +1,12 @@
 /**
  * Payment Capture
  * 신용카드          ; creditcard         ; CreditCardPaymentInfo
- * 현금 결제         ; cash               ; AmwayCashPaymentInfo
+ * 현금결제         ; cash               ; AmwayCashPaymentInfo
  * 자동이체          ; directdebit        ; DirectDebitPaymentInfo
- * 쿠폰 결제         ; creditvoucher      ; VoucherPaymentInfo
- * 포인트            ; point              ; PointPaymentInfo
- * 미수금 결제       ; arCredit           ; AmwayMonetaryPaymentInfo
- * 현금/IC카드 결제  ; cashiccard         ; ICCardPaymentInfo
+ * 쿠폰결제(price 영역에 포함)         ; creditvoucher      ; VoucherPaymentInfo
+ * 포인트(price 영역에 포함)            ; point              ; PointPaymentInfo
+ * 미수금결제       ; arCredit           ; AmwayMonetaryPaymentInfo
+ * 현금/IC카드결제  ; cashiccard         ; ICCardPaymentInfo
  *
  * <code>
  * let pc = new PaymentCapture();
@@ -27,28 +27,56 @@ export class PaymentCapture {
         this.ccPaymentInfo = ccPaymentInfo;
     }
 
+    public get getCcPaymentInfo(): CreditCardPaymentInfo {
+        return this.ccPaymentInfo;
+    }
+
     public set setCashPaymentInfo(cashPaymentInfo: CashPaymentInfo) {
         this.cashPaymentInfo = cashPaymentInfo;
+    }
+
+    public get getCashPaymentInfo(): CashPaymentInfo {
+        return this.cashPaymentInfo;
     }
 
     public set setDirectDebitPaymentInfo(directDebitPaymentInfo: DirectDebitPaymentInfo) {
         this.directDebitPaymentInfo = directDebitPaymentInfo;
     }
 
+    public get getDirectDebitPaymentInfo(): DirectDebitPaymentInfo {
+        return this.directDebitPaymentInfo;
+    }
+
     public set setVoucherPaymentInfo(voucherPaymentInfo: VoucherPaymentInfo) {
         this.voucherPaymentInfo = voucherPaymentInfo;
+    }
+
+    public get getVoucherPaymentInfo(): VoucherPaymentInfo {
+        return this.voucherPaymentInfo;
     }
 
     public set setPointPaymentInfo(pointPaymentInfo: PointPaymentInfo) {
         this.pointPaymentInfo = pointPaymentInfo;
     }
 
+    public get getPointPaymentInfo(): PointPaymentInfo {
+        return this.pointPaymentInfo;
+    }
+
     public set setMonetaryPaymentInfo(monetaryPaymentInfo: AmwayMonetaryPaymentInfo) {
         this.monetaryPaymentInfo = monetaryPaymentInfo;
     }
 
+    public get getMonetaryPaymentInfo(): AmwayMonetaryPaymentInfo {
+        return this.monetaryPaymentInfo;
+    }
+
     public set setIcCardPaymentInfo(icCardPaymentInfo: ICCardPaymentInfo) {
         this.icCardPaymentInfo = icCardPaymentInfo;
+    }
+
+    public get getIcCardPaymentInfo(): ICCardPaymentInfo {
+        return this.icCardPaymentInfo;
     }
 }
 
@@ -122,6 +150,9 @@ export class AmwayPaymentInfoData {
     public set setAmount(amount: number) {
         this.amount = amount;
     }
+    public get getAmount(): number {
+        return this.amount;
+    }
     public set setPaymentModeData(paymentMode: PaymentModeData) {
         this.paymentMode = paymentMode;
     }
@@ -174,17 +205,26 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     public set setInstallmentPlan(installmentPlan: string) {
         this.installmentPlan = installmentPlan;
     }
+    public get getInstallmentPlan(): string {
+        return this.installmentPlan;
+    }
     public set setMemberType(memberType: string) {
         this.memberType = memberType;
     }
     public set setCardNumber(cardNumber: string) {
         this.cardNumber = cardNumber;
     }
+    public get getCardNumber(): string {
+        return this.cardNumber;
+    }
     public set setCardPassword(cardPassword: string) {
         this.cardPassword = cardPassword;
     }
     public set setCardAuthNumber(cardAuthNumber: string) {
         this.cardAuthNumber = cardAuthNumber;
+    }
+    public get getCardAuthNumber(): string {
+        return this.cardAuthNumber;
     }
     public set setValidToMonth(validToMonth: string) {
         this.validToMonth = validToMonth;
@@ -211,8 +251,29 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
 /** 현금/수표 결제 */
 export class CashPaymentInfo extends AmwayPaymentInfoData {
     protected cashType: string; // 현금유형 CashType (CASH, CHECK)
+    protected received: string; // 받은금액
+    protected change: string;   // 거스름돈
+    protected cashreceipt: boolean; // 현금영수증 출력여부
     public set setCashType(cashType: string) {
         this.cashType = cashType;
+    }
+    public set setReceived(received: number) {
+        this.received = String(received);
+    }
+    public get getReceived(): string {
+        return this.received;
+    }
+    public set setChange(change: number) {
+        this.change = String(change);
+    }
+    public get getChange(): string {
+        return this.change;
+    }
+    public set setCashReceipt(cashreceipt: boolean) {
+        this.cashreceipt = cashreceipt;
+    }
+    public get getCashReceipt(): boolean {
+        return this.cashreceipt;
     }
     constructor(amount: number, cashType?: string, paymentProvider?: string, status?: string) {
         super(amount, 'cash', paymentProvider, status);
@@ -295,6 +356,13 @@ export class ICCardPaymentInfo extends AmwayPaymentInfoData {
 
 /** 쿠폰결제 */
 export class VoucherPaymentInfo extends AmwayPaymentInfoData {
+    name: string;
+    public set setName(name: string) {
+        this.name = name;
+    }
+    public get getName(): string {
+        return this.name;
+    }
     constructor(amount: number) {
         super(amount, 'creditvoucher');
     }

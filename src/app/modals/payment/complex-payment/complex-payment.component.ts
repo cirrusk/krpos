@@ -92,7 +92,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // point
     this.setSelected(evt, 2, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
-      this.selectPopup('PointComponent', PointComponent);
+      // sprint 6차로 주석처리
+      // this.selectPopup('PointComponent', PointComponent);
     }
   }
 
@@ -100,7 +101,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // point
     this.setSelected(evt, 3, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
-      this.selectPopup('PointComponent', PointComponent);
+      // sprint 6차로 주석처리
+      // this.selectPopup('PointComponent', PointComponent);
     }
   }
 
@@ -145,7 +147,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.popupList.sort();
     this.modal.openModalByComponent(CompletePaymentComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'CashComponent',
         paymentType: 'n'
@@ -166,7 +168,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       // this.paymentSubscription =
       this.modal.openModalByComponent(this.paymentComponent,
         {
-          callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
           title: '',
           actionButtonLabel: '',
           closeButtonLabel: '',

@@ -21,6 +21,7 @@ export * from './peripheral/common/document-format.enum';
 export * from './peripheral/common/format-reader';
 export * from './peripheral/printer/helper/escpos/escpos';
 export * from './peripheral/printer/helper/printer-commands';
+export * from './peripheral/niceterminal/nice.payment.service';
 
 export * from './guard/login.guard';
 export * from './guard/order.guard';
