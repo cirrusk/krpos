@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService } from '../../../core';
-import { OrderEntry, Accounts, PaymentModeListByMain, MemberType } from '../../../data';
+import { Accounts, PaymentModeListByMain, MemberType } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -11,11 +11,11 @@ import { ChecksComponent } from '../ways/checks/checks.component';
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
 import { PointComponent } from '../ways/point/point.component';
+import { CompletePaymentComponent } from '../complete-payment/complete-payment.component';
 import { PaymentService } from '../../../service';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
-import { RecursiveTemplateAstVisitor } from '@angular/compiler';
-import { CompletePaymentComponent } from '../complete-payment/complete-payment.component';
+
 
 @Component({
   selector: 'pos-complex-payment',

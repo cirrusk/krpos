@@ -217,7 +217,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
-
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {
     event.stopPropagation();
