@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   qzDebugMode: false,
 
-  hybrisEndpointDomain: 'qa.amway.co.kr',
+  hybrisEndpointDomain: 'psup.amway.co.kr',
   hybrisEndpointPort: 80,
 
   foreignerUserId: '8000000',
@@ -23,12 +23,12 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  apiDomain: 'https://api.qa.amway.co.kr',
-  apiRootUrl: 'https://api.qa.amway.co.kr/api/v2',
+  apiDomain: 'https://api.psup.amway.co.kr',
+  apiRootUrl: 'https://api.psup.amway.co.kr/api/v2',
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',
-    token: 'https://api.qa.amway.co.kr/authorizationserver/oauth/token',
+    token: 'https://api.psup.amway.co.kr/authorizationserver/oauth/token',
     userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
     customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
     batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
@@ -64,12 +64,12 @@ export const environment = {
     orderList: '/{baseSiteId}/users/{userId}/orders',
     orderDetails: '/{baseSiteId}/users/{userId}/order-details'
   },
-  logLevel: 'info',
+  logLevel: 'debug',
   terminalTimeout: 20,
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://api.qa.amway.co.kr/api/',
+  hybrisCheckUrl: 'https://api.psup.amway.co.kr/api/',
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9,

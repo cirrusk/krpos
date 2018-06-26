@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   qzDebugMode: false,
 
-  hybrisEndpointDomain: 'www.abnkorea.co.kr',
+  hybrisEndpointDomain: 'uat.amway.co.kr',
   hybrisEndpointPort: 80,
 
   foreignerUserId: '8000000',
@@ -23,12 +23,12 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  apiDomain: 'https://127.0.0.1:9002',
-  apiRootUrl: 'https://127.0.0.1:9002/api/v2',
+  apiDomain: 'https://api.uat.amway.co.kr',
+  apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',
-    token: 'https://127.0.0.1:9002/authorizationserver/oauth/token',
+    token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
     userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
     customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
     batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
@@ -69,7 +69,7 @@ export const environment = {
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://127.0.0.1:9002/api/',
+  hybrisCheckUrl: 'https://api.uat.amway.co.kr/api/',
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9,
