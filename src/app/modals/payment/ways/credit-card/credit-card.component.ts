@@ -122,9 +122,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private getCardCodes(): Map<string, string> {
     const map = new Map([
+      ['01', 'B'], // AMEX
       ['02', 'B'], // 국민은행
-      ['03', 'B'], // AMEX
-      ['04', 'B']  // 현대카드
+      ['08', 'B']  // 현대카드
     ]
     );
     return map;
