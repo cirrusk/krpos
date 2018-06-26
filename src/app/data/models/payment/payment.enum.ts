@@ -49,3 +49,8 @@ export enum PaymentModes {
     DIRECTDEBIT = 'directdebit',
     COUPON = 'creditvoucher'
 }
+
+export enum BankTypes {
+    DIRECT_DEBIT = 'DIRECT_DEBIT',
+    BONUS = 'BONUS'
+}
