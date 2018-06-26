@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService } from '../../../core';
-import { Accounts, PaymentModeListByMain, MemberType } from '../../../data';
+import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -25,13 +25,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
   private PAYMENT_LIST = [[0, 'CreditCardComponent', CreditCardComponent],
-                          [1, 'IcCardComponent', IcCardComponent],
-                          [2, 'PointComponent', PointComponent],
-                          [3, 'PointComponent', PointComponent],
-                          [4, 'CashComponent', CashComponent],
-                          [5, 'CashComponent', CashComponent],
-                          [6, 'DirectDebitComponent', DirectDebitComponent],
-                          [7, 'ReCashComponent', ReCashComponent]];
+  [1, 'IcCardComponent', IcCardComponent],
+  [2, 'PointComponent', PointComponent],
+  [3, 'PointComponent', PointComponent],
+  [4, 'CashComponent', CashComponent],
+  [5, 'CashComponent', CashComponent],
+  [6, 'DirectDebitComponent', DirectDebitComponent],
+  [7, 'ReCashComponent', ReCashComponent]];
   private paymentModesSubscription: Subscription;
   private paymentSubscription: Subscription;
 
@@ -41,16 +41,17 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private activePopup: Array<number>;
   private paymentComponent: any;
   private paymentModeListByMain: PaymentModeListByMain;
+  private paymentcapture: PaymentCapture;
   enableMenu: Array<string>;
   public memberType = MemberType;
 
   constructor(protected modalService: ModalService,
-              private paymentService: PaymentService,
-              private modal: Modal,
-              private alert: AlertService,
-              private spinner: SpinnerService,
-              private logger: Logger,
-              private renderer: Renderer2) {
+    private paymentService: PaymentService,
+    private modal: Modal,
+    private alert: AlertService,
+    private spinner: SpinnerService,
+    private logger: Logger,
+    private renderer: Renderer2) {
     super(modalService);
     this.init();
   }
@@ -164,24 +165,52 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   // selectPopup(num: number) {
   selectPopup(modalId: string, component: any) {
     // if (this.activePopup.length > 0) {
-      this.paymentComponent =  component;
-      // this.paymentSubscription =
-      this.modal.openModalByComponent(this.paymentComponent,
-        {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-          closeByClickOutside: false,
-          modalId: modalId,
-          paymentType: 'c'
-        }
-      );
-      // .subscribe(
-      //   result => {
-      //     const index = this.activePopup.indexOf(num);
-      //     this.activePopup.splice(index, 1);
-      //     this.selectPopup(this.activePopup[0]);
-      //   }
-      // );
+    this.paymentComponent = component;
+    // this.paymentSubscription =
+    this.modal.openModalByComponent(this.paymentComponent,
+      {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
+        closeByClickOutside: false,
+        modalId: modalId,
+        paymentType: 'c'
+      }
+    ).subscribe(payments => {
+      if (payments) {
+        this.remakePaymentCapture(payments);
+      }
+    });
+    // .subscribe(
+    //   result => {
+    //     const index = this.activePopup.indexOf(num);
+    //     this.activePopup.splice(index, 1);
+    //     this.selectPopup(this.activePopup[0]);
+    //   }
+    // );
     // }
+  }
+
+  private remakePaymentCapture(paymentcapture: PaymentCapture) {
+    if (paymentcapture.getCcPaymentInfo) {
+      this.paymentcapture.setCcPaymentInfo = paymentcapture.getCcPaymentInfo;
+    }
+    if (paymentcapture.getCashPaymentInfo) {
+      this.paymentcapture.setCashPaymentInfo = paymentcapture.getCashPaymentInfo;
+    }
+    if (paymentcapture.getDirectDebitPaymentInfo) {
+      this.paymentcapture.setDirectDebitPaymentInfo = paymentcapture.getDirectDebitPaymentInfo;
+    }
+    if (paymentcapture.getIcCardPaymentInfo) {
+      this.paymentcapture.setIcCardPaymentInfo = paymentcapture.getIcCardPaymentInfo;
+    }
+    if (paymentcapture.getMonetaryPaymentInfo) {
+      this.paymentcapture.setMonetaryPaymentInfo = paymentcapture.getMonetaryPaymentInfo;
+    }
+    if (paymentcapture.getPointPaymentInfo) {
+      this.paymentcapture.setPointPaymentInfo = paymentcapture.getPointPaymentInfo;
+    }
+    if (paymentcapture.getVoucherPaymentInfo) {
+      this.paymentcapture.setVoucherPaymentInfo = paymentcapture.getVoucherPaymentInfo;
+    }
   }
 
   getPaymentModesByMain(userId: string, cartId: string): void {
