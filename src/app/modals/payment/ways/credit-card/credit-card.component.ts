@@ -247,8 +247,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
               if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                 this.paidDate = result.created ? result.created : new Date();
-                // 장바구니에 정보를 보내야함.
-                // capture 정보, order 정보
+                // 장바구니에 정보를 보내야함. capture 정보, order 정보
                 this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                 setTimeout(() => {
                   this.paid.nativeElement.blur(); // keydown.enter 처리 안되도록
@@ -259,6 +258,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               }
             } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
               // cart-list.component에 재생성 이벤트 보내서 처리
+              this.info.sendInfo('recart', this.orderInfo);
             }
           }, error => {
             this.finishStatus = 'fail';
@@ -305,7 +305,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 일반 결제완료 후 Enter Key 치면 팝업 닫힘
-   * 일반결제 : 카트 및 클라이언트 초기화
+   * 일반결제 : 카트 및 클라이언트 초기화, 영수증 출력
    * 복합결제 : 카트 및 클라이언트 갱신
    */
   cartInitAndClose() {
@@ -316,11 +316,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
           this.info.sendInfo('orderClear', 'clear');
         } else {
-          this.alert.show({ message: '실패' });
+          this.alert.show({ message: '영수증 출력 실패' });
         }
         this.close();
       } else { // 복합결제
-
+        this.close();
       }
     }
   }
@@ -330,19 +330,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.paymentType === 'n') {
         if (this.cardresult && this.cardresult.approved) {
           this.cartInitAndClose();
         } else {
           this.nicePay();
         }
-      } else {
-        if (this.cardresult && this.cardresult.approved) {
-          this.close();
-        } else {
-          this.nicePay();
-        }
-      }
     } else if (event.keyCode === KeyCode.ESCAPE) {
       this.close();
     }

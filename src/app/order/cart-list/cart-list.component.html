@@ -140,23 +140,23 @@
                   <ul *ngIf="accountInfo;">
                       <li class="credit">
                           <span>신용카드</span>
-                          <em><span></span></em>
+                          <em>{{ccamount | number}}<span>{{installment}}</span></em>
                       </li>
                       <li>
                           <span>현금</span>
-                          <em></em>
+                          <em>{{cashamount | number}}</em>
                       </li>
                       <li>
                           <span>포인트</span>
-                          <em></em>
+                          <em>{{pointamount | number}}</em>
                       </li>
                       <li>
                           <span>Re-Cash</span>
-                          <em></em>
+                          <em>{{recashamount | number}}</em>
                       </li>
                       <li>
                           <span>자동이체</span>
-                          <em></em>
+                          <em>{{ddamount | number}}</em>
                       </li>
                   </ul>
                   <!-- //비회원시 삭제4 -->
@@ -173,7 +173,7 @@
           </li>
           <li>
               <span>할인금액</span>
-              <em class="sale">0</em>
+              <em class="sale">{{discount | number}}</em>
           </li>
           <li>
               <span class="t01">Total PV/BV</span>
@@ -187,11 +187,11 @@
           </li>
           <li>
               <span>내신금액</span>
-              <em>{{ 0 | number }}</em>
+              <em>{{ received | number }}</em>
           </li>
           <li>
               <span>거스름돈</span>
-              <em>{{ 0 | number }}</em>
+              <em>{{ change | number }}</em>
           </li>
       </ul>
   </div>

@@ -6,9 +6,10 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType, PaymentCapture } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
+import { Order } from '../../data/models/order/order';
 
 @Component({
   selector: 'pos-cart-list',
@@ -58,6 +59,15 @@ export class CartListComponent implements OnInit, OnDestroy {
   cartListCount: number;                                                    // 카트 목록 개수
   balance: number;                                                          // 회원 포인트
   recash: number;                                                           // 회원 Re-Cash
+  ccamount: number;
+  installment: string;
+  cashamount: number;
+  pointamount: number;
+  recashamount: number;
+  ddamount: number;
+  discount: number;
+  received: number;
+  change: number;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
@@ -90,18 +100,18 @@ export class CartListComponent implements OnInit, OnDestroy {
         const type = result && result.type;
         if (result !== null && type === 'orderClear') {
           this.init();
+        } else if (result != null && type === 'payinfo') {
+          const data = result.data;
+          // console.log('[capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[0]));
+          // console.log('[order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[1]));
+          this.retreiveInfo(data[0], data[1]);
+        } else if (result != null && type === 'recart') {
+          const order: Order = result.data;
+          console.log('[order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(order));
+          this.copyCartByEntries(this.accountInfo, order.entries);
         }
       }
     );
-
-    // 사용자 선택 : 팝업에서 처리된 결과를 받음.
-    // this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
-    //   result => {
-    //     if (result) {
-    //       this.getAccountAndCartInfo(result);
-    //     }
-    //   }
-    // );
 
     // 제품 선택
     this.productSubscription = this.addCartBroker.getInfo().subscribe(
@@ -141,14 +151,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // 수량 변경
-    // this.updateItemQtySubscription = this.updateItemQtyBroker.getInfo().subscribe(
-    //   result => {
-    //     if (result) {
-    //       this.updateItemQtyCart(result.code, result.qty);
-    //     }
-    //   }
-    // );
   }
 
   ngOnInit() {
@@ -872,6 +874,33 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
   }
 
+  private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
+    this.getBalanceInfo();
+    if (paymentcapture.getCcPaymentInfo) {
+      const cc = paymentcapture.getCcPaymentInfo;
+      this.ccamount = cc.getAmount;
+      this.installment = cc.getInstallmentPlan;
+    }
+    if (paymentcapture.getCashPaymentInfo) {
+      const cash = paymentcapture.getCashPaymentInfo;
+      this.cashamount = cash.getAmount;
+      this.received = cash.getReceived ? Number(cash.getReceived) : 0;
+      this.change = cash.getChange ? Number(cash.getChange) : 0;
+    }
+    if (paymentcapture.getPointPaymentInfo) {
+      this.pointamount = paymentcapture.getPointPaymentInfo.getAmount;
+    }
+    if (paymentcapture.getMonetaryPaymentInfo) {
+      this.recashamount = paymentcapture.getMonetaryPaymentInfo.getAmount;
+    }
+    if (paymentcapture.getDirectDebitPaymentInfo) {
+      this.ddamount = paymentcapture.getDirectDebitPaymentInfo.getAmount;
+    }
+    this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
+    this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
+    this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
+    this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+  }
   /**
    * 장바구니 복원 데이터 설정
    * @param cartData
