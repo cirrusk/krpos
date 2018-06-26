@@ -71,7 +71,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
-   * 
+   * 결제만 수행
    */
   private approval() {
     this.spinner.show();
@@ -100,7 +100,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
-   * 
+   * 결제, Paymetn capture
    */
   private approvalAndPayment() {
     this.spinner.show();
