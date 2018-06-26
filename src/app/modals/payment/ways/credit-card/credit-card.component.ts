@@ -152,6 +152,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       } else if (this.change < 0) {
         this.alert.show({ message: '실결제금액이 큽니다.' });
       } else {
+        this.spinner.show();
         const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(payprice), this.installment);
         this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
         resultNotifier.subscribe(
@@ -159,9 +160,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.cardresult = res;
             if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
               this.alert.error({ message: res.msg });
+              this.spinner.hide();
             } else {
               if (res.approved) {
-                this.spinner.show();
                 this.cardnumber = res.maskedCardNumber;
                 this.cardcompany = res.issuerName;
                 this.cardauthnumber = res.approvalNumber;
@@ -204,6 +205,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                   () => { this.spinner.hide(); });
               } else {
                 this.finishStatus = 'fail';
+                this.spinner.hide();
                 this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
               }
             }

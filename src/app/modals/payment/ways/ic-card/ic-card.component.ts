@@ -68,6 +68,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   private nicePay() {
     if (this.paymentType === 'n') {
+      this.spinner.show();
       const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
       this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
       resultNotifier.subscribe(
@@ -75,9 +76,9 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.cardresult = res;
           if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
             this.alert.error({ message: res.msg });
+            this.spinner.hide();
           } else {
             if (res.approved) {
-              this.spinner.show();
               this.cardnumber = res.maskedCardNumber;
               this.cardcompay = res.issuerName;
               this.cardauthnumber = res.approvalNumber;
@@ -115,6 +116,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
                 () => { this.spinner.hide(); });
             } else {
               this.finishStatus = 'fail';
+              this.spinner.hide();
               this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
             }
           }
