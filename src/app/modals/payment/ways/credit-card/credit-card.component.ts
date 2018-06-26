@@ -11,8 +11,9 @@ import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/
 import { Utils } from '../../../../core/utils';
 import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
 import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
-import { InstallmentPlanComponent } from '../../..';
+// import { InstallmentPlanComponent } from '../../..';
 import { InfoBroker } from '../../../../broker';
+import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
 
 @Component({
   selector: 'pos-credit-card',
