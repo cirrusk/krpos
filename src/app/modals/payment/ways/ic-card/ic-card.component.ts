@@ -110,7 +110,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
                   this.spinner.hide();
                   const errdata = Utils.getError(error);
                   if (errdata) {
-                    this.logger.set('cash.component', `${errdata.message}`).error();
+                    this.logger.set('iccard.component', `${errdata.message}`).error();
                   }
                 },
                 () => { this.spinner.hide(); });

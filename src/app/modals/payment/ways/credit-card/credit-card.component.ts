@@ -199,7 +199,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                     this.spinner.hide();
                     const errdata = Utils.getError(error);
                     if (errdata) {
-                      this.logger.set('cash.component', `${errdata.message}`).error();
+                      this.logger.set('credit.card.component', `${errdata.message}`).error();
                     }
                   },
                   () => { this.spinner.hide(); });
