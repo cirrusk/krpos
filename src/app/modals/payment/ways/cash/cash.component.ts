@@ -105,54 +105,57 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       }
     );
     const change = paidAmount - payAmount;
+
     if (paidAmount < 1) {
       this.alert.warn({ message: this.message.get('notinputPaid') });
     } else if (change < 0) {
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
-      if (this.paymentType === 'n') {
-        if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
-          this.spinner.show();
+
+      if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
+        if (this.paymentType === 'n') {
+          this.paymentAndCapture(payAmount, paidAmount, change);
+        } else {
           this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
-          this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
-            result => {
-              this.orderInfo = result;
-              this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-              this.finishStatus = result.statusDisplay;
-              if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-                  this.paidDate = result.created ? result.created : new Date();
-
-                  setTimeout(() => { // 결제 성공, 변경못하도록 처리
-                    this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
-                    this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
-                    this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
-                  }, 5);
-                  this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-                  this.printer.openCashDrawer(); // 캐셔 drawer 오픈
-                } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-
-                } else { // CART 삭제된 상태
-
-                }
-              } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-                // cart-list.component에 재생성 이벤트 보내서 처리
-              }
-            },
-            error => {
-              this.finishStatus = 'fail';
-              this.spinner.hide();
-              const errdata = Utils.getError(error);
-              if (errdata) {
-                this.logger.set('cash.component', `${errdata.message}`).error();
-              }
-            },
-            () => { this.spinner.hide(); });
+          this.result = this.paymentcapture;
+          this.finishStatus = StatusDisplay.PAID;
         }
-      } else {
       }
     }
+  }
+
+  private paymentAndCapture(payAmount: number, paidAmount: number, change: number) {
+    this.spinner.show();
+    this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
+    this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
+      this.orderInfo = result;
+      this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+      this.finishStatus = result.statusDisplay;
+      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.paidDate = result.created ? result.created : new Date();
+          setTimeout(() => {
+            this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
+            this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
+            this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
+          }, 5);
+          this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          this.printer.openCashDrawer(); // 캐셔 drawer 오픈
+        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+        } else { // CART 삭제된 상태
+        }
+      } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+        // cart-list.component에 재생성 이벤트 보내서 처리
+      }
+    }, error => {
+      this.finishStatus = 'fail';
+      this.spinner.hide();
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.logger.set('cash.component', `${errdata.message}`).error();
+      }
+    }, () => { this.spinner.hide(); });
   }
 
   /**

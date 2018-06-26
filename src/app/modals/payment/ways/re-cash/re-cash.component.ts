@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState, StorageService } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData
@@ -31,7 +31,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private balancesubscription: Subscription;
   private alertsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService, private payments: PaymentService, private alert: AlertService,
+  constructor(protected modalService: ModalService, private receipt: ReceiptService, private payments: PaymentService,
+    private storage: StorageService, private alert: AlertService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.isAllPay = false;
@@ -42,7 +43,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
-    this.paidamount = this.cartInfo.totalPrice.value;
+    if (this.paymentType === 'n') {
+      this.paidamount = this.cartInfo.totalPrice.value;
+    } else {
+      this.paidamount = this.storage.getPay();
+    }
+
     this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
       this.balance = result;
     });
@@ -78,43 +84,44 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       } else if (check < 0) {
         this.alert.warn({ message: '결제에 사용할 금액이 많습니다.' });
       } else {
-        this.spinner.show();
-        this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
-        this.logger.set('recash.component', 'recash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-        this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
-          result => {
-            this.orderInfo = result;
-            this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-            this.finishStatus = result.statusDisplay;
-            if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-              if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-
-                setTimeout(() => { // 결제 성공, 변경못하도록 처리
-                  this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
-                  this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
-                }, 5);
-                this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-              } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-
-              } else { // CART 삭제된 상태
-                this.info.sendInfo('recart', this.orderInfo);
-              }
-            } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-              // cart-list.component에 재생성 이벤트 보내서 처리
-              this.info.sendInfo('recart', this.orderInfo);
-            }
-          },
-          error => {
-            this.finishStatus = 'fail';
-            this.spinner.hide();
-            const errdata = Utils.getError(error);
-            if (errdata) {
-              this.logger.set('recash.component', `${errdata.message}`).error();
-            }
-          },
-          () => { this.spinner.hide(); });
+        this.payment();
       }
+    } else {
+
     }
+  }
+
+  private payment() {
+    this.spinner.show();
+    this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+    this.logger.set('recash.component', 'recash payment : ' + Utils.stringify(this.paymentcapture)).debug();
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
+      this.orderInfo = result;
+      this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+      this.finishStatus = result.statusDisplay;
+      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          setTimeout(() => {
+            this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
+            this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
+          }, 5);
+          this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+        } else { // CART 삭제된 상태
+          this.info.sendInfo('recart', this.orderInfo);
+        }
+      } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+        // cart-list.component에 재생성 이벤트 보내서 처리
+        this.info.sendInfo('recart', this.orderInfo);
+      }
+    }, error => {
+      this.finishStatus = 'fail';
+      this.spinner.hide();
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.logger.set('recash.component', `${errdata.message}`).error();
+      }
+    }, () => { this.spinner.hide(); });
   }
 
   useRecash() {
