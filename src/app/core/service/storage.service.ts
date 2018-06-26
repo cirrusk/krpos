@@ -152,7 +152,7 @@ export class StorageService implements OnDestroy {
     } else {
       data[0] = item;
     }
-    const reducedata = data.reduce(function(a, b) {if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
+    const reducedata = data.reduce(function (a, b) { if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
     this.setSessionItem('latestModalId', reducedata);
   }
 
@@ -218,7 +218,7 @@ export class StorageService implements OnDestroy {
   public removePay() {
     this.removeSessionItem('pay');
   }
-  
+
   /**
    * Access Token 정보 가져오기
    */
@@ -303,7 +303,7 @@ export class StorageService implements OnDestroy {
    */
   public setLocalItem<T>(key: string, data: T): void {
     this.lstorage.setItem(key, Utils.stringify(data));
-    this.storageSubject.next({ key: key, value: data});
+    this.storageSubject.next({ key: key, value: data });
   }
 
   /**
@@ -450,7 +450,7 @@ export class StorageService implements OnDestroy {
       } catch (e) {
         v = event.newValue;
       }
-      this.storageSubject.next({ key: event.key, value: v});
+      this.storageSubject.next({ key: event.key, value: v });
     }
   }
 }
