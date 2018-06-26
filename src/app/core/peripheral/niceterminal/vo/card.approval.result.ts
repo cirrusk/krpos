@@ -32,13 +32,13 @@ export class CardApprovalResult extends WebsocketResult {
     private _issuerName: string;
 
     // 매입사 코드
-    private _merchantCode: string;
+    private _acquireCode: string;
 
     // 매입사 명
-    private _merchantName: string;
+    private _acquireName: string;
 
     // 가맹점 번호
-    private _salerNumber: string;
+    private _merchantNumber: string;
 
     // 마스킹된 카드 번호
     private _maskedCardNumber: string;
@@ -141,30 +141,6 @@ export class CardApprovalResult extends WebsocketResult {
      */
     public get issuerName(): string {
         return this._issuerName;
-    }
-
-    /**
-     * Getter merchantCode
-     * @return {string}
-     */
-    public get merchantCode(): string {
-        return this._merchantCode;
-    }
-
-    /**
-     * Getter merchantName
-     * @return {string}
-     */
-    public get merchantName(): string {
-        return this._merchantName;
-    }
-
-    /**
-     * Getter salerNumber
-     * @return {string}
-     */
-    public get salerNumber(): string {
-        return this._salerNumber;
     }
 
     /**
@@ -280,30 +256,6 @@ export class CardApprovalResult extends WebsocketResult {
     }
 
     /**
-     * Setter merchantCode
-     * @param {string} value
-     */
-    public set merchantCode(value: string) {
-        this._merchantCode = value;
-    }
-
-    /**
-     * Setter merchantName
-     * @param {string} value
-     */
-    public set merchantName(value: string) {
-        this._merchantName = value;
-    }
-
-    /**
-     * Setter salerNumber
-     * @param {string} value
-     */
-    public set salerNumber(value: string) {
-        this._salerNumber = value;
-    }
-
-    /**
      * Setter maskedCardNumber
      * @param {string} value
      */
@@ -346,6 +298,56 @@ export class CardApprovalResult extends WebsocketResult {
     constructor() {
         super();
     }
+
+
+    /**
+     * Getter acquireCode
+     * @return {string}
+     */
+	public get acquireCode(): string {
+		return this._acquireCode;
+	}
+
+    /**
+     * Getter acquireName
+     * @return {string}
+     */
+	public get acquireName(): string {
+		return this._acquireName;
+	}
+
+    /**
+     * Getter merchantNumber
+     * @return {string}
+     */
+	public get merchantNumber(): string {
+		return this._merchantNumber;
+	}
+
+    /**
+     * Setter acquireCode
+     * @param {string} value
+     */
+	public set acquireCode(value: string) {
+		this._acquireCode = value;
+	}
+
+    /**
+     * Setter acquireName
+     * @param {string} value
+     */
+	public set acquireName(value: string) {
+		this._acquireName = value;
+	}
+
+    /**
+     * Setter merchantNumber
+     * @param {string} value
+     */
+	public set merchantNumber(value: string) {
+		this._merchantNumber = value;
+	}
+
 
     public stringify(): string {
         return JSON.stringify(this);

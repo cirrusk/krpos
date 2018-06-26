@@ -32,16 +32,16 @@ export class ICCardApprovalResult extends WebsocketResult {
     private _issuerCode: string;
 
     // 매입사 코드 (사용 X)
-    private _merchantCode: string;
+    private _acquireCode: string;
 
     // 발급사명 (사용 X)
     private _issuerName: string;
 
     // 매입사명 (사용 X)
-    private _merchantName: string;
+    private _acquireName: string;
 
     // 가맹점 번호 (사용 X)
-    private _salerNumber: string;
+    private _merchantNumber: string;
 
     // 마스킹된 카드 번호
     private _maskedCardNumber: string;
@@ -59,13 +59,13 @@ export class ICCardApprovalResult extends WebsocketResult {
     private _issuerOrgName: string;
 
     // 매입기관명
-    private _merchantOrgName: string;
+    private _acquireOrgName: string;
 
     // 발급기관코드
     private _issuerOrgCode: string;
 
     // 매입기관코드
-    private _merchantOrgCode: string;
+    private _acquireOrgCode: string;
 
     // 시스템 구분코드
     private _distinguishCode: string;
@@ -172,39 +172,12 @@ export class ICCardApprovalResult extends WebsocketResult {
     }
 
     /**
-     * Getter merchantCode
-     * @return {string}
-     * @deprecated
-     */
-    public get merchantCode(): string {
-        return this._merchantCode;
-    }
-
-    /**
      * Getter issuerName
      * @return {string}
      * @deprecated
      */
     public get issuerName(): string {
         return this._issuerName;
-    }
-
-    /**
-     * Getter merchantName
-     * @return {string}
-     * @deprecated
-     */
-    public get merchantName(): string {
-        return this._merchantName;
-    }
-
-    /**
-     * Getter salerNumber
-     * @return {string}
-     * @deprecated
-     */
-    public get salerNumber(): string {
-        return this._salerNumber;
     }
 
     /**
@@ -230,14 +203,6 @@ export class ICCardApprovalResult extends WebsocketResult {
      */
     public get issuerOrgName(): string {
         return this._issuerOrgName;
-    }
-
-    /**
-     * Getter merchantOrgName
-     * @return {string}
-     */
-    public get merchantOrgName(): string {
-        return this._merchantOrgName;
     }
 
     /**
@@ -380,39 +345,12 @@ export class ICCardApprovalResult extends WebsocketResult {
     }
 
     /**
-     * Setter merchantCode
-     * @param {string} value
-     * @deprecated
-     */
-    public set merchantCode(value: string) {
-        this._merchantCode = value;
-    }
-
-    /**
      * Setter issuerName
      * @param {string} value
      * @deprecated
      */
     public set issuerName(value: string) {
         this._issuerName = value;
-    }
-
-    /**
-     * Setter merchantName
-     * @param {string} value
-     * @deprecated
-     */
-    public set merchantName(value: string) {
-        this._merchantName = value;
-    }
-
-    /**
-     * Setter salerNumber
-     * @param {string} value
-     * @deprecated
-     */
-    public set salerNumber(value: string) {
-        this._salerNumber = value;
     }
 
     /**
@@ -438,14 +376,6 @@ export class ICCardApprovalResult extends WebsocketResult {
      */
     public set issuerOrgName(value: string) {
         this._issuerOrgName = value;
-    }
-
-    /**
-     * Setter merchantOrgName
-     * @param {string} value
-     */
-    public set merchantOrgName(value: string) {
-        this._merchantOrgName = value;
     }
 
     /**
@@ -522,27 +452,11 @@ export class ICCardApprovalResult extends WebsocketResult {
     }
 
     /**
-     * Getter merchantOrgCode
-     * @return {string}
-     */
-    public get merchantOrgCode(): string {
-        return this._merchantOrgCode;
-    }
-
-    /**
      * Setter issuerOrgCode
      * @param {string} value
      */
     public set issuerOrgCode(value: string) {
         this._issuerOrgCode = value;
-    }
-
-    /**
-     * Setter merchantOrgCode
-     * @param {string} value
-     */
-    public set merchantOrgCode(value: string) {
-        this._merchantOrgCode = value;
     }
 
     /**
@@ -604,6 +518,87 @@ export class ICCardApprovalResult extends WebsocketResult {
     public set approved(approved: boolean) {
         this._approved = approved;
     }
+
+    /**
+     * Getter acquireCode
+     * @return {string}
+     */
+	public get acquireCode(): string {
+		return this._acquireCode;
+	}
+
+    /**
+     * Getter acquireName
+     * @return {string}
+     */
+	public get acquireName(): string {
+		return this._acquireName;
+	}
+
+    /**
+     * Getter merchantNumber
+     * @return {string}
+     */
+	public get merchantNumber(): string {
+		return this._merchantNumber;
+	}
+
+    /**
+     * Getter acquireOrgName
+     * @return {string}
+     */
+	public get acquireOrgName(): string {
+		return this._acquireOrgName;
+	}
+
+    /**
+     * Getter acquireOrgCode
+     * @return {string}
+     */
+	public get acquireOrgCode(): string {
+		return this._acquireOrgCode;
+	}
+
+    /**
+     * Setter acquireCode
+     * @param {string} value
+     */
+	public set acquireCode(value: string) {
+		this._acquireCode = value;
+	}
+
+    /**
+     * Setter acquireName
+     * @param {string} value
+     */
+	public set acquireName(value: string) {
+		this._acquireName = value;
+	}
+
+    /**
+     * Setter merchantNumber
+     * @param {string} value
+     */
+	public set merchantNumber(value: string) {
+		this._merchantNumber = value;
+	}
+
+    /**
+     * Setter acquireOrgName
+     * @param {string} value
+     */
+	public set acquireOrgName(value: string) {
+		this._acquireOrgName = value;
+	}
+
+    /**
+     * Setter acquireOrgCode
+     * @param {string} value
+     */
+	public set acquireOrgCode(value: string) {
+		this._acquireOrgCode = value;
+	}
+
 
     public stringify() {
         return JSON.stringify(this);

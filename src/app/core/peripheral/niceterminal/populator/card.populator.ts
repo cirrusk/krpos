@@ -116,10 +116,10 @@ export class CardPopulator {
             result.vat = tokens[6];
             result.approvalNumber = tokens[7];
             result.issuerCode = tokens[8];
-            result.merchantCode = tokens[9];
+            result.acquireCode = tokens[9];
             result.issuerName = tokens[10];
-            result.merchantName = tokens[11];
-            result.salerNumber = tokens[12];
+            result.acquireName = tokens[11];
+            result.merchantNumber = tokens[12];
             result.maskedCardNumber = tokens[13];
             result.installmentMonth = tokens[14];
             result.processingNumber = tokens[15];
@@ -226,10 +226,10 @@ export class CardPopulator {
             result.vat = tokens[6];
             result.approvalNumber = tokens[7];
             result.issuerCode = tokens[8];
-            result.merchantCode = tokens[9];
+            result.acquireCode = tokens[9];
             result.issuerName = tokens[10];
-            result.merchantName = tokens[11];
-            result.salerNumber = tokens[12];
+            result.acquireName = tokens[11];
+            result.merchantNumber = tokens[12];
             result.maskedCardNumber = tokens[13];
             result.installmentMonth = tokens[14];
             result.processingNumber = tokens[15];
