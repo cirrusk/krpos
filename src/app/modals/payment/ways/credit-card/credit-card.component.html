@@ -18,13 +18,13 @@
                         <tr>
                             <th scope="row">실결제금액</th>
                             <td>
-                                <input #paid type="text" class="w110 ar" title="실결제금액" (keyup)="cal(paid.value)" (keydown.enter)="check(paid.value)">
+                                <input #paid type="text" class="w110 ar" title="실결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="paidBlur()">
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">총 매출</th>
                             <td>
-                                <span class="won">{{payprice | number}}</span>
+                                <span class="won">{{paidamount | number}}</span>
                             </td>
                         </tr>
                         <tr>
@@ -38,11 +38,11 @@
                             <td>
                                 <input #installmentPeriod type="number" class="w110" title="할부개월">
                                 <label class="inp_rd mgl10" for="ck1">일시불
-                                    <input #allCheck type="radio" name="ck" id="ck1" checked (click)="checkPay(0)">
+                                    <input #allCheck type="radio" name="ck" id="ck1" checked (click)="checkInstallment(0)">
                                     <span class="checkmark"></span>
                                 </label>
                                 <label class="inp_rd mgl10" for="ck2">할부
-                                    <input #partCheck type="radio" name="ck" id="ck2" (click)="checkPay(1)">
+                                    <input #partCheck type="radio" name="ck" id="ck2" (click)="checkInstallment(1)">
                                     <span class="checkmark"></span>
                                 </label>
                             </td>

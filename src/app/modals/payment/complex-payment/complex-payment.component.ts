@@ -93,7 +93,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.setSelected(evt, 2, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      // this.selectPopup('PointComponent', PointComponent);
+      // this.selectPopup('APointComponent', PointComponent);
     }
   }
 
@@ -102,7 +102,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.setSelected(evt, 3, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      // this.selectPopup('PointComponent', PointComponent);
+      // this.selectPopup('MPointComponent', PointComponent);
     }
   }
 
@@ -118,7 +118,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // cheque
     this.setSelected(evt, 5, 'cheque');
     if (this.enableMenu.indexOf('cheque') > -1) {
-      this.selectPopup('CashComponent', CashComponent);
+      this.selectPopup('ChequeComponent', CashComponent);
     }
   }
 
@@ -149,8 +149,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        modalId: 'CashComponent',
-        paymentType: 'n'
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
       }
     );
     // this.activePopup = this.popupList.slice(0, this.popupList.length);
@@ -169,11 +169,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.modal.openModalByComponent(this.paymentComponent,
         {
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-          title: '',
-          actionButtonLabel: '',
-          closeButtonLabel: '',
           closeByClickOutside: false,
-          modalId: modalId
+          modalId: modalId,
+          paymentType: 'c'
         }
       );
       // .subscribe(
@@ -198,8 +196,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('complex-payment.component', `get Payment Modes By Main error type : ${errdata.type}`).error();
-          this.logger.set('complex-payment.component', `get Payment Modes By Main error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },

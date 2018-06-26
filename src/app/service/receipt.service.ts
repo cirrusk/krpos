@@ -221,7 +221,6 @@ export class ReceiptService {
         } else {
             text = this.consumerNormal(receiptInfo);
         }
-        console.log('print ' + text);
         // 최종 영수증 데이터 구성 - END
 
         try {
