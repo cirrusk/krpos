@@ -9,6 +9,7 @@ import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.comp
 import { Accounts, OrderEntry, KeyCode, Coupon, PaymentCapture, PaymentModes } from '../../../../data';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
 import { PaymentService } from '../../../../service';
+import { Cart } from '../../../../data/models/order/cart';
 
 @Component({
   selector: 'pos-coupon',
@@ -16,7 +17,7 @@ import { PaymentService } from '../../../../service';
 })
 export class CouponComponent extends ModalComponent implements OnInit, OnDestroy {
   accountInfo: Accounts;
-  private cartList: Array<OrderEntry>;
+  private cartInfo: Cart;
   private couponubscription: Subscription;
   private coupon: Coupon;
   couponlist: Coupon[];
@@ -29,7 +30,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
-    this.cartList = this.callerData.cartList;
+    this.cartInfo = this.callerData.cartInfo;
     this.couponubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid).subscribe(result => {
       this.couponlist = result.coupons;
       this.couponCount = this.couponlist.length;
@@ -53,7 +54,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.close();
     this.modal.openModalByComponent(CouponPaymentComponent,
       {
-        callerData: { accountInfo: this.accountInfo, cartList: this.cartList, coupon: this.coupon },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
         closeByClickOutside: false,
         closeByEnter: false,
         modalId: 'CouponPaymentComponent_Pop'
@@ -65,7 +66,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        callerData: { accountInfo: this.accountInfo, cartList: this.cartList },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
