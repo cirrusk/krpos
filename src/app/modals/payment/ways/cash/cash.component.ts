@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { AlertService, AlertState } from '../../../../core/alert/alert.service';
 import {
   ModalComponent, ModalService, KeyCommand, KeyboardService,
-  PrinterService, SpinnerService, Logger, Modal
+  PrinterService, SpinnerService, Logger, Modal, StorageService
 } from '../../../../core';
 import { MessageService, PaymentService, ReceiptService } from '../../../../service';
 import {
@@ -44,6 +44,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private receipt: ReceiptService,
     private payments: PaymentService,
     private alert: AlertService,
+    private storage: StorageService,
     private spinner: SpinnerService,
     private keyboard: KeyboardService,
     private info: InfoBroker,
@@ -69,7 +70,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.payment.nativeElement.value = this.cartInfo.totalPrice.value;
       // setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly'); }, 5);
     } else {
-      this.payment.nativeElement.value = 0;
+      this.payment.nativeElement.value = this.storage.getPay();
     }
   }
 

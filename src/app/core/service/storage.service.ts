@@ -208,7 +208,7 @@ export class StorageService implements OnDestroy {
   }
 
   public getPay(): number {
-    return this.getSessionItem('pay');
+    return this.getSessionItem('pay') ? this.getSessionItem('pay') : 0;
   }
 
   public setPay(data: number): void {
