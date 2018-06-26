@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData
@@ -29,6 +29,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentType: string;
   private paymentsubscription: Subscription;
   private balancesubscription: Subscription;
+  private alertsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private payments: PaymentService, private alert: AlertService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
@@ -41,6 +42,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.paidamount = this.cartInfo.totalPrice.value;
     this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
       this.balance = result;
     });
@@ -49,20 +51,32 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   ngOnDestroy() {
     if (this.balancesubscription) { this.balancesubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
   pay(evt: KeyboardEvent) {
     evt.preventDefault();
     if (this.isAllPay) {
-
+      console.log('*** allpay');
     } else {
       console.log('*** use point : ' + this.usePoint.nativeElement.value);
     }
     if (this.paymentType === 'n') {
-      if (this.change > 0) {
-
-      } else if (this.change < 0) {
-
+      this.alertsubscription = this.alert.alertState.subscribe(
+        (state: AlertState) => {
+          if (!state.show) {
+            setTimeout(() => {
+              this.usePoint.nativeElement.focus();
+              this.usePoint.nativeElement.select();
+            }, 50);
+          }
+        }
+      );
+      const check = this.paidamount - this.usePoint.nativeElement.value;
+      if (check > 0) {
+        this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
+      } else if (check < 0) {
+        this.alert.warn({ message: '결제에 사용할 금액이 많습니다.' });
       } else {
         this.spinner.show();
         this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
@@ -103,19 +117,21 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   useRecash() {
-    const usecash = this.usePoint.nativeElement.value;
-    this.change = this.balance.amount - usecash;
+    if (this.balance) {
+      const usecash = this.usePoint.nativeElement.value;
+      this.change = this.balance.amount - usecash;
+    }
   }
 
   checkPay(type: number) {
     if (type === 0) {
-      this.usePoint.nativeElement.value = '';
-      this.change = this.paidamount;
+      this.usePoint.nativeElement.value = this.paidamount;
+      this.change = this.balance.amount - this.paidamount;
       this.isAllPay = true;
     } else {
       this.isAllPay = false;
-      this.usePoint.nativeElement.focus();
     }
+    setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
   }
 
   private makePaymentCaptureData(paidamount: number): PaymentCapture {

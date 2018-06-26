@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ModalComponent, Modal, ModalService, Logger, SpinnerService } from '../../../../../core';
+import { ModalComponent, ModalService, Logger, SpinnerService } from '../../../../../core';
 import { PaymentService } from '../../../../../service';
 import { Accounts, BankInfo } from '../../../../../data';
 
@@ -18,8 +18,7 @@ export class InstallmentPlanComponent  extends ModalComponent implements OnInit,
   constructor(protected modalService: ModalService,
               private paymentService: PaymentService,
               private logger: Logger,
-              private spinner: SpinnerService,
-              private modal: Modal) {
+              private spinner: SpinnerService) {
     super(modalService);
   }
 
@@ -40,7 +39,7 @@ export class InstallmentPlanComponent  extends ModalComponent implements OnInit,
           this.bankList = result;
         }
       },
-      error => { this.logger.set('installment-plan.component', `${error}`).error(); },
+      error => { this.spinner.hide(); this.logger.set('installment-plan.component', `${error}`).error(); },
       () => { this.spinner.hide(); }
     );
   }
