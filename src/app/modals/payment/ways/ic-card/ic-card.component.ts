@@ -83,6 +83,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         this.alert.error({ message: res.msg });
       } else {
         if (res.approved) {
+          this.finishStatus = StatusDisplay.PAID;
           this.cardnumber = res.maskedCardNumber;
           this.cardcompay = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
