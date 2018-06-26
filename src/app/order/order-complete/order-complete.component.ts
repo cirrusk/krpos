@@ -81,7 +81,8 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   getOrderList(searchType: string, memberType: string, searchText: string) {
     this.spinner.show();
-    this.orderListSubscription = this.orderService.orderList(searchText, 'NORMAL_ORDER', 'pos', 'pickup').subscribe(
+    this.orderListSubscription = this.orderService.orderList(searchText, memberType,
+                                                             searchType, 'NORMAL_ORDER', 'pos', 'pickup').subscribe(
       resultData => {
         if (resultData) {
           this.orderHistoryList = resultData;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from '../../core';
-import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData } from '../../data';
+import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType } from '../../data';
 import { Order, OrderList } from '../../data/models/order/order';
 
 @Injectable()
@@ -34,10 +34,21 @@ export class OrderService {
    * @param sort 정렬조건값
    * @param asc asc 정렬 여부
    */
-  orderList(userid: string, orderTypes: string, channels: string, deliveryModes: string, currentPage = 0, pageSize = 10, sort = 'date', asc = true): Observable<OrderHistoryList> {
+  orderList(searchText: string, memberType: string, searchType: string, orderTypes: string, channels: string,
+            deliveryModes: string, confirmFlag =  false, currentPage = 0, pageSize = 10, sort = 'date', asc = true): Observable<OrderHistoryList> {
     const arrOrderTypes = new Array<string>(); // NORMAL_ORDER
     const arrChannels = new Array<string>(); // Web,WebMobile
     const arrDeliveryModes = new Array<string>(); // delivery,install
+    let amwayBusinessNature = '';
+    const confirm = confirmFlag;
+
+    if (memberType === 'A') {
+      amwayBusinessNature = MemberType.ABO;
+    } else if (memberType === 'M') {
+      amwayBusinessNature = MemberType.MEMBER;
+    } else {
+      amwayBusinessNature = MemberType.CONSUMER;
+    }
 
     orderTypes.split(',').forEach( orderType => {
       arrOrderTypes.push(orderType.trim());
@@ -51,7 +62,13 @@ export class OrderService {
       arrDeliveryModes.push(deliveryMode.trim());
     });
 
-    const orderData = new OrderData(arrOrderTypes, arrChannels, arrDeliveryModes, currentPage, pageSize);
+    const orderData = new OrderData(arrOrderTypes, arrChannels, arrDeliveryModes, amwayBusinessNature, confirm, currentPage, pageSize);
+
+    if (searchType === 'phone') {
+      orderData.phoneNumber = searchText;
+    } else {
+      orderData.orderingABOId = searchText;
+    }
 
     const param = {
       currentPage: orderData.currentPage,
@@ -59,9 +76,8 @@ export class OrderService {
       sort: sort, asc: asc, fields: 'FULL'
     };
 
-    const pathvariables = { userId: userid };
-    const data = new HttpData('orderList', pathvariables, orderData, param);
-    return this.api.get(data);
+    const data = new HttpData('orderList', null, orderData, param, 'json');
+    return this.api.post(data);
   }
 
   /**
