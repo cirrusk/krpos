@@ -42,9 +42,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
-    if (this.paymentType === 'n') {
       this.payprice = this.cartInfo.totalPrice.value;
-    }
   }
 
   ngOnDestroy() {
@@ -65,9 +63,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private nicePay() {
-    if (this.paymentType === 'n') {
       this.approvalAndPayment();
-    }
   }
 
   /**
@@ -184,7 +180,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   cartInitAndClose() {
-    if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
@@ -195,9 +190,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         }
       }
       this.close();
-    } else {
-      console.log('복합결제일 경우...');
-    }
   }
 
   @HostListener('document:keydown', ['$event'])
