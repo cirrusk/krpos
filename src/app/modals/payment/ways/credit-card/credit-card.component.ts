@@ -12,6 +12,7 @@ import { Utils } from '../../../../core/utils';
 import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
 import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
 import { InstallmentPlanComponent } from '../../..';
+import { InfoBroker } from '../../../../broker';
 
 @Component({
   selector: 'pos-credit-card',
@@ -19,7 +20,7 @@ import { InstallmentPlanComponent } from '../../..';
 })
 export class CreditCardComponent extends ModalComponent implements OnInit, OnDestroy {
 
-  private installment: number;
+  private installment: string;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -33,7 +34,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   cardnumber: string; // 카드번호
-  cardcompay: string; // 카드사명
+  cardcompany: string; // 카드사명
   cardperiod: string; // 유효기간
   cardauthnumber: string; // 승인번호
   @ViewChild('paid') private paid: ElementRef;
@@ -41,9 +42,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal,
-    private alert: AlertService, private spinner: SpinnerService, private logger: Logger, private renderer: Renderer2) {
+    private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
-    this.installment = 0;
+    this.installment = '00';
     this.finishStatus = null;
   }
 
@@ -78,11 +79,21 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   checkPay(type: number) {
     this.installmentPeriod.nativeElement.value = '';
     if (type === 0) {
-      this.installment = 0;
+      this.installment = '00';
       setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 5);
     } else {
       setTimeout(() => { this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'readonly'); }, 5);
-      this.installment = this.installmentPeriod.nativeElement.value;
+      let insmnt: string = this.installmentPeriod.nativeElement.value;
+      if (insmnt) {
+        if (insmnt.length === 0) {
+          insmnt = '00';
+        } else if (insmnt.length === 1) {
+          insmnt = '0' + insmnt;
+        }
+      } else {
+        insmnt = '00';
+      }
+      this.installment = insmnt;
       this.installmentPeriod.nativeElement.focus();
     }
   }
@@ -141,7 +152,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       } else if (this.change < 0) {
         this.alert.show({ message: '실결제금액이 큽니다.' });
       } else {
-        const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(payprice), String(this.installment));
+        const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(payprice), this.installment);
         this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
         resultNotifier.subscribe(
           (res: CardApprovalResult) => {
@@ -152,8 +163,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               if (res.approved) {
                 this.spinner.show();
                 this.cardnumber = res.maskedCardNumber;
-                this.cardcompay = res.issuerName;
-                // this.cardperiod;
+                this.cardcompany = res.issuerName;
                 this.cardauthnumber = res.approvalNumber;
                 this.paidDate = Utils.convertDate(res.approvalDateTime);
 
@@ -204,6 +214,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   close() {
+    this.closeModal();
+  }
+
+  payCancel() {
     if (this.cardresult && this.cardresult.approved) {
       const payprice = this.paid.nativeElement.value;
       const apprnum = this.cardresult.approvalNumber;
@@ -218,10 +232,32 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           }
         },
         error => { this.logger.set('credit.card.component', `${error}`).error(); },
-        () => { this.closeModal(); }
+        () => { this.close(); }
       );
     } else {
-      this.closeModal();
+      this.close();
+    }
+  }
+
+    /**
+   * 결제완료 후 Enter Key 치면 팝업 닫힘
+   * 일반결제 : 카트 및 클라이언트 초기화
+   * 복합결제 : 카트 및 클라이언트 갱신
+   */
+  cartInitAndClose() {
+    if (this.paymentType === 'n') { // 일반결제
+      if (this.finishStatus === StatusDisplay.PAID) {
+        const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        if (rtn) {
+          this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+          this.info.sendInfo('orderClear', 'clear');
+        } else {
+          this.alert.show({ message: '실패' });
+        }
+      }
+      this.close();
+    } else {
+      console.log('복합결제일 경우...');
     }
   }
 
@@ -230,7 +266,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      this.nicePay();
+      if (this.cardresult && this.cardresult.approved) {
+        this.cartInitAndClose();
+      } else {
+        this.nicePay();
+      }
     } else if (event.keyCode === KeyCode.ESCAPE) {
       this.close();
     }
