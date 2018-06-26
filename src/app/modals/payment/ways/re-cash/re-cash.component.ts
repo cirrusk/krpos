@@ -11,7 +11,7 @@ import { PaymentService } from '../../../../service';
 })
 export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy {
   isAllPay: boolean;
-  private accounts: Accounts;
+  private accountInfo: Accounts;
   @ViewChild('usePoint') usePoint: ElementRef;
   balance: Balance;
   private paymentSubscription: Subscription;
@@ -22,8 +22,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnInit() {
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
-    this.accounts = this.callerData.account;
-    this.paymentSubscription = this.payment.getRecash(this.accounts.uid).subscribe(result => {
+    this.accountInfo = this.callerData.accountInfo;
+    this.paymentSubscription = this.payment.getRecash(this.accountInfo.uid).subscribe(result => {
       this.balance = result;
     });
   }

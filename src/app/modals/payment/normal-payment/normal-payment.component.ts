@@ -55,7 +55,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(CreditCardComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEscape: false,
         modalId: 'CreditCardComponent',
@@ -89,16 +89,16 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
    */
   amwayPoint(evt: any) {
     this.setSelected(evt);
-    this.close();
-    this.modal.openModalByComponent(PointComponent,
-      {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        modalId: 'PointComponent',
-        pointType: 'a',
-        paymentType: 'n'
-      }
-    );
+    // sprint 6차로 주석처리
+    // this.close();
+    // this.modal.openModalByComponent(PointComponent,
+    //   {
+    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+    //     closeByClickOutside: false,
+    //     modalId: 'PointComponent',
+    //     pointType: 'a'
+    //   }
+    // );
   }
 
   /**
@@ -107,16 +107,16 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
    */
   memberPoint(evt: any) {
     this.setSelected(evt);
-    this.close();
-    this.modal.openModalByComponent(PointComponent,
-      {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        modalId: 'PointComponent_MEM',
-        pointType: 'm',
-        paymentType: 'n'
-      }
-    );
+    // sprint 6차로 주석처리
+    // this.close();
+    // this.modal.openModalByComponent(PointComponent,
+    //   {
+    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+    //     closeByClickOutside: false,
+    //     modalId: 'PointComponent_MEM',
+    //     pointType: 'm'
+    //   }
+    // );
   }
 
   /**
@@ -128,7 +128,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(CashComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'CashComponent',
         paymentType: 'n'
@@ -145,7 +145,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ChecksComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'ChecksComponent',
         paymentType: 'n'
@@ -162,7 +162,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(DirectDebitComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'DirectDebitComponent',
         paymentType: 'n'
@@ -179,7 +179,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ReCashComponent,
       {
-        callerData: { account: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'ReCashComponent',
         paymentType: 'n'

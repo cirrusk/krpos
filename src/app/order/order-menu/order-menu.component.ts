@@ -3,8 +3,8 @@ import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
-  CancelOrderComponent, CouponCheckComponent } from '../../modals';
-import { Accounts, OrderHistoryList, OrderEntry } from '../../data';
+  CancelOrderComponent, CouponCheckComponent, ComplexPaymentComponent } from '../../modals';
+import { Accounts, OrderHistoryList, OrderEntry, MemberType } from '../../data';
 import { OrderService, MessageService } from '../../service';
 import { Utils } from '../../core/utils';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { Cart } from '../../data/models/order/cart';
 export class OrderMenuComponent implements OnInit, OnDestroy {
   private orderInfoSubscribetion: Subscription;
 
-  private account: Accounts;
+  private accountInfo: Accounts;
   private cartInfo: Cart;
   private orderInfoList: OrderHistoryList;
   hasAccount = false;
@@ -54,7 +54,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       if (data.type === 'account') {
         this.hasAccount = data.flag;
         if (data.data) {
-          this.account = data.data;
+          this.accountInfo = data.data;
         }
       } else if (data.type === 'product') {
         this.hasProduct = data.flag;
@@ -80,7 +80,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
-        callerData : {accountInfo: this.account, cartInfo: this.cartInfo},
+        callerData : {accountInfo: this.accountInfo, cartInfo: this.cartInfo},
         closeByClickOutside: false,
         modalId: 'NormalPaymentComponent'
       }
@@ -94,24 +94,27 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   complexPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
-    this.modal.openModalByComponent(CouponCheckComponent,
-      {
-        callerData : {accountInfo: this.account, cartInfo: this.cartInfo},
-        closeByClickOutside: false,
-        closeByEnter: false,
-        modalId: 'CouponCheckComponent'
-      }
-    );
 
-/*
-    this.modal.openModalByComponent(ComplexPaymentComponent,
-      {
-        callerData : {accountInfo: this.account, cartInfo: this.cartInfo},
-        closeByClickOutside: false,
-        closeByEnter: false,
-        modalId: 'ComplexPaymentComponent'
-      }
-    );*/
+    if (this.accountInfo.accountTypeCode === MemberType.ABO) {
+      this.modal.openModalByComponent(CouponCheckComponent,
+        {
+          callerData : {accountInfo: this.accountInfo, cartInfo: this.cartInfo},
+          closeByClickOutside: false,
+          closeByEnter: false,
+          modalId: 'CouponCheckComponent'
+        }
+      );
+    } else {
+      this.modal.openModalByComponent(ComplexPaymentComponent,
+        {
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+          closeByClickOutside: false,
+          closeByEnter: false,
+          closeByEscape: false,
+          modalId: 'ComplexPaymentComponent_Coupon'
+        }
+      );
+    }
   }
 
   /**
@@ -194,7 +197,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
-        callerData: {account: this.account},
+        callerData: {accountInfo: this.accountInfo},
         closeByClickOutside: false,
         modalId: 'EtcOrderComponent'
       }

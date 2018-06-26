@@ -10,7 +10,7 @@ import { Cart } from '../../../data/models/order/cart';
   templateUrl: './coupon-payment.component.html'
 })
 export class CouponPaymentComponent extends ModalComponent implements OnInit {
-  private account: Accounts;
+  private accountInfo: Accounts;
   private cartInfo: Cart;
   private coupon: Coupon;
   constructor(protected modalService: ModalService, private modal: Modal) {
@@ -18,7 +18,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.account = this.callerData.accountInfo;
+    this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.coupon = this.callerData.coupon;
     console.log('coupon ---> ' + this.coupon);
@@ -28,7 +28,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit {
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        callerData: { accountInfo: this.account, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,

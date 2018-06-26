@@ -17,7 +17,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   pointTypeText: string;
   isAllPay: boolean;
   private cartInfo: Cart;
-  private account: Accounts;
+  private accountInfo: Accounts;
   private paymentType: string;
   private balance: Balance;
   balanceamount: number;
@@ -44,10 +44,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     } else {
       this.pointTypeText = 'Member 포인트';
     }
-    this.account = this.callerData.account;
+    this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.paymentprice = this.cartInfo.totalPrice.value;
-    this.balancesubscription = this.payments.getBalance(this.account.parties[0].uid).subscribe(result => {
+    this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(result => {
       this.balance = result;
       this.balanceamount = this.balance.amount;
       const changeprice = this.balanceamount - this.usePoint.nativeElement.value;
@@ -80,7 +80,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         // payment capture and place order
         const paymentcapture = this.makePaymentCaptureData(this.paymentprice);
         this.logger.set('point.component', 'point payment : ' + Utils.stringify(paymentcapture)).debug();
-        this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
+        this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
           result => {
             this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
             this.finishStatus = result.statusDisplay;

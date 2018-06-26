@@ -15,7 +15,7 @@ import { PaymentService } from '../../../../service';
   templateUrl: './coupon.component.html'
 })
 export class CouponComponent extends ModalComponent implements OnInit, OnDestroy {
-  account: Accounts;
+  accountInfo: Accounts;
   private cartList: Array<OrderEntry>;
   private couponubscription: Subscription;
   private coupon: Coupon;
@@ -28,9 +28,9 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   ngOnInit() {
-    this.account = this.callerData.accountInfo;
+    this.accountInfo = this.callerData.accountInfo;
     this.cartList = this.callerData.cartList;
-    this.couponubscription = this.payment.searchCoupon(this.account.uid, this.account.parties[0].account.uid).subscribe(result => {
+    this.couponubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid).subscribe(result => {
       this.couponlist = result.coupons;
       this.couponCount = this.couponlist.length;
     });
@@ -53,7 +53,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.close();
     this.modal.openModalByComponent(CouponPaymentComponent,
       {
-        callerData: { accountInfo: this.account, cartList: this.cartList, coupon: this.coupon },
+        callerData: { accountInfo: this.accountInfo, cartList: this.cartList, coupon: this.coupon },
         closeByClickOutside: false,
         closeByEnter: false,
         modalId: 'CouponPaymentComponent_Pop'
@@ -65,7 +65,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        callerData: { accountInfo: this.account, cartList: this.cartList },
+        callerData: { accountInfo: this.accountInfo, cartList: this.cartList },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,

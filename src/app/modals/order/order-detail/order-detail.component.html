@@ -17,7 +17,7 @@
                             <li><span>ABO정보</span><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></li>
                             <li><span>구매일자</span><em>{{orderDetail.orders[0].created | date:'yyyy/MM/dd  HH:mm:ss'}}</em></li>
                             <li><span>주문번호</span><em>{{orderDetail.orders[0].code}}</em></li>
-                            <li><span>출력일자</span><em></em></li>
+                            <li><span>출력일자</span><em>{{orderDetail.orders[0].created | date:'yyyy/MM/dd  HH:mm:ss'}}</em></li>
                             <li><span>인수자</span><em></em></li>
                         </ul>
                         <div class="scroll_tbl">
@@ -43,7 +43,7 @@
                                     <tbody>
                                         <tr *ngFor="let entry of orderDetail.orders[0].entries;">
                                             <td>{{ entry.entryNumber + 1}}</td>
-                                            <td><span class="blck">{{entry.product.code}}</span></td>
+                                            <td><span class="blck">{{entry.product.code}}</span>{{entry.product.name}}</td>
                                             <td>{{ entry.basePrice.value }}</td>
                                             <td>{{ entry.quantity }}</td>
                                             <td>{{ entry.totalPrice.value }}</td>
@@ -61,21 +61,30 @@
                         <ul class="list">
                             <li><span>상품수량</span><em>{{ orderDetail.orders[0].totalUnitCount | number }}</em></li>
                             <li><span>과세물품</span><em>{{ orderDetail.orders[0].totalPrice.value | number }}</em></li>
-                            <li><span>부&nbsp; 가&nbsp; 세</span><em>{{ orderDetail.orders[0].totalPriceWithTax.value - orderDetail.orders[0].totalPrice.value | number }}</em></li>
+                            <li><span>부&nbsp; 가&nbsp; 세</span><em>{{ orderDetail.orders[0].totalTax.value | number }}</em></li>
                             <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{ orderDetail.orders[0].totalPriceWithTax.value | number }}</em></li>
-                            <li class="txt_b"><span>할인금액</span><em></em></li>
+                            <li class="txt_b"><span>할인금액</span><em>{{orderDetail.orders[0].totalDiscounts.value}}</em></li>
                             <li><span>할인 쿠폰(신규 5%)</span><em></em></li>
                             <li><span>포인트차감(A포인트)</span><em></em></li>
                             <li class="txt_b"><span>결제금액</span><em></em></li>
                         </ul>
                         <ul class="list">
-                            <li>[신용카드결제]</li>
-                            <li>카드번호:32458****504</li>
-                            <li>할부: 일시불 (승인번호: 37360868)</li>
+                            <div *ngFor="let paymentInfo of orderDetail.orders[0].paymentDetails.paymentInfos">
+                                <div *ngIf="paymentInfo.paymentMode.code === 'creditcard' || paymentInfo.paymentMode.code === 'cashiccard'; else elseTemplate">
+                                    <li>[[{{ paymentInfo.paymentMode.name }}]]</li>
+                                    <li>카드번호 : <em>{{ paymentInfo.paymentMode.code }}</em></li>
+                                    <li>할부<em>{{ paymentInfo.paymentMode.code  }}</em></li>
+                                </div>
+                                <ng-template #elseTemplate>
+                                    <li><span>[{{paymentInfo.paymentMode.name}}]</span><em>{{ paymentInfo.amount | number }}</em></li>
+                                </ng-template>
+                                <!-- <li>카드번호:32458****504</li>
+                                <li>할부: 일시불 (승인번호: 37360868)</li> -->
+                            </div>
                         </ul>
                         <ul class="list">
-                            <li class="fx"><span>PV</span><em></em></li>
-                            <li class="fx"><span>BV</span><em></em></li>
+                            <li class="fx"><span>PV</span><em>{{orderDetail.orders[0].totalPriceWithTax.amwayValue.pointValue}}</em></li>
+                            <li class="fx"><span>BV</span><em>{{orderDetail.orders[0].totalPriceWithTax.amwayValue.businessVolume}}</em></li>
                             <li class="fx"><span>PV SUM</span><em></em></li>
                             <li class="fx"><span>BV SUM</span><em></em></li>
                             <li class="fx"><span>GROUP PV</span><em></em></li>

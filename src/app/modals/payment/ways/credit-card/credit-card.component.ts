@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener, OnDe
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
-import { ModalComponent, ModalService, NicePaymentService, Logger, AlertService, SpinnerService, AlertState } from '../../../../core';
+import { ModalComponent, ModalService, NicePaymentService, Logger, AlertService, SpinnerService, AlertState, Modal } from '../../../../core';
 import { PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData, Accounts, KeyCode, StatusDisplay } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -11,7 +11,7 @@ import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/
 import { Utils } from '../../../../core/utils';
 import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
 import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
-
+import { InstallmentPlanComponent } from '../../..';
 
 @Component({
   selector: 'pos-credit-card',
@@ -22,7 +22,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private installment: number;
   private orderInfo: Order;
   private cartInfo: Cart;
-  private account: Accounts;
+  private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private cardresult: CardApprovalResult;
@@ -40,7 +40,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
-    private payments: PaymentService, private nicepay: NicePaymentService,
+    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal,
     private alert: AlertService, private spinner: SpinnerService, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = 0;
@@ -52,7 +52,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       // this.paid.nativeElement.focus();
       this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly');
     }, 50);
-    this.account = this.callerData.account;
+    this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     if (this.paymentType === 'n') {
       this.payprice = this.cartInfo.totalPrice.value;
@@ -85,6 +85,18 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.installment = this.installmentPeriod.nativeElement.value;
       this.installmentPeriod.nativeElement.focus();
     }
+  }
+
+  popupInstallmentPlan() {
+    this.modal.openModalByComponent(InstallmentPlanComponent,
+      {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        closeByEscape: false,
+        modalId: 'InstallmentPlanComponent'
+      }
+    );
   }
 
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
@@ -148,7 +160,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                 // payment caputure
                 this.paymentcapture = this.makePaymentCaptureData(payprice);
                 this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-                this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+                this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
                   result => {
                     this.orderInfo = result;
                     this.logger.set('credit.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();

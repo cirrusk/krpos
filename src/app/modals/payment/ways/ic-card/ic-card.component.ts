@@ -11,7 +11,7 @@ import { Cart } from '../../../../data/models/order/cart';
 export class IcCardComponent extends ModalComponent implements OnInit {
   private orderInfo: Order;
   private cartInfo: Cart;
-  private account: Accounts;
+  private accountInfo: Accounts;
   private paymentType: string;
   payprice: number;
   finishStatus: string;                                // 결제완료 상태
@@ -26,7 +26,7 @@ export class IcCardComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.account = this.callerData.account;
+    this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     if (this.paymentType === 'n') {
       this.payprice = this.cartInfo.totalPrice.value;

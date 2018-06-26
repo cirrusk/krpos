@@ -30,7 +30,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paidDate: Date;
   private orderInfo: Order;
   private cartInfo: Cart;
-  private account: Accounts;
+  private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private point; number;
@@ -57,7 +57,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
       this.handleKeyboardCommand(c);
     });
-    this.account = this.callerData.account;
+    this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     setTimeout(() => {
       this.paid.nativeElement.value = 0;
@@ -111,7 +111,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           this.spinner.show();
           this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
           this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.account.uid, this.account.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
             result => {
               this.orderInfo = result;
               this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
@@ -167,7 +167,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   protected popupCashReceipt() {
     this.modal.openModalByComponent(CashReceiptComponent,
       {
-        callerData: { account: this.account, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
         closeByClickOutside: false,
         modalId: 'CashReceiptComponent',
         paymentType: this.paymentType
@@ -203,7 +203,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.PAID) {
-        const rtn = this.receipt.print(this.account, this.cartInfo, this.orderInfo, this.paymentcapture);
+        const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
           this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
           this.info.sendInfo('orderClear', 'clear');

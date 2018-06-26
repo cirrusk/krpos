@@ -41,6 +41,8 @@ import { ClientAccountComponent } from './account/client-account/client-account.
 import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.component';
 import { CompletePaymentComponent } from './payment/complete-payment/complete-payment.component';
 import { OrderDetailComponent } from './order/order-detail/order-detail.component';
+import { InstallmentPlanComponent } from './payment/ways/credit-card/installment-plan/installment-plan.component';
+
 
 @NgModule({
   declarations: [
@@ -79,7 +81,8 @@ import { OrderDetailComponent } from './order/order-detail/order-detail.componen
     ClientAccountComponent,
     CouponCheckComponent,
     CompletePaymentComponent,
-    OrderDetailComponent
+    OrderDetailComponent,
+    InstallmentPlanComponent
   ],
   imports: [
     CommonModule,
@@ -121,7 +124,8 @@ import { OrderDetailComponent } from './order/order-detail/order-detail.componen
     ClientAccountComponent,
     CouponCheckComponent,
     CompletePaymentComponent,
-    OrderDetailComponent
+    OrderDetailComponent,
+    InstallmentPlanComponent
   ]
 })
 export class ModalsModule {
