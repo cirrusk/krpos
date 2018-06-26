@@ -47,7 +47,11 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentType === 'n') {
       this.paidamount = this.cartInfo.totalPrice.value;
     } else {
-      this.paidamount = this.storage.getPay();
+      if (this.storage.getPay() === 0) {
+        this.paidamount = this.cartInfo.totalPrice.value;
+      } else {
+        this.paidamount = this.storage.getPay();
+      }
     }
     this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
       this.balance = result;
