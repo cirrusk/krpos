@@ -114,6 +114,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
             } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
               this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
               // cart-list.component에 재생성 이벤트 보내서 처리
+              this.info.sendInfo('recart', this.orderInfo);
             }
           },
           error => {

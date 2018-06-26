@@ -66,62 +66,91 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   private nicePay() {
     if (this.paymentType === 'n') {
-      this.spinner.show();
-      const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
-      this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
-      resultNotifier.subscribe(
-        (res: ICCardApprovalResult) => {
-          this.cardresult = res;
-          if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-            this.alert.error({ message: res.msg });
-            this.spinner.hide();
-          } else {
-            if (res.approved) {
-              this.cardnumber = res.maskedCardNumber;
-              this.cardcompay = res.issuerName;
-              this.cardauthnumber = res.approvalNumber;
-              this.paidDate = Utils.convertDate(res.approvalDateTime);
-
-              // payment caputure
-              this.paymentcapture = this.makePaymentCaptureData(this.payprice);
-              this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-              this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
-                result => {
-                  this.orderInfo = result;
-                  this.logger.set('ic.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-                  this.finishStatus = result.statusDisplay;
-                  if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-                      this.paidDate = result.created ? result.created : new Date();
-                      this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-                    } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-
-                    } else { // CART 삭제된 상태
-
-                    }
-                  } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-                    // cart-list.component에 재생성 이벤트 보내서 처리
-
-                  }
-                },
-                error => {
-                  this.finishStatus = 'fail';
-                  this.spinner.hide();
-                  const errdata = Utils.getError(error);
-                  if (errdata) {
-                    this.logger.set('iccard.component', `${errdata.message}`).error();
-                  }
-                },
-                () => { this.spinner.hide(); });
-            } else {
-              this.finishStatus = 'fail';
-              this.spinner.hide();
-              this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
-            }
-          }
-        }
-      );
+      this.approvalAndPayment();
     }
+  }
+
+  /**
+   * 
+   */
+  private approval() {
+    this.spinner.show();
+    const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
+    this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
+    resultNotifier.subscribe((res: ICCardApprovalResult) => {
+      this.cardresult = res;
+      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
+        this.alert.error({ message: res.msg });
+      } else {
+        if (res.approved) {
+          this.cardnumber = res.maskedCardNumber;
+          this.cardcompay = res.issuerName;
+          this.cardauthnumber = res.approvalNumber;
+          this.paidDate = Utils.convertDate(res.approvalDateTime);
+          // payment caputure
+          this.paymentcapture = this.makePaymentCaptureData(this.payprice);
+          this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+        } else {
+          this.finishStatus = 'fail';
+          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+        }
+      }
+      this.spinner.hide();
+    });
+  }
+
+  /**
+   * 
+   */
+  private approvalAndPayment() {
+    this.spinner.show();
+    const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
+    this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
+    resultNotifier.subscribe((res: ICCardApprovalResult) => {
+      this.cardresult = res;
+      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
+        this.alert.error({ message: res.msg });
+        this.spinner.hide();
+      } else {
+        if (res.approved) {
+          this.cardnumber = res.maskedCardNumber;
+          this.cardcompay = res.issuerName;
+          this.cardauthnumber = res.approvalNumber;
+          this.paidDate = Utils.convertDate(res.approvalDateTime);
+          // payment caputure
+          this.paymentcapture = this.makePaymentCaptureData(this.payprice);
+          this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
+            this.orderInfo = result;
+            this.logger.set('ic.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+            this.finishStatus = result.statusDisplay;
+            if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+              if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+                this.paidDate = result.created ? result.created : new Date();
+                this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+              } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+              } else { // CART 삭제된 상태
+                this.info.sendInfo('recart', this.orderInfo);
+              }
+            } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+              // cart-list.component에 재생성 이벤트 보내서 처리
+              this.info.sendInfo('recart', this.orderInfo);
+            }
+          }, error => {
+            this.finishStatus = 'fail';
+            this.spinner.hide();
+            const errdata = Utils.getError(error);
+            if (errdata) {
+              this.logger.set('iccard.component', `${errdata.message}`).error();
+            }
+          }, () => { this.spinner.hide(); });
+        } else {
+          this.finishStatus = 'fail';
+          this.spinner.hide();
+          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+        }
+      }
+    });
   }
 
   close() {

@@ -210,7 +210,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.approvalAndPayment();
       }
     } else {
-      if (this.change >= 0) {
+      if (this.change > 0) {
+        this.approval();
+      } else if (this.change === 0) {
         this.approvalAndPayment();
       } else {
         this.alert.show({ message: '실결제금액이 큽니다.' });
@@ -218,6 +220,36 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
+  /**
+   * 카드결제만 진행
+   */
+  private approval() {
+    const paidprice = this.paid.nativeElement.value;
+    this.spinner.show();
+    const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
+    this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
+    resultNotifier.subscribe((res: CardApprovalResult) => {
+      this.cardresult = res;
+      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
+        this.alert.error({ message: res.msg });
+        this.spinner.hide();
+      } else {
+        if (res.approved) {
+          this.cardnumber = res.maskedCardNumber;
+          this.cardcompany = res.issuerName;
+          this.cardauthnumber = res.approvalNumber;
+          this.paidDate = Utils.convertDate(res.approvalDateTime);
+          // payment caputure
+          this.paymentcapture = this.makePaymentCaptureData(paidprice);
+          this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+        } else {
+          this.finishStatus = 'fail';
+          this.spinner.hide();
+          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+        }
+      }
+    });
+  }
   /**
    * 카드 결제 VAN사에 전송하고 Payment처리
    */
@@ -320,6 +352,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
         this.close();
       } else { // 복합결제
+        this.result = this.paymentcapture.getCcPaymentInfo;
         this.close();
       }
     }
