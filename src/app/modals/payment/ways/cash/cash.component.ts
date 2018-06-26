@@ -85,9 +85,12 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param paidAmount 내신금액
    * @param payAmount 결제금액
    */
-  pay(evt: KeyboardEvent, paidAmount: number, payAmount: number) {
+  pay(evt: KeyboardEvent, paidAmount: number, payAmount: number): void {
     evt.preventDefault();
-    setTimeout(() => { this.paycheck.nativeElement.blur(); this.renderer.setAttribute(this.paycheck.nativeElement, 'disabled', 'disabled'); }, 5);
+    if (this.finishStatus !== null) {
+      return;
+    }
+    // setTimeout(() => { this.paycheck.nativeElement.blur(); this.renderer.setAttribute(this.paycheck.nativeElement, 'disabled', 'disabled'); }, 5);
     // 유효성체크 실패 시 포커스 이동 처리
     this.alertsubscription = this.alert.alertState.subscribe(
       (state: AlertState) => {
@@ -125,7 +128,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
                     this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                     this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
                   }, 5);
-
+                  this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                   this.printer.openCashDrawer(); // 캐셔 drawer 오픈
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
 

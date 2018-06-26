@@ -6,6 +6,8 @@ import { KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType
 import { PaymentService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
 import { Utils } from '../../../../core/utils';
+import { Order } from '../../../../data/models/order/order';
+import { InfoBroker } from '../../../../broker';
 
 @Component({
   selector: 'pos-point',
@@ -16,6 +18,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   pointType: string; // modal component 호출 시 전달 받은 포인트 타입
   pointTypeText: string;
   isAllPay: boolean;
+  private orderInfo: Order;
+  private paymentcapture: PaymentCapture;
   private cartInfo: Cart;
   private accountInfo: Accounts;
   private paymentType: string;
@@ -31,6 +35,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     private payments: PaymentService,
     private alert: AlertService,
     private spinner: SpinnerService,
+    private info: InfoBroker,
     private logger: Logger) {
     super(modalService);
     this.isAllPay = true;
@@ -78,10 +83,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       } else {
         this.spinner.show();
         // payment capture and place order
-        const paymentcapture = this.makePaymentCaptureData(this.paymentprice);
-        this.logger.set('point.component', 'point payment : ' + Utils.stringify(paymentcapture)).debug();
-        this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, paymentcapture).subscribe(
+        this.paymentcapture = this.makePaymentCaptureData(this.paymentprice);
+        this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
+        this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
           result => {
+            this.orderInfo = result;
             this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
             this.finishStatus = result.statusDisplay;
             if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
@@ -93,7 +99,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
                 //   this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                 //   this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
                 // }, 5);
-
+                this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
               } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
 
               } else { // CART 삭제된 상태

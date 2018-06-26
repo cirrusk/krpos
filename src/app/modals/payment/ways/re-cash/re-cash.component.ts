@@ -93,7 +93,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
                   this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
                   this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
                 }, 5);
-
+                this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
               } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
 
               } else { // CART 삭제된 상태

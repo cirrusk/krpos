@@ -93,7 +93,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
                   if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
                     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                       this.paidDate = result.created ? result.created : new Date();
-
+                      this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                     } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
 
                     } else { // CART 삭제된 상태

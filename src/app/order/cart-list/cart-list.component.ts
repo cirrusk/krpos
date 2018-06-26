@@ -102,7 +102,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.init();
         } else if (result != null && type === 'payinfo') {
           const data = result.data;
-          // console.log('[capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[0]));
+          console.log('[capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[0]));
           // console.log('[order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[1]));
           this.retreiveInfo(data[0], data[1]);
         } else if (result != null && type === 'recart') {
@@ -204,6 +204,14 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPV = 0;
     this.totalBV = 0;
     this.selectedCartNum = -1;
+    this.ccamount = 0;
+    this.cashamount = 0;
+    this.pointamount = 0;
+    this.recashamount = 0;
+    this.ddamount = 0;
+    this.discount = 0;
+    this.received = 0;
+    this.change = 0;
     this.pager = new Pagination();
     this.resCartInfo = new ResCartInfo();
     this.restrictionModel = new RestrictionModel();
