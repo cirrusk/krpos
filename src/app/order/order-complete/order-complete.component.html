@@ -62,9 +62,9 @@
                               <td><span>{{order.user.uid}}</span></td>
                               <td><span class="elips mx90 ac">{{order.user.name}}</span></td>
                               <td class="ar"><span>{{order.total.value | number}}원</span></td>
-                              <td><span>{{order.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>
-                              <td><span>{{order.deliveryMode.code}}</span></td>
-                              <td><span>{{order.status}} <a href="#" class="btn03_blue mgl10">취소</a><a href="#" class="btn03_gray">영수증</a></span></td>
+                              <td><span>{{order.date | date:'yy/MM/dd HH:mm:ss'}}</span></td>
+                              <td><span>{{order.deliveryMode.name}}</span></td>
+                              <td><span>{{order.status}} <a href="javascript:void(0)" class="btn03_blue mgl10">취소</a><a href="javascript:void(0)" class="btn03_gray" (click)="$event.stopPropagation(); reissueReceipts(order.user.uid, order.code)">영수증</a></span></td>
                           </tr>                         
                       </tbody>
                   </table>

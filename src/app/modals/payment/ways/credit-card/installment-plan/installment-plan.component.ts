@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Logger, SpinnerService } from '../../../../../core';
 import { PaymentService } from '../../../../../service';
-import { Accounts, BankInfo } from '../../../../../data';
+import { Accounts, BankInfoList } from '../../../../../data';
 
 @Component({
   selector: 'pos-installment-plan',
@@ -13,7 +13,7 @@ export class InstallmentPlanComponent  extends ModalComponent implements OnInit,
   private installmentPlanSubscription: Subscription;
 
   private accountInfo: Accounts;
-  bankList: BankInfo;
+  bankList: BankInfoList;
 
   constructor(protected modalService: ModalService,
               private paymentService: PaymentService,
@@ -33,7 +33,7 @@ export class InstallmentPlanComponent  extends ModalComponent implements OnInit,
 
   getInstallmentPlan() {
     this.spinner.show();
-    this.installmentPlanSubscription = this.paymentService.getInstallmentPlan('B', this.accountInfo.parties[0].uid).subscribe(
+    this.installmentPlanSubscription = this.paymentService.getInstallmentPlan().subscribe(
       result => {
         if (result) {
           this.bankList = result;

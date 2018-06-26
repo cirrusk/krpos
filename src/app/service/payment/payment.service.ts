@@ -5,8 +5,8 @@ import 'rxjs/add/operator/timeout';
 
 import { ApiService, StorageService, Config } from '../../core';
 import {
-  BankInfo, Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData
+  Balance, CouponList, HttpData,
+  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData, BankInfoList
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 
@@ -49,10 +49,9 @@ export class PaymentService {
    *
    * @param code 카드사코드
    */
-  getInstallmentPlan(cardcode: string, userid: string): Observable<BankInfo> {
-    const pathvariables = { userId: userid };
-    const params = { code: cardcode, feilds: 'DEFAULT' };
-    const data = new HttpData('intallmentPlan', pathvariables, null, params);
+  getInstallmentPlan(): Observable<BankInfoList> {
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('intallmentPlan', null, null, params);
     return this.api.get(data);
   }
 

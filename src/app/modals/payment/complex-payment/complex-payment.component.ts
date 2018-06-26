@@ -90,7 +90,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   amwayPoint(evt: any) {
     // point
-    this.setSelected(evt, 2, 'point');
+    // this.setSelected(evt, 2, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
       // this.selectPopup('APointComponent', PointComponent);
@@ -99,7 +99,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   memberPoint(evt: any) {
     // point
-    this.setSelected(evt, 3, 'point');
+    // this.setSelected(evt, 3, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
       // this.selectPopup('MPointComponent', PointComponent);

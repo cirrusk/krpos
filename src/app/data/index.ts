@@ -37,6 +37,7 @@ export * from './models/payment/payment-mode';
 export * from './models/payment/payment-capture';
 export * from './models/payment/payment-details';
 export * from './models/payment/bank-info';
+export * from './models/payment/bank-info-list';
 export * from './models/payment/balance';
 export * from './models/payment/coupon';
 export * from './models/payment/voucher';

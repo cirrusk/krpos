@@ -1,6 +1,7 @@
+import { PaymentService } from './../../../service/payment/payment.service';
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { ModalComponent, ModalService, Modal, SpinnerService, StorageService, Logger, AlertService } from '../../../core';
-import { OrderService } from '../../../service';
+import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 
@@ -14,6 +15,8 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
+              private receiptService: ReceiptService,
+              private messageService: MessageService,
               private modal: Modal,
               private spinner: SpinnerService,
               private storageService: StorageService,
@@ -52,7 +55,16 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
       },
       () => { this.spinner.hide(); }
     );
+  }
 
+  reissueReceipts() {
+    try {
+      this.receiptService.reissueReceipts(this.orderDetail);
+      this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+    } catch (e) {
+      this.logger.set('order-detail.component', `Reissue Receipts error type : ${e}`).error();
+      this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+    }
   }
 
   close() {

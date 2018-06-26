@@ -7,13 +7,15 @@
     <div class="pop_container">
         <div class="pop_content">
             <dl class="scrl_area" *ngIf="bankList">
-              <dt>{{bankList.name}}</dt>
-              <dd><span *ngFor="let installmentPlan of bankList.installmentPlans">{{installmentPlan.name}}</span></dd>
+                <div *ngFor="let bankInfo of bankList.bankInfos">
+                    <dt>{{bankInfo.name}}</dt>
+                    <dd><span *ngFor="let installmentPlan of bankInfo.installmentPlans">{{installmentPlan.name}}</span></dd>
+                </div>
             </dl>
         </div>
     </div>
     <!-- //pop_container -->
     <div class="pop_footer clearfix">
-        <span class="fl">취소 ESC</span>
+        <span class="fl">취소 ESC</span>    
     </div>
 </div>

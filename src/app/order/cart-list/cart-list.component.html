@@ -65,8 +65,8 @@
                 <td class="al">{{cartEntry.product.code}}</td>
                 <td class="al"><span class="elips">{{cartEntry.product.name}}</span></td>
                 <td>{{cartEntry.quantity}}</td>
-                <td class="ar">{{cartEntry.product.price.value | number}}</td>
-                <td class="ar">{{cartEntry.product.price.value*cartEntry.quantity | number}}</td>
+                <td class="ar">{{cartEntry.basePrice.value | number}}</td>
+                <td class="ar">{{cartEntry.totalPrice.value | number}}</td>
                 <td></td>
             </tr>                                   
         </tbody>

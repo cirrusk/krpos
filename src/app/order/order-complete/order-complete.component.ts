@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy } from '
 import { Router } from '@angular/router';
 import { OrderList } from './../../data/models/order/order';
 import { Pagination, OrderHistoryList, OrderHistory } from '../../data';
-import { PagerService, MessageService, OrderService } from '../../service';
+import { PagerService, MessageService, OrderService, ReceiptService } from '../../service';
 import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
@@ -25,6 +25,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   constructor(private router: Router,
               private modal: Modal,
               private orderService: OrderService,
+              private receiptService: ReceiptService,
               private spinner: SpinnerService,
               private alert: AlertService,
               private messageService: MessageService,
@@ -92,6 +93,35 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
           this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  reissueReceipts(userId: string, orderCode: string) {
+    const orderCodes = new Array<string>();
+    orderCodes.push(orderCode);
+    this.spinner.show();
+    this.orderService.orderDetails(userId, orderCodes).subscribe(
+      orderDetail => {
+        if (orderDetail) {
+          try {
+            this.receiptService.reissueReceipts(orderDetail);
+            this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+          } catch (e) {
+            this.logger.set('order-complete.component', `Reissue Receipts error type : ${e}`).error();
+            this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+          }
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('order-detail.component', `Get Order Detail error type : ${errdata.type}`).error();
+          this.logger.set('order-detail.component', `Get Order Detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },

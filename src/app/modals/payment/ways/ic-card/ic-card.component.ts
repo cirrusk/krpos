@@ -28,7 +28,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   cardnumber: string; // 카드번호
-  cardcompay: string; // 카드사명
+  cardcompany: string; // 카드사명
   cardperiod: string; // 유효기간
   cardauthnumber: string; // 승인번호
   @ViewChild('cardpassword') private cardpassword: ElementRef;
@@ -84,7 +84,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
       } else {
         if (res.approved) {
           this.cardnumber = res.maskedCardNumber;
-          this.cardcompay = res.issuerName;
+          this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
           // payment caputure
@@ -114,7 +114,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
       } else {
         if (res.approved) {
           this.cardnumber = res.maskedCardNumber;
-          this.cardcompay = res.issuerName;
+          this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
           // payment caputure

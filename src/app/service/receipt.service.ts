@@ -3,9 +3,9 @@ import { ReceiptDataProvider, EscPos, StorageService, PrinterService } from '../
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
-    ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo, Discount, DiscountInfo, ReceiptInfo
+    ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo, Discount, DiscountInfo, ReceiptInfo, CreditCardPaymentInfo, AmwayPaymentInfoData
 } from '../data';
-import { Order } from '../data/models/order/order';
+import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
 import { Utils } from '../core/utils';
 
@@ -47,6 +47,43 @@ export class ReceiptService {
         return EscPos.unescapeLeadingSpace(retText);
     }
 
+    public reissueReceipts(orderData: OrderList): void {
+        const cartInfo = new Cart();
+        const paymentCapture = new PaymentCapture();
+        let jsonPaymentData = {};
+
+        orderData.orders.forEach(order => {
+            const jsonCartData = { 'user':  order.user,
+                               'entries': order.entries,
+                               'totalPrice': order.totalPrice,
+                               'subTotal': order.subTotal,
+                               'totalUnitCount': order.totalUnitCount,
+                               'totalPriceWithTax': order.totalPriceWithTax,
+                               'totalTax': order.totalTax,
+                               'totalDiscounts':  order.totalDiscounts};
+            Object.assign(cartInfo, jsonCartData);
+
+            order.paymentDetails.paymentInfos.forEach(paymentInfo => {
+                switch (paymentInfo.paymentMode.code) {
+                    case 'creditcard'   : { jsonPaymentData = {'ccPaymentInfo' : paymentInfo}; } break;
+                    case 'cashiccard'   : { jsonPaymentData = {'icCardPaymentInfo' : paymentInfo }; } break;
+                    case 'cash'         : { jsonPaymentData = {'cashPaymentInfo' : paymentInfo }; } break;
+                    case 'directdebit'  : { jsonPaymentData = {'directDebitPaymentInfo' : paymentInfo }; } break;
+                    case 'arCredit'     : { jsonPaymentData = {'monetaryPaymentInfo' : paymentInfo }; } break;
+                    case 'point'        : { jsonPaymentData = {'pointPaymentInfo' : paymentInfo }; } break;
+                    case 'creditvoucher': { jsonPaymentData = {'voucherPaymentInfo' : paymentInfo }; } break;
+                    default: { jsonPaymentData = {}; } break;
+                }
+
+                Object.assign(paymentCapture, jsonPaymentData);
+            });
+
+
+            this.print(order.account, cartInfo, order, paymentCapture);
+        });
+
+    }
+
     /**
      * 영수증 출력
      *
@@ -75,11 +112,11 @@ export class ReceiptService {
         orderInfo.setCashier = new Cashier(token.employeeId, token.employeeName);
         if (account.accountTypeCode === MemberType.ABO) {
             const abo = new Account();
-            abo.setAbo = new AccountInfo(account.parties[0].uid, account.parties[0].name);
+            abo.setAbo = new AccountInfo(cartInfo.user.uid, cartInfo.user.name);
             orderInfo.setAccount = abo;
         } else {
             const member = new Account();
-            member.setAbo = new AccountInfo(account.parties[0].uid, account.parties[0].name);
+            member.setAbo = new AccountInfo(cartInfo.user.uid, cartInfo.user.name);
             orderInfo.setAccount = member;
         }
         orderInfo.setType = type || '현장구매';
@@ -106,7 +143,7 @@ export class ReceiptService {
                 'idx': entry.entryNumber.toString(),
                 'skuCode': entry.product.code,
                 'productName': entry.product.name,
-                'price': entry.product.price.value.toString(),
+                'price': entry.basePrice.value.toString(),
                 'qty': entry.quantity.toString(),
                 'totalPrice': entry.totalPrice.value.toString()
             });
@@ -155,7 +192,7 @@ export class ReceiptService {
         }
         if (paymentCapture.getCashPaymentInfo) {
             const cainfo = paymentCapture.getCashPaymentInfo;
-            const cash = new Cash(cainfo.getAmount, cainfo.getReceived, cainfo.getChange, cainfo.getCashReceipt);
+            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, cainfo.getCashReceipt);
             payment.setCash = cash;
         }
         // payments - END

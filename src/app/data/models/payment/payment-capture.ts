@@ -106,16 +106,26 @@ export class CurrencyData {
 }
 
 export class PaymentModeData {
-    protected code: string;
+    code: string;
     protected name: string;
     protected description: string;
     protected active: boolean;
     public set setCode(code: string) {
         this.code = code;
     }
+
+    public get getCode(): string {
+        return this.code;
+    }
+
+    public get getName(): string {
+        return this.name;
+    }
+
     public set setDiscription(description: string) {
         this.description = description;
     }
+
     public set setActive(active: boolean) {
         this.active = active;
     }
@@ -135,11 +145,11 @@ export class AmwayPaymentInfoData {
     protected transactionid: string; // 거래 번호
     protected transactionCode: string;
     protected referenceNumber: string;
-    protected amount: number; // 지불금액
+    amount: number; // 지불금액
     protected currency: CurrencyData;
     protected status: string;
     protected comments: string;
-    protected paymentMode: PaymentModeData;
+    paymentMode: PaymentModeData;
     protected paymentProvider: string;
     protected saveInAccount: boolean;
     protected alias: string;
@@ -162,6 +172,36 @@ export class AmwayPaymentInfoData {
     public set setCurrencyData(currency: CurrencyData) {
         this.currency = currency;
     }
+
+    public set setPaymentInfoLine1(paymentInfoLine1: string) {
+        this.paymentInfoLine1 = paymentInfoLine1;
+    }
+    public set setPaymentInfoLine2(paymentInfoLine2: string) {
+        this.paymentInfoLine2 = paymentInfoLine2;
+    }
+    public set setPaymentInfoLine3(paymentInfoLine3: string) {
+        this.paymentInfoLine3 = paymentInfoLine3;
+    }
+    public set setPaymentInfoLine4(paymentInfoLine4: string) {
+        this.paymentInfoLine4 = paymentInfoLine4;
+    }
+
+    public get getPaymentInfoLine1(): string {
+        return this.paymentInfoLine1;
+    }
+    public get getPaymentInfoLine2(): string {
+        return this.paymentInfoLine2;
+    }
+    public get getPaymentInfoLine3(): string {
+        return this.paymentInfoLine3;
+    }
+    public get getPaymentInfoLine4(): string {
+        return this.paymentInfoLine4;
+    }
+   public get getPaymentMode(): PaymentModeData {
+        return this.paymentMode;
+    }
+
     constructor(amount: number, paymentmodecode: string, paymentProvider?: string, status?: string) {
         this.amount = amount;
         this.paymentProvider = paymentProvider || 'akl';
