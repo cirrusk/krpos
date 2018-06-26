@@ -3,7 +3,10 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
 import { ModalComponent, ModalService, NicePaymentService, Logger, AlertService, SpinnerService, AlertState, Modal } from '../../../../core';
-import { PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData, Accounts, KeyCode, StatusDisplay } from '../../../../data';
+import {
+  PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
+  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType
+} from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { ReceiptService, PaymentService } from '../../../../service';
@@ -59,7 +62,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (this.paymentType === 'n') {
       this.payprice = this.cartInfo.totalPrice.value;
       this.paid.nativeElement.value = this.payprice;
-      this.change = this.payprice;
+      this.change = 0;
     }
   }
 
@@ -77,6 +80,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.paid.nativeElement.blur();
     }, 5);
   }
+
   checkPay(type: number) {
     this.installmentPeriod.nativeElement.value = '';
     if (type === 0) {
@@ -114,12 +118,21 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
     const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
     const ccard = new CreditCardPaymentInfo(paidamount);
-    ccard.setCardAuthNumber = this.cardresult.approvalNumber;
-    ccard.setCardCompayCode = this.cardresult.issuerCode;
+    ccard.setCardNumber = this.cardresult.maskedCardNumber;
+    ccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
+    ccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
+    ccard.setCardCompayCode = 'B'; // this.cardresult.issuerCode;
+    ccard.setCardAcquireCode = this.cardresult.acquireCode; // 매입사 코드
     ccard.setCardPassword = this.cardpassword.nativeElement.value;
-    ccard.setInstallmentPlan = this.cardresult.installmentMonth;
-    ccard.setMemberType = '';
-    ccard.setPaymentType = '';
+    ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
+    ccard.setMemberType = CCMemberType.PERSONAL;
+    ccard.setPaymentType = CCPaymentType.GENERAL;
+    ccard.setCardType = PaymentModes.CREDITCARD;
+    ccard.setTransactionId = ''; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    const cn = this.cardresult.maskedCardNumber;
+    if (cn && cn.length > 4) {
+      ccard.setNumber = cn.substring(cn.length - 4); // 카드 번호 뒷 4자리
+    }
     ccard.setValidToMonth = '';
     ccard.setValidToYear = '';
     ccard.setPaymentModeData = new PaymentModeData(PaymentModes.CREDITCARD);
@@ -165,7 +178,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             } else {
               if (res.approved) {
                 this.cardnumber = res.maskedCardNumber;
-                this.cardcompany = res.issuerName;
+                this.cardcompany = res.acquireName; // issuerName;
                 this.cardauthnumber = res.approvalNumber;
                 this.paidDate = Utils.convertDate(res.approvalDateTime);
 
@@ -187,12 +200,13 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                         }, 5);
 
                       } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-
+                        this.payCancel();
                       } else { // CART 삭제된 상태
-
+                        this.payCancel();
                       }
                     } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                       // cart-list.component에 재생성 이벤트 보내서 처리
+                      this.payCancel();
                     }
                   },
                   error => {
@@ -235,18 +249,18 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           }
         },
         error => { this.logger.set('credit.card.component', `${error}`).error(); },
-        () => { this.close(); }
+        () => { /*this.close();*/ }
       );
     } else {
-      this.close();
+      /*this.close();*/
     }
   }
 
-    /**
-   * 결제완료 후 Enter Key 치면 팝업 닫힘
-   * 일반결제 : 카트 및 클라이언트 초기화
-   * 복합결제 : 카트 및 클라이언트 갱신
-   */
+  /**
+ * 결제완료 후 Enter Key 치면 팝업 닫힘
+ * 일반결제 : 카트 및 클라이언트 초기화
+ * 복합결제 : 카트 및 클라이언트 갱신
+ */
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.PAID) {

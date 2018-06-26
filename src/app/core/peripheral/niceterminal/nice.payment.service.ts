@@ -48,7 +48,7 @@ export class NicePaymentService {
 
         const obs: Observable<any> = this.niceDriver.send(body);
 
-        obs.first().subscribe(
+        obs/*.first()*/.subscribe(
             (res) => {
                 const raw: string = res;
 

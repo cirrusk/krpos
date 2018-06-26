@@ -1,3 +1,6 @@
+import { MemberType } from '../order/member-type.enum';
+import { CCMemberType, CCPaymentType } from './payment.enum';
+
 /**
  * Payment Capture
  * 신용카드          ; creditcard         ; CreditCardPaymentInfo
@@ -196,8 +199,24 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     protected validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
     protected validFromYear: string; // 유효기간 시작 년 필수값 임의설정
     protected xPayResponseData: any; // 안심결제
+
+    public set setCardAcquireCode(cardAcquirerCode: string) {
+        this.cardAcquirerCode = cardAcquirerCode;
+    }
+    public set setCardMerchantNumber(cardMerchantNumber: string) {
+        this.cardMerchantNumber = cardMerchantNumber;
+    }
+    public set setNumber(number: string) {
+        this.number = number;
+    }
+    public set setTransactionId(transactionid: string) {
+        this.transactionid = transactionid;
+    }
+    public set setCardType(cardtype: string) {
+        this.cardtype = cardtype;
+    }
     public set setPaymentType(paymentType: string) {
-        this.paymentType = paymentType;
+        this.paymentType = paymentType || CCPaymentType.GENERAL;
     }
     public set setCardCompayCode(cardCompanyCode: string) {
         this.cardCompanyCode = cardCompanyCode;
@@ -209,7 +228,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
         return this.installmentPlan;
     }
     public set setMemberType(memberType: string) {
-        this.memberType = memberType;
+        this.memberType = memberType || CCMemberType.PERSONAL;
     }
     public set setCardNumber(cardNumber: string) {
         this.cardNumber = cardNumber;

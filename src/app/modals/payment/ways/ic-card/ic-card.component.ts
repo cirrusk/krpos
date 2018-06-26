@@ -97,12 +97,13 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
                       this.paidDate = result.created ? result.created : new Date();
 
                     } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-
+this.payCancel();
                     } else { // CART 삭제된 상태
-
+                      this.payCancel();
                     }
                   } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                     // cart-list.component에 재생성 이벤트 보내서 처리
+                    this.payCancel();
                   }
                 },
                 error => {
@@ -147,10 +148,10 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           }
         },
         error => { this.logger.set('ic.card.component', `${error}`).error(); },
-        () => { this.close(); }
+        () => { /*this.close();*/ }
       );
     } else {
-      this.close();
+      /*this.close();*/
     }
   }
 
