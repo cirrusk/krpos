@@ -117,7 +117,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
               this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
               this.finishStatus = result.statusDisplay;
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                if (this.finishStatus === StatusDisplay.PAID) {
+                if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                   this.paidDate = result.created ? result.created : new Date();
 
                   setTimeout(() => { // 결제 성공, 변경못하도록 처리
@@ -202,7 +202,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    */
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.PAID) {
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
           this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
@@ -222,7 +222,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.finishStatus === StatusDisplay.PAID) {
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.cartInitAndClose();
       }
     }
@@ -237,7 +237,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private handleKeyboardCommand(command: KeyCommand) {
     try {
       switch (command.combo) {
-        case 'ctrl+r': { if (this.finishStatus === StatusDisplay.PAID) { this[command.name](); } } break;
+        case 'ctrl+r': { if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) { this[command.name](); } } break;
       }
     } catch (e) {
       this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();

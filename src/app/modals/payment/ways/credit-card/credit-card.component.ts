@@ -245,7 +245,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.logger.set('credit.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
             this.finishStatus = result.statusDisplay;
             if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-              if (this.finishStatus === StatusDisplay.PAID) {
+              if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                 this.paidDate = result.created ? result.created : new Date();
                 // 장바구니에 정보를 보내야함.
                 // capture 정보, order 정보
@@ -309,7 +309,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 복합결제 : 카트 및 클라이언트 갱신
    */
   cartInitAndClose() {
-    if (this.finishStatus === StatusDisplay.PAID) {
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentType === 'n') { // 일반결제
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {

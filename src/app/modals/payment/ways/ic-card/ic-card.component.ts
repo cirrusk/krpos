@@ -91,7 +91,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
                   this.logger.set('ic.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
                   this.finishStatus = result.statusDisplay;
                   if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                    if (this.finishStatus === StatusDisplay.PAID) {
+                    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                       this.paidDate = result.created ? result.created : new Date();
 
                     } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
@@ -155,7 +155,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.PAID) {
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
           this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();

@@ -98,7 +98,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
             this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
             this.finishStatus = result.statusDisplay;
             if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-              if (this.finishStatus === StatusDisplay.PAID) {
+              if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                 this.paidDate = result.created ? result.created : new Date();
 
                 setTimeout(() => { // 결제 성공, 변경못하도록 처리
@@ -147,7 +147,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.PAID) {
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
           this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
@@ -167,7 +167,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.finishStatus === StatusDisplay.PAID) {
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.cartInitAndClose();
       }
     }
