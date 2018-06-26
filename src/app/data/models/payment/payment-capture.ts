@@ -387,7 +387,7 @@ export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData {
 }
 
 /** 현금IC카드결제 */
-export class ICCardPaymentInfo extends AmwayPaymentInfoData {
+export class ICCardPaymentInfo extends CreditCardPaymentInfo {
     protected accountNumber: string; // 계좌번호
     protected baOwner: string; // 예금주명
     protected bankIDNumber: string;

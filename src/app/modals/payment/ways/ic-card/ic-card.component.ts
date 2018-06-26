@@ -55,6 +55,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setBank = this.cardresult.issuerOrgName;
     iccard.setBankIDNumber = this.cardresult.issuerOrgCode;
     iccard.setBaOwner = '';
+    iccard.setCardPassword = this.cardpassword.nativeElement.value;
     iccard.setPaymentModeData = new PaymentModeData(PaymentModes.ICCARD);
     iccard.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();
