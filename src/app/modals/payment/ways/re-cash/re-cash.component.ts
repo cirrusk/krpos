@@ -43,12 +43,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     if (this.paymentType === 'n') {
       this.paidamount = this.cartInfo.totalPrice.value;
     } else {
       this.paidamount = this.storage.getPay();
     }
-
     this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
       this.balance = result;
     });
@@ -67,6 +67,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       console.log('*** use point : ' + this.usePoint.nativeElement.value);
     }
+    const check = this.paidamount - this.usePoint.nativeElement.value;
     if (this.paymentType === 'n') {
       this.alertsubscription = this.alert.alertState.subscribe(
         (state: AlertState) => {
@@ -78,7 +79,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
           }
         }
       );
-      const check = this.paidamount - this.usePoint.nativeElement.value;
       if (check > 0) {
         this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
       } else if (check < 0) {
@@ -87,7 +87,11 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.payment();
       }
     } else {
+      if (check > 0) {
 
+      } else if (check === 0) {
+        this.payment();
+      }
     }
   }
 
@@ -146,9 +150,15 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     const recash = new AmwayMonetaryPaymentInfo(paidamount);
     recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
     recash.setCurrencyData = new CurrencyData();
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.setMonetaryPaymentInfo = recash;
-    return paymentcapture;
+    if (this.paymentType === 'n') {
+      const paymentcapture = new PaymentCapture();
+      paymentcapture.setMonetaryPaymentInfo = recash;
+      return paymentcapture;
+    } else {
+      this.paymentcapture.setMonetaryPaymentInfo = recash;
+      return this.paymentcapture;
+    }
+
   }
 
   cartInitAndClose() {

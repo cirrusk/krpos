@@ -41,6 +41,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.paidamount = this.cartInfo.totalPrice.value;
     this.setDirectDebitInfo();
     if (!this.accountnumber) {
@@ -79,9 +80,15 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     directdebit.setBaOwner = this.depositor;
     directdebit.setPaymentModeData = new PaymentModeData(PaymentModes.DIRECTDEBIT);
     directdebit.setCurrencyData = new CurrencyData();
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.setDirectDebitPaymentInfo = directdebit;
-    return paymentcapture;
+    if (this.paymentType === 'n') {
+      const paymentcapture = new PaymentCapture();
+      paymentcapture.setDirectDebitPaymentInfo = directdebit;
+      return paymentcapture;
+    } else {
+      this.paymentcapture.setDirectDebitPaymentInfo = directdebit;
+      return this.paymentcapture;
+    }
+
   }
 
   pay(evt: KeyboardEvent) {

@@ -51,6 +51,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.paymentprice = this.cartInfo.totalPrice.value;
     this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(result => {
       this.balance = result;
@@ -146,9 +147,15 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     const point = new PointPaymentInfo(paidamount, pointtype);
     point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
     point.setCurrencyData = new CurrencyData();
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.setPointPaymentInfo = point;
-    return paymentcapture;
+    if (this.paymentType === 'n') {
+      const paymentcapture = new PaymentCapture();
+      paymentcapture.setPointPaymentInfo = point;
+      return paymentcapture;
+    } else {
+      this.paymentcapture.setPointPaymentInfo = point;
+      return this.paymentcapture;
+    }
+
   }
 
   close() {

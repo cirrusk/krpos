@@ -58,6 +58,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.paidamount = this.cartInfo.totalPrice.value;
     if (this.paymentType === 'n') {
       this.paid.nativeElement.value = this.paidamount;
@@ -150,9 +151,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
     const ccard = this.makePaymentInfo(paidamount);
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.setCcPaymentInfo = ccard;
-    return paymentcapture;
+    if (this.paymentType === 'n') {
+      const paymentcapture = new PaymentCapture();
+      paymentcapture.setCcPaymentInfo = ccard;
+      return paymentcapture;
+    } else {
+      this.paymentcapture.setCcPaymentInfo = ccard;
+      return this.paymentcapture;
+    }
+
   }
 
   /**
@@ -355,7 +362,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
         this.close();
       } else { // 복합결제
-        this.result = this.paymentcapture.getCcPaymentInfo;
+        this.result = this.paymentcapture;
         this.close();
       }
     }

@@ -18,8 +18,8 @@ export class CashReceiptComponent extends ModalComponent implements OnInit {
   }
 
   requestReceipt() {
-console.log('발행구분 : ' + this.divcheck);
-console.log(this.clientnum.nativeElement.value);
+    console.log('발행구분 : ' + this.divcheck);
+    console.log(this.clientnum.nativeElement.value);
   }
 
   selectDiv(div: string) {

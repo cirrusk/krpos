@@ -60,6 +60,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     });
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     setTimeout(() => {
       this.paid.nativeElement.value = 0;
       this.paid.nativeElement.select();
@@ -193,9 +194,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     cash.setChange = change;
     cash.setPaymentModeData = new PaymentModeData(PaymentModes.CASH);
     cash.setCurrencyData = new CurrencyData();
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.setCashPaymentInfo = cash;
-    return paymentcapture;
+    if (this.paymentType === 'n') {
+      const paymentcapture = new PaymentCapture();
+      paymentcapture.setCashPaymentInfo = cash;
+      return paymentcapture;
+    } else {
+      this.paymentcapture.setCashPaymentInfo = cash;
+      return this.paymentcapture;
+    }
+
   }
 
   close() {

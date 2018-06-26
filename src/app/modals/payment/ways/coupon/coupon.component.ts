@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, Modal } from '../../../../core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
-import { Accounts, OrderEntry, KeyCode, CouponList, Coupon, PaymentCapture, PaymentModes } from '../../../../data';
+import { Accounts, OrderEntry, KeyCode, Coupon, PaymentCapture, PaymentModes } from '../../../../data';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
 import { PaymentService } from '../../../../service';
 
