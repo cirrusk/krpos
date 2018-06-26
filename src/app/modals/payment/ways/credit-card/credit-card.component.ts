@@ -235,6 +235,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.spinner.hide();
       } else {
         if (res.approved) {
+          this.finishStatus = StatusDisplay.PAID;
           this.cardnumber = res.maskedCardNumber;
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
