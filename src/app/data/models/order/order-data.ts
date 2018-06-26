@@ -1,18 +1,26 @@
 export class OrderData {
+    orderingABOId: string;
+    phoneNumber: string;
+    amwayBusinessNature: string;
     orderTypes: Array<string>; // NORMAL_ORDER
-    channels: Array<string>; // Web,WebMobile
+    salesChannels: Array<string>; // Web,WebMobile
     deliveryModes: Array<string>; // delivery,install
+    confirm: boolean;
     currentPage: number;
     pageSize: number;
 
     constructor(_orderTypes?: Array<string>,
-                _channels?: Array<string>,
+                _salesChannels?: Array<string>,
                 _deliveryModes?: Array<string>,
+                _amwayBusinessNature?: string,
+                _confirm?: boolean,
                 _currentPage?: number,
                 _pageSize?: number) {
         this.orderTypes = _orderTypes;
-        this.channels = _channels;
+        this.salesChannels = _salesChannels;
         this.deliveryModes = _deliveryModes;
+        this.amwayBusinessNature = _amwayBusinessNature;
+        this.confirm = _confirm;
         this.currentPage = _currentPage;
         this.pageSize = _pageSize;
     }

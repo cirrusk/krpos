@@ -61,7 +61,7 @@ export const environment = {
     paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails',
     placeOrder: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts/{cartId}/paymentCaptureAndPlaceOrder',
     searchCheque: '/{baseSiteId}/validateCheckNumber',
-    orderList: '/{baseSiteId}/users/{userId}/orders',
+    orderList: '/{baseSiteId}/order/search',
     orderDetails: '/{baseSiteId}/users/{userId}/order-details'
   },
   logLevel: 'info',
