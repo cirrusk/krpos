@@ -1,9 +1,10 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, AlertService, Modal } from '../../../core';
-import { SearchService, PagerService } from '../../../service';
-import { Pagination, OrderEntry } from '../../../data';
+import { ModalComponent, ModalService, AlertService, Modal, SpinnerService, Logger } from '../../../core';
+import { SearchService, PagerService, OrderService } from '../../../service';
+import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
 import { Order } from '../../../data/models/order/order';
+import { Utils } from '../../../core/utils';
 
 @Component({
   selector: 'pos-ecp-confirm',
@@ -16,7 +17,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   private searchProductInfoSubscription: Subscription;
   private order: Order;
-  private entryList: Array<OrderEntry>;
+  entryList: Array<OrderEntry>;
+  private orderList: OrderHistoryList;
 
   pager: Pagination;                 // pagination 정보
   currentOrderList: Array<OrderEntry>;
@@ -24,7 +26,10 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   constructor(private modal: Modal,
               protected modalService: ModalService,
+              private spinner: SpinnerService,
               private alert: AlertService,
+              private logger: Logger,
+              private orderService: OrderService,
               private searchService: SearchService,
               private pagerService: PagerService) {
     super(modalService);
@@ -33,10 +38,9 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   ngOnInit() {
     setTimeout(() => { this.barcode.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
-    if (this.callerData.order) {
-      this.order = this.callerData.order;
-      this.entryList = this.order.entries;
-      this.setPage(Math.ceil(this.entryList.length / this.PAGE_SIZE));
+    if (this.callerData.orderList) {
+      this.orderList = this.callerData.orderList;
+      this.getOrderDetail(this.orderList);
     }
   }
 
@@ -49,10 +53,36 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     this.totalCount = 0;
     this.entryList = new  Array<OrderEntry>();
     this.currentOrderList = new  Array<OrderEntry>();
+    this.orderList = new OrderHistoryList();
   }
 
-  searchProductInfo(code: string): void {
-    // this.searchProductInfoSubscription = this.searchService.getBasicProductInfo(searchdata: string, userId: string, cartId: string, currentpage: number)
+  getOrderDetail(orderList: OrderHistoryList): void {
+    const orderCodes = new Array<string>();
+      orderList.orders.forEach(order => {
+        orderCodes.push(order.code);
+      });
+      this.spinner.show();
+      this.orderService.orderDetails(orderList.orders[0].user.uid, orderCodes).subscribe(
+        orderDetail => {
+          if (orderDetail) {
+            this.entryList = orderDetail.orders[0].entries;
+            this.setPage(Math.ceil(this.entryList.length / this.PAGE_SIZE));
+          }
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
+            this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
+  }
+
+  productConfirm(productCode: string): void {
 
   }
 

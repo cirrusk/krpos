@@ -10,6 +10,8 @@ export class OrderHistory {
     combinedOrderId: string;
     user: Principal;
     deliveryMode: any; // DeliveryModeWsDTO
+    orderStatus: Enumeration; // EnumerationWsDTO
+    orderType: Enumeration;  // EnumerationWsDTO
     channel: Enumeration;
     amwayAccount: Accounts;
     volumeAccount: Accounts;

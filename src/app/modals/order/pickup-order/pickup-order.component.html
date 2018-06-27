@@ -10,12 +10,12 @@
             <label class="inp_rd type01" for="ps1">ABO회원<input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label>
             <!-- 회원검색영역 -->
             <div class="mbinfo_search">
-                <select title="회원구분">
-                    <option>ABO회원</option>
-                    <option>주문번호</option>
+                <select #searchType title="회원구분">
+                    <option value="abo">ABO회원</option>
+                    <option value="orderCode">주문번호</option>
                 </select>
-                <input type="text" style="width:480px">
-                <button type="button" class="btn01_blue">확인</button>
+                <input #inputSearchText type="text" style="width:480px" (keydown.enter)="searchOrder(searchType.value, inputSearchText.value)">
+                <button type="button" class="btn01_blue" (click)="searchOrder(searchType.value, inputSearchText.value)">확인</button>
             </div>
             <!-- //회원검색영역 -->
 
@@ -24,9 +24,9 @@
                 <!-- 왼쪽테이블 -->
                 <div class="tbl_col fl bg_bar">
                     <!-- 5줄이 넘을 시 노출  -->
-                    <div class="paging">
-                        <button type="button" class="ico_comm prev01">이전</button>
-                        <button type="button" class="ico_comm next01">다음</button>
+                    <div class="paging" *ngIf="sourceOrderHistoryList.orders.length > 0">
+                        <button type="button" class="ico_comm prev01" [disabled]="sourceOrderHistoryList.pagination.currentPage === 0">이전</button>
+                        <button type="button" class="ico_comm next01" [disabled]="sourceOrderHistoryList.pagination.currentPage === sourceOrderHistoryList.pagination.totalPages - 1">다음</button>
                     </div>
                     <!-- //5줄이 넘을 시 노출  -->
                     <table>
@@ -50,54 +50,27 @@
                         </thead>
                         <tbody>
                             <!-- 선택시 tr에 on클래스 추가 -->
-                            <tr class="on">
-                                <td class="al"><span class="chk">23232017</span></td>
-                                <td><span>748002</span></td>
-                                <td class="tit"><span class="elips">김영희</span></td>
-                                <td><span>18/05/31</span></td>
-                                <td class="ar"><span>999,999,000원</span></td>
+                            <tr [class.on]="selectedOrderNum == i" *ngFor="let order of sourceOrderHistoryList.orders; let i = index;" (click)="moveOrder(order.code)">
+                                <td class="al"><span class="chk">{{order.code}}</span></td>
+                                <td><span>{{order.user.uid}}</span></td>
+                                <td class="tit"><span class="elips">{{order.user.name}}</span></td>
+                                <td><span>{{order.date | date:'yy/MM/dd'}}</span></td>
+                                <td class="ar"><span>{{order.total.value | number}}원</span></td>
                             </tr>
-                            <tr class="on">
-                                <td class="al"><span class="chk">23232017</span></td>
-                                <td><span>748002</span></td>
-                                <td class="tit"><span class="elips">김영희</span></td>
-                                <td><span>18/05/31</span></td>
-                                <td class="ar"><span>999,999,000원</span></td>
-                            </tr>
-                            <tr>
-                                <td class="al"><span class="chk">23232017</span></td>
-                                <td><span>748002</span></td>
-                                <td class="tit"><span class="elips">김영희</span></td>
-                                <td><span>18/05/31</span></td>
-                                <td class="ar"><span>999,999,000원</span></td>
-                            </tr>
-                            <tr>
-                                <td class="al"><span class="chk">23232017</span></td>
-                                <td><span>748002</span></td>
-                                <td class="tit"><span class="elips">김영나나희</span></td>
-                                <td><span>18/05/31</span></td>
-                                <td class="ar"><span>999,999,000원</span></td>
-                            </tr>
-                            <tr>
-                                <td class="al"><span class="chk">23232017</span></td>
-                                <td><span>748002</span></td>
-                                <td class="tit"><span class="elips">김영나나희</span></td>
-                                <td><span>18/05/31</span></td>
-                                <td class="ar"><span>999,999,000원</span></td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </div>
                 <!-- //왼쪽테이블 -->
                 <!-- 오른쪽테이블 -->
                 <div class="tbl_col fr bg_bar">
-                    <p class="txt"><strong><span class="fc_red">1</span>명</strong> ABO의 <strong><span class="fc_red">1</span>건</strong>의 주문정보가 선택되었습니다.</p>
-                    <!-- 5줄이 넘을 시 노출 
-                    <div class="paging">
+                    <p class="txt"><strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
+                    <!-- 5줄이 넘을 시 노출 -->
+                    <div class="paging" *ngIf="targetOrderHistoryList.orders.length > 0">
                         <button type="button" class="ico_comm prev01">이전</button>
                         <button type="button" class="ico_comm next01">다음</button>
                     </div>
-                     //5줄이 넘을 시 노출  -->
+                     <!-- 5줄이 넘을 시 노출  -->
                     <table>
                         <caption>선택된 ABO 주문정보</caption>
                         <colgroup>
@@ -117,12 +90,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="ar"><span>23232017</span></td>
-                                <td><span>748002</span></td>
-                                <td class="tit"><span class="elips">김영나나희</span></td>
-                                <td><span>18/05/31</span></td>
-                                <td class="ar"><span>999,999,000원</span></td>
+                            <tr *ngFor="let order of targetOrderHistoryList.orders; let i = index;" (click)="deleteOrder(order.code)">
+                                <td class="al"><span class="chk">{{order.code}}</span></td>
+                                <td><span>{{order.user.uid}}</span></td>
+                                <td class="tit"><span class="elips">{{order.user.name}}</span></td>
+                                <td><span>{{order.date | date:'yy/MM/dd'}}</span></td>
+                                <td class="ar"><span>{{order.total.value | number}}원</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -194,7 +167,7 @@
     <div class="pop_footer clearfix">
         <span class="fl">취소 ESC</span>
         <span class="fr">
-            <a href="javascript:void(0)" *ngIf="searchType === 'p'" class="btn01_blue" (click)="printECP($event)">출력</a>
+            <a href="javascript:void(0)" *ngIf="orderType === 'p'" class="btn01_blue" (click)="printECP($event)">출력</a>
             <a href="javascript:void(0)" class="btn01_blue" (click)="confirmECP($event)">컨펌</a>
             <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
         </span>

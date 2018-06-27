@@ -66,6 +66,8 @@ export class OrderService {
 
     if (searchType === 'phone') {
       orderData.phoneNumber = searchText;
+    } else if (searchType === 'orderCode') {
+      orderData.orderingABOId = searchText;
     } else {
       orderData.orderingABOId = searchText;
     }
@@ -90,7 +92,7 @@ export class OrderService {
     const param = { codes: ordercodes, fields: 'FULL' };
     const pathvariables = { userId: userid };
     const body = { codes: ordercodes };
-    const data = new HttpData('orderDetails', pathvariables, body, param);
+    const data = new HttpData('orderDetails', pathvariables, body, param, 'json');
     return this.api.get(data);
   }
 

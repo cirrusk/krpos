@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, ViewChild } from '@angular/core';
 
+import { Subscription } from 'rxjs/Subscription';
 import { EcpPrintComponent } from '../ecp-print/ecp-print.component';
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
 import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService, StorageService } from '../../../core';
 import { StringBuilder, Utils } from '../../../core/utils';
-import { OrderHistory } from '../../../data';
-import { OrderService } from '../../../service';
+import { OrderHistoryList, OrderHistory } from '../../../data';
+import { OrderService, MessageService, ReceiptService } from '../../../service';
 import { Order } from '../../../data/models/order/order';
 
 @Component({
@@ -13,10 +14,18 @@ import { Order } from '../../../data/models/order/order';
   templateUrl: './pickup-order.component.html'
 })
 export class PickupOrderComponent extends ModalComponent implements OnInit {
+
+  private orderListSubscription: Subscription;
+
   @ViewChildren('ecporders') ecporders: QueryList<ElementRef>;
-  private orderInfo: OrderHistory;
+  @ViewChild('inputSearchText') searchValue: ElementRef;
+  sourceOrderHistoryList: OrderHistoryList;
+  targetOrderHistoryList: OrderHistoryList;
   private order: Order;
-  private orderType: string;
+  orderType: string;
+  private orderTypeName: string;
+  private confirmFlag = false;
+  private selectedOrderNum = -1;
 
   searchType: string;
 
@@ -25,30 +34,127 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
               private modal: Modal,
               private spinner: SpinnerService,
               private storageService: StorageService,
+              private messageService: MessageService,
+              private receiptService: ReceiptService,
               private logger: Logger,
               private alert: AlertService,
               private renderer: Renderer2) {
     super(modalService);
+    this.init();
+  }
+
+  init() {
+    this.sourceOrderHistoryList = new OrderHistoryList(new Array<OrderHistory>());
+    this.targetOrderHistoryList = new OrderHistoryList(new Array<OrderHistory>());
   }
 
   ngOnInit() {
-    this.searchType = this.callerData.type;
+    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
+    this.orderType = this.callerData.searchType;
 
-    if (this.searchType === 'e') {
-      this.orderType = '간편선물';
-    } else if (this.searchType === 'i') {
-      this.orderType = '설치주문';
+    if (this.orderType === 'e') {
+      this.orderTypeName = '간편선물';
+    } else if (this.orderType === 'i') {
+      this.orderTypeName = '설치주문';
     } else {
-      this.orderType = '픽업예약주문';
+      this.orderTypeName = '픽업예약주문';
+      // this.confirmFlag = true;
     }
   }
 
+  /**
+   * 컨펌 리스트로 이동
+   * @param orderCode
+   */
+  moveOrder(orderCode: string): void {
+    let targetExistedIdx = -1;
+    if (this.targetOrderHistoryList.orders) {
+      targetExistedIdx = this.targetOrderHistoryList.orders.findIndex(
+        function (obj) {
+          return obj.code === orderCode;
+        }
+      );
+    } else {
+      targetExistedIdx = -1;
+    }
+
+    if (targetExistedIdx === -1) {
+      const sourceExistedIdx: number = this.sourceOrderHistoryList.orders.findIndex(
+        function (obj) {
+          return obj.code === orderCode;
+        }
+      );
+
+      this.targetOrderHistoryList.orders.push(this.sourceOrderHistoryList.orders[sourceExistedIdx]);
+    }
+  }
+
+  /**
+   * 컨펌 리스트에서 제거
+   * @param orderCode
+   */
+  deleteOrder(orderCode: string): void {
+    const existedIdx: number = this.targetOrderHistoryList.orders.findIndex(
+      function (obj) {
+        return obj.code === orderCode;
+      }
+    );
+
+    this.targetOrderHistoryList.orders.splice(existedIdx, 1);
+  }
+
+  /**
+   * 조회
+   * @param searchType
+   * @param searchText
+   */
+  searchOrder(searchType: string, searchText: string) {
+    if (searchText === '' || searchText === undefined || searchText === null) {
+      this.alert.info({ message: this.messageService.get('noSearchText') });
+    } else {
+      this.getOrderList(searchType, 'A', searchText, 0);
+    }
+  }
+
+  /**
+   * 주문 조회
+   * @param searchType
+   * @param memberType
+   * @param searchText
+   * @param page
+   */
+  getOrderList(searchType: string, memberType: string, searchText: string, page = 0) {
+    this.spinner.show();
+    this.orderListSubscription = this.orderService.orderList(searchText, memberType,
+                                                             searchType, 'NORMAL_ORDER', 'pos', 'pickup', this.confirmFlag, page, 5).subscribe(
+      resultData => {
+        if (resultData) {
+          this.sourceOrderHistoryList = resultData;
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
+          this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
+   * 컨펌 진행
+   * @param evt
+   */
   confirmECP(evt: any) {
     this.setSelected(evt);
 
     this.modal.openModalByComponent(EcpConfirmComponent,
       {
-        callerData: { order: this.order  },
+        callerData: { orderList: this.targetOrderHistoryList  },
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         modalId: 'EcpConfirmComponent'
@@ -56,32 +162,37 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     );
   }
 
+  /**
+   * 영수증 출력
+   * @param evt
+   */
   printECP(evt: any) {
     this.setSelected(evt);
 
-    if (this.orderInfo) {
+    if (this.targetOrderHistoryList) {
+      const orderCodes = new Array<string>();
+      this.targetOrderHistoryList.orders.forEach(order => {
+        orderCodes.push(order.code);
+      });
       this.spinner.show();
-      this.orderService.getOrderDetail(this.orderInfo.code).subscribe(
+      this.orderService.orderDetails(this.targetOrderHistoryList.orders[0].user.uid, orderCodes).subscribe(
         orderDetail => {
           if (orderDetail) {
-            this.order = orderDetail;
-            const receipt = this.makeReceipt(this.order);
-            this.modal.openModalByComponent(EcpPrintComponent,
-              {
-                message: receipt,
-                actionButtonLabel: '확인',
-                closeButtonLabel: '취소',
-                modalId: 'EcpPrintComponent'
-              }
-            );
+            try {
+              this.receiptService.reissueReceipts(orderDetail);
+              this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+            } catch (e) {
+              this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
+              this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+            }
           }
         },
         error => {
           this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('pickup-order.component', `Get Order Detail error type : ${errdata.type}`).error();
-            this.logger.set('pickup-order.component', `Get Order Detail error message : ${errdata.message}`).error();
+            this.logger.set('pickup-order.component', `Reissue Receipts error type : ${errdata.type}`).error();
+            this.logger.set('pickup-order.component', `Reissue Receipts error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         },
@@ -98,12 +209,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     const print = new StringBuilder();
     print.append(`<span class="logo"><img src="/assets/images/common/bill_logo.png" alt="Amway"></span>`);
     print.append(`<ul class="list">`);
-    print.append(`    <li><span>주문형태</span><em>${orderDetail.code}픽업예약주문</em></li>`);
-    print.append(`    <li><span>ABO정보</span><em>${orderDetail.code}74800002 ${orderDetail.code}박길녀 &amp; 김천억</em></li>`);
-    print.append(`    <li><span>구매일자</span><em>${orderDetail.code}2018/01/30 15:53:55</em></li>`);
-    print.append(`    <li><span>주문번호</span><em>${orderDetail.code}232320175**</em></li>`);
-    print.append(`    <li><span>출력일자</span><em>${orderDetail.code}2018/03/14 16:33:22</em></li>`);
-    print.append(`    <li><span>인수자</span><em>${orderDetail.code}3456732 / ${orderDetail.code}암돌이</em></li>`);
+    print.append(`    <li><span>주문형태</span><em>${this.orderTypeName}</em></li>`);
+    print.append(`    <li><span>ABO정보</span><em>${orderDetail.user.uid} ${orderDetail.user.name}</em></li>`);
+    print.append(`    <li><span>구매일자</span><em>${orderDetail.created} </em></li>`);
+    print.append(`    <li><span>주문번호</span><em>${orderDetail.code}</em></li>`);
+    print.append(`    <li><span>출력일자</span><em>${orderDetail.created}</em></li>`);
     print.append(`</ul>`);
     print.append(`<div class="scroll_tbl">`);
     print.append(`    <div>`);
@@ -128,11 +238,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     print.append(`            <tbody>`);
     orderDetail.entries.forEach(entry => {
       print.append(`                <tr>`);
-      print.append(`                    <td>${entry.entryNumber}999</td>`);
-      print.append(`                    <td><span class="blck">${entry.product.name}1322424323</span>에멀전에멀전에멀전에멀전에멀전에멀전에멀전</td>`);
-      print.append(`                    <td>${entry.product.price.value}123,000,000</td>`);
-      print.append(`                    <td>${entry.quantity}888</td>`);
-      print.append(`                    <td>${entry.totalPrice.value}333,000</td>`);
+      print.append(`                    <td>${entry.entryNumber + 1}</td>`);
+      print.append(`                    <td><span class="blck">${entry.product.code}</span>${entry.product.name}</td>`);
+      print.append(`                    <td>${entry.basePrice.value}</td>`);
+      print.append(`                    <td>${entry.quantity}</td>`);
+      print.append(`                    <td>${entry.totalPrice.value}</td>`);
       print.append(`                </tr>`);
     });
     print.append(`            </tbody>`);
@@ -140,9 +250,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     print.append(`    </div>`);
     print.append(`</div>`);
     print.append(`<ul class="list">`);
-    print.append(`    <li><span>상품수량</span><em>${orderDetail.code}3</em></li>`);
-    print.append(`    <li><span>과세물품</span><em>${orderDetail.code}333,000</em></li>`);
-    print.append(`    <li><span>부&nbsp; 가&nbsp; 세</span><em>${orderDetail.code}333,333</em></li>`);
+    print.append(`    <li><span>상품수량</span><em>${orderDetail.totalUnitCount}</em></li>`);
+    print.append(`    <li><span>과세물품</span><em>${orderDetail.subTotal.value}</em></li>`);
+    print.append(`    <li><span>부&nbsp; 가&nbsp; 세</span><em>${orderDetail.totalTax}</em></li>`);
     print.append(`    <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>${orderDetail.code}1,000</em></li>`);
     print.append(`    <li class="txt_b"><span>할인금액</span><em>${orderDetail.code}1,000</em></li>`);
     print.append(`    <li><span>할인 쿠폰(신규 5%)</span><em>${orderDetail.code}1,000</em></li>`);

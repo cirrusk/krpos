@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType
+  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -212,5 +212,35 @@ export class CartService {
 
     return this.httpClient.patch<SaveCartResult>(apiURL, { headers: httpHeaders, observe: 'response' })
       .map(data => data as SaveCartResult);
+  }
+
+  /**
+   * 그룹 장바구니 생성
+   * @param userId
+   * @param cartId
+   * @param volumeAccounts // ex) 7480001,7460002
+   */
+  createGroupCart(userId: string, cartId: string, volumeAccounts: string): Observable<AmwayExtendedOrdering>  {
+    const arrVolumeAccount = new Array<string>();
+    volumeAccounts.split(',').forEach(volumeAccount => {
+      arrVolumeAccount.push(volumeAccount.trim());
+    });
+
+    const param = { fields: 'FULL', volumeAccounts : arrVolumeAccount};
+    const pathvariables = { userId: userId, cartId: cartId };
+    const data = new HttpData('createGroupCart', pathvariables, null, param, 'json');
+    return this.api.post(data);
+  }
+
+  /**
+   * 그룹 장바구니 조회
+   * @param userId
+   * @param cartId
+   */
+  getGroupCart(userId: string, cartId: string): Observable<AmwayExtendedOrdering> {
+    const param = { fields: 'FULL'};
+    const pathvariables = { userId: userId, cartId: cartId };
+    const data = new HttpData('getGroupCart', pathvariables, null, param, 'json');
+    return this.api.get(data);
   }
 }

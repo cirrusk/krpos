@@ -6,6 +6,7 @@ export * from './models/key-code';
 export * from './models/order/abstract-order';
 export * from './models/order/account-list';
 export * from './models/order/accounts';
+export * from './models/order/amway-extended-ordering';
 export * from './models/order/cart-info';
 export * from './models/order/cart-list';
 export * from './models/order/cart-message';

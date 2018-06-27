@@ -5,5 +5,7 @@ export class OrderHistoryList {
     sorts: Array<Sort>;
     pagination: Pagination;
 
-    constructor() {}
+    constructor(_orders?: Array<OrderHistory>) {
+        this.orders = _orders;
+    }
 }
