@@ -214,27 +214,22 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   getPaymentModesByMain(userId: string, cartId: string): void {
-    if (this.storage.getPaymentModes()) {
-      this.paymentModeListByMain = this.storage.getPaymentModes();
-    } else {
-      this.spinner.show();
-      this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
-        result => {
-          if (result) {
-            this.paymentModeListByMain = result;
-            this.storage.setPaymentModes(result);
-          }
-        },
-        error => {
-          this.spinner.hide();
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        },
-        () => { this.spinner.hide(); }
-      );
-    }
+    this.spinner.show();
+    this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
+      result => {
+        if (result) {
+          this.paymentModeListByMain = result;
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
   }
 
   close() {

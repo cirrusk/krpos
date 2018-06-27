@@ -207,18 +207,6 @@ export class StorageService implements OnDestroy {
     return (terminalinfo !== null && Utils.isNotEmpty(terminalinfo.id));
   }
 
-  public getPaymentModes(): PaymentModeListByMain {
-    return this.getSessionItem('paymentmodes');
-  }
-
-  public setPaymentModes(data: PaymentModeListByMain): void {
-    this.setSessionItem('paymentmodes', data);
-  }
-
-  public removePaymentModes(): void {
-    this.removeSessionItem('paymentmodes');
-  }
-
   public getPay(): number {
     return this.getSessionItem('pay') ? this.getSessionItem('pay') : 0;
   }
