@@ -334,7 +334,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       {
         modalId: 'ClientAccountComponent'
       }
-    );
+    ).subscribe(result => {
+      if (result) {
+        this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
+      }
+    });
   }
 
   /**

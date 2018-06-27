@@ -4,11 +4,10 @@
           <div class="srch_wrap">
               <h1 class="tit_h1">주문완료 내역</h1>
               <p class="txt01">현 ABC에서는 현재 인식된 고객의 60일간 픽업/예약주문에 대한 조회만 가능합니다.</p>
-              <label class="inp_rd type01" for="sk1">ABO 번호<input #searchType1 type="radio" name="sk" id="sk1" value="abo" checked (change)="setSearchType(searchType1.value)"><span class="checkmark"></span></label>
-              <label class="inp_rd type01" for="sk2">아이디<input #searchType2 type="radio" name="sk" id="sk2" value="id" (change)="setSearchType(searchType2.value)"><span class="checkmark"></span></label>
-              <label class="inp_rd type01" for="sk3">휴대폰 번호<input #searchType3 type="radio" name="sk" id="sk3" value="phone" (change)="setSearchType(searchType3.value)"><span class="checkmark"></span></label>
+              <label class="inp_rd type01" for="sk1">ABO 번호/아이디<input #searchType1 type="radio" name="sk" id="sk1" value="abo" [checked]="chkSearchTypeABO"><span class="checkmark"></span></label>
+              <label class="inp_rd type01" for="sk2">휴대폰 번호<input #searchType2 type="radio" name="sk" id="sk2" value="phone" [checked]="chkSearchTypeC" disabled><span class="checkmark"></span></label>              
               <div class="mbinfo_search">
-                  <select #searchMemberType title="회원구분">
+                  <select #searchMemberType title="회원구분" (change)="changeMemberType($event.target.value)">
                     <option value="A">ABO회원</option>
                     <option value="M">일반회원</option>
                     <option value="C">소비자</option>

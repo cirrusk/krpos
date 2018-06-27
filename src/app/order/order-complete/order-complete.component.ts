@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { OrderList } from './../../data/models/order/order';
 import { Pagination, OrderHistoryList, OrderHistory } from '../../data';
@@ -20,7 +20,13 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   selectedOrderNum: number;
   searchType: string;
 
+  @Input() chkSearchTypeABO = true;
+  @Input() chkSearchTypeC = false;
   @ViewChild('inputSearchText') private searchText: ElementRef;
+  @ViewChild('searchType1') private searchTypeABO: ElementRef;
+  @ViewChild('searchType2') private searchTypeC: ElementRef;
+  @ViewChild('chkSearchType1') private chkSearchType1: ElementRef;
+
 
   constructor(private router: Router,
               private modal: Modal,
@@ -51,13 +57,25 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.searchType = 'abo';
   }
 
-  setSearchType (type: string) {
-    this.searchType = type;
-  }
-
   activeRowCart(index: number, orderCode: string, userId: string): void {
     this.selectedOrderNum = index;
     this.popupOrderDetail(orderCode, userId);
+  }
+
+  changeMemberType(memberType: string) {
+    if (memberType === 'C') {
+      this.renderer.removeAttribute(this.searchTypeC.nativeElement, 'disabled');
+      this.renderer.setAttribute(this.searchTypeABO.nativeElement, 'disabled', 'disabled');
+      this.chkSearchTypeABO = false;
+      this.chkSearchTypeC = true;
+      this.searchType = 'phone';
+    } else {
+      this.renderer.removeAttribute(this.searchTypeABO.nativeElement, 'disabled');
+      this.renderer.setAttribute(this.searchTypeC.nativeElement, 'disabled', 'disabled');
+      this.chkSearchTypeABO = true;
+      this.chkSearchTypeC = false;
+      this.searchType = 'abo';
+    }
   }
 
   popupOrderDetail(orderCode: string, userId: string) {
