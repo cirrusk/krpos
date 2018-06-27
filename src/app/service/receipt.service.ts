@@ -196,6 +196,7 @@ export class ReceiptService {
             payment.setCash = cash;
         }
         // payments - END
+
         // prices - START
         // {{priceFormatHelper '상품수량' price.totalQty}}
         // {{priceFormatHelper '과세 물품' price.amountWithoutVAT}}
