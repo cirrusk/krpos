@@ -272,6 +272,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.spinner.show();
     const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
+    // setTimeout(() => subscription.unsubscribe(), 5000);
     resultNotifier.subscribe((res: CardApprovalResult) => {
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {

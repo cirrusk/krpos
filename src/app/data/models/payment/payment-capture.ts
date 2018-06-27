@@ -18,13 +18,13 @@ import { CCMemberType, CCPaymentType } from './payment.enum';
  * </code>
  */
 export class PaymentCapture {
-    protected ccPaymentInfo: CreditCardPaymentInfo; /** 신용카드 */
-    protected cashPaymentInfo: CashPaymentInfo; /** 현금결제 */
-    protected directDebitPaymentInfo: DirectDebitPaymentInfo; /** 자동이체 */
-    protected voucherPaymentInfo: VoucherPaymentInfo; /** 쿠폰결제 */
-    protected pointPaymentInfo: PointPaymentInfo; /** 포인트결제 */
-    protected monetaryPaymentInfo: AmwayMonetaryPaymentInfo; /** 미수금결제(AR) */
-    protected icCardPaymentInfo: ICCardPaymentInfo; /** 현금IC카드결제 */
+    ccPaymentInfo: CreditCardPaymentInfo; /** 신용카드 */
+    cashPaymentInfo: CashPaymentInfo; /** 현금결제 */
+    directDebitPaymentInfo: DirectDebitPaymentInfo; /** 자동이체 */
+    voucherPaymentInfo: VoucherPaymentInfo; /** 쿠폰결제 */
+    pointPaymentInfo: PointPaymentInfo; /** 포인트결제 */
+    monetaryPaymentInfo: AmwayMonetaryPaymentInfo; /** 미수금결제(AR) */
+    icCardPaymentInfo: ICCardPaymentInfo; /** 현금IC카드결제 */
 
     public set setCcPaymentInfo(ccPaymentInfo: CreditCardPaymentInfo) {
         this.ccPaymentInfo = ccPaymentInfo;
@@ -214,27 +214,27 @@ export class AmwayPaymentInfoData {
 
 /** 신용카드 */
 export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
-    protected maskedcardnumber: string;
+    maskedcardnumber: string;
     protected validthru: string;
     protected validfrom: string;
-    protected cardtype: string;
+    cardtype: string;
     protected subscriptionID: string;
-    protected paymentType: string; // 카드 결제 유형 CreditCardPaymentType GENERAL, SAFE
-    protected memberType: string; // 카드 회원 유형 CreditCardMemberType(일반결제인 경우만 생성) PERSONAL, LEGAL
-    protected cardNumber: string;
-    protected cardAuthNumber: string;
+    paymentType: string; // 카드 결제 유형 CreditCardPaymentType GENERAL, SAFE
+    memberType: string; // 카드 회원 유형 CreditCardMemberType(일반결제인 경우만 생성) PERSONAL, LEGAL
+    cardNumber: string;
+    cardAuthNumber: string;
     protected validToMonth: string; // 유효기간 종료 월 필수값 임의설정
     protected validToYear: string; // 유효기간 종료 년 필수값 임의설정
-    protected cardCompanyCode: string;
-    protected cardPassword: string;
-    protected installmentPlan: string; // 할부기간 InstallmentPlanModel 0 - 일시불
-    protected cardTransactionId: string;
-    protected cardAcquirerCode: string;
-    protected cardApprovalNumber: string;
-    protected cardMerchantNumber: string;
-    protected cardRequestDate: Date;
-    protected ccOwner: string; // 신용 카드 소유자
-    protected number: string; // 카드번호(필수값(카드번호 뒤 4자리))
+    cardCompanyCode: string;
+    cardPassword: string;
+    installmentPlan: string; // 할부기간 InstallmentPlanModel 0 - 일시불
+    cardTransactionId: string;
+    cardAcquirerCode: string;
+    cardApprovalNumber: string;
+    cardMerchantNumber: string;
+    cardRequestDate: Date;
+    ccOwner: string; // 신용 카드 소유자
+    number: string; // 카드번호(필수값(카드번호 뒤 4자리))
     protected type: string; // 카드 타입 CreditCardType없는 경우 임의설정(필수값)
     protected validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
     protected validFromYear: string; // 유효기간 시작 년 필수값 임의설정
@@ -309,10 +309,10 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
 
 /** 현금/수표 결제 */
 export class CashPaymentInfo extends AmwayPaymentInfoData {
-    protected cashType: string; // 현금유형 CashType (CASH, CHECK)
-    protected received: string; // 받은금액
-    protected change: string;   // 거스름돈
-    protected cashreceipt: boolean; // 현금영수증 출력여부
+    cashType: string; // 현금유형 CashType (CASH, CHECK)
+    received: string; // 받은금액
+    change: string;   // 거스름돈
+    cashreceipt: boolean; // 현금영수증 출력여부
     public set setCashType(cashType: string) {
         this.cashType = cashType;
     }
@@ -342,10 +342,10 @@ export class CashPaymentInfo extends AmwayPaymentInfoData {
 
 /** 자동이체 */
 export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
-    protected accountNumber: string; // 계좌번호
-    protected baOwner: string; // 예금주명
-    protected bankIDNumber: string;
-    protected bank: string; // 은행 명
+    accountNumber: string; // 계좌번호
+    baOwner: string; // 예금주명
+    bankIDNumber: string;
+    bank: string; // 은행 명
     public set setAccountNumber(accountNumber: string) {
         this.accountNumber = accountNumber;
     }
@@ -369,7 +369,7 @@ export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
 
 /** 포인트결제 */
 export class PointPaymentInfo extends AmwayPaymentInfoData {
-    protected pointType: string; // BalanceReferenceTypeModel (BR030 - 전환포인트, BR033 - 멤버포인트)
+    pointType: string; // BalanceReferenceTypeModel (BR030 - 전환포인트, BR033 - 멤버포인트)
     public set setPointType(pointType: string) {
         this.pointType = pointType;
     }
@@ -388,10 +388,10 @@ export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData {
 
 /** 현금IC카드결제 */
 export class ICCardPaymentInfo extends CreditCardPaymentInfo {
-    protected accountNumber: string; // 계좌번호
-    protected baOwner: string; // 예금주명
-    protected bankIDNumber: string;
-    protected bank: string; // 은행 명
+    accountNumber: string; // 계좌번호
+    baOwner: string; // 예금주명
+    bankIDNumber: string;
+    bank: string; // 은행 명
     public set setAccountNumber(accountNumber: string) {
         this.accountNumber = accountNumber;
     }

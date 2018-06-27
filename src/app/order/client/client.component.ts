@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { ClientAccountComponent } from '../../modals';
 import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture } from '../../data';
-import { PagerService } from '../../service';
+import { PagerService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
 
@@ -39,8 +39,9 @@ export class ClientComponent implements OnInit, OnDestroy {
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
+  private paymentsubscription: Subscription;
   public memberType = MemberType;
-  constructor(private modal: Modal, private storage: StorageService,
+  constructor(private modal: Modal, private storage: StorageService, private payment: PaymentService,
     private logger: Logger, private config: Config, private route: ActivatedRoute,
     private pagerService: PagerService) {
     this.cartListCount = this.config.getConfig('cartListCount');
@@ -96,6 +97,11 @@ export class ClientComponent implements OnInit, OnDestroy {
           this.init();
           this.storage.removeOrderEntry();
           this.storage.removeCustomer();
+        } else if (result.key === 'payinfo') {
+          const data: any = result.value;
+          if (data) {
+            this.retreiveInfo(data[0], data[1]);
+          }
         }
       }
     });
@@ -103,6 +109,60 @@ export class ClientComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.stsubscription) { this.stsubscription.unsubscribe(); }
+    if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+  }
+
+  private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
+    if (paymentcapture) {
+      console.log('[client capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(paymentcapture));
+    }
+    if (order) {
+      console.log('[client order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(order));
+    }
+
+    if (paymentcapture) {
+      // this.getBalanceInfo();
+      if (paymentcapture.ccPaymentInfo) {
+        const cc = paymentcapture.ccPaymentInfo;
+        this.ccamount = cc.amount;
+        this.installment = cc.installmentPlan;
+      }
+      if (paymentcapture.cashPaymentInfo) {
+        const cash = paymentcapture.cashPaymentInfo;
+        this.cashamount = cash.amount;
+        this.received = cash.received ? Number(cash.received) : 0;
+        this.change = cash.change ? Number(cash.change) : 0;
+      }
+      if (paymentcapture.pointPaymentInfo) {
+        this.pointamount = paymentcapture.pointPaymentInfo.amount;
+      }
+      if (paymentcapture.monetaryPaymentInfo) {
+        this.recashamount = paymentcapture.monetaryPaymentInfo.amount;
+      }
+      if (paymentcapture.directDebitPaymentInfo) {
+        this.ddamount = paymentcapture.directDebitPaymentInfo.amount;
+      }
+    }
+    if (order) {
+      this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
+      this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
+      this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
+      this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+    }
+  }
+
+  private getBalanceInfo() {
+    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
+      result => {
+        if (result) {
+          this.balance = result[0].amount;
+          this.recash = result[1].amount;
+          const jsonData = { 'balance': result };
+          Object.assign(this.accountInfo, jsonData);
+          this.storage.setCustomer(this.accountInfo);
+        }
+      }
+    );
   }
 
   private init() {
@@ -124,8 +184,6 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.pager = new Pagination();
   }
 
-  private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
-  }
 
   private addCartEntry(orderEntry: OrderEntry) {
     const existedIdx: number = this.cartList.findIndex(
