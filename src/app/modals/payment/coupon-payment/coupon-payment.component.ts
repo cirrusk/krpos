@@ -14,9 +14,12 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit {
   private cartInfo: Cart;
   private coupon: Coupon;
   paidamount: number;
+  isAllPay: boolean;
+  private paymentType: string;
   @ViewChild('couponcode') private couponcode: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal) {
     super(modalService);
+    this.isAllPay = true;
   }
 
   ngOnInit() {
@@ -29,6 +32,18 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit {
       this.couponcode.nativeElement.value = this.coupon.couponCode;
     }
   }
+
+  setChange(usepoint) {
+    if (usepoint > 0) {
+      // this.change = this.balanceamount - usepoint;
+      if (this.paymentType === 'n') {
+        // this.validationNormal();
+      } else {
+        // this.validationComplex();
+      }
+    }
+  }
+
 
   openComplexPayment() {
     this.close();

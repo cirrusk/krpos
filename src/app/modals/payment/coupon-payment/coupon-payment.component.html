@@ -28,7 +28,7 @@
                       <tr>
                           <th scope="row">사용 금액</th>
                           <td colspan="3">
-                              <input type="text" class="w110 ar" title="사용 금액" [readonly]="isAllPay" #usePay (keyup)="setChange(usePay.value)">
+                              <input type="text" #usePay class="w110 ar" title="사용 금액" [readonly]="isAllPay" #usePay (keyup)="setChange(usePay.value)">
                               <label class="inp_rd mgl10" for="sg1">전체금액<input #allCheck type="radio" name="sg" id="sg1" checked><span class="checkmark"></span></label>
                               <label class="inp_rd mgl10" for="sg2">일부금액<input #partCheck type="radio" name="sg" id="sg2"><span class="checkmark"></span></label>
                           </td>
