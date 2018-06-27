@@ -102,7 +102,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.init();
         } else if (result != null && type === 'payinfo') {
           const data = result.data;
-          console.log('[capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[0]));
+          // console.log('[capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[0]));
           // console.log('[order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(data[1]));
           this.retreiveInfo(data[0], data[1]);
         } else if (result != null && type === 'recart') {
@@ -887,31 +887,35 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
-    this.getBalanceInfo();
-    if (paymentcapture.getCcPaymentInfo) {
-      const cc = paymentcapture.getCcPaymentInfo;
-      this.ccamount = cc.getAmount;
-      this.installment = cc.getInstallmentPlan;
+    if (paymentcapture) {
+      this.getBalanceInfo();
+      if (paymentcapture.getCcPaymentInfo) {
+        const cc = paymentcapture.getCcPaymentInfo;
+        this.ccamount = cc.getAmount;
+        this.installment = cc.getInstallmentPlan;
+      }
+      if (paymentcapture.getCashPaymentInfo) {
+        const cash = paymentcapture.getCashPaymentInfo;
+        this.cashamount = cash.getAmount;
+        this.received = cash.getReceived ? Number(cash.getReceived) : 0;
+        this.change = cash.getChange ? Number(cash.getChange) : 0;
+      }
+      if (paymentcapture.getPointPaymentInfo) {
+        this.pointamount = paymentcapture.getPointPaymentInfo.getAmount;
+      }
+      if (paymentcapture.getMonetaryPaymentInfo) {
+        this.recashamount = paymentcapture.getMonetaryPaymentInfo.getAmount;
+      }
+      if (paymentcapture.getDirectDebitPaymentInfo) {
+        this.ddamount = paymentcapture.getDirectDebitPaymentInfo.getAmount;
+      }
     }
-    if (paymentcapture.getCashPaymentInfo) {
-      const cash = paymentcapture.getCashPaymentInfo;
-      this.cashamount = cash.getAmount;
-      this.received = cash.getReceived ? Number(cash.getReceived) : 0;
-      this.change = cash.getChange ? Number(cash.getChange) : 0;
+    if (order) {
+      this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
+      this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
+      this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
+      this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
     }
-    if (paymentcapture.getPointPaymentInfo) {
-      this.pointamount = paymentcapture.getPointPaymentInfo.getAmount;
-    }
-    if (paymentcapture.getMonetaryPaymentInfo) {
-      this.recashamount = paymentcapture.getMonetaryPaymentInfo.getAmount;
-    }
-    if (paymentcapture.getDirectDebitPaymentInfo) {
-      this.ddamount = paymentcapture.getDirectDebitPaymentInfo.getAmount;
-    }
-    this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
-    this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
-    this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
-    this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
   }
   /**
    * 장바구니 복원 데이터 설정

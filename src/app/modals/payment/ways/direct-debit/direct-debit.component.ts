@@ -80,15 +80,20 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     directdebit.setBaOwner = this.depositor;
     directdebit.setPaymentModeData = new PaymentModeData(PaymentModes.DIRECTDEBIT);
     directdebit.setCurrencyData = new CurrencyData();
-    if (this.paymentType === 'n') {
+    if (this.paymentcapture) {
+      if (this.paymentType === 'n') {
+        const paymentcapture = new PaymentCapture();
+        paymentcapture.setDirectDebitPaymentInfo = directdebit;
+        return paymentcapture;
+      } else {
+        this.paymentcapture.setDirectDebitPaymentInfo = directdebit;
+        return this.paymentcapture;
+      }
+    } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setDirectDebitPaymentInfo = directdebit;
       return paymentcapture;
-    } else {
-      this.paymentcapture.setDirectDebitPaymentInfo = directdebit;
-      return this.paymentcapture;
     }
-
   }
 
   pay(evt: KeyboardEvent) {

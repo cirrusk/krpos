@@ -154,15 +154,20 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     const recash = new AmwayMonetaryPaymentInfo(paidamount);
     recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
     recash.setCurrencyData = new CurrencyData();
-    if (this.paymentType === 'n') {
+    if (this.paymentcapture) {
+      if (this.paymentType === 'n') {
+        const paymentcapture = new PaymentCapture();
+        paymentcapture.setMonetaryPaymentInfo = recash;
+        return paymentcapture;
+      } else {
+        this.paymentcapture.setMonetaryPaymentInfo = recash;
+        return this.paymentcapture;
+      }
+    } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setMonetaryPaymentInfo = recash;
       return paymentcapture;
-    } else {
-      this.paymentcapture.setMonetaryPaymentInfo = recash;
-      return this.paymentcapture;
     }
-
   }
 
   cartInitAndClose() {

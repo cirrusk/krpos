@@ -95,8 +95,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     //   {
     //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
     //     closeByClickOutside: false,
-    //     modalId: 'PointComponent',
-    //     pointType: 'a'
+    //     modalId: 'APointComponent',
+    //     pointType: 'a',
+    //     paymentType: 'n'
     //   }
     // );
   }
@@ -113,8 +114,9 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
     //   {
     //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
     //     closeByClickOutside: false,
-    //     modalId: 'PointComponent_MEM',
-    //     pointType: 'm'
+    //     modalId: 'MPointComponent',
+    //     pointType: 'm',
+    //     paymentType: 'n'
     //   }
     // );
   }

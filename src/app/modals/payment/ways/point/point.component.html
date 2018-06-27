@@ -1,48 +1,67 @@
 <div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
-  <div class="pop_header">
-      <h1>{{pointTypeText}}</h1>
-      <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
-  </div>
-  <!-- pop_container -->
-  <div class="pop_container">
-      <div class="pop_content">
-          <!-- 결제내역 -->
-          <div class="tbl_row">
-              <table>
-                  <caption>{{pointTypeText}} 결제내역</caption>
-                  <colgroup>
-                      <col style="width:110px">
-                      <col>
-                  </colgroup>
-                  <tbody>
-                      <tr>
-                          <th scope="row">결제금액</th>
-                          <td><span class="won">{{paymentprice | number}}</span></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">가용 포인트</th>
-                          <td><span class="won">{{balanceamount | number}}</span></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">사용 포인트</th>
-                          <td>
-                              <input type="number" class="w110" title="사용 포인트" [readonly]="isAllPay" #usePoint (keyup)="setChange(usePoint.value)" (keydown.enter)="payPoint()">
-                              <label class="inp_rd mgl10" for="se1">전체금액<input #allCheck type="radio" name="se" id="se1" checked (click)="checkPay(0)"><span class="checkmark"></span></label>
-                              <label class="inp_rd" for="se2">일부금액<input #partCheck type="radio" name="se" id="se2" (click)="checkPay(1)"><span class="checkmark"></span></label>
-                          </td>
-                      </tr>
-                      <tr>
-                          <th scope="row">잔액</th>
-                          <td><span class="won">{{change | number}}</span></td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-          <!-- //결제내역 -->
-      </div>
-  </div>
-  <!-- //pop_container -->
-  <div class="pop_footer clearfix">
-      <span class="fl">취소 ESC</span>
-  </div>
+    <div class="pop_header">
+        <h1>{{pointTypeText}}</h1>
+        <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content">
+            <!-- 결제내역 -->
+            <div class="tbl_row">
+                <table>
+                    <caption>{{pointTypeText}} 결제내역</caption>
+                    <colgroup>
+                        <col style="width:110px">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th scope="row">결제금액</th>
+                            <td>
+                                <span class="won">{{paymentprice | number}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">가용 포인트</th>
+                            <td>
+                                <span class="won">{{balanceamount | number}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">사용 포인트</th>
+                            <td>
+                                <input type="number" class="w110" title="사용 포인트" [readonly]="isAllPay" #usePoint (keyup)="setChange(usePoint.value)" (keydown.enter)="payPoint()">
+                                <label class="inp_rd mgl10" for="se1">전체금액
+                                    <input #allCheck type="radio" name="se" id="se1" checked (click)="checkPay(0)">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="inp_rd" for="se2">일부금액
+                                    <input #partCheck type="radio" name="se" id="se2" (click)="checkPay(1)">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">잔액</th>
+                            <td>
+                                <span class="won">{{change | number}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <em *ngIf="checktype === '1'" class="finish fail">사용 포인트가 부족합니다.</em>
+            <em *ngIf="checktype === '2'" class="finish fail">사용 포인트가 결제금액보다 많습니다.</em>
+            <em *ngIf="checktype === '3'" class="finish fail">사용 포인트가 공란입니다.</em>
+            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">결제가 완료되었습니다.</em>
+            <ng-template #payFail>
+                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">결제에 실패했습니다.</em>
+            </ng-template>
+            <!-- //결제내역 -->
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer clearfix">
+        <span class="fl">취소 ESC</span>
+    </div>
 </div>

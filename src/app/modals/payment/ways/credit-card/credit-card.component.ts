@@ -151,15 +151,20 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private makePaymentCaptureData(paidamount: number): PaymentCapture {
     const ccard = this.makePaymentInfo(paidamount);
-    if (this.paymentType === 'n') {
+    if (this.paymentcapture) {
+      if (this.paymentType === 'n') {
+        const paymentcapture = new PaymentCapture();
+        paymentcapture.setCcPaymentInfo = ccard;
+        return paymentcapture;
+      } else {
+        this.paymentcapture.setCcPaymentInfo = ccard;
+        return this.paymentcapture;
+      }
+    } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setCcPaymentInfo = ccard;
       return paymentcapture;
-    } else {
-      this.paymentcapture.setCcPaymentInfo = ccard;
-      return this.paymentcapture;
     }
-
   }
 
   /**
@@ -373,11 +378,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-        if (this.cardresult && this.cardresult.approved) {
-          this.cartInitAndClose();
-        } else {
-          this.nicePay();
-        }
+      if (this.cardresult && this.cardresult.approved) {
+        this.cartInitAndClose();
+      } else {
+        this.nicePay();
+      }
     } /*else if (event.keyCode === KeyCode.ESCAPE) {
       this.close();
     }*/

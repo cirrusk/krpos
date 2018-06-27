@@ -116,14 +116,17 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     } else if (change < 0) {
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
-
       if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
         if (this.paymentType === 'n') {
           this.paymentAndCapture(payAmount, paidAmount, change);
         } else {
-          this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
-          this.result = this.paymentcapture;
-          this.finishStatus = StatusDisplay.PAID;
+          if (paidAmount === payAmount) {
+            this.paymentAndCapture(payAmount, paidAmount, change);
+          } else if (paidAmount > payAmount) {
+            this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
+            this.result = this.paymentcapture;
+            this.finishStatus = StatusDisplay.PAID;
+          }
         }
       }
     }
@@ -198,15 +201,20 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     cash.setChange = change;
     cash.setPaymentModeData = new PaymentModeData(PaymentModes.CASH);
     cash.setCurrencyData = new CurrencyData();
-    if (this.paymentType === 'n') {
+    if (this.paymentcapture) {
+      if (this.paymentType === 'n') {
+        const paymentcapture = new PaymentCapture();
+        paymentcapture.setCashPaymentInfo = cash;
+        return paymentcapture;
+      } else {
+        this.paymentcapture.setCashPaymentInfo = cash;
+        return this.paymentcapture;
+      }
+    } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setCashPaymentInfo = cash;
       return paymentcapture;
-    } else {
-      this.paymentcapture.setCashPaymentInfo = cash;
-      return this.paymentcapture;
     }
-
   }
 
   close() {
@@ -231,7 +239,20 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       }
       this.close();
     } else {
-      console.log('복합결제일 경우...');
+      const paid = this.paid.nativeElement.value;
+      const payment = this.payment.nativeElement.value;
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        if (paid === payment) { // 금액이 같을 경우만 영수증 출력
+          const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          if (rtn) {
+            this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+            this.info.sendInfo('orderClear', 'clear');
+          } else {
+            this.alert.show({ message: '실패' });
+          }
+        }
+      }
+      this.close();
     }
   }
 
