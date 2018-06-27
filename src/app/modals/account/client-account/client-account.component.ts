@@ -92,7 +92,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
             userInfo => {
               if (userInfo) {
                 this.account = userInfo;
-                this.searchAccountBroker.sendInfo('n', this.account.accounts[0]);
+                this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
                 this.close();
               }
             },
