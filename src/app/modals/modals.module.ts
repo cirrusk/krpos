@@ -42,6 +42,7 @@ import { CouponCheckComponent } from './payment/coupon-payment/coupon-check.comp
 import { CompletePaymentComponent } from './payment/complete-payment/complete-payment.component';
 import { OrderDetailComponent } from './order/order-detail/order-detail.component';
 import { InstallmentPlanComponent } from './payment/ways/credit-card/installment-plan/installment-plan.component';
+import { CancelCartComponent } from './cart/cancel-cart/cancel-cart.component';
 
 
 @NgModule({
@@ -82,7 +83,8 @@ import { InstallmentPlanComponent } from './payment/ways/credit-card/installment
     CouponCheckComponent,
     CompletePaymentComponent,
     OrderDetailComponent,
-    InstallmentPlanComponent
+    InstallmentPlanComponent,
+    CancelCartComponent
   ],
   imports: [
     CommonModule,
@@ -125,7 +127,8 @@ import { InstallmentPlanComponent } from './payment/ways/credit-card/installment
     CouponCheckComponent,
     CompletePaymentComponent,
     OrderDetailComponent,
-    InstallmentPlanComponent
+    InstallmentPlanComponent,
+    CancelCartComponent
   ]
 })
 export class ModalsModule {

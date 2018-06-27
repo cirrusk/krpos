@@ -68,7 +68,7 @@
                               <td><span>{{order.orderType.label}}</span></td>
                               <td><span>{{order.orderStatus.label}} 
                                   <a *ngIf="!order.orderStatus.label" href="javascript:void(0)" class="btn03_blue mgl10" (click)="$event.stopPropagation();">취소</a>
-                                  <a *ngIf="order.orderStatus.label" href="javascript:void(0)" class="btn03_gray mgl10"  (click)="$event.stopPropagation();">취소</a>
+                                  <a *ngIf="order.orderStatus.label" href="javascript:void(0)" class="btn03_gray mgl10"  (click)="$event.stopPropagation(); popupCancel()">취소</a>
                                   <a href="javascript:void(0)" class="btn03_gray" (click)="$event.stopPropagation(); reissueReceipts(order.user.uid, order.code)">영수증</a></span>
                             </td>
                           </tr>                         

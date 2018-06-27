@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ModalComponent, ModalService, AlertService } from '../../../core';
-import { CancleOrderBroker } from '../../../broker/order/cart/cancle-order.broker';
 
 @Component({
   selector: 'pos-cancel-order',
@@ -10,17 +9,11 @@ import { CancleOrderBroker } from '../../../broker/order/cart/cancle-order.broke
 export class CancelOrderComponent extends ModalComponent implements OnInit {
 
   constructor(protected modalService: ModalService,
-              private alert: AlertService,
-              private cancleOrderBroker: CancleOrderBroker) {
+              private alert: AlertService) {
     super(modalService);
   }
 
   ngOnInit() {
-  }
-
-  cancleOrder() {
-    this.cancleOrderBroker.sendInfo('delCart');
-    this.close();
   }
 
   close() {

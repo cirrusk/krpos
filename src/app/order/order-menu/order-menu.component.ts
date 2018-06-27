@@ -3,7 +3,7 @@ import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
-  CancelOrderComponent } from '../../modals';
+  CancelCartComponent } from '../../modals';
 import { Accounts, OrderHistoryList, OrderEntry, MemberType } from '../../data';
 import { OrderService, MessageService } from '../../service';
 import { Utils } from '../../core/utils';
@@ -171,12 +171,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   cancelOrder(evt: any) {
     if (!this.hasAccount) { return; }
     // this.checkClass(evt);
-    this.modal.openModalByComponent(CancelOrderComponent,
+    this.modal.openModalByComponent(CancelCartComponent,
       {
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: true,
-        modalId: 'CancelOrderComponent'
+        modalId: 'CancelCartComponent'
       }
     );
   }

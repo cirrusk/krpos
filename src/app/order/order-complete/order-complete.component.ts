@@ -7,6 +7,7 @@ import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
+import { CancelOrderComponent } from '../../modals';
 
 @Component({
   selector: 'pos-order-complete',
@@ -85,6 +86,18 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
         modalId: 'OrderDetailComponent'
+      }
+    );
+  }
+
+  popupCancel() {
+    this.modal.openModalByComponent(CancelOrderComponent,
+      {
+        callerData: { },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        closeByEscape: false,
+        modalId: 'CancelOrderComponent'
       }
     );
   }

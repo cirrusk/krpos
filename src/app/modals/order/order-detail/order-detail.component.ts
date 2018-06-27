@@ -4,6 +4,7 @@ import { ModalComponent, ModalService, Modal, SpinnerService, StorageService, Lo
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
+import { CancelOrderComponent } from '../..';
 
 @Component({
   selector: 'pos-order-detail',
@@ -32,6 +33,18 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   }
 
   init() {
+  }
+
+  popupCancel() {
+    this.modal.openModalByComponent(CancelOrderComponent,
+      {
+        callerData: { },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        closeByEscape: false,
+        modalId: 'CancelOrderComponent'
+      }
+    );
   }
 
   getOrderDetail(userId: string, orderCode: string) {
