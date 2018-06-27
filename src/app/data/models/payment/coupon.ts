@@ -1,7 +1,9 @@
 import { ProductInfo } from '../order/product-info';
+import { Pagination } from '../common/pagination';
 
 export class CouponList {
     coupons: Array<Coupon>;
+    pagination: Pagination;
 }
 
 export class Coupon {
@@ -11,7 +13,6 @@ export class Coupon {
     active: boolean;
     startDate: Date;
     endDate: Date;
-    code: string;
     product: ProductInfo;
     status: string;
     description: string;
