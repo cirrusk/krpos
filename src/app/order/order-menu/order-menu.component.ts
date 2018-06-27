@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { Cart } from '../../data/models/order/cart';
 import { CouponCheckComponent } from '../../modals/payment/coupon-payment/coupon-check.component';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
+import { SearchAccountBroker } from '../../broker';
 
 @Component({
   selector: 'pos-order-menu',
@@ -18,6 +19,7 @@ import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/co
 })
 export class OrderMenuComponent implements OnInit, OnDestroy {
   private orderInfoSubscribetion: Subscription;
+  // private searchAccountBrokerSubscribetion: Subscription;
 
   private accountInfo: Accounts;
   private cartInfo: Cart;
@@ -34,6 +36,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
               private alert: AlertService,
               private spinner: SpinnerService,
               private logger: Logger,
+              private searchAccountBroker: SearchAccountBroker,
               // private element: ElementRef,
               private renderer: Renderer2,
               private router: Router
@@ -43,6 +46,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
+    // if (this.searchAccountBrokerSubscribetion) { this.searchAccountBrokerSubscribetion.unsubscribe(); }
   }
 
   /**
@@ -135,7 +139,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         paymentType: 'g',
         modalId: 'SearchAccountComponent'
       }
-    );
+    ).subscribe(result => {
+      if (result) {
+        this.searchAccountBroker.sendInfo('g', result);
+      }
+    });
   }
 
   /**

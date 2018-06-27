@@ -5,23 +5,7 @@
       <button type="button" class="ico_comm next02">다음</button>
   </span>
   <span>
-      <a href="javascript:void(0)" class="on">홍길동</a>
-      <a href="javascript:void(0)">박보검</a>        
-      <a href="javascript:void(0)">조쉬하트넷</a>
-      <a href="javascript:void(0)">박보영</a>
-      <a href="javascript:void(0)">김하나</a>
-      <a href="javascript:void(0)">김태연</a>
-      <a href="javascript:void(0)">한승현</a>
-      <a href="javascript:void(0)">마동석</a>
-      <a href="javascript:void(0)">하정후</a>
-      <a href="javascript:void(0)">배지연</a>
-      <a href="javascript:void(0)">연정훈</a>
-      <a href="javascript:void(0)">김태연</a>
-      <a href="javascript:void(0)">한승현</a>
-      <a href="javascript:void(0)">마동석</a>
-      <a href="javascript:void(0)">하정후</a>
-      <a href="javascript:void(0)">배지연</a>
-      <a href="javascript:void(0)">연정훈</a>
+      <a href="javascript:void(0)" [class.on]="selectedUser == i" *ngFor="let accountInfo of groupAccountInfo; let i = index;" (click)="selectUserInfo(i, accountInfo.parties[0].uid)">{{accountInfo.parties[0].name}}</a>
   </span>
 </div>
 <!-- //고객리스트 : 그룹결제시 노출 -->

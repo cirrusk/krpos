@@ -25,8 +25,8 @@
                 <div class="tbl_col fl bg_bar">
                     <!-- 5줄이 넘을 시 노출  -->
                     <div class="paging" *ngIf="sourceOrderHistoryList.orders.length > 0">
-                        <button type="button" class="ico_comm prev01" [disabled]="sourceOrderHistoryList.pagination.currentPage === 0">이전</button>
-                        <button type="button" class="ico_comm next01" [disabled]="sourceOrderHistoryList.pagination.currentPage === sourceOrderHistoryList.pagination.totalPages - 1">다음</button>
+                        <button type="button" class="ico_comm prev01" [disabled]="sourceOrderHistoryList.pagination.currentPage === 0" (click)="setPage(sourceOrderHistoryList.pagination.currentPage - 1)">이전</button>
+                        <button type="button" class="ico_comm next01" [disabled]="sourceOrderHistoryList.pagination.currentPage === sourceOrderHistoryList.pagination.totalPages - 1" (click)="setPage(sourceOrderHistoryList.pagination.currentPage + 1)">다음</button>
                     </div>
                     <!-- //5줄이 넘을 시 노출  -->
                     <table>
@@ -50,11 +50,11 @@
                         </thead>
                         <tbody>
                             <!-- 선택시 tr에 on클래스 추가 -->
-                            <tr [class.on]="selectedOrderNum == i" *ngFor="let order of sourceOrderHistoryList.orders; let i = index;" (click)="moveOrder(order.code)">
+                            <tr class="" *ngFor="let order of sourceOrderHistoryList.orders; let i = index;" (click)="moveOrder($event, order.code)">
                                 <td class="al"><span class="chk">{{order.code}}</span></td>
                                 <td><span>{{order.user.uid}}</span></td>
                                 <td class="tit"><span class="elips">{{order.user.name}}</span></td>
-                                <td><span>{{order.date | date:'yy/MM/dd'}}</span></td>
+                                <td><span>{{order.placed | date:'yy/MM/dd'}}</span></td>
                                 <td class="ar"><span>{{order.total.value | number}}원</span></td>
                             </tr>
                             

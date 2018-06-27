@@ -39,8 +39,8 @@
                           <!-- 내역 선택시 tr에 on클래스 추가 -->
                           <tr *ngFor="let orderEntry of currentOrderList; let i = index;">
                               <td><span>{{orderEntry.entryNumber}}</span></td>
-                              <td><span>{{orderList.orders[0].code}}</span></td>
-                              <td><span>{{orderList.orders[0].user.uid}}</span></td>
+                              <td><span>{{orderList.orders[orderEntry.entryNumber].code}}</span></td>
+                              <td><span>{{orderList.orders[orderEntry.entryNumber].user.uid}}</span></td>
                               <td class="tit"><span class="elips mx400">{{orderEntry.product.name}}</span></td>
                               <td><span>{{orderEntry.quantity}}</span></td>
                               <td><span>X</span></td>

@@ -49,6 +49,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   paymentType: string;                                                      // 결제타입(일반 = n, 그룹 = g)
 
   accountInfo: Accounts;                                                    // 사용자 정보
+  groupAccountInfo: Array<Accounts>;
   searchMode: string;                                                       // 조회 모드
   cartList: Array<OrderEntry>;                                              // 장바구니 리스트
   currentCartList: Array<OrderEntry>;                                       // 출력 장바구니 리스트
@@ -68,6 +69,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   discount: number;
   received: number;
   change: number;
+  selectedUser = -1;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
@@ -109,6 +111,16 @@ export class CartListComponent implements OnInit, OnDestroy {
           const order: Order = result.data;
           console.log('[order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(order));
           this.copyCartByEntries(this.accountInfo, order.entries);
+        }
+      }
+    );
+
+    // 그룹 회원 선택
+    this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
+      accountInfo => {
+        if (accountInfo && accountInfo.type === 'g') {
+          this.paymentType = 'g';
+          this.getAccountAndSaveCart(accountInfo.data);
         }
       }
     );
@@ -212,10 +224,12 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.discount = 0;
     this.received = 0;
     this.change = 0;
+    this.selectedUser = -1;
     this.pager = new Pagination();
     this.resCartInfo = new ResCartInfo();
     this.restrictionModel = new RestrictionModel();
     this.restrictionMessageList = Array<RestrictionModel>();
+    this.groupAccountInfo = new Array<Accounts>();
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.setLocalItem('clearclient', {});
@@ -362,10 +376,14 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private getAccountAndSaveCart(account: Accounts) {
     this.sendRightMenu('a', true, account);
-    if (this.accountInfo) {
+    if (this.accountInfo && this.paymentType === 'n') {
       this.changeUser(account);
     } else {
       this.accountInfo = account;
+      if (this.paymentType === 'g') {
+        this.groupAccountInfo.push(account);
+        this.selectedUser = this.groupAccountInfo.length - 1;
+      }
       // this.storage.setCustomer(this.accountInfo); // getBalanceInfo로 이동
       this.activeSearchMode('P');
       this.getSaveCarts();
@@ -534,6 +552,10 @@ export class CartListComponent implements OnInit, OnDestroy {
         terminalInfo.pointOfService.name, 'POS').subscribe(
           cartResult => {
             this.cartInfo = cartResult;
+            // 그룹 결제일 경우 그룹생성
+            if (this.paymentType === 'g') {
+
+            }
             this.sendRightMenu('c', true);
             if (popupFlag) {
               if (productCode !== undefined) {
@@ -1059,6 +1081,12 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  selectUserInfo(index: number, uid: string): void {
+    this.selectedUser = index;
+    // 카트 정보 교체
+    this.logger.set('selectUserInfo', uid).debug();
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])

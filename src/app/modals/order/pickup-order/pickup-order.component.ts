@@ -26,8 +26,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
   private orderTypeName: string;
   private confirmFlag = false;
   private selectedOrderNum = -1;
-
-  searchType: string;
+  private searchType: string;
+  private searchText: string;
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
@@ -46,6 +46,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
   init() {
     this.sourceOrderHistoryList = new OrderHistoryList(new Array<OrderHistory>());
     this.targetOrderHistoryList = new OrderHistoryList(new Array<OrderHistory>());
+    this.searchType = '';
+    this.searchText = '';
   }
 
   ngOnInit() {
@@ -66,7 +68,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
    * 컨펌 리스트로 이동
    * @param orderCode
    */
-  moveOrder(orderCode: string): void {
+  moveOrder(evt: any, orderCode: string): void {
+    this.setSelected(evt);
+
     let targetExistedIdx = -1;
     if (this.targetOrderHistoryList.orders) {
       targetExistedIdx = this.targetOrderHistoryList.orders.findIndex(
@@ -112,8 +116,14 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     if (searchText === '' || searchText === undefined || searchText === null) {
       this.alert.info({ message: this.messageService.get('noSearchText') });
     } else {
+      this.searchType = searchType;
+      this.searchText = searchText;
       this.getOrderList(searchType, 'A', searchText, 0);
     }
+  }
+
+  setPage(page: number) {
+    this.getOrderList(this.searchType, 'A', this.searchText, page);
   }
 
   /**
@@ -287,13 +297,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
 
   private setSelected(evt: any) {
     evt.stopPropagation();
-    this.ecporders.forEach(ecporder => {
-        parent = this.renderer.parentNode(ecporder.nativeElement);
-      this.renderer.removeClass(parent, 'on');
-      this.renderer.removeClass(ecporder.nativeElement, 'on');
-    });
-    parent = this.renderer.parentNode(evt.target);
-    this.renderer.addClass(parent, 'on');
-    this.renderer.addClass(evt.target, 'on');
+    const chk = evt.currentTarget.classList.contains('on');
+    if (chk) {
+      this.renderer.removeClass(evt.currentTarget, 'on');
+    } else {
+      this.renderer.addClass(evt.currentTarget, 'on');
+    }
   }
 }
