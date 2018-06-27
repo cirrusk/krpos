@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
-import { AccessToken, TerminalInfo, BatchInfo, Accounts } from '../../data';
+import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain } from '../../data';
 import { Utils } from '../utils';
 
 
@@ -205,6 +205,18 @@ export class StorageService implements OnDestroy {
   public hasTerminalAuth(): boolean {
     const terminalinfo: TerminalInfo = this.getTerminalInfo();
     return (terminalinfo !== null && Utils.isNotEmpty(terminalinfo.id));
+  }
+
+  public getPaymentModes(): PaymentModeListByMain {
+    return this.getSessionItem('paymentmodes');
+  }
+
+  public setPaymentModes(data: PaymentModeListByMain): void {
+    this.setSessionItem('paymentmodes', data);
+  }
+
+  public removePaymentModes(): void {
+    this.removeSessionItem('paymentmodes');
   }
 
   public getPay(): number {
