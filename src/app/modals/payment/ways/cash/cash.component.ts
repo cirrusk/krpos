@@ -67,10 +67,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.paid.nativeElement.focus();
     }, 50);
 
-    if (this.paymentType === 'n') {
+    if (this.paymentType === 'n') { // 일반결제
       this.payment.nativeElement.value = this.cartInfo.totalPrice.value;
       // setTimeout(() => { this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly'); }, 5);
-    } else {
+    } else { // 복합결제
       if (this.storage.getPay() === 0) {
         this.payment.nativeElement.value = this.cartInfo.totalPrice.value;
       } else {
@@ -110,28 +110,35 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       }
     );
     const change = paidAmount - payAmount;
-
     if (paidAmount < 1) {
       this.alert.warn({ message: this.message.get('notinputPaid') });
     } else if (change < 0) {
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
+      // 내신금액이 클 경우 거스름돈
       if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
-        if (this.paymentType === 'n') {
+        if (this.paymentType === 'n') { // 일반결제
           this.paymentAndCapture(payAmount, paidAmount, change);
-        } else {
-          if (paidAmount === payAmount) {
+        } else { // 복합결제
+          if (paidAmount >= payAmount) { // 금액이 같거나 거스름돈 있으면 payment 처리
             this.paymentAndCapture(payAmount, paidAmount, change);
-          } else if (paidAmount > payAmount) {
-            this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
-            this.result = this.paymentcapture;
-            this.finishStatus = StatusDisplay.PAID;
           }
         }
+      } else { // 내신 금액이 작을 경우
+        this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
+        this.result = this.paymentcapture;
+        this.finishStatus = StatusDisplay.PAID;
       }
     }
   }
 
+  /**
+   * 결제 정보 캡쳐
+   *
+   * @param payAmount 내신금액
+   * @param paidAmount 결제금액
+   * @param change 거스름돈
+   */
   private paymentAndCapture(payAmount: number, paidAmount: number, change: number) {
     this.spinner.show();
     this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
@@ -239,7 +246,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         }
       }
       this.close();
-    } else {
+    } else { // 복합결제
       const paid = this.paid.nativeElement.value;
       const payment = this.payment.nativeElement.value;
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {

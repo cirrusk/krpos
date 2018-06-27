@@ -1,10 +1,8 @@
-import { VoucherPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
-
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
-
-import { ModalComponent, ModalService, Modal } from '../../../../core';
 import { Subscription } from 'rxjs/Subscription';
 
+import { ModalComponent, ModalService, Modal } from '../../../../core';
+import { VoucherPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
 import { Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination } from '../../../../data';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
@@ -43,12 +41,15 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private searchCoupon(pagenum: number) {
-    this.couponubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(result => {
-      this.couponlist = result.coupons;
-      this.couponCount = this.couponlist.length;
-      this.page = result.pagination;
-      this.paging(this.couponlist.length, pagenum, this.pagesize);
-    });
+    this.couponubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
+      result => {
+        this.couponlist = result.coupons;
+        this.couponCount = this.couponlist.length;
+        if (result.pagination) {
+          this.page = result.pagination;
+          this.paging(this.couponlist.length, pagenum, this.pagesize);
+        }
+      });
   }
 
   ngOnDestroy() {

@@ -15,6 +15,7 @@ import { CompletePaymentComponent } from '../complete-payment/complete-payment.c
 import { PaymentService } from '../../../service';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
+import { InfoBroker } from '../../../broker';
 
 @Component({
   selector: 'pos-complex-payment',
@@ -33,7 +34,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   [7, 'ReCashComponent', ReCashComponent]];
   private paymentModesSubscription: Subscription;
   private paymentSubscription: Subscription;
-
+  private cmplsubscription: Subscription;
   accountInfo: Accounts;
   private cartInfo: Cart;
   private popupList: Array<number>;
@@ -50,6 +51,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private alert: AlertService,
     private spinner: SpinnerService,
     private logger: Logger,
+    private info: InfoBroker,
     private renderer: Renderer2) {
     super(modalService);
     this.init();
@@ -59,10 +61,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
 
-    if (this.accountInfo.accountTypeCode === MemberType.ABO) {
-      this.popupCoupon();
-    }
-
+    this.cmplsubscription = this.info.getInfo().subscribe(
+      result => {
+        const type = result && result.type;
+        const data = result && result.data;
+        if (result !== null && type === 'orderClear' && data === 'clear') { // 복합결제 완료되면 복합결제 팝업 닫기
+          this.close();
+        }
+      }
+    );
 
     this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
     this.popupList.push(0);
@@ -76,17 +83,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   ngOnDestroy() {
     if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
-  }
-
-  private popupCoupon() {
-    // this.modal.openModalByComponent(CouponCheckComponent,
-    //   {
-    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-    //     closeByClickOutside: false,
-    //     closeByEnter: false,
-    //     modalId: 'CouponCheckComponent'
-    //   }
-    // );
+    if (this.cmplsubscription) { this.cmplsubscription.unsubscribe(); }
   }
 
   creditCard(evt: any) {
