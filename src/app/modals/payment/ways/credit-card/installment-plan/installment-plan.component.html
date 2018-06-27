@@ -7,10 +7,10 @@
     <div class="pop_container">
         <div class="pop_content">
             <dl class="scrl_area" *ngIf="bankList">
-                <div *ngFor="let bankInfo of bankList.bankInfos">
+                <ng-container *ngFor="let bankInfo of bankList.bankInfos">
                     <dt>{{bankInfo.name}}</dt>
-                    <dd><span *ngFor="let installmentPlan of bankInfo.installmentPlans">{{installmentPlan.name}}</span></dd>
-                </div>
+                    <dd><span *ngFor="let installmentPlan of bankInfo.installmentPlans">{{installmentPlan.displayName}}</span></dd>
+                </ng-container>
             </dl>
         </div>
     </div>
