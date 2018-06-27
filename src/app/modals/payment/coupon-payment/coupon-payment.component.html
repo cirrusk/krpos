@@ -19,18 +19,18 @@
                   <tbody>
                       <tr>
                           <th scope="row">결제금액</th>
-                          <td colspan="3"><span class="won">100,000,000</span></td>
+                          <td colspan="3"><span class="won">{{paidamount | number}}</span></td>
                       </tr>
                       <tr>
                           <th scope="row">쿠폰번호</th>
-                          <td colspan="3"><input type="text" class="w200" title="쿠폰번호"></td>
+                          <td colspan="3"><input #couponcode type="text" class="w200" title="쿠폰번호"></td>
                       </tr>
                       <tr>
                           <th scope="row">사용 금액</th>
                           <td colspan="3">
-                              <input type="text" class="w110 ar" title="할부개월">
-                              <label class="inp_rd mgl10" for="sg1">전체금액<input type="radio" name="sg" id="sg1" checked><span class="checkmark"></span></label>
-                              <label class="inp_rd mgl10" for="sg2">일부금액<input type="radio" name="sg" id="sg2"><span class="checkmark"></span></label>
+                              <input type="text" class="w110 ar" title="사용 금액" [readonly]="isAllPay" #usePay (keyup)="setChange(usePay.value)">
+                              <label class="inp_rd mgl10" for="sg1">전체금액<input #allCheck type="radio" name="sg" id="sg1" checked><span class="checkmark"></span></label>
+                              <label class="inp_rd mgl10" for="sg2">일부금액<input #partCheck type="radio" name="sg" id="sg2"><span class="checkmark"></span></label>
                           </td>
                       </tr>
                       <tr>
