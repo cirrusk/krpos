@@ -95,7 +95,7 @@ export class PaymentService {
    * @param accountid 회원 아이디
    * @param userid 회원 아이디
    */
-  searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 10, sort = 'startDate', asc = true): Observable<CouponList> {
+  searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = {
       currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc,
