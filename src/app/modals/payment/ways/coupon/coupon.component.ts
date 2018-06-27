@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService } from '../../../../core';
 import { VoucherPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
 import { Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination } from '../../../../data';
@@ -29,7 +29,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   private page: Pagination;
   private pagesize = 5;
   constructor(protected modalService: ModalService, private modal: Modal,
-    private info: InfoBroker, private payment: PaymentService, private pager: PagerService) {
+    private info: InfoBroker, private payment: PaymentService, private storage: StorageService, private pager: PagerService) {
     super(modalService);
     this.couponCount = -1;
   }
@@ -120,7 +120,8 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           pcap = new PaymentCapture();
           pcap.setVoucherPaymentInfo = coupon;
 
-          this.info.sendInfo('payinfo', [pcap, null]);
+          // this.info.sendInfo('payinfo', [pcap, null]);
+          this.sendPayemtAndOrder(pcap, null);
 
         }
       });
@@ -130,6 +131,17 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   activeRow(index: number, coupon: Coupon) {
     this.activeNum = index;
     this.coupon = coupon;
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

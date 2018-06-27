@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { ClientAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination, MemberType } from '../../data';
+import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture } from '../../data';
 import { PagerService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
+import { Order } from '../../data/models/order/order';
 
 @Component({
   selector: 'pos-client',
@@ -25,6 +26,15 @@ export class ClientComponent implements OnInit, OnDestroy {
   selectedCartNum: number;                        // 선택된 카트번호
   balance: number;                                // 회원 포인트
   recash: number;                                 // 회원 Re-Cash
+  ccamount: number;
+  installment: string;
+  cashamount: number;
+  pointamount: number;
+  recashamount: number;
+  ddamount: number;
+  discount: number;
+  received: number;
+  change: number;
   accountType: string;                            // 회원 타입
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
@@ -102,8 +112,19 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.totalPrice = 0;
     this.totalPV = 0;
     this.totalBV = 0;
+    this.ccamount = 0;
+    this.cashamount = 0;
+    this.pointamount = 0;
+    this.recashamount = 0;
+    this.ddamount = 0;
+    this.discount = 0;
+    this.received = 0;
+    this.change = 0;
     this.selectedCartNum = -1;
     this.pager = new Pagination();
+  }
+
+  private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
   }
 
   private addCartEntry(orderEntry: OrderEntry) {

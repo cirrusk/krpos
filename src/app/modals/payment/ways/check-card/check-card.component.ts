@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ModalComponent, ModalService } from '../../../../core';
+import { ModalComponent, ModalService, StorageService } from '../../../../core';
 import { PaymentCapture, CreditCardPaymentInfo, PaymentModeData, PaymentModes, CurrencyData } from '../../../../data';
+import { Order } from '../../../../data/models/order/order';
+import { InfoBroker } from '../../../../broker';
 
 @Component({
   selector: 'pos-check-card',
@@ -9,7 +11,7 @@ import { PaymentCapture, CreditCardPaymentInfo, PaymentModeData, PaymentModes, C
 })
 export class CheckCardComponent extends ModalComponent implements OnInit {
 
-  constructor(protected modalService: ModalService) {
+  constructor(protected modalService: ModalService, private info: InfoBroker, private storage: StorageService) {
     super(modalService);
   }
 
@@ -32,6 +34,17 @@ export class CheckCardComponent extends ModalComponent implements OnInit {
     const paymentcapture = new PaymentCapture();
     paymentcapture.setCcPaymentInfo = ccard;
     return paymentcapture;
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

@@ -155,7 +155,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
             this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
             this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
           }, 5);
-          this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
           this.printer.openCashDrawer(); // 캐셔 drawer 오픈
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
         } else { // CART 삭제된 상태
@@ -223,6 +224,17 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       paymentcapture.setCashPaymentInfo = cash;
       return paymentcapture;
     }
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

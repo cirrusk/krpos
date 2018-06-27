@@ -118,7 +118,8 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
                   this.ddpassword.nativeElement.blur(); // keydown.enter 처리 안되도록
                   this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly');
                 }, 5);
-                this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+                // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+                this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
               } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
                 this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
               } else { // CART 삭제된 상태
@@ -154,6 +155,17 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       );
     }
 
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

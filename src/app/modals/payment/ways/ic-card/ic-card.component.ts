@@ -134,7 +134,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
                 if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                   this.paidDate = result.created ? result.created : new Date();
-                  this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+                  // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+                  this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
                 } else { // CART 삭제된 상태
                   this.info.sendInfo('recart', this.orderInfo);
@@ -159,6 +160,17 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         }
       }
     });
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

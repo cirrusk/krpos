@@ -1,8 +1,10 @@
 import { CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { Component, OnInit } from '@angular/core';
 
-import { ModalComponent, ModalService } from '../../../../core';
+import { ModalComponent, ModalService, StorageService } from '../../../../core';
 import { PaymentCapture, CashPaymentInfo, CashType, PaymentModes, PaymentModeData } from '../../../../data';
+import { InfoBroker } from '../../../../broker';
+import { Order } from '../../../../data/models/order/order';
 
 @Component({
   selector: 'pos-checks',
@@ -10,7 +12,7 @@ import { PaymentCapture, CashPaymentInfo, CashType, PaymentModes, PaymentModeDat
 })
 export class ChecksComponent extends ModalComponent implements OnInit {
 
-  constructor(protected modalService: ModalService) {
+  constructor(protected modalService: ModalService, private info: InfoBroker, private storage: StorageService) {
     super(modalService);
   }
 
@@ -24,6 +26,17 @@ export class ChecksComponent extends ModalComponent implements OnInit {
     const paymentcapture = new PaymentCapture();
     paymentcapture.setCashPaymentInfo = cash;
     return paymentcapture;
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

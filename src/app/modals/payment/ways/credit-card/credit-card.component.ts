@@ -244,6 +244,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.spinner.hide();
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
+        this.finishStatus = 'fail';
         this.alert.error({ message: res.msg });
       } else {
         if (res.approved) {
@@ -294,7 +295,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                 if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                   this.paidDate = result.created ? result.created : new Date();
                   // 장바구니에 정보를 보내야함. capture 정보, order 정보
-                  this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+                  // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+                  this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
                   setTimeout(() => {
                     this.paid.nativeElement.blur(); // keydown.enter 처리 안되도록
                     this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
@@ -323,6 +325,17 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       }
       this.storage.removePay();
     });
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {
@@ -382,6 +395,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
         this.close();
       }
+    } else {
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
     }
   }
 
@@ -392,6 +408,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (event.keyCode === KeyCode.ENTER) {
       if (this.cardresult && this.cardresult.approved) {
         this.cartInitAndClose();
+      } else if (this.cardresult && !this.cardresult.approved) {
+        this.close();
       } else {
         this.nicePay();
       }

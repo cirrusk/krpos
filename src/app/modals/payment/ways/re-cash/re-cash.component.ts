@@ -93,7 +93,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       if (check > 0) {
         this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
-        this.info.sendInfo('payinfo', [this.paymentcapture, null]);
+        // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
+        this.sendPayemtAndOrder(this.paymentcapture, null);
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       } else if (check === 0) {
@@ -116,7 +117,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
             this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
             this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
           }, 5);
-          this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
         } else { // CART 삭제된 상태
           this.info.sendInfo('recart', this.orderInfo);
@@ -204,6 +206,17 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
       this.close();
     }
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {

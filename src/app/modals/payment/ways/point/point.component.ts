@@ -172,8 +172,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       console.log(paid);
       if (paid > 0) {
         const point = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-        this.result = this.paymentcapture = this.makePaymentCaptureData(point);
-        this.info.sendInfo('payinfo', [this.paymentcapture, null]);
+        this.paymentcapture = this.makePaymentCaptureData(point);
+        this.result = this.paymentcapture;
+        // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
+        this.sendPayemtAndOrder(this.paymentcapture, null);
         this.close();
       } else if (paid === 0) {
         this.paymentCapture();
@@ -202,7 +204,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
             //   this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
             //   this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
             // }, 5);
-            this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+            // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+            this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           } else { // CART 삭제된 상태
             this.info.sendInfo('recart', this.orderInfo);
@@ -241,6 +244,17 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       paymentcapture.setPointPaymentInfo = point;
       return paymentcapture;
     }
+  }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {
