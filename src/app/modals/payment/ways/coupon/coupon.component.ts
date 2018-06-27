@@ -10,6 +10,8 @@ import { Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination } f
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
 import { PaymentService, PagerService } from '../../../../service';
 import { Cart } from '../../../../data/models/order/cart';
+import { Order } from '../../../../data/models/order/order';
+import { InfoBroker } from '../../../../broker';
 
 @Component({
   selector: 'pos-coupon',
@@ -18,6 +20,8 @@ import { Cart } from '../../../../data/models/order/cart';
 export class CouponComponent extends ModalComponent implements OnInit, OnDestroy {
   accountInfo: Accounts;
   private cartInfo: Cart;
+  private orderInfo: Order;
+  private paymentcapture: PaymentCapture;
   private couponubscription: Subscription;
   private paymentsubscription: Subscription;
   private coupon: Coupon;
@@ -26,7 +30,8 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   couponCount: number;
   private page: Pagination;
   private pagesize = 5;
-  constructor(protected modalService: ModalService, private modal: Modal, private payment: PaymentService, private pager: PagerService) {
+  constructor(protected modalService: ModalService, private modal: Modal,
+    private info: InfoBroker, private payment: PaymentService, private pager: PagerService) {
     super(modalService);
     this.couponCount = -1;
   }
@@ -65,14 +70,19 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
    */
   paymentCoupon() {
     this.close();
-    this.modal.openModalByComponent(CouponPaymentComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        modalId: 'CouponPaymentComponent_Pop'
-      }
-    );
+
+    if (this.coupon) {
+      this.makePaymentCaptureData();
+    } else {
+      this.modal.openModalByComponent(CouponPaymentComponent,
+        {
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
+          closeByClickOutside: false,
+          closeByEnter: false,
+          modalId: 'CouponPaymentComponent_Pop'
+        }
+      );
+    }
   }
 
   openComplexPayment() {
@@ -96,21 +106,24 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.searchCoupon(pagenum);
   }
 
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
-
+  private makePaymentCaptureData(): void {
+    let pcap: PaymentCapture;
     this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
-      data => {
+      result => {
+        if (result) {
+          const paidamount = result.totalDiscounts.value;
+          const coupon = new VoucherPaymentInfo(paidamount);
+          coupon.setName = (this.coupon) ? this.coupon.name : '';
+          coupon.setPaymentModeData = new PaymentModeData(PaymentModes.COUPON);
+          coupon.setCurrencyData = new CurrencyData();
+          pcap = new PaymentCapture();
+          pcap.setVoucherPaymentInfo = coupon;
 
+          this.info.sendInfo('payinfo', [pcap, null]);
+
+        }
       });
-
-
-    const coupon = new VoucherPaymentInfo(paidamount);
-    coupon.setName = (this.coupon) ? this.coupon.name : '';
-    coupon.setPaymentModeData = new PaymentModeData(PaymentModes.COUPON);
-    coupon.setCurrencyData = new CurrencyData();
-    const paymentcapture = new PaymentCapture();
-    paymentcapture.setVoucherPaymentInfo = coupon;
-    return paymentcapture;
+    console.log(JSON.stringify(pcap));
   }
 
   activeRow(index: number, coupon: Coupon) {

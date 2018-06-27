@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, AlertService, SpinnerService } from '../../../../core';
+import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService } from '../../../../core';
 import { KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType, PaymentModes, PaymentModeData, CurrencyData, StatusDisplay } from '../../../../data';
 import { PaymentService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
@@ -36,6 +36,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     private payments: PaymentService,
     private alert: AlertService,
     private spinner: SpinnerService,
+    private storage: StorageService,
     private info: InfoBroker,
     private logger: Logger) {
     super(modalService);
@@ -53,7 +54,15 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    this.paymentprice = this.cartInfo.totalPrice.value;
+    if (this.paymentType === 'n') {
+      this.paymentprice = this.cartInfo.totalPrice.value;
+    } else {
+      if (this.storage.getPay() === 0) {
+        this.paymentprice = this.cartInfo.totalPrice.value;
+      } else {
+        this.paymentprice = this.storage.getPay();
+      }
+    }
     this.getBalance();
   }
 
@@ -180,35 +189,37 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     // payment capture and place order
     this.paymentcapture = this.makePaymentCaptureData(this.paymentprice);
     this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
-      this.orderInfo = result;
-      this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-      this.finishStatus = result.statusDisplay;
-      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          // this.paidDate = result.created ? result.created : new Date();
-          // setTimeout(() => { // 결제 성공, 변경못하도록 처리
-          //   this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
-          //   this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
-          //   this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
-          // }, 5);
-          this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-        } else { // CART 삭제된 상태
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+      result => {
+        this.orderInfo = result;
+        this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+        this.finishStatus = result.statusDisplay;
+        if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+          if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+            // this.paidDate = result.created ? result.created : new Date();
+            // setTimeout(() => { // 결제 성공, 변경못하도록 처리
+            //   this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
+            //   this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
+            //   this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
+            // }, 5);
+            this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+          } else { // CART 삭제된 상태
+            this.info.sendInfo('recart', this.orderInfo);
+          }
+        } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+          // cart-list.component에 재생성 이벤트 보내서 처리
           this.info.sendInfo('recart', this.orderInfo);
         }
-      } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-        // cart-list.component에 재생성 이벤트 보내서 처리
-        this.info.sendInfo('recart', this.orderInfo);
-      }
-    }, error => {
-      this.finishStatus = 'fail';
-      this.spinner.hide();
-      const errdata = Utils.getError(error);
-      if (errdata) {
-        this.logger.set('point.component', `${errdata.message}`).error();
-      }
-    }, () => { this.spinner.hide(); });
+        this.storage.removePay();
+      }, error => {
+        this.finishStatus = 'fail';
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('point.component', `${errdata.message}`).error();
+        }
+      }, () => { this.spinner.hide(); });
   }
 
   private makePaymentCaptureData(paidamount: number): PaymentCapture {

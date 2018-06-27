@@ -9,6 +9,7 @@ import {
   PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData, BankInfoList
 } from '../../data';
 import { Order } from '../../data/models/order/order';
+import { Cart } from '../../data/models/order/cart';
 
 @Injectable()
 export class PaymentService {
@@ -112,9 +113,9 @@ export class PaymentService {
    * @param cartid 카트 아이디
    * @param couponcode 쿠폰 코드
    */
-  applyCoupon(userid: string, cartid: string, couponcode: string): Observable<VoucherList> {
+  applyCoupon(userid: string, cartid: string, couponcode: string): Observable<Cart> {
     const pathvariables = { userId: userid, cartId: cartid };
-    const param = { voucherId: couponcode };
+    const param = { voucherId: couponcode, fields: 'FULL' };
     const data = new HttpData('applyCoupon', pathvariables, param, null);
     return this.api.post(data);
   }

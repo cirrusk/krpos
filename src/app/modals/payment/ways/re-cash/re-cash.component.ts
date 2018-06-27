@@ -92,7 +92,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
     } else {
       if (check > 0) {
-
+        this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+        this.info.sendInfo('payinfo', [this.paymentcapture, null]);
+        this.result = this.paymentcapture;
+        this.finishStatus = StatusDisplay.PAID;
       } else if (check === 0) {
         this.payment();
       }
@@ -122,6 +125,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         // cart-list.component에 재생성 이벤트 보내서 처리
         this.info.sendInfo('recart', this.orderInfo);
       }
+      this.storage.removePay();
     }, error => {
       this.finishStatus = 'fail';
       this.spinner.hide();
@@ -175,7 +179,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
         if (rtn) {
-          this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+          this.logger.set('recash.component', '일반결제 장바구니 초기화...').debug();
           this.info.sendInfo('orderClear', 'clear');
         } else {
           this.alert.show({ message: '실패' });
@@ -184,6 +188,21 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.close();
     } else {
       console.log('복합결제일 경우...');
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        const check = this.paidamount - this.usePoint.nativeElement.value;
+        if (check > 0) {
+
+        } else if (check === 0) {
+          const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          if (rtn) {
+            this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
+            this.info.sendInfo('orderClear', 'clear');
+          } else {
+            this.alert.show({ message: '실패' });
+          }
+        }
+      }
+      this.close();
     }
   }
 

@@ -156,6 +156,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
         // cart-list.component에 재생성 이벤트 보내서 처리
       }
+      this.storage.removePay();
     }, error => {
       this.finishStatus = 'fail';
       this.spinner.hide();

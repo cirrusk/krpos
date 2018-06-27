@@ -3,8 +3,9 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { ComplexPaymentComponent } from '../complex-payment/complex-payment.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
-import { Accounts, OrderEntry, KeyCode } from '../../../data';
+import { Accounts, KeyCode } from '../../../data';
 import { Cart } from '../../../data/models/order/cart';
+
 
 @Component({
   selector: 'pos-coupon-check',

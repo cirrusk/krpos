@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState, StorageService } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode
@@ -32,7 +32,8 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService, private printer: PrinterService, private payments: PaymentService,
+  constructor(protected modalService: ModalService, private receipt: ReceiptService,
+    private storage: StorageService, private printer: PrinterService, private payments: PaymentService,
     private logger: Logger, private info: InfoBroker, private alert: AlertService, private spinner: SpinnerService, private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
@@ -128,6 +129,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
               // cart-list.component에 재생성 이벤트 보내서 처리
               this.info.sendInfo('recart', this.orderInfo);
             }
+            this.storage.removePay();
           },
           error => {
             this.finishStatus = 'fail';

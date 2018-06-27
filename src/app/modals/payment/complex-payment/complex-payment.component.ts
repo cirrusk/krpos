@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, Modal, SpinnerService, AlertService, StorageService } from '../../../core';
+import { ModalComponent, ModalService, Modal, SpinnerService, AlertService, Logger } from '../../../core';
 import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -15,7 +15,6 @@ import { CompletePaymentComponent } from '../complete-payment/complete-payment.c
 import { PaymentService } from '../../../service';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
-
 
 @Component({
   selector: 'pos-complex-payment',
@@ -50,7 +49,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private modal: Modal,
     private alert: AlertService,
     private spinner: SpinnerService,
-    private storage: StorageService,
+    private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
     this.init();
@@ -59,6 +58,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+
+    if (this.accountInfo.accountTypeCode === MemberType.ABO) {
+      this.popupCoupon();
+    }
+
+
     this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
     this.popupList.push(0);
   }
@@ -66,12 +71,23 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   init() {
     this.popupList = new Array<number>();
     this.enableMenu = new Array<string>();
+    this.paymentcapture = new PaymentCapture();
   }
 
   ngOnDestroy() {
     if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
   }
 
+  private popupCoupon() {
+    // this.modal.openModalByComponent(CouponCheckComponent,
+    //   {
+    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+    //     closeByClickOutside: false,
+    //     closeByEnter: false,
+    //     modalId: 'CouponCheckComponent'
+    //   }
+    // );
+  }
 
   creditCard(evt: any) {
     // creditcard
@@ -191,27 +207,31 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   private remakePaymentCapture(paymentcapture: PaymentCapture) {
-    if (paymentcapture.getCcPaymentInfo) {
-      this.paymentcapture.setCcPaymentInfo = paymentcapture.getCcPaymentInfo;
+    if (paymentcapture) {
+      this.logger.set('compex.payment.component prams', `${JSON.stringify(paymentcapture, null, 2)}`).debug();
+      if (paymentcapture.getCcPaymentInfo) {
+        this.paymentcapture.setCcPaymentInfo = paymentcapture.getCcPaymentInfo;
+      }
+      if (paymentcapture.getCashPaymentInfo) {
+        this.paymentcapture.setCashPaymentInfo = paymentcapture.getCashPaymentInfo;
+      }
+      if (paymentcapture.getDirectDebitPaymentInfo) {
+        this.paymentcapture.setDirectDebitPaymentInfo = paymentcapture.getDirectDebitPaymentInfo;
+      }
+      if (paymentcapture.getIcCardPaymentInfo) {
+        this.paymentcapture.setIcCardPaymentInfo = paymentcapture.getIcCardPaymentInfo;
+      }
+      if (paymentcapture.getMonetaryPaymentInfo) {
+        this.paymentcapture.setMonetaryPaymentInfo = paymentcapture.getMonetaryPaymentInfo;
+      }
+      if (paymentcapture.getPointPaymentInfo) {
+        this.paymentcapture.setPointPaymentInfo = paymentcapture.getPointPaymentInfo;
+      }
+      if (paymentcapture.getVoucherPaymentInfo) {
+        this.paymentcapture.setVoucherPaymentInfo = paymentcapture.getVoucherPaymentInfo;
+      }
     }
-    if (paymentcapture.getCashPaymentInfo) {
-      this.paymentcapture.setCashPaymentInfo = paymentcapture.getCashPaymentInfo;
-    }
-    if (paymentcapture.getDirectDebitPaymentInfo) {
-      this.paymentcapture.setDirectDebitPaymentInfo = paymentcapture.getDirectDebitPaymentInfo;
-    }
-    if (paymentcapture.getIcCardPaymentInfo) {
-      this.paymentcapture.setIcCardPaymentInfo = paymentcapture.getIcCardPaymentInfo;
-    }
-    if (paymentcapture.getMonetaryPaymentInfo) {
-      this.paymentcapture.setMonetaryPaymentInfo = paymentcapture.getMonetaryPaymentInfo;
-    }
-    if (paymentcapture.getPointPaymentInfo) {
-      this.paymentcapture.setPointPaymentInfo = paymentcapture.getPointPaymentInfo;
-    }
-    if (paymentcapture.getVoucherPaymentInfo) {
-      this.paymentcapture.setVoucherPaymentInfo = paymentcapture.getVoucherPaymentInfo;
-    }
+    this.logger.set('compex.payment.component convert', `${JSON.stringify(this.paymentcapture, null, 2)}`).debug();
   }
 
   getPaymentModesByMain(userId: string, cartId: string): void {

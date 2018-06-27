@@ -3,12 +3,14 @@ import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
-  CancelOrderComponent, CouponCheckComponent, ComplexPaymentComponent } from '../../modals';
+  CancelOrderComponent } from '../../modals';
 import { Accounts, OrderHistoryList, OrderEntry, MemberType } from '../../data';
 import { OrderService, MessageService } from '../../service';
 import { Utils } from '../../core/utils';
 import { Router } from '@angular/router';
 import { Cart } from '../../data/models/order/cart';
+import { CouponCheckComponent } from '../../modals/payment/coupon-payment/coupon-check.component';
+import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 
 @Component({
   selector: 'pos-order-menu',
