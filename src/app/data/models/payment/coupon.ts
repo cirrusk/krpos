@@ -1,20 +1,21 @@
-import { Customer } from '../order/customer';
-import { Accounts } from '../order/accounts';
+import { ProductInfo } from '../order/product-info';
 
 export class CouponList {
     coupons: Array<Coupon>;
 }
 
 export class Coupon {
-    couponType: string;
-    description: string;
-    value: string;
-    code: string;
-    customer: Customer; // CustomerWsDTO
-    account: Accounts; // AmwayAccountWsDTO
+    couponCode: string;
+    couponId: string;
+    name: string;
+    active: boolean;
     startDate: Date;
     endDate: Date;
-    store: string;
-    redemptionCoupon: string;
+    code: string;
+    product: ProductInfo;
     status: string;
+    description: string;
+    notificationOn: boolean;
+    solrRootCategory: string;
+    bindingAnyProduct: boolean;
 }

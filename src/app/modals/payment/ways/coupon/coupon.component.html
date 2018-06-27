@@ -38,13 +38,13 @@
                             <!-- 내역 선택시 tr에 on클래스 추가 -->
                             <tr [class.on]="activeNum === i" *ngFor="let coupon of couponlist; let i = index" (click)="activeRow(i, coupon)">
                                 <td class="tit">
-                                    <span class="elips mx420">{{coupon?.description}}</span>
+                                    <span class="elips mx420"></span>
                                 </td>
                                 <td>
-                                    <span>{{coupon?.value}}</span>
+                                    <span>{{coupon?.name}}</span>
                                 </td>
                                 <td>
-                                    <span>{{coupon?.code}}</span>
+                                    <span>{{coupon?.couponId}}</span>
                                 </td>
                             </tr>
                         </tbody>
