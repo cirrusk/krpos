@@ -93,4 +93,17 @@ export class OrderService {
     const data = new HttpData('orderDetails', pathvariables, body, param);
     return this.api.get(data);
   }
+
+  /**
+   * 주문취소
+   *
+   * @param accountid account 아이디
+   * @param userid 회원아이디
+   * @param ordercode 주문번호
+   */
+  orderCancel(accountid: string, userid: string, ordercode: string) {
+    const pathvariables = { accountId: accountid, userId: userid, orderCode: ordercode };
+    const data = new HttpData('orderDetails', pathvariables, null, null);
+    return this.api.get(data);
+  }
 }

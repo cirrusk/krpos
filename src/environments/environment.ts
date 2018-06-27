@@ -62,7 +62,8 @@ export const environment = {
     placeOrder: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts/{cartId}/paymentCaptureAndPlaceOrder',
     searchCheque: '/{baseSiteId}/validateCheckNumber',
     orderList: '/{baseSiteId}/order/search',
-    orderDetails: '/{baseSiteId}/users/{userId}/order-details'
+    orderDetails: '/{baseSiteId}/users/{userId}/order-details',
+    orderCancel: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cancel-order/{orderCode}'
   },
   logLevel: 'debug',
   terminalTimeout: 20,
