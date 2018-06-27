@@ -60,7 +60,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
       this.orderTypeName = '설치주문';
     } else {
       this.orderTypeName = '픽업예약주문';
-      // this.confirmFlag = true;
+      this.confirmFlag = true;
     }
   }
 
@@ -210,86 +210,6 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
       );
     }
   }
-
-  makeReceipt(orderDetail: Order): string {
-    const tokenInfo = this.storageService.getTokenInfo();
-    const terminalInfo = this.storageService.getTerminalInfo();
-    const cashierId = tokenInfo.employeeName;
-    const posNo = terminalInfo.id;
-    const print = new StringBuilder();
-    print.append(`<span class="logo"><img src="/assets/images/common/bill_logo.png" alt="Amway"></span>`);
-    print.append(`<ul class="list">`);
-    print.append(`    <li><span>주문형태</span><em>${this.orderTypeName}</em></li>`);
-    print.append(`    <li><span>ABO정보</span><em>${orderDetail.user.uid} ${orderDetail.user.name}</em></li>`);
-    print.append(`    <li><span>구매일자</span><em>${orderDetail.created} </em></li>`);
-    print.append(`    <li><span>주문번호</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li><span>출력일자</span><em>${orderDetail.created}</em></li>`);
-    print.append(`</ul>`);
-    print.append(`<div class="scroll_tbl">`);
-    print.append(`    <div>`);
-    print.append(`        <table>`);
-    print.append(`            <caption>주문내역</caption>`);
-    print.append(`            <colgroup>`);
-    print.append(`                <col style="width:20px">`);
-    print.append(`                <col>`);
-    print.append(`                <col style="width:70px">`);
-    print.append(`                <col style="width:30px">`);
-    print.append(`                <col style="width:70px">`);
-    print.append(`            </colgroup>`);
-    print.append(`            <thead>`);
-    print.append(`                <tr>`);
-    print.append(`                    <th scope="col">번호</th>`);
-    print.append(`                    <th scope="col">상품명</th>`);
-    print.append(`                    <th scope="col">단가</th>`);
-    print.append(`                    <th scope="col">수량</th>`);
-    print.append(`                    <th scope="col">금액</th>`);
-    print.append(`                </tr>`);
-    print.append(`            </thead>`);
-    print.append(`            <tbody>`);
-    orderDetail.entries.forEach(entry => {
-      print.append(`                <tr>`);
-      print.append(`                    <td>${entry.entryNumber + 1}</td>`);
-      print.append(`                    <td><span class="blck">${entry.product.code}</span>${entry.product.name}</td>`);
-      print.append(`                    <td>${entry.basePrice.value}</td>`);
-      print.append(`                    <td>${entry.quantity}</td>`);
-      print.append(`                    <td>${entry.totalPrice.value}</td>`);
-      print.append(`                </tr>`);
-    });
-    print.append(`            </tbody>`);
-    print.append(`        </table>`);
-    print.append(`    </div>`);
-    print.append(`</div>`);
-    print.append(`<ul class="list">`);
-    print.append(`    <li><span>상품수량</span><em>${orderDetail.totalUnitCount}</em></li>`);
-    print.append(`    <li><span>과세물품</span><em>${orderDetail.subTotal.value}</em></li>`);
-    print.append(`    <li><span>부&nbsp; 가&nbsp; 세</span><em>${orderDetail.totalTax}</em></li>`);
-    print.append(`    <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>${orderDetail.code}1,000</em></li>`);
-    print.append(`    <li class="txt_b"><span>할인금액</span><em>${orderDetail.code}1,000</em></li>`);
-    print.append(`    <li><span>할인 쿠폰(신규 5%)</span><em>${orderDetail.code}1,000</em></li>`);
-    print.append(`    <li><span>포인트차감(A포인트)</span><em>${orderDetail.code}1,000</em></li>`);
-    print.append(`    <li class="txt_b"><span>결제금액</span><em>${orderDetail.code}1,000</em></li>`);
-    print.append(`</ul>`);
-    print.append(`<ul class="list">`);
-    print.append(`    <li>[신용카드결제]</li>`);
-    print.append(`    <li>카드번호:${orderDetail.code}32458****504</li>`);
-    print.append(`    <li>할부: 일시불 (승인번호: ${orderDetail.code}37360868)</li>`);
-    print.append(`</ul>`);
-    print.append(`<ul class="list">`);
-    print.append(`    <li class="fx"><span>PV</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li class="fx"><span>BV</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li class="fx"><span>PV SUM</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li class="fx"><span>BV SUM</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li class="fx"><span>GROUP PV</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li class="fx"><span>GROUP BV</span><em>${orderDetail.code}</em></li>`);
-    print.append(`    <li><span>잔여 A 포인트</span><em>${orderDetail.code}00</em></li>`);
-    print.append(`    <li>POS번호 및 캐셔 정보<br>POS No. ${posNo} / ${cashierId}</li>`);
-    print.append(`    <li><span>공제번호</span><em>${orderDetail.code}8645571</em></li>`);
-    print.append(`</ul>`);
-    print.append(`<p class="txt">*** ${orderDetail.code}정상 승인 완료 ***</p>`);
-
-    return print.toString();
-  }
-
 
   close() {
     this.closeModal();
