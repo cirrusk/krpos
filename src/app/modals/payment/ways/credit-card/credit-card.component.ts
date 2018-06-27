@@ -124,7 +124,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEnter: false,
-        closeByEscape: false,
+        closeByEscape: true,
         modalId: 'InstallmentPlanComponent'
       }
     );
@@ -378,8 +378,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         } else {
           this.nicePay();
         }
-    } else if (event.keyCode === KeyCode.ESCAPE) {
+    } /*else if (event.keyCode === KeyCode.ESCAPE) {
       this.close();
-    }
+    }*/
   }
 }

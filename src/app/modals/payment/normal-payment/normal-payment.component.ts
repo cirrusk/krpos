@@ -57,7 +57,7 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
       {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
-        closeByEscape: false,
+        closeByEscape: true,
         modalId: 'CreditCardComponent',
         paymentType: 'n'
       }
