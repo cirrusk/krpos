@@ -38,10 +38,13 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
    */
   searchBER(evt: any) {
     this.setSelected(evt);
+    if (!this.accountInfo) {
+      return;
+    }
     this.close();
     this.modal.openModalByComponent(SearchBerComponent,
       {
-        callerData: { aboNum: this.accountInfo.uid },
+        callerData: { aboNum: this.accountInfo.parties[0].uid },
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
