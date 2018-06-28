@@ -1,9 +1,11 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Modal, Logger, StorageService } from '../../core';
-import { PromotionOrderComponent, EtcOrderComponent,
+import {
+  PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
-  CancelCartComponent } from '../../modals';
+  CancelCartComponent
+} from '../../modals';
 import { Accounts, OrderHistoryList, MemberType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { CouponCheckComponent } from '../../modals/payment/coupon-payment/coupon-check.component';
@@ -25,11 +27,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal,
-              private storage: StorageService,
-              private logger: Logger,
-              private searchAccountBroker: SearchAccountBroker,
-              private renderer: Renderer2
-              ) { }
+    private storage: StorageService,
+    private logger: Logger,
+    private searchAccountBroker: SearchAccountBroker,
+    private renderer: Renderer2
+  ) { }
 
   ngOnInit() { }
 
@@ -74,7 +76,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
-        callerData : {accountInfo: this.accountInfo, cartInfo: this.cartInfo},
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         modalId: 'NormalPaymentComponent'
       }
@@ -92,7 +94,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
       this.modal.openModalByComponent(CouponCheckComponent,
         {
-          callerData : {accountInfo: this.accountInfo, cartInfo: this.cartInfo},
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
           closeByClickOutside: false,
           closeByEnter: false,
           modalId: 'CouponCheckComponent'
@@ -108,7 +110,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           modalId: 'ComplexPaymentComponent_Od'
         }
       ).subscribe(result => {
-        if (!result) { this.storage.removePaymentModeCode(); }
+        if (!result) {
+          this.storage.removePaymentModeCode();
+          this.storage.removePay();
+        }
       });
     }
   }
@@ -146,7 +151,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(PickupOrderComponent,
       {
         title: 'ECP픽업 주문리스트',
-        callerData : {searchType : 'p'},
+        callerData: { searchType: 'p' },
         closeByClickOutside: true,
         modalId: 'PickupOrderComponent'
       }
@@ -197,7 +202,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     // this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
-        callerData: {accountInfo: this.accountInfo},
+        callerData: { accountInfo: this.accountInfo },
         closeByClickOutside: false,
         modalId: 'EtcOrderComponent'
       }

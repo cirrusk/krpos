@@ -131,7 +131,10 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         modalId: 'ComplexPaymentComponent_Ck'
       }
     ).subscribe(result => {
-      if (!result) { this.storage.removePaymentModeCode(); }
+      if (!result) {
+        this.storage.removePaymentModeCode();
+        this.storage.removePay();
+      }
     });
   }
 

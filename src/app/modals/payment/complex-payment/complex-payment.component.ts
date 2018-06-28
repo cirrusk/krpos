@@ -94,6 +94,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   init() {
     this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 초기화
+    this.storage.removePay(); // 복합결제 남은 금액 정보 초기화
     this.popupList = new Array<number>();
     this.enableMenu = new Array<string>();
     this.paymentcapture = new PaymentCapture();

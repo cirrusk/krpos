@@ -207,6 +207,9 @@ export class StorageService implements OnDestroy {
     return (terminalinfo !== null && Utils.isNotEmpty(terminalinfo.id));
   }
 
+  /**
+   * 복합결제 시 남은 금액을 기록
+   */
   public getPay(): number {
     return this.getSessionItem('pay') ? this.getSessionItem('pay') : 0;
   }
@@ -219,6 +222,9 @@ export class StorageService implements OnDestroy {
     this.removeSessionItem('pay');
   }
 
+  /**
+   * 복합결제 시 주결제 수단을 기록
+   */
   public getPaymentModeCode(): string {
     return this.getSessionItem('paymentmode');
   }
