@@ -36,6 +36,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   received: number;
   change: number;
   accountType: string;                            // 회원 타입
+  apprtype: string;
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
@@ -101,6 +102,12 @@ export class ClientComponent implements OnInit, OnDestroy {
           const data: any = result.value;
           if (data) {
             this.retreiveInfo(data[0], data[1]);
+          }
+        } else if (result.key === 'apprtype') {
+          if (result.value === 'n') {
+            this.apprtype = '일반결제';
+          } else if (result.value === 'c') {
+            this.apprtype = '복합결제';
           }
         }
       }

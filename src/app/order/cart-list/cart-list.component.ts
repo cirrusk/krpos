@@ -70,6 +70,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   received: number;
   change: number;
   selectedUser = -1;
+  apprtype: string;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
@@ -199,6 +200,11 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
+  setType(data) {
+    if (data) {
+      this.apprtype = data.type;
+    }
+  }
   /**
    * 변수 초기화
    */

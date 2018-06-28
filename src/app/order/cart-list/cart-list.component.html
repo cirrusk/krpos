@@ -87,7 +87,7 @@
               </em>                
               
               <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountTypeCode.toUpperCase() === memberType.CONSUMER ? accountInfo.parties[0].uid : accountInfo.uid}}</span>
-              <span class="t02" *ngIf="accountInfo;">일반결제</span>
+              <span class="t02" *ngIf="accountInfo;">{{apprtype}}</span>
               <!-- //비회원시 삭제1 -->
           </div>
           <div class="info_cont">

@@ -2,7 +2,7 @@
   <!-- 좌측영역 -->
   <div class="m_cont">
       <!-- 주문영역 -->
-      <pos-cart-list [noticeList]="noticeList" (posCart)="posMenu.setFlag($event)"></pos-cart-list>
+      <pos-cart-list [noticeList]="noticeList" (posCart)="posMenu.setFlag($event)" #posCart></pos-cart-list>
       <!-- //주문영역 -->
       <!-- 가격정보영역 -->
       <!-- <pos-price-info></pos-price-info>-->
@@ -13,7 +13,7 @@
   <!-- 우측영역 -->
   <div class="m_right">
       <!-- 메뉴 -->
-      <pos-order-menu [promotionList]="promotionList" #posMenu></pos-order-menu>
+      <pos-order-menu [promotionList]="promotionList" (posMenu)="posCart.setType($event)" #posMenu></pos-order-menu>
       <!-- //메뉴 -->
   </div>
   <!-- //우측영역-->

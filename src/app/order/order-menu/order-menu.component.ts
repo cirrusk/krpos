@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Modal, Logger, StorageService } from '../../core';
 import {
@@ -26,6 +26,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   hasCart = false;
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
+  @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();    // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
   constructor(private modal: Modal,
     private storage: StorageService,
     private logger: Logger,
@@ -74,6 +75,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   normalPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
+    this.posMenu.emit({ type: '일반결제' });
+    this.storage.setLocalItem('apprtype', 'n');
     this.modal.openModalByComponent(NormalPaymentComponent,
       {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
@@ -90,7 +93,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   complexPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
-
+    this.posMenu.emit({ type: '복합결제' });
+    this.storage.setLocalItem('apprtype', 'c');
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
       this.modal.openModalByComponent(CouponCheckComponent,
         {
