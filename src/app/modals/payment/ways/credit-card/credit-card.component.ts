@@ -250,6 +250,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.cardresult = res;
         if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
           this.finishStatus = 'fail';
+          this.storage.removePaymentModeCode();
           this.alert.error({ message: res.msg });
         } else {
           if (res.approved) {
@@ -266,6 +267,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             }
           } else {
             this.finishStatus = 'fail';
+            this.storage.removePaymentModeCode();
             this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
           }
         }
@@ -400,24 +402,16 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   cartInitAndClose() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentType === 'n') { // 일반결제
-        const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-        if (rtn) {
-          this.logger.set('credit.card.component', '일반결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
-        } else {
-          this.alert.show({ message: '영수증 출력 실패' });
-        }
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.logger.set('credit.card.component', '일반결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
         this.close();
       } else { // 복합결제
         const change = this.paidamount - this.paid.nativeElement.value;
         if (change === 0) {
-          const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          if (rtn) {
-            this.logger.set('credit.card.component', '복합 결제 장바구니 초기화...').debug();
-            this.info.sendInfo('orderClear', 'clear');
-          } else {
-            this.alert.show({ message: '영수증 출력 실패' });
-          }
+          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          this.logger.set('credit.card.component', '복합 결제 장바구니 초기화...').debug();
+          this.info.sendInfo('orderClear', 'clear');
         } else {
           this.result = this.paymentcapture;
         }

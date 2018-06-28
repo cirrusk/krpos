@@ -184,13 +184,9 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-        if (rtn) {
-          this.logger.set('recash.component', '일반결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
-        } else {
-          this.alert.show({ message: '실패' });
-        }
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.logger.set('recash.component', '일반결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
       }
       this.close();
     } else {
@@ -200,13 +196,9 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         if (check > 0) {
 
         } else if (check === 0) {
-          const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          if (rtn) {
-            this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
-            this.info.sendInfo('orderClear', 'clear');
-          } else {
-            this.alert.show({ message: '실패' });
-          }
+          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
+          this.info.sendInfo('orderClear', 'clear');
         }
       }
       this.close();
