@@ -188,6 +188,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.received = 0;
     this.change = 0;
     this.selectedCartNum = -1;
+    this.apprtype = '';
     this.pager = new Pagination();
   }
 

@@ -231,6 +231,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.received = 0;
     this.change = 0;
     this.selectedUser = -1;
+    this.apprtype = '';
     this.pager = new Pagination();
     this.resCartInfo = new ResCartInfo();
     this.restrictionModel = new RestrictionModel();
