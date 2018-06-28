@@ -1,5 +1,6 @@
 import { OrderEntry, Accounts, Principal, Price } from '../..';
 import { Voucher } from '../payment/voucher';
+import { Coupon } from '../payment/coupon';
 import { PaymentDetails, PaymentDetailInfo } from '../payment/payment-details';
 import { AmwayValue } from '../common/amway-value';
 
@@ -25,6 +26,7 @@ export class AbstractOrder {
     store: string;
     guid: string;
     calculated: boolean;
+    appliedCouponData: Array<Coupon>;
     appliedVouchers: Array<Voucher>; // List<VoucherWsDTO>
     user: Principal;
     pickupOrderGroups: any; // List<PickupOrderEntryGroupWsDTO>

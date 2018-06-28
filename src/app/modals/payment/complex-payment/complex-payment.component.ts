@@ -67,6 +67,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         const data = result && result.data;
         if (result !== null && type === 'orderClear' && data === 'clear') { // 복합결제 완료되면 복합결제 팝업 닫기
           this.close();
+        } else if (result != null && type === 'coupon') {
+          this.remakePaymentCapture(data);
         }
       }
     );

@@ -116,6 +116,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
       result => {
         if (result) {
+          this.logger.set('coupon.component', JSON.stringify(result, null, 2)).debug();
           const paidamount = result.totalDiscounts.value;
           const coupon = new VoucherPaymentInfo(paidamount);
           coupon.setName = (this.coupon) ? this.coupon.name : '';
@@ -147,13 +148,14 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
-   * 장바구니와 클라이언트에 정보 전달
+   * 장바구니와 클라이언트에 정보 전달, 복합결제 창에 전달
    *
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
   private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
+    this.info.sendInfo('coupon', payment);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
