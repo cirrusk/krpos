@@ -43,7 +43,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     if (this.paymentType === 'n') {
-    this.payprice = this.cartInfo.totalPrice.value;
+      this.payprice = this.cartInfo.totalPrice.value;
     } else {
       if (this.storage.getPay() === 0) {
         this.payprice = this.cartInfo.totalPrice.value;
@@ -85,6 +85,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     resultNotifier.subscribe((res: ICCardApprovalResult) => {
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
+        this.finishStatus = 'fail';
+        this.storage.removePaymentModeCode();
         this.alert.error({ message: res.msg });
       } else {
         if (res.approved) {
@@ -98,6 +100,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
         } else {
           this.finishStatus = 'fail';
+          this.storage.removePaymentModeCode();
           this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
         }
       }
@@ -204,13 +207,9 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   cartInitAndClose() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-      if (rtn) {
-        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
-      } else {
-        this.alert.show({ message: '실패' });
-      }
+      this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+      this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+      this.info.sendInfo('orderClear', 'clear');
     }
     this.close();
   }

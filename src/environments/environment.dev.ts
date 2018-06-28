@@ -58,7 +58,6 @@ export const environment = {
     recash: '/{baseSiteId}/users/{userId}/recash',
     searchCoupon: '/{baseSiteId}/accounts/{accountId}/users/{userId}/coupons',
     applyCoupon: '/{baseSiteId}/users/{userId}/carts/{cartId}/vouchers',
-    paymentCapture: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentdetails',
     placeOrder: '/{baseSiteId}/accounts/{accountId}/users/{userId}/carts/{cartId}/paymentCaptureAndPlaceOrder',
     searchCheque: '/{baseSiteId}/validateCheckNumber',
     orderList: '/{baseSiteId}/order/search',

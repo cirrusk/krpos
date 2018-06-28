@@ -138,22 +138,6 @@ export class PaymentService {
   }
 
   /**
-   * Payment Capture 실행하기
-   *
-   * @deprecated Payment Capture와 Place Order를 진행하도록 변경
-   * @see placeOrder 참조
-   * @param userid 사용자아이디
-   * @param cartid 카트아이디
-   * @param paymentcapture Payment Mode 별 PaymentCapture 정보
-   */
-  paymentCapture(userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<PaymentDetails> {
-    const pathvariables = { userId: userid, cartId: cartid };
-    const params = { feilds: 'DEFAULT' };
-    const data = new HttpData('paymentCapture', pathvariables, paymentcapture, params);
-    return this.api.post(data);
-  }
-
-  /**
    * Payment Capture와 Place Order를 진행
    *
    * @param accountid 회원 아이디
