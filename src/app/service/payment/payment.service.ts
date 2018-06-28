@@ -98,10 +98,7 @@ export class PaymentService {
    */
   searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
-    const params = {
-      currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc,
-      couponStatuses: ['NEW', 'REISSUED', 'REDEEMED'], showActive: true, feilds: 'DEFAULT'
-    }; // 'EXPIRED', 'DELETED', 'FREEZED'
+    const params = { currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc, feilds: 'DEFAULT' };
     const data = new HttpData('searchCoupon', pathvariables, null, params);
     return this.api.get(data);
   }

@@ -155,15 +155,20 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.checktype = '3';
       }
     }
-
+    if (this.balanceamount < usepoint) {
+      this.alert.show({ message: '가용포인트 보다 사용포인트가 클 수 없습니다.' });
+      return;
+    }
     const paid = this.paymentprice - usepoint;
     if (this.paymentType === 'n') {
       if (paid > 0) { // 포인트가 부족
-        this.checktype = '1';
+        // this.checktype = '1';
         // this.alert.show({ message: '사용 포인트가 부족합니다.' });
+        // return;
       } else if (paid < 0) { // 포인트가 많음.
-        this.checktype = '2';
+        // this.checktype = '2';
         // this.alert.show({ message: '사용 포인트가 결제금액보다 많습니다.' });
+        // return;
       } else {
         this.checktype = null;
         this.paymentCapture();
