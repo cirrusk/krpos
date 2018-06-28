@@ -122,12 +122,12 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         } else { // 복합결제
           if (paidAmount >= payAmount) { // 금액이 같거나 거스름돈 있으면 payment 처리
             // this.paymentAndCapture(payAmount, paidAmount, change);
-            this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change).capturePaymentInfoData;
+            this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change).capturePaymentInfoData;
             this.completePayPopup(paidAmount, payAmount, change);
           }
         }
       } else { // 내신 금액이 작을 경우
-        this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change).capturePaymentInfoData;
+        this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       }
