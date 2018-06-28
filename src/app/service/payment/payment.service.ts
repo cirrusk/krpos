@@ -113,7 +113,7 @@ export class PaymentService {
   applyCoupon(userid: string, cartid: string, couponcode: string): Observable<Cart> {
     const pathvariables = { userId: userid, cartId: cartid };
     const param = { voucherId: couponcode, fields: 'FULL' };
-    const data = new HttpData('applyCoupon', pathvariables, param, null, 'b');
+    const data = new HttpData('applyCoupon', pathvariables, null, param, 'b');
     return this.api.post(data);
   }
 

@@ -61,24 +61,14 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
-  selectCoupon(evt: any) {
-    this.modal.openModalByComponent(CouponPaymentComponent,
-      {
-        closeByClickOutside: false,
-        modalId: 'CouponPayComponent'
-      }
-    );
-  }
-
   /**
    * % 쿠폰은 자동 계산, 금액 쿠폰은 결제 팝업 뜸
    */
   paymentCoupon() {
-    this.close();
-
     if (this.coupon) {
       this.makePaymentCaptureData();
     } else {
+      this.close();
       this.modal.openModalByComponent(CouponPaymentComponent,
         {
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
@@ -94,11 +84,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
-        modalId: 'ComplexPaymentComponent_Pop'
+        modalId: 'ComplexPaymentComponent'
       }
     );
   }
@@ -125,8 +115,14 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           pcap = new PaymentCapture();
           pcap.setVoucherPaymentInfo = coupon;
 
+          this.paymentcapture = pcap;
+
           // this.info.sendInfo('payinfo', [pcap, null]);
           this.sendPaymentAndOrder(pcap, null);
+
+          this.openComplexPayment();
+        } else {
+          this.logger.set('coupon.component', `no apply or exist cart`).error();
         }
       },
       error => { this.logger.set('coupon.component', `${error}`).error(); });
@@ -155,7 +151,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
    */
   private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
-    this.info.sendInfo('coupon', payment);
+    // this.info.sendInfo('coupon', payment);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }
 

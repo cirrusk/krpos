@@ -60,6 +60,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    if (this.callerData.paymentCapture) {
+      this.paymentcapture = this.callerData.paymentCapture;
+    }
+
+console.log(JSON.stringify(this.paymentcapture));
 
     this.cmplsubscription = this.info.getInfo().subscribe(
       result => {
@@ -67,9 +72,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         const data = result && result.data;
         if (result !== null && type === 'orderClear' && data === 'clear') { // 복합결제 완료되면 복합결제 팝업 닫기
           this.close();
-        } else if (result != null && type === 'coupon') {
+        } /*else if (result != null && type === 'coupon') {
           this.remakePaymentCapture(data);
-        }
+        }*/
       }
     );
 
@@ -208,26 +213,26 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private remakePaymentCapture(paymentcapture: PaymentCapture) {
     if (paymentcapture) {
       this.logger.set('compex.payment.component prams', `${JSON.stringify(paymentcapture, null, 2)}`).debug();
-      if (paymentcapture.getCcPaymentInfo) {
-        this.paymentcapture.setCcPaymentInfo = paymentcapture.getCcPaymentInfo;
+      if (paymentcapture.ccPaymentInfo) {
+        this.paymentcapture.ccPaymentInfo = paymentcapture.ccPaymentInfo;
       }
-      if (paymentcapture.getCashPaymentInfo) {
-        this.paymentcapture.setCashPaymentInfo = paymentcapture.getCashPaymentInfo;
+      if (paymentcapture.cashPaymentInfo) {
+        this.paymentcapture.cashPaymentInfo = paymentcapture.cashPaymentInfo;
       }
-      if (paymentcapture.getDirectDebitPaymentInfo) {
-        this.paymentcapture.setDirectDebitPaymentInfo = paymentcapture.getDirectDebitPaymentInfo;
+      if (paymentcapture.directDebitPaymentInfo) {
+        this.paymentcapture.directDebitPaymentInfo = paymentcapture.directDebitPaymentInfo;
       }
-      if (paymentcapture.getIcCardPaymentInfo) {
-        this.paymentcapture.setIcCardPaymentInfo = paymentcapture.getIcCardPaymentInfo;
+      if (paymentcapture.icCardPaymentInfo) {
+        this.paymentcapture.icCardPaymentInfo = paymentcapture.icCardPaymentInfo;
       }
-      if (paymentcapture.getMonetaryPaymentInfo) {
-        this.paymentcapture.setMonetaryPaymentInfo = paymentcapture.getMonetaryPaymentInfo;
+      if (paymentcapture.monetaryPaymentInfo) {
+        this.paymentcapture.monetaryPaymentInfo = paymentcapture.monetaryPaymentInfo;
       }
-      if (paymentcapture.getPointPaymentInfo) {
-        this.paymentcapture.setPointPaymentInfo = paymentcapture.getPointPaymentInfo;
+      if (paymentcapture.pointPaymentInfo) {
+        this.paymentcapture.pointPaymentInfo = paymentcapture.pointPaymentInfo;
       }
-      if (paymentcapture.getVoucherPaymentInfo) {
-        this.paymentcapture.setVoucherPaymentInfo = paymentcapture.getVoucherPaymentInfo;
+      if (paymentcapture.voucherPaymentInfo) {
+        this.paymentcapture.voucherPaymentInfo = paymentcapture.voucherPaymentInfo;
       }
     }
     this.logger.set('compex.payment.component convert', `${JSON.stringify(this.paymentcapture, null, 2)}`).debug();
