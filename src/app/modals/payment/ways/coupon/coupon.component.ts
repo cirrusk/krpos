@@ -121,7 +121,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           pcap.setVoucherPaymentInfo = coupon;
 
           // this.info.sendInfo('payinfo', [pcap, null]);
-          this.sendPayemtAndOrder(pcap, null);
+          this.sendPaymentAndOrder(pcap, null);
 
         }
       });
@@ -139,7 +139,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }

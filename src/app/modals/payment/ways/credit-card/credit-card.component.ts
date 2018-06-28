@@ -19,6 +19,7 @@ import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/ca
 import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
 import { InfoBroker } from '../../../../broker';
 import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 
 @Component({
   selector: 'pos-credit-card',
@@ -221,13 +222,16 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.approvalAndPayment();
       }
     } else {
-      if (this.change > 0) {
-        this.approval();
-      } else if (this.change === 0) {
-        this.approvalAndPayment();
-      } else {
-        this.alert.show({ message: '실결제금액이 큽니다.' });
-      }
+      this.approval();
+      // if (this.change > 0) { // 결제 더 할것이 남음.
+      //   this.approval();
+      // } else if (this.change === 0) {
+      //   // this.approvalAndPayment();
+
+      //   // this.completePayPopup(paidprice, this.paidamount, 0);
+      // } else {
+      //   this.alert.show({ message: '실결제금액이 큽니다.' });
+      // }
     }
   }
 
@@ -235,33 +239,40 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 카드결제만 진행
    */
   private approval() {
-    const paidprice: number = this.paid.nativeElement.value;
-    this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-    this.spinner.show();
-    const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
-    this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
-    resultNotifier.subscribe((res: CardApprovalResult) => {
-      this.spinner.hide();
-      this.cardresult = res;
-      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        this.finishStatus = 'fail';
-        this.alert.error({ message: res.msg });
-      } else {
-        if (res.approved) {
-          this.finishStatus = StatusDisplay.PAID;
-          this.cardnumber = res.maskedCardNumber;
-          this.cardcompany = res.issuerName;
-          this.cardauthnumber = res.approvalNumber;
-          this.paidDate = Utils.convertDate(res.approvalDateTime);
-          // payment caputure
-          this.paymentcapture = this.makePaymentCaptureData(paidprice);
-          this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-        } else {
+    if (this.change >= 0) {
+      const paidprice: number = this.paid.nativeElement.value;
+      this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+      this.spinner.show();
+      const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
+      this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
+      resultNotifier.subscribe((res: CardApprovalResult) => {
+        this.spinner.hide();
+        this.cardresult = res;
+        if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
           this.finishStatus = 'fail';
-          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+          this.alert.error({ message: res.msg });
+        } else {
+          if (res.approved) {
+            this.finishStatus = StatusDisplay.PAID;
+            this.cardnumber = res.maskedCardNumber;
+            this.cardcompany = res.issuerName;
+            this.cardauthnumber = res.approvalNumber;
+            this.paidDate = Utils.convertDate(res.approvalDateTime);
+            // payment caputure
+            this.paymentcapture = this.makePaymentCaptureData(paidprice);
+            this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+            if (this.change === 0) {
+              this.completePayPopup(paidprice, this.paidamount, this.change);
+            }
+          } else {
+            this.finishStatus = 'fail';
+            this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+          }
         }
-      }
-    });
+      });
+    } else {
+      this.alert.show({ message: '실결제금액이 큽니다.' });
+    }
   }
 
   /**
@@ -297,7 +308,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                   this.paidDate = result.created ? result.created : new Date();
                   // 장바구니에 정보를 보내야함. capture 정보, order 정보
                   // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-                  this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
+                  this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
                   setTimeout(() => {
                     this.paid.nativeElement.blur(); // keydown.enter 처리 안되도록
                     this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
@@ -328,13 +339,29 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     });
   }
 
+  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+    this.close();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: {
+          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+          paidAmount: paidAmount, payAmount: payAmount, change: change
+        },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
+      }
+    );
+  }
+
   /**
    * 장바구니와 클라이언트에 정보 전달
    *
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }

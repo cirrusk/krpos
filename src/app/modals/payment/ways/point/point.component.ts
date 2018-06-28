@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService, Modal } from '../../../../core';
 import { KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType, PaymentModes, PaymentModeData, CurrencyData, StatusDisplay } from '../../../../data';
 import { PaymentService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
 import { Utils } from '../../../../core/utils';
 import { Order } from '../../../../data/models/order/order';
 import { InfoBroker } from '../../../../broker';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 
 @Component({
   selector: 'pos-point',
@@ -33,6 +34,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   constructor(protected modalService: ModalService,
+    private modal: Modal,
     private payments: PaymentService,
     private alert: AlertService,
     private spinner: SpinnerService,
@@ -139,7 +141,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
   }
 
-
   payPoint() {
     if (this.finishStatus !== null) {
       this.close();
@@ -169,16 +170,16 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       }
     } else {
       this.checktype = null;
-      console.log(paid);
-      if (paid > 0) {
-        const point = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-        this.paymentcapture = this.makePaymentCaptureData(point);
+      const point = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
+      this.paymentcapture = this.makePaymentCaptureData(point);
+      if (paid > 0) { // 결제할것이 남음.
         this.result = this.paymentcapture;
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
-        this.sendPayemtAndOrder(this.paymentcapture, null);
+        this.sendPaymentAndOrder(this.paymentcapture, null);
         this.close();
       } else if (paid === 0) {
-        this.paymentCapture();
+        this.completePayPopup(usepoint, this.paymentprice, 0);
+        // this.paymentCapture();
       } else {
         this.checktype = '2';
       }
@@ -205,7 +206,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
             //   this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
             // }, 5);
             // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-            this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
+            this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           } else { // CART 삭제된 상태
             this.info.sendInfo('recart', this.orderInfo);
@@ -252,9 +253,25 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setLocalItem('payinfo', [payment, order]);
+  }
+
+  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+    this.close();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: {
+          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+          paidAmount: paidAmount, payAmount: payAmount, change: change
+        },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
+      }
+    );
   }
 
   close() {

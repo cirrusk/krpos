@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData
@@ -11,6 +11,7 @@ import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { InfoBroker } from '../../../../broker';
 import { Utils } from '../../../../core/utils';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 
 @Component({
   selector: 'pos-re-cash',
@@ -31,7 +32,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private balancesubscription: Subscription;
   private alertsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService, private payments: PaymentService,
+  constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
     private storage: StorageService, private alert: AlertService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
@@ -71,7 +72,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       console.log('*** use point : ' + this.usePoint.nativeElement.value);
     }
-    const check = this.paidamount - this.usePoint.nativeElement.value;
+    const usepoint = this.usePoint.nativeElement.value;
+    const check = this.paidamount - usepoint;
     if (this.paymentType === 'n') {
       this.alertsubscription = this.alert.alertState.subscribe(
         (state: AlertState) => {
@@ -91,14 +93,15 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.payment();
       }
     } else {
-      if (check > 0) {
-        this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+      this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+      if (check > 0) { // 결제할것이 남음.
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
-        this.sendPayemtAndOrder(this.paymentcapture, null);
+        this.sendPaymentAndOrder(this.paymentcapture, null);
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       } else if (check === 0) {
-        this.payment();
+        // this.payment();
+        this.completePayPopup(this.paidamount, usepoint, check);
       }
     }
   }
@@ -118,7 +121,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
             this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
           }, 5);
           // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-          this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
+          this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
         } else { // CART 삭제된 상태
           this.info.sendInfo('recart', this.orderInfo);
@@ -214,9 +217,25 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setLocalItem('payinfo', [payment, order]);
+  }
+
+  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+    this.close();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: {
+          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+          paidAmount: paidAmount, payAmount: payAmount, change: change
+        },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
+      }
+    );
   }
 
   close() {

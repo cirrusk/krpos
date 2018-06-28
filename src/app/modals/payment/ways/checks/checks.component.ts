@@ -34,7 +34,7 @@ export class ChecksComponent extends ModalComponent implements OnInit {
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }

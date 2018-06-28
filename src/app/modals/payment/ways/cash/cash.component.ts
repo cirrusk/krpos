@@ -16,6 +16,7 @@ import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
 import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
 import { Order } from '../../../../data/models/order/order';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 
 @Component({
   selector: 'pos-cash',
@@ -33,7 +34,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
-  private point; number;
   private keyboardsubscription: Subscription;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
@@ -121,15 +121,33 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           this.paymentAndCapture(payAmount, paidAmount, change);
         } else { // 복합결제
           if (paidAmount >= payAmount) { // 금액이 같거나 거스름돈 있으면 payment 처리
-            this.paymentAndCapture(payAmount, paidAmount, change);
+            // this.paymentAndCapture(payAmount, paidAmount, change);
+            this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change);
+            this.completePayPopup(paidAmount, payAmount, change);
           }
         }
       } else { // 내신 금액이 작을 경우
-        this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
+        this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change);
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       }
     }
+  }
+
+  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+    this.close();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: {
+          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+          paidAmount: paidAmount, payAmount: payAmount, change: change
+        },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
+      }
+    );
   }
 
   /**
@@ -156,7 +174,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
             this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
           }, 5);
           // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-          this.sendPayemtAndOrder(this.paymentcapture, this.orderInfo);
+          this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           this.printer.openCashDrawer(); // 캐셔 drawer 오픈
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
         } else { // CART 삭제된 상태
@@ -232,7 +250,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  private sendPayemtAndOrder(payment: PaymentCapture, order: Order) {
+  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }

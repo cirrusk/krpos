@@ -1,4 +1,4 @@
-<div class="pop_wrap pop_m">
+<div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
   <div class="pop_header">
       <h1>결제완료</h1>
       <button type="button" class="ico_comm pop_close01" (click)="close()">닫기</button>
@@ -17,25 +17,27 @@
                   <tbody>
                       <tr>
                           <th scope="row">내신금액</th>
-                          <td><span class="won"></span></td>
+                          <td><span class="won">{{paidamount | number}}</span></td>
                       </tr>
                       <tr>
                           <th scope="row">결제금액</th>
-                          <td><span class="won"></span></td>
+                          <td><span class="won">{{payamount | number}}</span></td>
                       </tr>
                       <tr>
                           <th scope="row">거스름돈</th>
-                          <td><span class="won"></span></td>
+                          <td><span class="won">{{change | number}}</span></td>
                       </tr>
                       <tr>
                           <th scope="row">결제일자</th>
-                          <td></td>
+                          <td>{{paidDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                       </tr>
                   </tbody>
               </table>
           </div>
-          <em class="finish ok">결제가 완료되었습니다.</em>
-          <!-- <em class="finish fail">결제에 실패했습니다.</em> -->
+          <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">결제가 완료되었습니다.</em>
+            <ng-template #payFail>
+                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">결제에 실패했습니다.</em>
+            </ng-template>
           <!-- //결제내역 -->
       </div>
   </div>
@@ -43,7 +45,7 @@
   <div class="pop_footer line02 clearfix">
       <span class="fl">취소 ESC</span>
       <span class="fr">
-          <a href="javascript:void(0)" class="btn01_blue"  (click)="close()">확인</a>
+          <a href="javascript:void(0)" class="btn01_blue"  (click)="pay($event)">확인</a>
           <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
       </span>
   </div>
