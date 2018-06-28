@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService, SpinnerService, Logger } from '../../../../core';
 import { VoucherPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
 import { Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination } from '../../../../data';
@@ -28,8 +28,9 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   couponCount: number;
   private page: Pagination;
   private pagesize = 5;
-  constructor(protected modalService: ModalService, private modal: Modal,
-    private info: InfoBroker, private payment: PaymentService, private storage: StorageService, private pager: PagerService) {
+  constructor(protected modalService: ModalService, private modal: Modal, private spinner: SpinnerService,
+    private info: InfoBroker, private payment: PaymentService, private storage: StorageService,
+    private logger: Logger, private pager: PagerService) {
     super(modalService);
     this.couponCount = -1;
   }
@@ -41,6 +42,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private searchCoupon(pagenum: number) {
+    this.spinner.show();
     this.couponubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
       result => {
         this.couponlist = result.coupons;
@@ -49,7 +51,9 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           this.page = result.pagination;
           this.paging(this.couponlist.length, pagenum, this.pagesize);
         }
-      });
+      },
+      error => { this.logger.set('', `${error}`).debug(); },
+      () => { this.spinner.hide(); });
   }
 
   ngOnDestroy() {
@@ -129,6 +133,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   activeRow(index: number, coupon: Coupon) {
+    if (this.activeNum === index) {
+      this.activeNum = -1;
+      this.coupon = null;
+      return;
+    }
     if (coupon.status === 'effective') {
       this.activeNum = index;
       this.coupon = coupon;
