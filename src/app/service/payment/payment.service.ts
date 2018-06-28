@@ -99,7 +99,7 @@ export class PaymentService {
   searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = { currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc, feilds: 'DEFAULT' };
-    const data = new HttpData('searchCoupon', pathvariables, null, params);
+    const data = new HttpData('searchCoupon', pathvariables, null, params, 'b');
     return this.api.get(data);
   }
 
