@@ -1,7 +1,6 @@
-
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { SearchBerComponent } from './../../account/search-ber/search-ber.component';
+import { SearchBerComponent } from '../../account/search-ber/search-ber.component';
 import { InfoBroker } from '../../../broker';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { Accounts } from '../../../data';
