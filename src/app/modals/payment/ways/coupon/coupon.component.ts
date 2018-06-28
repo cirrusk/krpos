@@ -129,8 +129,13 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   activeRow(index: number, coupon: Coupon) {
-    this.activeNum = index;
-    this.coupon = coupon;
+    if (coupon.status === 'effective') {
+      this.activeNum = index;
+      this.coupon = coupon;
+    } else {
+      this.activeNum = -1;
+      this.coupon = null;
+    }
   }
 
   /**

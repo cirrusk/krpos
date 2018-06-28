@@ -105,28 +105,29 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
 
     this.spinner.show();
-    this.spsubscription = this.search.getBasicProductInfo(this.searchType, sval, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(data => {
-      this.products = data;
-      this.productCount = data.pagination.totalResults;
-      this.totalPages = data.pagination.totalPages;
-      if (this.totalPages > 1) {
-        if (this.currentPage === 0) { // 첫페이지
-          this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
-          this.renderer.addClass(this.searchNext.nativeElement, 'on');
-        } else {
-          if ((this.totalPages - 1) === this.currentPage) { // 마지막 페이지
-            this.renderer.addClass(this.searchPrev.nativeElement, 'on');
-            this.renderer.removeClass(this.searchNext.nativeElement, 'on');
-          } else {
-            this.renderer.addClass(this.searchPrev.nativeElement, 'on');
+    this.spsubscription = this.search.getBasicProductInfo(this.searchType, sval, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(
+      data => {
+        this.products = data;
+        this.productCount = data.pagination.totalResults;
+        this.totalPages = data.pagination.totalPages;
+        if (this.totalPages > 1) {
+          if (this.currentPage === 0) { // 첫페이지
+            this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
             this.renderer.addClass(this.searchNext.nativeElement, 'on');
+          } else {
+            if ((this.totalPages - 1) === this.currentPage) { // 마지막 페이지
+              this.renderer.addClass(this.searchPrev.nativeElement, 'on');
+              this.renderer.removeClass(this.searchNext.nativeElement, 'on');
+            } else {
+              this.renderer.addClass(this.searchPrev.nativeElement, 'on');
+              this.renderer.addClass(this.searchNext.nativeElement, 'on');
+            }
           }
+        } else {
+          this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
+          this.renderer.removeClass(this.searchNext.nativeElement, 'on');
         }
-      } else {
-        this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
-        this.renderer.removeClass(this.searchNext.nativeElement, 'on');
-      }
-    },
+      },
       error => {
         this.spinner.hide();
         const errdata = Utils.getError(error);

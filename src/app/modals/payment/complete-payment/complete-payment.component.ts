@@ -27,20 +27,22 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private alertsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private printer: PrinterService, private receipt: ReceiptService, private payments: PaymentService,
-    private alert: AlertService, private storage: StorageService,
-    private spinner: SpinnerService, private info: InfoBroker, private logger: Logger
+    private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger
   ) {
     super(modalService);
     this.finishStatus = null;
+    this.paidamount = 0;
+    this.change = 0;
   }
 
   ngOnInit() {
     this.accountInfo = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
     this.paymentcapture = this.callerData.paymentInfo;
-    this.paidamount = this.callerData.paidAmount;
-    this.payamount = this.callerData.payAmount;
-    this.change = this.callerData.change;
+    this.paidamount = this.cartInfo.totalPrice.value;
+    this.payamount = this.cartInfo.totalPrice.value; // this.callerData.payAmount;
+    // this.change = this.callerData.change;
+    this.paidAmount();
 
   }
 
@@ -60,6 +62,51 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
+  private paidAmount() {
+    let paid = 0;
+    if (this.paymentcapture.ccPaymentInfo) { // 신용카드
+      const p = this.paymentcapture.ccPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+    if (this.paymentcapture.cashPaymentInfo) { // 현금결제
+      const p = this.paymentcapture.cashPaymentInfo.received;
+      if (p) {
+        paid += Number(p);
+      }
+      const strchange = this.paymentcapture.cashPaymentInfo.change;
+      this.change = strchange ? Number(strchange) : 0;
+    }
+    if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
+      const p = this.paymentcapture.directDebitPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+
+    if (this.paymentcapture.pointPaymentInfo) { // 포인트
+      const p = this.paymentcapture.pointPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+
+    if (this.paymentcapture.monetaryPaymentInfo) { // 미수금결제(AR)
+      const p = this.paymentcapture.monetaryPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+
+    if (this.paymentcapture.icCardPaymentInfo) { // 현금IC카드결제
+      const p = this.paymentcapture.icCardPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+    this.paidamount = paid;
+  }
   /**
    * 결제 정보 캡쳐
    *
@@ -103,12 +150,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       if (this.paidamount >= this.payamount) {
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
         const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-        if (rtn) {
-          this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
-        } else {
-          this.alert.show({ message: '실패' });
-        }
+        this.logger.set('complete.payment.component', 'print result : ' + rtn).debug();
       }
     }
     // this.close();
@@ -135,6 +177,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
         this.close();
       }
     }
