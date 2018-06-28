@@ -219,6 +219,18 @@ export class StorageService implements OnDestroy {
     this.removeSessionItem('pay');
   }
 
+  public getPaymentModeCode(): string {
+    return this.getSessionItem('paymentmode');
+  }
+
+  public setPaymentModeCode(data: string): void {
+    this.setSessionItem('paymentmode', data);
+  }
+
+  public removePaymentModeCode(): void {
+    this.removeSessionItem('paymentmode');
+  }
+
   /**
    * Access Token 정보 가져오기
    */

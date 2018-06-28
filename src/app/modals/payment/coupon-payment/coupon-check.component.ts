@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 
-import { ModalComponent, ModalService, Modal } from '../../../core';
+import { ModalComponent, ModalService, Modal, StorageService } from '../../../core';
 import { ComplexPaymentComponent } from '../complex-payment/complex-payment.component';
 import { CouponComponent } from '../ways/coupon/coupon.component';
 import { Accounts, KeyCode } from '../../../data';
@@ -14,7 +14,7 @@ import { Cart } from '../../../data/models/order/cart';
 export class CouponCheckComponent extends ModalComponent implements OnInit {
   private accountInfo: Accounts;
   private cartInfo: Cart;
-  constructor(protected modalService: ModalService, private modal: Modal) {
+  constructor(protected modalService: ModalService, private modal: Modal, private storage: StorageService) {
     super(modalService);
   }
 
@@ -45,9 +45,11 @@ export class CouponCheckComponent extends ModalComponent implements OnInit {
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
-        modalId: 'ComplexPaymentComponent_Coupon'
+        modalId: 'ComplexPaymentComponent_CpCk'
       }
-    );
+    ).subscribe(result => {
+      if (!result) { this.storage.removePaymentModeCode(); }
+    });
   }
 
   close() {

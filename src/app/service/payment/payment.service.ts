@@ -89,14 +89,24 @@ export class PaymentService {
     const data = new HttpData('recash', pathvariables, null, params);
     return this.api.get(data);
   }
-
   /**
    * 쿠폰 목록 조회
    *
    * @param accountid 회원 아이디
    * @param userid 회원 아이디
    */
-  searchCoupon(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
+
+  /**
+   * 쿠폰 목록 조회
+   * @param accountid 회원 아이디
+   * @param userid 회원 아이디
+   * @param couponcode 쿠폰코드
+   * @param currentpage 현재 페이지
+   * @param pagesize 페이지사이즈
+   * @param sort 정렬값
+   * @param asc 정렬
+   */
+  searchCoupon(accountid: string, userid: string, couponcode?: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = { currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc, feilds: 'DEFAULT' };
     const data = new HttpData('searchCoupon', pathvariables, null, params, 'b');

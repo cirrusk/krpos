@@ -24,7 +24,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private paymentsubscription: Subscription;
-  private couponubscription: Subscription;
+  private couponsubscription: Subscription;
   @ViewChild('couponcode') private couponcode: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private spinner: SpinnerService,
     private info: InfoBroker, private payment: PaymentService,
@@ -45,13 +45,28 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
   }
 
   ngOnDestroy() {
-    if (this.couponubscription) { this.couponubscription.unsubscribe(); }
+    if (this.couponsubscription) { this.couponsubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
   searchCoupon(couponcode: string) {
     this.spinner.show();
-    this.coupon = null;
+    this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
+      result => {
+        if (result) {
+          if (result.coupons && result.coupons.length > 0) {
+            this.coupon = result.coupons[0];
+          }
+        } else {
+          this.alert.info({ message: `해당 쿠폰이 존재하지 않습니다. 쿠폰 정보를 다시 확인해주세요.` });
+        }
+      },
+      error => {
+        this.spinner.hide();
+        this.alert.info({ message: `해당 쿠폰이 존재하지 않습니다. 쿠폰 정보를 다시 확인해주세요.` });
+        this.logger.set('coupon.component', `${error}`).error();
+      },
+      () => { this.spinner.hide(); });
   }
 
   applyCoupon() {
@@ -82,14 +97,14 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
           // this.info.sendInfo('payinfo', [pcap, null]);
           this.sendPaymentAndOrder(pcap, null);
 
-          this.openComplexPayment();
+          this.openComplexPayment(this.paymentcapture);
         } else {
           this.logger.set('coupon.payment.component', `no apply or exist cart`).error();
         }
       },
       error => {
         this.logger.set('coupon.payment.component', `${error}`).error();
-        this.alert.error({ message: `쿠폰 결제가 실패 했습니다. 쿠폰 정보를 다시 확인해주세요.`});
+        this.alert.error({ message: `쿠폰 결제가 실패 했습니다. 쿠폰 정보를 다시 확인해주세요.` });
       });
   }
 
@@ -105,11 +120,11 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
     this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
-  openComplexPayment() {
+  openComplexPayment(pc?: PaymentCapture) {
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent,
       {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: pc },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,

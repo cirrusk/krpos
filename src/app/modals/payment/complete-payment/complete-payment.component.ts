@@ -166,6 +166,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 삭제
         this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
         this.info.sendInfo('orderClear', 'clear');
         this.close();

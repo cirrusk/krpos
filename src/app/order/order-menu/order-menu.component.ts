@@ -1,5 +1,5 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
-import { Modal, Logger, SpinnerService, AlertService } from '../../core';
+import { Modal, Logger, SpinnerService, AlertService, StorageService } from '../../core';
 import { Subscription } from 'rxjs/Subscription';
 import { PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
@@ -19,8 +19,6 @@ import { SearchAccountBroker } from '../../broker';
 })
 export class OrderMenuComponent implements OnInit, OnDestroy {
   private orderInfoSubscribetion: Subscription;
-  // private searchAccountBrokerSubscribetion: Subscription;
-
   private accountInfo: Accounts;
   private cartInfo: Cart;
   private orderInfoList: OrderHistoryList;
@@ -30,23 +28,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   constructor(private modal: Modal,
-              // private storage: StorageService,
-              private orderService: OrderService,
-              private messageService: MessageService,
-              private alert: AlertService,
-              private spinner: SpinnerService,
+              private storage: StorageService,
               private logger: Logger,
               private searchAccountBroker: SearchAccountBroker,
-              // private element: ElementRef,
-              private renderer: Renderer2,
-              private router: Router
+              private renderer: Renderer2
               ) { }
 
   ngOnInit() { }
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
-    // if (this.searchAccountBrokerSubscribetion) { this.searchAccountBrokerSubscribetion.unsubscribe(); }
   }
 
   /**
@@ -117,9 +108,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           closeByClickOutside: false,
           closeByEnter: false,
           closeByEscape: false,
-          modalId: 'ComplexPaymentComponent_Coupon'
+          modalId: 'ComplexPaymentComponent_Od'
         }
-      );
+      ).subscribe(result => {
+        if (!result) { this.storage.removePaymentModeCode(); }
+      });
     }
   }
 
