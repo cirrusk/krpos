@@ -52,7 +52,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           this.paging(this.couponlist.length, pagenum, this.pagesize);
         }
       },
-      error => { this.logger.set('', `${error}`).debug(); },
+      error => { this.logger.set('coupon.component', `${error}`).error(); },
       () => { this.spinner.hide(); });
   }
 
@@ -126,10 +126,9 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
 
           // this.info.sendInfo('payinfo', [pcap, null]);
           this.sendPaymentAndOrder(pcap, null);
-
         }
-      });
-    console.log(JSON.stringify(pcap));
+      },
+      error => { this.logger.set('coupon.component', `${error}`).error(); });
   }
 
   activeRow(index: number, coupon: Coupon) {
