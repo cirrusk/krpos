@@ -35,7 +35,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   ngOnInit() {
-    this.accountInfo = this.callerData.accountInfo;
+    this.accountInfo = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
     this.paymentcapture = this.callerData.paymentInfo;
     this.paidamount = this.callerData.paidAmount;
@@ -111,7 +111,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         }
       }
     }
-    this.close();
+    // this.close();
   }
 
   /**
@@ -135,7 +135,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-
+        this.close();
       }
     }
   }
