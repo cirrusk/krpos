@@ -9,7 +9,7 @@ import {
 import { MessageService, PaymentService, ReceiptService } from '../../../../service';
 import {
   Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
-  CurrencyData, KeyCode, StatusDisplay
+  CurrencyData, KeyCode, StatusDisplay, CapturePaymentInfo
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
@@ -122,12 +122,12 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         } else { // 복합결제
           if (paidAmount >= payAmount) { // 금액이 같거나 거스름돈 있으면 payment 처리
             // this.paymentAndCapture(payAmount, paidAmount, change);
-            this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change);
+            this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change).capturePaymentInfoData;
             this.completePayPopup(paidAmount, payAmount, change);
           }
         }
       } else { // 내신 금액이 작을 경우
-        this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change);
+        this.paymentcapture = this.makePaymentCaptureData(paidAmount, payAmount, change).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       }
@@ -159,9 +159,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    */
   private paymentAndCapture(payAmount: number, paidAmount: number, change: number) {
     this.spinner.show();
-    this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change);
+    const capturepaymentinfo = this.makePaymentCaptureData(payAmount, paidAmount, change);
+    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
       this.orderInfo = result;
       this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
       this.finishStatus = result.statusDisplay;
@@ -222,7 +223,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    *
    * @param paidamount 지불 금액
    */
-  private makePaymentCaptureData(paidamount: number, received: number, change: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number, received: number, change: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
     const cash = new CashPaymentInfo(paidamount, CashType.CASH);
     cash.setReceived = received;
     cash.setChange = change;
@@ -232,16 +234,20 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
         paymentcapture.setCashPaymentInfo = cash;
-        return paymentcapture;
+        capturepaymentinfo.setPaymentModeCode = PaymentModes.CASH;
+        capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
       } else {
         this.paymentcapture.setCashPaymentInfo = cash;
-        return this.paymentcapture;
+        capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode();
+        capturepaymentinfo.setCapturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setCashPaymentInfo = cash;
-      return paymentcapture;
+      capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
     }
+    return capturepaymentinfo;
   }
 
   /**

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
-  PaymentModes, PaymentModeData, StatusDisplay, CurrencyData
+  PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo
 } from '../../../../data';
 import { PaymentService, ReceiptService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
@@ -95,7 +95,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.payment();
       }
     } else {
-      this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+      this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
       if (check > 0) { // 결제할것이 남음.
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
         this.sendPaymentAndOrder(this.paymentcapture, null);
@@ -110,9 +110,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   private payment() {
     this.spinner.show();
-    this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+    const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
+    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('recash.component', 'recash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
       this.orderInfo = result;
       this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
       this.finishStatus = result.statusDisplay;
@@ -161,7 +162,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
   }
 
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
     const recash = new AmwayMonetaryPaymentInfo(paidamount);
     recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
     recash.setCurrencyData = new CurrencyData();
@@ -169,16 +171,20 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
         paymentcapture.setMonetaryPaymentInfo = recash;
-        return paymentcapture;
+        capturepaymentinfo.paymentModeCode = PaymentModes.ARCREDIT;
+        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
         this.paymentcapture.setMonetaryPaymentInfo = recash;
-        return this.paymentcapture;
+        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setMonetaryPaymentInfo = recash;
-      return paymentcapture;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
+    return capturepaymentinfo;
   }
 
   cartInitAndClose() {

@@ -215,7 +215,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // if (this.activePopup.length > 0) {
     this.paymentComponent = component;
     if (payment && !this.storage.getPaymentModeCode()) {
-      this.storage.setPaymentModeCode(this.paymentModes.get(payment)); // 주결제 수단을 세션에 설정
+      // this.storage.setPaymentModeCode(this.paymentModes.get(payment)); // 주결제 수단을 세션에 설정
+      this.storage.setPaymentModeCode(payment); // 주결제 수단을 세션에 설정
     }
     // this.paymentSubscription =
     this.modal.openModalByComponent(this.paymentComponent,
@@ -275,9 +276,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       result => {
         if (result) {
           this.paymentModeListByMain = result;
-          this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
-            this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code);
-          });
+          // this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
+          //   this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code);
+          //   this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code);
+          // });
           // console.log(this.paymentModes.get('cash'));
           // this.paymentModes.forEach((data, key) => {
           //   console.log(key + ' > ' + data);

@@ -54,9 +54,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
     this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
       result => {
         if (result) {
-          if (result.coupons && result.coupons.length > 0) {
-            this.coupon = result.coupons[0];
-          }
+          this.coupon = result;
         } else {
           this.alert.info({ message: `해당 쿠폰이 존재하지 않습니다. 쿠폰 정보를 다시 확인해주세요.` });
         }

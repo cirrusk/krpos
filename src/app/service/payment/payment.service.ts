@@ -6,7 +6,7 @@ import 'rxjs/add/operator/timeout';
 import { ApiService, StorageService, Config } from '../../core';
 import {
   Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData, BankInfoList
+  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData, BankInfoList, CapturePaymentInfo, Coupon
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
@@ -106,9 +106,22 @@ export class PaymentService {
    * @param sort 정렬값
    * @param asc 정렬
    */
-  searchCoupon(accountid: string, userid: string, couponcode?: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
+  searchCoupons(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = { currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc, feilds: 'DEFAULT' };
+    const data = new HttpData('searchCoupons', pathvariables, null, params, 'b');
+    return this.api.get(data);
+  }
+
+  /**
+   * 쿠폰 조회
+   *  @param accountid 회원 아이디
+   * @param userid 회원 아이디
+   * @param couponcode 쿠폰코드
+   */
+  searchCoupon(accountid: string, userid: string, couponcode: string): Observable<Coupon> {
+    const pathvariables = { accountId: accountid, userId: userid };
+    const params = { voucherId: couponcode, feilds: 'DEFAULT' };
     const data = new HttpData('searchCoupon', pathvariables, null, params, 'b');
     return this.api.get(data);
   }
@@ -145,7 +158,7 @@ export class PaymentService {
    * @param cartid 카트 아이디
    * @param paymentcapture Payment Capture 정보
    */
-  placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
+  placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: CapturePaymentInfo): Observable<Order> {
     const pathvariables = { accountId: accountid, userId: userid, cartId: cartid };
     const param = { fields: 'FULL' };
     const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'b');
@@ -161,7 +174,7 @@ export class PaymentService {
    * @param cartid 카트 아이디
    * @param paymentcapture Payment Capture 정보
    */
-  placeOrderWithTimeout(accountid: string, userid: string, cartid: string, paymentcapture: PaymentCapture): Observable<Order> {
-   return this.placeOrder(accountid, userid, cartid, paymentcapture).timeout(1000 * this.directdebitTimeout);
+  placeOrderWithTimeout(accountid: string, userid: string, cartid: string, paymentcapture: CapturePaymentInfo, timeout = this.directdebitTimeout): Observable<Order> {
+    return this.placeOrder(accountid, userid, cartid, paymentcapture).timeout(1000 * timeout);
   }
 }

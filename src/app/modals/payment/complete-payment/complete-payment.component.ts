@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, PrinterService, AlertService, StorageService, SpinnerService, Logger } from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
-import { Accounts, PaymentCapture, StatusDisplay, KeyCode } from '../../../data';
+import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo } from '../../../data';
 import { ReceiptService, PaymentService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
@@ -96,6 +96,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
     this.paidamount = paid;
   }
+
   /**
    * 결제 정보 캡쳐
    *
@@ -105,8 +106,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private paymentAndCapture() {
     this.spinner.show();
+    const capturepaymentinfo = new CapturePaymentInfo();
+    capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+    capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(result => {
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
       this.orderInfo = result;
       this.logger.set('complete-payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
       this.finishStatus = result.statusDisplay;

@@ -43,7 +43,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
 
   private searchCoupon(pagenum: number) {
     this.spinner.show();
-    this.couponubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, null, pagenum, this.pagesize).subscribe(
+    this.couponubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
       result => {
         this.couponlist = result.coupons;
         this.couponCount = this.couponlist.length;

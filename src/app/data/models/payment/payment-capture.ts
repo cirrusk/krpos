@@ -1,5 +1,21 @@
-import { MemberType } from '../order/member-type.enum';
 import { CCMemberType, CCPaymentType } from './payment.enum';
+
+export class CapturePaymentInfo {
+    paymentModeCode: string;
+    capturePaymentInfoData: PaymentCapture;
+    public set setPaymentModeCode(paymentModeCode: string) {
+        this.paymentModeCode = paymentModeCode;
+    }
+    public get getPaymentModeCode(): string {
+        return this.paymentModeCode;
+    }
+    public set setCapturePaymentInfoData(capturePaymentInfoData: PaymentCapture) {
+        this.capturePaymentInfoData = capturePaymentInfoData;
+    }
+    public get getCapturePaymentInfoData(): PaymentCapture {
+        return this.capturePaymentInfoData;
+    }
+}
 
 /**
  * Payment Capture
@@ -84,10 +100,10 @@ export class PaymentCapture {
 }
 
 export class CurrencyData {
-    protected isocode: string;
-    protected name: string;
-    protected active: boolean;
-    protected symbol: string;
+    isocode: string;
+    name: string;
+    active: boolean;
+    symbol: string;
     public set setIsoCode(isocode: string) {
         this.isocode = isocode;
     }
@@ -107,9 +123,9 @@ export class CurrencyData {
 
 export class PaymentModeData {
     code: string;
-    protected name: string;
-    protected description: string;
-    protected active: boolean;
+    name: string;
+    description: string;
+    active: boolean;
     public set setCode(code: string) {
         this.code = code;
     }
@@ -146,7 +162,7 @@ export class AmwayPaymentInfoData {
     protected transactionCode: string;
     protected referenceNumber: string;
     amount: number; // 지불금액
-    protected currency: CurrencyData;
+    currency: CurrencyData;
     protected status: string;
     protected comments: string;
     paymentMode: PaymentModeData;
@@ -198,7 +214,7 @@ export class AmwayPaymentInfoData {
     public get getPaymentInfoLine4(): string {
         return this.paymentInfoLine4;
     }
-   public get getPaymentMode(): PaymentModeData {
+    public get getPaymentMode(): PaymentModeData {
         return this.paymentMode;
     }
 

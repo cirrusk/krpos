@@ -8,7 +8,7 @@ import {
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
-  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType
+  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType, CapturePaymentInfo
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -149,22 +149,27 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    *
    * @param paidamount 결제금액
    */
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
     const ccard = this.makePaymentInfo(paidamount);
     if (this.paymentcapture) {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
         paymentcapture.setCcPaymentInfo = ccard;
-        return paymentcapture;
+        capturepaymentinfo.paymentModeCode = PaymentModes.CREDITCARD;
+        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
         this.paymentcapture.setCcPaymentInfo = ccard;
-        return this.paymentcapture;
+        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setCcPaymentInfo = ccard;
-      return paymentcapture;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
+    return capturepaymentinfo;
   }
 
   /**
@@ -260,7 +265,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.cardauthnumber = res.approvalNumber;
             this.paidDate = Utils.convertDate(res.approvalDateTime);
             // payment caputure
-            this.paymentcapture = this.makePaymentCaptureData(paidprice);
+            this.paymentcapture = this.makePaymentCaptureData(paidprice).capturePaymentInfoData;
             this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
             if (this.change === 0) {
               this.completePayPopup(paidprice, this.paidamount, this.change);
@@ -298,9 +303,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
           // payment caputure
-          this.paymentcapture = this.makePaymentCaptureData(paidprice);
+          const capturepaymentinfo = this.makePaymentCaptureData(paidprice);
+          this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
             result => {
               this.orderInfo = result;
               this.logger.set('credit.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();

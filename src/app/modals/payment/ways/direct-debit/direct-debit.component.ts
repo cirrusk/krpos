@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState, StorageService } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
-  CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode
+  CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -31,12 +31,14 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   depositor: string;
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
+  checktype: number;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
     private storage: StorageService, private printer: PrinterService, private payments: PaymentService,
     private logger: Logger, private info: InfoBroker, private alert: AlertService, private spinner: SpinnerService, private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
+    this.checktype = 0;
   }
 
   ngOnInit() {
@@ -46,7 +48,9 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     this.paidamount = this.cartInfo.totalPrice.value;
     this.setDirectDebitInfo();
     if (!this.accountnumber) {
-      this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
+      this.finishStatus = 'fail';
+      this.checktype = -1;
+      // this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
       setTimeout(() => {
         this.ddpassword.nativeElement.blur();
         this.renderer.setAttribute(this.ddpassword.nativeElement, 'disabled', 'disabled');
@@ -63,38 +67,45 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
   private setDirectDebitInfo() {
     const banks: Array<BankAccount> = this.accountInfo.parties[0].bankAccounts;
-    banks.forEach(bankaccount => {
-      if (bankaccount.typeCode === BankTypes.DIRECT_DEBIT) {
-        this.accountnumber = bankaccount.accountNumber;
-        this.bank = bankaccount.bankInfo ? bankaccount.bankInfo.name : '';
-        this.bankid = bankaccount.bankInfo ? bankaccount.bankInfo.code : '';
-        this.depositor = bankaccount.depositor ? bankaccount.depositor : '';
-      }
-    });
+    if (banks) {
+      banks.forEach(bankaccount => {
+        if (bankaccount.typeCode === BankTypes.DIRECT_DEBIT) {
+          this.accountnumber = bankaccount.accountNumber;
+          this.bank = bankaccount.bankInfo ? bankaccount.bankInfo.name : '';
+          this.bankid = bankaccount.bankInfo ? bankaccount.bankInfo.code : '';
+          this.depositor = bankaccount.depositor ? bankaccount.depositor : '';
+        }
+      });
+    }
   }
 
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
     const directdebit = new DirectDebitPaymentInfo(paidamount);
-    directdebit.setAccountNumber = this.accountnumber;
-    directdebit.setBank = this.bank;
-    directdebit.setBankIDNumber = this.bankid;
-    directdebit.setBaOwner = this.depositor;
-    directdebit.setPaymentModeData = new PaymentModeData(PaymentModes.DIRECTDEBIT);
-    directdebit.setCurrencyData = new CurrencyData();
+    directdebit.accountNumber = this.accountnumber;
+    directdebit.bank = this.bank;
+    directdebit.bankIDNumber = this.bankid;
+    directdebit.baOwner = this.depositor;
+    directdebit.paymentMode = new PaymentModeData(PaymentModes.DIRECTDEBIT);
+    directdebit.currency = new CurrencyData();
     if (this.paymentcapture) {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
-        paymentcapture.setDirectDebitPaymentInfo = directdebit;
-        return paymentcapture;
+        paymentcapture.directDebitPaymentInfo = directdebit;
+        capturepaymentinfo.paymentModeCode = PaymentModes.DIRECTDEBIT;
+        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
-        this.paymentcapture.setDirectDebitPaymentInfo = directdebit;
-        return this.paymentcapture;
+        this.paymentcapture.directDebitPaymentInfo = directdebit;
+        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
-      paymentcapture.setDirectDebitPaymentInfo = directdebit;
-      return paymentcapture;
+      paymentcapture.directDebitPaymentInfo = directdebit;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
+    return capturepaymentinfo;
   }
 
   pay(evt: KeyboardEvent) {
@@ -103,10 +114,12 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (pwd) {
       if (this.paymentType === 'n') {
         this.spinner.show();
-        this.paymentcapture = this.makePaymentCaptureData(this.paidamount);
+        const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
+        this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
         this.logger.set('direct.debit.component', 'direct.debit payment : ' + Utils.stringify(this.paymentcapture)).debug();
-        this.paymentsubscription = this.payments.placeOrderWithTimeout(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+        this.paymentsubscription = this.payments.placeOrderWithTimeout(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
           result => {
+            setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 50);
             this.orderInfo = result;
             this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
             this.finishStatus = result.statusDisplay;
@@ -114,10 +127,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
               if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                 this.paidDate = result.created ? result.created : new Date();
 
-                setTimeout(() => { // 결제 성공, 변경못하도록 처리
-                  this.ddpassword.nativeElement.blur(); // keydown.enter 처리 안되도록
-                  this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly');
-                }, 5);
+                setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
                 // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                 this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
               } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
@@ -173,15 +183,12 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   cartInitAndClose() {
+
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-        if (rtn) {
-          this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
-        } else {
-          this.alert.show({ message: '실패' });
-        }
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
       }
       this.close();
     } else {
@@ -196,6 +203,8 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.cartInitAndClose();
+      } else if (this.finishStatus === 'fail') {
+        this.close();
       }
     }
   }

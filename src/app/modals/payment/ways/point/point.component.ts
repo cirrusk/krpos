@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } fro
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService, Modal } from '../../../../core';
-import { KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType, PaymentModes, PaymentModeData, CurrencyData, StatusDisplay } from '../../../../data';
+import {
+  KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
+  PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo
+} from '../../../../data';
 import { PaymentService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
 import { Utils } from '../../../../core/utils';
@@ -176,7 +179,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     } else {
       this.checktype = null;
       const point = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-      this.paymentcapture = this.makePaymentCaptureData(point);
+      this.paymentcapture = this.makePaymentCaptureData(point).capturePaymentInfoData;
       if (paid > 0) { // 결제할것이 남음.
         this.result = this.paymentcapture;
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
@@ -195,9 +198,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private paymentCapture() {
     this.spinner.show();
     // payment capture and place order
-    this.paymentcapture = this.makePaymentCaptureData(this.paymentprice);
+    const capturepaymentinfo = this.makePaymentCaptureData(this.paymentprice);
+    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
       result => {
         this.orderInfo = result;
         this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
@@ -231,8 +235,9 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       }, () => { this.spinner.hide(); });
   }
 
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
-    const pointtype = ''; // (this.pointType === 'a') ? PointType.BR030 : PointType.BR033;
+  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const pointtype = (this.pointType === 'a') ? PointType.BR030 : PointType.BR033;
     const point = new PointPaymentInfo(paidamount, pointtype);
     point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
     point.setCurrencyData = new CurrencyData();
@@ -240,16 +245,20 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
         paymentcapture.setPointPaymentInfo = point;
-        return paymentcapture;
+        capturepaymentinfo.paymentModeCode = PaymentModes.POINT;
+        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
         this.paymentcapture.setPointPaymentInfo = point;
-        return this.paymentcapture;
+        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setPointPaymentInfo = point;
-      return paymentcapture;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
+    return capturepaymentinfo;
   }
 
   /**

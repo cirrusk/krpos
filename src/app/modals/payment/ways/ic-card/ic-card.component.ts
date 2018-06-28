@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
 import { ModalComponent, ModalService, NicePaymentService, Logger, AlertService, SpinnerService, StorageService } from '../../../../core';
-import { KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts, StatusDisplay } from '../../../../data';
+import { KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts, StatusDisplay, CapturePaymentInfo } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { ICCardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/iccard.approval.result';
@@ -57,7 +57,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
-  private makePaymentCaptureData(paidamount: number): PaymentCapture {
+  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
     const iccard = new ICCardPaymentInfo(paidamount);
     iccard.setAccountNumber = this.cardresult.approvalNumber;
     iccard.setBank = this.cardresult.issuerOrgName;
@@ -68,7 +69,9 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();
     paymentcapture.setIcCardPaymentInfo = iccard;
-    return paymentcapture;
+    capturepaymentinfo.paymentModeCode = PaymentModes.ICCARD;
+    capturepaymentinfo.capturePaymentInfoData = paymentcapture;
+    return capturepaymentinfo;
   }
 
   private nicePay() {
@@ -96,7 +99,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
           // payment caputure
-          this.paymentcapture = this.makePaymentCaptureData(this.payprice);
+          this.paymentcapture = this.makePaymentCaptureData(this.payprice).capturePaymentInfoData;
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
         } else {
           this.finishStatus = 'fail';
@@ -127,9 +130,10 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
           // payment caputure
-          this.paymentcapture = this.makePaymentCaptureData(this.payprice);
+          const capturepaymentinfo = this.makePaymentCaptureData(this.payprice);
+          this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, this.paymentcapture).subscribe(
+          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
             result => {
               this.orderInfo = result;
               this.logger.set('ic.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
