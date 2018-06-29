@@ -22,9 +22,15 @@
                         <tr>
                             <th scope="row">결제금액</th>
                             <td>
-                                <input #paid type="text" class="w110 ar" title="결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="paidBlur()">
+                                <input #paid type="text" class="w110 ar" title="결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="nextStep()">
                             </td>
                         </tr>
+                        <tr>
+                            <th scope="row">잔액</th>
+                            <td>
+                                <span class="won">{{change | number}}</span>
+                            </td>
+                        </tr>                        
                         <tr>
                             <th scope="row">비밀번호</th>
                             <td>
@@ -49,7 +55,7 @@
                         </tr>
                         <tr>
                             <th scope="row">승인번호</th>
-                            <td></td>
+                            <td>{{authnumber}}</td>
                         </tr>
                         <tr>
                             <th scope="row">이체일자</th>

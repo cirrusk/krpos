@@ -25,7 +25,9 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   paidamount: number;
+  change: number;
   accountnumber: string;
+  authnumber: string;
   bank: string;
   bankid: string;
   depositor: string;
@@ -40,6 +42,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
+    this.change = 0;
   }
 
   ngOnInit() {
@@ -54,6 +57,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       // this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
       setTimeout(() => {
         this.paid.nativeElement.blur();
+        this.renderer.setAttribute(this.paid.nativeElement, 'disabled', 'disabled');
         this.renderer.setAttribute(this.ddpassword.nativeElement, 'disabled', 'disabled');
       }, 50);
     } else {
@@ -76,7 +80,9 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
    * @param paid 실결제 금액
    */
   paidCal(paid: number) {
-    // this.change = this.paidamount - paid;
+    if (typeof paid === 'number') {
+      this.change = this.paidamount - paid;
+    }
   }
 
   /**
@@ -84,6 +90,13 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
    */
   paidBlur() {
     setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
+  }
+
+  nextStep() {
+    const paid = this.paid.nativeElement.value;
+    if (paid) {
+      setTimeout(() => { this.ddpassword.nativeElement.focus(); }, 50);
+    }
   }
 
   private setDirectDebitInfo() {
