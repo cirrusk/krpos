@@ -122,11 +122,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.printer.openCashDrawer();
           }
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-          this.info.sendInfo('recart', this.orderInfo);
+          this.finishStatus = 'recart';
         } else { // CART 삭제된 상태
-          this.info.sendInfo('recart', this.orderInfo);
+          this.finishStatus = 'recart';
         }
       } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+        this.finishStatus = 'fail';
         // cart-list.component에 재생성 이벤트 보내서 처리
       }
       this.storage.removePay();
@@ -174,6 +175,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 삭제
         this.storage.removePay(); // 복합결제 남은 금액 정보 초기화
         this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
+        this.close();
+      } else if (this.finishStatus === 'fail') {
+        this.info.sendInfo('orderClear', 'clear');
+        this.close();
+      } else if (this.finishStatus === 'recart') {
+        this.info.sendInfo('recart', this.orderInfo);
         this.info.sendInfo('orderClear', 'clear');
         this.close();
       }

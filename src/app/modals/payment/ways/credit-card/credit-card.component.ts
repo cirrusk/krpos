@@ -364,10 +364,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                   }, 5);
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                   this.apprmessage = '결제에 실패했습니다.';
-                  this.info.sendInfo('recart', this.orderInfo);
+                  this.finishStatus = 'recart';
                 } else { // CART 삭제된 상태
                   this.apprmessage = '결제에 실패했습니다.';
-                  this.info.sendInfo('recart', this.orderInfo);
+                  this.finishStatus = 'recart';
                 }
               } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
                 // cart-list.component에 재생성 이벤트 보내서 처리
@@ -469,6 +469,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
         this.close();
       }
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
     } else {
       this.info.sendInfo('orderClear', 'clear');
       this.close();
@@ -480,19 +484,14 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (Utils.isEmpty(this.orderInfo.code)) {
-        this.info.sendInfo('orderClear', 'clear');
+      if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
+        this.cartInitAndClose();
+      } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
         this.close();
       } else {
-        if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
-          this.cartInitAndClose();
-        } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
-          this.close();
-        } else {
-          if (!this.dupcheck) {
-            setTimeout(() => { this.nicePay(); }, 100);
-            this.dupcheck = true;
-          }
+        if (!this.dupcheck) {
+          setTimeout(() => { this.nicePay(); }, 100);
+          this.dupcheck = true;
         }
       }
     }

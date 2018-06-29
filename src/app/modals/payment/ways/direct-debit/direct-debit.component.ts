@@ -213,18 +213,17 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
             this.apprmessage = `즉시 출금이 불가합니다.`;
             // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
-            this.info.sendInfo('recart', this.orderInfo);
+            this.finishStatus = 'recart';
           } else { // CART 삭제된 상태
             // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
             this.apprmessage = `즉시 출금이 불가합니다.`;
-            this.info.sendInfo('recart', this.orderInfo);
+            this.finishStatus = 'recart';
           }
         } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = 'fail';
           // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
           this.apprmessage = `즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.`;
           // cart-list.component에 재생성 이벤트 보내서 처리
-
         }
         this.storage.removePay();
       }, error => {
@@ -296,6 +295,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.cartInitAndClose();
+      } else if (this.finishStatus === 'recart') {
+        this.info.sendInfo('recart', this.orderInfo);
+        this.info.sendInfo('orderClear', 'clear');
+        this.close();
       } else if (this.finishStatus === 'fail') {
         this.close();
       }

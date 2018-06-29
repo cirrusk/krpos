@@ -226,10 +226,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.apprmessage = '결제에 실패했습니다.';
-            this.info.sendInfo('recart', this.orderInfo);
+            this.finishStatus = 'recart';
           } else { // CART 삭제된 상태
             this.apprmessage = '결제에 실패했습니다.';
-            this.info.sendInfo('recart', this.orderInfo);
+            this.finishStatus = 'recart';
           }
         } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           // cart-list.component에 재생성 이벤트 보내서 처리

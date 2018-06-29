@@ -112,7 +112,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         } else if (result != null && type === 'recart') {
           const order: Order = result.data;
           console.log('[order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(order));
-          this.copyCartByEntries(this.accountInfo, order.entries);
+          this.copyCartByEntries(this.accountInfo, this.cartList);
         }
       }
     );
