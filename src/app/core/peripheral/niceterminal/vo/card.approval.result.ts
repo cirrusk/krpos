@@ -304,49 +304,49 @@ export class CardApprovalResult extends WebsocketResult {
      * Getter acquireCode
      * @return {string}
      */
-	public get acquireCode(): string {
-		return this._acquireCode;
-	}
+    public get acquireCode(): string {
+        return this._acquireCode;
+    }
 
     /**
      * Getter acquireName
      * @return {string}
      */
-	public get acquireName(): string {
-		return this._acquireName;
-	}
+    public get acquireName(): string {
+        return this._acquireName;
+    }
 
     /**
      * Getter merchantNumber
      * @return {string}
      */
-	public get merchantNumber(): string {
-		return this._merchantNumber;
-	}
+    public get merchantNumber(): string {
+        return this._merchantNumber;
+    }
 
     /**
      * Setter acquireCode
      * @param {string} value
      */
-	public set acquireCode(value: string) {
-		this._acquireCode = value;
-	}
+    public set acquireCode(value: string) {
+        this._acquireCode = value;
+    }
 
     /**
      * Setter acquireName
      * @param {string} value
      */
-	public set acquireName(value: string) {
-		this._acquireName = value;
-	}
+    public set acquireName(value: string) {
+        this._acquireName = value;
+    }
 
     /**
      * Setter merchantNumber
      * @param {string} value
      */
-	public set merchantNumber(value: string) {
-		this._merchantNumber = value;
-	}
+    public set merchantNumber(value: string) {
+        this._merchantNumber = value;
+    }
 
 
     public stringify(): string {
