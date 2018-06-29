@@ -32,6 +32,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   checktype: number;
+  @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
     private storage: StorageService, private printer: PrinterService, private payments: PaymentService,
@@ -52,11 +53,16 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       this.checktype = -1;
       // this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
       setTimeout(() => {
-        this.ddpassword.nativeElement.blur();
+        this.paid.nativeElement.blur();
         this.renderer.setAttribute(this.ddpassword.nativeElement, 'disabled', 'disabled');
       }, 50);
     } else {
-      setTimeout(() => { this.ddpassword.nativeElement.focus(); }, 50);
+      if (this.paymentType === 'n') {
+        this.paid.nativeElement.value = this.paidamount;
+        setTimeout(() => { this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly'); }, 50);
+      } else {
+        setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
+      }
     }
   }
 
@@ -113,44 +119,9 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     const pwd = this.ddpassword.nativeElement.value;
     if (pwd) {
       if (this.paymentType === 'n') {
-        this.spinner.show();
-        const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
-        this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
-        this.logger.set('direct.debit.component', 'direct.debit payment : ' + Utils.stringify(this.paymentcapture)).debug();
-        this.paymentsubscription = this.payments.placeOrderWithTimeout(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
-          result => {
-            setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 50);
-            this.orderInfo = result;
-            this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-            this.finishStatus = result.statusDisplay;
-            if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-              if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-                this.paidDate = result.created ? result.created : new Date();
+        this.approvalAndPayment();
+      } else {
 
-                setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
-                // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-                this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-              } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-                this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
-              } else { // CART 삭제된 상태
-                this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
-              }
-            } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-              this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
-              // cart-list.component에 재생성 이벤트 보내서 처리
-              this.info.sendInfo('recart', this.orderInfo);
-            }
-            this.storage.removePay();
-          },
-          error => {
-            this.finishStatus = 'fail';
-            this.spinner.hide();
-            const errdata = Utils.getError(error);
-            if (errdata) {
-              this.logger.set('direct.debit.component', `${errdata.message}`).error();
-            }
-          },
-          () => { this.spinner.hide(); });
       }
     } else {
       this.alert.show({ message: '비밀번호가 공란입니다.' });
@@ -165,6 +136,44 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       );
     }
 
+  }
+
+  private approvalAndPayment() {
+    this.spinner.show();
+    const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
+    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
+    this.logger.set('direct.debit.component', 'direct.debit payment : ' + Utils.stringify(this.paymentcapture)).debug();
+    this.paymentsubscription = this.payments.placeOrderWithTimeout(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
+      result => {
+      setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 50);
+      this.orderInfo = result;
+      this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+      this.finishStatus = result.statusDisplay;
+      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.paidDate = result.created ? result.created : new Date();
+          setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
+          // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
+          this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+          this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+        } else { // CART 삭제된 상태
+          this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+        }
+      } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+        this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+        // cart-list.component에 재생성 이벤트 보내서 처리
+        this.info.sendInfo('recart', this.orderInfo);
+      }
+      this.storage.removePay();
+    }, error => {
+      this.finishStatus = 'fail';
+      this.spinner.hide();
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.logger.set('direct.debit.component', `${errdata.message}`).error();
+      }
+    }, () => { this.spinner.hide(); });
   }
 
   /**

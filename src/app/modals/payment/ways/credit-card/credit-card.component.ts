@@ -306,7 +306,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           const capturepaymentinfo = this.makePaymentCaptureData(paidprice);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
+          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
             result => {
               this.orderInfo = result;
               this.logger.set('credit.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();

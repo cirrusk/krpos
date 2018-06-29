@@ -162,7 +162,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     const capturepaymentinfo = this.makePaymentCaptureData(payAmount, paidAmount, change);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
       this.orderInfo = result;
       this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
       this.finishStatus = result.statusDisplay;

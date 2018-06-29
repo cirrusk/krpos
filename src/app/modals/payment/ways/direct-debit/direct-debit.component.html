@@ -1,61 +1,69 @@
 <div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
-  <div class="pop_header">
-      <h1>자동이체</h1>
-      <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
-  </div>
-  <!-- pop_container -->
-  <div class="pop_container">
-      <div class="pop_content">
-          <!-- 결제내역 -->
-          <div class="tbl_row">
-              <table>
-                  <caption>자동이체 내역</caption>
-                  <colgroup>
-                      <col style="width:110px">
-                      <col>
-                  </colgroup>
-                  <tbody>
-                      <tr>
+    <div class="pop_header">
+        <h1>자동이체</h1>
+        <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
+    </div>
+    <!-- pop_container -->
+    <div class="pop_container">
+        <div class="pop_content">
+            <!-- 결제내역 -->
+            <div class="tbl_row">
+                <table>
+                    <caption>자동이체 내역</caption>
+                    <colgroup>
+                        <col style="width:110px">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <!-- <tr>
                           <th scope="row">결제금액</th>
                           <td><span class="won">{{paidamount | number}}</span></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">비밀번호</th>
-                          <td><input #ddpassword type="password" class="w110" title="비밀번호" (keydown.enter)="pay($event)"></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">계좌번호</th>
-                          <td>{{accountnumber}}</td>
-                      </tr>
-                      <tr>
-                          <th scope="row">거래은행</th>
-                          <td>{{bank}}</td>
-                      </tr>
-                      <tr>
-                          <th scope="row">예금주</th>
-                          <td>{{depositor}}</td>
-                      </tr>
-                      <tr>
-                          <th scope="row">출금방식</th>
-                          <td>즉시 출금</td>
-                      </tr>
-                      <tr>
-                          <th scope="row">승인번호</th>
-                          <td></td>
-                      </tr>
-                      <tr>
-                          <th scope="row">이체일자</th>
-                          <td>2018.01.30 15:53:55</td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-          <em *ngIf="checktype === -1" class="finish fail">계좌번호가 없으므로 자동이체를 진행할 수 없습니다.</em>
-          <!-- //결제내역 -->
-      </div>
-  </div>
-  <!-- //pop_container -->
-  <div class="pop_footer clearfix">
-      <span class="fl">취소 ESC</span>
-  </div>
+                      </tr> -->
+                        <tr>
+                            <th scope="row">결제금액</th>
+                            <td>
+                                <input #paid type="text" class="w110 ar" title="결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="paidBlur()">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">비밀번호</th>
+                            <td>
+                                <input #ddpassword type="password" class="w110" title="비밀번호" (keydown.enter)="pay($event)">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">계좌번호</th>
+                            <td>{{accountnumber}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">거래은행</th>
+                            <td>{{bank}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">예금주</th>
+                            <td>{{depositor}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">출금방식</th>
+                            <td>즉시 출금</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">승인번호</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">이체일자</th>
+                            <td>2018.01.30 15:53:55</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <em *ngIf="checktype === -1" class="finish fail">계좌번호가 없으므로 자동이체를 진행할 수 없습니다.</em>
+            <!-- //결제내역 -->
+        </div>
+    </div>
+    <!-- //pop_container -->
+    <div class="pop_footer clearfix">
+        <span class="fl">취소 ESC</span>
+    </div>
 </div>

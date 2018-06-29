@@ -113,7 +113,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('recash.component', 'recash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
       this.orderInfo = result;
       this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
       this.finishStatus = result.statusDisplay;

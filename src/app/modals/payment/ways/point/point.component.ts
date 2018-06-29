@@ -201,7 +201,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     const capturepaymentinfo = this.makePaymentCaptureData(this.paymentprice);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
       result => {
         this.orderInfo = result;
         this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();

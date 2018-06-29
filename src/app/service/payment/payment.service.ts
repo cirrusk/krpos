@@ -153,13 +153,12 @@ export class PaymentService {
   /**
    * Payment Capture와 Place Order를 진행
    *
-   * @param accountid 회원 아이디
    * @param userid 회원 아이디
    * @param cartid 카트 아이디
    * @param paymentcapture Payment Capture 정보
    */
-  placeOrder(accountid: string, userid: string, cartid: string, paymentcapture: CapturePaymentInfo): Observable<Order> {
-    const pathvariables = { accountId: accountid, userId: userid, cartId: cartid };
+  placeOrder(userid: string, cartid: string, paymentcapture: CapturePaymentInfo): Observable<Order> {
+    const pathvariables = { userId: userid, cartId: cartid };
     const param = { fields: 'FULL' };
     const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'b');
     return this.api.post(data);
@@ -169,12 +168,11 @@ export class PaymentService {
    * Payment Capture와 Place Order를 진행
    * 타임아웃 지정(자동이체 등)
    *
-   * @param accountid 회원 아이디
    * @param userid 회원 아이디
    * @param cartid 카트 아이디
    * @param paymentcapture Payment Capture 정보
    */
-  placeOrderWithTimeout(accountid: string, userid: string, cartid: string, paymentcapture: CapturePaymentInfo, timeout = this.directdebitTimeout): Observable<Order> {
-    return this.placeOrder(accountid, userid, cartid, paymentcapture).timeout(1000 * timeout);
+  placeOrderWithTimeout(userid: string, cartid: string, paymentcapture: CapturePaymentInfo, timeout = this.directdebitTimeout): Observable<Order> {
+    return this.placeOrder(userid, cartid, paymentcapture).timeout(1000 * timeout);
   }
 }
