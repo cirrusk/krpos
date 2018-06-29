@@ -20,7 +20,6 @@ export class CouponCheckComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
-    console.log({}, this.accountInfo);
     this.cartInfo = this.callerData.cartInfo;
   }
 
