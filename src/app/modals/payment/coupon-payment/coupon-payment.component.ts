@@ -6,8 +6,9 @@ import { ComplexPaymentComponent } from '../complex-payment/complex-payment.comp
 import { Accounts, Coupon, PaymentCapture, VoucherPaymentInfo, PaymentModeData, PaymentModes, CurrencyData } from '../../../data';
 import { Cart } from '../../../data/models/order/cart';
 import { InfoBroker } from '../../../broker';
-import { PaymentService } from '../../../service';
+import { PaymentService, MessageService } from '../../../service';
 import { Order } from '../../../data/models/order/order';
+import { Utils } from '../../../core/utils';
 
 @Component({
   selector: 'pos-coupon-payment',
@@ -27,7 +28,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
   private couponsubscription: Subscription;
   @ViewChild('couponcode') private couponcode: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private spinner: SpinnerService,
-    private info: InfoBroker, private payment: PaymentService,
+    private info: InfoBroker, private payment: PaymentService, private message: MessageService,
     private storage: StorageService, private logger: Logger, private alert: AlertService) {
     super(modalService);
     this.isAllPay = true;
@@ -69,11 +70,12 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
 
   applyCoupon() {
     if (this.coupon) {
-      this.makePaymentCaptureData();
+      this.makePaymentCaptureAndApply();
     }
   }
 
-  private makePaymentCaptureData(): void {
+  private makePaymentCaptureAndApply(): void {
+    this.spinner.show();
     let pcap: PaymentCapture;
     this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
       result => {
@@ -101,9 +103,13 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         }
       },
       error => {
-        this.logger.set('coupon.payment.component', `${error}`).error();
-        this.alert.error({ message: `쿠폰 결제가 실패 했습니다. 쿠폰 정보를 다시 확인해주세요.` });
-      });
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: this.message.get(errdata.message) });
+        }
+      },
+      () => { this.spinner.hide(); });
   }
 
   /**
@@ -126,7 +132,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
-        modalId: 'ComplexPaymentComponent_Ck'
+        modalId: 'ComplexPaymentComponent_Ckpm'
       }
     ).subscribe(result => {
       if (!result) {
