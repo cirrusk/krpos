@@ -36,6 +36,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private cardresult: CardApprovalResult;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  private dupcheck = false;
   paidamount: number;
   change: number;
   finishStatus: string;                                // 결제완료 상태
@@ -201,6 +202,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     return ccard;
   }
 
+  private dupCheck(dup: boolean) {
+    this.dupcheck = dup;
+  }
   /**
    * 신용카드 정보 입력 및 결제 단말기 인식 후,
    * 실물 키보드에서 Enter 키 터치 시 결제 정보가 PG사로 넘어감
@@ -290,7 +294,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.spinner.show();
     const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
-    // setTimeout(() => subscription.unsubscribe(), 5000);
     resultNotifier.subscribe((res: CardApprovalResult) => {
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
@@ -430,19 +433,21 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   @HostListener('document:keydown', ['$event'])
-  onKeyBoardDown(event: any) {
+  onCreditCardPay(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.cardresult && this.cardresult.approved) {
+      if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
         this.cartInitAndClose();
-      } else if (this.cardresult && !this.cardresult.approved) {
+      } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
         this.close();
       } else {
-        this.nicePay();
+        console.log('>>>>>>>>>>>> ' + this.dupcheck);
+        if (!this.dupcheck) {
+          setTimeout(() => { this.nicePay(); }, 100);
+          this.dupcheck = true;
+        }
       }
-    } /*else if (event.keyCode === KeyCode.ESCAPE) {
-      this.close();
-    }*/
+    }
   }
 }

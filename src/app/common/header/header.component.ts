@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private batch: BatchService,
     private msg: MessageService,
     private printer: PrinterService,
-    private nicepay: NicePaymentService,
+    // private nicepay: NicePaymentService,
     private router: Router,
     private modal: Modal,
     private alert: AlertService,
@@ -77,7 +77,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.printer.init();
-    this.nicepay.init();
+    // this.nicepay.init();
     this.getTerminalInfo();
     this.tokensubscription = this.info.getInfo().subscribe(
       result => {

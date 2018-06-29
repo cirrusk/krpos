@@ -4,6 +4,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/operator/first';
+import 'rxjs/add/operator/take';
 
 import { NiceDriver } from './nice.driver';
 import { Logger } from '../../logger/logger';
@@ -48,7 +50,7 @@ export class NicePaymentService {
 
         const obs: Observable<any> = this.niceDriver.send(body);
 
-        obs/*.first()*/.subscribe(
+        obs.first().subscribe(
             (res) => {
                 const raw: string = res;
 
