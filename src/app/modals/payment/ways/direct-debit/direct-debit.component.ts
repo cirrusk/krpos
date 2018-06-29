@@ -154,7 +154,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       } else {
         const paid = this.paid.nativeElement.value; // 결제금액
         if (this.paidamount > paid) { // 다음결제수단
-
+          this.storage.setPay(this.paidamount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+          this.makePaymentCaptureData(paid);
+          this.result = this.paymentcapture;
+          this.finishStatus = StatusDisplay.PAID;
         } else if (this.paidamount === paid) {
           this.approvalAndPayment();
         }

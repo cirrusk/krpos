@@ -87,6 +87,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   /**
    * 현금 결제 처리
+   * ABO	현금(수표)	A포인트	Recash			쿠폰
+   * Member	현금(수표)	M포인트
+   * 소비자	현금(수표)
    *
    * @param receivedAmount 내신금액
    * @param payAmount 결제금액
