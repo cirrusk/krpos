@@ -88,10 +88,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   /**
    * 현금 결제 처리
    *
-   * @param paidAmount 내신금액
+   * @param receivedAmount 내신금액
    * @param payAmount 결제금액
    */
-  pay(evt: KeyboardEvent, paidAmount: number, payAmount: number): void {
+  pay(evt: KeyboardEvent, receivedAmount: number, payAmount: number): void {
     evt.preventDefault();
     if (this.finishStatus !== null) {
       return;
@@ -109,38 +109,39 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         }
       }
     );
-    const change = paidAmount - payAmount;
-    if (paidAmount < 1) {
+    const change = receivedAmount - payAmount;
+    if (receivedAmount < 1) {
       this.alert.warn({ message: this.message.get('notinputPaid') });
     } else if (change < 0) {
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
       // 내신금액이 클 경우 거스름돈
-      if (paidAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
+      if (receivedAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
         if (this.paymentType === 'n') { // 일반결제
-          this.paymentAndCapture(payAmount, paidAmount, change);
+          this.paymentAndCapture(payAmount, receivedAmount, change);
         } else { // 복합결제
-          if (paidAmount >= payAmount) { // 금액이 같거나 거스름돈 있으면 payment 처리
-            // this.paymentAndCapture(payAmount, paidAmount, change);
-            this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change).capturePaymentInfoData;
-            this.completePayPopup(paidAmount, payAmount, change);
+          if (receivedAmount >= payAmount) { // 금액이 같거나 거스름돈 있으면 payment 처리
+            // this.paymentAndCapture(payAmount, receivedAmount, change);
+            this.paymentcapture = this.makePaymentCaptureData(payAmount, receivedAmount, change).capturePaymentInfoData;
+            this.completePayPopup(receivedAmount, payAmount, change);
           }
         }
       } else { // 내신 금액이 작을 경우
-        this.paymentcapture = this.makePaymentCaptureData(payAmount, paidAmount, change).capturePaymentInfoData;
+        this.storage.setPay(payAmount - receivedAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+        this.paymentcapture = this.makePaymentCaptureData(payAmount, receivedAmount, change).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       }
     }
   }
 
-  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+  private completePayPopup(receivedAmount: number, payAmount: number, change: number) {
     this.close();
     this.modal.openModalByComponent(CompletePaymentComponent,
       {
         callerData: {
           account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-          paidAmount: paidAmount, payAmount: payAmount, change: change
+          paidAmount: receivedAmount, payAmount: payAmount, change: change
         },
         closeByClickOutside: false,
         closeByEscape: false,
@@ -153,13 +154,13 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   /**
    * 결제 정보 캡쳐
    *
-   * @param payAmount 내신금액
+   * @param receivedAmount 내신금액
    * @param paidAmount 결제금액
    * @param change 거스름돈
    */
-  private paymentAndCapture(payAmount: number, paidAmount: number, change: number) {
+  private paymentAndCapture(receivedAmount: number, paidAmount: number, change: number) {
     this.spinner.show();
-    const capturepaymentinfo = this.makePaymentCaptureData(payAmount, paidAmount, change);
+    const capturepaymentinfo = this.makePaymentCaptureData(receivedAmount, paidAmount, change);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
     this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
@@ -275,27 +276,17 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   cartInitAndClose() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-        if (rtn) {
-          this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
-        } else {
-          this.alert.show({ message: '실패' });
-        }
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.info.sendInfo('orderClear', 'clear');
       }
       this.close();
     } else { // 복합결제
-      const paid = this.paid.nativeElement.value;
-      const payment = this.payment.nativeElement.value;
+      const paid = this.paid.nativeElement.value; // 내신금액
+      const payment = this.payment.nativeElement.value; // 결제금액
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         if (paid === payment) { // 금액이 같을 경우만 영수증 출력
-          const rtn = this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          if (rtn) {
-            this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-            this.info.sendInfo('orderClear', 'clear');
-          } else {
-            this.alert.show({ message: '실패' });
-          }
+          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          this.info.sendInfo('orderClear', 'clear');
         }
       }
       this.close();
