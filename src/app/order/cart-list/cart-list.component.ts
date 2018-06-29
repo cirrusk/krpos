@@ -213,7 +213,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.searchValid.valueChanges
       .debounceTime(200)
       .subscribe(v => {
-        console.log(v);
         if (v) {
           if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
             this.searchText.nativeElement.value = v.replace(numEngDelExp, '');
