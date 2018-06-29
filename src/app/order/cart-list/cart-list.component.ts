@@ -440,6 +440,9 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param cartList 카트 엔트리 정보
    */
   private copyCartByEntries(account: Accounts, cartList: Array<OrderEntry>) {
+    if (!cartList) {
+      return;
+    }
     this.spinner.show();
     this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
       this.init();

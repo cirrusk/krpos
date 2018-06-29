@@ -166,7 +166,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setCcPaymentInfo = ccard;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
     return capturepaymentinfo;

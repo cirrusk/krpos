@@ -102,7 +102,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.directDebitPaymentInfo = directdebit;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.DIRECTDEBIT;
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
     return capturepaymentinfo;

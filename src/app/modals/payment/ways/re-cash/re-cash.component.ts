@@ -181,7 +181,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setMonetaryPaymentInfo = recash;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.ARCREDIT;
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
     return capturepaymentinfo;
