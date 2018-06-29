@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker } from '../../broker';
-import { AlertService, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService, NicePaymentService } from '../../core';
+import { AlertService, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService } from '../../core';
 import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
 import { BatchInfo, LockType, TerminalInfo } from '../../data';
@@ -58,7 +58,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private batch: BatchService,
     private msg: MessageService,
     private printer: PrinterService,
-    // private nicepay: NicePaymentService,
     private router: Router,
     private modal: Modal,
     private alert: AlertService,
@@ -77,7 +76,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.printer.init();
-    // this.nicepay.init();
     this.getTerminalInfo();
     this.tokensubscription = this.info.getInfo().subscribe(
       result => {
