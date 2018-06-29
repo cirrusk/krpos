@@ -133,7 +133,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           const capturepaymentinfo = this.makePaymentCaptureData(this.payprice);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
+          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
             result => {
               this.orderInfo = result;
               this.logger.set('ic.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();

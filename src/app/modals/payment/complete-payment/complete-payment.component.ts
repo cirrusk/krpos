@@ -110,7 +110,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
     capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.uid, this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
       this.orderInfo = result;
       this.logger.set('complete-payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
       this.finishStatus = result.statusDisplay;

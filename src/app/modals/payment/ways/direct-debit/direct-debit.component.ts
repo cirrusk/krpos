@@ -71,6 +71,21 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
+   /**
+   * 실결제 금액 입력 시 잔액 계산
+   * @param paid 실결제 금액
+   */
+  paidCal(paid: number) {
+    // this.change = this.paidamount - paid;
+  }
+
+  /**
+   * 엔터입력시 blur 처리되도록
+   */
+  paidBlur() {
+    setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
+  }
+
   private setDirectDebitInfo() {
     const banks: Array<BankAccount> = this.accountInfo.parties[0].bankAccounts;
     if (banks) {
