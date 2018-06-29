@@ -20,13 +20,14 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 
 @Component({
   selector: 'pos-cash',
-  templateUrl: './cash.component.html'
+  templateUrl: './cash.component.html',
+  styleUrls: ['./cash.component.css']
 })
 export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   @ViewChild('paid') private paid: ElementRef;         // 내신금액
   @ViewChild('payment') private payment: ElementRef;   // 결제금액
-  @ViewChild('paycheck') private paycheck: ElementRef; // 결제확인버튼
+  paylock: boolean;                                    // 결제버튼잠금
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   private orderInfo: Order;
@@ -99,7 +100,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     if (this.finishStatus !== null) {
       return;
     }
-    // setTimeout(() => { this.paycheck.nativeElement.blur(); this.renderer.setAttribute(this.paycheck.nativeElement, 'disabled', 'disabled'); }, 5);
+    this.paySubmitLock(true);
     // 유효성체크 실패 시 포커스 이동 처리
     this.alertsubscription = this.alert.alertState.subscribe(
       (state: AlertState) => {
@@ -107,15 +108,16 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.paid.nativeElement.focus();
             this.paid.nativeElement.select();
-            this.renderer.setAttribute(this.paycheck.nativeElement, 'disabled', '');
           }, 5);
         }
       }
     );
     const change = receivedAmount - payAmount;
     if (receivedAmount < 1) {
+      this.paySubmitLock(false); // 버튼 잠금 해제
       this.alert.warn({ message: this.message.get('notinputPaid') });
     } else if (change < 0) {
+      this.paySubmitLock(false); // 버튼 잠금 해제
       this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
       // 내신금액이 클 경우 거스름돈
@@ -136,6 +138,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         this.finishStatus = StatusDisplay.PAID;
       }
     }
+  }
+
+  private paySubmitLock(lock: boolean) {
+    this.paylock = lock;
   }
 
   private completePayPopup(receivedAmount: number, payAmount: number, change: number) {
