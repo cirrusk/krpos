@@ -10,6 +10,7 @@ import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Paginati
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 import { Order } from '../../data/models/order/order';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'pos-cart-list',
@@ -75,7 +76,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
   public memberType = MemberType;                                           // HTML 사용(enum)
-
+  searchValid: FormControl = new FormControl('');
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -167,6 +168,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.checkChar();
     this.printerService.init();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
     this.phytoCafeSubscription = this.info.getInfo().subscribe(
@@ -198,6 +200,26 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+  }
+
+  /**
+   * 한글이나 특수문자 제거
+   */
+  private checkChar() {
+    const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
+    const engExp: RegExp = new RegExp(/[a-z]/gi);
+    const numExp: RegExp = new RegExp(/[0-9]/g);
+    const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
+    this.searchValid.valueChanges
+      .debounceTime(200)
+      .subscribe(v => {
+        console.log(v);
+        if (v) {
+          if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
+            this.searchText.nativeElement.value = v.replace(numEngDelExp, '');
+          }
+        }
+      });
   }
 
   setType(data) {

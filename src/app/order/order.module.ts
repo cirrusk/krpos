@@ -12,10 +12,13 @@ import { ClientComponent } from './client/client.component';
 import { PromotionComponent, PromotionItemElementDirective } from './promotion/promotion.component';
 import { PromotionItemDirective } from './promotion/promotion-item.directive';
 import { StripHtmlPipe } from '../core/pipe/strip-html.pipe';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   declarations: [
     CartListComponent,
