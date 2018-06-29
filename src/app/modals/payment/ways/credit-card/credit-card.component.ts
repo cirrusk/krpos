@@ -276,35 +276,43 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.spinner.show();
       const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
       this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
-      resultNotifier.subscribe((res: CardApprovalResult) => {
-        this.spinner.hide();
-        this.cardresult = res;
-        if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-          this.finishStatus = 'fail';
-          this.storage.removePaymentModeCode();
-          this.apprmessage = res.msg;
-          // this.alert.error({ message: res.msg });
-        } else {
-          if (res.approved) {
-            this.finishStatus = StatusDisplay.PAID;
-            this.cardnumber = res.maskedCardNumber;
-            this.cardcompany = res.issuerName;
-            this.cardauthnumber = res.approvalNumber;
-            this.paidDate = Utils.convertDate(res.approvalDateTime);
-            // payment caputure
-            this.paymentcapture = this.makePaymentCaptureData(paidprice).capturePaymentInfoData;
-            this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-            if (this.change === 0) {
-              this.completePayPopup(paidprice, this.paidamount, this.change);
-            }
-          } else {
+      resultNotifier.subscribe(
+        (res: CardApprovalResult) => {
+          this.spinner.hide();
+          this.cardresult = res;
+          if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
             this.finishStatus = 'fail';
             this.storage.removePaymentModeCode();
-            // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
-            this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
+            this.apprmessage = res.msg;
+            // this.alert.error({ message: res.msg });
+          } else {
+            if (res.approved) {
+              this.finishStatus = StatusDisplay.PAID;
+              this.apprmessage = '카드 승인이 완료되었습니다.';
+              this.cardnumber = res.maskedCardNumber;
+              this.cardcompany = res.issuerName;
+              this.cardauthnumber = res.approvalNumber;
+              this.paidDate = Utils.convertDate(res.approvalDateTime);
+              // payment caputure
+              this.paymentcapture = this.makePaymentCaptureData(paidprice).capturePaymentInfoData;
+              this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+              if (this.change === 0) {
+                this.completePayPopup(paidprice, this.paidamount, this.change);
+              }
+            } else {
+              this.finishStatus = 'fail';
+              this.storage.removePaymentModeCode();
+              // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+              this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
+            }
           }
-        }
-      });
+        },
+        error => {
+          this.spinner.hide();
+        },
+        () => {
+          this.spinner.hide();
+        });
     } else {
       // this.alert.show({ message: '실결제금액이 큽니다.' });
       this.checktype = -2;
@@ -361,6 +369,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                 }
               } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                 // cart-list.component에 재생성 이벤트 보내서 처리
+                this.finishStatus = 'fail';
                 this.apprmessage = '결제에 실패했습니다.';
                 this.info.sendInfo('recart', this.orderInfo);
               }

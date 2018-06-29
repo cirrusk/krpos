@@ -50,12 +50,12 @@
                     </tbody>
                 </table>
             </div>
-            <em *ngIf="checktype === '1'" class="finish fail">사용 포인트가 부족합니다.</em>
-            <em *ngIf="checktype === '2'" class="finish fail">사용 포인트가 결제금액보다 많습니다.</em>
-            <em *ngIf="checktype === '3'" class="finish fail">사용 포인트가 공란입니다.</em>
-            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">결제가 완료되었습니다.</em>
+            <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === null && checktype === -3" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
             <ng-template #payFail>
-                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">결제에 실패했습니다.</em>
+                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
             </ng-template>
             <!-- //결제내역 -->
         </div>

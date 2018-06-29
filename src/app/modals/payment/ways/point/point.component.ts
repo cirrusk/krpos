@@ -25,7 +25,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   balanceamount: number;
   paymentprice: number;
   change: number;
-  checktype: string;
+  checktype: number;
+  apprmessage: string;
   private orderInfo: Order;
   private paymentcapture: PaymentCapture;
   private cartInfo: Cart;
@@ -47,7 +48,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     super(modalService);
     this.isAllPay = true;
     this.finishStatus = null;
-    this.checktype = null;
+    this.checktype = 0;
   }
 
   ngOnInit() {
@@ -121,9 +122,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     const paid = this.paymentprice - usepoint;
     if (paid < 0) { // 포인트가 많음.
-      this.checktype = '2';
+      this.checktype = -2;
+      this.apprmessage = '사용 포인트가 결제금액보다 많습니다.';
     } else {
-      this.checktype = null;
+      this.checktype = 0;
     }
   }
 
@@ -136,11 +138,13 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     const paid = this.paymentprice - usepoint;
     if (paid === 0) {
-      this.checktype = '0';
+      this.checktype = 0;
     } else if (paid > 0) { // 포인트가 부족
-      this.checktype = '1';
+      this.checktype = -1;
+      this.apprmessage = '사용 포인트가 결제금액보다 작습니다.';
     } else { // 포인트가 많음.
-      this.checktype = '2';
+      this.checktype = -2;
+      this.apprmessage = '사용 포인트가 결제금액보다 많습니다.';
     }
   }
 
@@ -155,7 +159,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     } else {
       usepoint = this.usePoint.nativeElement.value;
       if (typeof usepoint !== 'number') {
-        this.checktype = '3';
+        this.checktype = -3;
+        this.apprmessage = '사용 포인트가 공란입니다.';
       }
     }
     if (this.balanceamount < usepoint) {
@@ -173,11 +178,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         // this.alert.show({ message: '사용 포인트가 결제금액보다 많습니다.' });
         // return;
       } else {
-        this.checktype = null;
+        this.checktype = 0;
         this.paymentCapture();
       }
     } else {
-      this.checktype = null;
+      this.checktype = 0;
       const point = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
       this.paymentcapture = this.makePaymentCaptureData(point).capturePaymentInfoData;
       if (paid > 0) { // 결제할것이 남음.
@@ -189,7 +194,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.completePayPopup(usepoint, this.paymentprice, 0);
         // this.paymentCapture();
       } else {
-        this.checktype = '2';
+        this.checktype = -2;
+        this.apprmessage = '사용 포인트가 결제금액보다 많습니다.';
       }
     }
 
@@ -208,6 +214,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+            this.apprmessage = '결제가 완료되었습니다.';
             // this.paidDate = result.created ? result.created : new Date();
             // setTimeout(() => { // 결제 성공, 변경못하도록 처리
             //   this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
@@ -217,11 +224,15 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
             // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+            this.apprmessage = '결제에 실패했습니다.';
           } else { // CART 삭제된 상태
             this.info.sendInfo('recart', this.orderInfo);
+            this.apprmessage = '결제에 실패했습니다.';
           }
         } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
           // cart-list.component에 재생성 이벤트 보내서 처리
+          this.finishStatus = 'fail';
+          this.apprmessage = '결제에 실패했습니다.';
           this.info.sendInfo('recart', this.orderInfo);
         }
         this.storage.removePay();
@@ -230,7 +241,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('point.component', `${errdata.message}`).error();
+          this.apprmessage = errdata.message;
+          // this.logger.set('point.component', `${errdata.message}`).error();
         }
       }, () => { this.spinner.hide(); });
   }

@@ -23,6 +23,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   paidamount: number;
   change: number;
   balance: Balance;
+  checktype: number;
+  apprmessage: string;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -38,6 +40,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;
+    this.checktype = 0;
   }
 
   ngOnInit() {
@@ -88,10 +91,15 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       // 전체결제금액을 Re-Cash로 적용 후 A포인트에 추가 금액 입력 후, 실물 키보드의 Enter 키가 입력된 경우, 경고 팝업 뜸 (반대 경우도 포함)
       // : 이미 Re-Cash(A포인트)로 전체 결제금액을 사용 중입니다. A포인트(Re-Cash)금액은 제외 됩니다.
       if (check > 0) {
-        this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
+        this.checktype = -1;
+        this.apprmessage = '결제 사용할 금액이 부족합니다.';
+        // this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
       } else if (check < 0) {
-        this.alert.warn({ message: '잔액보다 사용하려는 금액이 클 수 없습니다.' });
+        this.checktype = -2;
+        this.apprmessage = '잔액보다 사용하려는 금액이 클 수 없습니다.';
+        // this.alert.warn({ message: '잔액보다 사용하려는 금액이 클 수 없습니다.' });
       } else {
+        this.checktype = 0;
         this.payment();
       }
     } else {
@@ -104,7 +112,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.finishStatus = StatusDisplay.PAID;
       } else if (check === 0) {
         // this.payment();
-        this.completePayPopup(this.paidamount, usepoint, check);
+        // this.completePayPopup(this.paidamount, usepoint, check);
       }
     }
   }
@@ -120,6 +128,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.finishStatus = result.statusDisplay;
       if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.apprmessage = '결제가 완료되었습니다.';
           setTimeout(() => {
             this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
             this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
@@ -127,11 +136,15 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
           // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
           this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+          this.apprmessage = '결제에 실패했습니다.';
         } else { // CART 삭제된 상태
+          this.apprmessage = '결제에 실패했습니다.';
           this.info.sendInfo('recart', this.orderInfo);
         }
       } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
         // cart-list.component에 재생성 이벤트 보내서 처리
+        this.finishStatus = 'fail';
+        this.apprmessage = '결제에 실패했습니다.';
         this.info.sendInfo('recart', this.orderInfo);
       }
       this.storage.removePay();
@@ -140,7 +153,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.spinner.hide();
       const errdata = Utils.getError(error);
       if (errdata) {
-        this.logger.set('recash.component', `${errdata.message}`).error();
+        // this.logger.set('recash.component', `${errdata.message}`).error();
+        this.apprmessage = errdata.message;
       }
     }, () => { this.spinner.hide(); });
   }
@@ -199,13 +213,13 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       console.log('복합결제일 경우...');
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        const check = this.paidamount - this.usePoint.nativeElement.value;
-        if (check > 0) {
-
-        } else if (check === 0) {
-          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
+        const usepoint = this.usePoint.nativeElement.value;
+        const check = this.paidamount - usepoint;
+        if (check === 0) {
+          this.completePayPopup(this.paidamount, usepoint, check);
+          // this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          // this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
+          // this.info.sendInfo('orderClear', 'clear');
         }
       }
       this.close();

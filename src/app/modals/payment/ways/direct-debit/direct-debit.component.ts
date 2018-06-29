@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState, StorageService, Modal } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo
@@ -12,6 +12,7 @@ import { BankAccount } from '../../../../data/models/order/bank-account';
 import { Utils } from '../../../../core/utils';
 import { ReceiptService, PaymentService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 @Component({
   selector: 'pos-direct-debit',
   templateUrl: './direct-debit.component.html'
@@ -34,9 +35,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   checktype: number;
+  apprmessage: string;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService,
+  constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
     private storage: StorageService, private printer: PrinterService, private payments: PaymentService,
     private logger: Logger, private info: InfoBroker, private alert: AlertService, private spinner: SpinnerService, private renderer: Renderer2) {
     super(modalService);
@@ -53,6 +55,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (!this.accountnumber) {
       this.finishStatus = 'fail';
       this.checktype = -1;
+      this.apprmessage = '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.';
       // this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
       setTimeout(() => {
         this.paid.nativeElement.blur();
@@ -145,13 +148,23 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     return capturepaymentinfo;
   }
 
+  checkpwd(pwd: string) {
+    if (pwd) {
+      this.checktype = 0;
+    } else {
+      this.checktype = -2;
+      this.apprmessage = '비밀번호가 공란입니다.';
+    }
+  }
   pay(evt: KeyboardEvent) {
     evt.preventDefault();
     const pwd = this.ddpassword.nativeElement.value;
     if (pwd) {
+      setTimeout(() => { this.ddpassword.nativeElement.blur(); }, 50);
       if (this.paymentType === 'n') {
         this.approvalAndPayment();
       } else {
+        this.checktype = 0;
         const paid = this.paid.nativeElement.value; // 결제금액
         if (this.paidamount > paid) { // 다음결제수단
           this.storage.setPay(this.paidamount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
@@ -163,7 +176,9 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         }
       }
     } else {
-      this.alert.show({ message: '비밀번호가 공란입니다.' });
+      // this.alert.show({ message: '비밀번호가 공란입니다.' });
+      this.checktype = -2;
+      this.apprmessage = '비밀번호가 공란입니다.';
       this.alertsubscription = this.alert.alertState.subscribe(
         (state: AlertState) => {
           if (!state.show) {
@@ -190,17 +205,22 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+            this.apprmessage = '결제가 완료되었습니다.';
             this.paidDate = result.created ? result.created : new Date();
             setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
             // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-            this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+            this.apprmessage = `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.`;
+            // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
           } else { // CART 삭제된 상태
-            this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+            // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+            this.apprmessage = `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.`;
           }
         } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-          this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+          this.finishStatus = 'fail';
+          // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
+          this.apprmessage = `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.`;
           // cart-list.component에 재생성 이벤트 보내서 처리
           this.info.sendInfo('recart', this.orderInfo);
         }
@@ -210,7 +230,8 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('direct.debit.component', `${errdata.message}`).error();
+          this.apprmessage = errdata.message;
+          // this.logger.set('direct.debit.component', `${errdata.message}`).error();
         }
       }, () => { this.spinner.hide(); });
   }
@@ -231,7 +252,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   cartInitAndClose() {
-
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
@@ -240,8 +260,31 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       }
       this.close();
     } else {
-      console.log('복합결제일 경우...');
+      // console.log('복합결제일 경우...');
+      if (this.change === 0) {
+        const paid = this.paid.nativeElement.value; // 결제금액
+        if (this.paidamount === paid) { // 결제완료
+          this.completePayPopup(paid, this.paidamount, this.change);
+        }
+      }
+      this.close();
     }
+  }
+
+  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+    this.close();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: {
+          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+          paidAmount: paidAmount, payAmount: payAmount, change: change
+        },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
+      }
+    );
   }
 
   @HostListener('document:keydown', ['$event'])

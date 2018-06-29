@@ -31,12 +31,15 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   cardcompany: string; // 카드사명
   cardperiod: string; // 유효기간
   cardauthnumber: string; // 승인번호
+  checktype: number;
+  apprmessage: string;
   @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private storage: StorageService,
     private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
+    this.checktype = 0;
   }
 
   ngOnInit() {
@@ -85,30 +88,37 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.spinner.show();
     const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
     this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
-    resultNotifier.subscribe((res: ICCardApprovalResult) => {
-      this.cardresult = res;
-      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        this.finishStatus = 'fail';
-        this.storage.removePaymentModeCode();
-        this.alert.error({ message: res.msg });
-      } else {
-        if (res.approved) {
-          this.finishStatus = StatusDisplay.PAID;
-          this.cardnumber = res.maskedCardNumber;
-          this.cardcompany = res.issuerName;
-          this.cardauthnumber = res.approvalNumber;
-          this.paidDate = Utils.convertDate(res.approvalDateTime);
-          // payment caputure
-          this.paymentcapture = this.makePaymentCaptureData(this.payprice).capturePaymentInfoData;
-          this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-        } else {
+    resultNotifier.subscribe(
+      (res: ICCardApprovalResult) => {
+        this.cardresult = res;
+        if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
           this.finishStatus = 'fail';
           this.storage.removePaymentModeCode();
-          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+          // this.alert.error({ message: res.msg });
+          this.apprmessage = res.msg;
+        } else {
+          if (res.approved) {
+            this.checktype = 0;
+            this.finishStatus = StatusDisplay.PAID;
+            this.apprmessage = '카드가 승인되었습니다.';
+            this.cardnumber = res.maskedCardNumber;
+            this.cardcompany = res.issuerName;
+            this.cardauthnumber = res.approvalNumber;
+            this.paidDate = Utils.convertDate(res.approvalDateTime);
+            // payment caputure
+            this.paymentcapture = this.makePaymentCaptureData(this.payprice).capturePaymentInfoData;
+            this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+          } else {
+            this.finishStatus = 'fail';
+            this.storage.removePaymentModeCode();
+            // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+            this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
+          }
         }
-      }
-      this.spinner.hide();
-    });
+
+      },
+      error => { this.spinner.hide(); },
+      () => { this.spinner.hide(); });
   }
 
   /**
@@ -121,10 +131,13 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     resultNotifier.subscribe((res: ICCardApprovalResult) => {
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        this.alert.error({ message: res.msg });
+        // this.alert.error({ message: res.msg });
         this.spinner.hide();
+        this.finishStatus = 'fail';
+        this.apprmessage = res.msg;
       } else {
         if (res.approved) {
+          this.checktype = 0;
           this.cardnumber = res.maskedCardNumber;
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
@@ -140,15 +153,20 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
               this.finishStatus = result.statusDisplay;
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
                 if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+                  this.apprmessage = '결제가 완료되었습니다.';
                   this.paidDate = result.created ? result.created : new Date();
                   // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                   this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+                  this.apprmessage = '결제에 실패했습니다.';
                 } else { // CART 삭제된 상태
+                  this.apprmessage = '결제에 실패했습니다.';
                   this.info.sendInfo('recart', this.orderInfo);
                 }
               } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                 // cart-list.component에 재생성 이벤트 보내서 처리
+                this.finishStatus = 'fail';
+                this.apprmessage = '결제에 실패했습니다.';
                 this.info.sendInfo('recart', this.orderInfo);
               }
               this.storage.removePay();
@@ -157,13 +175,15 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
               this.spinner.hide();
               const errdata = Utils.getError(error);
               if (errdata) {
-                this.logger.set('iccard.component', `${errdata.message}`).error();
+                this.apprmessage = errdata.message;
+                // this.logger.set('iccard.component', `${errdata.message}`).error();
               }
             }, () => { this.spinner.hide(); });
         } else {
           this.finishStatus = 'fail';
           this.spinner.hide();
-          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+          // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
+          this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
         }
       }
     });

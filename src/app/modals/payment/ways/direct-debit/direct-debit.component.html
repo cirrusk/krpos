@@ -40,7 +40,7 @@
                         <tr>
                             <th scope="row">비밀번호</th>
                             <td>
-                                <input #ddpassword type="password" class="w110" title="비밀번호" (keydown.enter)="pay($event)">
+                                <input #ddpassword type="password" class="w110" title="비밀번호" (keyup)="checkpwd(ddpassword.value)" (keydown.enter)="pay($event)">
                             </td>
                         </tr>
                         <tr>
@@ -70,7 +70,12 @@
                     </tbody>
                 </table>
             </div>
-            <em *ngIf="checktype === -1" class="finish fail">계좌번호가 없으므로 자동이체를 진행할 수 없습니다.</em>
+            <em *ngIf="checktype === -1" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="checktype === -2" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
+            <ng-template #payFail>
+                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
+            </ng-template>
             <!-- //결제내역 -->
         </div>
     </div>

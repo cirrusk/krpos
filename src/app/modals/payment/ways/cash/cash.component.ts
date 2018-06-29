@@ -30,6 +30,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paylock: boolean;                                    // 결제버튼잠금
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
+  checktype: number;
+  apprmessage: string;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -53,6 +55,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
+    this.checktype = 0;
   }
 
   ngOnInit() {
@@ -115,11 +118,16 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     const change = receivedAmount - payAmount;
     if (receivedAmount < 1) {
       this.paySubmitLock(false); // 버튼 잠금 해제
-      this.alert.warn({ message: this.message.get('notinputPaid') });
+      this.checktype = -1;
+      this.apprmessage = this.message.get('notinputPaid');
+      // this.alert.warn({ message: this.message.get('notinputPaid') });
     } else if (change < 0) {
       this.paySubmitLock(false); // 버튼 잠금 해제
-      this.alert.warn({ message: this.message.get('notEnoughPaid') });
+      this.checktype = -2;
+      this.apprmessage = this.message.get('notEnoughPaid');
+      // this.alert.warn({ message: this.message.get('notEnoughPaid') });
     } else {
+      this.checktype = 0;
       // 내신금액이 클 경우 거스름돈
       if (receivedAmount >= payAmount) { // payment capture 와 place order (한꺼번에) 실행
         if (this.paymentType === 'n') { // 일반결제
@@ -178,6 +186,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.finishStatus = result.statusDisplay;
       if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.apprmessage = '결제가 완료되었습니다.';
           this.paidDate = result.created ? result.created : new Date();
           setTimeout(() => {
             this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
@@ -188,11 +197,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           this.printer.openCashDrawer(); // 캐셔 drawer 오픈
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+          this.apprmessage = '결제에 실패했습니다.';
         } else { // CART 삭제된 상태
           this.info.sendInfo('recart', this.orderInfo);
+          this.apprmessage = '결제에 실패했습니다.';
         }
       } else { // 결제정보 없는 경우, CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
         // cart-list.component에 재생성 이벤트 보내서 처리
+        this.finishStatus = 'fail';
+        this.apprmessage = '결제에 실패했습니다.';
         this.info.sendInfo('recart', this.orderInfo);
       }
       this.storage.removePay();
@@ -201,7 +214,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.spinner.hide();
       const errdata = Utils.getError(error);
       if (errdata) {
-        this.logger.set('cash.component', `${errdata.message}`).error();
+        this.apprmessage = errdata.message;
       }
     }, () => { this.spinner.hide(); });
   }
