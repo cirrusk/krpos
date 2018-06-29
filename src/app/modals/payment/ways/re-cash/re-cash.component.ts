@@ -70,11 +70,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   pay(evt: KeyboardEvent) {
     evt.preventDefault();
-    if (this.isAllPay) {
-      console.log('*** allpay');
-    } else {
-      console.log('*** use point : ' + this.usePoint.nativeElement.value);
-    }
     const usepoint = this.usePoint.nativeElement.value;
     const check = this.paidamount - usepoint;
     if (this.paymentType === 'n') {
@@ -103,6 +98,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.payment();
       }
     } else {
+      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
       this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
       if (check > 0) { // 결제할것이 남음.
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
@@ -111,6 +107,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
       } else if (check === 0) {
+        this.finishStatus = StatusDisplay.PAID;
         // this.payment();
         // this.completePayPopup(this.paidamount, usepoint, check);
       }

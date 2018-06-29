@@ -131,7 +131,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // this.setSelected(evt, 2, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      // this.selectPopup('APointComponent', PointComponent , 'a', null);
+      this.selectPopup('APointComponent', PointComponent , 'a', null);
     }
   }
 

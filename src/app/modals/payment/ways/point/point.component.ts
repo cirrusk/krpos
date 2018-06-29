@@ -157,7 +157,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.isAllPay) {
       usepoint = this.paymentprice;
     } else {
-      usepoint = this.usePoint.nativeElement.value;
+      usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
       if (typeof usepoint !== 'number') {
         this.checktype = -3;
         this.apprmessage = '사용 포인트가 공란입니다.';
@@ -183,14 +183,15 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       }
     } else {
       this.checktype = 0;
-      const point = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-      this.paymentcapture = this.makePaymentCaptureData(point).capturePaymentInfoData;
+      const p = usepoint;
+      this.paymentcapture = this.makePaymentCaptureData(p).capturePaymentInfoData;
       if (paid > 0) { // 결제할것이 남음.
         this.result = this.paymentcapture;
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
         this.sendPaymentAndOrder(this.paymentcapture, null);
         this.close();
       } else if (paid === 0) {
+        this.result = this.paymentcapture;
         this.completePayPopup(usepoint, this.paymentprice, 0);
         // this.paymentCapture();
       } else {
@@ -249,7 +250,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
-    const pointtype = (this.pointType === 'a') ? PointType.BR030 : PointType.BR033;
+    const pointtype = ''; // (this.pointType === 'a') ? PointType.BR030 : PointType.BR033;
     const point = new PointPaymentInfo(paidamount, pointtype);
     point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
     point.setCurrencyData = new CurrencyData();
