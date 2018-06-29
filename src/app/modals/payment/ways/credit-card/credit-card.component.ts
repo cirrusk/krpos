@@ -67,6 +67,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.paidamount = this.cartInfo.totalPrice.value;
     if (this.paymentType === 'n') {
       this.paid.nativeElement.value = this.paidamount;
+      setTimeout(() => { this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly'); }, 50);
       this.change = 0;
     } else {
       setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
