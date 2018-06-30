@@ -105,7 +105,7 @@ export class OrderService {
    */
   orderCancel(accountid: string, userid: string, ordercode: string) {
     const pathvariables = { accountId: accountid, userId: userid, orderCode: ordercode };
-    const data = new HttpData('orderDetails', pathvariables, null, null);
+    const data = new HttpData('orderCancel', pathvariables, null, null, 'json');
     return this.api.get(data);
   }
 }

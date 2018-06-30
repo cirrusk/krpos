@@ -15,7 +15,8 @@
         "templPaperCut",
         "templDashline",
         "templMacAndCo",
-        "templAdditionalTitle"
+        "templAdditionalTitle",
+        "templCancelTitle"
     ],
     "precompile": {
         "templApInfo": true,
@@ -33,7 +34,8 @@
         "templPaperCut": true,
         "templDashline": true,
         "templMacAndCo": true,
-        "templAdditionalTitle": false
+        "templAdditionalTitle": false,
+        "templCancelTitle": false
     },
     "downloadUriPrefix": "/assets/template/receipt/",
     "downloadUris": {
@@ -52,7 +54,8 @@
         "templPaperCut": "papercut.xml",
         "templDashline": "dashline.xml",
         "templMacAndCo": "macAndCoNum.xml",
-        "templAdditionalTitle": "additionalTitle.xml"
+        "templAdditionalTitle": "additionalTitle.xml",
+        "templCancelTitle": "cancel.xml"
     },
     "receipts": [
         "normalReceiptABO", "normalReceiptMember", "normalReceiptConsumer"
@@ -62,6 +65,7 @@
             "templApInfo",
             "templOrderSummary",
             "templAdditionalTitle",
+            "templCancelTitle",
             "templProductList", "templDashline",
             "templPrices", "templDashline",
             "templPayments", "templDashline",
@@ -74,6 +78,7 @@
             "templApInfo",
             "templOrderSummary",
             "templAdditionalTitle",
+            "templCancelTitle",
             "templProductList", "templDashline",
             "templPrices", "templDashline",
             "templPayments", "templDashline",
@@ -85,6 +90,7 @@
             "templApInfo",
             "templOrderSummary",
             "templAdditionalTitle",
+            "templCancelTitle",
             "templProductList", "templDashline",
             "templPrices", "templDashline",
             "templPayments", "templDashline",

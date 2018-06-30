@@ -31,16 +31,17 @@
                         <tbody>
                             <tr class="on">
                                 <td><label class="inp_rd single" for="ps1"><input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label></td>
-                                <td><span>1003555</span></td>
-                                <td class="name"><span class="elips mx150">김나나나나난나나</span></td>
-                                <td><span>740002</span></td>
-                                <td class="ar"><span>120,000원</span></td>
-                                <td><span>2018/01/30 15:53:55</span></td>
+                                <td><span>{{orderInfo.code}}</span></td>
+                                <td class="name"><span class="elips mx150">{{orderInfo.user.name}}</span></td>
+                                <td><span>{{orderInfo.user.uid}}</span></td>
+                                <td class="ar"><span>{{orderInfo.total.value | number}}원</span></td>
+                                <td><span>{{orderInfo.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>                                
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="txt03">해당 주문은 그룹 결제 내역입니다.<br> 해당 ABO 주문 취소 시, 같은 그룹 내 ABO의 주문이 모두 취소됩니다.<br>취소하시겠습니까?</p>
+                <p class="txt03">해당 주문을 취소하시겠습니까?</p>
+                <!-- <p class="txt03">해당 주문은 그룹 결제 내역입니다.<br> 해당 ABO 주문 취소 시, 같은 그룹 내 ABO의 주문이 모두 취소됩니다.<br>취소하시겠습니까?</p> -->
             </div>
         </div>
     </div>
@@ -48,7 +49,7 @@
     <div class="pop_footer clearfix">
         <span class="fl">취소 ESC</span>
         <span class="fr">
-            <a href="javascript:void(0);" class="btn01_blue">확인</a>
+            <a href="javascript:void(0);" class="btn01_blue" (click)="cancelOrder()">확인</a>
             <a href="javascript:void(0);" class="btn01_white" (click)="close()">취소</a>
         </span>
     </div>

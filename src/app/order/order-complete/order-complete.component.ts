@@ -14,16 +14,18 @@ import { CancelOrderComponent } from '../../modals';
   templateUrl: './order-complete.component.html'
 })
 export class OrderCompleteComponent implements OnInit, OnDestroy {
-
+  private PAGE_SIZE = 8;
   private orderListSubscription: Subscription;
 
   orderHistoryList: OrderHistoryList;
   selectedOrderNum: number;
   searchType: string;
+  memberType: string;
+  searchText: string;
 
   @Input() chkSearchTypeABO = true;
   @Input() chkSearchTypeC = false;
-  @ViewChild('inputSearchText') private searchText: ElementRef;
+  @ViewChild('inputSearchText') private inputSearchText: ElementRef;
   @ViewChild('searchType1') private searchTypeABO: ElementRef;
   @ViewChild('searchType2') private searchTypeC: ElementRef;
   @ViewChild('chkSearchType1') private chkSearchType1: ElementRef;
@@ -43,7 +45,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    setTimeout(() => { this.searchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
+    setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
   }
 
   ngOnDestroy() {
@@ -80,40 +82,59 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   }
 
   popupOrderDetail(orderCode: string, userId: string) {
-    this.modal.openModalByComponent(OrderDetailComponent,
-      {
-        callerData: { orderCode: orderCode, userId: userId },
-        actionButtonLabel: '선택',
-        closeButtonLabel: '취소',
-        modalId: 'OrderDetailComponent'
+    const existedIdx: number = this.orderHistoryList.orders.findIndex(
+      function (obj) {
+        return obj.code === orderCode;
       }
     );
-  }
 
-  popupCancel() {
-    this.modal.openModalByComponent(CancelOrderComponent,
-      {
-        callerData: { },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        closeByEscape: false,
-        modalId: 'CancelOrderComponent'
-      }
-    );
-  }
-
-  searchOrder(memberType: string, searchText: string) {
-    if (searchText === '' || searchText === undefined || searchText === null) {
-      this.alert.info({ message: this.messageService.get('noSearchText') });
-    } else {
-      this.getOrderList(this.searchType, memberType, searchText);
+    if (existedIdx !== -1) {
+      this.modal.openModalByComponent(OrderDetailComponent,
+        {
+          callerData: { orderInfo : this.orderHistoryList.orders[existedIdx] },
+          actionButtonLabel: '선택',
+          closeButtonLabel: '취소',
+          modalId: 'OrderDetailComponent'
+        }
+      );
     }
   }
 
-  getOrderList(searchType: string, memberType: string, searchText: string) {
+  popupCancel(orderCode: string) {
+    const existedIdx: number = this.orderHistoryList.orders.findIndex(
+      function (obj) {
+        return obj.code === orderCode;
+      }
+    );
+
+    if (existedIdx !== -1) {
+      this.modal.openModalByComponent(CancelOrderComponent,
+        {
+          callerData: { orderInfo : this.orderHistoryList.orders[existedIdx] },
+          closeByClickOutside: false,
+          closeByEnter: false,
+          closeByEscape: false,
+          modalId: 'CancelOrderComponent'
+        }
+      );
+    }
+
+  }
+
+  searchOrder(_memberType: string, _searchText: string) {
+    if (_searchText === '' || _searchText === undefined || _searchText === null) {
+      this.alert.info({ message: this.messageService.get('noSearchText') });
+    } else {
+      this.memberType = _memberType;
+      this.searchText = _searchText;
+      this.getOrderList(this.searchType, _memberType, _searchText, 0);
+    }
+  }
+
+  getOrderList(searchType: string, memberType: string, searchText: string, page: number) {
     this.spinner.show();
     this.orderListSubscription = this.orderService.orderList(searchText, memberType,
-                                                             searchType, 'NORMAL_ORDER', 'pos', 'pickup').subscribe(
+                                                             searchType, 'NORMAL_ORDER', 'pos', 'pickup', false, page, this.PAGE_SIZE).subscribe(
       resultData => {
         if (resultData) {
           this.orderHistoryList = resultData;
@@ -159,6 +180,12 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
       },
       () => { this.spinner.hide(); }
     );
+  }
+
+  setPage(page: number) {
+    if (page > -1 && page < this.orderHistoryList.pagination.totalPages ) {
+      this.getOrderList(this.searchType, this.memberType, this.searchText, page);
+    }
   }
 
   goOrder() {

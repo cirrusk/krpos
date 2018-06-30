@@ -5,6 +5,7 @@ import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent } from '../..';
+import { OrderHistory } from '../../../data';
 
 @Component({
   selector: 'pos-order-detail',
@@ -13,6 +14,7 @@ import { CancelOrderComponent } from '../..';
 export class OrderDetailComponent extends ModalComponent implements OnInit {
 
   orderDetail: OrderList;
+  orderInfo: OrderHistory;
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
@@ -29,7 +31,8 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOrderDetail(this.callerData.userId, this.callerData.orderCode);
+    this.orderInfo = this.callerData.orderInfo;
+    this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
   }
 
   init() {
@@ -38,11 +41,29 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   popupCancel() {
     this.modal.openModalByComponent(CancelOrderComponent,
       {
-        callerData: { },
+        callerData: { orderInfo : this.orderInfo },
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
         modalId: 'CancelOrderComponent'
+      }
+    );
+  }
+
+  paymentChange() {
+    this.modal.openModalByComponent(CancelOrderComponent,
+      {
+        callerData: { orderInfo : this.orderInfo },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        closeByEscape: false,
+        modalId: 'CancelOrderComponent'
+      }
+    ).subscribe(
+      result => {
+        if (result) {
+          // 재결제 추가
+        }
       }
     );
   }

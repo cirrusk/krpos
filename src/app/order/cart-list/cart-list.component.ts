@@ -6,7 +6,8 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode, ResCartInfo, MemberType, PaymentCapture } from '../../data';
+import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
+         ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 import { Order } from '../../data/models/order/order';
@@ -77,6 +78,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
   public memberType = MemberType;                                           // HTML 사용(enum)
   searchValid: FormControl = new FormControl('');
+
+  // 그룹
+  amwayExtendedOrdering: AmwayExtendedOrdering;
+  groupSelectedCart: AbstractOrder;
+
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -255,6 +261,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.restrictionModel = new RestrictionModel();
     this.restrictionMessageList = Array<RestrictionModel>();
     this.groupAccountInfo = new Array<Accounts>();
+    this.groupSelectedCart = new AbstractOrder();
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.setLocalItem('clearclient', {});
@@ -400,18 +407,27 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param account 회원정보
    */
   private getAccountAndSaveCart(account: Accounts) {
-    this.sendRightMenu('a', true, account);
     if (this.accountInfo && this.paymentType === 'n') {
+      this.sendRightMenu('a', true, account);
       this.changeUser(account);
     } else {
-      this.accountInfo = account;
+      // 그룹 결제시
       if (this.paymentType === 'g') {
+        // ordering주문자 저장
+        if (this.accountInfo === null) {
+          this.accountInfo = account;
+          this.sendRightMenu('a', true, account);
+        }
+
         this.groupAccountInfo.push(account);
         this.selectedUser = this.groupAccountInfo.length - 1;
+      } else {
+        this.accountInfo = account;
+        this.sendRightMenu('a', true, account);
+        this.getSaveCarts();
       }
       // this.storage.setCustomer(this.accountInfo); // getBalanceInfo로 이동
       this.activeSearchMode('P');
-      this.getSaveCarts();
     }
     this.getBalanceInfo();
   }
@@ -580,20 +596,25 @@ export class CartListComponent implements OnInit, OnDestroy {
         terminalInfo.pointOfService.name, 'POS').subscribe(
           cartResult => {
             this.cartInfo = cartResult;
+            this.sendRightMenu('c', true);
             // 그룹 결제일 경우 그룹생성
             if (this.paymentType === 'g') {
-
-            }
-            this.sendRightMenu('c', true);
-            if (popupFlag) {
-              if (productCode !== undefined) {
-                this.selectProductInfo(productCode);
-              } else {
-                this.searchParams.data = this.cartInfo;
-                this.callSearchProduct(this.searchParams);
+              let strUserId = '';
+              this.groupAccountInfo.forEach(account => {
+                strUserId += ',' + account.parties[0].uid;
+              });
+              this.createGroupCart(accountId, this.cartInfo.code, strUserId.slice(1), popupFlag, productCode);
+            } else {
+              if (popupFlag) {
+                if (productCode !== undefined) {
+                  this.selectProductInfo(productCode);
+                } else {
+                  this.searchParams.data = this.cartInfo;
+                  this.callSearchProduct(this.searchParams);
+                }
+              } else if (productCode !== undefined) {
+                this.addCartEntries(productCode);
               }
-            } else if (productCode !== undefined) {
-              this.addCartEntries(productCode);
             }
           },
           error => {
@@ -645,7 +666,10 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   getCartList(cartInfo: CartInfo, page?: number): void {
     this.spinner.show();
-    this.cartListSubscription = this.cartService.getCartList(cartInfo.user.uid, cartInfo.code).subscribe(
+    const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+    const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+
+    this.cartListSubscription = this.cartService.getCartList(userId, cartId).subscribe(
       result => {
         this.resCartInfo.cartList = result;
         this.cartList = result.entries;
@@ -689,7 +713,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      this.addCartSubscription = this.cartService.addCartEntry(this.cartInfo.user.uid, this.cartInfo.code, code.toUpperCase()).subscribe(
+      console.log(this.groupSelectedCart);
+      const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+      const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+
+      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase()).subscribe(
         result => {
           this.resCartInfo = result;
           this.addCartModel = this.resCartInfo.cartModification;
@@ -698,6 +726,10 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.productInfo = addModel.entry;
               this.addCartEntry(this.productInfo);
             });
+
+            if (this.paymentType === 'g') {
+              this.getGroupCart(userId, cartId);
+            }
           } else {
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
             this.restrictionMessageList.push(this.restrictionModel);
@@ -1067,10 +1099,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       case 'A': { this.posCart.emit({ type: 'account', flag: useflag, data: model }); break; }
       case 'P': { this.posCart.emit({ type: 'product', flag: useflag, data: model }); break; }
       case 'C': { this.posCart.emit({ type: 'cart', flag: useflag, data: model }); break; }
+      case 'G': { this.posCart.emit({ type: 'group', flag: useflag, data: model }); break; }
       default: {
         this.posCart.emit({ type: 'account', flag: useflag });
         this.posCart.emit({ type: 'product', flag: useflag });
         this.posCart.emit({ type: 'cart', flag: useflag });
+        this.posCart.emit({ type: 'group', flag: useflag });
       }
     }
   }
@@ -1111,10 +1145,105 @@ export class CartListComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * 그룹 사용자 선택
+   * @param index
+   * @param uid
+   */
   selectUserInfo(index: number, uid: string): void {
     this.selectedUser = index;
-    // 카트 정보 교체
-    this.logger.set('selectUserInfo', uid).debug();
+    if (this.amwayExtendedOrdering) {
+      // 카트 정보 교체
+      const existedIdx: number = this.amwayExtendedOrdering.orders.findIndex(
+        function (obj) {
+          return obj.volumeABOAccount.uid === uid;
+        }
+      );
+
+      if (existedIdx  > -1) {
+        this.groupSelectedCart = this.amwayExtendedOrdering.orders[existedIdx];
+        this.cartList = this.groupSelectedCart.entries;
+        this.getCartList(null);
+      }
+    }
+  }
+
+  /**
+   * 그룹 카트 조회
+   * @param userId
+   * @param cartId
+   */
+  getGroupCart(userId: string, cartId: string) {
+    this.spinner.show();
+    this.cartService.getGroupCart(userId, cartId).subscribe(
+      result => {
+        if (result) {
+          this.amwayExtendedOrdering = result;
+          this.sendRightMenu('G', true, this.amwayExtendedOrdering);
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
+   * 그룹 카트 생성
+   * @param userId
+   * @param cartId
+   * @param volumeAccount ex) 7480001,7480002 or 7480001
+   * sub 추가시 volumeAccount
+   * 추가시 가장 앞에 있는 구매자로 조회
+   */
+  createGroupCart(userId: string, cartId: string, volumeAccount: string, popupFlag: boolean, productCode: string) {
+    this.spinner.show();
+    this.cartService.createGroupCart(userId, cartId, volumeAccount).subscribe(
+      result => {
+        if (result) {
+          this.amwayExtendedOrdering = result;
+          let uid = '';
+          // 복수 인원 확인
+          if (volumeAccount.indexOf(',') > -1) {
+            uid = this.groupAccountInfo[this.selectedUser].parties[0].uid;
+          } else {
+            uid = volumeAccount;
+          }
+          const existedIdx: number = this.amwayExtendedOrdering.orders.findIndex(
+            function (obj) {
+              return obj.volumeABOAccount.uid === uid;
+            }
+          );
+
+          this.groupSelectedCart = this.amwayExtendedOrdering.orders[existedIdx];
+          this.cartList = this.groupSelectedCart.entries;
+          if (popupFlag) {
+            if (productCode !== undefined) {
+              this.selectProductInfo(productCode);
+            } else {
+              this.searchParams.data = this.cartInfo;
+              this.callSearchProduct(this.searchParams);
+            }
+          } else if (productCode !== undefined) {
+            this.addCartEntries(productCode);
+          }
+          this.getCartList(null);
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])

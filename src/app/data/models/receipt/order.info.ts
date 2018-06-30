@@ -1,7 +1,7 @@
 export class OrderInfoVO {
     posId: string;
     number: string;
-    cashier:any;
+    cashier: any;
     macAndCoNum: string;
     type: string;
     account: any;
@@ -26,5 +26,5 @@ export class OrderInfoVO {
             }
         };
         this.date = (new Date()).toDateString();
-    } 
+    }
 }
