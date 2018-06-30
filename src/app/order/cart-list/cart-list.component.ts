@@ -247,6 +247,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.discount = 0;
     this.received = 0;
     this.change = 0;
+    this.installment = '';
     this.selectedUser = -1;
     this.apprtype = '';
     this.pager = new Pagination();

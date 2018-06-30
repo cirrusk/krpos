@@ -6,6 +6,7 @@
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
+            <form id="ccform">
             <!-- 결제내역 -->
             <div class="tbl_row">
                 <table>
@@ -50,7 +51,7 @@
                         <tr>
                             <th scope="row">비밀번호</th>
                             <td>
-                                <input #cardpassword type="password" class="w110" title="비밀번호" disabled>
+                                <input #cardpassword type="password" class="w110" title="비밀번호" autocomplete="off" disabled>
                             </td>
                         </tr>
                         <tr>
@@ -76,6 +77,7 @@
                     </tbody>
                 </table>
             </div>
+            </form>
             <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
