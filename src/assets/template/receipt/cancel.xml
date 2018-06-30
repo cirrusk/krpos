@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    {{#if orderInfo.cancelFlag}}
+        <align mode="center">
+            <text-line>
+                [결제취소]
+            </text-line>
+        </align> 
+    {{/if}}
+</document>

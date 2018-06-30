@@ -13,5 +13,7 @@ export const LANG_KO_MSGS = {
     'noSearchText' : '검색어를 입력해주세요.',
     'receiptComplete' : '영수증 발행이 완료되었습니다.',
     'receiptFail' : '영수증 발행이 실패되었습니다.',
-    'coupon.already.exists.cart': '이미 장바구니에 적용된 쿠폰입니다.'
+    'coupon.already.exists.cart': '이미 장바구니에 적용된 쿠폰입니다.',
+    'cancelReceiptComplete' : '취소 영수증 발행이 완료되었습니다',
+    'cancelReceiptFail' : '취소 영수증 발행이 실패되었습니다.'
 };

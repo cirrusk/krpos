@@ -26,6 +26,10 @@ export class ReceiptService {
         return this.getReceipt(data, ReceiptTypeEnum.ConsumerNormal);
     }
 
+    public orderingABOGroup(data: any): string {
+        return this.getReceipt(data, ReceiptTypeEnum.OrderingABOGroup);
+    }
+
     private getReceipt(data: any, format: ReceiptTypeEnum): string {
         const templateList: Array<string> = this.receitDataProvider.getReceiptTemplates(format);
 
@@ -47,7 +51,7 @@ export class ReceiptService {
         return EscPos.unescapeLeadingSpace(retText);
     }
 
-    public reissueReceipts(orderData: OrderList): void {
+    public reissueReceipts(orderData: OrderList, cancelFlag = false): void {
         const cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
@@ -78,8 +82,11 @@ export class ReceiptService {
                 Object.assign(paymentCapture, jsonPaymentData);
             });
 
-
-            this.print(order.account, cartInfo, order, paymentCapture);
+            if (cancelFlag) {
+                this.print(order.account, cartInfo, order, paymentCapture, 'Y');
+            } else {
+                this.print(order.account, cartInfo, order, paymentCapture);
+            }
         });
 
     }
@@ -95,7 +102,7 @@ export class ReceiptService {
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      */
-    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, type?: string, macAndCoNum?: string): boolean {
+    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string, type?: string, macAndCoNum?: string): boolean {
         let rtn = true;
         const posId = this.storage.getTerminalInfo().id;
         const token = this.storage.getTokenInfo();
@@ -127,6 +134,10 @@ export class ReceiptService {
         // 공제번호 : {{orderInfo.macAndCoNum}}
         orderInfo.setMacAndCoNum = macAndCoNum || '123456789';
         // macAndCoNum - END
+
+        if (cancelFlag === 'Y') {
+            orderInfo.setCancelFlag = cancelFlag;
+        }
 
         // productList - START
         const productList = Array<any>();
@@ -252,7 +263,9 @@ export class ReceiptService {
         receiptInfo.setPrice = price;
         receiptInfo.setProductList = productEntryList;
         let text = '';
-        if (account.accountTypeCode === MemberType.ABO) { // ABO
+        if (account.accountTypeCode === 'group') { // Group
+            text = this.orderingABOGroup(receiptInfo);
+        } else if (account.accountTypeCode === MemberType.ABO) { // ABO
             text = this.aboNormal(receiptInfo);
         } else if (account.accountTypeCode === MemberType.MEMBER) {
             text = this.memberNormal(receiptInfo);

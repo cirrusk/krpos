@@ -20,11 +20,11 @@
 
           <!-- 검색결과 영역 : 검색 후-->
           <div class="mbinfo_list">
-              <p class="txt"><strong>총 <span class="fc_red">{{orderHistoryList.orders.length}}</span>건</strong>이 검색되었습니다.</p>
+              <p class="txt"><strong>총 <span class="fc_red">{{orderHistoryList.pagination.totalResults}}</span>건</strong>이 검색되었습니다.</p>
               <span class="btn_wrap">
                   <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
-                  <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== 0" class="ico_comm prev03">이전</a>
-                  <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== orderHistoryList.pagination.totalPages - 1" class="ico_comm next03">다음</a>
+                  <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== 0" class="ico_comm prev03" (click)="setPage(orderHistoryList.pagination.currentPage - 1)">이전</a>
+                  <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== orderHistoryList.pagination.totalPages - 1" class="ico_comm next03"(click)="setPage(orderHistoryList.pagination.currentPage + 1)">다음</a>
                   <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
               </span>
               <!-- 검색결과 : 있음(페이지당 회원 최대 수 7개) -->
@@ -58,7 +58,7 @@
                       <tbody>
                           <!-- 회원 선택시 tr에 on클래스 추가 -->
                           <tr [class.on]="selectedOrderNum == i" *ngFor="let order of orderHistoryList.orders; let i = index;" (click)="activeRowCart(i, order.code, order.user.uid)">
-                              <td><span>{{i+1}}</span></td>
+                              <td><span>{{(orderHistoryList.pagination.pageSize * orderHistoryList.pagination.currentPage)+(i+1)}}</span></td>
                               <td><span>{{order.code}}</span></td>
                               <td><span>{{order.user.uid}}</span></td>
                               <td><span class="elips mx90 ac">{{order.user.name}}</span></td>
@@ -67,8 +67,8 @@
                               <td><span>{{order.deliveryMode.name}}</span></td>
                               <td><span>{{order.orderType.label}}</span></td>
                               <td><span>{{order.orderStatus.label}} 
-                                  <a *ngIf="!order.orderStatus.label" href="javascript:void(0)" class="btn03_blue mgl10" (click)="$event.stopPropagation();">취소</a>
-                                  <a *ngIf="order.orderStatus.label" href="javascript:void(0)" class="btn03_gray mgl10"  (click)="$event.stopPropagation(); popupCancel()">취소</a>
+                                  <a *ngIf="order.isCancellable" href="javascript:void(0)" class="btn03_blue mgl10" (click)="$event.stopPropagation(); popupCancel(order.code)">취소</a>
+                                  <a *ngIf="!order.isCancellable" href="javascript:void(0)" class="btn03_gray mgl10"  (click)="$event.stopPropagation();">취소</a>
                                   <a href="javascript:void(0)" class="btn03_gray" (click)="$event.stopPropagation(); reissueReceipts(order.user.uid, order.code)">영수증</a></span>
                             </td>
                           </tr>                         
@@ -80,7 +80,7 @@
               <!-- 검색결과 : 없음 -->
               <ng-template #elseTemplate>
                 <p class="no_data">해당 하는 검색 결과가 없습니다. 다시 검색해 주세요.</p>
-              </ng-template>              
+              </ng-template>               
               <!-- 검색결과 : 없음 -->
 
               <div class="btn_bottom">
