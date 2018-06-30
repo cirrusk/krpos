@@ -243,14 +243,13 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         const errdata = Utils.getError(error);
         if (errdata) {
           this.apprmessage = errdata.message;
-          // this.logger.set('point.component', `${errdata.message}`).error();
         }
       }, () => { this.spinner.hide(); });
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
-    const pointtype = ''; // (this.pointType === 'a') ? PointType.BR030 : PointType.BR033;
+    const pointtype = (this.pointType === 'a') ? PointType.BR030 : PointType.BR033; // 전환포인트 : 멤버포인트
     const point = new PointPaymentInfo(paidamount, pointtype);
     point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
     point.setCurrencyData = new CurrencyData();

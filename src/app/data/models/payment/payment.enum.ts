@@ -17,6 +17,7 @@ export enum CashType {
 }
 
 export enum PointType {
+    BR022 = 'BR022', // 주문
     BR030 = 'BR030', // 전환포인트
     BR033 = 'BR033'  // 멤버포인트
 }
