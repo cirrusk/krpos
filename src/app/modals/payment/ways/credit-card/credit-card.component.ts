@@ -490,7 +490,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.close();
       } else {
         if (!this.dupcheck) {
-          setTimeout(() => { this.nicePay(); }, 100);
+          setTimeout(() => { this.nicePay(); }, 300);
           this.dupcheck = true;
         }
       }

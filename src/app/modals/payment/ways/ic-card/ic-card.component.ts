@@ -253,7 +253,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         this.close();
       } else {
         if (!this.dupcheck) {
-          setTimeout(() => { this.nicePay(); }, 100);
+          setTimeout(() => { this.nicePay(); }, 300);
           this.dupcheck = true;
         }
       }
