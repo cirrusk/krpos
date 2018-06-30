@@ -24,6 +24,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentType: string;
   private cardresult: ICCardApprovalResult;
   private paymentsubscription: Subscription;
+  private dupcheck = false;
   payprice: number;
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
@@ -246,13 +247,16 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.cardresult && this.cardresult.approved) {
+      if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
         this.cartInitAndClose();
+      } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
+        this.close();
       } else {
-        this.nicePay();
+        if (!this.dupcheck) {
+          setTimeout(() => { this.nicePay(); }, 100);
+          this.dupcheck = true;
+        }
       }
-    } else if (event.keyCode === KeyCode.ESCAPE) {
-      this.close();
     }
   }
 
