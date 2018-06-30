@@ -1,15 +1,18 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, StorageService, SpinnerService, Logger } from '../../../../core';
-import { VoucherPaymentInfo, PaymentModeData, CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
-import { Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination } from '../../../../data';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
-import { PaymentService, PagerService } from '../../../../service';
+import { ModalComponent, ModalService, Modal, StorageService, SpinnerService, Logger, AlertService } from '../../../../core';
+import { PaymentService, MessageService } from '../../../../service';
+import { InfoBroker } from '../../../../broker';
+import {
+  Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination,
+  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay
+} from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
-import { InfoBroker } from '../../../../broker';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-coupon',
@@ -17,22 +20,25 @@ import { InfoBroker } from '../../../../broker';
 })
 export class CouponComponent extends ModalComponent implements OnInit, OnDestroy {
   accountInfo: Accounts;
+  couponlist: Coupon[];
+  activeNum: number;
+  couponCount: number;
+  checktype: number;
+  finishStatus: string;
   private cartInfo: Cart;
-  private orderInfo: Order;
   private paymentcapture: PaymentCapture;
   private couponubscription: Subscription;
   private paymentsubscription: Subscription;
   private coupon: Coupon;
-  couponlist: Coupon[];
-  activeNum: number;
-  couponCount: number;
   private page: Pagination;
   private pagesize = 5;
   constructor(protected modalService: ModalService, private modal: Modal, private spinner: SpinnerService,
     private info: InfoBroker, private payment: PaymentService, private storage: StorageService,
-    private logger: Logger, private pager: PagerService) {
+    private message: MessageService, private alert: AlertService, private logger: Logger) {
     super(modalService);
     this.couponCount = -1;
+    this.checktype = 0;
+    this.finishStatus = null;
   }
 
   ngOnInit() {
@@ -46,10 +52,10 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.couponubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
       result => {
         this.couponlist = result.coupons;
-        this.couponCount = this.couponlist.length;
+        this.couponCount = result.pagination.totalResults;
         if (result.pagination) {
           this.page = result.pagination;
-          this.paging(this.couponlist.length, pagenum, this.pagesize);
+          this.paging(this.couponCount, pagenum, this.pagesize);
         }
       },
       error => { this.logger.set('coupon.component', `${error}`).error(); },
@@ -65,8 +71,8 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
    * % 쿠폰은 자동 계산, 금액 쿠폰은 결제 팝업 뜸
    */
   paymentCoupon() {
-    if (this.coupon) {
-      this.makePaymentCaptureData();
+    if (this.coupon && this.finishStatus === null) {
+      this.applyCouponAndPaymentCapture();
     } else {
       this.close();
       this.modal.openModalByComponent(CouponPaymentComponent,
@@ -74,7 +80,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
           closeByClickOutside: false,
           closeByEnter: false,
-          modalId: 'CouponPaymentComponent_Pop'
+          modalId: 'CouponPaymentComponent_Cpn'
         }
       );
     }
@@ -88,7 +94,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
         closeByClickOutside: false,
         closeByEnter: false,
         closeByEscape: false,
-        modalId: 'ComplexPaymentComponent_Cpp'
+        modalId: 'ComplexPaymentComponent_Cpn'
       }
     ).subscribe(result => {
       if (!result) {
@@ -99,19 +105,19 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   setPage(pagenum: number) {
-    if (pagenum < 1 || pagenum > this.page.totalPages) {
-      return;
-    }
+    if (pagenum < 0 || pagenum > this.page.totalPages - 1) { return; }
+    this.activeNum = -1;
+    this.coupon = null;
     this.paging(this.couponlist.length, pagenum, this.pagesize);
     this.searchCoupon(pagenum);
   }
 
-  private makePaymentCaptureData(): void {
+  private applyCouponAndPaymentCapture(): void {
     let pcap: PaymentCapture;
     this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
       result => {
         if (result) {
-          this.logger.set('coupon.component', JSON.stringify(result, null, 2)).debug();
+          this.finishStatus = StatusDisplay.PAID;
           const paidamount = result.totalDiscounts.value;
           const coupon = new VoucherPaymentInfo(paidamount);
           coupon.setName = (this.coupon) ? this.coupon.name : '';
@@ -119,18 +125,23 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           coupon.setCurrencyData = new CurrencyData();
           pcap = new PaymentCapture();
           pcap.setVoucherPaymentInfo = coupon;
-
           this.paymentcapture = pcap;
-
-          // this.info.sendInfo('payinfo', [pcap, null]);
           this.sendPaymentAndOrder(pcap, null);
-
           this.openComplexPayment();
         } else {
+          this.finishStatus = 'notexist';
           this.logger.set('coupon.component', `no apply or exist cart`).error();
         }
       },
-      error => { this.logger.set('coupon.component', `${error}`).error(); });
+      error => {
+        this.finishStatus = 'fail';
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.activeNum = -1;
+          this.coupon = null;
+          this.alert.show({ message: this.message.get(errdata.message) });
+        }
+      });
   }
 
   activeRow(index: number, coupon: Coupon) {
@@ -156,7 +167,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
    */
   private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
-    // this.info.sendInfo('coupon', payment);
     this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
@@ -167,25 +177,21 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   private paging(totalItems: number, currentPage: number = 1, pageSize: number = 5): void {
     // 총 페이지 수
     const totalPages = Math.ceil(totalItems / pageSize);
-
     // 페이지 설정
     this.page.startPage = 0;
     this.page.pageSize = pageSize;
     this.page.endPage = totalPages - 1;
     this.page.totalPages = totalPages;
-
     // 출력 index
     this.page.startIndex = (currentPage - 1) * pageSize;
     this.page.endIndex = Math.min(this.page.startIndex + pageSize - 1, totalItems - 1);
-
     // Item 설정
     this.page.totalItems = totalItems;
     this.page.currentPage = currentPage;
-
   }
 
   @HostListener('document:keydown', ['$event'])
-  onAlertKeyDown(event: any) {
+  onCouponKeyDown(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ESCAPE) { // 27 : esc
