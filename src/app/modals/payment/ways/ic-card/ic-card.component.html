@@ -7,6 +7,7 @@
     <div class="pop_container">
         <div class="pop_content">
             <!-- 결제내역 -->
+            <form id="icform">
             <div class="tbl_row">
                 <table>
                     <caption>IC카드 결제내역</caption>
@@ -36,7 +37,7 @@
                         <tr>
                             <th scope="row">비밀번호</th>
                             <td>
-                                <input #cardpassword type="password" class="w110" title="비밀번호">
+                                <input #cardpassword type="password" autocomplete="off" class="w110" title="비밀번호">
                             </td>
                         </tr>
                         <tr>
@@ -62,6 +63,7 @@
                     </tbody>
                 </table>
             </div>
+            </form>
             <!-- //결제내역 -->
         </div>
     </div>

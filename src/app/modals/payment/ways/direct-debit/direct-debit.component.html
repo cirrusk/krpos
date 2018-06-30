@@ -7,6 +7,7 @@
     <div class="pop_container">
         <div class="pop_content">
             <!-- 결제내역 -->
+            <form id="ddform">
             <div class="tbl_row">
                 <table>
                     <caption>자동이체 내역</caption>
@@ -40,7 +41,7 @@
                         <tr>
                             <th scope="row">비밀번호</th>
                             <td>
-                                <input #ddpassword type="password" class="w110" title="비밀번호" (keyup)="checkpwd(ddpassword.value)" (keydown.enter)="pay($event)">
+                                <input #ddpassword type="password" class="w110" title="비밀번호" autocomplete="off" (keyup)="checkpwd(ddpassword.value)" (keydown.enter)="pay($event)">
                             </td>
                         </tr>
                         <tr>
@@ -70,6 +71,7 @@
                     </tbody>
                 </table>
             </div>
+            </form>
             <em *ngIf="checktype === -1" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="checktype === -2" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
