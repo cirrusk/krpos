@@ -6,6 +6,8 @@ import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent } from '../..';
 import { OrderHistory } from '../../../data';
+import { InfoBroker } from '../../../broker';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pos-order-detail',
@@ -17,6 +19,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   orderInfo: OrderHistory;
 
   constructor(protected modalService: ModalService,
+              private router: Router,
               private orderService: OrderService,
               private receiptService: ReceiptService,
               private messageService: MessageService,
@@ -25,6 +28,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
               private storageService: StorageService,
               private logger: Logger,
               private alert: AlertService,
+              private info: InfoBroker,
               private renderer: Renderer2) {
     super(modalService);
     this.init();
@@ -63,6 +67,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
       result => {
         if (result) {
           // 재결제 추가
+          this.info.sendInfo('paymentChange', result);
+          this.goOrder();
+          this.close();
         }
       }
     );
@@ -99,6 +106,10 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
       this.logger.set('order-detail.component', `Reissue Receipts error type : ${e}`).error();
       this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
     }
+  }
+
+  goOrder() {
+    this.router.navigate(['/order']);
   }
 
   close() {

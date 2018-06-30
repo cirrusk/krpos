@@ -5,6 +5,7 @@ import { OrderHistory } from '../../../data';
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Subscription } from 'rxjs/Subscription';
 import { Utils } from '../../../core/utils';
+import { OrderList } from '../../../data/models/order/order';
 
 @Component({
   selector: 'pos-cancel-order',
@@ -12,8 +13,10 @@ import { Utils } from '../../../core/utils';
 })
 export class CancelOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   private cancelOrderSubscription: Subscription;
+  private orderDetailsSubscription: Subscription;
 
   orderInfo: OrderHistory;
+  orderList: OrderList;
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
@@ -31,13 +34,13 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
 
   ngOnDestroy() {
     if (this.cancelOrderSubscription) { this.cancelOrderSubscription.unsubscribe(); }
+    if (this.orderDetailsSubscription) { this.orderDetailsSubscription.unsubscribe(); }
   }
 
   cancelOrder() {
     this.spinner.show();
     this.cancelOrderSubscription = this.orderService.orderCancel(this.orderInfo.amwayAccount.uid, this.orderInfo.user.uid, this.orderInfo.code).subscribe(
       cancelData => {
-        this.logger.set('cancelOrder', '성공').debug();
         if (cancelData) {
           this.cancelReceipts(this.orderInfo.user.uid, this.orderInfo.code);
         }
@@ -59,12 +62,14 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);
     this.spinner.show();
-    this.orderService.orderDetails(userId, orderCodes).subscribe(
+    this.orderDetailsSubscription = this.orderService.orderDetails(userId, orderCodes).subscribe(
       orderDetail => {
         if (orderDetail) {
           try {
+            this.orderList = orderDetail;
             this.receiptService.reissueReceipts(orderDetail, true);
             this.alert.info({ title: '취소 영수증 발행', message: this.messageService.get('cancelReceiptComplete') });
+            this.close();
           } catch (e) {
             this.logger.set('cancel-order.component', `Reissue Receipts error type : ${e}`).error();
             this.alert.error({ title: '취소 영수증 발행', message: this.messageService.get('cancelReceiptFail') });
@@ -85,6 +90,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   close() {
+    this.result = this.orderList;
     this.closeModal();
   }
 }

@@ -19,6 +19,7 @@ export class OrderHistory {
     id: string;
     warehouseCode: string;
     invoiceNumber: string;
+    isCancellable: boolean;
 
     constructor() {}
 }

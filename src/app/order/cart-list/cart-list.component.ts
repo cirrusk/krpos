@@ -5,12 +5,12 @@ import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
-import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker } from '../../broker';
+import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, PaymentBroker } from '../../broker';
 import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
          ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
-import { Order } from '../../data/models/order/order';
+import { Order, OrderList } from '../../data/models/order/order';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -36,6 +36,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private searchSubscription: Subscription;
   private infoSubscription: Subscription;
   private paymentsubscription: Subscription;
+  private paymentChangesubscription: Subscription;
 
   private searchParams: SearchParam;                                        // 조회 파라미터
   private cartInfo: CartInfo;                                               // 장바구니 기본정보
@@ -83,6 +84,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   amwayExtendedOrdering: AmwayExtendedOrdering;
   groupSelectedCart: AbstractOrder;
 
+  // 결제수단변경
+  orderList: OrderList;
+  paymentChange: boolean;
+
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -97,6 +102,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private restoreCartBroker: RestoreCartBroker,
     private cancleOrderBroker: CancleOrderBroker,
     private info: InfoBroker,
+    private paymentBroker: PaymentBroker,
     private config: Config,
     private printerService: PrinterService,
     private logger: Logger) {
@@ -115,6 +121,19 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.retreiveInfo(data[0], data[1]);
         } else if (result != null && type === 'recart') {
           this.copyCartByEntries(this.accountInfo, this.cartList);
+        }
+      }
+    );
+
+    // 결제수단 변경
+    this.paymentChangesubscription = this.paymentBroker.getInfo().subscribe(
+      result => {
+        const type = result && result.type;
+        if (result != null && type === 'paymentChange') {
+          this.paymentType = 'n';
+          this.paymentChange = true;
+          this.orderList = result.data;
+          this.selectAccountInfo(this.searchMode, this.orderList.orders[0].user.uid);
         }
       }
     );
@@ -202,6 +221,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    if (this.paymentChangesubscription) { this.paymentChangesubscription.unsubscribe(); }
   }
 
   /**
@@ -256,6 +276,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.installment = '';
     this.selectedUser = -1;
     this.apprtype = '';
+    this.paymentChange = false;
     this.pager = new Pagination();
     this.resCartInfo = new ResCartInfo();
     this.restrictionModel = new RestrictionModel();
@@ -296,7 +317,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
     if (this.searchMode === 'A') { // 회원검색
-      this.selectAccountInfo(searchText);
+      this.selectAccountInfo(this.searchMode, searchText);
     } else { // 제품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
         this.createCartInfo(true, searchKey);
@@ -424,7 +445,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         this.accountInfo = account;
         this.sendRightMenu('a', true, account);
-        this.getSaveCarts();
+        if (this.paymentChange) {
+          this.copyCartByEntries(this.accountInfo, this.orderList.orders[0].entries);
+        } else {
+          this.getSaveCarts();
+        }
       }
       // this.storage.setCustomer(this.accountInfo); // getBalanceInfo로 이동
       this.activeSearchMode('P');
@@ -518,13 +543,13 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 회원 검색 ->  결과 값이 1일 경우 display and create cart
-   *
+   * searchMode ex) A = ABO, M = MEMBER, C = Customer
    * @param accountid 회원아이디(ABO검색 기본)
    */
-  private selectAccountInfo(accountid?: string): void {
+  private selectAccountInfo(searchMode: string, accountid?: string): void {
     if (accountid) {
       this.spinner.show();
-      this.searchSubscription = this.searchService.getAccountList('A', accountid).subscribe(
+      this.searchSubscription = this.searchService.getAccountList(searchMode, accountid).subscribe(
         result => {
           const accountsize = result.accounts.length;
           if (accountsize === 1) {
@@ -713,7 +738,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      console.log(this.groupSelectedCart);
       const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
       const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 

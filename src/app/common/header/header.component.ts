@@ -5,7 +5,7 @@ import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
-import { InfoBroker } from '../../broker';
+import { InfoBroker, PaymentBroker } from '../../broker';
 import { AlertService, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService } from '../../core';
 import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
@@ -62,6 +62,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private modal: Modal,
     private alert: AlertService,
     private info: InfoBroker,
+    private paymentBroker: PaymentBroker,
     private datePipe: DatePipe,
     private qzchecker: QzHealthChecker,
     private logger: Logger,
@@ -98,6 +99,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.getHoldTotalCount();
           } else if (type === 'cbt') {
             if (result.data.act) { this.checkBatchAfterLogin(); }
+          } else if (type === 'paymentChange') {
+            setTimeout(() => {
+              this.paymentBroker.sendInfo('paymentChange', result.data);
+            }, 1000);
           }
         }
       }
