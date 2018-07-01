@@ -20,7 +20,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartList = new Array<CartEntry>();
 
     this.subscription = this.addCartBroker.getSubscription().subscribe(value => {
-        console.log(`Add to cart ${value}`);
         this.addCartEntry(value);
     });
   }

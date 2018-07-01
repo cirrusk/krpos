@@ -12,6 +12,7 @@ import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 import { Order, OrderList } from '../../data/models/order/order';
 import { FormControl } from '@angular/forms';
+import { noUndefined } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'pos-cart-list',
@@ -297,6 +298,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   activeSearchMode(mode: string): void {
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
+    this.searchText.nativeElement.value = '';
     this.searchMode = mode;
   }
 
@@ -376,6 +378,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       const code = this.currentCartList[this.selectedCartNum].product.code;
       const qty = this.currentCartList[this.selectedCartNum].quantity;
+      const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
       this.modal.openModalByComponent(UpdateItemQtyComponent,
         {
@@ -386,7 +389,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       ).subscribe(result => {
         if (result) {
-          this.updateItemQtyCart(result.code, result.qty);
+          this.updateItemQtyCart(cartId, result.code, result.qty);
         }
       });
     }
@@ -439,9 +442,10 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.accountInfo = account;
           this.sendRightMenu('a', true, account);
         }
-
-        this.groupAccountInfo.push(account);
-        this.selectedUser = this.groupAccountInfo.length - 1;
+        if (this.checkGroupUserId(account.uid)) {
+          this.groupAccountInfo.push(account);
+          this.selectedUser = this.groupAccountInfo.length - 1;
+        }
       } else {
         this.accountInfo = account;
         this.sendRightMenu('a', true, account);
@@ -815,14 +819,14 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param code
    * @param qty
    */
-  updateItemQtyCart(code: string, qty: number): void {
-    if (this.cartInfo.code !== undefined) {
+  updateItemQtyCart(cartCode: string, code: string, qty: number): void {
+    if (this.cartInfo.code !== undefined || cartCode !== undefined) {
       const index = this.cartList.findIndex(function (obj) {
         return obj.product.code === code;
       });
       this.spinner.show();
       this.updateCartSubscription = this.cartService.updateItemQuantityCart(this.cartInfo.user.uid,
-        this.cartInfo.code,
+        cartCode,
         this.cartList[index].entryNumber,
         code,
         qty).subscribe(
@@ -862,15 +866,15 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 개별 삭제
    * @param code
    */
-  removeItemCart(code: string): void {
-    if (this.cartInfo.code !== undefined) {
+  removeItemCart(cartId: string, code: string): void {
+    if (this.cartInfo.code !== undefined || cartId !== undefined) {
       const index = this.cartList.findIndex(function (obj) {
         return obj.product.code === code;
       });
 
       this.spinner.show();
       this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
-        this.cartInfo.code,
+        cartId,
         this.cartList[index].entryNumber).subscribe(
           result => {
             this.resCartInfo.cartList = result.cartList;
@@ -1193,6 +1197,24 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 그룹 유저 중복 검사
+   * @param uid
+   */
+  checkGroupUserId(uid: string): boolean {
+    const existedIdx: number = this.groupAccountInfo.findIndex(
+      function (obj) {
+        return obj.uid === uid;
+      }
+    );
+
+    if (existedIdx === -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * 그룹 카트 조회
    * @param userId
    * @param cartId
@@ -1283,7 +1305,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (this.selectedCartNum === -1) {
             this.alert.warn({ message: this.message.get('selectProductDelete') });
           } else {
-            this.removeItemCart(this.currentCartList[this.selectedCartNum].product.code);
+            const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+            this.removeItemCart(cartId, this.currentCartList[this.selectedCartNum].product.code);
           }
         }
       }

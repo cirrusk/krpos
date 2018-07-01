@@ -60,11 +60,21 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.searchType = 'abo';
   }
 
+  /**
+   * 주문 상세 팝업 전시
+   * @param index
+   * @param orderCode
+   * @param userId
+   */
   activeRowCart(index: number, orderCode: string, userId: string): void {
     this.selectedOrderNum = index;
     this.popupOrderDetail(orderCode, userId);
   }
 
+  /**
+   * 맴버타입별 초기화 및 Disable 처리
+   * @param memberType
+   */
   changeMemberType(memberType: string) {
     if (memberType === 'C') {
       this.renderer.removeAttribute(this.searchTypeC.nativeElement, 'disabled');
@@ -81,6 +91,11 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 주문 상세 팝업 호출
+   * @param orderCode
+   * @param userId
+   */
   popupOrderDetail(orderCode: string, userId: string) {
     const existedIdx: number = this.orderHistoryList.orders.findIndex(
       function (obj) {
@@ -100,6 +115,10 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 주문 취소 팝업 호출
+   * @param orderCode
+   */
   popupCancel(orderCode: string) {
     const existedIdx: number = this.orderHistoryList.orders.findIndex(
       function (obj) {
@@ -121,6 +140,11 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   }
 
+  /**
+   * 주문 조회
+   * @param _memberType
+   * @param _searchText
+   */
   searchOrder(_memberType: string, _searchText: string) {
     if (_searchText === '' || _searchText === undefined || _searchText === null) {
       this.alert.info({ message: this.messageService.get('noSearchText') });
@@ -131,6 +155,13 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 주문 리스트 조회
+   * @param searchType
+   * @param memberType
+   * @param searchText
+   * @param page
+   */
   getOrderList(searchType: string, memberType: string, searchText: string, page: number) {
     this.spinner.show();
     this.orderListSubscription = this.orderService.orderList(searchText, memberType,
@@ -153,6 +184,11 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * 영수증 출력
+   * @param userId
+   * @param orderCode
+   */
   reissueReceipts(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);

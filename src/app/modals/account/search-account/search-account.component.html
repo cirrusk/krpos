@@ -12,8 +12,8 @@
             <div class="mbinfo_search">
                 <select #searchMemberType title="회원구분">
                     <option value="A">ABO회원</option>
-                    <option value="M">일반회원</option>
-                    <option value="C">소비자</option>
+                    <option *ngIf="paymentType !== 'g'" value="M">일반회원</option>
+                    <option *ngIf="paymentType !== 'g'" value="C">소비자</option>
                 </select>
                 <input #inputSearchText autofocus type="text" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)" value="{{searchText}}">
                 <button type="button" class="btn01_blue" (click)="getAccountList(searchMemberType.value,inputSearchText.value)">확인</button>

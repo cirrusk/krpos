@@ -268,7 +268,6 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
       this.alertService.info({ message: '주문이 완료되었습니다.' });
       this.close();
     } catch (e) {
-      console.log(text);
       this.alertService.info({ message: '주문이 실패되었습니다.' });
     }
   }

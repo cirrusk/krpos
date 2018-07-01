@@ -37,6 +37,9 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     if (this.orderDetailsSubscription) { this.orderDetailsSubscription.unsubscribe(); }
   }
 
+  /**
+   * 취소 요청
+   */
   cancelOrder() {
     this.spinner.show();
     this.cancelOrderSubscription = this.orderService.orderCancel(this.orderInfo.amwayAccount.uid, this.orderInfo.user.uid, this.orderInfo.code).subscribe(
@@ -58,6 +61,11 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     );
   }
 
+  /**
+   * 취소 영수증 출력
+   * @param userId
+   * @param orderCode
+   */
   cancelReceipts(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);
@@ -68,11 +76,17 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           try {
             this.orderList = orderDetail;
             this.receiptService.reissueReceipts(orderDetail, true);
-            this.alert.info({ title: '취소 영수증 발행', message: this.messageService.get('cancelReceiptComplete') });
+            this.alert.info({ title: '취소 영수증 발행',
+                              message: this.messageService.get('cancelReceiptComplete'),
+                              timer: true,
+                              interval: 1000});
             this.close();
           } catch (e) {
             this.logger.set('cancel-order.component', `Reissue Receipts error type : ${e}`).error();
-            this.alert.error({ title: '취소 영수증 발행', message: this.messageService.get('cancelReceiptFail') });
+            this.alert.error({ title: '취소 영수증 발행',
+                               message: this.messageService.get('cancelReceiptFail'),
+                               timer: true,
+                               interval: 1000});
           }
         }
       },
@@ -80,8 +94,8 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('order-complete.component', `Get Order Detail error type : ${errdata.type}`).error();
-          this.logger.set('order-complete.component', `Get Order Detail error message : ${errdata.message}`).error();
+          this.logger.set('cancel-order.component', `Get Order Detail error type : ${errdata.type}`).error();
+          this.logger.set('cancel-order.component', `Get Order Detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },

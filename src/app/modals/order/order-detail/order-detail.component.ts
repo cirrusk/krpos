@@ -42,6 +42,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   init() {
   }
 
+  /**
+   * 주문 취소 팝업
+   */
   popupCancel() {
     this.modal.openModalByComponent(CancelOrderComponent,
       {
@@ -54,6 +57,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     );
   }
 
+  /**
+   * 결제수단변경/재결제
+   */
   paymentChange() {
     this.modal.openModalByComponent(CancelOrderComponent,
       {
@@ -75,6 +81,11 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     );
   }
 
+  /**
+   * 주문 상세 정보 조회
+   * @param userId
+   * @param orderCode
+   */
   getOrderDetail(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);
@@ -98,16 +109,27 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     );
   }
 
+  /**
+   * 영수증 재발행
+   */
   reissueReceipts() {
     try {
       this.receiptService.reissueReceipts(this.orderDetail);
-      this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+      this.alert.info({ title: '영수증 재발행',
+                        message: this.messageService.get('receiptComplete'),
+                        timer: true,
+                        interval: 1000});
     } catch (e) {
       this.logger.set('order-detail.component', `Reissue Receipts error type : ${e}`).error();
-      this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+      this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail'),
+                         timer: true,
+                         interval: 1000});
     }
   }
 
+  /**
+   * Order 페이지로 이동
+   */
   goOrder() {
     this.router.navigate(['/order']);
   }
