@@ -1,3 +1,4 @@
+import { FocusBlurDirective } from './../../../../core/modal/focus-blur.directive';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -66,7 +67,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       this.paidamount = this.cartInfo.totalPrice.value;
       if (this.paymentType === 'n') {
         this.paid.nativeElement.value = this.paidamount;
-        setTimeout(() => { this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly'); }, 50);
+        setTimeout(() => {
+          this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
+          this.ddpassword.nativeElement.focus();
+        }, 50);
       } else {
         if (this.storage.getPay() > 0) {
           this.paidamount = this.storage.getPay();
@@ -86,7 +90,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   * @param paid 실결제 금액
   */
   paidCal(paid: number) {
-    if (typeof paid === 'number') {
+    if (typeof paid === 'number' || paid !== '') {
       this.change = this.paidamount - paid;
     }
   }
@@ -149,29 +153,39 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   checkpwd(pwd: string) {
-    if (pwd) {
+    if (Utils.isNotEmpty(pwd)) {
       this.checktype = 0;
     } else {
       this.checktype = -2;
       this.apprmessage = '비밀번호가 공란입니다.';
     }
   }
+
   pay(evt: KeyboardEvent) {
     evt.preventDefault();
     const pwd = this.ddpassword.nativeElement.value;
-    if (pwd) {
+    if (Utils.isNotEmpty(pwd)) {
+      this.checktype = 0;
       setTimeout(() => { this.ddpassword.nativeElement.blur(); }, 50);
+      const paid = this.paid.nativeElement.value; // 결제금액
       if (this.paymentType === 'n') {
-        this.approvalAndPayment();
+        if (Number(this.paidamount) === Number(paid)) {
+          this.approvalAndPayment();
+        }
       } else {
-        this.checktype = 0;
-        const paid = this.paid.nativeElement.value; // 결제금액
-        if (this.paidamount > paid) { // 다음결제수단
+        console.log(this.paidamount);
+        console.log(paid);
+        if (Number(this.paidamount) < Number(paid)) {
+          this.checktype = -3;
+          this.apprmessage = '실결제금액이 큽니다.';
+        } else if (Number(this.paidamount) > Number(paid)) { // 다음결제수단
+          this.checktype = 0;
           this.storage.setPay(this.paidamount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
           this.makePaymentCaptureData(paid);
           this.result = this.paymentcapture;
           this.finishStatus = StatusDisplay.PAID;
-        } else if (this.paidamount === paid) {
+          this.apprmessage = '결제가 완료되었습니다.';
+        } else {
           this.approvalAndPayment();
         }
       }
@@ -179,15 +193,15 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       // this.alert.show({ message: '비밀번호가 공란입니다.' });
       this.checktype = -2;
       this.apprmessage = '비밀번호가 공란입니다.';
-      this.alertsubscription = this.alert.alertState.subscribe(
-        (state: AlertState) => {
-          if (!state.show) {
-            setTimeout(() => {
-              this.ddpassword.nativeElement.focus();
-            }, 50);
-          }
-        }
-      );
+      // this.alertsubscription = this.alert.alertState.subscribe(
+      //   (state: AlertState) => {
+      //     if (!state.show) {
+      //       setTimeout(() => {
+      //         this.ddpassword.nativeElement.focus();
+      //       }, 50);
+      //     }
+      //   }
+      // );
     }
 
   }
@@ -264,7 +278,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       // console.log('복합결제일 경우...');
       if (this.change === 0) {
         const paid = this.paid.nativeElement.value; // 결제금액
-        if (this.paidamount === paid) { // 결제완료
+        if (Number(this.paidamount) === Number(paid)) { // 결제완료
           this.completePayPopup(paid, this.paidamount, this.change);
         }
       }
