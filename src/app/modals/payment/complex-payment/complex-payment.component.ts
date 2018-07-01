@@ -104,6 +104,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnDestroy() {
     if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
     if (this.cmplsubscription) { this.cmplsubscription.unsubscribe(); }
+    if (this.paymentModesSubscription) { this.paymentModesSubscription.unsubscribe(); }
   }
 
   creditCard(evt: any) {
@@ -131,7 +132,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // this.setSelected(evt, 2, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      this.selectPopup('APointComponent', PointComponent , 'a', null);
+      this.selectPopup('APointComponent', PointComponent, 'a', null);
     }
   }
 
