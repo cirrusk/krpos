@@ -122,10 +122,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
     const directdebit = new DirectDebitPaymentInfo(paidamount);
-    directdebit.accountNumber = '01001702000029'; // this.accountnumber;
-    directdebit.bank = '우체국'; // this.bank;
-    directdebit.bankIDNumber = ''; // this.bankid;
-    directdebit.baOwner = '아노생'; // this.depositor;
+    directdebit.accountNumber = this.accountnumber;
+    directdebit.bank = this.bank;
+    directdebit.bankIDNumber = this.bankid;
+    directdebit.baOwner = this.depositor;
     directdebit.paymentMode = new PaymentModeData(PaymentModes.DIRECTDEBIT);
     directdebit.currency = new CurrencyData();
     if (this.paymentcapture) {
