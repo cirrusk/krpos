@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, PrinterService, AlertService, StorageService, SpinnerService, Logger } from '../../../core';
+import { ModalComponent, ModalService, PrinterService, AlertService, StorageService, SpinnerService, Logger, KeyboardService, KeyCommand, Modal } from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
 import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo } from '../../../data';
 import { ReceiptService, PaymentService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
+import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
 
 @Component({
   selector: 'pos-complete-payment',
@@ -25,9 +26,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private paymentcapture: PaymentCapture;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  private keyboardsubscription: Subscription;
   constructor(protected modalService: ModalService,
-    private printer: PrinterService, private receipt: ReceiptService, private payments: PaymentService,
-    private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger
+    private printer: PrinterService, private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService,
+    private storage: StorageService, private spinner: SpinnerService, private modal: Modal, private info: InfoBroker, private logger: Logger
   ) {
     super(modalService);
     this.finishStatus = null;
@@ -36,6 +38,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     this.accountInfo = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
     this.paymentcapture = this.callerData.paymentInfo;
@@ -49,6 +54,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   pay(evt: KeyboardEvent): void {
@@ -166,6 +172,20 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.closeModal();
   }
 
+  /**
+ * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
+ */
+  protected popupCashReceipt() {
+    this.modal.openModalByComponent(CashReceiptComponent,
+      {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
+        closeByClickOutside: false,
+        modalId: 'CashReceiptComponent',
+        paymentType: 'c'
+      }
+    );
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {
     event.stopPropagation();
@@ -185,6 +205,28 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.info.sendInfo('orderClear', 'clear');
         this.close();
       }
+    }
+  }
+
+  /**
+ * 현금영수증 버튼 선택 시에만 이벤트 처리하면됨.
+ * 반드시 결제가 완료된 후에만 처리됨.
+ *
+ * @param command 키보드 명령어
+ */
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      switch (command.combo) {
+        case 'ctrl+r': {
+          if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+            if (this.paymentcapture.cashPaymentInfo) {
+              this[command.name]();
+            }
+          }
+        } break;
+      }
+    } catch (e) {
+      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }
   }
 }
