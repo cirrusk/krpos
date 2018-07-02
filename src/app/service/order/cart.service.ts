@@ -92,7 +92,8 @@ export class CartService {
     orderList.orderEntries = orderEntries;
 
     const pathvariables = { userId: userId, cartId: cartId };
-    const data = new HttpData('addToCart', pathvariables, orderList, null, 'json');
+    const param = { fields: 'FULL'};
+    const data = new HttpData('addToCart', pathvariables, orderList, param, 'json');
     return this.api.post(data).flatMap((cartModification: CartModification[]) => {
       return this.getCartList(userId, cartId)
       .map(cart => new ResCartInfo(cart, cartModification) as ResCartInfo);
