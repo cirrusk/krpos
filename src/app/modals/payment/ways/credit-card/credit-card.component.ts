@@ -12,7 +12,7 @@ import {
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
-import { ReceiptService, PaymentService } from '../../../../service';
+import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/card.approval.result';
 import { Utils } from '../../../../core/utils';
 import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
@@ -51,7 +51,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
-    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
+    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService, private message: MessageService,
     private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = '00';
@@ -88,7 +88,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (this.paymentType === 'c') {
       if (this.change < 0) {
         this.checktype = -2;
-        this.apprmessage = '실결제금액이 총 매출보다 큽니다.';
+        this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
       } else {
         this.checktype = 0;
         this.apprmessage = '';
@@ -96,10 +96,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else {
       if (this.change > 0) {
         this.checktype = -1;
-        this.apprmessage = '실결제금액이 총 매출보다 작습니다.';
+        this.apprmessage = this.message.get('credit.valid.smallpaid'); // '실결제금액이 총 매출보다 작습니다.';
       } else if (this.change < 0) {
         this.checktype = -2;
-        this.apprmessage = '실결제금액이 총 매출보다 큽니다.';
+        this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
       } else {
         this.checktype = 0;
         this.apprmessage = '';
@@ -244,26 +244,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     );
 
     if (this.paymentType === 'n') {
-      if (this.change > 0) {
-        // this.alert.show({ message: '실결제금액이 부족합니다.' });
-        // this.checktype = -1;
-      } else if (this.change < 0) {
-        // this.alert.show({ message: '실결제금액이 큽니다.' });
-        // this.checktype = -2;
-      } else {
+      if (this.change === 0) {
         this.approvalAndPayment();
       }
     } else {
       this.approval();
-      // if (this.change > 0) { // 결제 더 할것이 남음.
-      //   this.approval();
-      // } else if (this.change === 0) {
-      //   // this.approvalAndPayment();
-
-      //   // this.completePayPopup(paidprice, this.paidamount, 0);
-      // } else {
-      //   this.alert.show({ message: '실결제금액이 큽니다.' });
-      // }
     }
   }
 
@@ -289,7 +274,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           } else {
             if (res.approved) {
               this.finishStatus = StatusDisplay.PAID;
-              this.apprmessage = '카드 승인이 완료되었습니다.';
+              this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
               this.cardnumber = res.maskedCardNumber;
               this.cardcompany = res.issuerName;
               this.cardauthnumber = res.approvalNumber;
@@ -317,7 +302,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else {
       // this.alert.show({ message: '실결제금액이 큽니다.' });
       this.checktype = -2;
-      this.apprmessage = '실결제금액이 총 매출보다 큽니다.';
+      this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
     }
   }
 
@@ -353,7 +338,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               this.finishStatus = result.statusDisplay;
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
                 if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-                  this.apprmessage = '결제가 완료되었습니다.';
+                  this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
                   this.paidDate = result.created ? result.created : new Date();
                   // 장바구니에 정보를 보내야함. capture 정보, order 정보
                   // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
@@ -363,16 +348,16 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                     this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
                   }, 5);
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-                  this.apprmessage = '결제에 실패했습니다.';
+                  this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
                   this.finishStatus = 'recart';
                 } else { // CART 삭제된 상태
-                  this.apprmessage = '결제에 실패했습니다.';
+                  this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
                   this.finishStatus = 'recart';
                 }
               } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
                 // cart-list.component에 재생성 이벤트 보내서 처리
                 this.finishStatus = 'fail';
-                this.apprmessage = '결제에 실패했습니다.';
+                this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
               }
             }, error => {
               this.finishStatus = 'fail';

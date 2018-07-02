@@ -1,8 +1,7 @@
-import { FocusBlurDirective } from './../../../../core/modal/focus-blur.directive';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, PrinterService, AlertState, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo
@@ -11,7 +10,7 @@ import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { BankAccount } from '../../../../data/models/order/bank-account';
 import { Utils } from '../../../../core/utils';
-import { ReceiptService, PaymentService } from '../../../../service';
+import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 @Component({
@@ -40,8 +39,8 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
-    private storage: StorageService, private printer: PrinterService, private payments: PaymentService,
-    private logger: Logger, private info: InfoBroker, private alert: AlertService, private spinner: SpinnerService, private renderer: Renderer2) {
+    private storage: StorageService, private payments: PaymentService, private message: MessageService,
+    private logger: Logger, private info: InfoBroker, private spinner: SpinnerService, private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -56,8 +55,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (!this.accountnumber) {
       this.finishStatus = 'fail';
       this.checktype = -1;
-      this.apprmessage = '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.';
-      // this.alert.error({ message: '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.' });
+      this.apprmessage = this.message.get('no.accountnumber'); // '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.';
       setTimeout(() => {
         this.paid.nativeElement.blur();
         this.renderer.setAttribute(this.paid.nativeElement, 'disabled', 'disabled');
@@ -157,7 +155,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       this.checktype = 0;
     } else {
       this.checktype = -2;
-      this.apprmessage = '비밀번호가 공란입니다.';
+      this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
   }
 
@@ -177,14 +175,14 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         console.log(paid);
         if (Number(this.paidamount) < Number(paid)) {
           this.checktype = -3;
-          this.apprmessage = '실결제금액이 큽니다.';
+          this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 큽니다.';
         } else if (Number(this.paidamount) > Number(paid)) { // 다음결제수단
           this.checktype = 0;
           this.storage.setPay(this.paidamount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
           this.makePaymentCaptureData(paid);
           this.result = this.paymentcapture;
           this.finishStatus = StatusDisplay.PAID;
-          this.apprmessage = '결제가 완료되었습니다.';
+          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
         } else {
           this.approvalAndPayment();
         }
@@ -192,16 +190,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     } else {
       // this.alert.show({ message: '비밀번호가 공란입니다.' });
       this.checktype = -2;
-      this.apprmessage = '비밀번호가 공란입니다.';
-      // this.alertsubscription = this.alert.alertState.subscribe(
-      //   (state: AlertState) => {
-      //     if (!state.show) {
-      //       setTimeout(() => {
-      //         this.ddpassword.nativeElement.focus();
-      //       }, 50);
-      //     }
-      //   }
-      // );
+      this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
 
   }
@@ -219,24 +208,24 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-            this.apprmessage = '결제가 완료되었습니다.';
+            this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
             this.paidDate = result.created ? result.created : new Date();
             setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
             // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-            this.apprmessage = `즉시 출금이 불가합니다.`;
+            this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다.`;
             // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
             this.finishStatus = 'recart';
           } else { // CART 삭제된 상태
             // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
-            this.apprmessage = `즉시 출금이 불가합니다.`;
+            this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다.`;
             this.finishStatus = 'recart';
           }
         } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = 'fail';
           // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
-          this.apprmessage = `즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.`;
+          this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.`;
           // cart-list.component에 재생성 이벤트 보내서 처리
         }
         this.storage.removePay();

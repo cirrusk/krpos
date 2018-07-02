@@ -6,7 +6,7 @@ import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo
 } from '../../../../data';
-import { PaymentService, ReceiptService } from '../../../../service';
+import { PaymentService, ReceiptService, MessageService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { InfoBroker } from '../../../../broker';
@@ -35,7 +35,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private alertsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
-    private storage: StorageService, private alert: AlertService,
+    private storage: StorageService, private alert: AlertService, private message: MessageService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.isAllPay = false;
@@ -87,11 +87,11 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       // : 이미 Re-Cash(A포인트)로 전체 결제금액을 사용 중입니다. A포인트(Re-Cash)금액은 제외 됩니다.
       if (check > 0) {
         this.checktype = -1;
-        this.apprmessage = '결제 사용할 금액이 부족합니다.';
+        this.apprmessage = this.message.get('recash.smallpaid'); // '결제 사용할 금액이 부족합니다.';
         // this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
       } else if (check < 0) {
         this.checktype = -2;
-        this.apprmessage = '잔액보다 사용하려는 금액이 클 수 없습니다.';
+        this.apprmessage = this.message.get('recash.overpaid'); // '잔액보다 사용하려는 금액이 클 수 없습니다.';
         // this.alert.warn({ message: '잔액보다 사용하려는 금액이 클 수 없습니다.' });
       } else {
         this.checktype = 0;
@@ -106,8 +106,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.sendPaymentAndOrder(this.paymentcapture, null);
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
+        this.apprmessage = this.message.get('payment.success');
       } else if (check === 0) {
         this.finishStatus = StatusDisplay.PAID;
+        this.apprmessage = this.message.get('payment.success');
         // this.payment();
         // this.completePayPopup(this.paidamount, usepoint, check);
       }
@@ -125,7 +127,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.finishStatus = result.statusDisplay;
       if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.apprmessage = '결제가 완료되었습니다.';
+          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
           setTimeout(() => {
             this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
             this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
@@ -133,16 +135,16 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
           // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
           this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-          this.apprmessage = '결제에 실패했습니다.';
+          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           this.finishStatus = 'recart';
         } else { // CART 삭제된 상태
-          this.apprmessage = '결제에 실패했습니다.';
+          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           this.finishStatus = 'recart';
         }
       } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
         // cart-list.component에 재생성 이벤트 보내서 처리
         this.finishStatus = 'fail';
-        this.apprmessage = '결제에 실패했습니다.';
+        this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
       }
       this.storage.removePay();
     }, error => {

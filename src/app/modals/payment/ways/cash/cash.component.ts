@@ -140,7 +140,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         this.paymentcapture = this.makePaymentCaptureData(payAmount, receivedAmount, change).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = '결제가 완료되었습니다.';
+        this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
       }
     }
   }
@@ -183,7 +183,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.finishStatus = result.statusDisplay;
       if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.apprmessage = '결제가 완료되었습니다.';
+          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
           this.paidDate = result.created ? result.created : new Date();
           setTimeout(() => {
             this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
@@ -194,16 +194,16 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
           this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           this.printer.openCashDrawer(); // 캐셔 drawer 오픈
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-          this.apprmessage = '결제에 실패했습니다.';
+          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           this.finishStatus = 'recart';
         } else { // CART 삭제된 상태
-          this.apprmessage = '결제에 실패했습니다.';
+          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           this.finishStatus = 'recart';
         }
       } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
         // cart-list.component에 재생성 이벤트 보내서 처리
         this.finishStatus = 'fail';
-        this.apprmessage = '결제에 실패했습니다.';
+        this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
       }
       this.storage.removePay();
     }, error => {

@@ -6,7 +6,7 @@ import {
   KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
   PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo
 } from '../../../../data';
-import { PaymentService } from '../../../../service';
+import { PaymentService, MessageService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
 import { Utils } from '../../../../core/utils';
 import { Order } from '../../../../data/models/order/order';
@@ -40,6 +40,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private payments: PaymentService,
+    private message: MessageService,
     private alert: AlertService,
     private spinner: SpinnerService,
     private storage: StorageService,
@@ -53,9 +54,9 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
 
   ngOnInit() {
     if (this.pointType === 'a') {
-      this.pointTypeText = 'A포인트';
+      this.pointTypeText = this.message.get('abo.point.label'); // 'A포인트';
     } else {
-      this.pointTypeText = 'Member 포인트';
+      this.pointTypeText = this.message.get('member.point.label'); // 'Member 포인트';
     }
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
@@ -123,7 +124,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     const paid = this.paymentprice - usepoint;
     if (paid < 0) { // 포인트가 많음.
       this.checktype = -2;
-      this.apprmessage = '사용 포인트가 결제금액보다 많습니다.';
+      this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
     } else {
       this.checktype = 0;
     }
@@ -141,10 +142,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       this.checktype = 0;
     } else if (paid > 0) { // 포인트가 부족
       this.checktype = -1;
-      this.apprmessage = '사용 포인트가 결제금액보다 작습니다.';
+      this.apprmessage = this.message.get('point.smallpaid'); // '사용 포인트가 결제금액보다 작습니다.';
     } else { // 포인트가 많음.
       this.checktype = -2;
-      this.apprmessage = '사용 포인트가 결제금액보다 많습니다.';
+      this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
     }
   }
 
@@ -160,11 +161,13 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
       if (typeof usepoint !== 'number') {
         this.checktype = -3;
-        this.apprmessage = '사용 포인트가 공란입니다.';
+        this.apprmessage = this.message.get('point.empty'); // '사용 포인트가 공란입니다.';
       }
     }
     if (this.balanceamount < usepoint) {
-      this.alert.show({ message: '가용포인트 보다 사용포인트가 클 수 없습니다.' });
+      // this.alert.show({ message: '가용포인트 보다 사용포인트가 클 수 없습니다.' });
+      this.checktype = -4;
+      this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
       return;
     }
     const paid = this.paymentprice - usepoint;
@@ -196,7 +199,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         // this.paymentCapture();
       } else {
         this.checktype = -2;
-        this.apprmessage = '사용 포인트가 결제금액보다 많습니다.';
+        this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
       }
     }
 
@@ -215,7 +218,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-            this.apprmessage = '결제가 완료되었습니다.';
+            this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
             // this.paidDate = result.created ? result.created : new Date();
             // setTimeout(() => { // 결제 성공, 변경못하도록 처리
             //   this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
@@ -225,16 +228,16 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
             // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-            this.apprmessage = '결제에 실패했습니다.';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
             this.finishStatus = 'recart';
           } else { // CART 삭제된 상태
-            this.apprmessage = '결제에 실패했습니다.';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
             this.finishStatus = 'recart';
           }
         } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           // cart-list.component에 재생성 이벤트 보내서 처리
           this.finishStatus = 'fail';
-          this.apprmessage = '결제에 실패했습니다.';
+          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
         }
         this.storage.removePay();
       }, error => {

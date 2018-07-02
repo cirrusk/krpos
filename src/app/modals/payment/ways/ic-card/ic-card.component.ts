@@ -7,7 +7,7 @@ import { KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyDa
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { ICCardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/iccard.approval.result';
-import { ReceiptService, PaymentService } from '../../../../service';
+import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
 import { ICCardCancelResult } from './../../../../core/peripheral/niceterminal/vo/iccard.cancel.result';
 import { Utils } from '../../../../core/utils';
@@ -35,9 +35,9 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   checktype: number;
   apprmessage: string;
   @ViewChild('cardpassword') private cardpassword: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService,
+  constructor(protected modalService: ModalService, private receipt: ReceiptService, private message: MessageService,
     private payments: PaymentService, private nicepay: NicePaymentService, private storage: StorageService,
-    private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
+    private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -101,7 +101,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           if (res.approved) {
             this.checktype = 0;
             this.finishStatus = StatusDisplay.PAID;
-            this.apprmessage = '카드가 승인되었습니다.';
+            this.apprmessage = this.message.get('card.payment.success'); // '카드가 승인되었습니다.';
             this.cardnumber = res.maskedCardNumber;
             this.cardcompany = res.issuerName;
             this.cardauthnumber = res.approvalNumber;
@@ -154,21 +154,21 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
               this.finishStatus = result.statusDisplay;
               if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
                 if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-                  this.apprmessage = '결제가 완료되었습니다.';
+                  this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
                   this.paidDate = result.created ? result.created : new Date();
                   // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                   this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-                  this.apprmessage = '결제에 실패했습니다.';
+                  this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
                   this.finishStatus = 'recart';
                 } else { // CART 삭제된 상태
-                  this.apprmessage = '결제에 실패했습니다.';
+                  this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
                   this.finishStatus = 'recart';
                 }
               } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
                 // cart-list.component에 재생성 이벤트 보내서 처리
                 this.finishStatus = 'fail';
-                this.apprmessage = '결제에 실패했습니다.';
+                this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
               }
               this.storage.removePay();
             }, error => {
