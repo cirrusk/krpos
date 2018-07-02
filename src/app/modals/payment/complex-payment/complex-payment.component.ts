@@ -7,9 +7,7 @@ import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
 import { IcCardComponent } from '../ways/ic-card/ic-card.component';
 import { CashComponent } from '../ways/cash/cash.component';
 import { DirectDebitComponent } from '../ways/direct-debit/direct-debit.component';
-import { ChecksComponent } from '../ways/checks/checks.component';
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
-import { CouponComponent } from '../ways/coupon/coupon.component';
 import { PointComponent } from '../ways/point/point.component';
 import { CompletePaymentComponent } from '../complete-payment/complete-payment.component';
 import { PaymentService } from '../../../service';
@@ -218,6 +216,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (payment && !this.storage.getPaymentModeCode()) {
       // this.storage.setPaymentModeCode(this.paymentModes.get(payment)); // 주결제 수단을 세션에 설정
       this.storage.setPaymentModeCode(payment); // 주결제 수단을 세션에 설정
+    }
+
+    // 선택한 메뉴에 대해서는 다시 선택 못하도록 disable 처리
+    if (payment) {
+      this.enableMenu = this.enableMenu.filter(item => item !== payment);
     }
     // this.paymentSubscription =
     this.modal.openModalByComponent(this.paymentComponent,

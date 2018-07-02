@@ -43,7 +43,7 @@ export class CouponCheckComponent extends ModalComponent implements OnInit {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
         closeByClickOutside: false,
         closeByEnter: false,
-        closeByEscape: false,
+        // closeByEscape: false,
         modalId: 'ComplexPaymentComponent_CpCk'
       }
     ).subscribe(result => {
