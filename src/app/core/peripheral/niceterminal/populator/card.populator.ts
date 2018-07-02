@@ -45,7 +45,7 @@ export class CardPopulator {
         strBuilder.push(data.installment);
         strBuilder.push(NiceConstants.DELIMITER);
         // 면세 금액
-        strBuilder.push(data.dutyFreeAmt)
+        strBuilder.push(data.dutyFreeAmt);
         strBuilder.push(NiceConstants.DELIMITER);
         // 과세 금액
         strBuilder.push(data.dutyAmount);

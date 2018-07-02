@@ -43,8 +43,8 @@ export class NicePaymentService {
         const notifier: Subject<CardApprovalResult> = new Subject();
 
         // 로깅 -> 추후 Persistence 고려
-        console.log('Card Approval Request');
-        console.log(requestVO.stringify());
+        // console.log('Card Approval Request');
+        // console.log(requestVO.stringify());
         this.logger.set('Card Approval Request', requestVO.stringify()).info();
 
         const body: string = CardPopulator.generateApprovalReq(requestVO);
@@ -58,8 +58,8 @@ export class NicePaymentService {
                 const resultVO: CardApprovalResult = CardPopulator.parseApprovalResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                console.log('Card Approval Result');
-                console.log(resultVO.stringify());
+                // console.log('Card Approval Result');
+                // console.log(resultVO.stringify());
                 this.logger.set('Card Approval Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);
@@ -87,8 +87,8 @@ export class NicePaymentService {
         const requestVO: CardCancelRequest = CardPopulator.fillCancelReqVO(amount, approvalNumber, approvalDate, installment);
 
         // 로깅 -> 추후 Persistence 고려
-        console.log('Card Cancel Request');
-        console.log(requestVO.stringify());
+        // console.log('Card Cancel Request');
+        // console.log(requestVO.stringify());
         this.logger.set('Card Cancel Request', requestVO.stringify()).info();
 
         const body: string = CardPopulator.generateCancelReq(requestVO);
@@ -102,8 +102,8 @@ export class NicePaymentService {
                 const resultVO: CardCancelResult = CardPopulator.parseCancelResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                console.log('Card Cancel Result');
-                console.log(resultVO.stringify());
+                // console.log('Card Cancel Result');
+                // console.log(resultVO.stringify());
                 this.logger.set('Card Cancel Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);
@@ -127,8 +127,8 @@ export class NicePaymentService {
         const requestVO: ICCardApprovalRequest = ICCardPopulator.fillApprovalReqVO(amount);
 
         // 로깅 -> 추후 Persistence 고려
-        console.log('IC Card Approval Request');
-        console.log(requestVO.stringify());
+        // console.log('IC Card Approval Request');
+        // console.log(requestVO.stringify());
         this.logger.set('IC Card Approval Request', requestVO.stringify()).info();
 
         const body: string = ICCardPopulator.generateApprovalReq(requestVO);
@@ -167,8 +167,9 @@ export class NicePaymentService {
         const requestVO: ICCardCancelRequest = ICCardPopulator.fillCancenReqVO(amount, approvalNumber, approvalDate);
 
         // 로깅 -> 추후 Persistence 고려
-        console.log('IC Card Cancel Request');
-        console.log(requestVO.stringify());
+        // console.log('IC Card Cancel Request');
+        // console.log(requestVO.stringify());
+        this.logger.set('IC Card Cancel Request', requestVO.stringify()).info();
 
         const body: string = ICCardPopulator.generateCancelReq(requestVO);
 
@@ -183,6 +184,7 @@ export class NicePaymentService {
                 // 로깅 -> 추후 Persistence 고려
                 console.log('IC Card Cancel Result');
                 console.log(resultVO.stringify());
+                this.logger.set('IC Card Cancel Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);
             },
