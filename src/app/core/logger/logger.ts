@@ -29,7 +29,7 @@ export class Logger {
         switch (level) {
           case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', 'DEBUG', 'color:teal', nm, msg); }
           case 'INFO':
-          case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:darkgray', 'LOG', 'color:black', nm, msg); }
+          case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:black', 'LOG', 'color:black', nm, msg); }
           case 'WARN':
           case 'ERROR': { return console.error.bind(console, `%c[%s] %c%s%s`, 'color:red', 'ERROR', 'color:red;', nm, msg); }
           case 'OFF':
