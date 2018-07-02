@@ -222,6 +222,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (payment) {
       this.enableMenu = this.enableMenu.filter(item => item !== payment);
     }
+
     // this.paymentSubscription =
     this.modal.openModalByComponent(this.paymentComponent,
       {

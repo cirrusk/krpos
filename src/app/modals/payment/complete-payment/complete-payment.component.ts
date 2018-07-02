@@ -9,6 +9,7 @@ import { ReceiptService, PaymentService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
+import { SerialComponent } from '../../scan/serial/serial.component';
 
 @Component({
   selector: 'pos-complete-payment',
@@ -20,6 +21,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   paidamount: number;
   payamount: number;
   change: number;
+  private entryNumber: number;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -184,6 +186,44 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         paymentType: 'c'
       }
     );
+  }
+
+  private hasSerialAndRfid(): number {
+    // 0: 없음, 1 : SERIAL, 2: RFID
+    let rtn = 0;
+    if (this.cartInfo) {
+      this.cartInfo.entries.forEach(entry => {
+        if (entry.product && entry.product.serialNumber) {
+          rtn = 1;
+          this.entryNumber = entry.entryNumber;
+        }
+        if (entry.product && entry.product.rfid) {
+          rtn = 2;
+          this.entryNumber = entry.entryNumber;
+        }
+      });
+    }
+    return rtn;
+  }
+
+  private registerSerialAndRfid() {
+    const regType = this.hasSerialAndRfid();
+    if (regType === 1 || regType === 2) {
+      this.modal.openModalByComponent(SerialComponent,
+        {
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, entryNumber: this.entryNumber },
+          closeByClickOutside: false,
+          modalId: 'SerialComponent',
+          regType: regType
+        }
+      ).subscribe(result => {
+        if (result) {
+          // this.cartInitAndClose();
+        }
+      });
+    } else if (regType === 0) {
+      // this.cartInitAndClose();
+    }
   }
 
   @HostListener('document:keydown', ['$event'])
