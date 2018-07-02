@@ -261,8 +261,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.info.sendInfo('orderClear', 'clear');
       }
       this.close();
-    } else {
-      // console.log('복합결제일 경우...');
+    } else { // 복합결제
       if (this.change === 0) {
         const paid = this.paid.nativeElement.value; // 결제금액
         if (Number(this.paidamount) === Number(paid)) { // 결제완료
