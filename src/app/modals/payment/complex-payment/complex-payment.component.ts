@@ -132,7 +132,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // this.setSelected(evt, 2, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      this.selectPopup('APointComponent', PointComponent, 'a', null);
+      this.selectPopup('APointComponent_Cplx', PointComponent, 'a', null);
     }
   }
 
@@ -145,7 +145,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // this.setSelected(evt, 3, 'point');
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      // this.selectPopup('MPointComponent', PointComponent, 'm', null);
+      this.selectPopup('MPointComponent_Cplx', PointComponent, 'm', null);
     }
   }
 
@@ -153,7 +153,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // cash
     this.setSelected(evt, 4, 'cash');
     if (this.enableMenu.indexOf('cash') > -1) {
-      this.selectPopup('CashComponent', CashComponent, null, 'cash');
+      this.selectPopup('CashComponent_Cplx', CashComponent, null, 'cash');
     }
   }
 
@@ -165,7 +165,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // cheque
     this.setSelected(evt, 5, 'cheque');
     if (this.enableMenu.indexOf('cheque') > -1) {
-      this.selectPopup('ChequeComponent', CashComponent, null, 'cheque');
+      this.selectPopup('ChequeComponent_Cplx', CashComponent, null, 'cheque');
     }
   }
 
@@ -173,7 +173,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // directdebit
     this.setSelected(evt, 6, 'directdebit');
     if (this.enableMenu.indexOf('directdebit') > -1) {
-      this.selectPopup('DirectDebitComponent', DirectDebitComponent, null, 'directdebit');
+      this.selectPopup('DirectDebitComponent_Cplx', DirectDebitComponent, null, 'directdebit');
     }
   }
 
@@ -181,7 +181,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // arCredit
     this.setSelected(evt, 7, 'arCredit');
     if (this.enableMenu.indexOf('arCredit') > -1) {
-      this.selectPopup('ReCashComponent', ReCashComponent, null, 'arCredit');
+      this.selectPopup('ReCashComponent_Cplx', ReCashComponent, null, 'arCredit');
     }
   }
 

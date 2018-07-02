@@ -109,16 +109,16 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   memberPoint(evt: any) {
     this.setSelected(evt);
     // sprint 6차로 주석처리
-    // this.close();
-    // this.modal.openModalByComponent(PointComponent,
-    //   {
-    //     callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-    //     closeByClickOutside: false,
-    //     modalId: 'MPointComponent',
-    //     pointType: 'm',
-    //     paymentType: 'n'
-    //   }
-    // );
+    this.close();
+    this.modal.openModalByComponent(PointComponent,
+      {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+        closeByClickOutside: false,
+        modalId: 'MPointComponent',
+        pointType: 'm',
+        paymentType: 'n'
+      }
+    );
   }
 
   /**
