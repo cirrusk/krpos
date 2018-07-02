@@ -114,6 +114,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
   }
 
+  installmentBlur() {
+    const inst = this.installmentPeriod.nativeElement.value;
+    if (Utils.isNotEmpty(inst)) {
+      setTimeout(() => { this.installmentPeriod.nativeElement.blur(); }, 50);
+    } else {
+      setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
+    }
+  }
+
   /**
    * 일시불/할부 여부 체크
    *
@@ -123,9 +132,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.installmentPeriod.nativeElement.value = '';
     if (type === 0) {
       this.installment = '00';
-      setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 5);
+      setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);
     } else {
-      setTimeout(() => { this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'readonly'); }, 5);
+      setTimeout(() => { this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'readonly'); }, 50);
       let insmnt: string = this.installmentPeriod.nativeElement.value;
       if (insmnt) {
         if (insmnt.length === 0) {
