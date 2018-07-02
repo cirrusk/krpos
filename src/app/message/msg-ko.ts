@@ -31,6 +31,6 @@ export const LANG_KO_MSGS = {
     'point.use.over': '가용포인트 보다 사용포인트가 큽니다.',
     'point.empty': '사용 포인트가 공란입니다.',
     'recash.smallpaid': '결제 사용할 금액이 부족합니다.',
-    'recash.overpaid': '사용금액이 잔액보다 큽니다.'
+    'recash.overpaid': '잔액보다 사용하려는 금액이 클 수 없습니다.'
 
 };
