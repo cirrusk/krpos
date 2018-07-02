@@ -171,10 +171,10 @@ export class AmwayPaymentInfoData {
     protected alias: string;
     protected providerInterfaceIdentifier: string;
     protected date: Date;
-    protected paymentInfoLine1: string;
-    protected paymentInfoLine2: string;
-    protected paymentInfoLine3: string;
-    protected paymentInfoLine4: string;
+    paymentInfoLine1: string;
+    paymentInfoLine2: string;
+    paymentInfoLine3: string;
+    paymentInfoLine4: string;
     protected issuer: string; // 은행/카드사 BankInfoModel 은행코드
     public set setAmount(amount: number) {
         this.amount = amount;

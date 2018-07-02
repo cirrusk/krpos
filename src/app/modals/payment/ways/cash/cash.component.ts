@@ -17,6 +17,7 @@ import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
 import { Order } from '../../../../data/models/order/order';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { SerialComponent } from '../../../scan/serial/serial.component';
 
 @Component({
   selector: 'pos-cash',
@@ -32,6 +33,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paidDate: Date;
   checktype: number;
   apprmessage: string;
+  private entryNumber: number;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -125,7 +127,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     if (this.paymentType === 'n') { // 일반결제인 경우
       if (change >= 0) {
         this.paymentAndCapture(payAmount, receivedAmount, change);
-      } else  {
+      } else {
         this.paySubmitLock(false); // 버튼 잠금 해제
         this.checktype = -2;
         this.apprmessage = this.message.get('notEnoughPaid');
@@ -318,13 +320,54 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  private hasSerialAndRfid(): number {
+    // 0: 없음, 1 : SERIAL, 2: RFID
+    let rtn = 0;
+    if (this.cartInfo) {
+      this.cartInfo.entries.forEach(entry => {
+        if (entry.product && entry.product.serialNumber) {
+          rtn = 1;
+          this.entryNumber = entry.entryNumber;
+        }
+        if (entry.product && entry.product.rfid) {
+          rtn = 2;
+          this.entryNumber = entry.entryNumber;
+        }
+      });
+    }
+    return rtn;
+  }
+
+  private registerSerialAndRfid() {
+    const regType = this.hasSerialAndRfid();
+    if (regType === 1 || regType === 2) {
+      this.modal.openModalByComponent(SerialComponent,
+        {
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, entryNumber: this.entryNumber },
+          closeByClickOutside: false,
+          modalId: 'SerialComponent',
+          regType: regType
+        }
+      ).subscribe(result => {
+        if (result) {
+          this.cartInitAndClose();
+        }
+      });
+    } else if (regType === 0) {
+      this.cartInitAndClose();
+    }
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.cartInitAndClose();
+        // serial, rfid 가 있으면 입력팝업에서 입력 후에 cartInitAndClose
+        // 아니면 cartInitAndClose
+        this.registerSerialAndRfid();
+        // this.cartInitAndClose();
       } else if (this.finishStatus === 'recart') {
         this.info.sendInfo('recart', this.orderInfo);
         this.info.sendInfo('orderClear', 'clear');

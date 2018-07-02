@@ -1,14 +1,14 @@
 <div class="pop_wrap pop_m">
     <div class="pop_header">
-        <h1>시리얼 번호 스캔 여부</h1>
+        <h1>{{regLabel}} 스캔 여부</h1>
         <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">{{closeButtonLabel}}</button>
     </div>
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
           <div class="ac">
-              <p class="txt04">제품 시리얼 번호를 입력하여 주세요</p>
-              <input type="text" class="mgt15" title="시리얼 번호" style="width:370px">
+              <p class="txt04">제품 {{regLabel}}를 입력하여 주세요</p>
+              <input #code type="text" class="mgt15" title="{{regLabel}}" style="width:370px">
             </div>
         </div>
     </div>
@@ -16,7 +16,7 @@
     <div class="pop_footer line02 clearfix">
         <span class="fl">취소 ESC</span>
         <span class="fr">
-            <a href="#" class="btn01_blue">확인</a>
+            <a href class="btn01_blue" (click)="!!reg()">확인</a>
             <a href (click)="!!close()" class="btn01_white">취소</a>
         </span>
     </div>

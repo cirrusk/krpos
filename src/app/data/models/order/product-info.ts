@@ -39,6 +39,8 @@ export class ProductInfo {
     retailPrice: Price;
     deliveryModes: any; // List<DeliveryModeWsDTO>
     vpsCode: string;
+    rfid: boolean;
+    serialNumber: boolean;
 
     constructor(_code?: string) {
         this.code = _code;
