@@ -18,6 +18,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   orderDetail: OrderList;
   orderInfo: OrderHistory;
 
+  emloyeeId: string;
+  emloyeeName: string;
+
   constructor(protected modalService: ModalService,
               private router: Router,
               private orderService: OrderService,
@@ -37,6 +40,8 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   ngOnInit() {
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+    this.emloyeeId = this.storageService.getEmloyeeId();
+    this.emloyeeName = this.storageService.getEmloyeeName();
   }
 
   init() {
