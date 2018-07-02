@@ -21,7 +21,7 @@ export const LANG_KO_MSGS = {
     'card.payment.success': '카드결제 승인이 완료되었습니다.',
     'credit.valid.overpaid': '실결제금액이 총 매출보다 큽니다.',
     'credit.valid.smallpaid': '실결제금액이 총 매출보다 작습니다.',
-    'no.accountnumber': '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.',
+    'no.accountnumber': '계좌번호가 없습니다. 계좌번호를 확인하시기 바랍니다.',
     'empty.password': '비밀번호가 공란입니다.',
     'notuse.directdeit': '즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.',
     'abo.point.label': 'A포인트',
