@@ -37,7 +37,7 @@
                         <tr>
                             <th scope="row">비밀번호</th>
                             <td>
-                                <input #cardpassword type="password" autocomplete="off" class="w110" title="비밀번호">
+                                <input #cardpassword type="password" autocomplete="off" class="w110" title="비밀번호" (keydown.enter)="passwordBlur()">
                             </td>
                         </tr>
                         <tr>
@@ -64,15 +64,15 @@
                 </table>
             </div>
             </form>
+            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
+            <ng-template #payFail>
+                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
+            </ng-template>
             <!-- //결제내역 -->
         </div>
     </div>
     <!-- //pop_container -->
     <div class="pop_footer clearfix">
         <span class="fl">취소 ESC</span>
-        <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
-        <ng-template #payFail>
-            <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
-        </ng-template>
     </div>
 </div>

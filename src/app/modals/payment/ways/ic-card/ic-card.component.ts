@@ -78,12 +78,15 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     return capturepaymentinfo;
   }
 
+  /**
+   * 현금 IC카드는 단독결제임.
+   */
   private nicePay() {
     this.approvalAndPayment();
   }
 
   /**
-   * 결제만 수행
+   * 결제만 수행 : 복합결제 시
    */
   private approval() {
     this.spinner.show();
@@ -190,6 +193,15 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     });
   }
 
+  private passwordBlur() {
+    const pwd = this.cardpassword.nativeElement.value;
+    if (Utils.isEmpty(pwd)) {
+      setTimeout(() => { this.cardpassword.nativeElement.focus(); }, 50);
+    } else {
+      setTimeout(() => { this.cardpassword.nativeElement.blur(); }, 50);
+    }
+  }
+  
   /**
    * 장바구니와 클라이언트에 정보 전달
    *
