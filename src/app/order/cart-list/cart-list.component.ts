@@ -756,7 +756,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             });
 
             if (this.paymentType === 'g') {
-              this.getGroupCart(userId, cartId);
+              this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
           } else {
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -836,6 +836,10 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.updateCartModel.statusCode === 'success') {
               this.productInfo = this.updateCartModel.entry;
               this.addCartEntry(this.productInfo, index);
+
+              if (this.paymentType === 'g') {
+                this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+              }
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
