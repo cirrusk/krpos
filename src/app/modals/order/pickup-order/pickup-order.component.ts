@@ -56,8 +56,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
 
     if (this.orderType === 'e') {
       this.orderTypeName = '간편선물';
+      this.confirmFlag = true;
     } else if (this.orderType === 'i') {
       this.orderTypeName = '설치주문';
+      this.confirmFlag = true;
     } else {
       this.orderTypeName = '픽업예약주문';
       this.confirmFlag = true;
