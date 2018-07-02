@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo
@@ -171,8 +171,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
           this.approvalAndPayment();
         }
       } else {
-        console.log(this.paidamount);
-        console.log(paid);
         if (Number(this.paidamount) < Number(paid)) {
           this.checktype = -3;
           this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 큽니다.';
