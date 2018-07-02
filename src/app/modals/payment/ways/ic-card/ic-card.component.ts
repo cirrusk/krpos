@@ -193,7 +193,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     });
   }
 
-  private passwordBlur() {
+  passwordBlur() {
     const pwd = this.cardpassword.nativeElement.value;
     if (Utils.isEmpty(pwd)) {
       setTimeout(() => { this.cardpassword.nativeElement.focus(); }, 50);
@@ -201,7 +201,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
       setTimeout(() => { this.cardpassword.nativeElement.blur(); }, 50);
     }
   }
-  
+
   /**
    * 장바구니와 클라이언트에 정보 전달
    *

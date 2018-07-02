@@ -5,7 +5,7 @@ import { ModalComponent, ModalService } from '../../../core';
 import { OrderService } from '../../../service';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
-import { Accounts } from '../../../data';
+import { Accounts, ProductScanTypes } from '../../../data';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -49,9 +49,9 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     }
     let codeType = '';
     if (this.regType === 1) {
-      codeType = 'SERIALNUMBER';
+      codeType = ProductScanTypes.SERIALNUMBER;
     } else if (this.regType === 2) {
-      codeType = 'RFID';
+      codeType = ProductScanTypes.RFID;
     }
 
     this.regsubscription = this.order.serialAndReif(this.accountInfo.parties[0].uid, this.orderInfo.code, this.entryNumber, codeType, code).subscribe(

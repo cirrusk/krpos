@@ -55,3 +55,8 @@ export enum BankTypes {
     DIRECT_DEBIT = 'DIRECT_DEBIT',
     BONUS = 'BONUS'
 }
+
+export enum ProductScanTypes {
+    SERIALNUMBER = 'SERIAL_NUMBER',
+    RFID = 'RFID'
+}

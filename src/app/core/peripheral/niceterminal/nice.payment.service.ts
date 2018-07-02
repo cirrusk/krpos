@@ -45,6 +45,7 @@ export class NicePaymentService {
         // 로깅 -> 추후 Persistence 고려
         console.log('Card Approval Request');
         console.log(requestVO.stringify());
+        this.logger.set('Card Approval Request', requestVO.stringify()).info();
 
         const body: string = CardPopulator.generateApprovalReq(requestVO);
 
@@ -59,6 +60,7 @@ export class NicePaymentService {
                 // 로깅 -> 추후 Persistence 고려
                 console.log('Card Approval Result');
                 console.log(resultVO.stringify());
+                this.logger.set('Card Approval Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);
             },
@@ -87,6 +89,7 @@ export class NicePaymentService {
         // 로깅 -> 추후 Persistence 고려
         console.log('Card Cancel Request');
         console.log(requestVO.stringify());
+        this.logger.set('Card Cancel Request', requestVO.stringify()).info();
 
         const body: string = CardPopulator.generateCancelReq(requestVO);
 
@@ -101,6 +104,7 @@ export class NicePaymentService {
                 // 로깅 -> 추후 Persistence 고려
                 console.log('Card Cancel Result');
                 console.log(resultVO.stringify());
+                this.logger.set('Card Cancel Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);
             },
@@ -125,6 +129,7 @@ export class NicePaymentService {
         // 로깅 -> 추후 Persistence 고려
         console.log('IC Card Approval Request');
         console.log(requestVO.stringify());
+        this.logger.set('IC Card Approval Request', requestVO.stringify()).info();
 
         const body: string = ICCardPopulator.generateApprovalReq(requestVO);
 
@@ -139,6 +144,7 @@ export class NicePaymentService {
                 // 로깅 -> 추후 Persistence 고려
                 console.log('IC Card Approval Result');
                 console.log(resultVO.stringify());
+                this.logger.set('IC Card Approval Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);
             },
