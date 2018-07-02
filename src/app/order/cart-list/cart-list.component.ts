@@ -457,8 +457,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
       // this.storage.setCustomer(this.accountInfo); // getBalanceInfo로 이동
       this.activeSearchMode('P');
+      this.getBalanceInfo();
     }
-    this.getBalanceInfo();
   }
 
   /**
