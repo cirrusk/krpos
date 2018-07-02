@@ -15,8 +15,8 @@
 <div class="list_wrap">
     <!-- 상품이 n개가 넘을 시 노출  -->
     <div class="paging" *ngIf="cartList.length > cartListCount">
-        <button type="button" [disabled]="pager.currentPage === pager.startPage" class="ico_comm prev01" (click)="setPage(pager.currentPage - 1,true)">이전</button>
-        <button type="button" [disabled]="pager.currentPage === pager.endPage" class="ico_comm next01" (click)="setPage(pager.currentPage + 1,true)">다음</button>
+        <button type="button" [disabled]="pager.currentPage === pager.startPage" class="ico_comm prev01" (click)="setPage(pager.currentPage - 1, true)">이전</button>
+        <button type="button" [disabled]="pager.currentPage === pager.endPage" class="ico_comm next01" (click)="setPage(pager.currentPage + 1, true)">다음</button>
     </div>
     <!-- //상품이 n개가 넘을 시 노출  -->
     <div class="list click_add">
@@ -46,11 +46,11 @@
             <tr [class.on]="selectedCartNum == i" *ngFor="let cartEntry of currentCartList; let i = index;" (click)="activeRowCart(i)">
                 <td *ngIf="cartList.length > 0 && cartList[0].entryNumber === 0">{{ cartEntry.entryNumber + 1}}</td>
                 <td *ngIf="cartList.length > 0 && cartList[0].entryNumber !== 0">{{ cartEntry.entryNumber}}</td>
-                <td class="al">{{cartEntry.product.code}}</td>
-                <td class="al"><span class="elips">{{cartEntry.product.name}}</span></td>
-                <td>{{cartEntry.quantity}}</td>
-                <td class="ar">{{cartEntry.basePrice.value | number}}</td>
-                <td class="ar">{{cartEntry.totalPrice.value | number}}</td>
+                <td class="al">{{cartEntry?.product?.code}}</td>
+                <td class="al"><span class="elips">{{cartEntry?.product?.name}}</span></td>
+                <td>{{cartEntry?.quantity}}</td>
+                <td class="ar">{{cartEntry?.basePrice?.value | number}}</td>
+                <td class="ar">{{cartEntry?.totalPrice?.value | number}}</td>
                 <td></td>
             </tr>                                   
         </tbody>
