@@ -35,7 +35,7 @@ export class OrderService {
    * @param asc asc 정렬 여부
    */
   orderList(searchText: string, memberType: string, searchType: string, orderTypes: string, channels: string,
-            deliveryModes: string, confirmFlag =  false, currentPage = 0, pageSize = 10, sort = 'date', asc = true): Observable<OrderHistoryList> {
+    deliveryModes: string, confirmFlag = false, currentPage = 0, pageSize = 10, sort = 'date', asc = true): Observable<OrderHistoryList> {
     const arrOrderTypes = new Array<string>(); // NORMAL_ORDER
     const arrChannels = new Array<string>(); // Web,WebMobile
     const arrDeliveryModes = new Array<string>(); // delivery,install
@@ -50,15 +50,15 @@ export class OrderService {
       amwayBusinessNature = MemberType.CONSUMER;
     }
 
-    orderTypes.split(',').forEach( orderType => {
+    orderTypes.split(',').forEach(orderType => {
       arrOrderTypes.push(orderType.trim());
     });
 
-    channels.split(',').forEach( channel => {
+    channels.split(',').forEach(channel => {
       arrChannels.push(channel.trim());
     });
 
-    deliveryModes.split(',').forEach( deliveryMode => {
+    deliveryModes.split(',').forEach(deliveryMode => {
       arrDeliveryModes.push(deliveryMode.trim());
     });
 
@@ -106,6 +106,22 @@ export class OrderService {
   orderCancel(accountid: string, userid: string, ordercode: string) {
     const pathvariables = { accountId: accountid, userId: userid, orderCode: ordercode };
     const data = new HttpData('orderCancel', pathvariables, null, null, 'json');
+    return this.api.get(data);
+  }
+
+  /**
+   * Serial, RFID 등록
+   *
+   * @param userid 회원아이디
+   * @param ordercode 주문번호
+   * @param entrynumber 주문 엔트리 번호
+   * @param codetype 코드타입 (RFID SERIALNUMBER)
+   * @param code 코드
+   */
+  serialAndReif(userid: string, ordercode: string, entrynumber: string, codetype: string, code: string) {
+    const pathvariables = { userId: userid, orderCode: ordercode, entryNumber: entrynumber };
+    const param = { codeType: codetype, code: code, fields: 'FULL' };
+    const data = new HttpData('serialAndRfid', pathvariables, null, param, 'json');
     return this.api.get(data);
   }
 }
