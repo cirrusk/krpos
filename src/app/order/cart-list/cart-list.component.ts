@@ -319,6 +319,10 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
     if (this.searchMode === 'A') { // 회원검색
+      if (this.paymentType === '') {
+        this.paymentType = 'n';
+      }
+
       this.selectAccountInfo(this.searchMode, searchText);
     } else { // 제품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
