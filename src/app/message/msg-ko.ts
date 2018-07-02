@@ -15,5 +15,22 @@ export const LANG_KO_MSGS = {
     'receiptFail' : '영수증 발행이 실패되었습니다.',
     'coupon.already.exists.cart': '이미 장바구니에 적용된 쿠폰입니다.',
     'cancelReceiptComplete' : '취소 영수증 발행이 완료되었습니다',
-    'cancelReceiptFail' : '취소 영수증 발행이 실패되었습니다.'
+    'cancelReceiptFail' : '취소 영수증 발행이 실패되었습니다.',
+    'payment.success': '결제가 완료되었습니다.',
+    'payment.fail': '결제에 실패했습니다.',
+    'card.payment.success': '카드결제 승인이 완료되었습니다.',
+    'credit.valid.overpaid': '실결제금액이 총 매출보다 큽니다.',
+    'credit.valid.smallpaid': '실결제금액이 총 매출보다 작습니다.',
+    'no.accountnumber': '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.',
+    'empty.password': '비밀번호가 공란입니다.',
+    'notuse.directdeit': '즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.',
+    'abo.point.label': 'A포인트',
+    'member.point.label': 'Member 포인트',
+    'point.overpaid': '사용 포인트가 결제금액보다 많습니다.',
+    'point.smallpaid': '사용 포인트가 결제금액보다 작습니다.',
+    'point.use.over': '가용포인트 보다 사용포인트가 큽니다.',
+    'point.empty': '사용 포인트가 공란입니다.',
+    'recash.smallpaid': '결제 사용할 금액이 부족합니다.',
+    'recash.overpaid': '사용금액이 잔액보다 큽니다.'
+
 };
