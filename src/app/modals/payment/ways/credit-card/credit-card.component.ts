@@ -108,18 +108,28 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   /**
-   * 엔터입력시 blur 처리되도록
+   * 결제금액 엔터입력시 blur 처리
+   * 결제창으로 이동 --> 엔터 입력에 대한 이벤트 처리
    */
   paidBlur() {
-    setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
+    const paid = this.paid.nativeElement.value;
+    if (Utils.isEmpty(paid)) {
+      setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
+    } else {
+      setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
+    }
   }
 
+  /**
+   * 할부개월 엔터 입력시 blur 처리
+   * 결제창으로 이동 --> 엔터 입력에 대한 이벤트 처리
+   */
   installmentBlur() {
     const inst = this.installmentPeriod.nativeElement.value;
-    if (Utils.isNotEmpty(inst)) {
-      setTimeout(() => { this.installmentPeriod.nativeElement.blur(); }, 50);
-    } else {
+    if (Utils.isEmpty(inst)) {
       setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
+    } else {
+      setTimeout(() => { this.installmentPeriod.nativeElement.blur(); }, 50);
     }
   }
 
@@ -135,17 +145,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);
     } else {
       setTimeout(() => { this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'readonly'); }, 50);
-      let insmnt: string = this.installmentPeriod.nativeElement.value;
-      if (insmnt) {
-        if (insmnt.length === 0) {
-          insmnt = '00';
-        } else if (insmnt.length === 1) {
-          insmnt = '0' + insmnt;
-        }
-      } else {
-        insmnt = '00';
-      }
-      this.installment = insmnt;
       this.installmentPeriod.nativeElement.focus();
     }
   }
@@ -261,6 +260,22 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
+  private getInstallment(): string {
+    const insmnt: number = this.installmentPeriod.nativeElement.value;
+    let strinst = String(insmnt);
+    if (Utils.isEmpty(strinst)) {
+      strinst = '00';
+    } else {
+      if (strinst.length === 0) {
+        strinst = '00';
+      } else if (strinst.length === 1) {
+        strinst = '0' + strinst;
+      }
+    }
+    this.installment = strinst;
+    return strinst;
+  }
+
   /**
    * 카드결제만 진행
    */
@@ -269,7 +284,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       const paidprice: number = this.paid.nativeElement.value;
       this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       this.spinner.show();
-      const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
+      const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
       this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
       resultNotifier.subscribe(
         (res: CardApprovalResult) => {
@@ -321,7 +336,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private approvalAndPayment() {
     const paidprice = this.paid.nativeElement.value;
     this.spinner.show();
-    const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.installment);
+    const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
     resultNotifier.subscribe((res: CardApprovalResult) => {
       this.cardresult = res;
