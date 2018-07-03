@@ -493,14 +493,21 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
-        this.cartInitAndClose();
-      } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
-        this.close();
-      } else {
+      if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
         if (!this.dupcheck) {
           setTimeout(() => { this.nicePay(); }, 300);
           this.dupcheck = true;
+        }
+      } else {
+        if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
+          this.cartInitAndClose();
+        } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
+            this.close();
+        } else {
+          if (!this.dupcheck) {
+            setTimeout(() => { this.nicePay(); }, 300);
+            this.dupcheck = true;
+          }
         }
       }
     }
