@@ -78,8 +78,8 @@ export class ReceiptService {
                     case 'creditvoucher': { jsonPaymentData = {'voucherPaymentInfo' : paymentInfo }; } break;
                     default: { jsonPaymentData = {}; } break;
                 }
-
                 Object.assign(paymentCapture, jsonPaymentData);
+                jsonPaymentData = {};
             });
 
             if (cancelFlag) {
@@ -99,6 +99,7 @@ export class ReceiptService {
      * @param order 주문정보
      * @param paymentCapture 결제캡쳐 정보
      * @param point 회원 포인트 정보(항상 출력 전에 새로 조회해야함.)
+     * @param cancelFlag 취소 문구 삽입 (Y : 취소, N : 승인)
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      */
@@ -151,7 +152,7 @@ export class ReceiptService {
         let totalDiscount = 0;
         cartInfo.entries.forEach(entry => {
             productList.push({
-                'idx': entry.entryNumber.toString(),
+                'idx': (entry.entryNumber + 1).toString(),
                 'skuCode': entry.product.code,
                 'productName': entry.product.name,
                 'price': entry.basePrice.value.toString(),
@@ -251,7 +252,7 @@ export class ReceiptService {
         // recash
         if (paymentCapture.getMonetaryPaymentInfo) {
             const recash = paymentCapture.getMonetaryPaymentInfo;
-            discount.setRecash = new DiscountInfo('Recash', recash.getAmount);
+            discount.setRecash = new DiscountInfo('Recash', recash.amount);
         }
         price.setDiscount = discount;
         // prices - END
@@ -273,7 +274,6 @@ export class ReceiptService {
             text = this.consumerNormal(receiptInfo);
         }
         // 최종 영수증 데이터 구성 - END
-
         try {
             this.printer.printText(text);
         } catch (e) {
