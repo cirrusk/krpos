@@ -220,7 +220,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
     // 선택한 메뉴에 대해서는 다시 선택 못하도록 disable 처리
     if (payment) {
-      this.enableMenu = this.enableMenu.filter(item => item !== payment);
+      // this.enableMenu = this.enableMenu.filter(item => item !== payment);
     }
 
     // this.paymentSubscription =
