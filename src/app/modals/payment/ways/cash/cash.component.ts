@@ -21,8 +21,7 @@ import { SerialComponent } from '../../../scan/serial/serial.component';
 
 @Component({
   selector: 'pos-cash',
-  templateUrl: './cash.component.html',
-  styleUrls: ['./cash.component.css']
+  templateUrl: './cash.component.html'
 })
 export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
@@ -33,7 +32,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paidDate: Date;
   checktype: number;
   apprmessage: string;
-  private entryNumber: number;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -322,17 +320,20 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   private hasSerialAndRfid(): number {
-    // 0: 없음, 1 : SERIAL, 2: RFID
+    // 0: 없음, 1 : SERIAL, 2: RFID, 3: SERIAL + RFID
     let rtn = 0;
     if (this.cartInfo) {
       this.cartInfo.entries.forEach(entry => {
-        if (entry.product && entry.product.serialNumber) {
-          rtn = 1;
-          this.entryNumber = entry.entryNumber;
-        }
-        if (entry.product && entry.product.rfid) {
-          rtn = 2;
-          this.entryNumber = entry.entryNumber;
+        if (entry.product) {
+          if (entry.product.serialNumber && !entry.product.rfid) {
+            rtn = 1;
+          }
+          if (entry.product.rfid && !entry.product.serialNumber) {
+            rtn = 2;
+          }
+          if (entry.product.rfid && entry.product.serialNumber) {
+            rtn = 3;
+          }
         }
       });
     }
@@ -341,10 +342,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   private registerSerialAndRfid() {
     const regType = this.hasSerialAndRfid();
-    if (regType === 1 || regType === 2) {
+    if (regType > 0) {
       this.modal.openModalByComponent(SerialComponent,
         {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, entryNumber: this.entryNumber },
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo },
           closeByClickOutside: false,
           modalId: 'SerialComponent',
           regType: regType
@@ -367,7 +368,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         // serial, rfid 가 있으면 입력팝업에서 입력 후에 cartInitAndClose
         // 아니면 cartInitAndClose
-        this.registerSerialAndRfid();
+        const lastmodal = this.storage.getLatestModalId();
+        if (lastmodal !== 'SerialComponent') {
+          this.registerSerialAndRfid();
+        }
         // this.cartInitAndClose();
       } else if (this.finishStatus === 'recart') {
         this.info.sendInfo('recart', this.orderInfo);
