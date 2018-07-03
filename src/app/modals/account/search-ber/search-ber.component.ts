@@ -43,7 +43,9 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   reset() {
     this.berCount = 0;
     this.berSeachMarker = -1;
-    this.berList.length = 0;
+    if (this.berList) {
+      this.berList.length = 0;
+    }
     this.inputSearchBer.nativeElement.value = '';
   }
 
