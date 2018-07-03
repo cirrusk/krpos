@@ -234,7 +234,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     const numExp: RegExp = new RegExp(/[0-9]/g);
     const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
     this.searchValid.valueChanges
-      .debounceTime(200)
+      .debounceTime(50)
       .subscribe(v => {
         if (v) {
           if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
@@ -297,7 +297,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param mode
    */
   activeSearchMode(mode: string): void {
-    setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 50);
+    setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
     this.searchMode = mode;
   }
 
