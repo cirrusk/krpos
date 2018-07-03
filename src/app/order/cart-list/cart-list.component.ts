@@ -12,7 +12,6 @@ import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 import { Order, OrderList } from '../../data/models/order/order';
 import { FormControl } from '@angular/forms';
-import { noUndefined } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'pos-cart-list',
