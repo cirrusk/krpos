@@ -294,7 +294,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.finishStatus = 'retry';
             this.storage.removePaymentModeCode();
             this.apprmessage = res.msg;
-            // this.alert.error({ message: res.msg });
           } else {
             if (res.approved) {
               this.finishStatus = StatusDisplay.PAID;
@@ -343,7 +342,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
         this.spinner.hide();
         this.finishStatus = 'retry';
-        // this.alert.error({ message: res.msg });
         this.apprmessage = res.msg;
       } else {
         if (res.approved) {
