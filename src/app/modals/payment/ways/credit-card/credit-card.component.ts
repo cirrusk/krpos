@@ -476,8 +476,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
         this.close();
       }
-    } else if (this.finishStatus === 'retry') { // 결제 재시도
-      this.logger.set('credit.card.component', `단말기 오류로 인한 재결제 : ${this.cardresult.msg}`).debug();
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');
