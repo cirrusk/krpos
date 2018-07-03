@@ -43,7 +43,7 @@
                               <td><span>{{orderList.orders[orderEntry.entryNumber].user.uid}}</span></td>
                               <td class="tit"><span class="elips mx400">{{orderEntry.product.name}}</span></td>
                               <td><span>{{orderEntry.quantity}}</span></td>
-                              <td><span>X</span></td>
+                              <td><span>{{orderEntry.quantity === orderEntry.ecpConfirmQty ? 'O' : 'X' }}</span></td>
                           </tr>
                       </tbody>
                   </table>
@@ -53,7 +53,7 @@
              <!-- 바코드스캔 수정 20180524 -->
              <div class="scan">
                 <label for="bcs">바코드 스캔</label>
-                <input #barcode autofocus type="text" id="bcs">
+                <input #barcode type="text" id="bcs" (keydown.enter)="productConfirm(barcode.value, pager.currentPage)">
             </div>
             <!-- //바코드스캔 수정 20180524 -->
       </div>

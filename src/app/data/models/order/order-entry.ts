@@ -31,7 +31,15 @@ export class OrderEntry {
     quantityShipped: number;
     quantityReturned: number;
 
+    // Ecp 컨펌 (숫자, true='완료')
+    ecpConfirmQty: any;
+
     constructor(_product?: ProductInfo) {
         this.product = _product;
+        this.ecpConfirmQty = '';
+    }
+
+    public set setEcpConfirmQty(data: any) {
+        this.ecpConfirmQty = data;
     }
 }
