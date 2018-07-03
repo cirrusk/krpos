@@ -291,7 +291,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.spinner.hide();
           this.cardresult = res;
           if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-            this.finishStatus = 'fail';
+            this.finishStatus = 'retry';
             this.storage.removePaymentModeCode();
             this.apprmessage = res.msg;
             // this.alert.error({ message: res.msg });
@@ -342,7 +342,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
         this.spinner.hide();
-        this.finishStatus = 'fail';
+        this.finishStatus = 'retry';
         // this.alert.error({ message: res.msg });
         this.apprmessage = res.msg;
       } else {
@@ -478,6 +478,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
         this.close();
       }
+    } else if (this.finishStatus === 'retry') { // 결제 재시도
+      this.logger.set('credit.card.component', `단말기 오류로 인한 재결제 : ${this.cardresult.msg}`).debug();
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');
