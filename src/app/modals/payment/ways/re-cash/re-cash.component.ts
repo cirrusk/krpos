@@ -99,7 +99,11 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
     } else {
       setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
-      this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
+      let paid: number = this.paidamount;
+      if (!this.isAllPay) {
+        paid = this.usePoint.nativeElement.value;
+      }
+      this.paymentcapture = this.makePaymentCaptureData(paid).capturePaymentInfoData;
       if (check > 0) { // 결제할것이 남음.
         // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
         this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
