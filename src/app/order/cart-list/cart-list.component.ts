@@ -297,8 +297,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param mode
    */
   activeSearchMode(mode: string): void {
-    setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
-    this.searchText.nativeElement.value = '';
+    setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 50);
     this.searchMode = mode;
   }
 
