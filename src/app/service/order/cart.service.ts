@@ -133,7 +133,8 @@ export class CartService {
   updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number): Observable<ResCartInfo> {
     const o1: OrderEntries = new OrderEntries(new Product(code), qty.toString());
     const pathvariables = { userId: userId, cartId: cartId, entryNumber: entryNumber };
-    const data = new HttpData('updateItemQtyCart', pathvariables, o1, null, 'json');
+    const param = { fields: 'FULL'};
+    const data = new HttpData('updateItemQtyCart', pathvariables, o1, param, 'json');
     return this.api.put(data).flatMap((cartModification: CartModification) => {
       const arrayCart = new Array<CartModification>();
       arrayCart.push(cartModification);
