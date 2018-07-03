@@ -50,7 +50,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z-]/g);
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
     this.loginIdValid.valueChanges
-    .debounceTime(200)
+    .debounceTime(70)
     .subscribe(v => {
       if (v) {
         if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
