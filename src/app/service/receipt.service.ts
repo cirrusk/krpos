@@ -203,9 +203,6 @@ export class ReceiptService {
         }
         if (paymentCapture.getCashPaymentInfo) {
             const cainfo = paymentCapture.getCashPaymentInfo;
-            if (Number(cainfo.change) < 0) {
-                cainfo.setChange = 0;
-            }
             const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, cainfo.getCashReceipt);
             payment.setCash = cash;
         }

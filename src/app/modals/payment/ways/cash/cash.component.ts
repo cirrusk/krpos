@@ -153,6 +153,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   private completePayPopup(receivedAmount: number, payAmount: number, change: number) {
     this.close();
+    change = (change < 0) ? 0 : change;
     this.modal.openModalByComponent(CompletePaymentComponent,
       {
         callerData: {
@@ -257,7 +258,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     const capturepaymentinfo = new CapturePaymentInfo();
     const cash = new CashPaymentInfo(paidamountbypayment, CashType.CASH);
     cash.setReceived = received;
-    cash.setChange = change;
+    cash.setChange = change < 0 ? 0 : change;
     cash.setPaymentModeData = new PaymentModeData(PaymentModes.CASH);
     cash.setCurrencyData = new CurrencyData();
     if (this.paymentcapture) {

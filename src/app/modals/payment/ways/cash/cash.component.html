@@ -25,7 +25,12 @@
                         </tr>
                         <tr>
                             <th scope="row">거스름돈</th>
-                            <td><span #change class="won">{{ paid.value - payment.value | number}}</span></td>
+                            <td>
+                                <span #change class="won" *ngIf="paid.value - payment.value > 0; else notChange">{{ paid.value - payment.value | number}}</span>
+                                <ng-template #notChange>
+                                    <span #change class="won">0</span>
+                                </ng-template>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">결제일자</th>
