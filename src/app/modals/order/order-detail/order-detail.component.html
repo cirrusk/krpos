@@ -43,9 +43,9 @@
                                         <tr *ngFor="let entry of orderDetail.orders[0].entries;">
                                             <td>{{ entry.entryNumber + 1}}</td>
                                             <td><span class="blck">{{entry.product.code}}</span>{{entry.product.name}}</td>
-                                            <td>{{ entry.basePrice.value }}</td>
+                                            <td>{{ entry.basePrice.value | number}}</td>
                                             <td>{{ entry.quantity }}</td>
-                                            <td>{{ entry.totalPrice.value }}</td>
+                                            <td>{{ entry.totalPrice.value | number}}</td>
                                         </tr>                                       
                                     </tbody>
                                 </table>
