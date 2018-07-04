@@ -20,6 +20,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
 
   emloyeeId: string;
   emloyeeName: string;
+  cancelSymbol: string;
+  cancelFlag: boolean;
+  activeFlag: boolean;
 
   constructor(protected modalService: ModalService,
               private router: Router,
@@ -40,11 +43,26 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   ngOnInit() {
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+    this.checkCancelStatus(this.orderInfo);
     this.emloyeeId = this.storageService.getEmloyeeId();
     this.emloyeeName = this.storageService.getEmloyeeName();
   }
 
   init() {
+    this.cancelSymbol = '';
+    this.cancelFlag = false;
+    this.activeFlag = false;
+  }
+
+  checkCancelStatus(orderInfo: OrderHistory) {
+    if (orderInfo.orderStatus.code === 'CANCELLED') {
+      this.cancelSymbol = '-';
+      this.cancelFlag = true;
+
+    } else {
+      this.cancelSymbol = '';
+      this.cancelFlag = false;
+    }
   }
 
   /**
@@ -59,6 +77,16 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
         closeByEscape: false,
         modalId: 'CancelOrderComponent'
       }
+    ).subscribe( result => {
+      if (result) {
+        this.cancelSymbol = '-';
+        this.cancelFlag = true;
+        this.activeFlag = true;
+        this.result = this.activeFlag;
+        this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+      }
+    }
+
     );
   }
 
@@ -140,6 +168,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   }
 
   close() {
+    this.result = this.activeFlag;
     this.closeModal();
   }
 

@@ -111,33 +111,12 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
           closeButtonLabel: '취소',
           modalId: 'OrderDetailComponent'
         }
-      );
-    }
-  }
-
-  /**
-   * 주문 취소 팝업 호출
-   * @param orderCode
-   */
-  popupCancel(orderCode: string) {
-    const existedIdx: number = this.orderHistoryList.orders.findIndex(
-      function (obj) {
-        return obj.code === orderCode;
-      }
-    );
-
-    if (existedIdx !== -1) {
-      this.modal.openModalByComponent(CancelOrderComponent,
-        {
-          callerData: { orderInfo : this.orderHistoryList.orders[existedIdx] },
-          closeByClickOutside: false,
-          closeByEnter: false,
-          closeByEscape: false,
-          modalId: 'CancelOrderComponent'
+      ).subscribe(result => {
+        if (result) {
+          this.getOrderList(this.searchType, this.memberType, this.searchText, this.orderHistoryList.pagination.currentPage);
         }
-      );
+      });
     }
-
   }
 
   /**
@@ -177,40 +156,6 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         if (errdata) {
           this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
           this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
-        }
-      },
-      () => { this.spinner.hide(); }
-    );
-  }
-
-  /**
-   * 영수증 출력
-   * @param userId
-   * @param orderCode
-   */
-  reissueReceipts(userId: string, orderCode: string) {
-    const orderCodes = new Array<string>();
-    orderCodes.push(orderCode);
-    this.spinner.show();
-    this.orderService.orderDetails(userId, orderCodes).subscribe(
-      orderDetail => {
-        if (orderDetail) {
-          try {
-            this.receiptService.reissueReceipts(orderDetail);
-            this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
-          } catch (e) {
-            this.logger.set('order-complete.component', `Reissue Receipts error type : ${e}`).error();
-            this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
-          }
-        }
-      },
-      error => {
-        this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('order-complete.component', `Get Order Detail error type : ${errdata.type}`).error();
-          this.logger.set('order-complete.component', `Get Order Detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
       },
