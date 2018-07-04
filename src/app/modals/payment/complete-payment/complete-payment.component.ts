@@ -66,7 +66,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
     // 내신금액이 결제금액보다 크면 처리함.
     if (this.paidamount >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
-      this.paymentAndCapture();
+      this.paymentAndPlaceOrder();
     }
   }
 
@@ -112,7 +112,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * @param paidAmount 결제금액
    * @param change 거스름돈
    */
-  private paymentAndCapture() {
+  private paymentAndPlaceOrder() {
     this.spinner.show();
     const capturepaymentinfo = new CapturePaymentInfo();
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
@@ -125,10 +125,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
           this.paidDate = result.created ? result.created : new Date();
-          this.printAndCartInit();
           if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
             this.printer.openCashDrawer();
           }
+          this.printAndCartInit();
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
           this.finishStatus = 'recart';
         } else { // CART 삭제된 상태
@@ -149,14 +149,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }, () => { this.spinner.hide(); });
   }
 
-  printAndCartInit() {
+  private printAndCartInit() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      if (this.paidamount >= this.payamount) {
-        this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-      }
+      this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+      this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
     }
-    // this.close();
   }
 
   /**
