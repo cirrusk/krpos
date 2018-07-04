@@ -307,6 +307,18 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     public set setValidToYear(validToYear: string) {
         this.validToYear = validToYear;
     }
+    public set setCardApprovalNumber(cardApprovalNumber: string) {
+        this.cardApprovalNumber = cardApprovalNumber;
+    }
+    public get getCardApprovalNumber(): string {
+        return this.cardApprovalNumber;
+    }
+    public set setCardRequestDate(cardRequestDate: Date) {
+        this.cardRequestDate = cardRequestDate;
+    }
+    public get getCardRequestDate(): Date {
+        return this.cardRequestDate;
+    }
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,
         validToMonth?: string, validToYear?: string) {

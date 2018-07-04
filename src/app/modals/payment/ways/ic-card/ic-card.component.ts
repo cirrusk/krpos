@@ -2,8 +2,11 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } fro
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
-import { ModalComponent, ModalService, NicePaymentService, Logger, AlertService, SpinnerService, StorageService } from '../../../../core';
-import { KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts, StatusDisplay, CapturePaymentInfo } from '../../../../data';
+import { ModalComponent, ModalService, NicePaymentService, Logger, SpinnerService, StorageService } from '../../../../core';
+import {
+  KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
+  StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType
+} from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { ICCardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/iccard.approval.result';
@@ -61,14 +64,38 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
+  /**
+ * 임시로 카드 매핑, 나중에 매핑되면 제거
+ */
+  private getCardCodes(): Map<string, string> {
+    const map = new Map([
+      ['01', 'C0G'], // AMEX
+      ['02', 'C0B'], // 국민은행
+      ['08', 'C04']  // 현대카드
+    ]
+    );
+    return map;
+  }
+
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
     const iccard = new ICCardPaymentInfo(paidamount);
-    iccard.setAccountNumber = this.cardresult.approvalNumber;
-    iccard.setBank = this.cardresult.issuerOrgName;
-    iccard.setBankIDNumber = this.cardresult.issuerOrgCode;
-    iccard.setBaOwner = '';
+    iccard.setCardNumber = this.cardresult.maskedCardNumber;
+    iccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
+    iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
+    iccard.setCardCompayCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
+    iccard.setCardAcquireCode = this.cardresult.acquireCode; // 매입사 코드
     iccard.setCardPassword = this.cardpassword.nativeElement.value;
+    iccard.setInstallmentPlan = '00';
+    iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
+    iccard.setCardRequestDate = Utils.convertDate(this.cardresult.approvalDateTime);
+    iccard.setNumber = this.cardresult.maskedCardNumber;
+    iccard.setMemberType = CCMemberType.PERSONAL;
+    iccard.setPaymentType = CCPaymentType.GENERAL;
+    iccard.setCardType = PaymentModes.ICCARD;
+    iccard.setTransactionId = this.cardresult.code; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    // iccard.setValidToMonth = '';
+    // iccard.setValidToYear = '';
     iccard.setPaymentModeData = new PaymentModeData(PaymentModes.ICCARD);
     iccard.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();

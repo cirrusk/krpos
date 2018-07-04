@@ -219,16 +219,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setCardAcquireCode = this.cardresult.acquireCode; // 매입사 코드
     ccard.setCardPassword = this.cardpassword.nativeElement.value;
     ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
+    ccard.setCardApprovalNumber = this.cardresult.approvalNumber;
+    ccard.setCardRequestDate = Utils.convertDate(this.cardresult.approvalDateTime);
+    ccard.setNumber = this.cardresult.maskedCardNumber;
     ccard.setMemberType = CCMemberType.PERSONAL;
     ccard.setPaymentType = CCPaymentType.GENERAL;
     ccard.setCardType = PaymentModes.CREDITCARD;
-    ccard.setTransactionId = ''; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
-    const cn = this.cardresult.maskedCardNumber;
-    if (cn && cn.length > 4) {
-      ccard.setNumber = cn.substring(cn.length - 4); // 카드 번호 뒷 4자리
-    }
-    ccard.setValidToMonth = '';
-    ccard.setValidToYear = '';
+    ccard.setTransactionId = this.cardresult.code; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    // ccard.setValidToMonth = '';
+    // ccard.setValidToYear = '';
     ccard.setPaymentModeData = new PaymentModeData(PaymentModes.CREDITCARD);
     ccard.setCurrencyData = new CurrencyData();
     return ccard;
