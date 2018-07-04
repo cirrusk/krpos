@@ -16,3 +16,16 @@ export class Cart extends AbstractOrder {
     }
 
 }
+
+export class SerialRfid {
+    productName: string;
+    hasSerial: boolean;
+    hasRfid: boolean;
+    entryNumber: number;
+    constructor(productName: string, hasSerial: boolean, hasRfid: boolean, entryNumber: number) {
+        this.productName = productName;
+        this.hasSerial = hasSerial;
+        this.hasRfid = hasRfid;
+        this.entryNumber = entryNumber;
+    }
+}
