@@ -48,7 +48,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paymentcapture = this.callerData.paymentInfo;
     this.paidamount = this.cartInfo.totalPrice.value;
     this.payamount = this.cartInfo.totalPrice.value; // this.callerData.payAmount;
-    // this.change = this.callerData.change;
     this.paidAmount();
 
   }
@@ -72,37 +71,44 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   private paidAmount() {
     let paid = 0;
-    if (this.paymentcapture.ccPaymentInfo) { // 신용카드
-      const p = this.paymentcapture.ccPaymentInfo.amount;
-      if (p) { paid += Number(p); }
-    }
+    // if (this.paymentcapture.ccPaymentInfo) { // 신용카드
+    //   const p = this.paymentcapture.ccPaymentInfo.amount;
+    //   if (p) { paid += Number(p); }
+    // }
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
       const p = this.paymentcapture.cashPaymentInfo.received;
-      if (p) { paid += Number(p); }
+      if (p) {
+        paid += Number(p);
+      } else {
+        this.paidamount = this.cartInfo.totalPrice.value;
+      }
       const strchange = this.paymentcapture.cashPaymentInfo.change;
       this.change = strchange ? Number(strchange) : 0;
+      this.paidamount = paid;
+    } else {
+      this.paidamount = this.cartInfo.totalPrice.value;
     }
-    if (this.paymentcapture.voucherPaymentInfo) { // 쿠폰
-      const p = this.paymentcapture.voucherPaymentInfo.amount;
-      if (p) { paid += Number(p); }
-    }
-    if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
-      const p = this.paymentcapture.directDebitPaymentInfo.amount;
-      if (p) { paid += Number(p); }
-    }
-    if (this.paymentcapture.pointPaymentInfo) { // 포인트
-      const p = this.paymentcapture.pointPaymentInfo.amount;
-      if (p) { paid += Number(p); }
-    }
-    if (this.paymentcapture.monetaryPaymentInfo) { // 미수금결제(AR)
-      const p = this.paymentcapture.monetaryPaymentInfo.amount;
-      if (p) { paid += Number(p); }
-    }
-    if (this.paymentcapture.icCardPaymentInfo) { // 현금IC카드결제
-      const p = this.paymentcapture.icCardPaymentInfo.amount;
-      if (p) { paid += Number(p); }
-    }
-    this.paidamount = paid;
+    // if (this.paymentcapture.voucherPaymentInfo) { // 쿠폰
+    //   const p = this.paymentcapture.voucherPaymentInfo.amount;
+    //   if (p) { paid += Number(p); }
+    // }
+    // if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
+    //   const p = this.paymentcapture.directDebitPaymentInfo.amount;
+    //   if (p) { paid += Number(p); }
+    // }
+    // if (this.paymentcapture.pointPaymentInfo) { // 포인트
+    //   const p = this.paymentcapture.pointPaymentInfo.amount;
+    //   if (p) { paid += Number(p); }
+    // }
+    // if (this.paymentcapture.monetaryPaymentInfo) { // 미수금결제(AR)
+    //   const p = this.paymentcapture.monetaryPaymentInfo.amount;
+    //   if (p) { paid += Number(p); }
+    // }
+    // if (this.paymentcapture.icCardPaymentInfo) { // 현금IC카드결제
+    //   const p = this.paymentcapture.icCardPaymentInfo.amount;
+    //   if (p) { paid += Number(p); }
+    // }
+
   }
 
   /**
@@ -241,6 +247,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.info.sendInfo('recart', this.orderInfo);
         this.info.sendInfo('orderClear', 'clear');
         this.close();
+      } else {
+        this.pay(event);
       }
     }
   }

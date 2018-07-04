@@ -17,11 +17,11 @@
                     <tbody>
                         <tr>
                             <th scope="row">내신금액</th>
-                            <td><input #paid type="text" class="w110 ar" title="내신금액" value="" (keydown.enter)="nextStep()"></td>
+                            <td><input #paid type="text" class="w110 ar" title="내신금액" (keyup)="cashCal()" (keydown.enter)="paidBlur()"></td>
                         </tr>
                         <tr>
                             <th scope="row">결제금액</th>
-                            <td><input #payment type="text" class="w110 ar" title="결제금액" value=""></td><!--(keydown.enter)="pay($event, paid.value, payment.value)"-->
+                            <td><input #payment type="text" class="w110 ar" title="결제금액" (keyup)="cashCal()" (keydown.enter)="paymentBlur();"></td>
                         </tr>
                         <tr>
                             <th scope="row">거스름돈</th>
@@ -41,6 +41,7 @@
             </div>
             <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === null && checktype === -3" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
             <ng-template #payFail>
                 <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
