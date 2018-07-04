@@ -82,12 +82,13 @@ export class TemplateParser {
 
   // 영수증 가격 리스트의 포맷을 양쪽 정렬로 맞추기 위한 Helper
   private registerPriceFormatHelper() {
-    this.handlebars.registerHelper('priceFormatHelper', (priceName: string, price: string) => {
+    this.handlebars.registerHelper('priceFormatHelper', (priceName: string, price: string, cancelFlag?: string) => {
       const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(priceName);
       const localePrice: string = ReceiptUtils.convertToLocalePrice(price);
       const blankLenth: number = 42 - utf8ItemLen - localePrice.length;
+      const cancelSymbol: string = cancelFlag === 'Y' ? '-' : '';
 
-      return new handlebars.SafeString(priceName + ReceiptUtils.spaces(blankLenth) + localePrice);
+      return new handlebars.SafeString(priceName + ReceiptUtils.spaces(blankLenth) + cancelSymbol + localePrice);
     });
   }
 
@@ -120,11 +121,12 @@ export class TemplateParser {
 
   // Bonus 정보를 용지 절반 기준 2단으로 보여주기 위한 Helper
   private registerBonusDataHelper() {
-    this.handlebars.registerHelper('bonusDataHelper', (title1: string, value1: string, title2: string, value2: string) => {
+    this.handlebars.registerHelper('bonusDataHelper', (title1: string, value1: string, title2: string, value2: string, cancelFlag?: string) => {
       const formatted: Array<string> = [];
+      const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
 
       formatted.push('<text-line>');
-      formatted.push(ReceiptUtils.fitTextsEqual(title1 + value1, title2 + value2));
+      formatted.push(ReceiptUtils.fitTextsEqual(title1 + cancelSymbol + value1, title2 + cancelSymbol + value2));
       formatted.push('</text-line>');
 
       return new handlebars.SafeString(formatted.join(''));

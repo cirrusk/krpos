@@ -1,45 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <text-line>
-        {{priceFormatHelper '상품수량' price.totalQty}}
+        {{priceFormatHelper '상품수량' price.totalQty orderInfo.cancelFlag}}
     </text-line>
     <text-line>
-        {{priceFormatHelper '과세 물품' price.amountWithoutVAT}}
+        {{priceFormatHelper '과세 물품' price.amountWithoutVAT orderInfo.cancelFlag}}
     </text-line>
     {{#if price.amountVAT}}
     <text-line>
-        {{priceFormatHelper '부 가 세' price.amountVAT}}
+        {{priceFormatHelper '부 가 세' price.amountVAT orderInfo.cancelFlag}}
     </text-line>
     {{/if}}
     <bold>
         <text-line>
-            {{priceFormatHelper '합 계' price.totalAmount}}
+            {{priceFormatHelper '합 계' price.totalAmount orderInfo.cancelFlag}}
         </text-line>
         {{#if price.totalDiscount}}
         <text-line>
-            {{priceFormatHelper '할인금액' price.totalDiscount}}
+            {{priceFormatHelper '할인금액' price.totalDiscount orderInfo.cancelFlag}}
         </text-line>
         {{/if}}
         {{#if price.discount}}
             </bold>
             {{#if price.discount.coupon}}
                 <text-line>
-                    {{priceFormatHelper price.discount.coupon.name price.discount.coupon.amount}}
+                    {{priceFormatHelper price.discount.coupon.name price.discount.coupon.amount orderInfo.cancelFlag}}
                 </text-line>
-            {{/if}}
-            {{#if price.discount.point}}
-                <text-line>
-                    {{priceFormatHelper price.discount.point.name price.discount.point.amount}}
-                </text-line>
-            {{/if}}
+            {{/if}} 
             {{#if price.discount.recash}}
                 <text-line>
-                    {{priceFormatHelper 'Recash' price.discount.recash.amount}}
+                    {{priceFormatHelper 'Recash' price.discount.recash.amount orderInfo.cancelFlag}}
                 </text-line>
             {{/if}}
         {{/if}}
         <text-line>
-            {{priceFormatHelper '결제금액' price.finalAmount}}
+            {{priceFormatHelper '결제금액' price.finalAmount orderInfo.cancelFlag}}
         </text-line>
     </bold>
 </document>

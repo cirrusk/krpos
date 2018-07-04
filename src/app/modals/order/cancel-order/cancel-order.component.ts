@@ -17,6 +17,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
 
   orderInfo: OrderHistory;
   orderList: OrderList;
+  cancelFlag: boolean;
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
@@ -26,6 +27,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
               private logger: Logger,
               private alert: AlertService) {
     super(modalService);
+    this.cancelFlag = false;
   }
 
   ngOnInit() {
@@ -76,17 +78,20 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           try {
             this.orderList = orderDetail;
             this.receiptService.reissueReceipts(orderDetail, true);
+            this.cancelFlag = true;
             this.alert.info({ title: '취소 영수증 발행',
                               message: this.messageService.get('cancelReceiptComplete'),
                               timer: true,
                               interval: 1000});
             this.close();
           } catch (e) {
+            this.cancelFlag = false;
             this.logger.set('cancel-order.component', `Reissue Receipts error type : ${e}`).error();
             this.alert.error({ title: '취소 영수증 발행',
                                message: this.messageService.get('cancelReceiptFail'),
                                timer: true,
                                interval: 1000});
+
           }
         }
       },
@@ -104,7 +109,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   close() {
-    this.result = this.orderList;
+    this.result = this.cancelFlag;
     this.closeModal();
   }
 }

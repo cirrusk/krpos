@@ -2,16 +2,16 @@
 <document>
     {{#if payments.cash}}
         <text-line>
-            {{priceFormatHelper '[현금결제]' payments.cash.amount}}
+            {{priceFormatHelper '[현금결제]' payments.cash.amount orderInfo.cancelFlag}}
         </text-line>
         {{#if payments.cash.received}}
         <text-line>
-            {{priceFormatHelper '받은금액' payments.cash.received}}
+            {{priceFormatHelper '받은금액' payments.cash.received orderInfo.cancelFlag}}
         </text-line>
         {{/if}}
         {{#if payments.cash.changes}}
         <text-line>
-            {{priceFormatHelper '거스름돈' payments.cash.changes}}
+            {{priceFormatHelper '거스름돈' payments.cash.changes orderInfo.cancelFlag}}
         </text-line>
         {{/if}}
         {{#if payments.cash.cashreceipt}}
@@ -24,7 +24,7 @@
     {{/if}}
     {{#if payments.creditcard}}
         <text-line>
-            {{priceFormatHelper '[신용카드결제]' payments.creditcard.amount}}
+            {{priceFormatHelper '[신용카드결제]' payments.creditcard.amount orderInfo.cancelFlag}}
         </text-line>
         <text-line>
             카드번호: {{payments.creditcard.cardnumber}}
