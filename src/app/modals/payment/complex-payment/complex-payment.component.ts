@@ -72,7 +72,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.paymentcapture = this.callerData.paymentCapture;
     }
 
-    console.log(JSON.stringify(this.paymentcapture));
+    this.logger.set('complex.payment.component', Utils.stringify(this.paymentcapture)).debug();
 
     this.cmplsubscription = this.info.getInfo().subscribe(
       result => {
@@ -275,12 +275,21 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.logger.set('compex.payment.component convert', `${JSON.stringify(this.paymentcapture, null, 2)}`).debug();
   }
 
-  getPaymentModesByMain(userId: string, cartId: string): void {
+  private setCouponEnabler() {
+    if (this.paymentcapture.voucherPaymentInfo) {
+      this.setEnableMenu('creditvoucher');
+    }
+  }
+
+  private getPaymentModesByMain(userId: string, cartId: string): void {
     this.spinner.show();
     this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
       result => {
         if (result) {
           this.paymentModeListByMain = result;
+
+          this.setCouponEnabler(); // 쿠폰을 찍고 들어오면 메뉴 체크함.
+
           // this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
           //   this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code);
           //   this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code);
@@ -340,6 +349,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         return obj.code.substring(obj.code.lastIndexOf('-') + 1) === type;
       }
     );
+
+    console.log('---------------------- ' + existedIdx);
 
     this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
       this.enableMenu.push(paymentType.code);
