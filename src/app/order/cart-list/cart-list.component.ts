@@ -142,8 +142,10 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       accountInfo => {
         if (accountInfo && accountInfo.type === 'g') {
-          this.paymentType = 'g';
-          this.getAccountAndSaveCart(accountInfo.data);
+          if (this.paymentType === '' || this.paymentType === 'g') {
+            this.paymentType = 'g';
+            this.getAccountAndSaveCart(accountInfo.data);
+          }
         }
       }
     );
@@ -317,10 +319,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
     if (this.searchMode === 'A') { // 회원검색
-      if (this.paymentType === '') {
-        this.paymentType = 'n';
-      }
-
       this.selectAccountInfo(this.searchMode, searchText);
     } else { // 제품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
@@ -346,6 +344,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     ).subscribe(result => {
       if (result) {
+        if (this.paymentType === '') {
+          this.paymentType = 'n';
+        }
         this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
       }
     });
@@ -447,6 +448,12 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (this.checkGroupUserId(account.uid)) {
           this.groupAccountInfo.push(account);
           this.selectedUser = this.groupAccountInfo.length - 1;
+          if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orders.length > 0) {
+            this.sendRightMenu('p', false);
+            this.cartList.length = 0;
+            this.storage.setOrderEntry(this.cartList);
+            this.setPage(0 ? 0 : Math.ceil(this.cartList.length / this.cartListCount));
+          }
         }
       } else {
         this.accountInfo = account;
@@ -559,6 +566,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           const accountsize = result.accounts.length;
           if (accountsize === 1) {
+            if (this.paymentType === '') {
+              this.paymentType = 'n';
+            }
             this.getAccountAndSaveCart(result.accounts[0]);
           } else {
             this.callSearchAccount(this.searchParams);
@@ -1194,7 +1204,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       );
 
-      if (existedIdx  > -1) {
+      if (existedIdx === -1) {
+        this.createGroupCart(this.cartInfo.user.uid, this.cartInfo.code, uid, false);
+      } else {
         this.groupSelectedCart = this.amwayExtendedOrdering.orders[existedIdx];
         this.cartList = this.groupSelectedCart.entries;
         this.getCartList(null);
@@ -1253,7 +1265,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * sub 추가시 volumeAccount
    * 추가시 가장 앞에 있는 구매자로 조회
    */
-  createGroupCart(userId: string, cartId: string, volumeAccount: string, popupFlag: boolean, productCode: string) {
+  createGroupCart(userId: string, cartId: string, volumeAccount: string, popupFlag: boolean, productCode?: string) {
     this.spinner.show();
     this.cartService.createGroupCart(userId, cartId, volumeAccount).subscribe(
       result => {
