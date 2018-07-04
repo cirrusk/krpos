@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } fro
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
-import { ModalComponent, ModalService, NicePaymentService, Logger, SpinnerService, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, NicePaymentService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
   StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType
@@ -15,6 +15,7 @@ import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.con
 import { ICCardCancelResult } from './../../../../core/peripheral/niceterminal/vo/iccard.cancel.result';
 import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 @Component({
   selector: 'pos-ic-card',
   templateUrl: './ic-card.component.html'
@@ -28,7 +29,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private cardresult: ICCardApprovalResult;
   private paymentsubscription: Subscription;
   private dupcheck = false;
-  payprice: number;
+  paidamount: number;
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
   cardnumber: string; // 카드번호
@@ -38,7 +39,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   checktype: number;
   apprmessage: string;
   @ViewChild('cardpassword') private cardpassword: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService, private message: MessageService,
+  constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private message: MessageService,
     private payments: PaymentService, private nicepay: NicePaymentService, private storage: StorageService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
@@ -47,15 +48,16 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   ngOnInit() {
+    this.storage.removePay(); // 단독결재만 하므로 초기화
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     if (this.paymentType === 'n') {
-      this.payprice = this.cartInfo.totalPrice.value;
+      this.paidamount = this.cartInfo.totalPrice.value;
     } else {
       if (this.storage.getPay() === 0) {
-        this.payprice = this.cartInfo.totalPrice.value;
+        this.paidamount = this.cartInfo.totalPrice.value;
       } else {
-        this.payprice = this.storage.getPay();
+        this.paidamount = this.storage.getPay();
       }
     }
   }
@@ -64,9 +66,18 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
+  passwordBlur() {
+    const pwd = this.cardpassword.nativeElement.value;
+    if (Utils.isEmpty(pwd)) {
+      setTimeout(() => { this.cardpassword.nativeElement.focus(); }, 50);
+    } else {
+      setTimeout(() => { this.cardpassword.nativeElement.blur(); }, 50);
+    }
+  }
+
   /**
- * 임시로 카드 매핑, 나중에 매핑되면 제거
- */
+   * 임시로 카드 매핑, 나중에 매핑되면 제거
+   */
   private getCardCodes(): Map<string, string> {
     const map = new Map([
       ['01', 'C0G'], // AMEX
@@ -109,54 +120,15 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
    * 현금 IC카드는 단독결제임.
    */
   private nicePay() {
-    this.approvalAndPayment();
+    this.cardPay();
   }
 
   /**
-   * 결제만 수행 : 복합결제 시
+   * 카드결제만 진행
    */
-  private approval() {
+  private cardPay() {
     this.spinner.show();
-    const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
-    this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
-    resultNotifier.subscribe(
-      (res: ICCardApprovalResult) => {
-        this.cardresult = res;
-        if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-          this.finishStatus = 'fail';
-          this.storage.removePaymentModeCode();
-          // this.alert.error({ message: res.msg });
-          this.apprmessage = res.msg;
-        } else {
-          if (res.approved) {
-            this.checktype = 0;
-            this.finishStatus = StatusDisplay.PAID;
-            this.apprmessage = this.message.get('card.payment.success'); // '카드가 승인되었습니다.';
-            this.cardnumber = res.maskedCardNumber;
-            this.cardcompany = res.issuerName;
-            this.cardauthnumber = res.approvalNumber;
-            this.paidDate = Utils.convertDate(res.approvalDateTime);
-            // payment caputure
-            this.paymentcapture = this.makePaymentCaptureData(this.payprice).capturePaymentInfoData;
-            this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          } else {
-            this.finishStatus = 'fail';
-            this.storage.removePaymentModeCode();
-            this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
-          }
-        }
-
-      },
-      error => { this.spinner.hide(); },
-      () => { this.spinner.hide(); });
-  }
-
-  /**
-   * 결제, Paymetn capture
-   */
-  private approvalAndPayment() {
-    this.spinner.show();
-    const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.payprice));
+    const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.paidamount));
     this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
     resultNotifier.subscribe((res: ICCardApprovalResult) => {
       this.cardresult = res;
@@ -171,8 +143,41 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
-          // payment caputure
-          const capturepaymentinfo = this.makePaymentCaptureData(this.payprice);
+          const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
+          this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
+          this.result = this.paymentcapture;
+          this.completePayPopup(this.paidamount, this.paidamount, 0);
+          this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+        } else {
+          this.finishStatus = 'fail';
+          this.spinner.hide();
+          this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
+        }
+      }
+    });
+  }
+
+  /**
+   * 결제, Paymetn capture
+   */
+  private cardPayAndPlaceOrder() {
+    this.spinner.show();
+    const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.paidamount));
+    this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
+    resultNotifier.subscribe((res: ICCardApprovalResult) => {
+      this.cardresult = res;
+      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
+        this.spinner.hide();
+        this.finishStatus = 'fail';
+        this.apprmessage = res.msg;
+      } else {
+        if (res.approved) {
+          this.checktype = 0;
+          this.cardnumber = res.maskedCardNumber;
+          this.cardcompany = res.issuerName;
+          this.cardauthnumber = res.approvalNumber;
+          this.paidDate = Utils.convertDate(res.approvalDateTime);
+          const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
           this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
@@ -215,15 +220,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     });
   }
 
-  passwordBlur() {
-    const pwd = this.cardpassword.nativeElement.value;
-    if (Utils.isEmpty(pwd)) {
-      setTimeout(() => { this.cardpassword.nativeElement.focus(); }, 50);
-    } else {
-      setTimeout(() => { this.cardpassword.nativeElement.blur(); }, 50);
-    }
-  }
-
   /**
    * 장바구니와 클라이언트에 정보 전달
    *
@@ -247,7 +243,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.cardresult && this.cardresult.approved) {
       const apprnum = this.cardresult.approvalNumber;
       const apprdate = this.cardresult.approvalDateTime ? this.cardresult.approvalDateTime.substring(0, 6) : '';
-      const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(this.payprice), apprnum, apprdate);
+      const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(this.paidamount), apprnum, apprdate);
       resultNotifier.subscribe(
         (res: ICCardCancelResult) => {
           if (res.approved) {
@@ -264,11 +260,30 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  cartInitAndClose() {
+  private completePayPopup(paidAmount: number, payAmount: number, change: number) {
+    this.close();
+    this.modal.openModalByComponent(CompletePaymentComponent,
+      {
+        callerData: {
+          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+          paidAmount: paidAmount, payAmount: payAmount, change: change
+        },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'CompletePaymentComponent',
+        paymentType: 'c'
+      }
+    );
+  }
+
+  private payFinishByEnter() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-      this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-      this.info.sendInfo('orderClear', 'clear');
+      if (this.paymentType === 'n') { // 일반결제
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
+        this.close();
+      }
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');
@@ -277,24 +292,27 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   @HostListener('document:keydown', ['$event'])
-  onKeyBoardDown(event: any) {
+  onIcCardDown(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
-        if (!this.dupcheck) {
-          setTimeout(() => { this.nicePay(); }, 300);
-          this.dupcheck = true;
-        }
-      } else {
-        if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
-          this.cartInitAndClose();
-        } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
-          this.close();
-        } else {
+      const modalid = this.storage.getLatestModalId();
+      if (modalid !== 'CompletePaymentComponent') {
+        if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
           if (!this.dupcheck) {
             setTimeout(() => { this.nicePay(); }, 300);
             this.dupcheck = true;
+          }
+        } else {
+          if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
+            this.payFinishByEnter();
+          } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
+            this.close();
+          } else {
+            if (!this.dupcheck) {
+              setTimeout(() => { this.nicePay(); }, 300);
+              this.dupcheck = true;
+            }
           }
         }
       }

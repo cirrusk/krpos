@@ -106,11 +106,21 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   checkPay(type: number) {
     this.usePoint.nativeElement.value = '';
     if (type === 0) { // 전체금액
-      this.isAllPay = true;
-      this.validationComplex();
+      setTimeout(() => {
+        this.usePoint.nativeElement.blur();
+        this.isAllPay = true;
+        this.validationComplex();
+      }, 50);
     } else {
       this.isAllPay = false;
       this.usePoint.nativeElement.focus();
+    }
+  }
+
+  pointBlur() {
+    const point = this.usePoint.nativeElement.value;
+    if (Utils.isNotEmpty(point)) {
+      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
     }
   }
 
@@ -298,7 +308,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
    * 일반결제 : 카트 및 클라이언트 초기화
    * 복합결제 : 카트 및 클라이언트 갱신
    */
-  cartInitAndClose() {
+  private payFinishByEnter() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
@@ -306,20 +316,20 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       }
       this.close();
     } else { // 복합결제
-      const payment = this.paymentprice; // 결제금액
-      let usepoint;
-      if (this.isAllPay) {
-        usepoint = this.paymentprice;
-      } else {
-        usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-      }
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        if (usepoint === payment) { // 금액이 같을 경우만 영수증 출력
-          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          this.info.sendInfo('orderClear', 'clear');
-        }
-      }
-      this.close();
+      // const payment = this.paymentprice; // 결제금액
+      // let usepoint;
+      // if (this.isAllPay) {
+      //   usepoint = this.paymentprice;
+      // } else {
+      //   usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
+      // }
+      // if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      //   if (usepoint === payment) { // 금액이 같을 경우만 영수증 출력
+      //     this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+      //     this.info.sendInfo('orderClear', 'clear');
+      //   }
+      // }
+      // this.close();
     }
   }
 
@@ -327,21 +337,24 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.closeModal();
   }
 
-  // @HostListener('document:keydown', ['$event'])
-  // onPointKeyDown(event: any) {
-  //   event.stopPropagation();
-  //   if (event.target.tagName === 'INPUT') { return; }
-  //   if (event.keyCode === KeyCode.ENTER) {
-  //     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-  //       this.cartInitAndClose();
-  //     } else if (this.finishStatus === 'fail') {
-  //       this.info.sendInfo('recart', this.orderInfo);
-  //       this.info.sendInfo('orderClear', 'clear');
-  //       this.close();
-  //     } else {
-  //       this.payPoint();
-  //     }
-  //   }
-  // }
+  @HostListener('document:keydown', ['$event'])
+  onPointKeyDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ENTER) {
+      const modalid = this.storage.getLatestModalId();
+      if (modalid !== 'CompletePaymentComponent') { // 결제완료 창이 뜨지 않았을 경우만 처리
+        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.payFinishByEnter();
+        } else if (this.finishStatus === 'fail') {
+          this.info.sendInfo('recart', this.orderInfo);
+          this.info.sendInfo('orderClear', 'clear');
+          this.close();
+        } else {
+          this.payPoint();
+        }
+      }
+    }
+  }
 
 }

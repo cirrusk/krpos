@@ -254,7 +254,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     this.closeModal();
   }
 
-  cartInitAndClose() {
+  private payFinishByEnter() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
@@ -295,7 +295,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.cartInitAndClose();
+        this.payFinishByEnter();
       } else if (this.finishStatus === 'recart') {
         this.info.sendInfo('recart', this.orderInfo);
         this.info.sendInfo('orderClear', 'clear');

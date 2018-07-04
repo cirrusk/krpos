@@ -68,7 +68,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
-  pay(evt: KeyboardEvent) {
+  payRecash(evt: KeyboardEvent) {
     evt.preventDefault();
     const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
     const check = this.paidamount - usepoint;
@@ -95,7 +95,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         // this.alert.warn({ message: '잔액보다 사용하려는 금액이 클 수 없습니다.' });
       } else {
         this.checktype = 0;
-        this.payment();
+        this.paymentAndPlaceOrder();
       }
     } else {
       setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
@@ -109,17 +109,16 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.sendPaymentAndOrder(this.paymentcapture, null);
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = this.message.get('payment.success');
+        this.apprmessage = this.message.get('payment.success.next');
       } else if (check === 0) {
         this.finishStatus = StatusDisplay.PAID;
         this.apprmessage = this.message.get('payment.success');
-        // this.payment();
-        // this.completePayPopup(this.paidamount, usepoint, check);
+        this.completePayPopup(this.paidamount, usepoint, check);
       }
     }
   }
 
-  private payment() {
+  private paymentAndPlaceOrder() {
     this.spinner.show();
     const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
@@ -168,13 +167,23 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   checkPay(type: number) {
     if (type === 0) {
-      this.usePoint.nativeElement.value = this.paidamount;
-      this.change = this.balance.amount - this.paidamount;
+      setTimeout(() => {
+        this.usePoint.nativeElement.value = this.paidamount;
+        this.change = this.balance.amount - this.paidamount;
+        this.usePoint.nativeElement.blur();
+      }, 50);
       this.isAllPay = true;
     } else {
       this.isAllPay = false;
+      setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     }
-    setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
+  }
+
+  pointBlur() {
+    const point = this.usePoint.nativeElement.value;
+    if (Utils.isNotEmpty(point)) {
+      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+    }
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
@@ -202,30 +211,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     return capturepaymentinfo;
   }
 
-  cartInitAndClose() {
-    if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-        this.logger.set('recash.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
-      }
-      this.close();
-    } else {
-      console.log('복합결제일 경우...');
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        const usepoint = this.usePoint.nativeElement.value;
-        const check = this.paidamount - usepoint;
-        if (check === 0) {
-          this.completePayPopup(this.paidamount, usepoint, check);
-          // this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          // this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
-          // this.info.sendInfo('orderClear', 'clear');
-        }
-      }
-      this.close();
-    }
-  }
-
   /**
    * 장바구니와 클라이언트에 정보 전달
    *
@@ -237,6 +222,13 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
+  /**
+   * 최종 결제 팝업 띄우기
+   *
+   * @param paidAmount 결제금액
+   * @param payAmount 지불금액
+   * @param change 거스름돈
+   */
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
     this.close();
     this.modal.openModalByComponent(CompletePaymentComponent,
@@ -253,6 +245,33 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     );
   }
 
+  /**
+   * 결제 종료 후 엔터키 처리
+   */
+  private payFinishByEnter() {
+    if (this.paymentType === 'n') { // 일반결제
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.logger.set('recash.component', '일반결제 장바구니 초기화...').debug();
+        this.info.sendInfo('orderClear', 'clear');
+      }
+      this.close();
+    } else {
+      console.log('복합결제일 경우...');
+      // if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      //   const usepoint = this.usePoint.nativeElement.value;
+      //   const check = this.paidamount - usepoint;
+      //   if (check === 0) {
+      //     this.completePayPopup(this.paidamount, usepoint, check);
+      //     this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+      //     this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
+      //     this.info.sendInfo('orderClear', 'clear');
+      //   }
+      // }
+      this.close();
+    }
+  }
+
   close() {
     this.closeModal();
   }
@@ -262,12 +281,17 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.cartInitAndClose();
-      } else if (this.finishStatus === 'recart') {
-        this.info.sendInfo('recart', this.orderInfo);
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
+      const modalid = this.storage.getLatestModalId();
+      if (modalid !== 'CompletePaymentComponent') { // 결제 최종 팝업이 떠있으면 처리하지 않음.
+        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.payFinishByEnter();
+        } else if (this.finishStatus === 'recart') {
+          this.info.sendInfo('recart', this.orderInfo);
+          this.info.sendInfo('orderClear', 'clear');
+          this.close();
+        } else {
+          this.payRecash(event);
+        }
       }
     }
   }
