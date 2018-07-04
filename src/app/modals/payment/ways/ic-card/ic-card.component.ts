@@ -142,7 +142,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           } else {
             this.finishStatus = 'fail';
             this.storage.removePaymentModeCode();
-            // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
             this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
           }
         }
@@ -162,7 +161,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     resultNotifier.subscribe((res: ICCardApprovalResult) => {
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        // this.alert.error({ message: res.msg });
         this.spinner.hide();
         this.finishStatus = 'fail';
         this.apprmessage = res.msg;
@@ -186,7 +184,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
                 if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
                   this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
                   this.paidDate = result.created ? result.created : new Date();
-                  // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
                   this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
                 } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
                   this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
@@ -207,13 +204,11 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
               const errdata = Utils.getError(error);
               if (errdata) {
                 this.apprmessage = errdata.message;
-                // this.logger.set('iccard.component', `${errdata.message}`).error();
               }
             }, () => { this.spinner.hide(); });
         } else {
           this.finishStatus = 'fail';
           this.spinner.hide();
-          // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
           this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
         }
       }
@@ -286,14 +281,21 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
-        this.cartInitAndClose();
-      } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
-        this.close();
-      } else {
+      if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
         if (!this.dupcheck) {
           setTimeout(() => { this.nicePay(); }, 300);
           this.dupcheck = true;
+        }
+      } else {
+        if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
+          this.cartInitAndClose();
+        } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
+          this.close();
+        } else {
+          if (!this.dupcheck) {
+            setTimeout(() => { this.nicePay(); }, 300);
+            this.dupcheck = true;
+          }
         }
       }
     }

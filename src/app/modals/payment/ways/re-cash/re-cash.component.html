@@ -51,7 +51,12 @@
                     </tbody>
                 </table>
             </div>
-
+            <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
+            <ng-template #payFail>
+                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
+            </ng-template>
             <dl class="caution">
                 <dt>
                     <span class="tag01">주의</span>
@@ -61,7 +66,6 @@
                 <dd>환불을 원하시는 경우 고객센터 1588-0080번으로 연락을 주십시오.</dd>
                 <dd class="star">전체 금액 사용 체크 시 1원을 제외한 최종 결제 금액이 적용됩니다.</dd>
             </dl>
-            {{apprmessage}}
             <!-- //결제내역 -->
         </div>
     </div>

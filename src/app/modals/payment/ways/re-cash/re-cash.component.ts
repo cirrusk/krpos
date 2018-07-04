@@ -70,7 +70,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   pay(evt: KeyboardEvent) {
     evt.preventDefault();
-    const usepoint = this.usePoint.nativeElement.value;
+    const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
     const check = this.paidamount - usepoint;
     if (this.paymentType === 'n') {
       this.alertsubscription = this.alert.alertState.subscribe(
@@ -101,11 +101,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
       let paid: number = this.paidamount;
       if (!this.isAllPay) {
-        paid = this.usePoint.nativeElement.value;
+        paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
       }
       this.paymentcapture = this.makePaymentCaptureData(paid).capturePaymentInfoData;
       if (check > 0) { // 결제할것이 남음.
-        // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
         this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
         this.sendPaymentAndOrder(this.paymentcapture, null);
         this.result = this.paymentcapture;
@@ -136,7 +135,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
             this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
             this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
           }, 5);
-          // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
           this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
         } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
           this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
@@ -156,7 +154,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.spinner.hide();
       const errdata = Utils.getError(error);
       if (errdata) {
-        // this.logger.set('recash.component', `${errdata.message}`).error();
         this.apprmessage = errdata.message;
       }
     }, () => { this.spinner.hide(); });

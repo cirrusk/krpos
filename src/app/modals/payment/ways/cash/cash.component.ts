@@ -115,16 +115,18 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         }
       }
     );
-    if (Number(receivedAmount) < 1) {
+    const nReceiveAmount = Number(receivedAmount);
+    const nPayAmount = Number(payAmount);
+    if (nReceiveAmount < 1) {
       this.paySubmitLock(false); // 버튼 잠금 해제
       this.checktype = -1;
       this.apprmessage = this.message.get('notinputPaid');
       return;
     }
-    const change = receivedAmount - payAmount;
+    const change = nReceiveAmount - nPayAmount;
     if (this.paymentType === 'n') { // 일반결제인 경우
       if (change >= 0) {
-        this.paymentAndCapture(payAmount, receivedAmount, change);
+        this.paymentAndCapture(nPayAmount, nReceiveAmount, change);
       } else {
         this.paySubmitLock(false); // 버튼 잠금 해제
         this.checktype = -2;
@@ -133,14 +135,14 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       }
     } else { // 복합결제인 경우
       if (change >= 0) { //  거스롬돈이 있을 경우 결제완료
-        this.paymentcapture = this.makePaymentCaptureData(payAmount, receivedAmount, change).capturePaymentInfoData;
-        this.completePayPopup(receivedAmount, payAmount, change);
+        this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
+        this.completePayPopup(nReceiveAmount, nPayAmount, change);
       } else { // 거스름돈이 없을 경우 결제 진행
-        this.storage.setPay(payAmount - receivedAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-        this.paymentcapture = this.makePaymentCaptureData(payAmount, receivedAmount, change).capturePaymentInfoData;
+        this.storage.setPay(nPayAmount - nReceiveAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+        this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
+        this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
       }
     }
   }
@@ -368,9 +370,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         // serial, rfid 가 있으면 입력팝업에서 입력 후에 cartInitAndClose
         // 아니면 cartInitAndClose
+        this.cartInitAndClose();
         const lastmodal = this.storage.getLatestModalId();
         if (lastmodal !== 'SerialComponent') {
-          this.registerSerialAndRfid();
+          // this.registerSerialAndRfid();
         }
         // this.cartInitAndClose();
       } else if (this.finishStatus === 'recart') {

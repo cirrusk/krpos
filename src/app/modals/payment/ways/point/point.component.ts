@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, AlertService, SpinnerService, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
   PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo
 } from '../../../../data';
-import { PaymentService, MessageService } from '../../../../service';
+import { PaymentService, MessageService, ReceiptService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
 import { Utils } from '../../../../core/utils';
 import { Order } from '../../../../data/models/order/order';
@@ -40,8 +40,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private payments: PaymentService,
+    private receipt: ReceiptService,
     private message: MessageService,
-    private alert: AlertService,
     private spinner: SpinnerService,
     private storage: StorageService,
     private info: InfoBroker,
@@ -158,14 +158,13 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.isAllPay) {
       usepoint = this.paymentprice;
     } else {
-      usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
+      usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
       if (typeof usepoint !== 'number') {
         this.checktype = -3;
         this.apprmessage = this.message.get('point.empty'); // '사용 포인트가 공란입니다.';
       }
     }
     if (this.balanceamount < usepoint) {
-      // this.alert.show({ message: '가용포인트 보다 사용포인트가 클 수 없습니다.' });
       this.checktype = -4;
       this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
       return;
@@ -182,32 +181,30 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         // return;
       } else {
         this.checktype = 0;
-        this.paymentCapture();
+        this.paymentCaptureAndPlaceOrder();
       }
     } else {
       this.checktype = 0;
-      const p = usepoint;
-      this.paymentcapture = this.makePaymentCaptureData(p).capturePaymentInfoData;
+      this.paymentcapture = this.makePaymentCaptureData(usepoint).capturePaymentInfoData;
       if (paid > 0) { // 결제할것이 남음.
         this.result = this.paymentcapture;
-        // this.info.sendInfo('payinfo', [this.paymentcapture, null]);
+        this.finishStatus = StatusDisplay.PAID;
+        this.apprmessage = this.message.get('payment.success.next');
+        this.storage.setPay(this.paymentprice - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
         this.sendPaymentAndOrder(this.paymentcapture, null);
-        this.close();
       } else if (paid === 0) {
         this.result = this.paymentcapture;
         this.completePayPopup(usepoint, this.paymentprice, 0);
-        // this.paymentCapture();
       } else {
-        this.checktype = -2;
+        this.finishStatus = 'fail';
         this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
       }
     }
 
   }
 
-  private paymentCapture() {
+  private paymentCaptureAndPlaceOrder() {
     this.spinner.show();
-    // payment capture and place order
     const capturepaymentinfo = this.makePaymentCaptureData(this.paymentprice);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -219,13 +216,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-            // this.paidDate = result.created ? result.created : new Date();
-            // setTimeout(() => { // 결제 성공, 변경못하도록 처리
-            //   this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
-            //   this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
-            //   this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
-            // }, 5);
-            // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
@@ -303,17 +293,55 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     );
   }
 
+  /**
+   * 결제완료 후 Enter Key 치면 팝업 닫힘
+   * 일반결제 : 카트 및 클라이언트 초기화
+   * 복합결제 : 카트 및 클라이언트 갱신
+   */
+  cartInitAndClose() {
+    if (this.paymentType === 'n') { // 일반결제
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.info.sendInfo('orderClear', 'clear');
+      }
+      this.close();
+    } else { // 복합결제
+      const payment = this.paymentprice; // 결제금액
+      let usepoint;
+      if (this.isAllPay) {
+        usepoint = this.paymentprice;
+      } else {
+        usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
+      }
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        if (usepoint === payment) { // 금액이 같을 경우만 영수증 출력
+          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          this.info.sendInfo('orderClear', 'clear');
+        }
+      }
+      this.close();
+    }
+  }
+
   close() {
     this.closeModal();
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onAlertKeyDown(event: any) {
-    event.stopPropagation();
-    if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
-      this.payPoint();
-    }
-  }
+  // @HostListener('document:keydown', ['$event'])
+  // onPointKeyDown(event: any) {
+  //   event.stopPropagation();
+  //   if (event.target.tagName === 'INPUT') { return; }
+  //   if (event.keyCode === KeyCode.ENTER) {
+  //     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+  //       this.cartInitAndClose();
+  //     } else if (this.finishStatus === 'fail') {
+  //       this.info.sendInfo('recart', this.orderInfo);
+  //       this.info.sendInfo('orderClear', 'clear');
+  //       this.close();
+  //     } else {
+  //       this.payPoint();
+  //     }
+  //   }
+  // }
 
 }

@@ -165,22 +165,23 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (Utils.isNotEmpty(pwd)) {
       this.checktype = 0;
       setTimeout(() => { this.ddpassword.nativeElement.blur(); }, 50);
-      const paid = this.paid.nativeElement.value; // 결제금액
+      const nPaidAmount = Number(this.paidamount);
+      const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0; // 결제금액
       if (this.paymentType === 'n') {
-        if (Number(this.paidamount) === Number(paid)) {
+        if (nPaidAmount === paid) {
           this.approvalAndPayment();
         }
       } else {
-        if (Number(this.paidamount) < Number(paid)) {
+        if (nPaidAmount < paid) {
           this.checktype = -3;
           this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 큽니다.';
-        } else if (Number(this.paidamount) > Number(paid)) { // 다음결제수단
+        } else if (nPaidAmount > paid) { // 다음결제수단
           this.checktype = 0;
-          this.storage.setPay(this.paidamount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+          this.storage.setPay(nPaidAmount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
           this.makePaymentCaptureData(paid);
           this.result = this.paymentcapture;
           this.finishStatus = StatusDisplay.PAID;
-          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
+          this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
         } else {
           this.approvalAndPayment();
         }

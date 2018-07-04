@@ -296,21 +296,21 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           } else {
             if (res.approved) {
               this.finishStatus = StatusDisplay.PAID;
-              this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
               this.cardnumber = res.maskedCardNumber;
               this.cardcompany = res.issuerName;
               this.cardauthnumber = res.approvalNumber;
               this.paidDate = Utils.convertDate(res.approvalDateTime);
-              // payment caputure
               this.paymentcapture = this.makePaymentCaptureData(paidprice).capturePaymentInfoData;
               this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-              if (this.change === 0) {
+              if (this.change === 0) { // 더이상 결제할 금액이 없으므로 완료처리함.
+                this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
                 this.completePayPopup(paidprice, this.paidamount, this.change);
+              } else {
+                this.apprmessage = this.message.get('card.payment.success.next'); // '카드결제 승인이 완료되었습니다.';
               }
             } else {
               this.finishStatus = 'fail';
               this.storage.removePaymentModeCode();
-              // this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
               this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
             }
           }
