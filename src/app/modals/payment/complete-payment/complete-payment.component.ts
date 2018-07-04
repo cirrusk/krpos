@@ -63,7 +63,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.finishStatus !== null) {
       return;
     }
-    // 내신금액이 결제금액보다 크면 처리함.
     if (this.paidamount >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
       this.paymentAndPlaceOrder();
     }
@@ -71,10 +70,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   private paidAmount() {
     let paid = 0;
-    // if (this.paymentcapture.ccPaymentInfo) { // 신용카드
-    //   const p = this.paymentcapture.ccPaymentInfo.amount;
-    //   if (p) { paid += Number(p); }
-    // }
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
       const p = this.paymentcapture.cashPaymentInfo.received;
       if (p) {
@@ -88,27 +83,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     } else {
       this.paidamount = this.cartInfo.totalPrice.value;
     }
-    // if (this.paymentcapture.voucherPaymentInfo) { // 쿠폰
-    //   const p = this.paymentcapture.voucherPaymentInfo.amount;
-    //   if (p) { paid += Number(p); }
-    // }
-    // if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
-    //   const p = this.paymentcapture.directDebitPaymentInfo.amount;
-    //   if (p) { paid += Number(p); }
-    // }
-    // if (this.paymentcapture.pointPaymentInfo) { // 포인트
-    //   const p = this.paymentcapture.pointPaymentInfo.amount;
-    //   if (p) { paid += Number(p); }
-    // }
-    // if (this.paymentcapture.monetaryPaymentInfo) { // 미수금결제(AR)
-    //   const p = this.paymentcapture.monetaryPaymentInfo.amount;
-    //   if (p) { paid += Number(p); }
-    // }
-    // if (this.paymentcapture.icCardPaymentInfo) { // 현금IC카드결제
-    //   const p = this.paymentcapture.icCardPaymentInfo.amount;
-    //   if (p) { paid += Number(p); }
-    // }
-
   }
 
   /**
@@ -124,37 +98,41 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
     capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
-      this.orderInfo = result;
-      this.logger.set('complete-payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-      this.finishStatus = result.statusDisplay;
-      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.paidDate = result.created ? result.created : new Date();
-          if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
-            this.printer.openCashDrawer();
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
+      result => {
+        this.orderInfo = result;
+        this.logger.set('complete-payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+        this.finishStatus = result.statusDisplay;
+        if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+          if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+            this.paidDate = result.created ? result.created : new Date();
+            if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
+              this.printer.openCashDrawer();
+            }
+            this.printAndCartInit();
+          } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+            this.finishStatus = 'recart';
+          } else { // CART 삭제된 상태
+            this.finishStatus = 'recart';
           }
-          this.printAndCartInit();
-        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-          this.finishStatus = 'recart';
-        } else { // CART 삭제된 상태
-          this.finishStatus = 'recart';
+        } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+          this.finishStatus = 'fail';
+          // cart-list.component에 재생성 이벤트 보내서 처리
         }
-      } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+        this.storage.removePay();
+      }, error => {
         this.finishStatus = 'fail';
-        // cart-list.component에 재생성 이벤트 보내서 처리
-      }
-      this.storage.removePay();
-    }, error => {
-      this.finishStatus = 'fail';
-      this.spinner.hide();
-      const errdata = Utils.getError(error);
-      if (errdata) {
-        this.logger.set('cash.component', `${errdata.message}`).error();
-      }
-    }, () => { this.spinner.hide(); });
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('cash.component', `${errdata.message}`).error();
+        }
+      }, () => { this.spinner.hide(); });
   }
 
+  /**
+   * 영수증 출력 및 카트 초기화
+   */
   private printAndCartInit() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
@@ -177,7 +155,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.closeModal();
   }
 
-  /**
+/**
  * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
  */
   protected popupCashReceipt() {
@@ -253,7 +231,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
-  /**
+/**
  * 현금영수증 버튼 선택 시에만 이벤트 처리하면됨.
  * 반드시 결제가 완료된 후에만 처리됨.
  *

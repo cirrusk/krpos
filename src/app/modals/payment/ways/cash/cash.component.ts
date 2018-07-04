@@ -1,7 +1,6 @@
 import { Component, OnInit, HostListener, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AlertService, AlertState } from '../../../../core/alert/alert.service';
 import {
   ModalComponent, ModalService, KeyCommand, KeyboardService,
   PrinterService, SpinnerService, Logger, Modal, StorageService
@@ -40,14 +39,12 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private paymentType: string;
   private keyboardsubscription: Subscription;
   private paymentsubscription: Subscription;
-  private alertsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
     private printer: PrinterService,
     private receipt: ReceiptService,
     private payments: PaymentService,
-    private alert: AlertService,
     private storage: StorageService,
     private spinner: SpinnerService,
     private keyboard: KeyboardService,
@@ -86,7 +83,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
-    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
   cashCal() {
@@ -150,22 +146,12 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       return;
     }
     this.paySubmitLock(true);
-    // 유효성체크 실패 시 포커스 이동 처리
-    this.alertsubscription = this.alert.alertState.subscribe(
-      (state: AlertState) => {
-        if (!state.show) {
-          setTimeout(() => {
-            this.paid.nativeElement.focus();
-            this.paid.nativeElement.select();
-          }, 5);
-        }
-      }
-    );
     const nReceiveAmount = Number(receivedAmount);
     const nPayAmount = Number(payAmount);
     if (nReceiveAmount < 1) {
       this.paySubmitLock(false); // 버튼 잠금 해제
       this.checktype = -1;
+      setTimeout(() => { this.paid.nativeElement.select(); this.paid.nativeElement.focus(); }, 50);
       this.apprmessage = this.message.get('notinputPaid');
       return;
     }
