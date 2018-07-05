@@ -116,7 +116,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     if (this.paymentType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
       this.spinner.show();
-      // 쿠폰이 없으면 바로 결제화면으로
+      // 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
       this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
         result => {
           const couponlist = result.coupons;
