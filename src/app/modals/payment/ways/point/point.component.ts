@@ -329,7 +329,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       //     this.info.sendInfo('orderClear', 'clear');
       //   }
       // }
-      // this.close();
+      this.close();
     }
   }
 
