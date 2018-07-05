@@ -1,15 +1,18 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, PrinterService, AlertService, StorageService, SpinnerService, Logger, KeyboardService, KeyCommand, Modal } from '../../../core';
+import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
+import { SerialComponent } from '../../scan/serial/serial.component';
+import {
+  ModalComponent, ModalService, PrinterService, StorageService, SpinnerService,
+  KeyboardService, KeyCommand, Modal, Logger
+} from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
 import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo } from '../../../data';
-import { ReceiptService, PaymentService } from '../../../service';
+import { ReceiptService, PaymentService, MessageService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
-import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
-import { SerialComponent } from '../../scan/serial/serial.component';
 
 @Component({
   selector: 'pos-complete-payment',
@@ -17,6 +20,7 @@ import { SerialComponent } from '../../scan/serial/serial.component';
 })
 export class CompletePaymentComponent extends ModalComponent implements OnInit, OnDestroy {
   finishStatus: string;                                // 결제완료 상태
+  apprmessage: string;
   paidDate: Date;
   paidamount: number;
   payamount: number;
@@ -30,8 +34,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private alertsubscription: Subscription;
   private keyboardsubscription: Subscription;
   constructor(protected modalService: ModalService,
-    private printer: PrinterService, private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService,
-    private storage: StorageService, private spinner: SpinnerService, private modal: Modal, private info: InfoBroker, private logger: Logger
+    private printer: PrinterService, private receipt: ReceiptService,
+    private payments: PaymentService, private keyboard: KeyboardService,
+    private storage: StorageService, private spinner: SpinnerService,
+    private message: MessageService, private modal: Modal, private info: InfoBroker, private logger: Logger
   ) {
     super(modalService);
     this.finishStatus = null;
@@ -58,6 +64,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
+  /**
+   * 결제 처리
+   *
+   * @param evt 이벤트
+   */
   pay(evt: KeyboardEvent): void {
     evt.preventDefault();
     if (this.finishStatus !== null) {
@@ -69,6 +80,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
+  /**
+   * 전체 결재 금액 계산
+   */
   private calAmountByPayment(): number {
     let paid = 0;
     if (this.paymentcapture.ccPaymentInfo) { // 신용카드
@@ -100,6 +114,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
     return paid;
   }
+
+  /**
+   * 결제금액 설정
+   */
   private paidAmount() {
     let paid = 0;
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
@@ -129,27 +147,26 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     const capturepaymentinfo = new CapturePaymentInfo();
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
     capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-    this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
+    this.logger.set('complete.payment.component', 'payment capture : ' + Utils.stringify(this.paymentcapture)).debug();
     this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
       result => {
         this.orderInfo = result;
-        this.logger.set('complete-payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+        this.logger.set('complete.payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
             this.paidDate = result.created ? result.created : new Date();
-            // if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
-            //   this.printer.openCashDrawer();
-            // }
-            // this.printAndCartInit();
+            this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           } else { // CART 삭제된 상태
             this.finishStatus = 'recart';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           }
         } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = 'fail';
-          // cart-list.component에 재생성 이벤트 보내서 처리
+          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
         }
         this.storage.removePay();
       }, error => {
@@ -157,7 +174,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('cash.component', `${errdata.message}`).error();
+          this.logger.set('complete.payment.component', `${errdata.message}`).error();
         }
       }, () => { this.spinner.hide(); });
   }
@@ -195,12 +212,15 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
         closeByClickOutside: false,
-        modalId: 'CashReceiptComponent',
+        modalId: 'CashReceiptComponent_Cplx',
         paymentType: 'c'
       }
     );
   }
 
+  /**
+   * 결제 최종 엔터키 입력 시
+   */
   private payFinishByEnter() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
@@ -260,7 +280,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   @HostListener('document:keydown', ['$event'])
-  onKeyBoardDown(event: any) {
+  onPaymentdDown(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
@@ -277,7 +297,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       } else {
         if (!this.dupcheck) {
           setTimeout(() => { this.pay(event); }, 300);
-            this.dupcheck = true;
+          this.dupcheck = true;
         }
       }
     }
@@ -301,7 +321,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         } break;
       }
     } catch (e) {
-      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+      this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }
   }
 }
