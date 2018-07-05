@@ -17,7 +17,6 @@ export * from './payment/normal-payment/normal-payment.component';
 export * from './payment/coupon-payment/coupon-payment.component';
 export * from './payment/ways/cash/cash.component';
 export * from './payment/ways/cash-receipt/cash-receipt.component';
-export * from './payment/ways/check-card/check-card.component';
 export * from './payment/ways/checks/checks.component';
 export * from './payment/ways/coupon/coupon.component';
 export * from './payment/ways/credit-card/credit-card.component';

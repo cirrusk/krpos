@@ -107,6 +107,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.apprmessage = '결제금액이 장바구니의 금액보다 클 수 없습니다.';
     }
   }
+
   /**
    * 내신금액에서 엔터키 입력 시 결제금액으로 이동
    */
@@ -120,6 +121,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 결제금엑에서 엔터키 입력 시 포커스 나가기
+   */
   paymentBlur() {
     const paid = this.paid.nativeElement.value;
     const payment = this.payment.nativeElement.value;
@@ -188,21 +192,25 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.paylock = lock;
   }
 
+  /**
+   * 최종 결제 완료 팝업
+   * @param receivedAmount 내신금액
+   * @param payAmount 결제금액
+   * @param change 거스름돈
+   */
   private completePayPopup(receivedAmount: number, payAmount: number, change: number) {
     this.close();
     change = (change < 0) ? 0 : change;
-    this.modal.openModalByComponent(CompletePaymentComponent,
-      {
-        callerData: {
-          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-          paidAmount: receivedAmount, payAmount: payAmount, change: change
-        },
-        closeByClickOutside: false,
-        closeByEscape: false,
-        modalId: 'CompletePaymentComponent',
-        paymentType: 'c'
-      }
-    );
+    this.modal.openModalByComponent(CompletePaymentComponent, {
+      callerData: {
+        account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+        paidAmount: receivedAmount, payAmount: payAmount, change: change
+      },
+      closeByClickOutside: false,
+      closeByEscape: false,
+      modalId: 'CompletePaymentComponent',
+      paymentType: 'c'
+    });
   }
 
   /**
@@ -217,56 +225,55 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     const capturepaymentinfo = this.makePaymentCaptureData(receivedAmount, paidAmount, change);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
-      this.orderInfo = result;
-      this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-      this.finishStatus = result.statusDisplay;
-      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-          this.paidDate = result.created ? result.created : new Date();
-          setTimeout(() => {
-            this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
-            this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
-            this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
-          }, 5);
-          this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-          this.printer.openCashDrawer(); // 캐셔 drawer 오픈
-        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
+      result => {
+        this.orderInfo = result;
+        this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
+        this.finishStatus = result.statusDisplay;
+        if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+          if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+            this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
+            this.paidDate = result.created ? result.created : new Date();
+            setTimeout(() => {
+              this.payment.nativeElement.blur(); // keydown.enter 처리 안되도록
+              this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
+              this.renderer.setAttribute(this.payment.nativeElement, 'readonly', 'readonly');
+            }, 5);
+            this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+            this.printer.openCashDrawer(); // 캐셔 drawer 오픈
+          } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
+            this.finishStatus = 'recart';
+          } else { // CART 삭제된 상태
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
+            this.finishStatus = 'recart';
+          }
+        } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
+          // cart-list.component에 재생성 이벤트 보내서 처리
+          this.finishStatus = 'fail';
           this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-          this.finishStatus = 'recart';
-        } else { // CART 삭제된 상태
-          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-          this.finishStatus = 'recart';
         }
-      } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-        // cart-list.component에 재생성 이벤트 보내서 처리
+        this.storage.removePay();
+      }, error => {
         this.finishStatus = 'fail';
-        this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-      }
-      this.storage.removePay();
-    }, error => {
-      this.finishStatus = 'fail';
-      this.spinner.hide();
-      const errdata = Utils.getError(error);
-      if (errdata) {
-        this.apprmessage = errdata.message;
-      }
-    }, () => { this.spinner.hide(); });
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.apprmessage = errdata.message;
+        }
+      }, () => { this.spinner.hide(); });
   }
 
   /**
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
-    this.modal.openModalByComponent(CashReceiptComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
-        closeByClickOutside: false,
-        modalId: 'CashReceiptComponent',
-        paymentType: this.paymentType
-      }
-    );
+    this.modal.openModalByComponent(CashReceiptComponent, {
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
+      closeByClickOutside: false,
+      modalId: 'CashReceiptComponent',
+      paymentType: this.paymentType
+    });
   }
 
   /**
@@ -335,7 +342,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       }
       this.close();
     } else { // 복합결제
-      const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0; // 내신금액
+      // const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0; // 내신금액
       const payment = this.payment.nativeElement.value ? Number(this.payment.nativeElement.value) : 0; // 결제금액
       // const change = paid - payment;
       const paychange = this.paidamount - payment;
@@ -354,47 +361,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  private hasSerialAndRfid(): number {
-    // 0: 없음, 1 : SERIAL, 2: RFID, 3: SERIAL + RFID
-    let rtn = 0;
-    if (this.cartInfo) {
-      this.cartInfo.entries.forEach(entry => {
-        if (entry.product) {
-          if (entry.product.serialNumber && !entry.product.rfid) {
-            rtn = 1;
-          }
-          if (entry.product.rfid && !entry.product.serialNumber) {
-            rtn = 2;
-          }
-          if (entry.product.rfid && entry.product.serialNumber) {
-            rtn = 3;
-          }
-        }
-      });
-    }
-    return rtn;
-  }
-
-  private registerSerialAndRfid() {
-    const regType = this.hasSerialAndRfid();
-    if (regType > 0) {
-      this.modal.openModalByComponent(SerialComponent,
-        {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo },
-          closeByClickOutside: false,
-          modalId: 'SerialComponent',
-          regType: regType
-        }
-      ).subscribe(result => {
-        if (result) {
-          this.payFinishByEnter();
-        }
-      });
-    } else if (regType === 0) {
-      this.payFinishByEnter();
-    }
-  }
-
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {
     event.stopPropagation();
@@ -405,13 +371,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         return;
       }
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        // serial, rfid 가 있으면 입력팝업에서 입력 후에 cartInitAndClose
-        // 아니면 cartInitAndClose
         this.payFinishByEnter();
-        if (lastmodal !== 'SerialComponent') {
-          // this.registerSerialAndRfid();
-        }
-        // this.cartInitAndClose();
       } else if (this.finishStatus === 'recart') {
         this.info.sendInfo('recart', this.orderInfo);
         this.info.sendInfo('orderClear', 'clear');
