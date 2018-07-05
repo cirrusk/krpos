@@ -294,7 +294,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       switch (command.combo) {
         case 'ctrl+r': {
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-            if (this.paymentcapture.cashPaymentInfo) {
+            if (this.paymentcapture.cashPaymentInfo || this.paymentcapture.monetaryPaymentInfo) { // 현금 + Recash 인 경우 출력
               this[command.name]();
             }
           }
