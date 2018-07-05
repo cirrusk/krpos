@@ -92,8 +92,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
         closeByClickOutside: false,
-        closeByEnter: false,
-        closeByEscape: false,
         modalId: 'ComplexPaymentComponent_Cpn'
       }
     ).subscribe(result => {

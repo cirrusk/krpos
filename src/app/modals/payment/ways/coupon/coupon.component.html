@@ -7,7 +7,7 @@
     <div class="pop_container">
         <div class="pop_content">
             <div class="mbinfo_list type03">
-                <p class="txt">{{accountInfo?.name | mask: 'name'}} 회원님(KR{{accountInfo?.uid | mask: 'uid'}}) 적용 가능한 쿠폰
+                <p class="txt">{{accountInfo?.name}} 회원님({{accountInfo?.uid}}) 적용 가능한 쿠폰
                     <strong *ngIf="couponCount > 0">총
                         <span class="fc_red">{{couponCount}}</span>개</strong>
                 </p>

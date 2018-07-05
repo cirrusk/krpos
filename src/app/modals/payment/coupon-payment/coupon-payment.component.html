@@ -23,16 +23,8 @@
                       </tr>
                       <tr>
                           <th scope="row">쿠폰번호</th>
-                          <td colspan="3"><input #couponcode type="text" class="w200" title="쿠폰번호" (keydown.enter)="searchCoupon(couponcode.value)"></td>
+                          <td colspan="3"><input #couponcode type="text" class="w200" title="쿠폰번호" (keyup)="check(couponcode.value)" (keydown.enter)="searchCoupon(couponcode.value)"></td>
                       </tr>
-<!--                      <tr>
-                          <th scope="row">사용 금액</th>
-                          <td colspan="3">
-                              <input type="text" #usePay class="w110 ar" title="사용 금액" [readonly]="isAllPay" #usePay (keyup)="setChange(usePay.value)">
-                              <label class="inp_rd mgl10" for="sg1">전체금액<input #allCheck type="radio" name="sg" id="sg1" checked><span class="checkmark"></span></label>
-                              <label class="inp_rd mgl10" for="sg2">일부금액<input #partCheck type="radio" name="sg" id="sg2"><span class="checkmark"></span></label>
-                          </td>
-                      </tr> -->
                       <tr>
                           <th scope="row">잔액</th>
                           <td><span class="won">{{changeamount | number}}</span></td>
@@ -43,6 +35,7 @@
               </table>
           </div>
           <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
+          <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
           <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
           <ng-template #payFail>
               <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>

@@ -54,7 +54,19 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
+  check(couponcode: string) {
+    if (Utils.isEmpty(couponcode)) {
+      this.checktype = -2;
+      this.apprmessage = '검색할 쿠폰번호를 입력해주세요.';
+    }
+  }
+
   searchCoupon(couponcode: string) {
+    if (Utils.isEmpty(couponcode)) {
+      this.checktype = -2;
+      this.apprmessage = '검색할 쿠폰번호를 입력해주세요.';
+      return;
+    }
     this.spinner.show();
     this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
       result => {
@@ -66,7 +78,6 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         } else {
           this.checktype = -1;
           this.apprmessage = '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
-          // this.alert.info({ message: `해당 쿠폰이 존재하지 않습니다. 쿠폰 정보를 다시 확인해주세요.` });
         }
       },
       error => {
@@ -79,9 +90,9 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
       () => { this.spinner.hide(); });
   }
 
-  couponDone() {
+  private couponDone() {
     if (this.finishStatus === StatusDisplay.PAID) {
-      this.makePaymentCaptureAndApply();
+      this.makeCouponPaymentCaptureAndApply();
     }
   }
 
@@ -90,6 +101,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
       this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
         result => {
           if (result) {
+            this.checktype = 0;
             this.logger.set('coupon.payment.component', JSON.stringify(result, null, 2)).debug();
             this.finishStatus = StatusDisplay.PAID;
             this.apprmessage = '쿠폰결제에 성공하였습니다.';
@@ -117,7 +129,11 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
     }
   }
 
-  private makePaymentCaptureAndApply(): void {
+  /**
+   * Payment Capture 를 만들어서 복합결제 창에 전송함.
+   * 이후에 Payment Capute 정보에 쿠폰을 포함
+   */
+  private makeCouponPaymentCaptureAndApply(): void {
     let pcap: PaymentCapture;
     const coupon = new VoucherPaymentInfo(this.couponamount);
     coupon.setName = (this.coupon) ? this.coupon.name : '';
@@ -130,7 +146,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
     this.openComplexPayment(this.paymentcapture);
   }
 
-  /**
+/**
  * 장바구니와 클라이언트에 정보 전달, 복합결제 창에 전달
  *
  * @param payment Payment Capture 정보
