@@ -350,8 +350,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       }
     );
 
-    console.log('---------------------- ' + existedIdx);
-
     this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
       this.enableMenu.push(paymentType.code);
     });

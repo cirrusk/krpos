@@ -63,11 +63,45 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.finishStatus !== null) {
       return;
     }
-    if (this.paidamount >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
+    const calpaid = this.calAmountByPayment();
+    console.log(calpaid);
+    console.log(this.payamount);
+    if (calpaid >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
       this.paymentAndPlaceOrder();
     }
   }
 
+  private calAmountByPayment(): number {
+    let paid = 0;
+    if (this.paymentcapture.ccPaymentInfo) { // 신용카드
+      const p = this.paymentcapture.ccPaymentInfo.amount;
+      if (p) { paid += Number(p); }
+    }
+    if (this.paymentcapture.cashPaymentInfo) { // 현금결제
+      const p = this.paymentcapture.cashPaymentInfo.amount;
+      if (p) { paid += Number(p); }
+    }
+    if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
+      const p = this.paymentcapture.directDebitPaymentInfo.amount;
+      if (p) { paid += Number(p); }
+    }
+    if (this.paymentcapture.voucherPaymentInfo) { // 쿠폰결제
+
+    }
+    if (this.paymentcapture.pointPaymentInfo) { // 포인트결제
+      const p = this.paymentcapture.pointPaymentInfo.amount;
+      if (p) { paid += Number(p); }
+    }
+    if (this.paymentcapture.monetaryPaymentInfo) { // 미수금결제(AR)
+      const p = this.paymentcapture.monetaryPaymentInfo.amount;
+      if (p) { paid += Number(p); }
+    }
+    if (this.paymentcapture.icCardPaymentInfo) { // 현금IC카드결제
+      const p = this.paymentcapture.icCardPaymentInfo.amount;
+      if (p) { paid += Number(p); }
+    }
+    return paid;
+  }
   private paidAmount() {
     let paid = 0;
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
@@ -75,7 +109,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       if (p) {
         paid += Number(p);
       } else {
-        this.paidamount = this.cartInfo.totalPrice.value;
+        paid = this.cartInfo.totalPrice.value;
       }
       const strchange = this.paymentcapture.cashPaymentInfo.change;
       this.change = strchange ? Number(strchange) : 0;
@@ -155,9 +189,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.closeModal();
   }
 
-/**
- * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
- */
+  /**
+   * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
+   */
   protected popupCashReceipt() {
     this.modal.openModalByComponent(CashReceiptComponent,
       {
@@ -231,12 +265,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
-/**
- * 현금영수증 버튼 선택 시에만 이벤트 처리하면됨.
- * 반드시 결제가 완료된 후에만 처리됨.
- *
- * @param command 키보드 명령어
- */
+  /**
+   * 현금영수증 버튼 선택 시에만 이벤트 처리하면됨.
+   * 반드시 결제가 완료된 후에만 처리됨.
+   *
+   * @param command 키보드 명령어
+   */
   private handleKeyboardCommand(command: KeyCommand) {
     try {
       switch (command.combo) {
