@@ -21,7 +21,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   paidamount: number;
   payamount: number;
   change: number;
-  private entryNumber: number;
+  private dupcheck = false;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -64,8 +64,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       return;
     }
     const calpaid = this.calAmountByPayment();
-    console.log(calpaid);
-    console.log(this.payamount);
     if (calpaid >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
       this.paymentAndPlaceOrder();
     }
@@ -140,10 +138,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
             this.paidDate = result.created ? result.created : new Date();
-            if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
-              this.printer.openCashDrawer();
-            }
-            this.printAndCartInit();
+            // if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
+            //   this.printer.openCashDrawer();
+            // }
+            // this.printAndCartInit();
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';
           } else { // CART 삭제된 상태
@@ -203,41 +201,61 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     );
   }
 
+  private payFinishByEnter() {
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
+        this.printer.openCashDrawer();
+      }
+      this.printAndCartInit();
+      this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 삭제
+      this.storage.removePay(); // 복합결제 남은 금액 정보 초기화
+      this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    }
+  }
+
+  /**
+   * 제품에 SERIAL 이나 RFID가 있는 제품인 경우
+   * 해당 SERIAL, RFID정보를 기록해야함.
+   *
+   * @returns 존재유무 0: 없음, 1 : SERIAL, 2: RFID, 3: SERIAL + RFID
+   */
   private hasSerialAndRfid(): number {
-    // 0: 없음, 1 : SERIAL, 2: RFID
     let rtn = 0;
     if (this.cartInfo) {
       this.cartInfo.entries.forEach(entry => {
-        if (entry.product && entry.product.serialNumber) {
-          rtn = 1;
-          this.entryNumber = entry.entryNumber;
-        }
-        if (entry.product && entry.product.rfid) {
-          rtn = 2;
-          this.entryNumber = entry.entryNumber;
+        if (entry.product) {
+          if (entry.product.serialNumber && !entry.product.rfid) {
+            rtn = 1;
+          }
+          if (!entry.product.serialNumber && entry.product.rfid) {
+            rtn = 2;
+          }
+          if (entry.product.serialNumber && entry.product.rfid) {
+            rtn = 3;
+          }
         }
       });
     }
     return rtn;
   }
 
+  /**
+   * SERIAL, RFID가 있을 경우 등록 팝업
+   */
   private registerSerialAndRfid() {
     const regType = this.hasSerialAndRfid();
-    if (regType === 1 || regType === 2) {
+    if (regType > 0) {
       this.modal.openModalByComponent(SerialComponent,
         {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, entryNumber: this.entryNumber },
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo },
           closeByClickOutside: false,
+          closeByEscape: false,
           modalId: 'SerialComponent',
           regType: regType
         }
-      ).subscribe(result => {
-        if (result) {
-          // this.cartInitAndClose();
-        }
-      });
-    } else if (regType === 0) {
-      // this.cartInitAndClose();
+      );
     }
   }
 
@@ -247,11 +265,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 삭제
-        this.storage.removePay(); // 복합결제 남은 금액 정보 초기화
-        this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
+        this.registerSerialAndRfid();
+        this.payFinishByEnter();
       } else if (this.finishStatus === 'fail') {
         this.info.sendInfo('orderClear', 'clear');
         this.close();
@@ -260,7 +275,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.info.sendInfo('orderClear', 'clear');
         this.close();
       } else {
-        this.pay(event);
+        if (!this.dupcheck) {
+          setTimeout(() => { this.pay(event); }, 300);
+            this.dupcheck = true;
+        }
       }
     }
   }

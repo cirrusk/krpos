@@ -51,7 +51,10 @@
                 <td>{{cartEntry?.quantity}}</td>
                 <td class="ar">{{cartEntry?.basePrice?.value | number}}</td>
                 <td class="ar">{{cartEntry?.totalPrice?.value | number}}</td>
-                <td></td>
+                <td *ngIf="cartEntry?.product?.serialNumber && cartEntry?.product?.rfid">s,r</td><!-- 테스트용 -->
+                <td *ngIf="cartEntry?.product?.serialNumber && !cartEntry?.product?.rfid">s</td><!-- 테스트용 -->
+                <td *ngIf="!cartEntry?.product?.serialNumber && cartEntry?.product?.rfid">r</td><!-- 테스트용 -->
+                <td *ngIf="!cartEntry?.product?.serialNumber && !cartEntry?.product?.rfid"></td><!-- 테스트용 -->
             </tr>                                   
         </tbody>
         </table>

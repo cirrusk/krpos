@@ -118,7 +118,7 @@ export class OrderService {
    * @param codetype 코드타입 (RFID SERIALNUMBER)
    * @param code 코드
    */
-  serialAndReif(userid: string, ordercode: string, entrynumber: number, codetype: string, code: string) {
+  serialAndRfid(userid: string, ordercode: string, entrynumber: number, codetype: string, code: string) {
     const pathvariables = { userId: userid, orderCode: ordercode, entryNumber: entrynumber };
     const param = { codeType: codetype, code: code, fields: 'FULL' };
     const data = new HttpData('serialAndRfid', pathvariables, null, param, 'json');
