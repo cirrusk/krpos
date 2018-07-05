@@ -2,7 +2,7 @@ import { StatusDisplay } from './../../../data/models/payment/payment.enum';
 import { Component, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService } from '../../../core';
+import { ModalComponent, ModalService, SpinnerService } from '../../../core';
 import { OrderService } from '../../../service';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
@@ -27,7 +27,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   private serialRfidList: Array<SerialRfid>;
   private regsubscription: Subscription;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
-  constructor(protected modalService: ModalService, private order: OrderService) {
+  constructor(protected modalService: ModalService, private order: OrderService, private spinner: SpinnerService) {
     super(modalService);
     this.serialRfidList = new Array<SerialRfid>();
     this.finishStatus = null;
@@ -143,7 +143,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       this.checktype = 0;
     }
-
+this.spinner.show();
     const codeTypes = new Array<string>();
     const entryNumbers = new Array<number>();
     const codes = new Array<string>();
@@ -176,8 +176,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     //     this.result = true;
     //     this.close();
     //   },
-    //   error => { },
-    //   () => { this.result = true; });
+    //   error => { this.spinner.hide(); },
+    //   () => { this.result = true;  this.spinner.hide(); });
   }
 
   close() {
