@@ -34,6 +34,8 @@ export const LANG_KO_MSGS = {
     'point.use.over': '가용포인트 보다 사용포인트가 클 수 없습니다.',
     'point.empty': '사용 포인트가 공란입니다.',
     'recash.smallpaid': '결제 사용할 금액이 부족합니다.',
-    'recash.overpaid': '잔액보다 사용하려는 금액이 클 수 없습니다.'
+    'recash.overpaid': '잔액보다 사용하려는 금액이 클 수 없습니다.',
+    'empty.coupon': '검색할 쿠폰번호를 입력해주세요.',
+    'noresult.coupon': '쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.'
 
 };

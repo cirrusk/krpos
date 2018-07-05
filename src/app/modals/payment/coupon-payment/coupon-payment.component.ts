@@ -57,14 +57,14 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
   check(couponcode: string) {
     if (Utils.isEmpty(couponcode)) {
       this.checktype = -2;
-      this.apprmessage = '검색할 쿠폰번호를 입력해주세요.';
+      this.apprmessage = this.message.get('empty.coupon'); // '검색할 쿠폰번호를 입력해주세요.';
     }
   }
 
   searchCoupon(couponcode: string) {
     if (Utils.isEmpty(couponcode)) {
       this.checktype = -2;
-      this.apprmessage = '검색할 쿠폰번호를 입력해주세요.';
+      this.apprmessage = this.message.get('empty.coupon'); // '검색할 쿠폰번호를 입력해주세요.';
       return;
     }
     this.spinner.show();
@@ -77,14 +77,14 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
           }
         } else {
           this.checktype = -1;
-          this.apprmessage = '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
+          this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
         }
       },
       error => {
         this.spinner.hide();
         // this.alert.info({ message: `해당 쿠폰이 존재하지 않습니다. 쿠폰 정보를 다시 확인해주세요.` });
         this.checktype = -1;
-        this.apprmessage = '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
+        this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
         this.logger.set('coupon.component', `${error}`).error();
       },
       () => { this.spinner.hide(); });
@@ -104,7 +104,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
             this.checktype = 0;
             this.logger.set('coupon.payment.component', JSON.stringify(result, null, 2)).debug();
             this.finishStatus = StatusDisplay.PAID;
-            this.apprmessage = '쿠폰결제에 성공하였습니다.';
+            this.apprmessage = this.message.get('payment.success.next'); // '쿠폰결제에 성공하였습니다.';
             this.changeamount = this.cartInfo.totalPrice.value - result.totalDiscounts.value; // 결제금액 - 쿠폰 금액
             this.couponamount = result.totalDiscounts.value; // 쿠폰 금액
             setTimeout(() => {
@@ -113,7 +113,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
             }, 50);
           } else {
             this.finishStatus = 'fail';
-            this.apprmessage = '쿠폰결제에 실패하였습니다.';
+            this.apprmessage = this.message.get('payment.fail'); // '쿠폰결제에 실패하였습니다.';
             this.logger.set('coupon.payment.component', `no apply or exist cart`).error();
           }
         },
