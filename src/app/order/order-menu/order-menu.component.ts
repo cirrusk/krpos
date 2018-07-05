@@ -1,17 +1,14 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { Modal, Logger, StorageService, AlertService, SpinnerService } from '../../core';
+import { Modal, Logger, StorageService } from '../../core';
 import {
   PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
   CancelCartComponent } from '../../modals';
-import { Accounts, OrderHistoryList, OrderEntry, MemberType, AmwayExtendedOrdering } from '../../data';
-import { OrderService, MessageService } from '../../service';
-import { Utils } from '../../core/utils';
-import { Router } from '@angular/router';
+import { Accounts, OrderHistoryList, MemberType, AmwayExtendedOrdering } from '../../data';
 import { Cart } from '../../data/models/order/cart';
-import { CouponCheckComponent } from '../../modals/payment/coupon-payment/coupon-check.component';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
+import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
 import { SearchAccountBroker } from '../../broker';
 
 @Component({
@@ -33,15 +30,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();    // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
   constructor(private modal: Modal,
               private storage: StorageService,
-              private orderService: OrderService,
-              private messageService: MessageService,
-              private alert: AlertService,
-              private spinner: SpinnerService,
               private logger: Logger,
               private searchAccountBroker: SearchAccountBroker,
-              // private element: ElementRef,
-              private renderer: Renderer2,
-              private router: Router
+              private renderer: Renderer2
               ) {
     this.init();
   }
@@ -118,12 +109,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('apprtype', 'c');
     if (this.paymentType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
-      this.modal.openModalByComponent(CouponCheckComponent,
+      this.modal.openModalByComponent(CouponComponent,
         {
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
           closeByClickOutside: false,
-          closeByEnter: false,
-          modalId: 'CouponCheckComponent'
+          modalId: 'CouponComponent'
         }
       );
     } else {
@@ -131,8 +121,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         {
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
           closeByClickOutside: false,
-          closeByEnter: false,
-          // closeByEscape: false,
           modalId: 'ComplexPaymentComponent_Od'
         }
       ).subscribe(result => {
