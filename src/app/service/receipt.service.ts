@@ -264,6 +264,7 @@ export class ReceiptService {
         }
         price.setDiscount = discount;
         // prices - END
+
         // 최종 영수증 데이터 구성 - START
         const receiptInfo = new ReceiptInfo();
         receiptInfo.setOrderInfo = orderInfo;
@@ -282,6 +283,7 @@ export class ReceiptService {
             text = this.consumerNormal(receiptInfo);
         }
         // 최종 영수증 데이터 구성 - END
+        
         try {
             this.printer.printText(text);
         } catch (e) {
