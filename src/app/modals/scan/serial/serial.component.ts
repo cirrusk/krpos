@@ -24,7 +24,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
-  private serialRfidList: Array<SerialRfid>;
+  serialRfidList: Array<SerialRfid>;
   private regsubscription: Subscription;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService, private order: OrderService, private spinner: SpinnerService) {

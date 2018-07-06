@@ -16,6 +16,7 @@ import { Pagination } from '../../../data';
   templateUrl: './hold-order.component.html'
 })
 export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDestroy {
+  private PAGE_SIZE = 5;
 
   private currentPage: number;                    // 현재 페이지 번호
   private pager: Pagination;                        // pagination 정보
@@ -65,7 +66,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
     this.holdsubscription = this.cartService.getSaveCarts(userId).subscribe(
       result => {
         this.cartList = result.carts;
-        this.setPage(Math.ceil(this.cartList.length / 5), 5);
+        this.setPage(Math.ceil(this.cartList.length / 5));
       },
       error => {
         this.spinner.hide();
@@ -83,15 +84,16 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
   /**
    * 출력 데이터 생성
    */
-  setPage(page: number, pageSize: number, pagerFlag: boolean = false) {
+  setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
       return;
     }
 
+    const currentData = this.pagerService.getCurrentPage(this.cartList, page, this.PAGE_SIZE);
     // pagination 생성 데이터 조회
-    this.pager = this.pagerService.getPager(this.cartList.length, page);
+    this.pager = Object.assign(currentData.get('pager'));
     // 출력 리스트 생성
-    this.currentCartList = this.cartList.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    this.currentCartList = Object.assign(currentData.get('list'));
   }
 
   close() {

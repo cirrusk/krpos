@@ -5,7 +5,7 @@
       <button type="button" class="ico_comm next02">다음</button>
   </span>
   <span>
-      <a href="javascript:void(0)" [class.on]="selectedUser == i" *ngFor="let accountInfo of groupAccountInfo; let i = index;" (click)="selectUserInfo(i, accountInfo.parties[0].uid)">{{accountInfo.parties[0].name}}</a>
+      <a href="javascript:void(0)" [class.on]="selectedUserIndex == i" *ngFor="let accountInfo of groupAccountInfo; let i = index;" (click)="selectUserInfo(i, accountInfo.parties[0].uid)">{{accountInfo.parties[0].name}}</a>
   </span>
 </div>
 <!-- //고객리스트 : 그룹결제시 노출 -->
@@ -94,9 +94,9 @@
               <ng-container *ngIf="paymentType == 'g'">
                 <!-- 비회원시 삭제1 -->
                 <em *ngIf="groupAccountInfo.length > 0;">
-                  {{groupAccountInfo[selectedUser].accountTypeCode.toUpperCase() === memberType.CONSUMER ? groupAccountInfo[selectedUser].parties[0].name : groupAccountInfo[selectedUser].name}} 회원님
+                  {{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.CONSUMER ? groupAccountInfo[selectedUserIndex].parties[0].name : groupAccountInfo[selectedUserIndex].name}} 회원님
                 </em>
-                <span *ngIf="groupAccountInfo.length > 0;" class="t01">{{groupAccountInfo[selectedUser].accountTypeCode.toUpperCase() === memberType.CONSUMER ? groupAccountInfo[selectedUser].parties[0].uid : groupAccountInfo[selectedUser].uid}}</span>
+                <span *ngIf="groupAccountInfo.length > 0;" class="t01">{{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.CONSUMER ? groupAccountInfo[selectedUserIndex].parties[0].uid : groupAccountInfo[selectedUserIndex].uid}}</span>
                 <span class="t02" *ngIf="groupAccountInfo.length > 0;">{{apprtype}}(그룹)</span>
                 <!-- //비회원시 삭제1 -->
               </ng-container>

@@ -90,7 +90,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
       () => { this.spinner.hide(); });
   }
 
-  private couponDone() {
+  couponDone() {
     if (this.finishStatus === StatusDisplay.PAID) {
       this.makeCouponPaymentCaptureAndApply();
     }

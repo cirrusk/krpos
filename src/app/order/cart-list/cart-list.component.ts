@@ -20,6 +20,7 @@ import { FormControl } from '@angular/forms';
   templateUrl: './cart-list.component.html'
 })
 export class CartListComponent implements OnInit, OnDestroy {
+  private GROUP_ACCOUNT_PAGE_SIZE = 10;
   private cartInfoSubscription: Subscription;
   private accountInfoSubscription: Subscription;
   private updateVolumeAccountSubscription: Subscription;
@@ -74,7 +75,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   discount: number;
   received: number;
   change: number;
-  selectedUser = -1;
+  selectedUserIndex = -1;
+  selectedUserId: string;
   apprtype: string;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
@@ -278,7 +280,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.received = 0;
     this.change = 0;
     this.installment = '';
-    this.selectedUser = -1;
+    this.selectedUserIndex = -1;
     this.apprtype = '';
     this.paymentChange = false;
     this.pager = new Pagination();
@@ -291,7 +293,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
-
+    this.selectedUserId = '';
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -449,9 +451,9 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.accountInfo = account;
           this.sendRightMenu('a', true, account);
         }
-        if (this.checkGroupUserId(account.uid)) {
+        if (this.checkGroupUserId(account.uid) < 0) {
           this.groupAccountInfo.push(account);
-          this.selectedUser = this.groupAccountInfo.length - 1;
+          this.selectedUserIndex = this.groupAccountInfo.length - 1;
           if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orders.length > 0) {
             this.sendRightMenu('p', false);
             this.cartList.length = 0;
@@ -921,11 +923,26 @@ export class CartListComponent implements OnInit, OnDestroy {
   removeCart(): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      this.removeCartSubscription = this.cartService.deleteCart(this.cartInfo ? this.cartInfo.user.uid : '',
-        this.cartInfo ? this.cartInfo.code : '').subscribe(
+      const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+      const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+
+      this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
           () => {
-            this.init();
-            this.storage.clearClient();
+
+            if (this.paymentType === 'n') {
+              this.init();
+              this.storage.clearClient();
+            } else if (this.paymentType === 'g') {
+              // 아 변수가 많다
+              const groupAccountIndex = this.checkGroupUserId(this.groupSelectedCart.volumeABOAccount.uid);
+              if (groupAccountIndex <= 0) {
+                this.init();
+                this.storage.clearClient();
+              } else {
+                const selectIndex = this.selectedUserIndex - 1;
+                this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
+              }
+            }
           },
           error => {
             this.spinner.hide();
@@ -937,8 +954,20 @@ export class CartListComponent implements OnInit, OnDestroy {
           () => { this.spinner.hide(); }
         );
     } else {
-      this.init();
-      this.storage.clearClient();
+      if (this.paymentType === 'n') {
+        this.init();
+        this.storage.clearClient();
+      } else if (this.paymentType === 'g') {
+        const groupAccountIndex = this.checkGroupUserId(this.selectedUserId);
+        if (groupAccountIndex <= 0) {
+          this.init();
+          this.storage.clearClient();
+        } else {
+          this.groupAccountInfo.splice(groupAccountIndex, 1);
+          const selectIndex = this.selectedUserIndex - 1;
+          this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
+        }
+      }
     }
   }
 
@@ -1081,9 +1110,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.selectedCartNum = -1;
     }
 
-    this.pager = this.pagerService.getPager(this.cartList.length, page); // pagination 생성 데이터 조회
+    const currentData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
+    // pagination 생성 데이터 조회
+    this.pager = Object.assign(currentData.get('pager'));
+    // 출력 리스트 생성
+    this.currentCartList = Object.assign(currentData.get('list'));
     this.totalPriceInfo();
-    this.currentCartList = this.cartList.slice(this.pager.startIndex, this.pager.endIndex + 1); // 출력 리스트 생성
   }
 
   /**
@@ -1200,7 +1232,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param uid
    */
   selectUserInfo(index: number, uid: string): void {
-    this.selectedUser = index;
+    this.selectedUserIndex = index;
+    this.selectedUserId = uid;
     if (this.amwayExtendedOrdering) {
       // 카트 정보 교체
       const existedIdx: number = this.amwayExtendedOrdering.orders.findIndex(
@@ -1223,18 +1256,13 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 그룹 유저 중복 검사
    * @param uid
    */
-  checkGroupUserId(uid: string): boolean {
+  checkGroupUserId(uid: string): number {
     const existedIdx: number = this.groupAccountInfo.findIndex(
       function (obj) {
         return obj.uid === uid;
       }
     );
-
-    if (existedIdx === -1) {
-      return true;
-    } else {
-      return false;
-    }
+    return existedIdx;
   }
 
   /**
@@ -1279,7 +1307,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           let uid = '';
           // 복수 인원 확인
           if (volumeAccount.indexOf(',') > -1) {
-            uid = this.groupAccountInfo[this.selectedUser].parties[0].uid;
+            uid = this.groupAccountInfo[this.selectedUserIndex].parties[0].uid;
           } else {
             uid = volumeAccount;
           }

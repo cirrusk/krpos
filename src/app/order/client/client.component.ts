@@ -222,11 +222,11 @@ export class ClientComponent implements OnInit, OnDestroy {
       this.selectedCartNum = -1;
     }
 
+    const currentData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
     // pagination 생성 데이터 조회
-    this.pager = this.pagerService.getPager(this.cartList.length, page);
+    this.pager = Object.assign(currentData.get('pager'));
     // 출력 리스트 생성
-    this.totalPriceInfo();
-    this.currentCartList = this.cartList.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    this.currentCartList = Object.assign(currentData.get('list'));
   }
 
   private totalPriceInfo(): void {
