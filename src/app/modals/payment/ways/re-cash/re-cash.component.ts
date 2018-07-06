@@ -25,6 +25,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   balance: Balance;
   checktype: number;
   apprmessage: string;
+  private dupcheck = false;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -86,10 +87,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.isAllPay = true;
     } else {
       this.isAllPay = false;
-      setTimeout(() => {
-        this.usePoint.nativeElement.focus();
-
-      }, 50);
+      setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     }
   }
 
@@ -119,10 +117,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       // : 이미 Re-Cash(A포인트)로 전체 결제금액을 사용 중입니다. A포인트(Re-Cash)금액은 제외 됩니다.
       if (check > 0) {
         this.checktype = -1;
+        this.dupcheck = false;
         this.apprmessage = this.message.get('recash.smallpaid'); // '결제 사용할 금액이 부족합니다.';
         // this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
       } else if (check < 0) {
         this.checktype = -2;
+        this.dupcheck = false;
         this.apprmessage = this.message.get('recash.overpaid'); // '잔액보다 사용하려는 금액이 클 수 없습니다.';
         // this.alert.warn({ message: '잔액보다 사용하려는 금액이 클 수 없습니다.' });
       } else {
@@ -295,7 +295,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
           this.info.sendInfo('orderClear', 'clear');
           this.close();
         } else {
-          this.payRecash(event);
+          if (!this.dupcheck) {
+            setTimeout(() => { this.payRecash(event); }, 200);
+            this.dupcheck = true;
+          }
         }
       }
     }
