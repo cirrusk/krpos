@@ -117,10 +117,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paidBlur() {
     const paid = this.paid.nativeElement.value;
     if (paid) {
-      setTimeout(() => {
-        this.payment.nativeElement.select();
-        this.payment.nativeElement.focus();
-      }, 50);
+      setTimeout(() => { this.payment.nativeElement.select(); this.payment.nativeElement.focus(); }, 50);
     }
   }
 

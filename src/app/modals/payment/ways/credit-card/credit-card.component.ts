@@ -156,15 +156,13 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 무이자할부 팝업
    */
   popupInstallmentPlan() {
-    this.modal.openModalByComponent(InstallmentPlanComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        closeByEscape: true,
-        modalId: 'InstallmentPlanComponent'
-      }
-    );
+    this.modal.openModalByComponent(InstallmentPlanComponent, {
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+      closeByClickOutside: false,
+      closeByEnter: false,
+      closeByEscape: true,
+      modalId: 'InstallmentPlanComponent'
+    });
   }
 
   /**
@@ -267,7 +265,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.paid.nativeElement.value = this.paidamount;
             this.change = 0;
             this.paid.nativeElement.blur();
-          }, 5);
+          }, 50);
         }
       }
     );
@@ -409,18 +407,16 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
     this.close();
-    this.modal.openModalByComponent(CompletePaymentComponent,
-      {
-        callerData: {
-          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-          paidAmount: paidAmount, payAmount: payAmount, change: change
-        },
-        closeByClickOutside: false,
-        closeByEscape: false,
-        modalId: 'CompletePaymentComponent',
-        paymentType: 'c'
-      }
-    );
+    this.modal.openModalByComponent(CompletePaymentComponent, {
+      callerData: {
+        account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+        paidAmount: paidAmount, payAmount: payAmount, change: change
+      },
+      closeByClickOutside: false,
+      closeByEscape: false,
+      modalId: 'CompletePaymentComponent',
+      paymentType: 'c'
+    });
   }
 
   /**

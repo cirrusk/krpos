@@ -164,14 +164,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   openPopup() {
     this.popupList.sort();
-    this.modal.openModalByComponent(CompletePaymentComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        modalId: 'CompletePaymentComponent',
-        paymentType: 'c'
-      }
-    );
+    this.modal.openModalByComponent(CompletePaymentComponent, {
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+      closeByClickOutside: false,
+      modalId: 'CompletePaymentComponent',
+      paymentType: 'c'
+    });
   }
 
   /**
@@ -198,15 +196,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.enableMenu = this.enableMenu.filter(item => item !== payment);
     }
 
-    this.modal.openModalByComponent(this.paymentComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
-        closeByClickOutside: false,
-        modalId: modalId,
-        pointType: pointtype,
-        paymentType: 'c'
-      }
-    ).subscribe(payments => {
+    this.modal.openModalByComponent(this.paymentComponent, {
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
+      closeByClickOutside: false,
+      modalId: modalId,
+      pointType: pointtype,
+      paymentType: 'c'
+    }).subscribe(payments => {
       if (payments) {
         this.remakePaymentCapture(payments);
       } else {

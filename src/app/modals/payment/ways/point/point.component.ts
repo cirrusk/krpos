@@ -293,18 +293,16 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
     this.close();
-    this.modal.openModalByComponent(CompletePaymentComponent,
-      {
-        callerData: {
-          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-          paidAmount: paidAmount, payAmount: payAmount, change: change
-        },
-        closeByClickOutside: false,
-        closeByEscape: false,
-        modalId: 'CompletePaymentComponent',
-        paymentType: 'c'
-      }
-    );
+    this.modal.openModalByComponent(CompletePaymentComponent, {
+      callerData: {
+        account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+        paidAmount: paidAmount, payAmount: payAmount, change: change
+      },
+      closeByClickOutside: false,
+      closeByEscape: false,
+      modalId: 'CompletePaymentComponent',
+      paymentType: 'c'
+    });
   }
 
   /**

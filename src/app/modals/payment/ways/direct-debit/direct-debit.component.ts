@@ -278,18 +278,16 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
     this.close();
-    this.modal.openModalByComponent(CompletePaymentComponent,
-      {
-        callerData: {
-          account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-          paidAmount: paidAmount, payAmount: payAmount, change: change
-        },
-        closeByClickOutside: false,
-        closeByEscape: false,
-        modalId: 'CompletePaymentComponent',
-        paymentType: 'c'
-      }
-    );
+    this.modal.openModalByComponent(CompletePaymentComponent, {
+      callerData: {
+        account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
+        paidAmount: paidAmount, payAmount: payAmount, change: change
+      },
+      closeByClickOutside: false,
+      closeByEscape: false,
+      modalId: 'CompletePaymentComponent',
+      paymentType: 'c'
+    });
   }
 
   @HostListener('document:keydown', ['$event'])

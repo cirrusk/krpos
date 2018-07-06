@@ -85,26 +85,22 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       this.applyCouponAndPaymentCapture();
     } else {
       this.close();
-      this.modal.openModalByComponent(CouponPaymentComponent,
-        {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
-          closeByClickOutside: false,
-          closeByEnter: false,
-          modalId: 'CouponPaymentComponent_Cpn'
-        }
-      );
+      this.modal.openModalByComponent(CouponPaymentComponent, {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        modalId: 'CouponPaymentComponent_Cpn'
+      });
     }
   }
 
   openComplexPayment() {
     this.close();
-    this.modal.openModalByComponent(ComplexPaymentComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
-        closeByClickOutside: false,
-        modalId: 'ComplexPaymentComponent_Cpn'
-      }
-    ).subscribe(result => {
+    this.modal.openModalByComponent(ComplexPaymentComponent, {
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
+      closeByClickOutside: false,
+      modalId: 'ComplexPaymentComponent_Cpn'
+    }).subscribe(result => {
       if (!result) {
         this.storage.removePaymentModeCode();
         this.storage.removePay();

@@ -216,14 +216,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
-    this.modal.openModalByComponent(CashReceiptComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
-        closeByClickOutside: false,
-        modalId: 'CashReceiptComponent_Cplx',
-        paymentType: 'c'
-      }
-    );
+    this.modal.openModalByComponent(CashReceiptComponent, {
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
+      closeByClickOutside: false,
+      modalId: 'CashReceiptComponent_Cplx',
+      paymentType: 'c'
+    });
   }
 
   /**
@@ -275,15 +273,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private registerSerialAndRfid() {
     const regType = this.hasSerialAndRfid();
     if (regType > 0) {
-      this.modal.openModalByComponent(SerialComponent,
-        {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo },
-          closeByClickOutside: false,
-          closeByEscape: false,
-          modalId: 'SerialComponent',
-          regType: regType
-        }
-      );
+      this.modal.openModalByComponent(SerialComponent, {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo },
+        closeByClickOutside: false,
+        closeByEscape: false,
+        modalId: 'SerialComponent',
+        regType: regType
+      });
     }
   }
 

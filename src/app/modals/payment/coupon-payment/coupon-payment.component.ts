@@ -102,7 +102,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         result => {
           if (result) {
             this.checktype = 0;
-            this.logger.set('coupon.payment.component', JSON.stringify(result, null, 2)).debug();
+            this.logger.set('coupon.payment.component', Utils.stringify(result)).debug();
             this.finishStatus = StatusDisplay.PAID;
             this.apprmessage = this.message.get('payment.success.next'); // '쿠폰결제에 성공하였습니다.';
             this.changeamount = this.cartInfo.totalPrice.value - result.totalDiscounts.value; // 결제금액 - 쿠폰 금액
