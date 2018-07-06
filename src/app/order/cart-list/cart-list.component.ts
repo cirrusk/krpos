@@ -6,8 +6,10 @@ import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, Pr
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, PaymentBroker } from '../../broker';
-import { Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
-         ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder } from '../../data';
+import {
+  Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
+  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder
+} from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Utils } from '../../core/utils';
 import { Order, OrderList } from '../../data/models/order/order';
@@ -289,6 +291,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
+
+    setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); // 초기화된 후에는 포커스 가도록
   }
 
   /**
