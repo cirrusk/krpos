@@ -10,8 +10,8 @@
               <p class="txt"><strong>총 <span class="fc_red">{{cartList.length}}</span>건</strong>의 정보가 있습니다.</p>
               <span class="btn_wrap" *ngIf="cartList.length > 5">
                 <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
-                <a href="#" class="ico_comm prev03">이전</a>
-                <a href="#" class="ico_comm next03 on">다음</a>
+                <a href="javascript:void(0)" [class.on]="pager.currentPage > pager.startPage" class="ico_comm prev03 " (click)="setPage(pager.currentPage - 1,true)">이전</a>
+                <a href="javascript:void(0)" [class.on]="pager.currentPage < pager.endPage" class="ico_comm next03 " (click)="setPage(pager.currentPage + 1,true)">다음</a>
               </span>
               <!-- 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
               <div class="tbl_col bg_bar" *ngIf="cartList.length > 0">
@@ -38,7 +38,7 @@
                       <tbody>
                           <!-- 내역 선택시 tr에 on클래스 추가 -->
                           <tr [class.on]="activeNum == i" *ngFor="let cart of currentCartList; let i = index;" (click)="activeRow(i)">
-                              <td><span>{{i+1}}</span></td>
+                              <td><span>{{pager.startIndex + (i+1)}}</span></td>
                               <td class="name"><span class="elips mx90">{{cart.user.name}}</span></td>
                               <td><span>{{cart.user.uid}}</span></td>
                               <td><span>{{cart.totalUnitCount}}개</span></td>

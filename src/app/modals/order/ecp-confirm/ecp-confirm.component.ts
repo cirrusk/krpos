@@ -130,10 +130,12 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       return;
     }
 
+
+    const currentData = this.pagerService.getCurrentPage(this.entryList, page, this.PAGE_SIZE);
     // pagination 생성 데이터 조회
-    this.pager = this.pagerService.getPager(this.entryList.length, page, this.PAGE_SIZE);
+    this.pager = Object.assign(currentData.get('pager'));
     // 출력 리스트 생성
-    this.currentOrderList  = this.entryList.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    this.currentOrderList = Object.assign(currentData.get('list'));
   }
 
   /**

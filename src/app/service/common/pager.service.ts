@@ -29,4 +29,14 @@ export class PagerService {
 
     return this.pagination;
   }
+
+  getCurrentPage(totalList: any, page: number, pageSize: number): Map<string, object> {
+    // pagination 생성 데이터 조회
+    const pager = this.getPager(totalList.length, page, pageSize);
+    // 출력 리스트 생성
+    const list = totalList.slice(pager.startIndex, pager.endIndex + 1);
+    const listMap = new Map<string, object>().set('pager', pager)
+                                             .set('list', list);
+    return listMap;
+  }
 }
