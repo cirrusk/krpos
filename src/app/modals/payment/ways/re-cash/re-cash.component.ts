@@ -262,16 +262,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
       this.close();
     } else {
-      // if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      //   const usepoint = this.usePoint.nativeElement.value;
-      //   const check = this.paidamount - usepoint;
-      //   if (check === 0) {
-      //     this.completePayPopup(this.paidamount, usepoint, check);
-      //     this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-      //     this.logger.set('recash.component', '복합결제 장바구니 초기화...').debug();
-      //     this.info.sendInfo('orderClear', 'clear');
-      //   }
-      // }
       this.close();
     }
   }
