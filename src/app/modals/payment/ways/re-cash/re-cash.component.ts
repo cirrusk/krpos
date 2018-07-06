@@ -262,7 +262,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
       this.close();
     } else {
-      console.log('복합결제일 경우...');
       // if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       //   const usepoint = this.usePoint.nativeElement.value;
       //   const check = this.paidamount - usepoint;
