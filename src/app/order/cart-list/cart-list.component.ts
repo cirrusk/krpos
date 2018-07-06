@@ -20,7 +20,7 @@ import { FormControl } from '@angular/forms';
   templateUrl: './cart-list.component.html'
 })
 export class CartListComponent implements OnInit, OnDestroy {
-  private GROUP_ACCOUNT_PAGE_SIZE = 10;
+  GROUP_ACCOUNT_PAGE_SIZE = 10;
   private cartInfoSubscription: Subscription;
   private accountInfoSubscription: Subscription;
   private updateVolumeAccountSubscription: Subscription;
@@ -55,7 +55,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   paymentType: string;                                                      // 결제타입(일반 = n, 그룹 = g)
 
   accountInfo: Accounts;                                                    // 사용자 정보
-  groupAccountInfo: Array<Accounts>;
+  groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
+  currentGroupAccountInfo: Array<Accounts>;                                 // 그룹 사용자 정보()
+  userPager: Pagination;                                                    // 그룹 사용자 페이징
   searchMode: string;                                                       // 조회 모드
   cartList: Array<OrderEntry>;                                              // 장바구니 리스트
   currentCartList: Array<OrderEntry>;                                       // 출력 장바구니 리스트
@@ -284,6 +286,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.apprtype = '';
     this.paymentChange = false;
     this.pager = new Pagination();
+    this.userPager = new Pagination();
     this.resCartInfo = new ResCartInfo();
     this.restrictionModel = new RestrictionModel();
     this.restrictionMessageList = Array<RestrictionModel>();
@@ -454,6 +457,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (this.checkGroupUserId(account.uid) < 0) {
           this.groupAccountInfo.push(account);
           this.selectedUserIndex = this.groupAccountInfo.length - 1;
+          this.setUserPage(0 ? 0 : Math.ceil(this.groupAccountInfo.length / 10));
           if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orders.length > 0) {
             this.sendRightMenu('p', false);
             this.cartList.length = 0;
@@ -934,6 +938,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.storage.clearClient();
             } else if (this.paymentType === 'g') {
               // 아 변수가 많다
+              // 삭제 로직 확인
               const groupAccountIndex = this.checkGroupUserId(this.groupSelectedCart.volumeABOAccount.uid);
               if (groupAccountIndex <= 0) {
                 this.init();
@@ -1116,6 +1121,28 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 출력 리스트 생성
     this.currentCartList = Object.assign(currentData.get('list'));
     this.totalPriceInfo();
+  }
+
+  /**
+   * 그룹 사용자 출력 데이터 생성
+   * @param page 페이지 번호
+   * @param pagerFlag 페이징 여부
+   */
+  setUserPage(page: number, pagerFlag: boolean = false) {
+    if ((page < 1 || page > this.userPager.totalPages) && pagerFlag) {
+      return;
+    }
+
+    // true 경우 페이지 이동이므로 선택 초기화
+    if (pagerFlag) {
+      this.selectedUserIndex = -1;
+    }
+
+    const currentData = this.pagerService.getCurrentPage(this.groupAccountInfo, page, this.GROUP_ACCOUNT_PAGE_SIZE);
+    // pagination 생성 데이터 조회
+    this.userPager = Object.assign(currentData.get('pager'));
+    // 출력 리스트 생성
+    this.currentGroupAccountInfo = Object.assign(currentData.get('list'));
   }
 
   /**

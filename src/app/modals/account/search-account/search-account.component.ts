@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, AlertService, SpinnerService } from '../../../core';
@@ -24,6 +24,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   totalCnt: number;                          // 검색 총 합계
   paymentType: string;
   searchText: string;                        // 검색어
+  @ViewChild('inputSearchText') searchValue: ElementRef;
+
   constructor(modalService: ModalService,
     private logger: Logger,
     private searchService: SearchService,
@@ -38,6 +40,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   ngOnInit() {
     this.logger.set('search.account.component', `결제 타입 --------------> ${this.paymentType}`).debug();
+    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
 
     if (this.callerData) {
       const searchParams = this.callerData.data;
