@@ -15,7 +15,7 @@
       <ng-template #workStart>
         <button type="button" class="type02" (click)="startWork()" *ngIf="hasTerminal === true; else notWorkStart">근무 시작</button>
         <ng-template #notWorkStart>
-          <button type="button" class="type02" [class.link-disabled]="screenLockType === 1">근무 시작</button>
+          <button type="button" class="type02" [class.link-disabled]="hasTerminal === false || screenLockType === 1">근무 시작</button>
         </ng-template>
       </ng-template>
       <button type="button" class="type02" [class.link-disabled]="screenLockType === null || screenLockType === -1" *ngIf="(screenLockType === null || screenLockType === -1)">화면 풀림</button><!-- 대시보드 로그인 전 -->
