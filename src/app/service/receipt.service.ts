@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReceiptDataProvider, EscPos, StorageService, PrinterService } from '../core';
+import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
@@ -12,7 +12,10 @@ import { Utils } from '../core/utils';
 @Injectable()
 export class ReceiptService {
 
-    constructor(private receitDataProvider: ReceiptDataProvider, private printer: PrinterService, private storage: StorageService) { }
+    constructor(private receitDataProvider: ReceiptDataProvider,
+        private printer: PrinterService,
+        private storage: StorageService,
+        private logger: Logger) { }
 
     public aboNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.ABONormal);
@@ -287,6 +290,7 @@ export class ReceiptService {
         try {
             this.printer.printText(text);
         } catch (e) {
+            this.logger.set('receipt.service', `${e.description}`).error();
             rtn = false;
         }
         return rtn;
