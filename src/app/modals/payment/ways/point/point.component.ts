@@ -260,16 +260,19 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.paymentcapture) {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
+        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         paymentcapture.setPointPaymentInfo = point;
         capturepaymentinfo.paymentModeCode = PaymentModes.POINT;
         capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
+        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         this.paymentcapture.setPointPaymentInfo = point;
         capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
         capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
       paymentcapture.setPointPaymentInfo = point;
       capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;

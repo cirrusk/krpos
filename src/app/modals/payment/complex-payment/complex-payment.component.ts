@@ -217,7 +217,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   private remakePaymentCapture(paymentcapture: PaymentCapture) {
     if (paymentcapture) {
-      this.logger.set('compex.payment.component params', `${Utils.stringify(paymentcapture)}`).debug();
+      this.logger.set('complex.payment.component params for remake', `${Utils.stringify(paymentcapture)}`).debug();
       if (paymentcapture.ccPaymentInfo) {
         this.paymentcapture.ccPaymentInfo = paymentcapture.ccPaymentInfo;
       }
@@ -237,10 +237,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         this.paymentcapture.pointPaymentInfo = paymentcapture.pointPaymentInfo;
       }
       if (paymentcapture.voucherPaymentInfo) {
-        this.paymentcapture.voucherPaymentInfo = paymentcapture.voucherPaymentInfo;
+        // this.paymentcapture.voucherPaymentInfo = paymentcapture.voucherPaymentInfo;
+        this.logger.set('complex.payment.component', 'no apply voucherPaymentInfo').info();
       }
     }
-    this.logger.set('compex.payment.component convert', `${Utils.stringify(this.paymentcapture)}`).debug();
+    this.logger.set('complex.payment.component convert for remake', `${Utils.stringify(this.paymentcapture)}`).debug();
   }
 
   /**

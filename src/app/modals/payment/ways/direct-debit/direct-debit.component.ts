@@ -133,16 +133,19 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (this.paymentcapture) {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
+        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         paymentcapture.directDebitPaymentInfo = directdebit;
         capturepaymentinfo.paymentModeCode = PaymentModes.DIRECTDEBIT;
         capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
+        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         this.paymentcapture.directDebitPaymentInfo = directdebit;
         capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
         capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
       paymentcapture.directDebitPaymentInfo = directdebit;
       capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.DIRECTDEBIT;
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;

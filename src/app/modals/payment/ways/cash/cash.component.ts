@@ -300,16 +300,19 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     if (this.paymentcapture) {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
+        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         paymentcapture.setCashPaymentInfo = cash;
         capturepaymentinfo.setPaymentModeCode = PaymentModes.CASH;
         capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
       } else {
+        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         this.paymentcapture.setCashPaymentInfo = cash;
         capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode();
         capturepaymentinfo.setCapturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
       paymentcapture.setCashPaymentInfo = cash;
       capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CASH;
       capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;

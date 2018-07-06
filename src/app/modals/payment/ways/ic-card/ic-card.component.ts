@@ -100,6 +100,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setPaymentModeData = new PaymentModeData(PaymentModes.ICCARD);
     iccard.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();
+    paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
     paymentcapture.setIcCardPaymentInfo = iccard;
     capturepaymentinfo.paymentModeCode = PaymentModes.ICCARD;
     capturepaymentinfo.capturePaymentInfoData = paymentcapture;

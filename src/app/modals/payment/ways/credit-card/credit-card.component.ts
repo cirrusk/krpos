@@ -207,16 +207,19 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (this.paymentcapture) {
       if (this.paymentType === 'n') {
         const paymentcapture = new PaymentCapture();
+        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         paymentcapture.setCcPaymentInfo = ccard;
         capturepaymentinfo.paymentModeCode = PaymentModes.CREDITCARD;
         capturepaymentinfo.capturePaymentInfoData = paymentcapture;
       } else {
+        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         this.paymentcapture.setCcPaymentInfo = ccard;
         capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
         capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
       }
     } else {
       const paymentcapture = new PaymentCapture();
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
       paymentcapture.setCcPaymentInfo = ccard;
       capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;
