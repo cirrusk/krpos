@@ -1,11 +1,11 @@
 <!-- 고객리스트 : 그룹결제시 노출 -->
 <div class="member_list" [hidden]="paymentType !== 'g'">
-  <span>
-      <button type="button" class="ico_comm prev02">이전</button>
-      <button type="button" class="ico_comm next02">다음</button>
+  <span *ngIf="groupAccountInfo.length > GROUP_ACCOUNT_PAGE_SIZE">
+      <button type="button" [disabled]="userPager.currentPage === userPager.startPage" class="ico_comm prev02" (click)="setUserPage(userPager.currentPage - 1, true)">이전</button>
+      <button type="button" [disabled]="userPager.currentPage === userPager.endPage" class="ico_comm next02" (click)="setUserPage(userPager.currentPage + 1, true)">다음</button>
   </span>
   <span>
-      <a href="javascript:void(0)" [class.on]="selectedUserIndex == i" *ngFor="let accountInfo of groupAccountInfo; let i = index;" (click)="selectUserInfo(i, accountInfo.parties[0].uid)">{{accountInfo.parties[0].name}}</a>
+      <a href="javascript:void(0)" [class.on]="selectedUserIndex == i" *ngFor="let accountInfo of currentGroupAccountInfo; let i = index;" (click)="selectUserInfo(i, accountInfo.parties[0].uid)">{{accountInfo.parties[0].name}}</a>
   </span>
 </div>
 <!-- //고객리스트 : 그룹결제시 노출 -->
