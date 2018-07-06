@@ -17,11 +17,11 @@ export class PriceInfo {
         this.amountWithoutVAT = String(amountWithoutVAT);
         this.amountVAT = String(amountVAT);
         this.totalAmount = String(totalAmount);
-        if (totalDiscount) {
+        if (totalDiscount) { // 0일 경우 용지 아까기 위해 출력에서 제외
             this.totalDiscount = String(totalDiscount);
         }
         this.finalAmount = String(finalAmount);
-        if (discount) {
+        if (discount) { // 값이 없을 경우 용지 아끼기 위해 출력에세 제외
             this.discount = discount;
         }
     }

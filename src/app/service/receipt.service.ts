@@ -240,32 +240,32 @@ export class ReceiptService {
         const price = new PriceInfo(totalQty, totalPriceWithTax, totalTax, subTotalPrice, totalPrice);
         if (totalDiscount > 0) {
             price.setTotalDiscount = totalDiscount;
-        }
-        const discount = new Discount();
-        // 쿠폰
-        if (paymentCapture.getVoucherPaymentInfo) {
-            const coupon = paymentCapture.getVoucherPaymentInfo;
-            if (coupon.amount > 0) {
-                discount.setCoupon = new DiscountInfo(coupon.getName || '할인쿠폰', coupon.getAmount);
+            const discount = new Discount();
+            // 쿠폰
+            if (paymentCapture.getVoucherPaymentInfo) {
+                const coupon = paymentCapture.getVoucherPaymentInfo;
+                if (coupon.amount > 0) {
+                    discount.setCoupon = new DiscountInfo(coupon.getName || '할인쿠폰', coupon.getAmount);
+                }
             }
-        }
-        // 포인트
-        if (paymentCapture.getPointPaymentInfo) {
-            const pointinfo = paymentCapture.getPointPaymentInfo;
-            let pointname = '';
-            if (account.accountTypeCode === MemberType.ABO) {
-                pointname = '포인트차감(A포인트)';
-            } else if (account.accountTypeCode === MemberType.MEMBER) {
-                pointname = '포인트차감(멤버포인트)';
+            // 포인트
+            if (paymentCapture.getPointPaymentInfo) {
+                const pointinfo = paymentCapture.getPointPaymentInfo;
+                let pointname = '';
+                if (account.accountTypeCode === MemberType.ABO) {
+                    pointname = '포인트차감(A포인트)';
+                } else if (account.accountTypeCode === MemberType.MEMBER) {
+                    pointname = '포인트차감(멤버포인트)';
+                }
+                discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
             }
-            discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
+            // recash
+            if (paymentCapture.getMonetaryPaymentInfo) {
+                const recash = paymentCapture.getMonetaryPaymentInfo;
+                discount.setRecash = new DiscountInfo('Recash', recash.amount);
+            }
+            price.setDiscount = discount;
         }
-        // recash
-        if (paymentCapture.getMonetaryPaymentInfo) {
-            const recash = paymentCapture.getMonetaryPaymentInfo;
-            discount.setRecash = new DiscountInfo('Recash', recash.amount);
-        }
-        price.setDiscount = discount;
         // prices - END
 
         // 최종 영수증 데이터 구성 - START
