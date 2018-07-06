@@ -282,7 +282,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private cardPay() {
     if (this.change >= 0) {
-      const paidprice: number = this.paid.nativeElement.value;
+      const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
       this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       this.spinner.show();
       const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
@@ -336,7 +336,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 카드 결제 VAN사에 전송하고 Payment처리
    */
   private cardPayAndPlaceOrder() {
-    const paidprice = this.paid.nativeElement.value;
+    const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
     this.spinner.show();
     const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
@@ -353,7 +353,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
           this.paidDate = Utils.convertDate(res.approvalDateTime);
-          // payment caputure
           const capturepaymentinfo = this.makePaymentCaptureData(paidprice);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();

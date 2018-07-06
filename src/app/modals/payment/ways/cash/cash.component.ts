@@ -24,6 +24,7 @@ import { SerialComponent } from '../../../scan/serial/serial.component';
 })
 export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
+  @ViewChild('cashPanel') private cashPanel: ElementRef;
   @ViewChild('paid') private paid: ElementRef;         // 내신금액
   @ViewChild('payment') private payment: ElementRef;   // 결제금액
   paylock: boolean;                                    // 결제버튼잠금

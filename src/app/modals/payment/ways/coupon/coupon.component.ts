@@ -28,6 +28,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   private orderInfo: Order;
   private cartInfo: Cart;
   private paymentcapture: PaymentCapture;
+  private alertsubscription: Subscription;
   private couponubscription: Subscription;
   private paymentsubscription: Subscription;
   private coupon: Coupon;
@@ -47,12 +48,18 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.cartInfo = this.callerData.cartInfo;
     this.searchCoupon(0);
     // 이미 장바구니에 적용된 경우 CART를 새로 구성해야 쿠폰 재설정 가능
-    this.alert.alertState.subscribe(state => {
+    this.alertsubscription = this.alert.alertState.subscribe(state => {
       if (!state.show) {
         this.info.sendInfo('recart', this.orderInfo);
         setTimeout(() => { this.close(); }, 50);
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.couponubscription) { this.couponubscription.unsubscribe(); }
+    if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
   private searchCoupon(pagenum: number) {
@@ -68,11 +75,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       },
       error => { this.logger.set('coupon.component', `${error}`).error(); },
       () => { this.spinner.hide(); });
-  }
-
-  ngOnDestroy() {
-    if (this.couponubscription) { this.couponubscription.unsubscribe(); }
-    if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
   /**
@@ -181,7 +183,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   close() {
-    console.log('111111111111111111111');
     this.closeModal();
   }
 

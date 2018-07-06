@@ -292,7 +292,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
 
-    setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); // 초기화된 후에는 포커스 가도록
+    // setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); // 초기화된 후에는 포커스 가도록
   }
 
   /**
