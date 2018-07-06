@@ -75,8 +75,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     } else { // 복합결제
       if (this.storage.getPay() === 0) {
         this.payment.nativeElement.value = this.cartInfo.totalPrice.value;
+        this.paidamount = this.cartInfo.totalPrice.value;
       } else {
         this.payment.nativeElement.value = this.storage.getPay();
+        this.paidamount = this.storage.getPay();
       }
     }
   }
@@ -171,10 +173,12 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         return;
       }
     } else { // 복합결제인 경우
+      console.log('change : ' + change);
       if (change < 0) { // 내신금액이 결제금액보다 작으면 결제금액을 내신금액으로 대체
         nPayAmount = nReceiveAmount;
         paychange = this.paidamount - nPayAmount;
       }
+      console.log('paychange : ' + paychange);
       if (paychange > 0) { // 결제할 금액이 더있음.
         this.storage.setPay(this.paidamount - nPayAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
         this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
