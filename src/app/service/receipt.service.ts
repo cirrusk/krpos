@@ -283,7 +283,6 @@ export class ReceiptService {
         }
         // 최종 영수증 데이터 구성 - END
         try {
-            console.log(text);
             this.printer.printText(text);
         } catch (e) {
             rtn = false;
