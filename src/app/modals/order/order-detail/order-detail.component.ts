@@ -5,7 +5,7 @@ import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent } from '../..';
-import { OrderHistory } from '../../../data';
+import { OrderHistory, PaymentCapture } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 
@@ -18,11 +18,12 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
   orderDetail: OrderList;
   orderInfo: OrderHistory;
 
-  emloyeeId: string;
+  clientId: string;
   emloyeeName: string;
   cancelSymbol: string;
   cancelFlag: boolean;
   activeFlag: boolean;
+  paymentCapture: PaymentCapture;
 
   constructor(protected modalService: ModalService,
               private router: Router,
@@ -44,7 +45,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
     this.checkCancelStatus(this.orderInfo);
-    this.emloyeeId = this.storageService.getEmloyeeId();
+    this.clientId = this.storageService.getClientId();
     this.emloyeeName = this.storageService.getEmloyeeName();
   }
 
@@ -52,6 +53,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     this.cancelSymbol = '';
     this.cancelFlag = false;
     this.activeFlag = false;
+    this.paymentCapture = new PaymentCapture();
   }
 
   checkCancelStatus(orderInfo: OrderHistory) {
@@ -126,6 +128,21 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     this.orderService.orderDetails(userId, orderCodes).subscribe(
       orderDetail => {
         if (orderDetail) {
+          let jsonPaymentData = {};
+          orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
+              switch (paymentInfo.paymentMode.code) {
+                  case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
+                  case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
+                  case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
+                  case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
+                  case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
+                  case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
+                  case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
+                  default: { jsonPaymentData = {}; } break;
+              }
+              Object.assign(this.paymentCapture, jsonPaymentData);
+              jsonPaymentData = {};
+          });
           this.orderDetail = orderDetail;
         }
       },
