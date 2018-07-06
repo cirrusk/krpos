@@ -57,25 +57,27 @@ export class ReceiptService {
         let jsonPaymentData = {};
 
         orderData.orders.forEach(order => {
-            const jsonCartData = { 'user':  order.user,
-                               'entries': order.entries,
-                               'totalPrice': order.totalPrice,
-                               'subTotal': order.subTotal,
-                               'totalUnitCount': order.totalUnitCount,
-                               'totalPriceWithTax': order.totalPriceWithTax,
-                               'totalTax': order.totalTax,
-                               'totalDiscounts':  order.totalDiscounts};
+            const jsonCartData = {
+                'user': order.user,
+                'entries': order.entries,
+                'totalPrice': order.totalPrice,
+                'subTotal': order.subTotal,
+                'totalUnitCount': order.totalUnitCount,
+                'totalPriceWithTax': order.totalPriceWithTax,
+                'totalTax': order.totalTax,
+                'totalDiscounts': order.totalDiscounts
+            };
             Object.assign(cartInfo, jsonCartData);
 
             order.paymentDetails.paymentInfos.forEach(paymentInfo => {
                 switch (paymentInfo.paymentMode.code) {
-                    case 'creditcard'   : { jsonPaymentData = {'ccPaymentInfo' : paymentInfo}; } break;
-                    case 'cashiccard'   : { jsonPaymentData = {'icCardPaymentInfo' : paymentInfo }; } break;
-                    case 'cash'         : { jsonPaymentData = {'cashPaymentInfo' : paymentInfo }; } break;
-                    case 'directdebit'  : { jsonPaymentData = {'directDebitPaymentInfo' : paymentInfo }; } break;
-                    case 'arCredit'     : { jsonPaymentData = {'monetaryPaymentInfo' : paymentInfo }; } break;
-                    case 'point'        : { jsonPaymentData = {'pointPaymentInfo' : paymentInfo }; } break;
-                    case 'creditvoucher': { jsonPaymentData = {'voucherPaymentInfo' : paymentInfo }; } break;
+                    case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
+                    case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
+                    case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
+                    case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
+                    case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
+                    case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
+                    case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
                     default: { jsonPaymentData = {}; } break;
                 }
                 Object.assign(paymentCapture, jsonPaymentData);
@@ -150,6 +152,7 @@ export class ReceiptService {
         let totalTax = 0;
         let totalPriceWithTax = 0;
         let totalDiscount = 0;
+        const strTotalDiscount = null;
         cartInfo.entries.forEach(entry => {
             productList.push({
                 'idx': (entry.entryNumber + 1).toString(),
@@ -231,12 +234,17 @@ export class ReceiptService {
         if (cartInfo.totalDiscounts) {
             totalDiscount = cartInfo.totalDiscounts.value;
         }
-        const price = new PriceInfo(totalQty, totalPriceWithTax, totalTax, subTotalPrice, totalDiscount, totalPrice);
+        const price = new PriceInfo(totalQty, totalPriceWithTax, totalTax, subTotalPrice, totalPrice);
+        if (totalDiscount > 0) {
+            price.setTotalDiscount = totalDiscount;
+        }
         const discount = new Discount();
         // 쿠폰
         if (paymentCapture.getVoucherPaymentInfo) {
             const coupon = paymentCapture.getVoucherPaymentInfo;
-            discount.setCoupon = new DiscountInfo(coupon.getName || '할인쿠폰', coupon.getAmount);
+            if (coupon.amount > 0) {
+                discount.setCoupon = new DiscountInfo(coupon.getName || '할인쿠폰', coupon.getAmount);
+            }
         }
         // 포인트
         if (paymentCapture.getPointPaymentInfo) {
@@ -275,6 +283,7 @@ export class ReceiptService {
         }
         // 최종 영수증 데이터 구성 - END
         try {
+            console.log(text);
             this.printer.printText(text);
         } catch (e) {
             rtn = false;

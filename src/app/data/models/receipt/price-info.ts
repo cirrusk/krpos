@@ -9,14 +9,21 @@ export class PriceInfo {
     public set setDiscount(discount: Discount) {
         this.discount = discount;
     }
-    constructor(totalQty: number, amountWithoutVAT: number, amountVAT: number, totalAmount: number, totalDiscount: number, finalAmount: number, discount?: Discount) {
+    public set setTotalDiscount(totalDiscount: number) {
+        this.totalDiscount = String(totalDiscount);
+    }
+    constructor(totalQty: number, amountWithoutVAT: number, amountVAT: number, totalAmount: number, finalAmount: number, totalDiscount?: number, discount?: Discount) {
         this.totalQty = String(totalQty);
         this.amountWithoutVAT = String(amountWithoutVAT);
         this.amountVAT = String(amountVAT);
         this.totalAmount = String(totalAmount);
-        this.totalDiscount = String(totalDiscount);
+        if (totalDiscount) {
+            this.totalDiscount = String(totalDiscount);
+        }
         this.finalAmount = String(finalAmount);
-        this.discount = discount;
+        if (discount) {
+            this.discount = discount;
+        }
     }
 }
 
