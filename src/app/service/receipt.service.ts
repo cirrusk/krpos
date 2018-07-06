@@ -283,7 +283,7 @@ export class ReceiptService {
             text = this.consumerNormal(receiptInfo);
         }
         // 최종 영수증 데이터 구성 - END
-        
+
         try {
             this.printer.printText(text);
         } catch (e) {
