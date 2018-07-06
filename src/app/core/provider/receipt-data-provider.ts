@@ -19,7 +19,7 @@ export class ReceiptDataProvider {
     const waitDownload: Subject<any> = new Subject();
 
     // Policy File
-    const policyUri: string = this.config.getConfig('occEndpointDomain') + this.config.getConfig('receitPolicyFile');
+    const policyUri: string = this.config.getConfig('receitPolicyFile');
 
     this.formatReader.get(policyUri)
         .subscribe(
@@ -43,7 +43,7 @@ export class ReceiptDataProvider {
     const downloadUriMap: Map<string, string> = this.getDownloadUriMap();
 
     this.getTemplateList().forEach((templateName: string) => {
-        const url = this.config.getConfig('occEndpointDomain') +  this.getDownloadUriPrefix() + downloadUriMap.get(templateName);
+        const url = this.getDownloadUriPrefix() + downloadUriMap.get(templateName);
 
         this.formatReader.get(url)
         .subscribe(
