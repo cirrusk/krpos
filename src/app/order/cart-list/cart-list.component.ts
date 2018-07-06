@@ -519,6 +519,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (!cartList) {
       return;
     }
+    console.log(account);
     this.spinner.show();
     this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
       this.init();

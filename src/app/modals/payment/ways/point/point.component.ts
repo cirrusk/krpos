@@ -34,6 +34,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private paymentType: string;
   private balance: Balance;
   @ViewChild('usePoint') usePoint: ElementRef;
+  @ViewChild('pointPanel') pointPanel: ElementRef;
   private balancesubscription: Subscription;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
@@ -107,7 +108,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.usePoint.nativeElement.value = '';
     if (type === 0) { // 전체금액
       setTimeout(() => {
-        this.usePoint.nativeElement.blur();
+        this.pointPanel.nativeElement.focus(); // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
         this.isAllPay = true;
         this.validationComplex();
       }, 50);

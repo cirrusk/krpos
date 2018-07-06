@@ -25,6 +25,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   couponCount: number;
   checktype: number;
   finishStatus: string;
+  private orderInfo: Order;
   private cartInfo: Cart;
   private paymentcapture: PaymentCapture;
   private couponubscription: Subscription;
@@ -45,6 +46,13 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.searchCoupon(0);
+    // 이미 장바구니에 적용된 경우 CART를 새로 구성해야 쿠폰 재설정 가능
+    this.alert.alertState.subscribe(state => {
+      if (!state.show) {
+        this.info.sendInfo('recart', this.orderInfo);
+        setTimeout(() => { this.close(); }, 50);
+      }
+    });
   }
 
   private searchCoupon(pagenum: number) {
@@ -111,6 +119,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private applyCouponAndPaymentCapture(): void {
+    this.spinner.show();
     let pcap: PaymentCapture;
     this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
       result => {
@@ -127,19 +136,22 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           this.sendPaymentAndOrder(pcap, null);
           this.openComplexPayment();
         } else {
+          this.spinner.hide();
           this.finishStatus = 'notexist';
           this.logger.set('coupon.component', `no apply or exist cart`).error();
         }
       },
       error => {
-        this.finishStatus = 'fail';
+        this.spinner.hide();
+        // this.finishStatus = 'fail';
         const errdata = Utils.getError(error);
         if (errdata) {
           this.activeNum = -1;
           this.coupon = null;
           this.alert.show({ message: this.message.get(errdata.message) });
         }
-      });
+      },
+      () => { this.spinner.hide(); });
   }
 
   activeRow(index: number, coupon: Coupon) {
@@ -169,6 +181,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   close() {
+    console.log('111111111111111111111');
     this.closeModal();
   }
 

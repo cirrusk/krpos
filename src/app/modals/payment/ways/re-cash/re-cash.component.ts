@@ -34,6 +34,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private balancesubscription: Subscription;
   private alertsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
+  @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
     private storage: StorageService, private alert: AlertService, private message: MessageService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
@@ -66,6 +67,37 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.balancesubscription) { this.balancesubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+  }
+
+  useRecash() {
+    if (this.balance) {
+      const usecash = this.usePoint.nativeElement.value;
+      this.change = this.balance.amount - usecash;
+    }
+  }
+
+  checkPay(type: number) {
+    if (type === 0) {
+      setTimeout(() => {
+        this.usePoint.nativeElement.value = this.paidamount;
+        this.change = this.balance.amount - this.paidamount;
+        this.recashPanel.nativeElement.focus(); // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
+      }, 50);
+      this.isAllPay = true;
+    } else {
+      this.isAllPay = false;
+      setTimeout(() => {
+        this.usePoint.nativeElement.focus();
+
+      }, 50);
+    }
+  }
+
+  pointBlur() {
+    const point = this.usePoint.nativeElement.value;
+    if (Utils.isNotEmpty(point)) {
+      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+    }
   }
 
   payRecash(evt: KeyboardEvent) {
@@ -156,34 +188,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
         this.apprmessage = errdata.message;
       }
     }, () => { this.spinner.hide(); });
-  }
-
-  useRecash() {
-    if (this.balance) {
-      const usecash = this.usePoint.nativeElement.value;
-      this.change = this.balance.amount - usecash;
-    }
-  }
-
-  checkPay(type: number) {
-    if (type === 0) {
-      setTimeout(() => {
-        this.usePoint.nativeElement.value = this.paidamount;
-        this.change = this.balance.amount - this.paidamount;
-        this.usePoint.nativeElement.blur();
-      }, 50);
-      this.isAllPay = true;
-    } else {
-      this.isAllPay = false;
-      setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
-    }
-  }
-
-  pointBlur() {
-    const point = this.usePoint.nativeElement.value;
-    if (Utils.isNotEmpty(point)) {
-      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
-    }
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {

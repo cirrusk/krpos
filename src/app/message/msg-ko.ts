@@ -36,6 +36,7 @@ export const LANG_KO_MSGS = {
     'recash.smallpaid': '결제 사용할 금액이 부족합니다.',
     'recash.overpaid': '잔액보다 사용하려는 금액이 클 수 없습니다.',
     'empty.coupon': '검색할 쿠폰번호를 입력해주세요.',
-    'noresult.coupon': '쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.'
+    'noresult.coupon': '쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.',
+    'not.choose.payment': '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.'
 
 };

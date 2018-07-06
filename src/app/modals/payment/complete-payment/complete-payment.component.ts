@@ -25,6 +25,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   paidamount: number;
   payamount: number;
   change: number;
+  checktype: number;
   private dupcheck = false;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -43,6 +44,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.finishStatus = null;
     this.paidamount = 0;
     this.change = 0;
+    this.checktype = 0;
   }
 
   ngOnInit() {
@@ -76,7 +78,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
     const calpaid = this.calAmountByPayment();
     if (calpaid >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
-      this.paymentAndPlaceOrder();
+      if (Utils.isEmpty(this.storage.getPaymentModeCode())) {
+        this.checktype = -1;
+        this.apprmessage = this.message.get('not.choose.payment'); // '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.';
+      } else {
+        this.checktype = 0;
+        this.paymentCaptureAndPlaceOrder();
+      }
     }
   }
 
@@ -136,13 +144,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   /**
-   * 결제 정보 캡쳐
+   * 주결제 수단 설정 및 결제 정보 캡쳐
    *
    * @param payAmount 내신금액
    * @param paidAmount 결제금액
    * @param change 거스름돈
    */
-  private paymentAndPlaceOrder() {
+  private paymentCaptureAndPlaceOrder() {
     this.spinner.show();
     const capturepaymentinfo = new CapturePaymentInfo();
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();

@@ -38,7 +38,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   cardauthnumber: string; // 승인번호
   checktype: number;
   apprmessage: string;
-  @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private message: MessageService,
     private payments: PaymentService, private nicepay: NicePaymentService, private storage: StorageService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
@@ -66,15 +65,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
-  passwordBlur() {
-    const pwd = this.cardpassword.nativeElement.value;
-    if (Utils.isEmpty(pwd)) {
-      setTimeout(() => { this.cardpassword.nativeElement.focus(); }, 50);
-    } else {
-      setTimeout(() => { this.cardpassword.nativeElement.blur(); }, 50);
-    }
-  }
-
   /**
    * 임시로 카드 매핑, 나중에 매핑되면 제거
    */
@@ -96,7 +86,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
     iccard.setCardCompayCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
     iccard.setCardAcquireCode = this.cardresult.acquireCode; // 매입사 코드
-    iccard.setCardPassword = this.cardpassword.nativeElement.value;
+    // iccard.setCardPassword = '';
     iccard.setInstallmentPlan = '00';
     iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
     iccard.setCardRequestDate = Utils.convertDate(this.cardresult.approvalDateTime);
@@ -158,7 +148,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
-   * 결제, Paymetn capture
+   * 결제, Payment capture
    */
   private cardPayAndPlaceOrder() {
     this.spinner.show();
