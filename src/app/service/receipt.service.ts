@@ -223,12 +223,12 @@ export class ReceiptService {
         // {{priceFormatHelper price.discount.detail.point.name price.discount.detail.point.amount}}
         // {{priceFormatHelper 'Recash' price.discount.detail.recash.amount}}
         // {{priceFormatHelper '결제금액' price.finalAmount}}
-        let sumAmount = 0;
-        let totalAmount = 0;
-        let amountVAT = 0;
-        let amountWithoutVAT = 0;
-        let totalDiscount = 0;
-        const totalQty = cartInfo.totalUnitCount;
+        let sumAmount = 0; // 합계
+        let totalAmount = 0; // 결제금액
+        let amountVAT = 0; // 부가세
+        let amountWithoutVAT = 0; // 과세 물품
+        let totalDiscount = 0; // 할인금액
+        const totalQty = cartInfo.totalUnitCount; // 상품수량
         // if (cartInfo.totalPriceWithTax && cartInfo.totalTax) { // 과세 물품
         //     amountWithoutVAT = cartInfo.totalPriceWithTax.value - cartInfo.totalTax.value;
         // }
@@ -239,7 +239,7 @@ export class ReceiptService {
             amountVAT = cartInfo.totalTax.value;
         }
         // if (cartInfo.totalPriceWithTax) { // 합계
-        //     totalAmount = cartInfo.totalPriceWithTax.value; // cartInfo.subTotal.value;
+        //     sumAmount = cartInfo.totalPriceWithTax.value; // cartInfo.subTotal.value;
         // }
         if (cartInfo.subTotal) { // 합계
             sumAmount = cartInfo.subTotal.value;
@@ -253,10 +253,11 @@ export class ReceiptService {
         if (cartInfo.totalDiscounts) { // 할인금액
             totalDiscount = cartInfo.totalDiscounts.value;
         }
-        if (totalDiscount > 0) { // 할인금액
-            price.setTotalDiscount = totalDiscount;
+        if (totalDiscount > 0) { // 할인금액 있을 경우만 출력
+            price.setTotalDiscount = totalDiscount; // 할인금액
+            // 할인금액정보 START
             const discount = new Discount();
-            if (order.appliedVouchers) { // 쿠폰
+            if (order.appliedVouchers) { // 1. 쿠폰
                 order.appliedVouchers.forEach(voucher => {
                     if (voucher.appliedValue) {
                         if (voucher.appliedValue.value > 0) {
@@ -265,22 +266,20 @@ export class ReceiptService {
                     }
                 });
             }
-            if (paymentCapture.getPointPaymentInfo) { // 포인트
+            if (paymentCapture.getPointPaymentInfo) { // 2. 포인트
                 const pointinfo = paymentCapture.getPointPaymentInfo;
-                let pointname = '';
-                if (account.accountTypeCode === MemberType.ABO) {
-                    pointname = '포인트차감(A포인트)';
-                } else if (account.accountTypeCode === MemberType.MEMBER) {
+                let pointname = '포인트차감(A포인트)';
+                if (account.accountTypeCode === MemberType.MEMBER) {
                     pointname = '포인트차감(멤버포인트)';
                 }
                 discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
             }
-            // recash
-            if (paymentCapture.getMonetaryPaymentInfo) {
+            if (paymentCapture.getMonetaryPaymentInfo) { // 3. Re-Cash
                 const recash = paymentCapture.getMonetaryPaymentInfo;
                 discount.setRecash = new DiscountInfo('Recash', recash.amount);
             }
             price.setDiscount = discount;
+            // 할인금액정보 END
         }
         // prices - END
 
