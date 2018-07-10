@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } fro
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ModalComponent, ModalService, NicePaymentService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
@@ -15,7 +16,7 @@ import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.con
 import { ICCardCancelResult } from './../../../../core/peripheral/niceterminal/vo/iccard.cancel.result';
 import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
-import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+
 @Component({
   selector: 'pos-ic-card',
   templateUrl: './ic-card.component.html'
