@@ -263,7 +263,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     protected validFromYear: string; // 유효기간 시작 년 필수값 임의설정
     protected xPayResponseData: any; // 안심결제
 
-    public set setCardAcquireCode(cardAcquirerCode: string) {
+    public set setCardAcquirerCode(cardAcquirerCode: string) {
         this.cardAcquirerCode = cardAcquirerCode;
     }
     public set setCardMerchantNumber(cardMerchantNumber: string) {
