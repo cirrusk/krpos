@@ -115,7 +115,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         }
       } else {
         this.spinner.hide();
-        this.popupShortage(this.entryList[existedIdx].product.code, this.entryList[existedIdx].product.name, this.entryList[existedIdx].quantity, 1);
+        this.popupNoProduct(productCode, 'test');
       }
     } catch (e) {
       this.spinner.hide();
@@ -155,7 +155,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         if (!entry.ecpConfirmQty) {
           entry.ecpConfirmQty = 0;
         }
-        // 부족
+        // 수량이 부족할 경우
         if (entry.quantity > entry.ecpConfirmQty) {
           productCode = entry.product.code;
           productName = entry.product.name;
@@ -163,7 +163,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
           errorQty = entry.quantity - entry.ecpConfirmQty;
           errorType = 'S';
           return true;
-          // 초과
+          // 수량이 초과한 경우
         } else if (entry.quantity < entry.ecpConfirmQty) {
           productCode = entry.product.code;
           productName = entry.product.name;
@@ -212,7 +212,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     this.modal.openConfirm(
       {
         title: 'ECP 컨펌',
-        message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량이` +
+        message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량은 ` +
                   `<em class="fc_red">${productQty}</em>개로<br>` +
                   `해당상품이 <em class="fc_red">${exceedQty}</em>개 더 담겼습니다.</p>`,
         actionButtonLabel: '확인',
@@ -248,8 +248,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * 없는 제품을 추가 했을 경우
    * @param productCode
    */
-  popupNoProduct(productCode: string) {
-    const productName = '아이템';
+  popupNoProduct(productCode: string, productName: string) {
     this.modal.openConfirm(
       {
         title: 'ECP 컨펌',

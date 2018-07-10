@@ -64,7 +64,7 @@
                             <li><span>부&nbsp; 가&nbsp; 세</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalTax.value | number }}</em></li>
                             <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPriceWithTax.value | number }}</em></li>
                             <li class="txt_b" *ngIf="orderDetail.orders[0].totalDiscounts.value > 0"><span>할인금액</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>
-                            <li *ngIf="orderDetail.orders[0].totalDiscounts.value > 0"><span>할인 쿠폰(신규 5%)</span><em></em></li>                            
+                            <li *ngIf="paymentCapture.getVoucherPaymentInfo && orderDetail.orders[0].totalDiscounts.value > 0"><span>할인 쿠폰({{paymentCapture.getVoucherPaymentInfo.paymentMode.name}})</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>                            
                             <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPriceWithTax.value | number }}</em></li>
                         </ul>
                         <ul class="list">
