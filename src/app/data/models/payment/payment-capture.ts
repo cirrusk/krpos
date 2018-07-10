@@ -159,9 +159,8 @@ export class PaymentModeData {
 export class AmwayPaymentInfoData {
     protected requesttoken: string;
     protected transactionid: string; // 거래 번호
-    protected transactionCode: string;
     protected referenceNumber: string;
-    amount: number; // 지불금액
+    amount: number; // 지불금액, double
     currency: CurrencyData;
     protected status: string;
     protected comments: string;
@@ -169,6 +168,7 @@ export class AmwayPaymentInfoData {
     protected paymentProvider: string;
     protected saveInAccount: boolean;
     protected alias: string;
+    protected transactionCode: string;
     protected providerInterfaceIdentifier: string;
     protected date: Date;
     paymentInfoLine1: string;
@@ -176,6 +176,12 @@ export class AmwayPaymentInfoData {
     paymentInfoLine3: string;
     paymentInfoLine4: string;
     protected issuer: string; // 은행/카드사 BankInfoModel 은행코드
+    abstractOrderCode: string;
+    paymentStatusCode: string;
+    mainPayment: boolean;
+    statusDetails: string;
+    statusCode: string;
+    referenceItem: string;
     public set setAmount(amount: number) {
         this.amount = amount;
     }
@@ -251,6 +257,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     cardRequestDate: Date;
     ccOwner: string; // 신용 카드 소유자
     number: string; // 카드번호(필수값(카드번호 뒤 4자리))
+    paymentSignature: string; // 5만원 이상 결제 시 sign data
     protected type: string; // 카드 타입 CreditCardType없는 경우 임의설정(필수값)
     protected validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
     protected validFromYear: string; // 유효기간 시작 년 필수값 임의설정
@@ -318,6 +325,12 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     public get getCardRequestDate(): Date {
         return this.cardRequestDate;
+    }
+    public set setPaymentSignature(paymentSignature: string) {
+        this.paymentSignature = paymentSignature;
+    }
+    public get getPaymentSignature(): string {
+        return this.paymentSignature;
     }
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,

@@ -230,7 +230,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * @param paidamount 결제금액
    */
   private makePaymentInfo(paidamount: number): CreditCardPaymentInfo {
-    const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
     const ccard = new CreditCardPaymentInfo(paidamount);
     ccard.setCardNumber = this.cardresult.maskedCardNumber;
     ccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
@@ -248,6 +247,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setTransactionId = this.cardresult.code; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
     // ccard.setValidToMonth = '';
     // ccard.setValidToYear = '';
+    const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
+    if (Utils.isNotEmpty(signdata)) {
+      ccard.setPaymentSignature = signdata;
+    }
     ccard.setPaymentModeData = new PaymentModeData(PaymentModes.CREDITCARD);
     ccard.setCurrencyData = new CurrencyData();
     return ccard;

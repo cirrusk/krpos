@@ -86,7 +86,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
     iccard.setCardCompayCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
     iccard.setCardAcquireCode = this.cardresult.acquireCode; // 매입사 코드
-    // iccard.setCardPassword = '';
     iccard.setInstallmentPlan = '00';
     iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
     iccard.setCardRequestDate = Utils.convertDate(this.cardresult.approvalDateTime);
@@ -97,6 +96,10 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setTransactionId = this.cardresult.code; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
     // iccard.setValidToMonth = '';
     // iccard.setValidToYear = '';
+    const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
+    if (Utils.isNotEmpty(signdata)) {
+      iccard.setPaymentSignature = signdata;
+    }
     iccard.setPaymentModeData = new PaymentModeData(PaymentModes.ICCARD);
     iccard.setCurrencyData = new CurrencyData();
     const paymentcapture = new PaymentCapture();
