@@ -138,7 +138,11 @@ export class ReceiptService {
 
         // macAndCoNum - START
         // 공제번호 : {{orderInfo.macAndCoNum}}
-        orderInfo.setMacAndCoNum = macAndCoNum || '123456789';
+        if (macAndCoNum) {
+            orderInfo.setMacAndCoNum = macAndCoNum;
+        } else {
+            orderInfo.setMacAndCoNum = ''; // order.deductionNumber
+        }
         // macAndCoNum - END
 
         if (cancelFlag === 'Y') {
@@ -149,12 +153,6 @@ export class ReceiptService {
         const productList = Array<any>();
         let totalPV = 0;
         let totalBV = 0;
-        let subTotalPrice = 0;
-        let totalPrice = 0;
-        let totalQty = 0;
-        let totalTax = 0;
-        let totalPriceWithTax = 0;
-        let totalDiscount = 0;
         const strTotalDiscount = null;
         cartInfo.entries.forEach(entry => {
             productList.push({
@@ -225,31 +223,49 @@ export class ReceiptService {
         // {{priceFormatHelper price.discount.detail.point.name price.discount.detail.point.amount}}
         // {{priceFormatHelper 'Recash' price.discount.detail.recash.amount}}
         // {{priceFormatHelper '결제금액' price.finalAmount}}
-        subTotalPrice = cartInfo.subTotal.value;
-        totalPrice = cartInfo.totalPrice.value;
-        totalQty = cartInfo.totalUnitCount;
-        if (cartInfo.totalPriceWithTax) {
-            totalPriceWithTax = cartInfo.totalPriceWithTax.value;
+        let sumAmount = 0;
+        let totalAmount = 0;
+        let amountVAT = 0;
+        let amountWithoutVAT = 0;
+        let totalDiscount = 0;
+        const totalQty = cartInfo.totalUnitCount;
+        // if (cartInfo.totalPriceWithTax && cartInfo.totalTax) { // 과세 물품
+        //     amountWithoutVAT = cartInfo.totalPriceWithTax.value - cartInfo.totalTax.value;
+        // }
+        if (cartInfo.subTotal && cartInfo.totalTax) { // 과세 물품
+            amountWithoutVAT = cartInfo.subTotal.value - cartInfo.totalTax.value;
         }
-        if (cartInfo.totalTax) {
-            totalTax = cartInfo.totalTax.value;
+        if (cartInfo.totalTax) { // 부가세
+            amountVAT = cartInfo.totalTax.value;
         }
-        if (cartInfo.totalDiscounts) {
+        // if (cartInfo.totalPriceWithTax) { // 합계
+        //     totalAmount = cartInfo.totalPriceWithTax.value; // cartInfo.subTotal.value;
+        // }
+        if (cartInfo.subTotal) { // 합계
+            sumAmount = cartInfo.subTotal.value;
+        }
+        if (cartInfo.totalPrice) { // 결제금액
+            totalAmount = cartInfo.totalPrice.value;
+        }
+        //                          상품수량   과세 물품          부가세     합계       결제금액       할인금액         할인금액정보
+        //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
+        const price = new PriceInfo(totalQty, amountWithoutVAT, amountVAT, sumAmount, totalAmount);
+        if (cartInfo.totalDiscounts) { // 할인금액
             totalDiscount = cartInfo.totalDiscounts.value;
         }
-        const price = new PriceInfo(totalQty, totalPriceWithTax, totalTax, subTotalPrice, totalPrice);
-        if (totalDiscount > 0) {
+        if (totalDiscount > 0) { // 할인금액
             price.setTotalDiscount = totalDiscount;
             const discount = new Discount();
-            // 쿠폰
-            if (paymentCapture.getVoucherPaymentInfo) {
-                const coupon = paymentCapture.getVoucherPaymentInfo;
-                if (coupon.amount > 0) {
-                    discount.setCoupon = new DiscountInfo(coupon.getName || '할인쿠폰', coupon.getAmount);
-                }
+            if (order.appliedVouchers) { // 쿠폰
+                order.appliedVouchers.forEach(voucher => {
+                    if (voucher.appliedValue) {
+                        if (voucher.appliedValue.value > 0) {
+                            discount.setCoupon = new DiscountInfo(voucher.name, voucher.appliedValue.value);
+                        }
+                    }
+                });
             }
-            // 포인트
-            if (paymentCapture.getPointPaymentInfo) {
+            if (paymentCapture.getPointPaymentInfo) { // 포인트
                 const pointinfo = paymentCapture.getPointPaymentInfo;
                 let pointname = '';
                 if (account.accountTypeCode === MemberType.ABO) {
