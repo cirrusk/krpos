@@ -10,7 +10,7 @@ import { DirectDebitComponent } from '../ways/direct-debit/direct-debit.componen
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
 import { PointComponent } from '../ways/point/point.component';
 import { CompletePaymentComponent } from '../complete-payment/complete-payment.component';
-import { PaymentService } from '../../../service';
+import { PaymentService, MessageService } from '../../../service';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
 import { InfoBroker } from '../../../broker';
@@ -30,6 +30,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   [5, 'CashComponent', CashComponent],
   [6, 'DirectDebitComponent', DirectDebitComponent],
   [7, 'ReCashComponent', ReCashComponent]];
+  private point: number;
+  private recash: number;
   private paymentModesSubscription: Subscription;
   private paymentSubscription: Subscription;
   private cmplsubscription: Subscription;
@@ -51,6 +53,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private storage: StorageService,
     private logger: Logger,
     private info: InfoBroker,
+    private message: MessageService,
     private renderer: Renderer2) {
     super(modalService);
     this.init();
@@ -62,9 +65,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (this.callerData.paymentCapture) {
       this.paymentcapture = this.callerData.paymentCapture;
     }
-
+    if (this.accountInfo && this.accountInfo.balance) {
+      this.point = this.accountInfo.balance[0].amount;
+      this.recash = this.accountInfo.balance[1].amount;
+    }
     this.logger.set('complex.payment.component', Utils.stringify(this.paymentcapture)).debug();
-
     this.cmplsubscription = this.info.getInfo().subscribe(
       result => {
         if (result !== null && result.type === 'orderClear' && result.data === 'clear') { // 복합결제 완료되면 복합결제 팝업 닫기
@@ -112,6 +117,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    */
   amwayPoint(evt: any) { // point
     // this.setSelected(evt, 2, 'point');
+    if (this.point <= 0) {
+      this.alert.show({ message: this.message.get('no.point', this.accountInfo.parties[0].name) });
+      return;
+    }
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
       this.selectPopup('APointComponent_Cplx', PointComponent, 'a', null);
@@ -124,6 +133,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    */
   memberPoint(evt: any) { // point
     // this.setSelected(evt, 3, 'point');
+    if (this.point <= 0) {
+      this.alert.show({ message: this.message.get('no.point', this.accountInfo.parties[0].name) });
+      return;
+    }
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
       this.selectPopup('MPointComponent_Cplx', PointComponent, 'm', null);
@@ -156,6 +169,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   reCashPayment(evt: any) { // arCredit
+    if (this.recash <= 0) {
+      this.alert.show({ message: this.message.get('no.recash', this.accountInfo.parties[0].name) });
+      return;
+    }
     this.setSelected(evt, 7, 'arCredit');
     if (this.enableMenu.indexOf('arCredit') > -1) {
       this.selectPopup('ReCashComponent_Cplx', ReCashComponent, null, 'arCredit');
