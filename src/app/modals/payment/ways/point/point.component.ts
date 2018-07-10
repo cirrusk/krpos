@@ -22,7 +22,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   pointType: string; // modal component 호출 시 전달 받은 포인트 타입
   pointTypeText: string;
   isAllPay: boolean;
-  balanceamount: number;
+  point: number;
   paymentprice: number;
   change: number;
   checktype: number;
@@ -79,8 +79,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(
       result => {
         this.balance = result;
-        this.balanceamount = this.balance.amount;
-        const changeprice = this.balanceamount - this.paymentprice;
+        this.point = this.balance.amount;
+        const changeprice = this.point - this.paymentprice;
         this.change = (changeprice < 0) ? 0 : changeprice;
       },
       error => { this.spinner.hide(); this.logger.set('point.component', `${error}`).error(); },
@@ -95,7 +95,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
 
   setChange(usepoint) {
     if (usepoint > 0) {
-      this.change = this.balanceamount - usepoint;
+      this.change = this.point - usepoint;
       if (this.paymentType === 'n') {
         this.validationNormal();
       } else {
@@ -107,6 +107,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   checkPay(type: number) {
     this.usePoint.nativeElement.value = '';
     if (type === 0) { // 전체금액
+      this.change = 0;
       setTimeout(() => {
         this.pointPanel.nativeElement.focus(); // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
         this.isAllPay = true;
@@ -132,6 +133,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     } else {
       usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
     }
+    if (this.change < 0) {
+      this.checktype = -4;
+      this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
+      return;
+    }
     const paid = this.paymentprice - usepoint;
     if (paid < 0) { // 포인트가 많음.
       this.checktype = -2;
@@ -147,6 +153,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       usepoint = this.paymentprice;
     } else {
       usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
+    }
+    if (this.change < 0) {
+      this.checktype = -4;
+      this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
+      return;
     }
     const paid = this.paymentprice - usepoint;
     if (paid === 0) {
@@ -175,7 +186,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.apprmessage = this.message.get('point.empty'); // '사용 포인트가 공란입니다.';
       }
     }
-    if (this.balanceamount < usepoint) {
+    if (this.point < usepoint) {
       this.checktype = -4;
       this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
       return;

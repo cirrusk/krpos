@@ -22,7 +22,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   isAllPay: boolean;
   paidamount: number;
   change: number;
-  balance: Balance;
+  recash: Balance;
   checktype: number;
   apprmessage: string;
   private dupcheck = false;
@@ -60,7 +60,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
     }
     this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
-      this.balance = result;
+      this.recash = result;
     });
   }
 
@@ -71,17 +71,29 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   useRecash() {
-    if (this.balance) {
+    if (this.recash) {
       const usecash = this.usePoint.nativeElement.value;
-      this.change = this.balance.amount - usecash;
+      this.change = this.recash.amount - usecash;
+      if (this.change < 0) {
+        this.checktype = -3;
+        this.apprmessage = this.message.get('recash.lack'); // '사용가능한 Re-Cash가 부족합니다.';
+      } else {
+        this.checktype = 0;
+      }
     }
   }
 
   checkPay(type: number) {
     if (type === 0) {
+      this.usePoint.nativeElement.value = this.paidamount;
+      this.change = this.recash.amount - this.paidamount;
+      if (this.change < 0) {
+        this.checktype = -3;
+        this.apprmessage = this.message.get('recash.lack'); // '사용가능한 Re-Cash가 부족합니다.';
+      } else {
+        this.checktype = 0;
+      }
       setTimeout(() => {
-        this.usePoint.nativeElement.value = this.paidamount;
-        this.change = this.balance.amount - this.paidamount;
         this.recashPanel.nativeElement.focus(); // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
       }, 50);
       this.isAllPay = true;
@@ -102,17 +114,26 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     evt.preventDefault();
     const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
     const check = this.paidamount - usepoint;
+    console.log('=====' + this.change);
+    if (this.change < 0) {
+      this.checktype = -3;
+      this.dupcheck = false;
+      this.apprmessage = this.message.get('recash.lack'); // '사용가능한 Re-Cash가 부족합니다.';
+      return;
+    } else {
+      this.checktype = 0;
+    }
     if (this.paymentType === 'n') {
-      this.alertsubscription = this.alert.alertState.subscribe(
-        (state: AlertState) => {
-          if (!state.show) {
-            setTimeout(() => {
-              this.usePoint.nativeElement.focus();
-              this.usePoint.nativeElement.select();
-            }, 50);
-          }
-        }
-      );
+      // this.alertsubscription = this.alert.alertState.subscribe(
+      //   (state: AlertState) => {
+      //     if (!state.show) {
+      //       setTimeout(() => {
+      //         this.usePoint.nativeElement.focus();
+      //         this.usePoint.nativeElement.select();
+      //       }, 50);
+      //     }
+      //   }
+      // );
       // 전체결제금액을 Re-Cash로 적용 후 A포인트에 추가 금액 입력 후, 실물 키보드의 Enter 키가 입력된 경우, 경고 팝업 뜸 (반대 경우도 포함)
       // : 이미 Re-Cash(A포인트)로 전체 결제금액을 사용 중입니다. A포인트(Re-Cash)금액은 제외 됩니다.
       if (check > 0) {
