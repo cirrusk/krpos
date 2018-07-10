@@ -139,12 +139,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     return iccard;
   }
 
-
-
-
-
-
-
   /**
    * 현금 IC카드는 단독결제임.
    */
