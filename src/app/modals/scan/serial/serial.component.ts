@@ -143,7 +143,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       this.checktype = 0;
     }
-this.spinner.show();
+    this.spinner.show();
     const codeTypes = new Array<string>();
     const entryNumbers = new Array<number>();
     const codes = new Array<string>();
@@ -168,16 +168,15 @@ this.spinner.show();
     codes.forEach(c => {
       console.log('*** scan code = ' + c);
     });
-
     // entrynumber, codetype, code 가 배열로 들어갈 수 있도록 처리
-    // this.regsubscription = this.order.serialAndRfid(this.accountInfo.parties[0].uid, this.orderInfo.code, 0, ProductScanTypes.SERIALNUMBER, '').subscribe(
-    //   result => {
-    //     console.log(result);
-    //     this.result = true;
-    //     this.close();
-    //   },
-    //   error => { this.spinner.hide(); },
-    //   () => { this.result = true;  this.spinner.hide(); });
+    this.regsubscription = this.order.serialAndRfid(this.accountInfo.parties[0].uid, this.orderInfo.code, 0, ProductScanTypes.SERIALNUMBER, '123456').subscribe(
+      result => {
+        console.log(result);
+        this.result = true;
+        this.close();
+      },
+      error => { this.result = true; this.spinner.hide(); this.close(); },
+      () => { this.result = true;  this.spinner.hide(); this.close(); });
   }
 
   close() {
@@ -192,7 +191,7 @@ this.spinner.show();
       if (this.finishStatus === StatusDisplay.PAID) {
         if (!this.dupcheck) {
           setTimeout(() => { this.reg(); }, 300);
-            this.dupcheck = true;
+          this.dupcheck = true;
         }
       }
     }

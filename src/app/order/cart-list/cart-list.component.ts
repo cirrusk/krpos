@@ -931,33 +931,33 @@ export class CartListComponent implements OnInit, OnDestroy {
       const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
-          () => {
+        () => {
 
-            if (this.paymentType === 'n') {
+          if (this.paymentType === 'n') {
+            this.init();
+            this.storage.clearClient();
+          } else if (this.paymentType === 'g') {
+            // 아 변수가 많다
+            // 삭제 로직 확인
+            const groupAccountIndex = this.checkGroupUserId(this.groupSelectedCart.volumeABOAccount.uid);
+            if (groupAccountIndex <= 0) {
               this.init();
               this.storage.clearClient();
-            } else if (this.paymentType === 'g') {
-              // 아 변수가 많다
-              // 삭제 로직 확인
-              const groupAccountIndex = this.checkGroupUserId(this.groupSelectedCart.volumeABOAccount.uid);
-              if (groupAccountIndex <= 0) {
-                this.init();
-                this.storage.clearClient();
-              } else {
-                const selectIndex = this.selectedUserIndex - 1;
-                this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
-              }
+            } else {
+              const selectIndex = this.selectedUserIndex - 1;
+              this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
             }
-          },
-          error => {
-            this.spinner.hide();
-            const errdata = Utils.getError(error);
-            if (errdata) {
-              this.alert.error({ message: `${errdata.message}` });
-            }
-          },
-          () => { this.spinner.hide(); }
-        );
+          }
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
     } else {
       if (this.paymentType === 'n') {
         this.init();
@@ -1240,17 +1240,19 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 조회후 account 정보에 balance merge
    */
   private getBalanceInfo() {
-    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
-      result => {
-        if (result && this.accountInfo) {
-          this.balance = result[0].amount;
-          this.recash = result[1].amount;
-          const jsonData = { 'balance': result };
-          Object.assign(this.accountInfo, jsonData);
-          this.storage.setCustomer(this.accountInfo);
+    if (this.accountInfo && this.accountInfo.parties) {
+      this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
+        result => {
+          if (result && this.accountInfo) {
+            this.balance = result[0].amount;
+            this.recash = result[1].amount;
+            const jsonData = { 'balance': result };
+            Object.assign(this.accountInfo, jsonData);
+            this.storage.setCustomer(this.accountInfo);
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   /**

@@ -279,6 +279,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         closeByEscape: false,
         modalId: 'SerialComponent',
         regType: regType
+      }).subscribe(result => {
+        if (result) {
+          this.payFinishByEnter();
+        }
       });
     }
   }
@@ -290,7 +294,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.keyCode === KeyCode.ENTER) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.registerSerialAndRfid();
-        this.payFinishByEnter();
       } else if (this.finishStatus === 'fail') {
         this.info.sendInfo('orderClear', 'clear');
         this.close();
