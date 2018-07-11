@@ -13,7 +13,7 @@
                     <div class="inner">
                         <span class="logo"><img src="/assets/images/common/bill_logo.png" alt="Amway"></span>
                         <ul class="list">
-                            <li><span>주문형태</span><em>{{orderDetail.orders[0].orderType.code}}</em></li>
+                            <li><span>주문형태</span><em>{{orderDetail.orders[0].orderType.label}}</em></li>
                             <li><span>ABO정보</span><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></li>
                             <li><span>구매일자</span><em>{{orderDetail.orders[0].created | date:'yyyy/MM/dd  HH:mm:ss'}}</em></li>
                             <li><span>POS번호</span><em>{{clientId}}</em></li>
@@ -60,12 +60,12 @@
                     <div class="inner">
                         <ul class="list">
                             <li><span>상품수량</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalUnitCount | number }}</em></li>
-                            <li><span>과세물품</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPrice.value | number }}</em></li>
+                            <li><span>과세물품</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].subTotal.value - orderDetail.orders[0].totalTax.value | number }}</em></li>
                             <li><span>부&nbsp; 가&nbsp; 세</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalTax.value | number }}</em></li>
-                            <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPriceWithTax.value | number }}</em></li>
+                            <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].subTotal.value | number }}</em></li>
                             <li class="txt_b" *ngIf="orderDetail.orders[0].totalDiscounts.value > 0"><span>할인금액</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>
                             <li *ngIf="paymentCapture.getVoucherPaymentInfo && orderDetail.orders[0].totalDiscounts.value > 0"><span>할인 쿠폰({{paymentCapture.getVoucherPaymentInfo.paymentMode.name}})</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>                            
-                            <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPriceWithTax.value | number }}</em></li>
+                            <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPrice.value | number }}</em></li>
                         </ul>
                         <ul class="list">
                             <div>

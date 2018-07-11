@@ -1,7 +1,6 @@
 <div class="nav">
     <!-- 선택시 class="on" -->
-    <button #menus type="button" (click)="normalPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">일반결제</button>
-    <button #menus type="button" (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">복합결제</button>
+    <button #menus type="button" (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">통합결제</button>
     <button #menus type="button" (click)="groupPayment($event)">그룹주문</button>
     <button #menus type="button" (click)="pickupOrder($event)">픽업주문</button>
     <button #menus type="button" (click)="cancelOrder($event)" [class.disabled]="!hasAccount">주문취소</button>
