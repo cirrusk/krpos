@@ -254,7 +254,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     cardAcquirerCode: string;
     cardApprovalNumber: string;
     cardMerchantNumber: string;
-    cardRequestDate: Date;
+    cardRequestDate: string; // Date; // 기존에 Date 형이었으나 Hybris 존송 시 ConvertException 발생으로 문자열로 바꿈.
     ccOwner: string; // 신용 카드 소유자
     number: string; // 카드번호(필수값(카드번호 뒤 4자리))
     paymentSignature: string; // 5만원 이상 결제 시 sign data
@@ -320,10 +320,10 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     public get getCardApprovalNumber(): string {
         return this.cardApprovalNumber;
     }
-    public set setCardRequestDate(cardRequestDate: Date) {
+    public set setCardRequestDate(cardRequestDate: string) { // Hybris에 맞는 포맷으로 전송위해 string 변환
         this.cardRequestDate = cardRequestDate;
     }
-    public get getCardRequestDate(): Date {
+    public get getCardRequestDate(): string {
         return this.cardRequestDate;
     }
     public set setPaymentSignature(paymentSignature: string) {

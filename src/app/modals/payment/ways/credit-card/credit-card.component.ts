@@ -244,7 +244,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setCardPassword = this.cardpassword.nativeElement.value;
     ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
     ccard.setCardApprovalNumber = this.cardresult.approvalNumber;
-    ccard.setCardRequestDate = null; // Utils.convertDate(this.cardresult.approvalDateTime);
+    ccard.setCardRequestDate = Utils.convertDateStringForHybris(this.cardresult.approvalDateTime); // Utils.convertDate(this.cardresult.approvalDateTime);
     ccard.setNumber = this.cardresult.maskedCardNumber;
     ccard.setMemberType = CCMemberType.PERSONAL;
     ccard.setPaymentType = CCPaymentType.GENERAL;

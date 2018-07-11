@@ -123,7 +123,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
     iccard.setInstallmentPlan = '00';
     iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
-    iccard.cardRequestDate = null; // Utils.convertDate(this.cardresult.approvalDateTime);
+    iccard.setCardRequestDate = Utils.convertDateStringForHybris(this.cardresult.approvalDateTime); // Utils.convertDate(this.cardresult.approvalDateTime);
     iccard.setNumber = this.cardresult.iccardSerialNumber;
     iccard.setMemberType = CCMemberType.PERSONAL;
     iccard.setPaymentType = CCPaymentType.GENERAL;
