@@ -236,19 +236,19 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 한글이나 특수문자 제거
    */
   private checkChar() {
-    const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
-    const engExp: RegExp = new RegExp(/[a-z]/gi);
-    const numExp: RegExp = new RegExp(/[0-9]/g);
-    const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
-    this.searchValid.valueChanges
-      .debounceTime(50)
-      .subscribe(v => {
-        if (v) {
-          if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
-            this.searchText.nativeElement.value = v.replace(numEngDelExp, '');
-          }
-        }
-      });
+    // const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
+    // const engExp: RegExp = new RegExp(/[a-z]/gi);
+    // const numExp: RegExp = new RegExp(/[0-9]/g);
+    // const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
+    // this.searchValid.valueChanges
+    //   .debounceTime(50)
+    //   .subscribe(v => {
+    //     if (v) {
+    //       if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
+    //         this.searchText.nativeElement.value = v.replace(numEngDelExp, '');
+    //       }
+    //     }
+    //   });
   }
 
   setType(data) {
@@ -256,6 +256,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.apprtype = data.type;
     }
   }
+
   /**
    * 변수 초기화
    */
@@ -354,7 +355,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     ).subscribe(result => {
       if (result) {
         if (this.paymentType === '') {
-          this.paymentType = 'n';
+          this.paymentType = 'c';
         }
         this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
       }
@@ -578,7 +579,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           const accountsize = result.accounts.length;
           if (accountsize === 1) {
             if (this.paymentType === '') {
-              this.paymentType = 'n';
+              this.paymentType = 'c';
             }
             this.getAccountAndSaveCart(result.accounts[0]);
           } else {

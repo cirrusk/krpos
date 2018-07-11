@@ -81,7 +81,7 @@
       <!-- 회원정보 -->
       <div class="member_info">
           <div class="info_top">
-              <ng-container *ngIf="paymentType == 'n' || paymentType == ''">
+              <ng-container *ngIf="paymentType == 'c' || paymentType == ''">
                   <!-- 비회원시 삭제1 -->
                   <em *ngIf="accountInfo;">
                       {{accountInfo.accountTypeCode.toUpperCase() === memberType.CONSUMER ? accountInfo.parties[0].name : accountInfo.name}} 회원님
