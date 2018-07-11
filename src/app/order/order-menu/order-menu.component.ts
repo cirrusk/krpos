@@ -85,33 +85,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 일반 결제 팝업
-   *
-   * @param evt
-   */
-  normalPayment(evt: any) {
-    if (!this.hasAccount || !this.hasProduct) { return; }
-    this.checkClass(evt);
-    this.posMenu.emit({ type: '일반결제' });
-    this.storage.setLocalItem('apprtype', 'n');
-    if (this.paymentType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
-    this.modal.openModalByComponent(NormalPaymentComponent,
-      {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
-        closeByClickOutside: false,
-        modalId: 'NormalPaymentComponent'
-      }
-    );
-  }
-
-  /**
-   * 복합 결제 팝업
+   * 통합 결제 팝업
    * @param evt
    */
   complexPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
-    this.posMenu.emit({ type: '복합결제' });
+    this.posMenu.emit({ type: '통합결제' });
     this.storage.setLocalItem('apprtype', 'c');
     if (this.paymentType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
