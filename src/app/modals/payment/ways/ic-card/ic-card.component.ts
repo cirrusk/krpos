@@ -212,12 +212,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.cardnumber = res.maskedCardNumber;
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
-          // this.paidDate = Utils.convertDate(res.approvalDateTime);
-          if (!res.approvalDateTime.startsWith('20') && res.approvalDateTime.length === 12) {
-            this.paidDate = Utils.convertDate('20' + res.approvalDateTime);
-          } else {
-            this.paidDate = Utils.convertDate(res.approvalDateTime);
-          }
+          this.paidDate = Utils.convertDate(res.approvalDateTime);
           const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
