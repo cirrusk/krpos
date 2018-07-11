@@ -43,3 +43,13 @@ export class PromotionPremiumItem {
     targetPV: number; // double
     targetBV: number; // double
 }
+
+export class PromotionDiscount {
+    promotionCode: string;
+    promotionDescription: string;
+    quantity: number;
+    discount: number; // BigDecimal
+    entryNumber: number;
+    freeGift: boolean;
+    taxDiscount: number; // BigDecimal
+}

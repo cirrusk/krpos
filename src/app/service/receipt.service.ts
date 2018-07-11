@@ -141,7 +141,11 @@ export class ReceiptService {
         if (macAndCoNum) {
             orderInfo.setMacAndCoNum = macAndCoNum;
         } else {
-            orderInfo.setMacAndCoNum = ''; // order.deductionNumber 없을 경우 --> 공제조합홈페이지 확인
+            if (order.deductionNumber) { // order.deductionNumber
+                orderInfo.setMacAndCoNum = Utils.isEmpty(order.deductionNumber) ? '공제조합홈페이지 확인' : order.deductionNumber;
+            } else {
+                orderInfo.setMacAndCoNum = '공제조합홈페이지 확인';
+            }
         }
         // macAndCoNum - END
 

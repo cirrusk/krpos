@@ -1,6 +1,7 @@
 import { PointOfService } from './point-of-service';
 
 export class TerminalInfo {
+    printer: Array<Printer>;
     id: string;
     location: string;
     pointOfService: PointOfService;
@@ -9,4 +10,10 @@ export class TerminalInfo {
         const t = Object.create(TerminalInfo.prototype);
         return Object.assign(t, json);
     }
+}
+
+export class Printer {
+    model: string;
+    description: string;
+    printerType: string;
 }
