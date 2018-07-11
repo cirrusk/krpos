@@ -2,7 +2,7 @@ import { StatusDisplay } from './../../../data/models/payment/payment.enum';
 import { Component, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, SpinnerService } from '../../../core';
+import { ModalComponent, ModalService, SpinnerService, Logger } from '../../../core';
 import { OrderService } from '../../../service';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
@@ -27,7 +27,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   serialRfidList: Array<SerialRfid>;
   private regsubscription: Subscription;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
-  constructor(protected modalService: ModalService, private order: OrderService, private spinner: SpinnerService) {
+  constructor(protected modalService: ModalService, private order: OrderService,
+    private spinner: SpinnerService, private logger: Logger) {
     super(modalService);
     this.serialRfidList = new Array<SerialRfid>();
     this.finishStatus = null;
@@ -173,10 +174,9 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       result => {
         console.log(result);
         this.result = true;
-        this.close();
       },
-      error => { this.result = true; this.spinner.hide(); this.close(); },
-      () => { this.result = true;  this.spinner.hide(); this.close(); });
+      error => { this.result = true; this.spinner.hide(); this.logger.set('serial.component', `${error}`).error(); },
+      () => { this.result = true; this.spinner.hide(); this.close(); }); // 주의) close를 여러번 하면 subscribe가 여러번 발생!
   }
 
   close() {

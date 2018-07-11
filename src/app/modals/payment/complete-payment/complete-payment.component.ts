@@ -285,6 +285,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.payFinishByEnter();
         }
       });
+    } else {
+      this.payFinishByEnter();
     }
   }
 
@@ -293,19 +295,22 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.registerSerialAndRfid();
-      } else if (this.finishStatus === 'fail') {
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
-      } else if (this.finishStatus === 'recart') {
-        this.info.sendInfo('recart', this.orderInfo);
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
-      } else {
-        if (!this.dupcheck) {
-          setTimeout(() => { this.pay(event); }, 300);
-          this.dupcheck = true;
+      const modalid = this.storage.getLatestModalId();
+      if (modalid !== 'SerialComponent') {
+        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          this.registerSerialAndRfid();
+        } else if (this.finishStatus === 'fail') {
+          this.info.sendInfo('orderClear', 'clear');
+          this.close();
+        } else if (this.finishStatus === 'recart') {
+          this.info.sendInfo('recart', this.orderInfo);
+          this.info.sendInfo('orderClear', 'clear');
+          this.close();
+        } else {
+          if (!this.dupcheck) {
+            setTimeout(() => { this.pay(event); }, 300);
+            this.dupcheck = true;
+          }
         }
       }
     }
