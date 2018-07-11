@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+
 import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
@@ -8,14 +10,21 @@ import {
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
 import { Utils } from '../core/utils';
+import { PaymentService } from './payment/payment.service';
 
 @Injectable()
-export class ReceiptService {
+export class ReceiptService implements OnDestroy {
 
+    private paymentsubscription: Subscription;
     constructor(private receitDataProvider: ReceiptDataProvider,
+        private payment: PaymentService,
         private printer: PrinterService,
         private storage: StorageService,
         private logger: Logger) { }
+
+    ngOnDestroy() {
+        if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    }
 
     public aboNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.ABONormal);
@@ -110,17 +119,43 @@ export class ReceiptService {
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string, type?: string, macAndCoNum?: string): boolean {
         let rtn = true;
+        // 현재 포인트를 조회 후에 프린트 정보 설정
+        this.paymentsubscription = this.payment.getBalance(account.parties[0].uid).subscribe(
+            result => {
+                const printInfo = {
+                    order: order, account: account, cartInfo: cartInfo, type: type,
+                    macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
+                    paymentCapture: paymentCapture, point: result.amount ? result.amount : 0
+                };
+                rtn = this.makeTextAndPrint(printInfo);
+            },
+            error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+                this.logger.set('receipt.service', `${error}`).error();
+                const printInfo = {
+                    order: order, account: account, cartInfo: cartInfo, type: type,
+                    macAndCoNum: macAndCoNum, cancelFlag: cancelFlag, paymentCapture: paymentCapture, point: 0
+                };
+                rtn = this.makeTextAndPrint(printInfo);
+            });
+        return rtn;
+    }
+
+    private makeTextAndPrint(printInfo: any): boolean {
+        let rtn = true;
+        // 영수증 출력 파라미터 설정 - START
+        const order: Order = printInfo.order;
+        const account: Accounts = printInfo.account;
+        const cartInfo: Cart = printInfo.cartInfo;
+        const type: string = printInfo.type;
+        const macAndCoNum: string = printInfo.macAndCoNum;
+        const cancelFlag: string = printInfo.cancelFlag;
+        const paymentCapture: PaymentCapture = printInfo.paymentCapture;
+        const pointValue: number = printInfo.point;
         const posId = this.storage.getTerminalInfo().id;
         const token = this.storage.getTokenInfo();
+        // 영수증 출력 파라미터 설정 - END
 
         // orderSummery - START
-        // 주문형태: {{orderInfo.type}}
-        // ABO정보: {{orderInfo.account.abo.id}} {{orderInfo.account.abo.name}}
-        // 구매자정보: {{orderInfo.account.member.id}} {{orderInfo.account.member.name}}
-        // 구매일자: {{orderInfo.date}}
-        // POS번호: {{orderInfo.posId}}
-        // 캐셔정보: {{orderInfo.cashier.firstName}}
-        // 주문번호: {{orderInfo.number}}
         const orderInfo = new OrderInfo(posId, order.code);
         orderInfo.setCashier = new Cashier(token.employeeId, token.employeeName);
         if (account.accountTypeCode === MemberType.ABO) {
@@ -137,7 +172,6 @@ export class ReceiptService {
         // orderSummary - END
 
         // macAndCoNum - START
-        // 공제번호 : {{orderInfo.macAndCoNum}}
         if (macAndCoNum) {
             orderInfo.setMacAndCoNum = macAndCoNum;
         } else {
@@ -149,15 +183,14 @@ export class ReceiptService {
         }
         // macAndCoNum - END
 
+        // 영수증 취소 플래그 - START
         if (cancelFlag === 'Y') {
             orderInfo.setCancelFlag = cancelFlag;
         }
+        // 영수증 취소 플래그 - END
 
         // productList - START
         const productList = Array<any>();
-        let totalPV = 0;
-        let totalBV = 0;
-        const strTotalDiscount = null;
         cartInfo.entries.forEach(entry => {
             productList.push({
                 'idx': (entry.entryNumber + 1).toString(),
@@ -174,21 +207,29 @@ export class ReceiptService {
         // productList - END
 
         // bonus - START
-        // {{bonusDataHelper 'PV:' bonus.ordering.PV 'BV:' bonus.ordering.BV}}
-        // {{bonusDataHelper 'PV SUM:' bonus.sum.PV 'BV SUM:' bonus.sum.BV}}
-        // {{bonusDataHelper 'GROUP PV:' bonus.group.PV 'GROUP BV:' bonus.group.BV}}
-        // 잔여 A 포인트 : {{aPoint}}
-        // 잔여 Member 포인트 : {{memberPoint}}
-        if (cartInfo.totalPrice && cartInfo.totalPrice.amwayValue) {
-            totalPV = cartInfo.totalPrice.amwayValue.pointValue;
-            totalBV = cartInfo.totalPrice.amwayValue.businessVolume;
-        }
+        let totalPV = 0;
+        let totalBV = 0;
+        let sumPV = 0;
+        let sumBV = 0;
+        let groupPV = 0;
+        let groupBV = 0;
         const bonus = new BonusInfo();
-        bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
-
-        bonus.setSum = new Bonus(String(totalPV), String(totalBV));
-        bonus.setGroup = new Bonus('그룹 PV합', '그룹 BV합');
-        const point = 0;
+        if (cartInfo.totalPrice && cartInfo.totalPrice.amwayValue) { // 장바구니 PV BV
+            totalPV = cartInfo.totalPrice.amwayValue.pointValue ? cartInfo.totalPrice.amwayValue.pointValue : 0;
+            totalBV = cartInfo.totalPrice.amwayValue.businessVolume ? cartInfo.totalPrice.amwayValue.businessVolume : 0;
+            bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
+        }
+        if (cartInfo.account) { // 합계 PV BV
+            sumPV = cartInfo.account.totalPV ? cartInfo.account.totalPV : 0;
+            sumBV = cartInfo.account.totalBV ? cartInfo.account.totalBV : 0;
+            bonus.setSum = new Bonus(String(sumPV), String(sumBV));
+        }
+        if (cartInfo.volumeABOAccount) { // 그룹 PV BV
+            groupPV = cartInfo.volumeABOAccount.totalPV ? cartInfo.volumeABOAccount.totalPV : 0;
+            groupBV = cartInfo.volumeABOAccount.totalBV ? cartInfo.volumeABOAccount.totalBV : 0;
+            bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
+        }
+        const point = pointValue ? pointValue : 0; // 포인트
         if (account.accountTypeCode === MemberType.ABO) {
             bonus.setAPoint = point <= 0 ? '' : String(point);
         } else if (account.accountTypeCode === MemberType.MEMBER) {
@@ -197,13 +238,6 @@ export class ReceiptService {
         // bonus - END
 
         // payments - START
-        // [현금결제] {{priceLocaleHelper payments.cash.amount}}
-        // 받은금액 {{priceLocaleHelper payments.cash.detail.received}}
-        // 거스름돈 {{priceLocaleHelper payments.cash.detail.changes}}
-        // payments.cash.cashreceipt
-        // [신용카드결제] {{priceLocaleHelper payments.creditcard.amount}}
-        // 카드번호: {{payments.creditcard.detail.cardnumber}}
-        // 할부: {{payments.creditcard.detail.installment}} (승인번호: {{payments.creditcard.detail.authNumber}})
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) {
             const ccpinfo = paymentCapture.getCcPaymentInfo;
@@ -218,44 +252,37 @@ export class ReceiptService {
         // payments - END
 
         // prices - START
-        // {{priceFormatHelper '상품수량' price.totalQty}}
-        // {{priceFormatHelper '과세 물품' price.amountWithoutVAT}}
-        // {{priceFormatHelper '부 가 세' price.amountVAT}}
-        // {{priceFormatHelper '합 계' price.totalAmount}}
-        // {{priceFormatHelper '할인금액' price.discount.total}}
-        // {{priceFormatHelper price.discount.detail.coupon.name price.discount.detail.coupon.amount}}
-        // {{priceFormatHelper price.discount.detail.point.name price.discount.detail.point.amount}}
-        // {{priceFormatHelper 'Recash' price.discount.detail.recash.amount}}
-        // {{priceFormatHelper '결제금액' price.finalAmount}}
         let sumAmount = 0; // 합계
         let totalAmount = 0; // 결제금액
         let amountVAT = 0; // 부가세
         let amountWithoutVAT = 0; // 과세 물품
         let totalDiscount = 0; // 할인금액
+        const taxValue = cartInfo.totalTax.value ? cartInfo.totalTax.value : 0;
+        const subTotalPrice = cartInfo.subTotal.value ? cartInfo.subTotal.value : 0;
         const totalQty = cartInfo.totalUnitCount; // 상품수량
         // if (cartInfo.totalPriceWithTax && cartInfo.totalTax) { // 과세 물품
         //     amountWithoutVAT = cartInfo.totalPriceWithTax.value - cartInfo.totalTax.value;
         // }
         if (cartInfo.subTotal && cartInfo.totalTax) { // 과세 물품
-            amountWithoutVAT = cartInfo.subTotal.value - cartInfo.totalTax.value;
+            amountWithoutVAT = subTotalPrice - taxValue;
         }
         if (cartInfo.totalTax) { // 부가세
-            amountVAT = cartInfo.totalTax.value;
+            amountVAT = taxValue;
         }
         // if (cartInfo.totalPriceWithTax) { // 합계
-        //     sumAmount = cartInfo.totalPriceWithTax.value; // cartInfo.subTotal.value;
+        //     sumAmount = cartInfo.totalPriceWithTax.value; // subTotalPrice;
         // }
         if (cartInfo.subTotal) { // 합계
-            sumAmount = cartInfo.subTotal.value;
+            sumAmount = subTotalPrice;
         }
         if (cartInfo.totalPrice) { // 결제금액
-            totalAmount = cartInfo.totalPrice.value;
+            totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;
         }
         //                          상품수량   과세 물품          부가세     합계       결제금액       할인금액         할인금액정보
         //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
         const price = new PriceInfo(totalQty, amountWithoutVAT, amountVAT, sumAmount, totalAmount);
         if (cartInfo.totalDiscounts) { // 할인금액
-            totalDiscount = cartInfo.totalDiscounts.value;
+            totalDiscount = cartInfo.totalDiscounts.value ? cartInfo.totalDiscounts.value : 0;
         }
         if (totalDiscount > 0) { // 할인금액 있을 경우만 출력
             price.setTotalDiscount = totalDiscount; // 할인금액
@@ -306,12 +333,14 @@ export class ReceiptService {
         }
         // 최종 영수증 데이터 구성 - END
 
+        // 영수증 출력 - START
         try {
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();
             rtn = false;
         }
+        // 영수증 출력 - END
         return rtn;
     }
 }

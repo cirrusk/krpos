@@ -13,7 +13,7 @@
     {{/if}}
     <bold>
         <text-line>
-            {{priceFormatHelper '합 계' price.totalAmount orderInfo.cancelFlag}}
+            {{priceFormatHelper '합 계' price.sumAmount orderInfo.cancelFlag}}
         </text-line>
         {{#if price.totalDiscount}}
         <text-line>
@@ -34,7 +34,7 @@
             {{/if}}
         {{/if}}
         <text-line>
-            {{priceFormatHelper '결제금액' price.finalAmount orderInfo.cancelFlag}}
+            {{priceFormatHelper '결제금액' price.totalAmount orderInfo.cancelFlag}}
         </text-line>
     </bold>
 </document>
