@@ -116,19 +116,19 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
    */
   private makePaymentInfo(paidamount: number): ICCardPaymentInfo {
     const iccard = new ICCardPaymentInfo(paidamount);
-    iccard.setCardNumber = this.cardresult.maskedCardNumber;
+    iccard.setCardNumber = this.cardresult.iccardSerialNumber;
     iccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
     iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
     iccard.setCardCompayCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
     iccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
     iccard.setInstallmentPlan = '00';
     iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
-    iccard.setCardRequestDate = Utils.convertDate(this.cardresult.approvalDateTime);
-    iccard.setNumber = this.cardresult.maskedCardNumber;
+    iccard.cardRequestDate = null; // Utils.convertDate(this.cardresult.approvalDateTime);
+    iccard.setNumber = this.cardresult.iccardSerialNumber;
     iccard.setMemberType = CCMemberType.PERSONAL;
     iccard.setPaymentType = CCPaymentType.GENERAL;
     iccard.setCardType = PaymentModes.ICCARD;
-    iccard.setTransactionId = this.cardresult.code; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    iccard.setTransactionId = this.cardresult.trxNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
     // ccard.setValidToMonth = '';
     // ccard.setValidToYear = '';
     const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
@@ -154,31 +154,42 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.spinner.show();
     const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.paidamount));
     this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
-    resultNotifier.subscribe((res: ICCardApprovalResult) => {
-      this.cardresult = res;
-      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        this.spinner.hide();
-        this.finishStatus = 'fail';
-        this.apprmessage = res.msg;
-      } else {
-        if (res.approved) {
-          this.checktype = 0;
-          this.cardnumber = res.maskedCardNumber;
-          this.cardcompany = res.issuerName;
-          this.cardauthnumber = res.approvalNumber;
-          this.paidDate = Utils.convertDate(res.approvalDateTime);
-          const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
-          this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
-          this.result = this.paymentcapture;
-          this.completePayPopup(this.paidamount, this.paidamount, 0);
-          this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-        } else {
-          this.finishStatus = 'fail';
+    resultNotifier.subscribe(
+      (res: ICCardApprovalResult) => {
+        this.cardresult = res;
+        if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
           this.spinner.hide();
-          this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
+          this.finishStatus = 'retry';
+          this.apprmessage = res.msg;
+          this.dupcheck = false;
+        } else {
+          if (res.approved) {
+            this.checktype = 0;
+            this.finishStatus = StatusDisplay.PAID;
+            this.cardnumber = res.maskedCardNumber;
+            this.cardcompany = res.issuerName;
+            this.cardauthnumber = res.approvalNumber;
+            this.paidDate = Utils.convertDate(res.approvalDateTime);
+            const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
+            this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
+            this.result = this.paymentcapture;
+            this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
+            // this.completePayPopup(this.paidamount, this.paidamount, 0);
+            this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
+            this.spinner.hide();
+          } else {
+            this.finishStatus = 'fail';
+            this.spinner.hide();
+            this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
+          }
         }
-      }
-    });
+      },
+      error => {
+        this.logger.set('ic.card.component', `${error}`).error();
+        this.spinner.hide();
+        this.storage.removePaymentModeCode();
+      },
+      () => { this.spinner.hide(); });
   }
 
   /**
@@ -192,15 +203,21 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
         this.spinner.hide();
-        this.finishStatus = 'fail';
+        this.finishStatus = 'retry';
         this.apprmessage = res.msg;
+        this.dupcheck = false;
       } else {
         if (res.approved) {
           this.checktype = 0;
           this.cardnumber = res.maskedCardNumber;
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
-          this.paidDate = Utils.convertDate(res.approvalDateTime);
+          // this.paidDate = Utils.convertDate(res.approvalDateTime);
+          if (!res.approvalDateTime.startsWith('20') && res.approvalDateTime.length === 12) {
+            this.paidDate = Utils.convertDate('20' + res.approvalDateTime);
+          } else {
+            this.paidDate = Utils.convertDate(res.approvalDateTime);
+          }
           const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -305,12 +322,14 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
         this.info.sendInfo('orderClear', 'clear');
         this.close();
+      } else {
+        this.completePayPopup(this.paidamount, this.paidamount, 0);
       }
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');
+      this.close();
     }
-    this.close();
   }
 
   @HostListener('document:keydown', ['$event'])

@@ -240,7 +240,7 @@ export /* default */ class Utils {
     // window.open('', '_self').close();
     // location.href = 'http://closekiosk';
     // location.href = 'http://exitkiosk';
-    try { location.href = '/closekiosk'; } catch (e) {}
+    try { location.href = '/closekiosk'; } catch (e) { }
   }
 
   /**
@@ -268,13 +268,26 @@ export /* default */ class Utils {
    * @param text 문자열 날짜
    */
   public static convertDate(text: string): Date {
-    // "dateOfBatchClosed": "2018-03-11T16:04:35+0000",
-    const df = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
-    if (df.test(text)) {
-      return new Date(text);
+    if (this.isNotEmpty(text) && text.length === 12) {
+      const y = Number(text.substring(0, 2));
+      const m = Number(text.substring(2, 4)) - 1;
+      const d = Number(text.substring(4, 6));
+      const h = Number(text.substring(6, 8));
+      const n = Number(text.substring(8, 10));
+      const s = Number(text.substring(10, 12));
+      return new Date('20' + y + '-' + m + '-' + d + ' ' + h + ':' + n + ':' + s);
+    } else if (this.isNotEmpty(text) && text.length === 14) {
+      const y = Number(text.substring(0, 4));
+      const m = Number(text.substring(4, 6)) - 1;
+      const d = Number(text.substring(6, 8));
+      const h = Number(text.substring(8, 10));
+      const n = Number(text.substring(10, 12));
+      const s = Number(text.substring(12, 14));
+      return new Date(y, m, d, h, n, s, 0);
     }
     return null;
   }
+
 
   /**
    * Date 형 날짜를 문자형으로 변환

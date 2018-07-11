@@ -183,6 +183,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('complete.payment.component', `${errdata.message}`).error();
+          this.apprmessage = errdata.message;
         }
       }, () => { this.spinner.hide(); });
   }

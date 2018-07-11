@@ -244,7 +244,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setCardPassword = this.cardpassword.nativeElement.value;
     ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
     ccard.setCardApprovalNumber = this.cardresult.approvalNumber;
-    ccard.setCardRequestDate = Utils.convertDate(this.cardresult.approvalDateTime);
+    ccard.setCardRequestDate = null; // Utils.convertDate(this.cardresult.approvalDateTime);
     ccard.setNumber = this.cardresult.maskedCardNumber;
     ccard.setMemberType = CCMemberType.PERSONAL;
     ccard.setPaymentType = CCPaymentType.GENERAL;
@@ -316,7 +316,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
               if (this.change === 0) { // 더이상 결제할 금액이 없으므로 완료처리함.
                 this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
-                this.completePayPopup(paidprice, this.paidamount, this.change);
+                // this.completePayPopup(paidprice, this.paidamount, this.change);
               } else {
                 this.apprmessage = this.message.get('card.payment.success.next'); // '카드결제 승인이 완료되었습니다.';
               }
@@ -361,7 +361,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.cardnumber = res.maskedCardNumber;
           this.cardcompany = res.issuerName;
           this.cardauthnumber = res.approvalNumber;
-          this.paidDate = Utils.convertDate(res.approvalDateTime);
+          // this.paidDate = Utils.convertDate(res.approvalDateTime);
+          if (!res.approvalDateTime.startsWith('20') && res.approvalDateTime.length === 12) {
+            this.paidDate = Utils.convertDate('20' + res.approvalDateTime);
+          } else {
+            this.paidDate = Utils.convertDate(res.approvalDateTime);
+          }
           const capturepaymentinfo = this.makePaymentCaptureData(paidprice);
           this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
           this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -479,13 +484,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       } else { // 복합결제
         const change = this.paidamount - this.paid.nativeElement.value;
         if (change === 0) {
-          this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          this.logger.set('credit.card.component', '복합 결제 장바구니 초기화...').debug();
-          this.info.sendInfo('orderClear', 'clear');
+          const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
+          this.completePayPopup(paidprice, this.paidamount, this.change);
+          // this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+          // this.logger.set('credit.card.component', '복합 결제 장바구니 초기화...').debug();
+          // this.info.sendInfo('orderClear', 'clear');
         } else {
           this.result = this.paymentcapture;
+          this.close();
         }
-        this.close();
       }
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
