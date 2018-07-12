@@ -239,7 +239,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setCardNumber = this.cardresult.maskedCardNumber;
     ccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
     ccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
-    ccard.setCardCompayCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
+    ccard.setCardCompanyCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
     ccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
     ccard.setCardPassword = this.cardpassword.nativeElement.value;
     ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';

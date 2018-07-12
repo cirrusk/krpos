@@ -281,7 +281,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     public set setPaymentType(paymentType: string) {
         this.paymentType = paymentType || CCPaymentType.GENERAL;
     }
-    public set setCardCompayCode(cardCompanyCode: string) {
+    public set setCardCompanyCode(cardCompanyCode: string) {
         this.cardCompanyCode = cardCompanyCode;
     }
     public set setInstallmentPlan(installmentPlan: string) {
