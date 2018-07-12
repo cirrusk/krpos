@@ -24,12 +24,10 @@
                         <caption>쿠폰 내역</caption>
                         <colgroup>
                             <col>
-                            <col style="width:130px">
                             <col style="width:180px">
                         </colgroup>
                         <thead>
                             <tr>
-                                <th scope="col">프로모션</th>
                                 <th scope="col">쿠폰명</th>
                                 <th scope="col">쿠폰 번호</th>
                             </tr>
@@ -38,10 +36,7 @@
                             <!-- 내역 선택시 tr에 on클래스 추가 -->
                             <tr [class.on]="activeNum === i" *ngFor="let coupon of couponlist; let i = index" (click)="activeRow(i, coupon)">
                                 <td class="tit">
-                                    <span class="elips mx420">{{coupon?.description}}</span>
-                                </td>
-                                <td>
-                                    <span>{{coupon?.name}}</span>
+                                    <span class="elips mx420">{{coupon?.name}}</span>
                                 </td>
                                 <td>
                                     <span>{{coupon?.couponCode}}</span>
