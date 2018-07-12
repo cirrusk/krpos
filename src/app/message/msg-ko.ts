@@ -45,6 +45,9 @@ export const LANG_KO_MSGS = {
     'noresult.coupon': '쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.',
     'not.choose.payment': '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.',
     'no.point': '{0}님의 포인트가 없습니다.<br>다른 결제수단을 선택해주세요.',
-    'no.recash': '{0}님의 Re-Cash가 없습니다.<br>다른 결제수단을 선택해주세요.'
-
+    'no.recash': '{0}님의 Re-Cash가 없습니다.<br>다른 결제수단을 선택해주세요.',
+    'default.order.type': '현장구매',
+    'deduction.msg': '공제조합홈페이지 확인',
+    'receipt.apoint.label': '포인트차감(A포인트)',
+    'receipt.mpoint.label': '포인트차감(멤버포인트)',
 };

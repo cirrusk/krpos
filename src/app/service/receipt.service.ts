@@ -11,7 +11,7 @@ import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
 import { Utils } from '../core/utils';
 import { PaymentService } from './payment/payment.service';
-
+import { MessageService } from '../message/message.service';
 @Injectable()
 export class ReceiptService implements OnDestroy {
 
@@ -20,6 +20,7 @@ export class ReceiptService implements OnDestroy {
         private payment: PaymentService,
         private printer: PrinterService,
         private storage: StorageService,
+        private message: MessageService,
         private logger: Logger) { }
 
     ngOnDestroy() {
@@ -167,7 +168,7 @@ export class ReceiptService implements OnDestroy {
             member.setAbo = new AccountInfo(cartInfo.user.uid, cartInfo.user.name);
             orderInfo.setAccount = member;
         }
-        orderInfo.setType = type || '현장구매';
+        orderInfo.setType = type || this.message.get('default.order.type'); // '현장구매';
         orderInfo.setDate = Utils.convertDateToString(new Date());
         // orderSummary - END
 
@@ -176,9 +177,9 @@ export class ReceiptService implements OnDestroy {
             orderInfo.setMacAndCoNum = macAndCoNum;
         } else {
             if (order.deductionNumber) { // order.deductionNumber
-                orderInfo.setMacAndCoNum = Utils.isEmpty(order.deductionNumber) ? '공제조합홈페이지 확인' : order.deductionNumber;
+                orderInfo.setMacAndCoNum = Utils.isEmpty(order.deductionNumber) ? this.message.get('deduction.msg') : order.deductionNumber;
             } else {
-                orderInfo.setMacAndCoNum = '공제조합홈페이지 확인';
+                orderInfo.setMacAndCoNum = this.message.get('deduction.msg'); // '공제조합홈페이지 확인';
             }
         }
         // macAndCoNum - END
@@ -305,9 +306,9 @@ export class ReceiptService implements OnDestroy {
             }
             if (paymentCapture.getPointPaymentInfo) { // 2. 포인트
                 const pointinfo = paymentCapture.getPointPaymentInfo;
-                let pointname = '포인트차감(A포인트)';
+                let pointname = this.message.get('receipt.apoint.label'); // '포인트차감(A포인트)';
                 if (account.accountTypeCode === MemberType.MEMBER) {
-                    pointname = '포인트차감(멤버포인트)';
+                    pointname = this.message.get('receipt.mpoint.label'); // '포인트차감(멤버포인트)';
                 }
                 discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
             }
