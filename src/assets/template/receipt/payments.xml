@@ -33,4 +33,9 @@
             할부: {{payments.creditcard.installmentDesc}} (승인번호: {{payments.creditcard.authnumber}})
         </text-line>
     {{/if}}
+    {{#if payments.iccard}}
+        <text-line>
+            {{priceFormatHelper '[I/C 카드결제]' payments.iccard.amount orderInfo.cancelFlag}}
+        </text-line>    
+    {{/if}}
 </document>

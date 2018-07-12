@@ -5,7 +5,7 @@ import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } f
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
-    ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo, Discount, DiscountInfo, ReceiptInfo, CreditCardPaymentInfo, AmwayPaymentInfoData
+    ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo, Discount, DiscountInfo, ReceiptInfo, CreditCardPaymentInfo, AmwayPaymentInfoData, ICCard
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -240,16 +240,22 @@ export class ReceiptService implements OnDestroy {
 
         // payments - START
         const payment = new PaymentInfo();
-        if (paymentCapture.getCcPaymentInfo) {
+        if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
             const ccard = new CreditCard(ccpinfo.getAmount, ccpinfo.getCardNumber, ccpinfo.getInstallmentPlan, ccpinfo.getCardAuthNumber);
             payment.setCreditCard = ccard;
         }
-        if (paymentCapture.getCashPaymentInfo) {
+        if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
             const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, cainfo.getCashReceipt);
             payment.setCash = cash;
         }
+        if (paymentCapture.getIcCardPaymentInfo) { // IC Card
+            const icinfo = paymentCapture.getIcCardPaymentInfo;
+            const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
+            payment.setICCard = iccard;
+        }
+
         // payments - END
 
         // prices - START

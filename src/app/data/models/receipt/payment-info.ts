@@ -1,11 +1,15 @@
 export class PaymentInfo {
     protected cash: Cash;
     protected creditcard: CreditCard;
+    protected iccard: ICCard;
     public set setCash(cash: Cash) {
         this.cash = cash;
     }
     public set setCreditCard(creditcard: CreditCard) {
         this.creditcard = creditcard;
+    }
+    public set setICCard(iccard: ICCard) {
+        this.iccard = iccard;
     }
 }
 
@@ -26,7 +30,7 @@ export class CreditCard extends PaymnetDefault {
         super(amount);
         this.cardnumber = cardnumber;
         this.installment = installment;
-        if (installment === '0' || installment === '1' ) {
+        if (installment === '0' || installment === '1') {
             this.installmentDesc = '일시불';
         } else {
             this.installmentDesc = installment + '개월';
@@ -46,8 +50,13 @@ export class Cash extends PaymnetDefault {
         this.cashreceipt = cashreceipt || false;
     }
 }
-// 자동이체
-// 쿠폰 결제
-// 포인트
-// 미수금 결제
 // 현금/IC카드 결제
+export class ICCard extends CreditCard {
+    constructor(amount: number, cardnumber: string, authnumber: string) {
+        super(amount, cardnumber, '0', authnumber);
+    }
+}
+
+// 자동이체
+// 미수금 결제
+
