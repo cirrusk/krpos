@@ -79,18 +79,19 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
 
   /**
    * % 쿠폰은 자동 계산, 금액 쿠폰은 결제 팝업 뜸
+   * -> 변경 쿠폰 정보 조회창에서 쿠폰 바코드 스캔이나 입력까지 처리
    */
   paymentCoupon() {
     if (this.coupon && this.finishStatus === null) {
       this.applyCouponAndPaymentCapture();
     } else {
-      this.close();
-      this.modal.openModalByComponent(CouponPaymentComponent, {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        modalId: 'CouponPaymentComponent_Cpn'
-      });
+      // this.close();
+      // this.modal.openModalByComponent(CouponPaymentComponent, {
+      //   callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
+      //   closeByClickOutside: false,
+      //   closeByEnter: false,
+      //   modalId: 'CouponPaymentComponent_Cpn'
+      // });
     }
   }
 
