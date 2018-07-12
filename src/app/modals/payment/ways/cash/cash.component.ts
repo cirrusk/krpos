@@ -187,6 +187,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       } else if (paychange === 0) { // 결제 완료
         this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
         this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
+        // this.finishStatus = StatusDisplay.PAID;
         this.completePayPopup(nReceiveAmount, nPayAmount, change);
       }
     }
@@ -355,6 +356,13 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       const paychange = this.paidamount - payment;
       if (paychange >= 0) {
         this.close();
+        // const nReceiveAmount = this.paid.nativeElement.value ? this.paid.nativeElement.value : 0;
+        // let nPayAmount = this.payment.nativeElement.value ? this.payment.nativeElement.value : 0;
+        // const change = nReceiveAmount - nPayAmount; // 거스름돈 = 내신금액 - 결제금액
+        // if (change < 0) { // 내신금액이 결제금액보다 작으면 결제금액을 내신금액으로 대체
+        //   nPayAmount = nReceiveAmount;
+        // }
+        // this.completePayPopup(nReceiveAmount, nPayAmount, change);
       }
       // const paid = this.paid.nativeElement.value; // 내신금액
       // const payment = this.payment.nativeElement.value; // 결제금액
