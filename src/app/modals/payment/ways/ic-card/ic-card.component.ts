@@ -35,7 +35,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   paidDate: Date;
   cardnumber: string; // 카드번호
   cardcompany: string; // 카드사명
-  cardperiod: string; // 유효기간
   cardauthnumber: string; // 승인번호
   checktype: number;
   apprmessage: string;
