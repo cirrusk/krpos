@@ -5,7 +5,8 @@ import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } f
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
-    ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo, Discount, DiscountInfo, ReceiptInfo, CreditCardPaymentInfo, AmwayPaymentInfoData, ICCard
+    ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
+    Discount, DiscountInfo, ReceiptInfo, ICCard
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
