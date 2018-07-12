@@ -292,7 +292,7 @@ export class ReceiptService implements OnDestroy {
         }
         if (totalDiscount > 0) { // 할인금액 있을 경우만 출력
             price.setTotalDiscount = totalDiscount; // 할인금액
-            // 할인금액정보 START
+            // 할인금액정보 - START
             const discount = new Discount();
             if (order.appliedVouchers) { // 1. 쿠폰
                 order.appliedVouchers.forEach(voucher => {
@@ -316,7 +316,7 @@ export class ReceiptService implements OnDestroy {
                 discount.setRecash = new DiscountInfo('Recash', recash.amount);
             }
             price.setDiscount = discount;
-            // 할인금액정보 END
+            // 할인금액정보 - END
         }
         // prices - END
 
