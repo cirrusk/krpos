@@ -255,7 +255,6 @@ export class ReceiptService implements OnDestroy {
             const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
             payment.setICCard = iccard;
         }
-
         // payments - END
 
         // prices - START
