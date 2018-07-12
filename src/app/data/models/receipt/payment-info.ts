@@ -59,4 +59,3 @@ export class ICCard extends CreditCard {
 
 // 자동이체
 // 미수금 결제
-
