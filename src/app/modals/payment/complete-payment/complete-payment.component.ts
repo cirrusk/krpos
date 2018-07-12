@@ -327,7 +327,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       switch (command.combo) {
         case 'ctrl+r': {
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-            if (this.paymentcapture.cashPaymentInfo || this.paymentcapture.monetaryPaymentInfo) { // 현금 + Recash 인 경우 출력
+            if (this.isReceiptEnable()) { // 현금, Recash, 자동이체 인 경우 출력
               this[command.name]();
             }
           }
@@ -336,5 +336,21 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     } catch (e) {
       this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }
+  }
+
+  /**
+   * 현금 결제가 포함되면 현금 영수증 신청이 가능
+   * directDebitPaymentInfo // 자동이체
+   * monetaryPaymentInfo // AR/AP
+   * cashPaymentInfo // 현금
+   */
+  private isReceiptEnable() {
+    if (this.paymentcapture.cashPaymentInfo // 현금
+      || this.paymentcapture.monetaryPaymentInfo // AP
+      || this.paymentcapture.directDebitPaymentInfo // 자동이체
+    ) {
+      return true;
+    }
+    return false;
   }
 }

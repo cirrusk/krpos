@@ -25,11 +25,13 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   couponCount: number;
   checktype: number;
   finishStatus: string;
+  apprmessage: string;
   private orderInfo: Order;
   private cartInfo: Cart;
   private paymentcapture: PaymentCapture;
   private alertsubscription: Subscription;
-  private couponubscription: Subscription;
+  private couponssubscription: Subscription;
+  private couponsubscription: Subscription;
   private paymentsubscription: Subscription;
   private coupon: Coupon;
   private page: Pagination;
@@ -46,7 +48,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
-    this.searchCoupon(0);
+    this.searchCoupons(0);
     // 이미 장바구니에 적용된 경우 CART를 새로 구성해야 쿠폰 재설정 가능
     this.alertsubscription = this.alert.alertState.subscribe(state => {
       if (!state.show) {
@@ -57,14 +59,22 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   ngOnDestroy() {
-    if (this.couponubscription) { this.couponubscription.unsubscribe(); }
+    if (this.couponssubscription) { this.couponssubscription.unsubscribe(); }
+    if (this.couponsubscription) { this.couponsubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
   }
 
-  private searchCoupon(pagenum: number) {
+  check(couponcode: string) {
+    if (Utils.isEmpty(couponcode)) {
+      this.checktype = -2;
+      this.apprmessage = this.message.get('empty.coupon'); // '검색할 쿠폰번호를 입력해주세요.';
+    }
+  }
+
+  private searchCoupons(pagenum: number) {
     this.spinner.show();
-    this.couponubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
+    this.couponssubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
       result => {
         this.couponlist = result.coupons;
         this.couponCount = result.pagination.totalResults;
@@ -74,6 +84,34 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
         }
       },
       error => { this.logger.set('coupon.component', `${error}`).error(); },
+      () => { this.spinner.hide(); });
+  }
+
+  searchCoupon(couponcode: string) {
+    if (Utils.isEmpty(couponcode)) {
+      this.checktype = -2;
+      this.apprmessage = this.message.get('empty.coupon'); // '검색할 쿠폰번호를 입력해주세요.';
+      return;
+    }
+    this.spinner.show();
+    this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
+      result => {
+        if (result) {
+          this.coupon = result;
+          if (this.finishStatus !== StatusDisplay.PAID) {
+            this.applyCouponAndPaymentCapture();
+          }
+        } else {
+          this.checktype = -1;
+          this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
+        }
+      },
+      error => {
+        this.spinner.hide();
+        this.checktype = -1;
+        this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
+        this.logger.set('coupon.component', `${error}`).error();
+      },
       () => { this.spinner.hide(); });
   }
 
@@ -114,7 +152,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.activeNum = -1;
     this.coupon = null;
     this.paging(this.couponlist.length, pagenum, this.pagesize);
-    this.searchCoupon(pagenum);
+    this.searchCoupons(pagenum);
   }
 
   private applyCouponAndPaymentCapture(): void {

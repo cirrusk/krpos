@@ -45,6 +45,12 @@
                         </tbody>
                     </table>
                 </div>
+                <table>
+                    <tr>
+                        <th scope="row">쿠폰번호</th>
+                        <td colspan="3"><input #couponcode type="text" class="w200" title="쿠폰번호" (keyup)="check(couponcode.value)" (keydown.enter)="searchCoupon(couponcode.value)"></td>
+                    </tr>
+                </table>    
                 <!-- // 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
                 <ng-template #elseEmpty>
                     <p *ngIf="couponCount === 0;" class="no_data">해당 하는 쿠폰이 존재하지 않습니다.</p>
