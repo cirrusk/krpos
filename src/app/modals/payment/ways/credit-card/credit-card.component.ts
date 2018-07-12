@@ -45,11 +45,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   paidDate: Date;
   cardnumber: string; // 카드번호
   cardcompany: string; // 카드사명
-  cardperiod: string; // 유효기간
   cardauthnumber: string; // 승인번호
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
-  @ViewChild('cardpassword') private cardpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService, private message: MessageService,
     private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
@@ -241,7 +239,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
     ccard.setCardCompanyCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
     ccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
-    ccard.setCardPassword = this.cardpassword.nativeElement.value;
     ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
     ccard.setCardApprovalNumber = this.cardresult.approvalNumber;
     ccard.setCardRequestDate = Utils.convertDateStringForHybris(this.cardresult.approvalDateTime); // Utils.convertDate(this.cardresult.approvalDateTime);

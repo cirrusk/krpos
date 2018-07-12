@@ -88,6 +88,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
+  searchCheque() {
+
+  }
+
   cashCal() {
     const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
     const payment = this.payment.nativeElement.value ? Number(this.payment.nativeElement.value) : 0;
