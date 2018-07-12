@@ -12,12 +12,12 @@ export class CashReceiptComponent extends ModalComponent implements OnInit {
   private divcheck: string;
   checktype: number;
   apprmessage: string;
-  fininshStatus: string;
+  finishStatus: string;
   constructor(protected modalService: ModalService) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
-    this.fininshStatus = null;
+    this.finishStatus = null;
   }
 
   ngOnInit() {
