@@ -219,9 +219,9 @@ export class ReceiptService implements OnDestroy {
             totalBV = cartInfo.totalPrice.amwayValue.businessVolume ? cartInfo.totalPrice.amwayValue.businessVolume : 0;
             bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
         }
-        if (cartInfo.account) { // 합계 PV BV
-            sumPV = cartInfo.account.totalPV ? cartInfo.account.totalPV : 0;
-            sumBV = cartInfo.account.totalBV ? cartInfo.account.totalBV : 0;
+        if (cartInfo.value) { // 합계 PV BV
+            sumPV = cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
+            sumBV = cartInfo.value.businessVolume ? cartInfo.value.businessVolume : 0;
             bonus.setSum = new Bonus(String(sumPV), String(sumBV));
         }
         if (cartInfo.volumeABOAccount) { // 그룹 PV BV
@@ -230,6 +230,7 @@ export class ReceiptService implements OnDestroy {
             bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
         }
         const point = pointValue ? pointValue : 0; // 포인트
+
         if (account.accountTypeCode === MemberType.ABO) {
             bonus.setAPoint = point <= 0 ? '' : String(point);
         } else if (account.accountTypeCode === MemberType.MEMBER) {

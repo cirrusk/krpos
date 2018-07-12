@@ -30,7 +30,7 @@
             카드번호: {{payments.creditcard.cardnumber}}
         </text-line>
         <text-line>
-            할부: {{payments.creditcard.installment}} (승인번호: {{payments.creditcard.authnumber}})
+            할부: {{payments.creditcard.installmentDesc}} (승인번호: {{payments.creditcard.authnumber}})
         </text-line>
     {{/if}}
 </document>

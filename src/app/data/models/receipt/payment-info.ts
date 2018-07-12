@@ -20,11 +20,17 @@ export class PaymnetDefault {
 export class CreditCard extends PaymnetDefault {
     protected cardnumber: string;  // 카드번호
     protected installment: string; // 할부개월
+    protected installmentDesc: string; // 할부개월 명
     protected authnumber: string;  // 승인번호
     constructor(amount: number, cardnumber: string, installment: string, authnumber: string) {
         super(amount);
         this.cardnumber = cardnumber;
         this.installment = installment;
+        if (installment === '0' || installment === '1' ) {
+            this.installmentDesc = '일시불';
+        } else {
+            this.installmentDesc = installment + '개월';
+        }
         this.authnumber = authnumber;
     }
 }
