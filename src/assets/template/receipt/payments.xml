@@ -5,14 +5,18 @@
             {{priceFormatHelper '[현금결제]' payments.cash.amount orderInfo.cancelFlag}}
         </text-line>
         {{#if payments.cash.received}}
+            {{#if payments.cash.cashreceipt}}
         <text-line>
             {{priceFormatHelper '받은금액' payments.cash.received orderInfo.cancelFlag}}
         </text-line>
+            {{/if}}
         {{/if}}
         {{#if payments.cash.changes}}
+            {{#if payments.cash.cashreceipt}}
         <text-line>
             {{priceFormatHelper '거스름돈' payments.cash.changes orderInfo.cancelFlag}}
         </text-line>
+            {{/if}}
         {{/if}}
         {{#if payments.cash.cashreceipt}}
             <align mode="center">

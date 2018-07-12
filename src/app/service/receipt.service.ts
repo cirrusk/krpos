@@ -249,21 +249,24 @@ export class ReceiptService implements OnDestroy {
         // bonus - END
 
         // payments - START
+        let isOnlyCash = true;
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
             const ccard = new CreditCard(ccpinfo.getAmount, ccpinfo.getCardNumber, ccpinfo.getInstallmentPlan, ccpinfo.getCardAuthNumber);
             payment.setCreditCard = ccard;
-        }
-        if (paymentCapture.getCashPaymentInfo) { // 현금 결제
-            const cainfo = paymentCapture.getCashPaymentInfo;
-            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, cainfo.getCashReceipt);
-            payment.setCash = cash;
+            isOnlyCash = false;
         }
         if (paymentCapture.getIcCardPaymentInfo) { // IC Card
             const icinfo = paymentCapture.getIcCardPaymentInfo;
             const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
             payment.setICCard = iccard;
+            isOnlyCash = false;
+        }
+        if (paymentCapture.getCashPaymentInfo) { // 현금 결제
+            const cainfo = paymentCapture.getCashPaymentInfo;
+            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
+            payment.setCash = cash;
         }
         // payments - END
 
