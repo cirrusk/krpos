@@ -581,7 +581,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           const accountsize = result.accounts.length;
           if (accountsize === 1) {
             if (this.paymentType === '') {
-              this.paymentType = 'c';
+              this.paymentType = 'n';
             }
             this.getAccountAndSaveCart(result.accounts[0]);
           } else {
