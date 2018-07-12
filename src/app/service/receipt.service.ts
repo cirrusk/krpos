@@ -65,6 +65,12 @@ export class ReceiptService implements OnDestroy {
         return EscPos.unescapeLeadingSpace(retText);
     }
 
+    /**
+     * 영수증 재출력
+     *
+     * @param orderData 주문 정보
+     * @param cancelFlag 취소여부
+     */
     public reissueReceipts(orderData: OrderList, cancelFlag = false): void {
         const cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
