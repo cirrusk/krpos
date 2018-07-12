@@ -141,6 +141,11 @@ export class ReceiptService implements OnDestroy {
         return rtn;
     }
 
+    /**
+     * 영수증 출력 정보를 이용하여 영수증 문구를 생성하고 출력
+     *
+     * @param printInfo 영수증 출력 정보
+     */
     private makeTextAndPrint(printInfo: any): boolean {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
@@ -231,11 +236,14 @@ export class ReceiptService implements OnDestroy {
             bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
         }
         const point = pointValue ? pointValue : 0; // 포인트
-
         if (account.accountTypeCode === MemberType.ABO) {
-            bonus.setAPoint = point <= 0 ? '' : String(point);
+            if (point > 0) {
+                bonus.setAPoint = String(point);
+            }
         } else if (account.accountTypeCode === MemberType.MEMBER) {
-            bonus.setMemberPoint = point <= 0 ? '' : String(point);
+            if (point > 0) {
+                bonus.setMemberPoint = String(point);
+            }
         }
         // bonus - END
 
