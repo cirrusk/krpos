@@ -144,7 +144,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // 그룹 회원 선택
+    // 그룹 회원 선택, 파이토 카페 회원 선택
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       accountInfo => {
         if (accountInfo && accountInfo.type === 'g') {
@@ -152,6 +152,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.paymentType = 'g';
             this.getAccountAndSaveCart(accountInfo.data);
           }
+        } else if (accountInfo && accountInfo.type === 'n') {
+          this.getAccountAndSaveCart(accountInfo.data);
         }
       }
     );

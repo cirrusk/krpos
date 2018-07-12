@@ -36,10 +36,10 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
    * @param evt
    */
   searchBER(evt: any) {
-    this.setSelected(evt);
     if (!this.accountInfo) {
       return;
     }
+    this.setSelected(evt);
     this.close();
     this.modal.openModalByComponent(SearchBerComponent,
       {
