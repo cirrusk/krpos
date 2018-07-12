@@ -82,6 +82,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         }
       }
     }
+    if (this.hasAccount && this.hasProduct) {
+      this.menus.forEach(menu => {
+        this.renderer.removeClass(menu.nativeElement, 'on');
+      });
+      this.renderer.addClass(this.menus.first.nativeElement, 'on');
+    }
   }
 
   /**
@@ -139,6 +145,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   /**
    * 그룹 결제 사용자 검색 팝업
    * parameter 로 paymentType 을 넘겨서 그룹 결제일 경우 활용하도록 함.
@@ -221,7 +228,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   etcOrder(evt: any) {
     // if (!this.hasAccount) { return; }
-    // this.checkClass(evt);
+    this.checkClass(evt);
     this.modal.openModalByComponent(EtcOrderComponent,
       {
         callerData: { accountInfo: this.accountInfo },
@@ -234,10 +241,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private checkClass(evt: any) {
     evt.stopPropagation();
     this.menus.forEach(menu => {
-      // this.renderer.removeClass(menu.nativeElement, 'blue');
       this.renderer.removeClass(menu.nativeElement, 'on');
     });
-    // this.renderer.addClass(evt.target, 'blue');
     this.renderer.addClass(evt.target, 'on');
   }
 
