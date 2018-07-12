@@ -255,13 +255,12 @@ export class ReceiptService implements OnDestroy {
             const ccpinfo = paymentCapture.getCcPaymentInfo;
             const ccard = new CreditCard(ccpinfo.getAmount, ccpinfo.getCardNumber, ccpinfo.getInstallmentPlan, ccpinfo.getCardAuthNumber);
             payment.setCreditCard = ccard;
-            isOnlyCash = false;
+            isOnlyCash = false; // 카드와 현금 복합결제 시 출력부에 내신금액 거스름돈 제외
         }
         if (paymentCapture.getIcCardPaymentInfo) { // IC Card
             const icinfo = paymentCapture.getIcCardPaymentInfo;
             const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
             payment.setICCard = iccard;
-            isOnlyCash = false;
         }
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
