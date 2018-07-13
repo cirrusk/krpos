@@ -1241,20 +1241,26 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 회원의 balance(point, re-cash) 정보 조회
    * 조회후 account 정보에 balance merge
+   * ABO/MEMBER 만 있음.
    */
   private getBalanceInfo() {
     if (this.accountInfo && this.accountInfo.parties) {
-      this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
-        result => {
-          if (result && this.accountInfo) {
-            this.balance = result[0].amount;
-            this.recash = result[1].amount;
-            const jsonData = { 'balance': result };
-            Object.assign(this.accountInfo, jsonData);
-            this.storage.setCustomer(this.accountInfo);
+      if (this.accountInfo.accountTypeCode === MemberType.CONSUMER) {
+        this.storage.setCustomer(this.accountInfo);
+      } else {
+        this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
+          result => {
+            if (result && this.accountInfo) {
+              this.balance = result[0].amount;
+              this.recash = result[1].amount;
+              const jsonData = { 'balance': result };
+              Object.assign(this.accountInfo, jsonData);
+              this.storage.setCustomer(this.accountInfo);
+            }
           }
-        }
-      );
+        );
+      }
+
     }
   }
 
