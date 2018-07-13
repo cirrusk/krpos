@@ -26,7 +26,7 @@ export class CartService {
    */
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
     const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');
-    const cartParams = new CartParams(pickupStore, cartType, null);
+    const cartParams = new CartParams(pickupStore, cartType);
     const param = { fields: 'BASIC', mac_address: macAddress };
     const pathvariables = { accountId: accountId, userId: userId };
     const data = new HttpData('createCart', pathvariables, cartParams, param, 'json');
@@ -222,15 +222,16 @@ export class CartService {
    * @param cartId
    * @param volumeAccounts // ex) 7480001,7460002
    */
-  createGroupCart(userId: string, cartId: string, volumeAccounts: string): Observable<AmwayExtendedOrdering>  {
+  createGroupCart(userId: string, cartId: string, volumeAccounts: string, pickupStore: string, cartType: string): Observable<AmwayExtendedOrdering>  {
     const arrVolumeAccount = new Array<string>();
     volumeAccounts.split(',').forEach(volumeAccount => {
       arrVolumeAccount.push(volumeAccount.trim());
     });
 
+    const cartParams = new CartParams(pickupStore, cartType);
     const param = { fields: 'FULL', volumeAccounts : arrVolumeAccount};
     const pathvariables = { userId: userId, cartId: cartId };
-    const data = new HttpData('createGroupCart', pathvariables, null, param, 'json');
+    const data = new HttpData('createGroupCart', pathvariables, cartParams, param, 'json');
     return this.api.post(data);
   }
 

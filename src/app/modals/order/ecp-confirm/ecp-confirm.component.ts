@@ -1,10 +1,8 @@
-import { ReceiptService } from './../../../service/receipt.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, AlertService, Modal, SpinnerService, Logger } from '../../../core';
-import { SearchService, PagerService, OrderService, MessageService } from '../../../service';
+import { PagerService, OrderService, MessageService } from '../../../service';
 import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
-import { Order } from '../../../data/models/order/order';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -17,11 +15,11 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('barcode') private barcode: ElementRef;
 
   private searchProductInfoSubscription: Subscription;
-  private order: Order;
-  entryList: Array<OrderEntry>;
+
   private orderList: OrderHistoryList;
 
-  pager: Pagination;                 // pagination 정보
+  entryList: Array<OrderEntry>;
+  pager: Pagination;                                     // pagination 정보
   currentOrderList: Array<OrderEntry>;
   totalCount: number;
 
@@ -32,8 +30,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
               private messageService: MessageService,
               private logger: Logger,
               private orderService: OrderService,
-              private searchService: SearchService,
-              private receiptService: ReceiptService,
               private pagerService: PagerService) {
     super(modalService);
     this.init();
