@@ -30,7 +30,7 @@
                         <tr>
                             <th scope="row">사용 포인트</th>
                             <td>
-                                <input type="number" class="w110" title="사용 포인트" [readonly]="isAllPay" #usePoint (keyup)="setChange(usePoint.value)" (keydown.enter)="pointBlur()">
+                                <input type="number" class="w110 ar" title="사용 포인트" [readonly]="isAllPay" #usePoint (keyup)="setChange(usePoint.value)" (keydown.enter)="pointBlur()">
                                 <label class="inp_rd mgl10" for="se1">전체금액
                                     <input #allCheck type="radio" name="se" id="se1" checked (click)="checkPay(0)">
                                     <span class="checkmark"></span>
