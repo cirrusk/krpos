@@ -7,6 +7,7 @@ import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture } from '..
 import { PagerService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
+import { Utils } from '../../core/utils';
 
 @Component({
   selector: 'pos-client',
@@ -68,7 +69,7 @@ export class ClientComponent implements OnInit, OnDestroy {
             });
           }
         } else if (result.key === 'customer') {
-          if (this.accountInfo) { this.init(); }
+          // if (this.accountInfo) { this.init(); }
           if (result.value) {
             this.accountInfo = result.value;
           }
@@ -128,19 +129,24 @@ export class ClientComponent implements OnInit, OnDestroy {
    */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
     if (paymentcapture) {
+      console.log(Utils.stringify(paymentcapture));
       if (paymentcapture.ccPaymentInfo) { // 신용카드
         const cc = paymentcapture.ccPaymentInfo;
         this.ccamount = cc.amount;
         this.installment = cc.installmentPlan;
       }
       if (paymentcapture.cashPaymentInfo) { // 현금
+        console.log(Utils.stringify(paymentcapture.cashPaymentInfo));
         const cash = paymentcapture.cashPaymentInfo;
         this.cashamount = cash.amount;
+        console.log(cash.amount);
         this.received = cash.received ? Number(cash.received) : 0;
         this.change = cash.change ? Number(cash.change) : 0;
       }
       if (paymentcapture.pointPaymentInfo) { // 포인트
+        console.log(Utils.stringify(paymentcapture.pointPaymentInfo));
         this.pointamount = paymentcapture.pointPaymentInfo.amount;
+        console.log(paymentcapture.pointPaymentInfo.amount);
       }
       if (paymentcapture.monetaryPaymentInfo) { // Re-Cash
         this.recashamount = paymentcapture.monetaryPaymentInfo.amount;
@@ -158,6 +164,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   private init() {
+    console.log('--- init ---');
     // this.accountInfo = null;
     this.cartList = new Array<OrderEntry>();
     this.currentCartList = new Array<OrderEntry>();
