@@ -58,10 +58,8 @@ export class NetworkStatusService {
       .timeInterval()
       .map(() => {
         if (window.navigator.onLine) {
-          console.log('online');
           return true;
         } else {
-          console.log('offline');
           return false;
         }
       });
