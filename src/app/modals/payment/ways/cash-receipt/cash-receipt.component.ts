@@ -13,6 +13,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit {
   checktype: number;
   apprmessage: string;
   finishStatus: string;
+  receiptdate: Date;
   constructor(protected modalService: ModalService) {
     super(modalService);
     this.divcheck = 'i';
