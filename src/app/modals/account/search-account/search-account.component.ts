@@ -23,8 +23,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   accountList: AccountList;                  // 회원 정보 리스트
   totalCnt: number;                          // 검색 총 합계
   paymentType: string;
-  searchText: string;                        // 검색어
-  @ViewChild('inputSearchText') searchValue: ElementRef;
+  @ViewChild('inputSearchText') private searchValue: ElementRef;
 
   constructor(modalService: ModalService,
     private logger: Logger,
@@ -45,8 +44,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     if (this.callerData) {
       const searchParams = this.callerData.data;
       if (searchParams.searchText.trim() !== '') {
+        this.searchValue.nativeElement.value = searchParams.searchText.trim();
         this.getAccountList('A', searchParams.searchText.trim());
-        this.searchText = searchParams.searchText.trim();
       }
     }
 
@@ -57,7 +56,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     if (this.searchListSubscription) { this.searchListSubscription.unsubscribe(); }
   }
 
-  init() {
+  init(cancel = false) {
     if (this.currentLeftAccountList !== undefined) {
       this.currentLeftAccountList.length = 0;
     } else {
@@ -81,7 +80,9 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.totalCnt = 0;
     this.paymentType = 'n';
     this.pager = new Pagination();
-    this.searchText = '';
+    if (cancel) {
+      this.searchValue.nativeElement.value = '';
+    }
   }
 
   /**

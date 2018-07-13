@@ -15,7 +15,7 @@
                     <option *ngIf="paymentType !== 'g'" value="M">일반회원</option>
                     <option *ngIf="paymentType !== 'g'" value="C">소비자</option>
                 </select>
-                <input #inputSearchText autofocus type="text" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)" value="{{searchText}}">
+                <input #inputSearchText type="text" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)">
                 <button type="button" class="btn01_blue" (click)="getAccountList(searchMemberType.value,inputSearchText.value)">확인</button>
             </div>
             <!-- //회원검색영역 -->
@@ -127,7 +127,7 @@
         <span class="fl">취소 ESC</span>
         <span class="fr">
             <a href="javascript:void(0)" class="btn01_blue" (click)="sendAccountInfo()">선택</a>
-            <a href="javascript:void(0)" class="btn01_white" (click)="init()">취소</a>
+            <a href="javascript:void(0)" class="btn01_white" (click)="init(true)">취소</a>
         </span>
     </div>
 </div>

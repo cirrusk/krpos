@@ -70,6 +70,8 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
    */
   receiptPrint(evt: any) {
     this.setSelected(evt);
+    this.router.navigate(['/order-complete']);
+    setTimeout(() => { this.close(); }, 270);
   }
 
   /**
@@ -79,6 +81,8 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
    */
   changePayment(evt: any) {
     this.setSelected(evt);
+    this.router.navigate(['/order-complete']);
+    setTimeout(() => { this.close(); }, 270);
   }
 
   phytoCafeOrder() {
