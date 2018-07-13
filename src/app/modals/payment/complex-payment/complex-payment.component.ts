@@ -27,9 +27,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   [2, 'PointComponent', PointComponent],
   [3, 'PointComponent', PointComponent],
   [4, 'CashComponent', CashComponent],
-  [5, 'CashComponent', CashComponent],
-  [6, 'DirectDebitComponent', DirectDebitComponent],
-  [7, 'ReCashComponent', ReCashComponent]];
+  [5, 'DirectDebitComponent', DirectDebitComponent],
+  [6, 'ReCashComponent', ReCashComponent]];
   private point: number;
   private recash: number;
   private paymentModesSubscription: Subscription;

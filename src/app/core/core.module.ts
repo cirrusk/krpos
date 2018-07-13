@@ -16,7 +16,7 @@ import {
 import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchAccountBroker } from '../broker';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
-import { ApiService, StorageService, QzHealthChecker, Logger, WsService, CacheService, KeyboardService } from '.';
+import { ApiService, StorageService, Logger, CacheService, KeyboardService, NetworkStatusService } from '.';
 import { PaymentBroker } from '../broker/order/payment.broker';
 
 @NgModule({
@@ -53,15 +53,14 @@ import { PaymentBroker } from '../broker/order/payment.broker';
     PagerService,
     MessageService,
     AccountService,
-    WsService,
     CacheService,
     KeyboardService,
+    NetworkStatusService,
     InfoBroker,
     SearchAccountBroker,
     RestoreCartBroker,
     CancleOrderBroker,
     PaymentBroker,
-    QzHealthChecker,
     DatePipe,
     Logger
   ],

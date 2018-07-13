@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker, PaymentBroker } from '../../broker';
-import { AlertService, Config, Logger, Modal, NetworkService, QzHealthChecker, StorageService, PrinterService } from '../../core';
+import { AlertService, Config, Logger, Modal, NetworkService, NetworkStatusService, StorageService, PrinterService } from '../../core';
 import { BatchComponent, HoldOrderComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
 import { BatchInfo, LockType, TerminalInfo } from '../../data';
@@ -37,6 +37,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private holdsubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
+  private networksubscription: Subscription;
   isClientScreen: boolean;
   posName: string;
   posTimer: string;
@@ -63,7 +64,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private info: InfoBroker,
     private paymentBroker: PaymentBroker,
     private datePipe: DatePipe,
-    private qzchecker: QzHealthChecker,
+    private networkstatus: NetworkStatusService,
     private logger: Logger,
     private config: Config) {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
@@ -118,32 +119,47 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     const timer = TimerObservable.create(2000, 1000);
     this.timersubscription = timer.subscribe(t => { this.posTimer = this.getPosTimer(); });
 
-    // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
-    // 5분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
-    if (this.qzCheck) {
-      this.qzsubscription = this.qzchecker.getQzChecker().subscribe(
-        result => {
-          if (result) {
-            this.logger.set('header.component', 'qz websocket connection is alive!!!').debug();
-          } else {
-            this.logger.set('header.component', 'qz websocket connection is dead!!!, check qz tray running mode...').warn();
-            // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
-            this.modal.openMessage({
-              title: 'QZ Tray 상태 체크',
-              message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
-              closeButtonLabel: '닫기',
-              closeByEnter: true,
-              modalId: 'QZSTATUS'
-            });
+    this.isQzCheck();
+    // this.networkCheck();
+  }
 
-            if (this.timer_id !== undefined) { clearTimeout(this.timer_id); }
-            this.timer_id = setTimeout(() => {
-              this.modal.clearAllModals(this.modal.getModalArray()[0]);
-            }, 1000 * 60 * 2); // 2분정도 후에 강제로 닫자. 그렇지 않으면 모달이 계속 뜸.
+  private isQzCheck() {
+    // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
+    // 3분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
+    if (this.qzCheck) {
+      this.qzsubscription = this.networkstatus.isQzAlive.subscribe(isalive => {
+        if (isalive) {
+          this.logger.set('header.component', 'qz websocket connection is alive!!!').debug();
+        } else {
+          this.logger.set('header.component', 'qz websocket connection is dead!!!, check qz tray running mode...').warn();
+          // 체크한 다음에 화면 잠그거나 다른 액션처리하도록 함.
+          this.modal.openMessage({
+            title: 'QZ Tray 상태 체크',
+            message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
+            closeButtonLabel: '닫기',
+            closeByEnter: true,
+            modalId: 'QZSTATUS'
+          });
+          if (this.timer_id !== undefined) {
+            clearTimeout(this.timer_id);
           }
+          this.timer_id = setTimeout(() => {
+            this.modal.clearAllModals(this.modal.getModalArray()[0]);
+          }, 1000 * 60 * 2);
         }
-      );
+      });
     }
+  }
+
+  private networkCheck(): void {
+    this.networksubscription = this.networkstatus.isNetworkAlive.subscribe(
+      alive => {
+        this.logger.set('header.component', `network status is alive : ${alive}`).info();
+      });
+  }
+
+  private getPosTimer(): string {
+    return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
   ngOnDestroy() {
@@ -157,6 +173,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.holdsubscription) { this.holdsubscription.unsubscribe(); }
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    if (this.networksubscription) { this.networksubscription.unsubscribe(); }
   }
 
   ngAfterViewInit() {
@@ -168,10 +185,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
-  }
-
-  private getPosTimer(): string {
-    return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
 
   /**

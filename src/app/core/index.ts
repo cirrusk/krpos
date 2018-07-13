@@ -1,11 +1,10 @@
 export * from './service/storage.service';
 export * from './service/api.service';
-export * from './service/qz-health-checker';
 export * from './spinner/spinner.service';
 export * from './alert/alert.service';
-export * from './service/ws.service';
 export * from './service/cache.service';
 export * from './service/keyboard.service';
+export * from './service/network-status.service';
 
 export * from './logger/logger';
 export * from './config/config';
