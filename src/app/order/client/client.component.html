@@ -93,7 +93,7 @@
                       <!-- //20180504 추가 -->
                       <div class="ic02">
                           <!-- 비회원시 삭제3 -->
-                          <dl *ngIf="accountInfo">
+                          <dl *ngIf="accountInfo && accountType !== memberType.CONSUMER">
                               <dt>Re-Cash</dt>
                               <dd>{{recash | number}}원</dd>
                           </dl>
