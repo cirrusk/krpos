@@ -245,12 +245,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   holdOrder() {
     if (this.screenLockType === LockType.LOCK) { return; }
     this.router.navigate(['/order']); // 대시보드에서 보류건을 클릭했을 경우 장바구니로 이동
-    this.modal.openModalByComponent(HoldOrderComponent,
-      {
-        closeByClickOutside: false,
-        modalId: 'HoldOrderComponent'
-      }
-    );
+    this.modal.openModalByComponent(HoldOrderComponent, {
+      closeByClickOutside: false,
+      modalId: 'HoldOrderComponent'
+    });
   }
 
   /**
@@ -277,13 +275,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   startWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
-    this.modal.openModalByComponent(LoginComponent,
-      {
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        modalId: 'LoginComponent'
-      }
-    ).subscribe(result => {
+    this.modal.openModalByComponent(LoginComponent, {
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      modalId: 'LoginComponent'
+    }).subscribe(result => {
       if (result) {
         this.info.sendInfo('swk', { message: result });
       }
@@ -301,13 +297,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   endWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
     this.router.navigate(['/dashboard']);
-    this.modal.openModalByComponent(LogoutComponent,
-      {
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        modalId: 'LogoutComponent'
-      }
-    ).subscribe(result => {
+    this.modal.openModalByComponent(LogoutComponent, {
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      modalId: 'LogoutComponent'
+    }).subscribe(result => {
       if (!result) {
         this.storage.setScreenLockType(LockType.INIT);
       } else {
@@ -340,15 +334,13 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 이후에는 카트 페이지에서 화면 잠금 버튼을 클릭하면 잠금 플래그를 설정하고 대시보드로 이동.
    */
   screenRelease() {
-    this.modalsubscription = this.modal.openModalByComponent(PasswordComponent,
-      {
-        title: '화면풀림',
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: false,
-        modalId: 'PasswordComponent'
-      }
-    ).subscribe((result) => {
+    this.modalsubscription = this.modal.openModalByComponent(PasswordComponent, {
+      title: '화면풀림',
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: 'PasswordComponent'
+    }).subscribe((result) => {
       if (result) {
         this.storage.removeScreenLock();
         // this.router.navigate(['/order']);
