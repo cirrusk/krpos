@@ -120,35 +120,32 @@ export class ClientComponent implements OnInit, OnDestroy {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
   }
 
+  /**
+   * Payment 정보, 주문정보 에서 각 금액을 가져옴
+   *
+   * @param paymentcapture PaymentInfo
+   * @param order 주문 정보
+   */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
     if (paymentcapture) {
-      console.log('[client capture] >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(paymentcapture));
-    }
-    if (order) {
-      console.log('[client order]   >>>>>>>>>>>>>>>>>>>> ' + JSON.stringify(order));
-    }
-
-    if (paymentcapture) {
-      if (paymentcapture.ccPaymentInfo) {
+      if (paymentcapture.ccPaymentInfo) { // 신용카드
         const cc = paymentcapture.ccPaymentInfo;
         this.ccamount = cc.amount;
         this.installment = cc.installmentPlan;
       }
-      if (paymentcapture.cashPaymentInfo) {
-        console.log('cash-------------------------------------' + JSON.stringify(paymentcapture.cashPaymentInfo));
+      if (paymentcapture.cashPaymentInfo) { // 현금
         const cash = paymentcapture.cashPaymentInfo;
         this.cashamount = cash.amount;
-        console.log('cash----------------------- ' + cash.amount);
         this.received = cash.received ? Number(cash.received) : 0;
         this.change = cash.change ? Number(cash.change) : 0;
       }
-      if (paymentcapture.pointPaymentInfo) {
+      if (paymentcapture.pointPaymentInfo) { // 포인트
         this.pointamount = paymentcapture.pointPaymentInfo.amount;
       }
-      if (paymentcapture.monetaryPaymentInfo) {
+      if (paymentcapture.monetaryPaymentInfo) { // Re-Cash
         this.recashamount = paymentcapture.monetaryPaymentInfo.amount;
       }
-      if (paymentcapture.directDebitPaymentInfo) {
+      if (paymentcapture.directDebitPaymentInfo) { // 자동이체
         this.ddamount = paymentcapture.directDebitPaymentInfo.amount;
       }
     }
