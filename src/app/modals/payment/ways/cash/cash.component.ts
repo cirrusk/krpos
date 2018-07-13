@@ -165,7 +165,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     if (this.paymentType === 'n') { // 일반결제인 경우
       if (change >= 0) { // 거스름돈 있음.
         if (paychange === 0) { // 결제할 금액이 장바구니 금액과 동일
-          this.paymentAndPlaceOrder(nPayAmount, nReceiveAmount, change);
+          this.paymentCaptureAndPlaceOrder(nPayAmount, nReceiveAmount, change);
         }
       } else {
         this.paySubmitLock(false); // 버튼 잠금 해제
@@ -225,7 +225,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param paidAmount 결제금액
    * @param change 거스름돈
    */
-  private paymentAndPlaceOrder(receivedAmount: number, paidAmount: number, change: number) {
+  private paymentCaptureAndPlaceOrder(receivedAmount: number, paidAmount: number, change: number) {
     this.spinner.show();
     const capturepaymentinfo = this.makePaymentCaptureData(receivedAmount, paidAmount, change);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;

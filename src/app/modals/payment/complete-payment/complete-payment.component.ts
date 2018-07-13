@@ -57,7 +57,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paidamount = this.cartInfo.totalPrice.value;
     this.payamount = this.cartInfo.totalPrice.value; // this.callerData.payAmount;
     this.paidAmount();
-
+    // this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
   }
 
   ngOnDestroy() {
@@ -165,6 +165,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
             this.paidDate = result.created ? result.created : new Date();
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
+            this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';

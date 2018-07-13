@@ -98,6 +98,7 @@ export class ClientComponent implements OnInit, OnDestroy {
           this.init();
           this.storage.removeOrderEntry();
           this.storage.removeCustomer();
+          this.accountInfo = null;
         } else if (result.key === 'payinfo') {
           const data: any = result.value;
           if (data) {
@@ -134,8 +135,10 @@ export class ClientComponent implements OnInit, OnDestroy {
         this.installment = cc.installmentPlan;
       }
       if (paymentcapture.cashPaymentInfo) {
+        console.log('cash-------------------------------------' + JSON.stringify(paymentcapture.cashPaymentInfo));
         const cash = paymentcapture.cashPaymentInfo;
         this.cashamount = cash.amount;
+        console.log('cash----------------------- ' + cash.amount);
         this.received = cash.received ? Number(cash.received) : 0;
         this.change = cash.change ? Number(cash.change) : 0;
       }
@@ -158,6 +161,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   private init() {
+    // this.accountInfo = null;
     this.cartList = new Array<OrderEntry>();
     this.currentCartList = new Array<OrderEntry>();
     this.totalItem = 0;
