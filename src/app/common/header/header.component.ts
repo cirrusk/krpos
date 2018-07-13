@@ -197,7 +197,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고 이후에는 세션에서 취득하도록 수정
    */
   private getTerminalInfo() {
-    const macAddress = this.storage.getMacAddress();
+    let macAddress = this.storage.getMacAddress();
     if (macAddress && Utils.isNotEmpty(macAddress)) {
       this.logger.set('header.component', 'exist session macaddress, get session terminal info...').debug();
       const terminalinfo: TerminalInfo = this.storage.getTerminalInfo();
@@ -205,44 +205,38 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         this.posName = terminalinfo.id; // pointOfService.displayName;
         this.hasTerminal = true;
       } else {
-        this.subscription = this.terminalService.getTerminalInfo(macAddress).subscribe(
-          result => {
-            this.posName = result.id; // pointOfService.displayName;
-            this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
-            this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
-            this.hasTerminal = true;
-          },
-          error => {
-            this.posName = '-';
-            this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
-            this.hasTerminal = false;
-            this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
-          }
-        );
+        this.getTerminal(macAddress);
       }
     } else {
       this.logger.set('header.component', 'not exist session macaddress, subscribing network driver...').debug();
       this.network.wait().subscribe(
         () => {
-          const macAddr = this.network.getLocalMacAddress('-');
-          this.storage.setMacAddress(macAddr); // mac address session storage 저장.
-          this.subscription = this.terminalService.getTerminalInfo(macAddr).subscribe(
-            result => {
-              this.posName = result.id; // pointOfService.displayName;
-              this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
-              this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
-              this.hasTerminal = true;
-            },
-            error => {
-              this.posName = '-';
-              this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
-              this.hasTerminal = false;
-              this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
-            }
-          );
+          macAddress = this.network.getLocalMacAddress('-');
+          this.storage.setMacAddress(macAddress); // mac address session storage 저장.
+          this.getTerminal(macAddress);
         }
       );
     }
+  }
+
+  /**
+   * 맥어드레스로 터미널 정보 얻기
+   *
+   * @param macAddr MAC ADDRESS
+   */
+  private getTerminal(macAddr: string) {
+    this.subscription = this.terminalService.getTerminalInfo(macAddr).subscribe(
+      result => {
+        this.posName = result.id; // pointOfService.displayName;
+        this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
+        this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
+        this.hasTerminal = true;
+      }, error => {
+        this.posName = '-';
+        this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
+        this.hasTerminal = false;
+        this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
+      });
   }
 
   /**
