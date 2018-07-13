@@ -1,13 +1,12 @@
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { OrderList } from './../../data/models/order/order';
 import { Pagination, OrderHistoryList, OrderHistory } from '../../data';
-import { PagerService, MessageService, OrderService, ReceiptService } from '../../service';
+import { MessageService, OrderService } from '../../service';
 import { Modal, Logger, SpinnerService, AlertService } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
-import { CancelOrderComponent } from '../../modals';
+
 
 @Component({
   selector: 'pos-order-complete',
@@ -17,24 +16,21 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   private PAGE_SIZE = 8;
   private orderListSubscription: Subscription;
 
+  @Input() chkSearchTypeABO = true;
+  @Input() chkSearchTypeC = false;
+  @ViewChild('inputSearchText') private inputSearchText: ElementRef;
+  @ViewChild('searchType1') private searchTypeABO: ElementRef;
+  @ViewChild('searchType2') private searchTypeC: ElementRef;
+
   orderHistoryList: OrderHistoryList;
   selectedOrderNum: number;
   searchType: string;
   memberType: string;
   searchText: string;
 
-  @Input() chkSearchTypeABO = true;
-  @Input() chkSearchTypeC = false;
-  @ViewChild('inputSearchText') private inputSearchText: ElementRef;
-  @ViewChild('searchType1') private searchTypeABO: ElementRef;
-  @ViewChild('searchType2') private searchTypeC: ElementRef;
-  @ViewChild('chkSearchType1') private chkSearchType1: ElementRef;
-
-
   constructor(private router: Router,
               private modal: Modal,
               private orderService: OrderService,
-              private receiptService: ReceiptService,
               private spinner: SpinnerService,
               private alert: AlertService,
               private messageService: MessageService,
@@ -163,12 +159,19 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * 주문완료 내역 페이지 이동
+   * @param page
+   */
   setPage(page: number) {
     if (page > -1 && page < this.orderHistoryList.pagination.totalPages ) {
       this.getOrderList(this.searchType, this.memberType, this.searchText, page);
     }
   }
 
+  /**
+   * order 페이지 이동
+   */
   goOrder() {
     this.router.navigate(['/order']);
   }

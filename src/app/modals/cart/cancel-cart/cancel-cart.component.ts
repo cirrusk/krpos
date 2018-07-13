@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalComponent } from '../../../core/modal/modal.component';
-import { ModalService, AlertService } from '../../../core';
+import { ModalService } from '../../../core';
 import { CancleOrderBroker } from '../../../broker';
 
 @Component({
@@ -10,7 +10,6 @@ import { CancleOrderBroker } from '../../../broker';
 export class CancelCartComponent extends ModalComponent implements OnInit {
 
   constructor(protected modalService: ModalService,
-              private alert: AlertService,
               private cancleOrderBroker: CancleOrderBroker) {
     super(modalService);
   }

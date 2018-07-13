@@ -9,6 +9,12 @@ export class PagerService {
     this.pagination = new Pagination();
    }
 
+  /**
+   * pagination 생성
+   * @param totalItems
+   * @param currentPage
+   * @param pageSize
+   */
   getPager(totalItems: number, currentPage: number = 1, pageSize: number = 8): Pagination {
     // 총 페이지 수
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -30,6 +36,12 @@ export class PagerService {
     return this.pagination;
   }
 
+  /**
+   * 현재 페이지 생성
+   * @param totalList
+   * @param page
+   * @param pageSize
+   */
   getCurrentPage(totalList: any, page: number, pageSize: number): Map<string, object> {
     // pagination 생성 데이터 조회
     const pager = this.getPager(totalList.length, page, pageSize);
