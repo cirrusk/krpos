@@ -128,7 +128,6 @@ export class ClientComponent implements OnInit, OnDestroy {
     }
 
     if (paymentcapture) {
-      // this.getBalanceInfo();
       if (paymentcapture.ccPaymentInfo) {
         const cc = paymentcapture.ccPaymentInfo;
         this.ccamount = cc.amount;
@@ -152,24 +151,10 @@ export class ClientComponent implements OnInit, OnDestroy {
     }
     if (order) {
       this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
-      this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
-      this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
+      this.totalPV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.pointValue : 0;
+      this.totalBV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.businessVolume : 0;
       this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
     }
-  }
-
-  private getBalanceInfo() {
-    this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
-      result => {
-        if (result) {
-          this.balance = result[0].amount;
-          this.recash = result[1].amount;
-          const jsonData = { 'balance': result };
-          Object.assign(this.accountInfo, jsonData);
-          this.storage.setCustomer(this.accountInfo);
-        }
-      }
-    );
   }
 
   private init() {
@@ -203,10 +188,8 @@ export class ClientComponent implements OnInit, OnDestroy {
     // 리스트에 없을 경우
     if (existedIdx === -1) {
       this.cartList.push(orderEntry);
-      // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
     } else {
       this.cartList[existedIdx] = orderEntry;
-      // this.activeRowCart(existedIdx); // 추가된 row selected
     }
 
     // 장바구니에 추가한 페이지로 이동
@@ -227,13 +210,14 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.pager = Object.assign(currentData.get('pager'));
     // 출력 리스트 생성
     this.currentCartList = Object.assign(currentData.get('list'));
+    this.totalPriceInfo();
   }
 
   private totalPriceInfo(): void {
     this.totalItem = this.resCart ? this.resCart.totalUnitCount : 0;
     this.totalPrice = this.resCart ? this.resCart.totalPrice.value : 0;
-    this.totalPV = this.resCart ? this.resCart.totalPrice.amwayValue.pointValue : 0;
-    this.totalBV = this.resCart ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
+    this.totalPV = this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.pointValue : 0;
+    this.totalBV = this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
   }
 
   activeRowCart(index: number): void {
