@@ -30,6 +30,11 @@ export class NetworkStatusService {
     this.hybrisCheck();
   }
 
+  /**
+   * QZ Tray 체크
+   *
+   * @param interval
+   */
   private qzCheck(interval = 180000) { // 기본 3분
     const use: boolean = this.config.getConfig('qzCheck');
     if (use) {
@@ -42,6 +47,11 @@ export class NetworkStatusService {
     }
   }
 
+  /**
+   * 네트워크 온라인 여부 체크
+   *
+   * @param interval
+   */
   private networkCheck(interval = 6000) { // 기본 1분
     this.networkStatus = Observable
       .interval(interval)
@@ -57,6 +67,11 @@ export class NetworkStatusService {
       });
   }
 
+  /**
+   * Hybris(API 서버) Alive 체크
+   *
+   * @param interval
+   */
   private hybrisCheck(interval = this.config.getConfig('healthCheckInterval')) {
     const use: boolean = this.config.getConfig('healthCheckUse');
     if (use) {
