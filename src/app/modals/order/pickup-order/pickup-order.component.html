@@ -24,7 +24,7 @@
                 <!-- 왼쪽테이블 -->
                 <div class="tbl_col fl bg_bar">
                     <!-- 5줄이 넘을 시 노출  -->
-                    <div class="paging" *ngIf="sourceOrderHistoryList.orders.length > 0">
+                    <div class="paging" *ngIf="sourceOrderHistoryList.pagination && sourceOrderHistoryList.pagination.totalResults > 5">
                         <button type="button" class="ico_comm prev01" [disabled]="sourceOrderHistoryList.pagination.currentPage === 0" (click)="setPage(sourceOrderHistoryList.pagination.currentPage - 1)">이전</button>
                         <button type="button" class="ico_comm next01" [disabled]="sourceOrderHistoryList.pagination.currentPage === sourceOrderHistoryList.pagination.totalPages - 1" (click)="setPage(sourceOrderHistoryList.pagination.currentPage + 1)">다음</button>
                     </div>
@@ -63,9 +63,9 @@
                 <!-- //왼쪽테이블 -->
                 <!-- 오른쪽테이블 -->
                 <div class="tbl_col fr bg_bar">
-                    <p class="txt"><strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
+                    <p class="txt" ><strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
                     <!-- 5줄이 넘을 시 노출 -->
-                    <div class="paging" *ngIf="targetOrderHistoryList.orders.length > 0">
+                    <div class="paging" *ngIf="targetOrderHistoryList.pagination && targetOrderHistoryList.pagination.totalResults > 5">
                         <button type="button" class="ico_comm prev01">이전</button>
                         <button type="button" class="ico_comm next01">다음</button>
                     </div>

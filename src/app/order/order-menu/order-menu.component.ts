@@ -66,6 +66,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         if (data.data) {
           this.accountInfo = data.data;
         }
+        if (!data.flag) {
+          this.paymentType = '';
+        }
       } else if (data.type === 'product') {
         this.hasProduct = data.flag;
         if (data.data) {

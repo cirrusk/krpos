@@ -149,10 +149,15 @@ export class CartListComponent implements OnInit, OnDestroy {
       accountInfo => {
         if (accountInfo && accountInfo.type === 'g') {
           if (this.paymentType === '' || this.paymentType === 'g') {
-            this.paymentType = 'g';
+            if (this.paymentType === '') {
+              this.paymentType = 'g';
+            }
             this.getAccountAndSaveCart(accountInfo.data);
           }
         } else if (accountInfo && accountInfo.type === 'n') {
+          if (this.paymentType === '') {
+            this.paymentType = 'n';
+          }
           this.getAccountAndSaveCart(accountInfo.data);
         }
       }
@@ -459,13 +464,12 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
         if (this.checkGroupUserId(account.uid) < 0) {
           this.groupAccountInfo.push(account);
-          this.selectedUserIndex = this.groupAccountInfo.length - 1;
-          this.setUserPage(0 ? 0 : Math.ceil(this.groupAccountInfo.length / 10));
+          this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
           if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orders.length > 0) {
             this.sendRightMenu('p', false);
             this.cartList.length = 0;
             this.storage.setOrderEntry(this.cartList);
-            this.setPage(0 ? 0 : Math.ceil(this.cartList.length / this.cartListCount));
+            this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
           }
         }
       } else {
@@ -528,7 +532,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (!cartList) {
       return;
     }
-    console.log(account);
     this.spinner.show();
     this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
       this.init();
@@ -940,14 +943,16 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.init();
             this.storage.clearClient();
           } else if (this.paymentType === 'g') {
-            // 아 변수가 많다
-            // 삭제 로직 확인
+            // 확인 필요
             const groupAccountIndex = this.checkGroupUserId(this.groupSelectedCart.volumeABOAccount.uid);
-            if (groupAccountIndex <= 0) {
+            if (this.groupAccountInfo.length < 2 || this.groupAccountInfo[0].parties[0].uid === this.groupSelectedCart.volumeABOAccount.uid) {
               this.init();
               this.storage.clearClient();
             } else {
-              const selectIndex = this.selectedUserIndex - 1;
+              this.groupAccountInfo.splice(groupAccountIndex, 1);
+              const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;
+              const page = this.selectedUserIndex - 1  === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
+              this.setUserPage(page);
               this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
             }
           }
@@ -972,7 +977,9 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.storage.clearClient();
         } else {
           this.groupAccountInfo.splice(groupAccountIndex, 1);
-          const selectIndex = this.selectedUserIndex - 1;
+          const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;
+          const page = this.selectedUserIndex - 1  === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
+          this.setUserPage(page);
           this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
         }
       }
@@ -1136,16 +1143,13 @@ export class CartListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // true 경우 페이지 이동이므로 선택 초기화
-    if (pagerFlag) {
-      this.selectedUserIndex = -1;
-    }
-
     const currentData = this.pagerService.getCurrentPage(this.groupAccountInfo, page, this.GROUP_ACCOUNT_PAGE_SIZE);
     // pagination 생성 데이터 조회
     this.userPager = Object.assign(currentData.get('pager'));
     // 출력 리스트 생성
     this.currentGroupAccountInfo = Object.assign(currentData.get('list'));
+
+    this.selectedUserIndex = this.currentGroupAccountInfo.length - 1;
   }
 
   /**
@@ -1205,7 +1209,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param useflag 사용플래그
    * @param model 모델객체
    */
-  private sendRightMenu(modelType: string, useflag: boolean, model?: any): void {
+  private sendRightMenu(modelType: string, useflag: boolean, model?: any, paymentType?: string): void {
     switch (modelType.toUpperCase()) {
       case 'A': { this.posCart.emit({ type: 'account', flag: useflag, data: model }); break; }
       case 'P': { this.posCart.emit({ type: 'product', flag: useflag, data: model }); break; }
@@ -1308,7 +1312,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           this.amwayExtendedOrdering = result;
-          this.sendRightMenu('G', true, this.amwayExtendedOrdering);
+          this.sendRightMenu('g', true, this.amwayExtendedOrdering);
         }
       },
       error => {

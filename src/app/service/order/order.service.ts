@@ -35,10 +35,11 @@ export class OrderService {
    * @param asc asc 정렬 여부
    */
   orderList(searchText: string, memberType: string, searchType: string, orderTypes: string, channels: string,
-    deliveryModes: string, confirmFlag = false, currentPage = 0, pageSize = 10, sort = 'date', asc = true): Observable<OrderHistoryList> {
+    deliveryModes: string, confirmFlag = false, currentPage = 0, pageSize = 10, sort = 'date', asc = true, orderStatus?: string): Observable<OrderHistoryList> {
     const arrOrderTypes = new Array<string>(); // NORMAL_ORDER
     const arrChannels = new Array<string>(); // Web,WebMobile
     const arrDeliveryModes = new Array<string>(); // delivery,install
+    const statuses = new Array<string>();
     let amwayBusinessNature = '';
     const confirm = confirmFlag;
 
@@ -62,12 +63,18 @@ export class OrderService {
       arrDeliveryModes.push(deliveryMode.trim());
     });
 
-    const orderData = new OrderData(arrOrderTypes, arrChannels, arrDeliveryModes, amwayBusinessNature, confirm, currentPage, pageSize);
+    if (orderStatus) {
+      orderStatus.split(',').forEach(status => {
+        statuses.push(status.trim());
+      });
+    }
+
+    const orderData = new OrderData(arrOrderTypes, arrChannels, arrDeliveryModes, statuses, amwayBusinessNature, confirm, currentPage, pageSize);
 
     if (searchType === 'phone') {
       orderData.phoneNumber = searchText;
     } else if (searchType === 'orderCode') {
-      orderData.orderingABOId = searchText;
+      orderData.orderCode = searchText;
     } else {
       orderData.orderingABOId = searchText;
     }

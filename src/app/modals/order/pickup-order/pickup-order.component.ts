@@ -14,6 +14,7 @@ import { Order } from '../../../data/models/order/order';
   templateUrl: './pickup-order.component.html'
 })
 export class PickupOrderComponent extends ModalComponent implements OnInit {
+  private PAGE_SIZE = 5;
 
   private orderListSubscription: Subscription;
 
@@ -28,6 +29,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
   private selectedOrderNum = -1;
   private searchType: string;
   private searchText: string;
+  private deliveryModes: string;
+  private channels: string;
+  private orderStatus: string;
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
@@ -57,12 +61,21 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     if (this.orderType === 'e') {
       this.orderTypeName = '간편선물';
       this.confirmFlag = true;
+      this.channels = 'pos,Web,WebMobile';
+      this.deliveryModes  = 'pickup';
+      this.orderStatus = 'COMPLETED';
     } else if (this.orderType === 'i') {
       this.orderTypeName = '설치주문';
       this.confirmFlag = true;
+      this.channels = 'pos,Web,WebMobile';
+      this.deliveryModes  = 'install';
+      this.orderStatus = 'COMPLETED';
     } else {
       this.orderTypeName = '픽업예약주문';
       this.confirmFlag = true;
+      this.channels = 'pos,Web,WebMobile';
+      this.deliveryModes  = 'pickup';
+      this.orderStatus = 'COMPLETED';
     }
   }
 
@@ -120,12 +133,12 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
     } else {
       this.searchType = searchType;
       this.searchText = searchText;
-      this.getOrderList(searchType, 'A', searchText, 0);
+      this.getOrderList(searchType, this.channels, this.deliveryModes, this.orderStatus, 'A', searchText, 0);
     }
   }
 
   setPage(page: number) {
-    this.getOrderList(this.searchType, 'A', this.searchText, page);
+    this.getOrderList(this.searchType, this.channels, this.deliveryModes, this.orderStatus, 'A', this.searchText, page);
   }
 
   /**
@@ -135,10 +148,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
    * @param searchText
    * @param page
    */
-  getOrderList(searchType: string, memberType: string, searchText: string, page = 0) {
+  getOrderList(searchType: string, channels: string, deliveryModes: string, orderStatus: string,  memberType: string, searchText: string, page = 0) {
     this.spinner.show();
     this.orderListSubscription = this.orderService.orderList(searchText, memberType,
-                                                             searchType, 'NORMAL_ORDER', 'pos', 'pickup', this.confirmFlag, page, 5).subscribe(
+                                                             searchType, 'NORMAL_ORDER', channels, deliveryModes, this.confirmFlag, page, this.PAGE_SIZE, orderStatus).subscribe(
       resultData => {
         if (resultData) {
           this.sourceOrderHistoryList = resultData;
