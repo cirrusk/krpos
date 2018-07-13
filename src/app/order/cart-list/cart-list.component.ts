@@ -1246,6 +1246,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   private getBalanceInfo() {
     if (this.accountInfo && this.accountInfo.parties) {
       if (this.accountInfo.accountTypeCode === MemberType.CONSUMER) {
+        const jsonData = { 'balance': [{ amount: 0 }, { amount: 0 }] };
+        Object.assign(this.accountInfo, jsonData);
         this.storage.setCustomer(this.accountInfo);
       } else {
         this.paymentsubscription = this.payment.getBalanceAndRecash(this.accountInfo.parties[0].uid).subscribe(
