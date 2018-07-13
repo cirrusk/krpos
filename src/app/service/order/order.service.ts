@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from '../../core';
-import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType } from '../../data';
+import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType, ResponseMessage } from '../../data';
 import { Order, OrderList } from '../../data/models/order/order';
 
 @Injectable()
@@ -130,5 +130,25 @@ export class OrderService {
     const param = { codeType: codetype, code: code, fields: 'FULL' };
     const data = new HttpData('serialAndRfid', pathvariables, null, param, 'json');
     return this.api.get(data);
+  }
+
+  /**
+   * 영수증 신청
+   *
+   * @param userid 회원아이디
+   * @param ordercode 주문번호
+   * @param issuenumber 주민번호/사업자등록번호/전화번호
+   */
+  receipt(userid: string, ordercode: string, issuenumber: string): Observable<ResponseMessage> {
+    const pathvariables = { userId: userid, orderCode: ordercode };
+    const body = {
+      receiptType: 'CASH',
+      receiptIssuanceType: 'INCOME_DEDUCTION',
+      receiptNumberType: 'CDN',
+      receiptIssuanceNumber: issuenumber
+    };
+    const param = { fields: 'FULL' };
+    const data = new HttpData('serialAndRfid', pathvariables, body, param, 'json');
+    return this.api.post(data);
   }
 }
