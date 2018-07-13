@@ -60,7 +60,7 @@ select, input[type='text'], input[type='password'], input[type='number'] {height
 input::-webkit-input-placeholder {color:#999 !important; font-family:'NSR'}
 input[type='password'] {letter-spacing:normal;}
 input:disabled {border-color:#999; background-color:#ececec}
-input[type='number'] {padding-right:0}
+/* input[type='number'] {padding-right:0} */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {-webkit-appearance:none; margin:0;}
 
@@ -98,8 +98,8 @@ input:disabled + .checkmark:after {display:block; background-color:#999}
 .fr {float:right}
 .clearfix:after {content:''; display:block; clear:both;}
 
-.mgt15 {margin-top:15px}
-.mgt12 {margin-top:12px}
+.mgt15 {margin-top:15px !important}
+.mgt12 {margin-top:12px !important}
 
 .mgl10 {margin-left:10px}
 .mgl20 {margin-left:20px}
@@ -169,6 +169,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .btn01_white:active {background-color:#ebf2f7}
 .btn01_blue {color:#fff; background-color:#11224e;}
 .btn01_blue:active {background-color:#0c1836}
+.btn01_blue.disabled {opacity:0.4}
 [class*='btn02'] {min-width:220px; font-family:'NSB'; font-size:16px; border-radius:1px}
 .btn02_white {color:#11224e; background-color:#fff; border:1px solid #11224e; height:30px; line-height:27px}
 .btn02_white:active {background-color:#ebf2f7}
@@ -228,7 +229,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .pop_container {}
 .pop_content {padding:30px 30px 0; max-height:600px; overflow:auto;}
 .pop_content.type02 {background-color:#f2f2f5}
-.pop_footer {height:75px; padding:20px 30px; box-sizing:border-box;}
+.pop_footer {min-height:75px; padding:20px 30px; box-sizing:border-box;}
 .pop_footer.line {border-top:1px solid #ccc}
 .pop_footer.line02 {border-top:1px solid #ccc; margin-top:30px}
 .pop_footer .fl {margin-top:8px; font-family:'NSB'; font-size:13px}
@@ -301,15 +302,18 @@ table input[type='text'] {font-family:'NSM';}
 .tbl_col.bg_bar td > span.none:before, .tbl_col.bg_bar td:first-child > span:before {content:''; display:none}
 .tbl_col.bg_bar td > span[class*='tag'] {display:inline-block; height:20px; line-height:20px; font-size:11px; font-family:'NSM';}
 .tbl_col tbody td .elips.bg_bar, .tbl_col.bg_bar td > .elips {padding-left:15px}
+.tbl_col.bg_bar td > .elips.ac {padding-left:10px}
 .tbl_col tbody td .elips.mx70 {max-width:70px}
 .tbl_col tbody td .elips.mx90 {max-width:90px}
 .tbl_col tbody td .elips.mx110 {max-width:110px}
 .tbl_col tbody td .elips.mx150 {max-width:150px}
+.tbl_col tbody td .elips.mx180 {max-width:180px}
 .tbl_col tbody td .elips.mx270 {max-width:270px}
 .tbl_col tbody td .elips.mx315 {max-width:315px}
 .tbl_col tbody td .elips.mx320 {max-width:320px}
 .tbl_col tbody td .elips.mx400 {max-width:400px}
 .tbl_col tbody td .elips.mx420 {max-width:420px}
+.tbl_col tbody td .elips.mx500 {max-width:500px}
 .tbl_col .chk:before {content:''; position:static !important; display:inline-block !important; width:18px !important; height:18px !important; background:url(/assets/images/common/ico_common.png) -358px -83px no-repeat !important; vertical-align:middle; margin:-2px 14px 0 0}
 .tbl_col .on .chk:before {background-position:-408px -83px !important}
 
@@ -427,14 +431,14 @@ table input[type='text'] {font-family:'NSM';}
 .bill_wrap .bill .list li.fx span {width:60px}
 .bill_wrap .bill .list li.fx em {width:70px}
 .bill_wrap .bill .list li.txt_b span, .bill_wrap .bill .list li.txt_b em {font-family:'NSB';}
-.bill_wrap .bill .list + .list {border-top:1px solid #ececec}
+.bill_wrap .bill .list + .list {border-top:1px solid #ccc}
 .bill_wrap .bill .txt {padding-top:10px; text-align:center; font-size:13px; color:#666}
 .bill_wrap.type02 .bill{margin:0 auto; height:540px}
 .bill_wrap.type02 {margin-top:0}
 
-.bill_wrap .bill.fl .scroll_tbl div {max-height:285px; overflow-y:scroll;}
+.bill_wrap .bill.fl .scroll_tbl div {height:278px; overflow-y:scroll;}
 .bill_wrap .bill.fl .scroll_tbl table thead tr th:nth-of-type(5) {width:88px}
-.scroll_tbl {position:relative; width:100%; padding:29px 0 9px; margin-top:2px; border-top:1px solid #ececec; border-bottom:1px solid #ececec; }
+.scroll_tbl {position:relative; width:100%; padding-top:29px; margin-top:2px; border-top:1px solid #ccc; border-bottom:1px solid #ccc; }
 .scroll_tbl div {overflow-x:hidden;}
 .scroll_tbl table { width:100%; line-height:15px;}
 .scroll_tbl table thead tr {position:absolute; top:0; display:inline-table; width:100%; margin-top:13px; color:#666}
@@ -460,6 +464,7 @@ table input[type='text'] {font-family:'NSM';}
 .scan {padding:20px 0; text-align:center}
 .scan label {display:inline-block; height:35px; line-height:30px; font-family:'NSB'; font-size:16px; color:#21243d; margin-right:10px}
 .scan input {width:370px}
+.scan input.w250 {width:250px}
 
 /* tab */
 .tab_type01 {display:block; text-align:center; font-size:0}
@@ -510,15 +515,16 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section01 .list_wrap .list {height:335px; background:#fff url(/assets/images/common/bg_board.png) 0 31px repeat; box-shadow: 0px 8px 10px 2px rgba(0, 19, 50, 0.1); overflow:hidden;}
 .m_cont .section01 .list_wrap .list table {width:100%}
 .m_cont .section01 .list_wrap .list table thead tr {border-bottom:1px solid #b3b3b3}
-.m_cont .section01 .list_wrap .list table tbody tr {border-top:1px solid #cfcfcf}
+.m_cont .section01 .list_wrap .list table tbody tr {border-top:1px solid #cfcfcf; white-space:nowrap}
 .m_cont .section01 .list_wrap .list table tbody tr:first-child {border-top:0}
 .m_cont .section01 .list_wrap .list table th {height:30px; font-size:12px; color:#666}
-.m_cont .section01 .list_wrap .list table td {height:38px; padding:0 10px; box-sizing:border-box; font-size:14px; color:#1a1a1a; text-align:center;}
+.m_cont .section01 .list_wrap .list table td {height:38px; padding:0 10px; box-sizing:border-box; color:#1a1a1a; text-align:center}
 .m_cont .section01 .list_wrap .list table td .elips {display:block; max-width:225px}
-.m_cont .section01 .list_wrap .list table td:nth-child(2) {font-size:11px}
-.m_cont .section01 .list_wrap .list table tr.on {border-top-color:#ebf2f7}
-.m_cont .section01 .list_wrap .list table tr.on + tr {border-top-color:#ebf2f7}
-.m_cont .section01 .list_wrap .list table tr.on td {font-family:'NSB'; font-size:14px; color:#11224e; background-color:#ebf2f7}
+.m_cont .section01 .list_wrap .list table td:nth-child(1),
+.m_cont .section01 .list_wrap .list table td:nth-child(2) {font-size:13px}
+.m_cont .section01 .list_wrap .list table tr.on {border-top-color:#1265cc}
+.m_cont .section01 .list_wrap .list table tr.on + tr {border-top-color:#1265cc}
+.m_cont .section01 .list_wrap .list table tr.on td {font-family:'NSR'; color:#fff; background-color:#1265cc}
 .m_cont .section01 .list_wrap .list table tr:last-child.on {border-bottom:1px solid #ebf2f7}
 .customer .m_cont .section01 .list_wrap .list table td .elips {max-width:420px}
 
@@ -526,14 +532,14 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section02:after {content:''; display:block; clear:both;}
 .m_cont .section02 > div {background-color:#fff; box-shadow: 0px 8px 10px 2px rgba(0, 19, 50, 0.1)}
 .m_cont .section02 .left {float:left; width:calc(50% - 5px)}
-.m_cont .section02 .left .search_wrap {position:relative; padding-right:98px; height:80px; border-bottom:1px solid #e6e6e6; box-sizing:border-box;}
+.m_cont .section02 .left .search_wrap {position:relative; padding-right:98px; height:80px; border-bottom:1px solid #ccc; box-sizing:border-box;}
 .m_cont .section02 .left .search_wrap button {-webkit-tap-highlight-color:transparent;}
-.m_cont .section02 .left .search_wrap .inner {height:80px; box-sizing:border-box; border-right:1px solid #e6e6e6}
+.m_cont .section02 .left .search_wrap .inner {height:80px; box-sizing:border-box; border-right:1px solid #ccc}
 .m_cont .section02 .left .search_wrap .inner .tab {height:24px; font-size:0}
-.m_cont .section02 .left .search_wrap .inner .tab button {width:50%; height:24px; font-size:14px; color:#fff; background-color:#b8bec2}
+.m_cont .section02 .left .search_wrap .inner .tab button {width:50%; height:24px; font-size:14px; color:#fff; background-color:#aaafb3}
 .m_cont .section02 .left .search_wrap .inner .tab .on {color:#21243d; font-family:'NSB'; background-color:#fff}
 .m_cont .section02 .left .search_wrap .inner .search {position:relative; padding:10px 15px 0 15px}
-.m_cont .section02 .left .search_wrap .inner .search input {width:100%; height:35px; padding-right:35px; background-color:#eaeef1; border:0}
+.m_cont .section02 .left .search_wrap .inner .search input {width:100%; height:35px; padding-right:35px; background-color:#dfe6eb; border:0}
 .m_cont .section02 .left .search_wrap .inner .search button {position:absolute; top:20px; right:25px}
 .m_cont .section02 .left .search_wrap .btn {position:absolute; top:0; right:0; width:98px; height:79px; font-size:15px; font-family:'NSB'; color:#21243d}
 .m_cont .section02 .left .search_wrap .btn.on {background-color:#ebf2f7}
@@ -584,7 +590,7 @@ table input[type='text'] {font-family:'NSM';}
 .m_cont .section02 .right .calc01 em.sale {color:#de0736}
 .m_cont .section02 .right .calc02 {height:195px; color:#fff; background-color:#11224e}
 .m_cont .section02 .right .calc02 li {height:64px}
-.m_cont .section02 .right .calc02 li + li {border-top:1px solid #293960}
+.m_cont .section02 .right .calc02 li + li {border-top:1px solid #4d597a}
 .m_cont .section02 .right .calc02 span {width:30%; height:64px; line-height:60px; padding-left:30px; font-size:17px}
 .m_cont .section02 .right .calc02 em {width:70%; height:64px; line-height:60px; padding-right:30px; text-align:right; font-size:23px}
 
@@ -602,7 +608,7 @@ table input[type='text'] {font-family:'NSM';}
 .m_right .nav button.disabled {background-color:#6b7687; color:#4b5366}
 .m_right .nav button:before {content:''; display:inline-block; background-color:#000}
 
-.m_right .promotion {position:relative; margin-top:71px;}
+.m_right .promotion {position:relative; margin-top:125px;}
 .m_right .promotion .img {width:140px; height:187px}
 .m_right .promotion .img li {display:none; width:140px; height:187px; box-sizing:border-box; border:1px solid #fff}
 .m_right .promotion .img li.on {display:block;}
