@@ -48,7 +48,8 @@ export class NetworkStatusService {
   }
 
   /**
-   * 네트워크 온라인 여부 체크
+   * 네트워크 온라인 여부 체크 - 동작하지 않음.
+   * WIFI 연결을 끌때 체크되지 않음.
    *
    * @param interval
    */

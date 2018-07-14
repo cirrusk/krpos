@@ -76,7 +76,7 @@ export const environment = {
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://oms-dev.abnkorea.co.kr/api/',
+  hybrisCheckUrl: 'https://127.0.0.1:9002/api',
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9,
