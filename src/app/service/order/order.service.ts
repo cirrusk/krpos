@@ -121,15 +121,13 @@ export class OrderService {
    *
    * @param userid 회원아이디
    * @param ordercode 주문번호
-   * @param entrynumber 주문 엔트리 번호
-   * @param codetype 코드타입 (RFID, SERIAL_NUMBER)
-   * @param code 코드
+   * @param entries Data Parameter
    */
-  serialAndRfid(userid: string, ordercode: string, entrynumber: number, codetype: string, code: string) {
-    const pathvariables = { userId: userid, orderCode: ordercode, entryNumber: entrynumber };
-    const param = { codeType: codetype, code: code, fields: 'FULL' };
-    const data = new HttpData('serialAndRfid', pathvariables, null, param, 'json');
-    return this.api.get(data);
+  serialAndRfid(userid: string, ordercode: string, entries: any): Observable<ResponseMessage> {
+    const pathvariables = { userId: userid, orderCode: ordercode};
+    const param = { fields: 'FULL' };
+    const data = new HttpData('serialAndRfid', pathvariables, entries, param, 'json');
+    return this.api.post(data);
   }
 
   /**

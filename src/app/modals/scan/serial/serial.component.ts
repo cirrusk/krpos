@@ -7,7 +7,7 @@ import { OrderService } from '../../../service';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
 import { SerialRfid } from '../../../data/models/order/cart';
-import { Accounts, ProductScanTypes, KeyCode } from '../../../data';
+import { Accounts, ProductScanTypes, KeyCode, SerialEntries, SerialEntry } from '../../../data';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -145,34 +145,29 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       this.checktype = 0;
     }
     this.spinner.show();
-    const codeTypes = new Array<string>();
-    const entryNumbers = new Array<number>();
-    const codes = new Array<string>();
+    const serialEntryArray: Array<SerialEntry> = new Array<SerialEntry>();
+    let serialEntry: SerialEntry;
     this.codes.forEach(cd => {
-      codeTypes.push(cd.nativeElement.getAttribute('data-type'));
-      entryNumbers.push(cd.nativeElement.getAttribute('data-entry'));
+      serialEntry = new SerialEntry();
+      serialEntry.entryNumber = cd.nativeElement.getAttribute('data-entry');
       if (cd.nativeElement.getAttribute('data-type') === ProductScanTypes.RFID) {
-        codes.push('SCAN-' + ProductScanTypes.RFID);
+        serialEntry.RFID = 'SCAN-' + ProductScanTypes.RFID;
       } else {
-        codes.push(cd.nativeElement.value);
+        serialEntry.SERIAL_NUMBER = cd.nativeElement.value;
       }
+      serialEntryArray.push(serialEntry);
     });
-
-    console.log('*** uid = ' + this.accountInfo.parties[0].uid);
-    console.log('*** order code = ' + this.orderInfo.code);
-    codeTypes.forEach(s => {
-      console.log('*** code type = ' + s);
-    });
-    entryNumbers.forEach(e => {
-      console.log('*** entry number = ' + e);
-    });
-    codes.forEach(c => {
-      console.log('*** scan code = ' + c);
-    });
-    // entrynumber, codetype, code 가 배열로 들어갈 수 있도록 처리
-    this.regsubscription = this.order.serialAndRfid(this.accountInfo.parties[0].uid, this.orderInfo.code, 0, ProductScanTypes.SERIALNUMBER, '123456').subscribe(
+    const serialEntries: SerialEntries = new SerialEntries();
+    serialEntries.orderEntries = serialEntryArray;
+    this.logger.set('serial.component', `Serial Entries : ${Utils.stringify(serialEntries)}`).debug();
+    this.regsubscription = this.order.serialAndRfid(this.accountInfo.parties[0].uid, this.orderInfo.code, serialEntries).subscribe(
       result => {
         console.log(result);
+        if (result.code === '200') {
+
+        } else {
+
+        }
         this.result = true;
       },
       error => { this.result = true; this.spinner.hide(); this.logger.set('serial.component', `${error}`).error(); },
