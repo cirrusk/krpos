@@ -1,13 +1,12 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, SpinnerService, Logger } from '../../../../core';
 import { Utils } from '../../../../core/utils';
-import { Accounts, StatusDisplay, KeyCode, PaymentCapture } from '../../../../data';
+import { Accounts, StatusDisplay, KeyCode } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { OrderService, MessageService } from '../../../../service';
-import { throwIfAlreadyLoaded } from '../../../../core/module-import-guard';
 
 @Component({
   selector: 'pos-cash-receipt',
@@ -16,6 +15,8 @@ import { throwIfAlreadyLoaded } from '../../../../core/module-import-guard';
 export class CashReceiptComponent extends ModalComponent implements OnInit, OnDestroy {
 
   @ViewChild('clientnum') private clientnum: ElementRef;       // 고객번호
+  @ViewChild('income') private income: ElementRef;
+  @ViewChild('outcome') private outcome: ElementRef;
   checktype: number;
   apprmessage: string;
   finishStatus: string;
@@ -25,10 +26,10 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   private accountInfo: Accounts;
   private cartInfo: Cart;
   private orderInfo: Order;
-  private paymentcapture: PaymentCapture;
   private receiptsubscription: Subscription;
   constructor(protected modalService: ModalService, private order: OrderService,
-    private spinner: SpinnerService, private message: MessageService, private logger: Logger) {
+    private spinner: SpinnerService, private message: MessageService,
+    private renderer: Renderer2, private logger: Logger) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
@@ -39,7 +40,6 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.orderInfo = this.callerData.orderInfo;
-    this.paymentcapture = this.callerData.paymentcapture;
     this.paymentamount = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
     setTimeout(() => { this.clientnum.nativeElement.focus(); }, 50);
   }
@@ -67,24 +67,25 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
       }
     } else {
       this.spinner.show();
-      let receipttype, issuancetype, numbertype;
-      if (this.paymentcapture) {
-        if (this.paymentcapture.cashPaymentInfo) {
-          receipttype = 'CASH';
-        }
-        if (this.paymentcapture.monetaryPaymentInfo) {
-          receipttype = 'CASH';
-        }
-        if (this.paymentcapture.directDebitPaymentInfo) {
-          receipttype = 'CASH';
-        }
-      }
+      let issuancetype, numbertype;
+      const receipttype = 'CASH'; // CASH(현금영수증), TAX(세금계산서)
+      // 카드번호 13 ~ 19
+      // 휴대폰번호 11
+      // 사업자등록번호 10(주민번호 앞에서부터 10자리)
+      // CPN(휴대폰번호), CDN(현금영수증카드번호), BRN(사업자등록번호)
       if (this.divcheck === 'i') {
-        issuancetype = 'INCOME_DEDUCTION';
+        issuancetype = 'INCOME_DEDUCTION'; // 소득공제
+        if (issuancenumber.length > 9 && issuancenumber.length < 12) { // 휴대폰
+          numbertype = 'CPN';
+        } else if (issuancenumber.length > 12 && issuancenumber.length < 20) {
+          numbertype = 'CDN';
+        } else {
+          numbertype = 'CDN';
+        }
         numbertype = 'CDN';
       } else if (this.divcheck === 'o') {
-        issuancetype = 'OUTCOME_DEDUCTION';
-        numbertype = 'CDN';
+        issuancetype = 'EXPENDITURE_PROOF'; // 지출증빙
+        numbertype = 'BRN';
       }
       const params = { receiptType: receipttype, issuanceType: issuancetype, numberType: numbertype, issuanceNumber: issuancenumber };
       const userid = this.accountInfo.parties[0].uid;
@@ -93,6 +94,12 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
         result => {
           if (result.code === '200') {
             this.finishStatus = StatusDisplay.PAID;
+            this.clientnum.nativeElement.blur();
+            setTimeout(() => {
+              this.renderer.setAttribute(this.income.nativeElement, 'disabled', 'disabled');
+              this.renderer.setAttribute(this.outcome.nativeElement, 'disabled', 'disabled');
+              this.renderer.setAttribute(this.clientnum.nativeElement, 'disabled', 'disabled');
+            }, 50);
             this.checktype = 0;
             this.receiptdate = new Date();
             this.apprmessage = this.message.get('receipt.reg.number.success');
@@ -116,6 +123,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
 
   selectDiv(div: string) {
     this.divcheck = div;
+    setTimeout(() => { this.clientnum.nativeElement.focus(); this.clientnum.nativeElement.select(); }, 50);
   }
 
   close() {

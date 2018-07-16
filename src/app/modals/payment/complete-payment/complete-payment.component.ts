@@ -221,7 +221,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.modal.openModalByComponent(CashReceiptComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
       closeByClickOutside: false,
-      modalId: 'CashReceiptComponent_Cplx',
+      modalId: 'CashReceiptComponent',
       paymentType: 'c'
     });
   }
@@ -297,7 +297,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== 'SerialComponent') {
+      if (modalid !== 'SerialComponent' && modalid !== 'CashReceiptComponent') {
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
           this.registerSerialAndRfid();
         } else if (this.finishStatus === 'fail') {
