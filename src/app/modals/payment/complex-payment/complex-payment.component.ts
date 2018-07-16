@@ -22,13 +22,6 @@ import { InfoBroker } from '../../../broker';
 export class ComplexPaymentComponent extends ModalComponent implements OnInit, OnDestroy {
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
-  private PAYMENT_LIST = [[0, 'CreditCardComponent', CreditCardComponent],
-  [1, 'IcCardComponent', IcCardComponent],
-  [2, 'PointComponent', PointComponent],
-  [3, 'PointComponent', PointComponent],
-  [4, 'CashComponent', CashComponent],
-  [5, 'DirectDebitComponent', DirectDebitComponent],
-  [6, 'ReCashComponent', ReCashComponent]];
   private point: number;
   private recash: number;
   private paymentModesSubscription: Subscription;

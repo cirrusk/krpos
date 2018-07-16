@@ -1388,6 +1388,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           let uid = '';
           // 복수 인원 확인
           if (volumeAccount.indexOf(',') > -1) {
+            // 선택한 사용자로 페이지 이동
             uid = this.currentGroupAccountInfo[this.selectedUserIndex].parties[0].uid;
           } else {
             uid = volumeAccount;
@@ -1398,6 +1399,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             }
           );
 
+          // 장바구니가 생성된 경우
           if (existedIdx > -1) {
             this.groupSelectedCart = this.amwayExtendedOrdering.orders[existedIdx];
             this.cartList = this.groupSelectedCart.entries;
