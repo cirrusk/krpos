@@ -326,7 +326,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.spinner.hide();
         });
     } else {
-      // this.alert.show({ message: '실결제금액이 큽니다.' });
       this.checktype = -2;
       this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
     }

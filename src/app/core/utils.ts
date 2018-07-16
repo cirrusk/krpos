@@ -335,7 +335,6 @@ export /* default */ class Utils {
     if (this.isEmpty(html)) {
       return '';
     }
-
     return html.replace(/<.*?>/g, '');
   }
 

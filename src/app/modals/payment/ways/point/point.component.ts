@@ -195,11 +195,9 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.paymentType === 'n') {
       if (paid > 0) { // 포인트가 부족
         // this.checktype = '1';
-        // this.alert.show({ message: '사용 포인트가 부족합니다.' });
         // return;
       } else if (paid < 0) { // 포인트가 많음.
         // this.checktype = '2';
-        // this.alert.show({ message: '사용 포인트가 결제금액보다 많습니다.' });
         // return;
       } else {
         this.checktype = 0;

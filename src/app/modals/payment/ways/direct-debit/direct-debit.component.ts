@@ -190,7 +190,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         }
       }
     } else {
-      // this.alert.show({ message: '비밀번호가 공란입니다.' });
       this.checktype = -2;
       this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
@@ -217,16 +216,13 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
             this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
             this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다.`;
-            // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
             this.finishStatus = 'recart';
           } else { // CART 삭제된 상태
-            // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
             this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다.`;
             this.finishStatus = 'recart';
           }
         } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = 'fail';
-          // this.alert.warn({ title: '경고', message: `즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.` });
           this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.`;
           // cart-list.component에 재생성 이벤트 보내서 처리
         }
@@ -237,7 +233,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         const errdata = Utils.getError(error);
         if (errdata) {
           this.apprmessage = errdata.message;
-          // this.logger.set('direct.debit.component', `${errdata.message}`).error();
         }
       }, () => { this.spinner.hide(); });
   }

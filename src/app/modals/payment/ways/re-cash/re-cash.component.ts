@@ -124,28 +124,16 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.checktype = 0;
     }
     if (this.paymentType === 'n') {
-      // this.alertsubscription = this.alert.alertState.subscribe(
-      //   (state: AlertState) => {
-      //     if (!state.show) {
-      //       setTimeout(() => {
-      //         this.usePoint.nativeElement.focus();
-      //         this.usePoint.nativeElement.select();
-      //       }, 50);
-      //     }
-      //   }
-      // );
       // 전체결제금액을 Re-Cash로 적용 후 A포인트에 추가 금액 입력 후, 실물 키보드의 Enter 키가 입력된 경우, 경고 팝업 뜸 (반대 경우도 포함)
       // : 이미 Re-Cash(A포인트)로 전체 결제금액을 사용 중입니다. A포인트(Re-Cash)금액은 제외 됩니다.
       if (check > 0) {
         this.checktype = -1;
         this.dupcheck = false;
         this.apprmessage = this.message.get('recash.smallpaid'); // '결제 사용할 금액이 부족합니다.';
-        // this.alert.warn({ message: '결제 사용할 금액이 부족합니다.' });
       } else if (check < 0) {
         this.checktype = -2;
         this.dupcheck = false;
         this.apprmessage = this.message.get('recash.overpaid'); // '잔액보다 사용하려는 금액이 클 수 없습니다.';
-        // this.alert.warn({ message: '잔액보다 사용하려는 금액이 클 수 없습니다.' });
       } else {
         this.checktype = 0;
         this.paymentAndPlaceOrder();
