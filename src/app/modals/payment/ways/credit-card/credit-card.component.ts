@@ -181,18 +181,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     return map;
   }
 
+  /**
+   * 할부 개월 수 패딩처리
+   */
   private getInstallment(): string {
     const insmnt: number = this.installmentPeriod.nativeElement.value;
-    let strinst = String(insmnt);
-    if (Utils.isEmpty(strinst)) {
-      strinst = '00';
-    } else {
-      if (strinst.length === 0) {
-        strinst = '00';
-      } else if (strinst.length === 1) {
-        strinst = '0' + strinst;
-      }
-    }
+    const strinst = Utils.padLeft(String(insmnt), '0', 2);
     this.installment = strinst;
     return strinst;
   }
