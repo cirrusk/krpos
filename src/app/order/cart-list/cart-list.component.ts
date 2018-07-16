@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
@@ -11,9 +12,9 @@ import {
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
-import { Utils } from '../../core/utils';
+import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
-import { FormControl } from '@angular/forms';
+import { Utils } from '../../core/utils';
 
 @Component({
   selector: 'pos-cart-list',
@@ -612,8 +613,15 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.productInfoSubscription = this.searchService.getBasicProductInfo('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
         result => {
           const totalCount = result.pagination.totalResults;
-          if (totalCount === 1 && result.products[0].code === productCode.toUpperCase() && result.products[0].sellableStatusForStock === undefined) {
-            this.addCartEntries(productCode);
+          const product: Product = result.products[0];
+          if (totalCount === 1 && product.code === productCode.toUpperCase()) {
+            if (product.sellableStatusForStock === undefined) {
+              this.addCartEntries(productCode);
+            } else if (product.sellableStatusForStock === 'OUTOFSTOCK') {
+              // this.alert.show({message: '재고가 부족합니다.'});
+            } else if (product.sellableStatusForStock === 'ENDOFSALE') {
+              // this.alert.show({message: '단종된 제품입니다.'});
+            }
           } else {
             this.searchParams.data = this.cartInfo;
             this.callSearchProduct(this.searchParams);
