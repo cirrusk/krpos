@@ -464,7 +464,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.sendRightMenu('a', true, account);
         }
         // 그룹 주문 사용자 중복확인
-        if (this.checkGroupUserId(account.uid) < 0) {
+        if (this.checkGroupUserId(account.uid) === -1) {
           this.groupAccountInfo.push(account);
           // 그룹주문 사용자 페이징처리
           this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
@@ -475,6 +475,10 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.storage.setOrderEntry(this.cartList);
             this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
           }
+        } else {
+          this.alert.info({ message: this.message.get('addedABO'),
+                            timer: true,
+                            interval: 1000});
         }
       } else {
         this.accountInfo = account;
@@ -1179,11 +1183,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.selectedCartNum = -1;
     }
 
-    const currentData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
+    const currentCartData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
     // pagination 생성 데이터 조회
-    this.pager = Object.assign(currentData.get('pager'));
+    this.pager = Object.assign(this.pager, currentCartData.get('pager'));
     // 출력 리스트 생성
-    this.currentCartList = Object.assign(currentData.get('list'));
+    this.currentCartList = Object.assign(currentCartData.get('list'));
     this.totalPriceInfo();
   }
 
@@ -1197,11 +1201,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const currentData = this.pagerService.getCurrentPage(this.groupAccountInfo, page, this.GROUP_ACCOUNT_PAGE_SIZE);
+    const currentUserData = this.pagerService.getCurrentPage(this.groupAccountInfo, page, this.GROUP_ACCOUNT_PAGE_SIZE);
+
     // pagination 생성 데이터 조회
-    this.userPager = Object.assign(currentData.get('pager'));
+    this.userPager = Object.assign(this.userPager, currentUserData.get('pager'));
     // 출력 리스트 생성
-    this.currentGroupAccountInfo = Object.assign(currentData.get('list'));
+    this.currentGroupAccountInfo = Object.assign(currentUserData.get('list'));
 
     this.selectedUserIndex = this.currentGroupAccountInfo.length - 1;
     this.selectedUserId = this.currentGroupAccountInfo[this.selectedUserIndex].parties[0].uid;

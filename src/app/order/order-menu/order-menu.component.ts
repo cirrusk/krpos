@@ -68,6 +68,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         }
         if (!data.flag) {
           this.paymentType = '';
+          this.amwayExtendedOrdering = new AmwayExtendedOrdering();
         }
       } else if (data.type === 'product') {
         this.hasProduct = data.flag;
