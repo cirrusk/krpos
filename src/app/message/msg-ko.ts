@@ -50,4 +50,7 @@ export const LANG_KO_MSGS = {
     'deduction.msg': '공제조합홈페이지 확인',
     'receipt.apoint.label': '포인트차감(A포인트)',
     'receipt.mpoint.label': '포인트차감(멤버포인트)',
+    'receipt.reg.number.emp': '고객번호를 입력해주세요.',
+    'receipt.reg.number.biz': '고객번호를 입력해주세요.',
+    'receipt.reg.number.success': '영수증 신청이 정상적으로 처리되었습니다.',
 };

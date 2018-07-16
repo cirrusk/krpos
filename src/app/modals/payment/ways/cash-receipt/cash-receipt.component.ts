@@ -6,7 +6,7 @@ import { Utils } from '../../../../core/utils';
 import { Accounts, StatusDisplay, KeyCode } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
-import { OrderService } from '../../../../service';
+import { OrderService, MessageService } from '../../../../service';
 
 @Component({
   selector: 'pos-cash-receipt',
@@ -26,7 +26,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   private orderInfo: Order;
   private receiptsubscription: Subscription;
   constructor(protected modalService: ModalService, private order: OrderService,
-    private spinner: SpinnerService, private logger: Logger) {
+    private spinner: SpinnerService, private message: MessageService, private logger: Logger) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
@@ -53,10 +53,10 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     if (Utils.isEmpty(issunumber)) {
       if (this.divcheck === 'i') {
         this.checktype = -1;
-        this.apprmessage = '';
+        this.apprmessage = this.message.get('receipt.reg.number.emp'); // 휴대폰 번호, 현금영수증 카드번호
       } else if (this.divcheck === 'o') {
         this.checktype = -2;
-        this.apprmessage = '';
+        this.apprmessage = this.message.get('receipt.reg.number.biz'); // 사업자 등록번호, 현금영수증 카드번호
       }
     } else {
       this.spinner.show();
@@ -64,10 +64,15 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
       const ordercode = this.orderInfo.code;
       this.receiptsubscription = this.order.receipt(userid, ordercode, issunumber).subscribe(
         result => {
-          this.finishStatus = StatusDisplay.PAID;
-          this.checktype = 0;
-          this.apprmessage = '';
-          console.log('receipt result : ' + result);
+          if (result.code === '200') {
+            this.finishStatus = StatusDisplay.PAID;
+            this.checktype = 0;
+            this.receiptdate = new Date();
+            this.apprmessage = this.message.get('receipt.reg.number.success');
+          } else {
+            this.finishStatus = 'fail';
+            this.apprmessage = result.returnMessage;
+          }
         },
         error => {
           this.finishStatus = 'fail';
