@@ -1,0 +1,55 @@
+<div class="pop_wrap pop_l">
+  <div class="pop_header">
+      <h1>ECP 출력 취소</h1>
+      <button type="button" class="ico_comm pop_close01" (click)="close()">닫기</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <div class="mbinfo_list type03">
+              <div class="tbl_col bg_bar">
+                  <table>
+                      <caption>주문내역</caption>
+                      <colgroup>
+                          <col style="width:55px">
+                          <col style="width:100px">
+                          <col>
+                          <col style="width:115px">
+                          <col style="width:130px">
+                          <col style="width:175px">
+                      </colgroup>
+                      <thead>
+                          <tr>
+                              <th scope="col"></th>
+                              <th scope="col">주문번호</th>
+                              <th scope="col">성명</th>
+                              <th scope="col">ABO번호/아이디</th>
+                              <th scope="col">결제금액</th>
+                              <th scope="col">결제일시</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr class="on">
+                              <td><label class="inp_rd single" for="ps1"><input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label></td>
+                              <td><span>{{orderInfo.code}}</span></td>
+                              <td class="name"><span class="elips mx150">{{orderInfo.user.name}}</span></td>
+                              <td><span>{{orderInfo.user.uid}}</span></td>
+                              <td class="ar"><span>{{orderInfo.total.value | number}}원</span></td>
+                              <td><span>{{orderInfo.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>       
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <p class="txt03">해당 ECP 출력을 취소하시겠습니까?</p>
+          </div>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href="javascript:void(0)" class="btn01_blue"  (click)="close()">확인</a>
+          <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
+      </span>
+  </div>
+</div>

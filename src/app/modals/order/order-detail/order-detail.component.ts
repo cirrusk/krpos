@@ -4,7 +4,7 @@ import { ModalComponent, ModalService, Modal, SpinnerService, StorageService, Lo
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
-import { CancelOrderComponent } from '../..';
+import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
 import { OrderHistory, PaymentCapture } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
@@ -64,6 +64,10 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     } else {
       this.cancelSymbol = '';
       this.cancelFlag = false;
+
+      if (orderInfo.orderType.code === 'GROUP_COMBINED_ORDER' && orderInfo.user.uid !== orderInfo.volumeAccount.uid) {
+        this.cancelFlag = true;
+      }
     }
   }
 
@@ -110,6 +114,27 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
           // 재결제 추가
           this.info.sendInfo('paymentChange', result);
           this.goOrder();
+          this.close();
+        }
+      }
+    );
+  }
+
+  /**
+   * ECP 출력 취소
+   */
+  cancelECPPrint() {
+    this.modal.openModalByComponent(CancelEcpPrintComponent,
+      {
+        callerData: { orderInfo : this.orderInfo },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        closeByEscape: false,
+        modalId: 'CancelEcpPrintComponent'
+      }
+    ).subscribe(
+      result => {
+        if (result) {
           this.close();
         }
       }

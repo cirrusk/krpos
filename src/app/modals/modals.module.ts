@@ -41,6 +41,7 @@ import { SearchBerComponent } from './account/search-ber/search-ber.component';
 import { SearchProductComponent } from './product/search-product/search-product.component';
 import { SerialComponent } from './scan/serial/serial.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
+import { CancelEcpPrintComponent } from './order/ecp-print/cancel-ecp-print/cancel-ecp-print.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.c
     SearchBerComponent,
     SerialComponent,
     UpdateItemQtyComponent,
-    MaskPipe
+    MaskPipe,
+    CancelEcpPrintComponent
   ],
   imports: [
     CommonModule,
@@ -121,7 +123,8 @@ import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.c
     SearchProductComponent,
     SearchBerComponent,
     SerialComponent,
-    UpdateItemQtyComponent
+    UpdateItemQtyComponent,
+    CancelEcpPrintComponent
   ]
 })
 export class ModalsModule {
