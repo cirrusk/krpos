@@ -222,16 +222,15 @@ export class CartService {
    * @param cartId
    * @param volumeAccounts // ex) 7480001,7460002
    */
-  createGroupCart(userId: string, cartId: string, volumeAccounts: string, pickupStore: string, cartType: string): Observable<AmwayExtendedOrdering>  {
+  createGroupCart(userId: string, cartId: string, volumeAccounts: string): Observable<AmwayExtendedOrdering>  {
     const arrVolumeAccount = new Array<string>();
     volumeAccounts.split(',').forEach(volumeAccount => {
       arrVolumeAccount.push(volumeAccount.trim());
     });
 
-    const cartParams = new CartParams(pickupStore, cartType);
     const param = { fields: 'FULL', volumeAccounts : arrVolumeAccount};
     const pathvariables = { userId: userId, cartId: cartId };
-    const data = new HttpData('createGroupCart', pathvariables, cartParams, param, 'json');
+    const data = new HttpData('createGroupCart', pathvariables, null, param, 'json');
     return this.api.post(data);
   }
 

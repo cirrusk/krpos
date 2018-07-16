@@ -6,6 +6,7 @@ export * from './login/batch.component';
 export * from './logout/logout.component';
 export * from './order/cancel-order/cancel-order.component';
 export * from './order/ecp-print/ecp-print.component';
+export * from './order/ecp-print/cancel-ecp-print/cancel-ecp-print.component';
 export * from './order/etc-order/etc-order.component';
 export * from './order/hold-order/hold-order.component';
 export * from './order/pickup-order/pickup-order.component';

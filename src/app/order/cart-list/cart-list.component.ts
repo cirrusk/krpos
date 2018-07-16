@@ -660,10 +660,15 @@ export class CartListComponent implements OnInit, OnDestroy {
         accountId = this.accountInfo.uid;
       }
 
+      let cartType = 'POS';
+      if (this.paymentType === 'g') {
+        cartType = 'WEBGROUP';
+      }
+
       this.spinner.show();
       this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
         accountId,
-        terminalInfo.pointOfService.name, 'POS').subscribe(
+        terminalInfo.pointOfService.name, cartType).subscribe(
           cartResult => {
             this.cartInfo = cartResult;
             this.sendRightMenu('c', true);
@@ -935,6 +940,10 @@ export class CartListComponent implements OnInit, OnDestroy {
           result => {
             this.resCartInfo.cartList = result.cartList;
             this.getCartList(this.cartInfo, index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
+            if (this.paymentType === 'g') {
+              // 그룹 카트 조회
+              this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+            }
           },
           error => {
             this.spinner.hide();
@@ -983,6 +992,8 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.setUserPage(page);
               // 사용자 선택하여 CartList 호출
               this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
+              // 그룹 카트 조회
+              this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
           }
         },
@@ -1202,8 +1213,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   totalPriceInfo(): void {
     this.totalItem = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalUnitCount : 0;
     this.totalPrice = this.resCartInfo.cartList ? this.resCartInfo.cartList.totalPrice.value : 0;
-    this.totalPV = this.resCartInfo.cartList.totalPrice.amwayValue ? this.resCartInfo.cartList.totalPrice.amwayValue.pointValue : 0;
-    this.totalBV = this.resCartInfo.cartList.totalPrice.amwayValue ? this.resCartInfo.cartList.totalPrice.amwayValue.businessVolume : 0;
+    this.totalPV = this.resCartInfo.cartList && this.resCartInfo.cartList.totalPrice.amwayValue ? this.resCartInfo.cartList.totalPrice.amwayValue.pointValue : 0;
+    this.totalBV = this.resCartInfo.cartList && this.resCartInfo.cartList.totalPrice.amwayValue ? this.resCartInfo.cartList.totalPrice.amwayValue.businessVolume : 0;
 
     this.sendRightMenu('c', true, this.resCartInfo.cartList);
   }
@@ -1387,9 +1398,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 추가시 가장 앞에 있는 구매자로 조회
    */
   createGroupCart(userId: string, cartId: string, volumeAccount: string, popupFlag: boolean, productCode?: string) {
-    const terminalInfo = this.storage.getTerminalInfo();
     this.spinner.show();
-    this.cartService.createGroupCart(userId, cartId, volumeAccount, terminalInfo.pointOfService.name, 'WEBGROUP').subscribe(
+    this.cartService.createGroupCart(userId, cartId, volumeAccount).subscribe(
       result => {
         if (result) {
           this.amwayExtendedOrdering = result;
