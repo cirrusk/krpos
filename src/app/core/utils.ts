@@ -339,4 +339,26 @@ export /* default */ class Utils {
     return html.replace(/<.*?>/g, '');
   }
 
+  /**
+   * 왼쪽 문자열 패딩처리
+   *
+   * @param text 처리할 문자열
+   * @param padstring 패딩할 문자
+   * @param padsize 패딩 사이즈
+   */
+  public static padLeft(text: string, padstring: string, padsize: number): string {
+    return text.padStart(padsize, padstring);
+  }
+
+  /**
+   * 오른쪽 문자열 패딩처리
+   *
+   * @param text 처리할 문자열
+   * @param padstring 패딩할 문자
+   * @param padsize 패딩 사이즈
+   */
+  public static padRight(text: string, padstring: string, padsize: number): string {
+    return text.padEnd(padsize, padstring);
+  }
+
 }
