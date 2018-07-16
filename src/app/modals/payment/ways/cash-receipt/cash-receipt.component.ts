@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ModalComponent, ModalService } from '../../../../core';
 import { Utils } from '../../../../core/utils';
+import { Cart } from '../../../../data/models/order/cart';
 
 @Component({
   selector: 'pos-cash-receipt',
@@ -9,11 +10,13 @@ import { Utils } from '../../../../core/utils';
 export class CashReceiptComponent extends ModalComponent implements OnInit {
 
   @ViewChild('clientnum') private clientnum: ElementRef;       // 고객번호
-  private divcheck: string;
   checktype: number;
   apprmessage: string;
   finishStatus: string;
   receiptdate: Date;
+  paymentamount: number;
+  private divcheck: string;
+  private cartInfo: Cart;
   constructor(protected modalService: ModalService) {
     super(modalService);
     this.divcheck = 'i';
@@ -22,6 +25,8 @@ export class CashReceiptComponent extends ModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.cartInfo = this.callerData.cartInfo;
+    this.paymentamount = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
     setTimeout(() => { this.clientnum.nativeElement.focus(); }, 50);
   }
 
