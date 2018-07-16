@@ -122,7 +122,7 @@ export class OrderService {
    * @param userid 회원아이디
    * @param ordercode 주문번호
    * @param entrynumber 주문 엔트리 번호
-   * @param codetype 코드타입 (RFID SERIALNUMBER)
+   * @param codetype 코드타입 (RFID, SERIAL_NUMBER)
    * @param code 코드
    */
   serialAndRfid(userid: string, ordercode: string, entrynumber: number, codetype: string, code: string) {
@@ -137,18 +137,18 @@ export class OrderService {
    *
    * @param userid 회원아이디
    * @param ordercode 주문번호
-   * @param issuenumber 주민번호/사업자등록번호/전화번호
+   * @param params Data Pameter
    */
-  receipt(userid: string, ordercode: string, issuenumber: string): Observable<ResponseMessage> {
+  receipt(userid: string, ordercode: string, params: any): Observable<ResponseMessage> {
     const pathvariables = { userId: userid, orderCode: ordercode };
     const body = {
-      receiptType: 'CASH',
-      receiptIssuanceType: 'INCOME_DEDUCTION',
-      receiptNumberType: 'CDN',
-      receiptIssuanceNumber: issuenumber
+      receiptType: params.receiptType, // CASH
+      receiptIssuanceType: params.issuanceType, // 'INCOME_DEDUCTION',
+      receiptNumberType: params.numberType, // 'CDN',
+      receiptIssuanceNumber: params.issuanceNumber
     };
-    const param = { fields: 'FULL' };
-    const data = new HttpData('serialAndRfid', pathvariables, body, param, 'json');
+    const param = { fields: 'DEFAULT' };
+    const data = new HttpData('receipt', pathvariables, body, param, 'json');
     return this.api.post(data);
   }
 }
