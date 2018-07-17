@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
-import { SerialComponent } from '../../scan/serial/serial.component';
 import {
   ModalComponent, ModalService, PrinterService, StorageService, SpinnerService,
   KeyboardService, KeyCommand, Modal, Logger
@@ -243,54 +242,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
-  /**
-   * 제품에 SERIAL 이나 RFID가 있는 제품인 경우
-   * 해당 SERIAL, RFID정보를 기록해야함.
-   *
-   * @returns 존재유무 0: 없음, 1 : SERIAL, 2: RFID, 3: SERIAL + RFID
-   */
-  private hasSerialAndRfid(): number {
-    let rtn = 0;
-    if (this.cartInfo) {
-      this.cartInfo.entries.forEach(entry => {
-        if (entry.product) {
-          if (entry.product.serialNumber && !entry.product.rfid) {
-            rtn = 1;
-          }
-          if (!entry.product.serialNumber && entry.product.rfid) {
-            rtn = 2;
-          }
-          if (entry.product.serialNumber && entry.product.rfid) {
-            rtn = 3;
-          }
-        }
-      });
-    }
-    return rtn;
-  }
-
-  /**
-   * SERIAL, RFID가 있을 경우 등록 팝업
-   */
-  private registerSerialAndRfid() {
-    const regType = this.hasSerialAndRfid();
-    if (regType > 0) {
-      this.modal.openModalByComponent(SerialComponent, {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo },
-        closeByClickOutside: false,
-        closeByEscape: false,
-        modalId: 'SerialComponent',
-        regType: regType
-      }).subscribe(result => {
-        if (result) {
-          this.payFinishByEnter();
-        }
-      });
-    } else {
-      this.payFinishByEnter();
-    }
-  }
-
   @HostListener('document:keydown', ['$event'])
   onPaymentdDown(event: any) {
     event.stopPropagation();
@@ -299,7 +250,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       const modalid = this.storage.getLatestModalId();
       if (modalid !== 'SerialComponent' && modalid !== 'CashReceiptComponent') {
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.registerSerialAndRfid();
+          this.payFinishByEnter();
         } else if (this.finishStatus === 'fail') {
           this.info.sendInfo('orderClear', 'clear');
           this.close();
