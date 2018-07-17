@@ -98,8 +98,9 @@ input:disabled + .checkmark:after {display:block; background-color:#999}
 .fr {float:right}
 .clearfix:after {content:''; display:block; clear:both;}
 
-.mgt15 {margin-top:15px !important}
 .mgt12 {margin-top:12px !important}
+.mgt15 {margin-top:15px !important}
+.mgt20 {margin-top:20px !important}
 
 .mgl10 {margin-left:10px}
 .mgl20 {margin-left:20px}
