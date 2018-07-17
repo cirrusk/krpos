@@ -3,12 +3,13 @@ import {
   ElementRef, QueryList, OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger } from '../../../core';
+import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, Modal } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { AddCartBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 import { CartInfo } from './../../../data/models/order/cart-info';
+import { SerialComponent } from '../../scan/serial/serial.component';
 
 @Component({
   selector: 'pos-search-product',
@@ -33,6 +34,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   totalPages: number;
   productItems: any;
   constructor(protected modalService: ModalService,
+    private modal: Modal,
     private search: SearchService,
     private alert: AlertService,
     private spinner: SpinnerService,
@@ -170,8 +172,24 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     } else {
       this.activeNum = index;
       this.product = product;
-      this.addCartBroker.sendInfo(this.product);
-      this.close();
+      // RFID, SERIAL 입력 받음.
+      if (product && (product.rfid || product.serialNumber)) {
+        this.modal.openModalByComponent(SerialComponent, {
+          callerData: { productInfo: product },
+          closeByClickOutside: false,
+          closeByEscape: false,
+          modalId: 'SerialComponent'
+        }).subscribe(result => {
+          // this.result = result; // 검색팝업이 닫힐때 SERIAL 받기(cart-list.component)
+          this.result = { productCode: this.product.code, serialNumber: result };
+          // this.addCartBroker.sendInfo(this.product);
+          this.close();
+        });
+      } else {
+        this.result = { productCode: this.product.code, serialNumber: null };
+        // this.addCartBroker.sendInfo(this.product);
+        this.close();
+      }
     }
   }
 

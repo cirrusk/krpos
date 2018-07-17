@@ -8,12 +8,9 @@
         <div class="pop_content">
             <div class="ac">
                 <p class="txt04">제품 {{regLabel}}를 입력하여 주세요.</p>
-                <ng-container *ngFor="let item of serialRfidList;">
-                    <input *ngIf="item.hasSerial && !item.hasRfid;" #codes type="text" [attr.data-prdname]="item.productName" [attr.data-type]="item.type" [attr.data-entry]="item.entryNumber" class="mgt15" title="{{regLabel}}"
-                        style="width:370px" (keydown.enter)="check(codes, $event)">
-                    <span *ngIf="!item.hasSerial && item.hasRfid;">{{item.productName}} RFID를 스캔해주시기 바랍니다.</span>
-                    <input *ngIf="!item.hasSerial && item.hasRfid;"#codes type="hidden" [attr.data-prdname]="item.productName" [attr.data-type]="item.type" [attr.data-entry]="item.entryNumber">
-                </ng-container>
+                {{productInfo.name}}<input *ngIf="productInfo.serialNumber && !productInfo.rfid;" #codes type="text" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
+                <span *ngIf="!productInfo.serialNumber && productInfo.rfid;">{{productInfo.name}} RFID를 스캔해주시기 바랍니다.</span>
+                <input *ngIf="!productInfo.serialNumber && productInfo.rfid;" #codes type="hidden" [attr.data-prdname]="productInfo.name">
             </div>
             <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
