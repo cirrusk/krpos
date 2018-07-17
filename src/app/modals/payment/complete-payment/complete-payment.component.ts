@@ -328,7 +328,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       switch (command.combo) {
         case 'ctrl+r': {
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-            if (this.isReceiptEnable()) { // 현금, Recash, 자동이체 인 경우 출력
+            if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
               this[command.name]();
             }
           }
@@ -348,7 +348,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private isReceiptEnable() {
     if (this.paymentcapture.cashPaymentInfo // 현금
       || this.paymentcapture.monetaryPaymentInfo // AP
-      || this.paymentcapture.directDebitPaymentInfo // 자동이체
+      // || this.paymentcapture.directDebitPaymentInfo // 자동이체
     ) {
       return true;
     }
