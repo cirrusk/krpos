@@ -300,6 +300,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.restrictionModel = new RestrictionModel();
     this.restrictionMessageList = Array<RestrictionModel>();
     this.groupAccountInfo = new Array<Accounts>();
+    this.currentGroupAccountInfo = new Array<Accounts>();
     this.groupSelectedCart = new AbstractOrder();
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
@@ -555,7 +556,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.addCartModel.forEach(model => {
         if (model.statusCode === 'success') {
           this.productInfo = model.entry;
-          this.addCartEntry(this.productInfo);
+          this.addCartEntry(this.resCartInfo.cartList);
         } else {
           this.restrictionModel = this.makeRestrictionMessage(model);
           this.restrictionMessageList.push(this.restrictionModel);
@@ -810,7 +811,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (this.addCartModel[0].statusCode === 'success') {
             this.addCartModel.forEach(addModel => {
               this.productInfo = addModel.entry;
-              this.addCartEntry(this.productInfo);
+              this.addCartEntry(this.resCartInfo.cartList);
             });
 
             if (this.paymentType === 'g') {
@@ -849,24 +850,15 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param orderEntry 주문정보
    * @param index 인덱스
    */
-  addCartEntry(orderEntry: OrderEntry, index?: number) {
-    const existedIdx: number = this.cartList.findIndex(
-      function (obj) {
-        return obj.product.code === orderEntry.product.code;
-      }
-    );
-
-    // 리스트에 없을 경우
-    if (existedIdx === -1) {
-      this.cartList.push(orderEntry);
-      // this.activeRowCart(this.cartList.length - 1); // 추가된 row selected
+  addCartEntry(cartList: Cart, index?: number) {
+    this.cartList = cartList.entries;
+    if (this.cartList.length > 0) {
       this.sendRightMenu('p', true);
     } else {
-      this.cartList[existedIdx] = orderEntry;
-      // this.activeRowCart(existedIdx); // 추가된 row selected
+      this.sendRightMenu('p', false);
     }
 
-    this.storage.setOrderEntry(this.resCartInfo.cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
+    this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
 
     // 장바구니에 추가한 페이지로 이동
     const page = index ? index + 1 : this.cartList.length;
@@ -895,7 +887,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             // 정상적으로 수정이 됐을 경우
             if (this.updateCartModel.statusCode === 'success') {
               this.productInfo = this.updateCartModel.entry;
-              this.addCartEntry(this.productInfo, index);
+              this.addCartEntry(this.resCartInfo.cartList, index);
 
               // 그룹 주문의 경우 총 금액 다시 조회
               if (this.paymentType === 'g') {
@@ -1185,9 +1177,10 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     const currentCartData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
     // pagination 생성 데이터 조회
-    this.pager = Object.assign(this.pager, currentCartData.get('pager'));
+    this.pager =  currentCartData.get('pager') as Pagination;
     // 출력 리스트 생성
-    this.currentCartList = Object.assign(currentCartData.get('list'));
+    this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
+
     this.totalPriceInfo();
   }
 
@@ -1204,12 +1197,14 @@ export class CartListComponent implements OnInit, OnDestroy {
     const currentUserData = this.pagerService.getCurrentPage(this.groupAccountInfo, page, this.GROUP_ACCOUNT_PAGE_SIZE);
 
     // pagination 생성 데이터 조회
-    this.userPager = Object.assign(this.userPager, currentUserData.get('pager'));
-    // 출력 리스트 생성
-    this.currentGroupAccountInfo = Object.assign(currentUserData.get('list'));
+    this.userPager = currentUserData.get('pager') as Pagination;
 
-    this.selectedUserIndex = this.currentGroupAccountInfo.length - 1;
-    this.selectedUserId = this.currentGroupAccountInfo[this.selectedUserIndex].parties[0].uid;
+    // 출력 리스트 생성
+    // 리스트 결과가 없을 경우 리스트 초기화
+    this.currentGroupAccountInfo = currentUserData.get('list') as Array<Accounts>;
+
+    this.selectedUserIndex = this.currentGroupAccountInfo.length === 0 ? -1 : this.currentGroupAccountInfo.length - 1;
+    this.selectedUserId = this.currentGroupAccountInfo.length === 0 ? '' : this.currentGroupAccountInfo[this.selectedUserIndex].parties[0].uid;
   }
 
   /**
@@ -1350,7 +1345,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.createGroupCart(this.cartInfo.user.uid, this.cartInfo.code, uid, false);
       } else {
         this.groupSelectedCart = this.amwayExtendedOrdering.orders[existedIdx];
-        this.cartList = this.groupSelectedCart.entries;
         this.getCartList(null);
       }
     }
