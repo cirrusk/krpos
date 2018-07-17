@@ -49,14 +49,15 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   }
 
   /**
+   * 현금 영수증 발급
+   * 고객번호 유형
+   *     CDN = 현금영수증 카드번호 : 13 ~ 19
+   *     CPN = 휴대폰번호 : 9 ~ 11
+   *     BRN = 사업자등록번호 : 10(주민번호 앞에서부터 10자리)
    *
-   * @param issuancenumber
+   * @param issuancenumber 고객번호(휴대폰 번호, 현금영수증 카드번호, 사업자 등록번호)
    */
   requestReceipt(issuancenumber: string) {
-    console.log('발행구분 : ' + this.divcheck);
-    console.log(issuancenumber);
-    console.log('userId : ' + this.accountInfo.parties[0].uid);
-    console.log('orderCode : ' + this.orderInfo.code);
     if (Utils.isEmpty(issuancenumber)) {
       if (this.divcheck === 'i') {
         this.checktype = -1;
@@ -69,23 +70,16 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
       this.spinner.show();
       let issuancetype, numbertype;
       const receipttype = 'CASH'; // CASH(현금영수증), TAX(세금계산서)
-      // 카드번호 13 ~ 19
-      // 휴대폰번호 11
-      // 사업자등록번호 10(주민번호 앞에서부터 10자리)
-      // CPN(휴대폰번호), CDN(현금영수증카드번호), BRN(사업자등록번호)
       if (this.divcheck === 'i') {
         issuancetype = 'INCOME_DEDUCTION'; // 소득공제
-        if (issuancenumber.length > 9 && issuancenumber.length < 12) { // 휴대폰
-          numbertype = 'CPN';
-        } else if (issuancenumber.length > 12 && issuancenumber.length < 20) {
-          numbertype = 'CDN';
+        if (issuancenumber.length > 12) {
+          numbertype = 'CDN'; // 현금영수증카드번호
         } else {
-          numbertype = 'CDN';
+          numbertype = 'CPN'; // 휴대폰
         }
-        numbertype = 'CDN';
       } else if (this.divcheck === 'o') {
         issuancetype = 'EXPENDITURE_PROOF'; // 지출증빙
-        numbertype = 'BRN';
+        numbertype = 'BRN'; // 사업자등록번호
       }
       const params = { receiptType: receipttype, issuanceType: issuancetype, numberType: numbertype, issuanceNumber: issuancenumber };
       const userid = this.accountInfo.parties[0].uid;
