@@ -76,6 +76,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.storage.removeLatestModalId();
     this.printer.init();
     this.getTerminalInfo();
     this.tokensubscription = this.info.getInfo().subscribe(
