@@ -629,7 +629,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (totalCount === 1 && product.code === productCode.toUpperCase()) {
             if (product.sellableStatusForStock === undefined) {
               // RFID, SERIAL 입력 받음.
-              product.rfid = true;
               if (product && (product.rfid || product.serialNumber)) {
                 this.modal.openModalByComponent(SerialComponent, {
                   callerData: { productInfo: product },
