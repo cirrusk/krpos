@@ -629,15 +629,17 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (totalCount === 1 && product.code === productCode.toUpperCase()) {
             if (product.sellableStatusForStock === undefined) {
               // RFID, SERIAL 입력 받음.
+              product.rfid = true;
               if (product && (product.rfid || product.serialNumber)) {
                 this.modal.openModalByComponent(SerialComponent, {
                   callerData: { productInfo: product },
                   closeByClickOutside: false,
-                  closeByEscape: false,
                   modalId: 'SerialComponent'
-                }).subscribe(serial => {
-                  console.log('serial => ' + serial);
-                  this.addCartEntries(productCode);
+                }).subscribe(data => {
+                  if (data) {
+                    console.log('serial => ' + data.serial);
+                    this.addCartEntries(productCode);
+                  }
                 });
               } else {
                 this.addCartEntries(productCode);
