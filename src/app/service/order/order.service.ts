@@ -117,6 +117,19 @@ export class OrderService {
   }
 
   /**
+   * 그룹주문 조회
+   *
+   * @param userid 회원아이디
+   * @param ordercode Ordering ABO 주문번호
+   */
+  groupOrder(userid: string, ordercode: string) {
+    const pathvariables = { userId: userid, orderId: ordercode };
+    const param = { fields: 'FULL' };
+    const data = new HttpData('getGroupOrder', pathvariables, null, param, 'json');
+    return this.api.get(data);
+  }
+
+  /**
    * Serial, RFID 등록
    *
    * @param userid 회원아이디

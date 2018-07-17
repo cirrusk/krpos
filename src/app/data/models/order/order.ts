@@ -1,4 +1,7 @@
 import { AbstractOrder, Consignment, OrderEntry, Address, Enumeration } from '../..';
+import { Price } from './price';
+import { PaymentDetails } from '../payment/payment-details';
+import { PointOfService } from '../common/point-of-service';
 
 export class Order extends AbstractOrder {
     created: Date;
@@ -23,4 +26,21 @@ export class Order extends AbstractOrder {
 
 export class OrderList {
     orders: Array<Order>;
+}
+
+/**
+ * AmwayExtendedOrderingWsDTO
+ */
+export class GroupOrder {
+    orders: Array<AbstractOrder>;
+    primaryOrder: string;
+    totalValue: Price; // PriceWsDTO
+    shippingFee: Price;
+    shippingFeeTax: Price;
+    savings: Price;
+    subtotal: Price;
+    totalUnitCount: number;
+    isPickUpCart: boolean;
+    paymentDetails: PaymentDetails; // AmwayPaymentDetailsWsDTO
+    deliveryPointOfService: PointOfService; // PointOfServiceWsDTO
 }
