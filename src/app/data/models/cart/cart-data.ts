@@ -1,6 +1,7 @@
 import { BasePrice } from './base-price';
 import { Pagination } from '../common/pagination';
 import { AmwayValue } from '../common/amway-value';
+import { Promotion } from '../order/promotion';
 
 /**
  * Add to Cart Response 객체 - CartModificationWsDTO
@@ -73,11 +74,11 @@ export class Product {
     categories: any; // < CategoryWsDTO > array
     reviews: any; // < ReviewWsDTO > array
     classifications: any; // < ClassificationWsDTO > array
-    potentialPromotions: any; // < PromotionWsDTO > array
+    potentialPromotions: Array<Promotion>; // < PromotionWsDTO > array
     variantOptions: any; // < VariantOptionWsDTO > array
     baseOptions: any; // < BaseOptionWsDTO > array
     volumePricesFlag: boolean;
-    volumePrices: any; // < PriceWsDTO > array
+    volumePrices: Array<Price>; // < PriceWsDTO > array
     productReferences: any; // < ProductReferenceWsDTO > array
     variantMatrix: string;
     priceRange: any; // PriceRangeWsDTO
@@ -92,6 +93,9 @@ export class Product {
     retailPrice: RetailPrice; // PriceWsDTO
     deliveryModes: any; // List<DeliveryModeWsDTO>
     sellableStatusForStock: string; // 2018.06.01 sellableStatus 에서 POS 용으로 수정(for 세션카트)
+    isSellable: boolean;
+    rfid: boolean;
+    serialNumber: boolean;
 }
 
 export class Stock {

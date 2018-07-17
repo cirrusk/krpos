@@ -1,4 +1,4 @@
-import { Product } from './../cart/cart-data';
+import { Product } from '../cart/cart-data';
 import { Price } from './price';
 
 export class PromotionList {
