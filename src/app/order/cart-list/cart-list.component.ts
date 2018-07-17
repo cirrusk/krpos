@@ -15,6 +15,7 @@ import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
+import { SerialComponent } from '../../modals/scan/serial/serial.component';
 
 @Component({
   selector: 'pos-cart-list',
@@ -386,7 +387,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         closeButtonLabel: '취소',
         modalId: 'SearchProductComponent'
       }
-    ).subscribe(() => {
+    ).subscribe(result => {
+      if (result) {
+        console.log('SearchProductComponent serial number : ' + result.serialNumber);
+        this.addToCart(result.productCode);
+      }
       this.searchText.nativeElement.focus();
     });
   }
@@ -477,9 +482,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
           }
         } else {
-          this.alert.info({ message: this.message.get('addedABO'),
-                            timer: true,
-                            interval: 1000});
+          this.alert.info({
+            message: this.message.get('addedABO'),
+            timer: true,
+            interval: 1000
+          });
         }
       } else {
         this.accountInfo = account;
@@ -621,11 +628,27 @@ export class CartListComponent implements OnInit, OnDestroy {
           const product: Product = result.products[0];
           if (totalCount === 1 && product.code === productCode.toUpperCase()) {
             if (product.sellableStatusForStock === undefined) {
-              this.addCartEntries(productCode);
-            } else if (product.sellableStatusForStock === 'OUTOFSTOCK') {
-              // this.alert.show({message: '재고가 부족합니다.'});
-            } else if (product.sellableStatusForStock === 'ENDOFSALE') {
-              // this.alert.show({message: '단종된 제품입니다.'});
+              // RFID, SERIAL 입력 받음.
+              if (product && (product.rfid || product.serialNumber)) {
+                this.modal.openModalByComponent(SerialComponent, {
+                  callerData: { productInfo: product },
+                  closeByClickOutside: false,
+                  closeByEscape: false,
+                  modalId: 'SerialComponent'
+                }).subscribe(serial => {
+                  console.log('serial => ' + serial);
+                  this.addCartEntries(productCode);
+                });
+              } else {
+                this.addCartEntries(productCode);
+              }
+            } else {
+              if (product.sellableStatusForStock === 'OUTOFSTOCK') {
+                this.alert.show({ message: '재고가 부족합니다.', timer: true, interval: 1000 });
+              } else if (product.sellableStatusForStock === 'ENDOFSALE') {
+                this.alert.show({ message: '단종된 제품입니다.', timer: true, interval: 1000 });
+              }
+              setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
             }
           } else {
             this.searchParams.data = this.cartInfo;
@@ -837,7 +860,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.alert.error({ message: `${errdata.message}` });
           }
         },
-        () => { this.spinner.hide(); }
+        () => { this.spinner.hide(); setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
       );
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
@@ -983,7 +1006,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.groupAccountInfo.splice(groupAccountIndex, 1);
               // 사용자의 현재 페이지 및 사용자 선택
               const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;
-              const page = this.selectedUserIndex - 1  === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
+              const page = this.selectedUserIndex - 1 === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
               // 그룹주문 사용자 페이지 전환
               this.setUserPage(page);
               // 사용자 선택하여 CartList 호출
@@ -1014,7 +1037,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         } else {
           this.groupAccountInfo.splice(groupAccountIndex, 1);
           const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;
-          const page = this.selectedUserIndex - 1  === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
+          const page = this.selectedUserIndex - 1 === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
           this.setUserPage(page);
           this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
         }
@@ -1177,7 +1200,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     const currentCartData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
     // pagination 생성 데이터 조회
-    this.pager =  currentCartData.get('pager') as Pagination;
+    this.pager = currentCartData.get('pager') as Pagination;
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 

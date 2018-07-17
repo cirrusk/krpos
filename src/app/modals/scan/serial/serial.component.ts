@@ -31,6 +31,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.productInfo) {
       if (this.productInfo.rfid && !this.productInfo.serialNumber) {
         this.regLabel = 'RFID';
+        this.finishStatus = StatusDisplay.PAID;
+        this.apprmessage = 'RFID 스캔 후 진행해주세요.';
       } else if (this.productInfo.serialNumber && !this.productInfo.rfid) {
         this.regLabel = '시리얼 번호';
       } else if (this.productInfo.serialNumber && this.productInfo.rfid) {
@@ -66,7 +68,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       this.checktype = 0;
       this.finishStatus = StatusDisplay.PAID;
       this.apprmessage = '스캔이 완료되었습니다.';
-      if (target) { setTimeout(() => { target.blur(); }, 50); }
+      if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
     }
   }
 
@@ -75,28 +77,34 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     let prdname: string;
     let pelm: any;
     let serial: string;
-    this.codes.forEach(cd => {
-      if (cd.nativeElement.getAttribute('type') === 'text') {
-        if (Utils.isEmpty(cd.nativeElement.value)) {
-          chkidx++;
-          prdname = cd.nativeElement.getAttribute('data-prdname');
-          pelm = cd;
-          return false;
-        } else {
-          serial = cd.nativeElement.value;
-        }
-      }
-    });
-
-    if (chkidx !== 0) {
-      this.checktype = -1;
-      this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
-      if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
-      return;
-    } else {
+    if (this.productInfo.rfid && !this.productInfo.serialNumber) {
       this.checktype = 0;
-      this.result = serial;
+      this.result = null;
       this.close();
+    } else {
+      this.codes.forEach(cd => {
+        if (cd.nativeElement.getAttribute('type') === 'text') {
+          if (Utils.isEmpty(cd.nativeElement.value)) {
+            chkidx++;
+            prdname = cd.nativeElement.getAttribute('data-prdname');
+            pelm = cd;
+            return false;
+          } else {
+            serial = cd.nativeElement.value;
+          }
+        }
+      });
+
+      if (chkidx !== 0) {
+        this.checktype = -1;
+        this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
+        if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
+        return;
+      } else {
+        this.checktype = 0;
+        this.result = serial;
+        this.close();
+      }
     }
   }
 
