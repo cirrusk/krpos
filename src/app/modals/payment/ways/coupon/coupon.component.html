@@ -1,4 +1,4 @@
-<div class="pop_wrap pop_l" tabindex="1" [posFocusBlur]="'focus'">
+<div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
     <div class="pop_header">
         <h1>쿠폰 정보 조회</h1>
         <button type="button" class="ico_comm pop_close01" (click)="openComplexPayment()">{{closeButtonLabel}}</button>
@@ -23,7 +23,7 @@
                     <table>
                         <caption>쿠폰 내역</caption>
                         <colgroup>
-                            <col>
+                            <col style="width:130px">
                             <col style="width:180px">
                         </colgroup>
                         <thead>
@@ -35,31 +35,25 @@
                         <tbody>
                             <!-- 내역 선택시 tr에 on클래스 추가 -->
                             <tr [class.on]="activeNum === i" *ngFor="let coupon of couponlist; let i = index" (click)="activeRow(i, coupon)">
-                                <td class="tit">
-                                    <span class="elips mx420">{{coupon?.name}}</span>
-                                </td>
-                                <td>
-                                    <span>{{coupon?.couponCode}}</span>
-                                </td>
+                                <td><span>{{coupon?.name}}</span></td>
+                                <td><span>{{coupon?.couponCode}}</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <table>
-                    <tr>
-                        <th scope="row">쿠폰번호</th>
-                        <td colspan="3"><input #couponcode type="text" class="w200" title="쿠폰번호" (keyup)="check(couponcode.value)" (keydown.enter)="searchCoupon(couponcode.value)"></td>
-                    </tr>
-                </table>    
                 <!-- // 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
                 <ng-template #elseEmpty>
                     <p *ngIf="couponCount === 0;" class="no_data">해당 하는 쿠폰이 존재하지 않습니다.</p>
                 </ng-template>
             </div>
+            <div class="scan">
+                <label for="bcs">바코드 스캔</label>
+                <input #couponcode type="text" id="bcs" class="w250" title="쿠폰번호" (keyup)="check(couponcode.value)" (keydown.enter)="searchCoupon(couponcode.value)">
+            </div>
         </div>
     </div>
     <!-- //pop_container -->
-    <div class="pop_footer clearfix">
+    <div class="pop_footer line clearfix">
         <span class="fl">취소 ESC</span>
         <span class="fr">
             <a href class="btn01_blue" (click)="!!paymentCoupon()">쿠폰결제 하기</a>

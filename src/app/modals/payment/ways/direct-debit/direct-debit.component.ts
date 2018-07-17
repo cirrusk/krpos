@@ -53,7 +53,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.setDirectDebitInfo();
     if (!this.accountnumber) {
-      this.finishStatus = 'fail';
       this.checktype = -1;
       this.apprmessage = this.message.get('no.accountnumber'); // '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.';
       setTimeout(() => {
