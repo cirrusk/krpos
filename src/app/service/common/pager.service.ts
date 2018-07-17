@@ -5,9 +5,7 @@ import { Pagination } from '../../data';
 export class PagerService {
   private pagination: Pagination;
 
-  constructor() {
-    this.pagination = new Pagination();
-   }
+  constructor() {}
 
   /**
    * pagination 생성
@@ -18,6 +16,8 @@ export class PagerService {
   getPager(totalItems: number, currentPage: number = 1, pageSize: number = 8): Pagination {
     // 총 페이지 수
     const totalPages = Math.ceil(totalItems / pageSize);
+
+    this.pagination = new Pagination();
 
     // 페이지 설정
     this.pagination.startPage = 1;
