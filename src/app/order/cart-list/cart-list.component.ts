@@ -6,7 +6,7 @@ import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
-import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, AddCartBroker, InfoBroker, PaymentBroker } from '../../broker';
+import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder
@@ -28,7 +28,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateVolumeAccountSubscription: Subscription;
   private addCartSubscription: Subscription;
   private updateCartSubscription: Subscription;
-  private productSubscription: Subscription;
+  // private productSubscription: Subscription;
   private removeEntrySubscription: Subscription;
   private removeCartSubscription: Subscription;
   private restoreCartSubscription: Subscription;
@@ -105,7 +105,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private spinner: SpinnerService,
     private payment: PaymentService,
     private message: MessageService,
-    private addCartBroker: AddCartBroker,
+    // private addCartBroker: AddCartBroker,
     private searchAccountBroker: SearchAccountBroker,
     private restoreCartBroker: RestoreCartBroker,
     private cancleOrderBroker: CancleOrderBroker,
@@ -165,14 +165,14 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // 제품 선택
-    this.productSubscription = this.addCartBroker.getInfo().subscribe(
-      productInfo => {
-        if (productInfo) {
-          this.addToCart(productInfo.code);
-        }
-      }
-    );
+    // 제품 선택 - modal result로 결과 받도록 수정 오류 시 복구처리
+    // this.productSubscription = this.addCartBroker.getInfo().subscribe(
+    //   productInfo => {
+    //     if (productInfo) {
+    //       this.addToCart(productInfo.code);
+    //     }
+    //   }
+    // );
 
     // 보류 복원
     this.restoreCartSubscription = this.restoreCartBroker.getInfo().subscribe(
@@ -222,7 +222,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.cartInfoSubscription) { this.cartInfoSubscription.unsubscribe(); }
     if (this.accountInfoSubscription) { this.accountInfoSubscription.unsubscribe(); }
-    if (this.productSubscription) { this.productSubscription.unsubscribe(); }
+    // if (this.productSubscription) { this.productSubscription.unsubscribe(); }
     if (this.updateVolumeAccountSubscription) { this.updateVolumeAccountSubscription.unsubscribe(); }
     if (this.addCartSubscription) { this.addCartSubscription.unsubscribe(); }
     if (this.removeEntrySubscription) { this.removeEntrySubscription.unsubscribe(); }
