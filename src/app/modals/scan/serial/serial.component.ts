@@ -30,13 +30,13 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     this.productInfo = this.callerData.productInfo;
     if (this.productInfo) {
       if (this.productInfo.rfid && !this.productInfo.serialNumber) {
-        this.regLabel = 'RFID';
+        this.regLabel = 'RFID 스캔';
         this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = 'RFID 스캔 후 진행해주세요.';
+        this.apprmessage = `${this.productInfo.name}의 ${this.regLabel} 후 진행해주세요.`;
       } else if (this.productInfo.serialNumber && !this.productInfo.rfid) {
-        this.regLabel = '시리얼 번호';
+        this.regLabel = '시리얼 번호 입력';
       } else if (this.productInfo.serialNumber && this.productInfo.rfid) {
-        this.regLabel = '시리얼 번호/RFID';
+        this.regLabel = '시리얼 번호 입력 / RFID 스캔';
       }
     }
     setTimeout(() => { this.codes.first.nativeElement.focus(); }, 50);

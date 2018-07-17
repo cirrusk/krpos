@@ -636,7 +636,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   modalId: 'SerialComponent'
                 }).subscribe(data => {
                   if (data) {
-                    console.log('serial => ' + data.serial);
+                    console.log('cart-list#selectProductInfo serial => ' + data.serial);
                     this.addCartEntries(productCode);
                   }
                 });

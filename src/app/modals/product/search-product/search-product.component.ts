@@ -177,13 +177,17 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.modal.openModalByComponent(SerialComponent, {
           callerData: { productInfo: product },
           closeByClickOutside: false,
-          closeByEscape: false,
-          modalId: 'SerialComponent'
-        }).subscribe(result => {
-          // this.result = result; // 검색팝업이 닫힐때 SERIAL 받기(cart-list.component)
-          this.result = { productCode: this.product.code, serialNumber: result };
+          modalId: 'SerialComponent_SR'
+        }).subscribe(data => {
+          // 검색팝업이 닫힐때 SERIAL 받기(cart-list.component)
+          if (data) {
+            this.result = { productCode: this.product.code, serialNumber: data.serial };
+            this.close();
+          } else {
+            this.activeNum = -1;
+            this.product = null;
+          }
           // this.addCartBroker.sendInfo(this.product);
-          this.close();
         });
       } else {
         this.result = { productCode: this.product.code, serialNumber: null };

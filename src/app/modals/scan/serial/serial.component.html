@@ -1,21 +1,20 @@
 <div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
     <div class="pop_header">
-        <h1>{{regLabel}} 스캔 여부</h1>
+        <h1>{{regLabel}}</h1>
         <button type="button" class="ico_comm pop_close01" (click)="close()">{{closeButtonLabel}}</button>
     </div>
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
             <div class="ac">
-                <p class="txt04">제품 {{regLabel}}를 입력하여 주세요.</p>
+                <p class="txt04">제품의 {{regLabel}}해 주세요.</p>
                 <input *ngIf="productInfo.serialNumber && !productInfo.rfid;" #codes type="text" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
-                <span *ngIf="!productInfo.serialNumber && productInfo.rfid;">RFID를 스캔해주시기 바랍니다.</span>
                 <input *ngIf="!productInfo.serialNumber && productInfo.rfid;" #codes type="hidden" [attr.data-prdname]="productInfo.name">
             </div>
-            <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
-            <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
+            <p *ngIf="finishStatus === null && checktype === -1" class="txt_info02 type02 mgt20">{{apprmessage}}</p>
+            <p *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="txt_info02 type02 mgt20">{{apprmessage}}</p>
             <ng-template #payFail>
-                <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
+                <p *ngIf="finishStatus !== null && finishStatus !== ''" class="txt_info02 type02 mgt20">{{apprmessage}}</p>
             </ng-template>
         </div>
     </div>
