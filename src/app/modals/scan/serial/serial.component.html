@@ -8,8 +8,8 @@
         <div class="pop_content">
             <div class="ac">
                 <p class="txt04">제품 {{regLabel}}를 입력하여 주세요.</p>
-                {{productInfo.name}}<input *ngIf="productInfo.serialNumber && !productInfo.rfid;" #codes type="text" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
-                <span *ngIf="!productInfo.serialNumber && productInfo.rfid;">{{productInfo.name}} RFID를 스캔해주시기 바랍니다.</span>
+                <input *ngIf="productInfo.serialNumber && !productInfo.rfid;" #codes type="text" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
+                <span *ngIf="!productInfo.serialNumber && productInfo.rfid;">RFID를 스캔해주시기 바랍니다.</span>
                 <input *ngIf="!productInfo.serialNumber && productInfo.rfid;" #codes type="hidden" [attr.data-prdname]="productInfo.name">
             </div>
             <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
@@ -24,7 +24,7 @@
         <span class="fl">취소 ESC</span>
         <span class="fr">
             <a href class="btn01_blue" (click)="!!reg()">확인</a>
-            <a href (click)="!!close()" class="btn01_white">취소</a>
+            <a href class="btn01_white" (click)="!!close()">취소</a>
         </span>
     </div>
 </div>
