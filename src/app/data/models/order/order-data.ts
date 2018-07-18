@@ -28,15 +28,6 @@ export class OrderData {
             this.sorts = s;
         }
     }
-    public set setOrderingABOId(orderingABOId: string) {
-        this.orderingABOId = orderingABOId;
-    }
-    public set setOrderCode(orderCode: string) {
-        this.orderCode = orderCode;
-    }
-    public set setPhoneNumber(phoneNumber: string) {
-        this.phoneNumber = phoneNumber;
-    }
 }
 
 export class SortData {
