@@ -77,7 +77,7 @@ export const environment = {
   qzCheck: false,
   healthCheckUse: false,
   healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://127.0.0.1:9002/api',
+  hybrisCheckUrl: 'https://127.0.0.1:9002/api/v2/swagger-ui.html',
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9,
