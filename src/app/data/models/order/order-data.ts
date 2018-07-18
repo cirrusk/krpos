@@ -23,6 +23,7 @@ export class OrderData {
         if (Array.isArray(sorts)) {
             this.sorts = sorts;
         } else {
+            sorts = sorts || 'code';
             const s: Array<SortData> = new Array<SortData>();
             s.push(new SortData(sorts, false));
             this.sorts = s;
