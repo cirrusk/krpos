@@ -80,6 +80,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    this.receipt.dispose();
   }
 
   /**

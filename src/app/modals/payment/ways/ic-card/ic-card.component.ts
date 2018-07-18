@@ -63,6 +63,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    this.receipt.dispose();
   }
 
   /**

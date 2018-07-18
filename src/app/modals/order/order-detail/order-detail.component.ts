@@ -1,5 +1,5 @@
 import { PaymentService } from './../../../service/payment/payment.service';
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, SpinnerService, StorageService, Logger, AlertService } from '../../../core';
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   selector: 'pos-order-detail',
   templateUrl: './order-detail.component.html'
 })
-export class OrderDetailComponent extends ModalComponent implements OnInit {
+export class OrderDetailComponent extends ModalComponent implements OnInit, OnDestroy {
 
   orderDetail: OrderList;
   orderInfo: OrderHistory;
@@ -47,6 +47,10 @@ export class OrderDetailComponent extends ModalComponent implements OnInit {
     this.checkCancelStatus(this.orderInfo);
     this.clientId = this.storageService.getClientId();
     this.emloyeeName = this.storageService.getEmloyeeName();
+  }
+
+  ngOnDestroy() {
+    this.receiptService.dispose();
   }
 
   init() {

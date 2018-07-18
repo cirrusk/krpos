@@ -68,6 +68,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.balancesubscription) { this.balancesubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    this.receipt.dispose();
   }
 
   useRecash() {

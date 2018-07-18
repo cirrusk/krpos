@@ -86,6 +86,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    this.receipt.dispose();
   }
 
   searchCheque() {

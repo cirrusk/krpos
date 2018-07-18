@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 import { EcpPrintComponent } from '../ecp-print/ecp-print.component';
@@ -13,7 +13,7 @@ import { Order } from '../../../data/models/order/order';
   selector: 'pos-pickup-order',
   templateUrl: './pickup-order.component.html'
 })
-export class PickupOrderComponent extends ModalComponent implements OnInit {
+export class PickupOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   private PAGE_SIZE = 5;
 
   private orderListSubscription: Subscription;
@@ -77,6 +77,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit {
       this.deliveryModes  = 'pickup';
       this.orderStatus = 'COMPLETED';
     }
+  }
+
+  ngOnDestroy() {
+    this.receiptService.dispose();
   }
 
   /**

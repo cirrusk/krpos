@@ -13,6 +13,7 @@ import { Cart } from '../data/models/order/cart';
 import { Utils } from '../core/utils';
 import { PaymentService } from './payment/payment.service';
 import { MessageService } from '../message/message.service';
+
 @Injectable()
 export class ReceiptService implements OnDestroy {
 
@@ -25,6 +26,12 @@ export class ReceiptService implements OnDestroy {
         private logger: Logger) { }
 
     ngOnDestroy() {
+        // if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+        this.dispose();
+    }
+
+    dispose() {
+        console.log('############### receipt service paymentsubscription dispose!!!!!!!!!!!!!!!');
         if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     }
 

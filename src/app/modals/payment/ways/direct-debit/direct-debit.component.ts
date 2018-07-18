@@ -80,6 +80,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    this.receipt.dispose();
   }
 
   /**

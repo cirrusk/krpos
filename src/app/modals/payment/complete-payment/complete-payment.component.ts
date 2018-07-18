@@ -63,6 +63,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
+    this.receipt.dispose();
   }
 
   /**

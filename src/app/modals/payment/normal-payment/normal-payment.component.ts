@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, StorageService, PrinterService } from '../../../core';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -24,7 +24,7 @@ import { Cart } from '../../../data/models/order/cart';
   selector: 'pos-normal-payment',
   templateUrl: './normal-payment.component.html'
 })
-export class NormalPaymentComponent extends ModalComponent implements OnInit {
+export class NormalPaymentComponent extends ModalComponent implements OnInit, OnDestroy {
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
   private cartInfo: Cart;
@@ -44,6 +44,10 @@ export class NormalPaymentComponent extends ModalComponent implements OnInit {
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+  }
+
+  ngOnDestroy() {
+    this.receiptService.dispose();
   }
 
   /**

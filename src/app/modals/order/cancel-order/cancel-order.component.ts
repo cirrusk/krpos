@@ -37,6 +37,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   ngOnDestroy() {
     if (this.cancelOrderSubscription) { this.cancelOrderSubscription.unsubscribe(); }
     if (this.orderDetailsSubscription) { this.orderDetailsSubscription.unsubscribe(); }
+    this.receiptService.dispose();
   }
 
   /**
