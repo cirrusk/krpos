@@ -33,6 +33,7 @@ export class ReceiptService implements OnDestroy {
     /**
      * Life Cycle hook 이 Servier에서 implement 되지 않아
      * Component Level 에서 처리
+     * 향후 버전업 시 implement 될 수 도 있음.
      */
     dispose() {
         this.logger.set('receipt.service', 'paymentsubscription dispose!!!').debug();
