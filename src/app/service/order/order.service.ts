@@ -69,7 +69,6 @@ export class OrderService {
       });
     }
 
-    // const orderData = new OrderData(arrOrderTypes, arrChannels, arrDeliveryModes, statuses, amwayBusinessNature, confirm, currentPage, pageSize);
     const orderData = new OrderData(amwayBusinessNature, arrChannels, arrOrderTypes, arrDeliveryModes, statuses, confirm, sort);
 
     if (searchType === 'phone') {
