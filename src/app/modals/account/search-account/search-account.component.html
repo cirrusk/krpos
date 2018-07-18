@@ -12,8 +12,8 @@
             <div class="mbinfo_search">
                 <select #searchMemberType title="회원구분">
                     <option value="A">ABO회원</option>
-                    <option *ngIf="paymentType !== 'g'" value="M">일반회원</option>
-                    <option *ngIf="paymentType !== 'g'" value="C">소비자</option>
+                    <option *ngIf="orderType !== 'g'" value="M">일반회원</option>
+                    <option *ngIf="orderType !== 'g'" value="C">소비자</option>
                 </select>
                 <input #inputSearchText type="text" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)">
                 <button type="button" class="btn01_blue" (click)="getAccountList(searchMemberType.value,inputSearchText.value)">확인</button>
@@ -23,8 +23,8 @@
             <!-- 검색결과 영역 : 검색 후-->
             <div class="mbinfo_list type02">
                 <span class="tab_type01">
-                    <span [class.on]="paymentType !== 'g'">일반결제</span>
-                    <span [class.on]="paymentType === 'g'">그룹결제</span>
+                    <span [class.on]="orderType !== 'g'">일반결제</span>
+                    <span [class.on]="orderType === 'g'">그룹결제</span>
                 </span>
                 <p class="txt"><strong>총 <span class="fc_red">{{totalCnt}}</span>건</strong>이 검색되었습니다.</p>
                 <span class="btn_wrap" *ngIf="accountList && totalCnt > 10">

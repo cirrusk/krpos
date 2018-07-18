@@ -69,7 +69,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   cartListCount: number;                                                    // 카트 목록 개수
   balance: number;                                                          // 회원 포인트
   recash: number;                                                           // 회원 Re-Cash
-  paymentType: string;                                                      // 결제타입(일반 = n, 그룹 = g)
+  orderType: string;                                                      // 결제타입(일반 = n, 그룹 = g)
   ccamount: number;                                                         // 신용카드 결제금액
   installment: string;                                                      // 카드 할부
   cashamount: number;                                                       // 현금 결제금액
@@ -138,7 +138,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         const type = result && result.type;
         if (result != null && type === 'paymentChange') {
-          this.paymentType = 'n';
+          this.orderType = 'n';
           this.paymentChange = true;
           this.orderList = result.data;
           this.selectAccountInfo(this.searchMode, this.orderList.orders[0].user.uid);
@@ -150,15 +150,15 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       accountInfo => {
         if (accountInfo && accountInfo.type === 'g') {
-          if (this.paymentType === '' || this.paymentType === 'g') {
-            if (this.paymentType === '') {
-              this.paymentType = 'g';
+          if (this.orderType === '' || this.orderType === 'g') {
+            if (this.orderType === '') {
+              this.orderType = 'g';
             }
             this.getAccountAndSaveCart(accountInfo.data);
           }
         } else if (accountInfo && accountInfo.type === 'n') {
-          if (this.paymentType === '') {
-            this.paymentType = 'n';
+          if (this.orderType === '') {
+            this.orderType = 'n';
           }
           this.getAccountAndSaveCart(accountInfo.data);
         }
@@ -277,7 +277,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.productInfo = new OrderEntry();
     this.searchParams = new SearchParam();
     this.searchMode = 'A';
-    this.paymentType = '';
+    this.orderType = '';
     this.totalItem = 0;
     this.totalPrice = 0;
     this.totalPV = 0;
@@ -359,13 +359,13 @@ export class CartListComponent implements OnInit, OnDestroy {
         callerData: { data: params },
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        paymentType: this.paymentType !== '' ? this.paymentType : 'n',
+        orderType: this.orderType !== '' ? this.orderType : 'n',
         modalId: 'SearchAccountComponent'
       }
     ).subscribe(result => {
       if (result) {
-        if (this.paymentType === '') {
-          this.paymentType = 'n';
+        if (this.orderType === '') {
+          this.orderType = 'n';
         }
         this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
       }
@@ -405,7 +405,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       const code = this.currentCartList[this.selectedCartNum].product.code;
       const qty = this.currentCartList[this.selectedCartNum].quantity;
-      const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+      const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
       this.modal.openModalByComponent(UpdateItemQtyComponent,
         {
@@ -458,12 +458,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param account 회원정보
    */
   private getAccountAndSaveCart(account: Accounts) {
-    if (this.accountInfo && this.paymentType === 'n') {
+    if (this.accountInfo && this.orderType === 'n') {
       this.sendRightMenu('a', true, account);
       this.changeUser(account);
     } else {
       // 그룹 결제시
-      if (this.paymentType === 'g') {
+      if (this.orderType === 'g') {
         // ordering주문자 저장
         if (this.accountInfo === null) {
           this.accountInfo = account;
@@ -600,8 +600,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         result => {
           const accountsize = result.accounts.length;
           if (accountsize === 1) {
-            if (this.paymentType === '') {
-              this.paymentType = 'n';
+            if (this.orderType === '') {
+              this.orderType = 'n';
             }
             this.getAccountAndSaveCart(result.accounts[0]);
           } else {
@@ -690,7 +690,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
 
       let cartType = 'POS';
-      if (this.paymentType === 'g') {
+      if (this.orderType === 'g') {
         cartType = 'WEBGROUP';
       }
 
@@ -702,7 +702,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.cartInfo = cartResult;
             this.sendRightMenu('c', true);
             // 그룹 결제일 경우 그룹생성
-            if (this.paymentType === 'g') {
+            if (this.orderType === 'g') {
               let strUserId = '';
               // Ordering ABO 를 제외한 ABO 설정
               this.groupAccountInfo.forEach((account, index) => {
@@ -777,8 +777,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   getCartList(cartInfo: CartInfo, page?: number): void {
     this.spinner.show();
-    const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
-    const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+    const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+    const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
     this.cartListSubscription = this.cartService.getCartList(userId, cartId).subscribe(
       result => {
@@ -824,8 +824,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
-      const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+      const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+      const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
       this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase()).subscribe(
         result => {
@@ -838,7 +838,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.addCartEntry(this.resCartInfo.cartList);
             });
 
-            if (this.paymentType === 'g') {
+            if (this.orderType === 'g') {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
           } else {
@@ -914,7 +914,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.addCartEntry(this.resCartInfo.cartList, index);
 
               // 그룹 주문의 경우 총 금액 다시 조회
-              if (this.paymentType === 'g') {
+              if (this.orderType === 'g') {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
             } else {
@@ -960,7 +960,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           result => {
             this.resCartInfo.cartList = result.cartList;
             this.getCartList(this.cartInfo, index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
-            if (this.paymentType === 'g') {
+            if (this.orderType === 'g') {
               // 그룹 카트 조회
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
@@ -985,16 +985,16 @@ export class CartListComponent implements OnInit, OnDestroy {
   removeCart(): void {
     if (this.cartInfo.code !== undefined) {
       this.spinner.show();
-      const userId = this.paymentType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
-      const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+      const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+      const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
         () => {
 
-          if (this.paymentType === 'n') {
+          if (this.orderType === 'n') {
             this.init();
             this.storage.clearClient();
-          } else if (this.paymentType === 'g') {
+          } else if (this.orderType === 'g') {
             // 확인 필요
             // 그룹주문시 groupAccount 에서 삭제할 Index 확인
             const groupAccountIndex = this.checkGroupUserId(this.groupSelectedCart.volumeABOAccount.uid);
@@ -1027,10 +1027,10 @@ export class CartListComponent implements OnInit, OnDestroy {
         () => { this.spinner.hide(); }
       );
     } else {
-      if (this.paymentType === 'n') {
+      if (this.orderType === 'n') {
         this.init();
         this.storage.clearClient();
-      } else if (this.paymentType === 'g') {
+      } else if (this.orderType === 'g') {
         const groupAccountIndex = this.checkGroupUserId(this.selectedUserId);
         if (groupAccountIndex <= 0) {
           this.init();
@@ -1288,7 +1288,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param useflag 사용플래그
    * @param model 모델객체
    */
-  private sendRightMenu(modelType: string, useflag: boolean, model?: any, paymentType?: string): void {
+  private sendRightMenu(modelType: string, useflag: boolean, model?: any): void {
     switch (modelType.toUpperCase()) {
       case 'A': { this.posCart.emit({ type: 'account', flag: useflag, data: model }); break; }
       case 'P': { this.posCart.emit({ type: 'product', flag: useflag, data: model }); break; }
@@ -1482,7 +1482,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (this.selectedCartNum === -1) {
             this.alert.warn({ message: this.message.get('selectProductDelete') });
           } else {
-            const cartId = this.paymentType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
+            const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
             this.removeItemCart(cartId, this.currentCartList[this.selectedCartNum].product.code);
           }
         }

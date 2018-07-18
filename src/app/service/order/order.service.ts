@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from '../../core';
-import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType, ResponseMessage } from '../../data';
+import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering } from '../../data';
 import { Order, OrderList } from '../../data/models/order/order';
 
 @Injectable()

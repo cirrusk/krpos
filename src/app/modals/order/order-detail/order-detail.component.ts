@@ -69,7 +69,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.cancelSymbol = '';
       this.cancelFlag = false;
 
-      if (orderInfo.orderType.code === 'GROUP_COMBINED_ORDER' && orderInfo.user.uid !== orderInfo.volumeAccount.uid) {
+      if (this.orderInfo.parentOrder !== '' && orderInfo.user.uid !== orderInfo.volumeAccount.uid) {
         this.cancelFlag = true;
       }
     }

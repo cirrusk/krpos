@@ -23,6 +23,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   accountList: AccountList;                  // 회원 정보 리스트
   totalCnt: number;                          // 검색 총 합계
   paymentType: string;
+  orderType: string;
   @ViewChild('inputSearchText') private searchValue: ElementRef;
 
   constructor(modalService: ModalService,
@@ -78,7 +79,6 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.activeNum = -1;
     this.activeCode = '';
     this.totalCnt = 0;
-    this.paymentType = 'n';
     this.pager = new Pagination();
     if (cancel) {
       this.searchValue.nativeElement.value = '';

@@ -12,9 +12,9 @@
                 <div class="bill fl">
                     <div class="inner">
                         <span class="logo"><img src="/assets/images/common/bill_logo.png" alt="Amway"></span>
-                        <ul class="list">
-                            <li><span>주문형태</span><em>{{orderDetail.orders[0].orderType.label}}</em></li>
-                            <li><span>ABO정보</span><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></li>
+                        <ul class="list">                            
+                            <li><span>주문형태</span><em *ngIf="orderInfo.deliveryMode.code === 'pickup' && orderInfo.channel.code === 'pos'; else elseTemplate1">현장구매</em><ng-template #elseTemplate1><em>픽업예약주문</em></ng-template></li>
+                            <li><span>ABO정보</span><em *ngIf="orderInfo.parentOrder; else elseTemplate2">{{orderDetail.orders[0].volumeABOAccount.uid}} {{orderDetail.orders[0].volumeABOAccount.name}}</em><ng-template #elseTemplate2><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></ng-template></li>
                             <li><span>구매일자</span><em>{{orderDetail.orders[0].created | date:'yyyy/MM/dd  HH:mm:ss'}}</em></li>
                             <li><span>POS번호</span><em>{{clientId}}</em></li>
                             <li><span>캐셔정보</span><em>{{emloyeeName}}</em></li>

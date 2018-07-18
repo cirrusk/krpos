@@ -8,7 +8,7 @@ import {
 } from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
-import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo } from '../../../data';
+import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering } from '../../../data';
 import { ReceiptService, PaymentService, MessageService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
@@ -25,9 +25,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   payamount: number;
   change: number;
   checktype: number;
+  orderType: string;
   private dupcheck = false;
   private orderInfo: Order;
   private cartInfo: Cart;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
   private paymentsubscription: Subscription;
@@ -41,6 +43,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   ) {
     super(modalService);
     this.finishStatus = null;
+    this.orderType = null;
     this.paidamount = 0;
     this.change = 0;
     this.checktype = 0;
@@ -52,6 +55,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     });
     this.accountInfo = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     this.paymentcapture = this.callerData.paymentInfo;
     this.paidamount = this.cartInfo.totalPrice.value;
     this.payamount = this.cartInfo.totalPrice.value; // this.callerData.payAmount;
@@ -63,7 +67,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
-    this.receipt.dispose();
   }
 
   /**
@@ -161,6 +164,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.orderInfo = result;
         this.logger.set('complete.payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
         this.finishStatus = result.statusDisplay;
+        this.orderType = result.orderType.code;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
             this.paidDate = result.created ? result.created : new Date();
@@ -194,8 +198,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private printAndCartInit() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-      this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+      if (this.orderType === 'GROUP_COMBINED_ORDER') {
+        this.receipt.groupPrint(this.accountInfo, this.amwayExtendedOrdering, this.orderInfo, this.paymentcapture);
+        this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+      } else {
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+      }
     }
   }
 

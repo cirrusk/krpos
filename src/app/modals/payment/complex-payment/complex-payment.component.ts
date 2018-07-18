@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, SpinnerService, AlertService, Logger, StorageService } from '../../../core';
-import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture } from '../../../data';
+import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -29,6 +29,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private cmplsubscription: Subscription;
   public accountInfo: Accounts;
   private cartInfo: Cart;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private popupList: Array<number>;
   private paymentComponent: any;
   private paymentModeListByMain: PaymentModeListByMain;
@@ -54,6 +55,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) {
       this.paymentcapture = this.callerData.paymentCapture;
     }
@@ -174,7 +176,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   openPopup() {
     this.popupList.sort();
     this.modal.openModalByComponent(CompletePaymentComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       modalId: 'CompletePaymentComponent',
       paymentType: 'c'

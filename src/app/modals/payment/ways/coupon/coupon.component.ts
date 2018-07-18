@@ -8,7 +8,7 @@ import { PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
 import {
   Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination,
-  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay
+  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay, AmwayExtendedOrdering
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -28,6 +28,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   apprmessage: string;
   private orderInfo: Order;
   private cartInfo: Cart;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
   private alertsubscription: Subscription;
   private couponssubscription: Subscription;
@@ -48,6 +49,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     this.searchCoupons(0);
     // 이미 장바구니에 적용된 경우 CART를 새로 구성해야 쿠폰 재설정 가능
     this.alertsubscription = this.alert.alertState.subscribe(state => {
@@ -136,7 +138,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   openComplexPayment() {
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       modalId: 'ComplexPaymentComponent_Cpn'
     }).subscribe(result => {

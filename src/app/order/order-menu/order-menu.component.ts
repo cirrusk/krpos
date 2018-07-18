@@ -27,7 +27,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private cartInfo: Cart;
   private orderInfoList: OrderHistoryList;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
-  private paymentType: string;
+  private orderType: string;
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();    // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
@@ -50,7 +50,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   }
 
   init() {
-    this.paymentType = '';
+    this.orderType = '';
   }
 
   /**
@@ -67,7 +67,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           this.accountInfo = data.data;
         }
         if (!data.flag) {
-          this.paymentType = '';
+          this.orderType = '';
           this.amwayExtendedOrdering = new AmwayExtendedOrdering();
         }
       } else if (data.type === 'product') {
@@ -103,7 +103,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.posMenu.emit({ type: '통합결제' });
     this.storage.setLocalItem('apprtype', 'c');
-    if (this.paymentType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
+    if (this.orderType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
       this.spinner.show();
       // 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
@@ -128,7 +128,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   private popupCoupon() {
     this.modal.openModalByComponent(CouponComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       modalId: 'CouponComponent'
     });
@@ -139,7 +139,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   private popupPayment() {
     this.modal.openModalByComponent(ComplexPaymentComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       modalId: 'ComplexPaymentComponent_Od'
     }).subscribe(result => {
@@ -152,9 +152,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 결제 사용자 검색 팝업
-   * parameter 로 paymentType 을 넘겨서 그룹 결제일 경우 활용하도록 함.
-   * paymentType = 'g' 그룹 결제
-   * paymentType = 'n' 일반 결제
+   * parameter 로 orderType 을 넘겨서 그룹 결제일 경우 활용하도록 함.
+   * orderType = 'g' 그룹 결제
+   * orderType = 'n' 일반 결제
    *
    * @param evt
    */
@@ -163,12 +163,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(SearchAccountComponent,
       {
         closeByClickOutside: false,
-        paymentType: 'g',
+        orderType: 'g',
         modalId: 'SearchAccountComponent'
       }
     ).subscribe(result => {
       if (result) {
-        this.paymentType = 'g';
+        this.orderType = 'g';
         this.searchAccountBroker.sendInfo('g', result);
       }
     });

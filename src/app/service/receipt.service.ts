@@ -6,7 +6,7 @@ import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard
+    Discount, DiscountInfo, ReceiptInfo, ICCard, AmwayExtendedOrdering
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -123,6 +123,12 @@ export class ReceiptService implements OnDestroy {
             }
         });
 
+    }
+
+    public groupPrint(account: Accounts, amwayExtendedOrdering: AmwayExtendedOrdering, order: Order, paymentCapture: PaymentCapture) {
+        // amwayExtendedOrdering.orders.forEach(order => {
+
+        // });
     }
 
     /**
