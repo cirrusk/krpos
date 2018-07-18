@@ -137,7 +137,7 @@ export class OrderService {
    * @param entries Data Parameter
    */
   serialAndRfid(userid: string, ordercode: string, entries: any): Observable<ResponseMessage> {
-    const pathvariables = { userId: userid, orderCode: ordercode};
+    const pathvariables = { userId: userid, orderCode: ordercode };
     const param = { fields: 'FULL' };
     const data = new HttpData('serialAndRfid', pathvariables, entries, param, 'json');
     return this.api.post(data);
