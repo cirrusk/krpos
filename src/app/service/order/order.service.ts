@@ -118,6 +118,8 @@ export class OrderService {
 
   /**
    * 그룹주문 조회
+   * 사유 : OrderWsDTO 는 단일 주문 결과로 그룹 정보를 넣을 수 없음.
+   * 처리 : POS 에서 그룹 주문인 경우 별도 호출 하여 정보 확인
    *
    * @param userid 회원아이디
    * @param ordercode Ordering ABO 주문번호
