@@ -106,11 +106,7 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.retreiveInfo(data[0], data[1]);
           }
         } else if (result.key === 'apprtype') {
-          if (result.value === 'n') {
-            this.apprtype = '일반결제';
-          } else if (result.value === 'c') {
-            this.apprtype = '복합결제';
-          }
+          this.apprtype = '통합결제';
         }
       }
     });
