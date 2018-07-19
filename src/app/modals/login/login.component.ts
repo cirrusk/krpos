@@ -50,14 +50,14 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z-]/g);
     setTimeout(() => this.loginIdInput.nativeElement.focus(), 50);
     this.loginIdValid.valueChanges
-    .debounceTime(70)
-    .subscribe(v => {
-      if (v) {
-        if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
-          this.loginIdInput.nativeElement.value = v.replace(numEngDelExp, '');
+      .debounceTime(70)
+      .subscribe(v => {
+        if (v) {
+          if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
+            this.loginIdInput.nativeElement.value = v.replace(numEngDelExp, '');
+          }
         }
-      }
-    });
+      });
   }
 
   /**
@@ -67,7 +67,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 반드시 존재여부를 체크한 후 undescribe 해야함.
    */
   ngOnDestroy() {
-    if (this.authsubscription) {this.authsubscription.unsubscribe(); }
+    if (this.authsubscription) { this.authsubscription.unsubscribe(); }
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
   }
 
@@ -95,7 +95,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     // 1. AD 계정 Validation 체크
     // 2. 비밀번호 미입력
     if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-      this.alert.warn({ message: '비밀번호가 공란입니다.' });
+      this.alert.warn({ message: '비밀번호가 공란입니다.', timer: true, interval: 1000 });
+      setTimeout(() => { this.loginPwdInput.nativeElement.focus(); }, 250);
       return;
     }
     this.spinner.show();
@@ -107,21 +108,21 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       this.storage.setEmployeeId(result.employeeId);
       this.storage.setTokenInfo(result);
       this.info.sendInfo('tkn', result);
-      this.info.sendInfo('cbt', {act: true}); // 로그인 성공 후 배치 후 처리 진행.
+      this.info.sendInfo('cbt', { act: true }); // 로그인 성공 후 배치 후 처리 진행.
       this.result = true;
       this.modalResult();
       this.close();
     },
-    error => {
-      this.spinner.hide();
-      const errdata = Utils.getError(error);
-      if (errdata) {
-        this.logger.set('login.component', `auth and token error type : ${errdata.type}`).error();
-        this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
-        this.alert.error({ message: `${errdata.message}` });
-      }
-    },
-    () => { this.spinner.hide(); });
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('login.component', `auth and token error type : ${errdata.type}`).error();
+          this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); });
   }
 
   close() {
@@ -146,8 +147,9 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     if (loginpwd) {
       this.startWork();
     } else {
-      if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
-        this.alert.warn({ message: '비밀번호가 공란입니다.' });
+      if (Utils.isEmpty(loginpwd)) {
+        this.alert.warn({ message: '비밀번호가 공란입니다.', timer: true, interval: 1000 });
+        setTimeout(() => { this.loginPwdInput.nativeElement.focus(); }, 250);
       }
     }
   }
