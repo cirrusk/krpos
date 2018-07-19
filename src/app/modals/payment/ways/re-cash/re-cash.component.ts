@@ -1,17 +1,17 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, AlertState, StorageService, Modal } from '../../../../core';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { PaymentService, ReceiptService, MessageService } from '../../../../service';
+import { ModalComponent, ModalService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo
 } from '../../../../data';
-import { PaymentService, ReceiptService, MessageService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { InfoBroker } from '../../../../broker';
 import { Utils } from '../../../../core/utils';
-import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 
 @Component({
   selector: 'pos-re-cash',
@@ -37,8 +37,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
-    private storage: StorageService, private alert: AlertService, private message: MessageService,
-    private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
+    private storage: StorageService, private message: MessageService, private spinner: SpinnerService, private info: InfoBroker,
+    private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;

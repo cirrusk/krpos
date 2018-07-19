@@ -20,14 +20,15 @@ import { InfoBroker } from '../../../broker';
   templateUrl: './complex-payment.component.html'
 })
 export class ComplexPaymentComponent extends ModalComponent implements OnInit, OnDestroy {
-  @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
 
+  accountInfo: Accounts;
+  enableMenu: Array<string>;
+  memberType = MemberType;
   private point: number;
   private recash: number;
   private paymentModesSubscription: Subscription;
   private paymentSubscription: Subscription;
   private cmplsubscription: Subscription;
-  public accountInfo: Accounts;
   private cartInfo: Cart;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private popupList: Array<number>;
@@ -35,9 +36,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private paymentModeListByMain: PaymentModeListByMain;
   private paymentcapture: PaymentCapture;
   private paymentModes: Map<string, string>;
-  public enableMenu: Array<string>;
-  public memberType = MemberType;
-
+  @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService,
     private paymentService: PaymentService,
     private modal: Modal,

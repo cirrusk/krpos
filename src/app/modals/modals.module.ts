@@ -27,7 +27,6 @@ import { IcCardComponent } from './payment/ways/ic-card/ic-card.component';
 import { InstallmentPlanComponent } from './payment/ways/credit-card/installment-plan/installment-plan.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
-import { NormalPaymentComponent } from './payment/normal-payment/normal-payment.component';
 import { OrderDetailComponent } from './order/order-detail/order-detail.component';
 import { PasswordComponent } from './password/password.component';
 import { PickupOrderComponent } from './order/pickup-order/pickup-order.component';
@@ -66,7 +65,6 @@ import { CancelEcpPrintComponent } from './order/ecp-print/cancel-ecp-print/canc
     InstallmentPlanComponent,
     LoginComponent,
     LogoutComponent,
-    NormalPaymentComponent,
     OrderDetailComponent,
     PasswordComponent,
     PickupOrderComponent,
@@ -111,7 +109,6 @@ import { CancelEcpPrintComponent } from './order/ecp-print/cancel-ecp-print/canc
     InstallmentPlanComponent,
     LoginComponent,
     LogoutComponent,
-    NormalPaymentComponent,
     OrderDetailComponent,
     PasswordComponent,
     PickupOrderComponent,

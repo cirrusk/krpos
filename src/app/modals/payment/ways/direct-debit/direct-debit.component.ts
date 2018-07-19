@@ -18,13 +18,6 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
   templateUrl: './direct-debit.component.html'
 })
 export class DirectDebitComponent extends ModalComponent implements OnInit, OnDestroy {
-  private orderInfo: Order;
-  private cartInfo: Cart;
-  private accountInfo: Accounts;
-  private paymentcapture: PaymentCapture;
-  private paymentType: string;
-  private paymentsubscription: Subscription;
-  private alertsubscription: Subscription;
   paidamount: number;
   change: number;
   accountnumber: string;
@@ -36,6 +29,13 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   paidDate: Date;
   checktype: number;
   apprmessage: string;
+  private orderInfo: Order;
+  private cartInfo: Cart;
+  private accountInfo: Accounts;
+  private paymentcapture: PaymentCapture;
+  private paymentType: string;
+  private paymentsubscription: Subscription;
+  private alertsubscription: Subscription;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,

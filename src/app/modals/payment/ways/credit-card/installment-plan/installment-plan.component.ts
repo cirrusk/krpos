@@ -1,7 +1,8 @@
-import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, Logger, SpinnerService } from '../../../../../core';
+import { Subscription } from 'rxjs/Subscription';
+
 import { PaymentService } from '../../../../../service';
+import { ModalComponent, ModalService, Logger, SpinnerService } from '../../../../../core';
 import { Accounts, BankInfoList } from '../../../../../data';
 
 @Component({

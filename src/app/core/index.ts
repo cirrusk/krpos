@@ -21,6 +21,15 @@ export * from './peripheral/common/format-reader';
 export * from './peripheral/printer/helper/escpos/escpos';
 export * from './peripheral/printer/helper/printer-commands';
 export * from './peripheral/niceterminal/nice.payment.service';
+export * from './peripheral/niceterminal/nice.constants';
+export * from './peripheral/niceterminal/vo/card.approval.request';
+export * from './peripheral/niceterminal/vo/card.approval.result';
+export * from './peripheral/niceterminal/vo/card.cancel.reqeust';
+export * from './peripheral/niceterminal/vo/card.cancel.result';
+export * from './peripheral/niceterminal/vo/iccard.approval.request';
+export * from './peripheral/niceterminal/vo/iccard.approval.result';
+export * from './peripheral/niceterminal/vo/iccard.cancel.request';
+export * from './peripheral/niceterminal/vo/iccard.cancel.result';
 
 export * from './guard/login.guard';
 export * from './guard/order.guard';

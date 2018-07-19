@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, SpinnerService, Logger } from '../../../../core';
-import { Utils } from '../../../../core/utils';
+import { OrderService, MessageService } from '../../../../service';
+import { ModalComponent, ModalService, SpinnerService } from '../../../../core';
 import { Accounts, StatusDisplay, KeyCode } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
-import { OrderService, MessageService } from '../../../../service';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-cash-receipt',
@@ -14,9 +14,6 @@ import { OrderService, MessageService } from '../../../../service';
 })
 export class CashReceiptComponent extends ModalComponent implements OnInit, OnDestroy {
 
-  @ViewChild('clientnum') private clientnum: ElementRef;       // 고객번호
-  @ViewChild('income') private income: ElementRef;
-  @ViewChild('outcome') private outcome: ElementRef;
   checktype: number;
   apprmessage: string;
   finishStatus: string;
@@ -27,9 +24,12 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   private cartInfo: Cart;
   private orderInfo: Order;
   private receiptsubscription: Subscription;
+  @ViewChild('clientnum') private clientnum: ElementRef;       // 고객번호
+  @ViewChild('income') private income: ElementRef;
+  @ViewChild('outcome') private outcome: ElementRef;
   constructor(protected modalService: ModalService, private order: OrderService,
     private spinner: SpinnerService, private message: MessageService,
-    private renderer: Renderer2, private logger: Logger) {
+    private renderer: Renderer2) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;

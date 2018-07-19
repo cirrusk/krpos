@@ -1,22 +1,17 @@
 import { Component, OnInit, HostListener, ElementRef, ViewChild, Renderer2, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import {
-  ModalComponent, ModalService, KeyCommand, KeyboardService,
-  PrinterService, SpinnerService, Logger, Modal, StorageService
-} from '../../../../core';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { MessageService, PaymentService, ReceiptService } from '../../../../service';
+import { ModalComponent, ModalService, PrinterService, SpinnerService, Logger, Modal, StorageService } from '../../../../core';
 import {
   Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
   CurrencyData, KeyCode, StatusDisplay, CapturePaymentInfo
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
-import { CashReceiptComponent } from '../cash-receipt/cash-receipt.component';
+import { Order } from '../../../../data/models/order/order';
 import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
-import { Order } from '../../../../data/models/order/order';
-import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { SerialComponent } from '../../../scan/serial/serial.component';
 
 @Component({
   selector: 'pos-cash',
@@ -24,9 +19,6 @@ import { SerialComponent } from '../../../scan/serial/serial.component';
 })
 export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
-  @ViewChild('cashPanel') private cashPanel: ElementRef;
-  @ViewChild('paid') private paid: ElementRef;         // 내신금액
-  @ViewChild('payment') private payment: ElementRef;   // 결제금액
   paylock: boolean;                                    // 결제버튼잠금
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
@@ -38,8 +30,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
-  private keyboardsubscription: Subscription;
   private paymentsubscription: Subscription;
+  @ViewChild('cashPanel') private cashPanel: ElementRef;
+  @ViewChild('paid') private paid: ElementRef;         // 내신금액
+  @ViewChild('payment') private payment: ElementRef;   // 결제금액
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
@@ -48,7 +42,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private payments: PaymentService,
     private storage: StorageService,
     private spinner: SpinnerService,
-    private keyboard: KeyboardService,
     private info: InfoBroker,
     private logger: Logger,
     private renderer: Renderer2) {
@@ -58,9 +51,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
-      this.handleKeyboardCommand(c);
-    });
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
@@ -84,7 +74,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     this.receipt.dispose();
   }
@@ -271,18 +260,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
-   */
-  protected popupCashReceipt() {
-    this.modal.openModalByComponent(CashReceiptComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
-      closeByClickOutside: false,
-      modalId: 'CashReceiptComponent',
-      paymentType: this.paymentType
-    });
-  }
-
-  /**
    * Payment Capture 데이터 생성
    *
    * @param paidamount 지불 금액
@@ -398,19 +375,4 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * 현금영수증 버튼 선택 시에만 이벤트 처리하면됨.
-   * 반드시 결제가 완료된 후에만 처리됨.
-   *
-   * @param command 키보드 명령어
-   */
-  private handleKeyboardCommand(command: KeyCommand) {
-    try {
-      switch (command.combo) {
-        case 'ctrl+r': { if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) { this[command.name](); } } break;
-      }
-    } catch (e) {
-      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
-    }
-  }
 }

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Modal, Logger, StorageService, SpinnerService } from '../../core';
 import {
   PromotionOrderComponent, EtcOrderComponent,
-  SearchAccountComponent, PickupOrderComponent, NormalPaymentComponent,
+  SearchAccountComponent, PickupOrderComponent,
   CancelCartComponent
 } from '../../modals';
 import { Accounts, OrderHistoryList, MemberType, AmwayExtendedOrdering } from '../../data';

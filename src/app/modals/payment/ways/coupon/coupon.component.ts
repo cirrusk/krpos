@@ -1,7 +1,6 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CouponPaymentComponent } from '../../coupon-payment/coupon-payment.component';
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
 import { ModalComponent, ModalService, Modal, StorageService, SpinnerService, Logger, AlertService } from '../../../../core';
 import { PaymentService, MessageService } from '../../../../service';

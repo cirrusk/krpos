@@ -1,8 +1,8 @@
 import { StatusDisplay } from './../../../data/models/payment/payment.enum';
 import { Component, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
 
-import { ModalComponent, ModalService, SpinnerService, Logger } from '../../../core';
-import { OrderService } from '../../../service';
+import { range } from 'lodash';
+import { ModalComponent, ModalService } from '../../../core';
 import { KeyCode } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { Product } from '../../../data/models/cart/cart-data';
@@ -17,17 +17,21 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   checktype: number;
   apprmessage: string;
   productInfo: Product;
+  productCount = [];
+  serials: Array<string>;
   private dupcheck = false;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
-  constructor(protected modalService: ModalService, private order: OrderService,
-    private spinner: SpinnerService, private logger: Logger) {
+  constructor(protected modalService: ModalService) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
+    this.serials = new Array<string>();
   }
 
   ngOnInit() {
     this.productInfo = this.callerData.productInfo;
+    const psize: number = this.callerData.productQty ? this.callerData.productQty : 1;
+    this.productCount = range(0, psize - 1);
     if (this.productInfo) {
       if (this.productInfo.rfid && !this.productInfo.serialNumber) {
         this.regLabel = 'RFID 스캔';
@@ -79,7 +83,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     let serial: string;
     if (this.productInfo.rfid && !this.productInfo.serialNumber) {
       this.checktype = 0;
-      this.result = { serial: null, rfid: 'dummy_rfid'};
+      this.result = { serialNumber: null, serials: null, rfid: 'dummy_rfid'};
       this.close();
     } else {
       this.codes.forEach(cd => {
@@ -91,6 +95,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             return false;
           } else {
             serial = cd.nativeElement.value;
+            this.serials.push(cd.nativeElement.value);
           }
         }
       });
@@ -102,7 +107,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         return;
       } else {
         this.checktype = 0;
-        this.result = { serial: serial, rfid: null};
+        this.result = { serialNumber: serial, serialNumbers: this.serials, rfid: null};
         this.close();
       }
     }

@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { PaymentService, MessageService, ReceiptService } from '../../../../service';
 import { ModalComponent, ModalService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
   PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo
 } from '../../../../data';
-import { PaymentService, MessageService, ReceiptService } from '../../../../service';
 import { Cart } from './../../../../data/models/order/cart';
-import { Utils } from '../../../../core/utils';
 import { Order } from '../../../../data/models/order/order';
 import { InfoBroker } from '../../../../broker';
-import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-point',
@@ -33,11 +33,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private accountInfo: Accounts;
   private paymentType: string;
   private balance: Balance;
-  @ViewChild('usePoint') usePoint: ElementRef;
-  @ViewChild('pointPanel') pointPanel: ElementRef;
   private balancesubscription: Subscription;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  @ViewChild('usePoint') usePoint: ElementRef;
+  @ViewChild('pointPanel') pointPanel: ElementRef;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private payments: PaymentService,

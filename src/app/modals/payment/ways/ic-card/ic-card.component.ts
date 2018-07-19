@@ -3,33 +3,25 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ModalComponent, ModalService, NicePaymentService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
+import { ReceiptService, PaymentService, MessageService } from '../../../../service';
+import {
+  ModalComponent, ModalService, NicePaymentService, Logger, SpinnerService,
+  StorageService, Modal, ICCardApprovalResult, NiceConstants, ICCardCancelResult
+} from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
   StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
-import { ICCardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/iccard.approval.result';
-import { ReceiptService, PaymentService, MessageService } from '../../../../service';
-import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
-import { ICCardCancelResult } from './../../../../core/peripheral/niceterminal/vo/iccard.cancel.result';
-import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-ic-card',
   templateUrl: './ic-card.component.html'
 })
 export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy {
-  private orderInfo: Order;
-  private cartInfo: Cart;
-  private accountInfo: Accounts;
-  private paymentcapture: PaymentCapture;
-  private paymentType: string;
-  private cardresult: ICCardApprovalResult;
-  private paymentsubscription: Subscription;
-  private dupcheck = false;
   paidamount: number;
   finishStatus: string;                                // 결제완료 상태
   paidDate: Date;
@@ -38,6 +30,14 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   cardauthnumber: string; // 승인번호
   checktype: number;
   apprmessage: string;
+  private orderInfo: Order;
+  private cartInfo: Cart;
+  private accountInfo: Accounts;
+  private paymentcapture: PaymentCapture;
+  private paymentType: string;
+  private cardresult: ICCardApprovalResult;
+  private paymentsubscription: Subscription;
+  private dupcheck = false;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private message: MessageService,
     private payments: PaymentService, private nicepay: NicePaymentService, private storage: StorageService,
     private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {

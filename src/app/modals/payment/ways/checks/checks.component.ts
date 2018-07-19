@@ -1,9 +1,9 @@
-import { CurrencyData } from './../../../../data/models/payment/payment-capture';
 import { Component, OnInit } from '@angular/core';
 
 import { ModalComponent, ModalService, StorageService } from '../../../../core';
 import { PaymentCapture, CashPaymentInfo, CashType, PaymentModes, PaymentModeData } from '../../../../data';
 import { InfoBroker } from '../../../../broker';
+import { CurrencyData } from '../../../../data/models/payment/payment-capture';
 import { Order } from '../../../../data/models/order/order';
 
 @Component({

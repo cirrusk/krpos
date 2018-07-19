@@ -2,9 +2,13 @@ import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener, OnDe
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
+import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService,
-  Logger, AlertService, SpinnerService, AlertState, Modal, StorageService
+  Logger, AlertService, SpinnerService, AlertState, Modal, StorageService,
+  CardApprovalResult, CardCancelResult, NiceConstants
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
@@ -12,14 +16,8 @@ import {
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
-import { ReceiptService, PaymentService, MessageService } from '../../../../service';
-import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/card.approval.result';
-import { Utils } from '../../../../core/utils';
-import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
-import { NiceConstants } from '../../../../core/peripheral/niceterminal/nice.constants';
 import { InfoBroker } from '../../../../broker';
-import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
-import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { Utils } from '../../../../core/utils';
 
 @Component({
   selector: 'pos-credit-card',
@@ -27,6 +25,15 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 })
 export class CreditCardComponent extends ModalComponent implements OnInit, OnDestroy {
 
+  apprmessage: string;
+  checktype: number;
+  paidamount: number;
+  change: number;
+  finishStatus: string;                                // 결제완료 상태
+  paidDate: Date;
+  cardnumber: string; // 카드번호
+  cardcompany: string; // 카드사명
+  cardauthnumber: string; // 승인번호
   private installment: string;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -37,20 +44,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   private dupcheck = false;
-  apprmessage: string;
-  checktype: number;
-  paidamount: number;
-  change: number;
-  finishStatus: string;                                // 결제완료 상태
-  paidDate: Date;
-  cardnumber: string; // 카드번호
-  cardcompany: string; // 카드사명
-  cardauthnumber: string; // 승인번호
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
-    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService, private message: MessageService,
-    private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private renderer: Renderer2) {
+    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
+    private message: MessageService, private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker,
+    private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = '00';
     this.finishStatus = null;
