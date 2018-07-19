@@ -62,9 +62,9 @@ export class CartService {
 
   /**
    * 장바구니에 제품 추가
-   * @param userId
-   * @param cartId
-   * @param code
+   * @param userId 회원 아이디
+   * @param cartId 카트 아이디
+   * @param code 제품 코드
    */
   addCartEntry(userId: string, cartId: string, code: string): Observable<ResCartInfo> {
     const orderList = new OrderEntryList();
