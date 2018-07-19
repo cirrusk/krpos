@@ -160,13 +160,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   groupPayment(evt: any) {
     this.checkClass(evt);
-    this.modal.openModalByComponent(SearchAccountComponent,
-      {
-        closeByClickOutside: false,
-        orderType: 'g',
-        modalId: 'SearchAccountComponent'
-      }
-    ).subscribe(result => {
+    this.modal.openModalByComponent(SearchAccountComponent, {
+      closeByClickOutside: false,
+      orderType: 'g',
+      modalId: 'SearchAccountComponent'
+    }).subscribe(result => {
       if (result) {
         this.orderType = 'g';
         this.searchAccountBroker.sendInfo('g', result);
@@ -181,14 +179,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   pickupOrder(evt: any) {
     this.checkClass(evt);
-    this.modal.openModalByComponent(PickupOrderComponent,
-      {
-        title: 'ECP픽업 주문리스트',
-        callerData: { searchType: 'p' },
-        closeByClickOutside: true,
-        modalId: 'PickupOrderComponent'
-      }
-    );
+    this.modal.openModalByComponent(PickupOrderComponent, {
+      title: 'ECP픽업 주문리스트',
+      callerData: { searchType: 'p' },
+      closeByClickOutside: true,
+      modalId: 'PickupOrderComponent'
+    });
   }
 
   /**
@@ -199,14 +195,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   cancelOrder(evt: any) {
     if (!this.hasAccount) { return; }
     // this.checkClass(evt);
-    this.modal.openModalByComponent(CancelCartComponent,
-      {
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: true,
-        modalId: 'CancelCartComponent'
-      }
-    );
+    this.modal.openModalByComponent(CancelCartComponent, {
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: true,
+      modalId: 'CancelCartComponent'
+    });
   }
 
   /**
@@ -217,12 +211,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   promotionOrder(evt: any) {
     if (!this.hasAccount) { return; }
     // this.checkPromotionClass(evt);
-    this.modal.openModalByComponent(PromotionOrderComponent,
-      {
-        closeByClickOutside: false,
-        modalId: 'PromotionOrderComponent'
-      }
-    );
+    this.modal.openModalByComponent(PromotionOrderComponent, {
+      closeByClickOutside: false,
+      modalId: 'PromotionOrderComponent'
+    });
   }
 
   /**
@@ -233,13 +225,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   etcOrder(evt: any) {
     // if (!this.hasAccount) { return; }
     this.checkClass(evt);
-    this.modal.openModalByComponent(EtcOrderComponent,
-      {
-        callerData: { accountInfo: this.accountInfo },
-        closeByClickOutside: false,
-        modalId: 'EtcOrderComponent'
-      }
-    );
+    this.modal.openModalByComponent(EtcOrderComponent, {
+      callerData: { accountInfo: this.accountInfo },
+      closeByClickOutside: false,
+      modalId: 'EtcOrderComponent'
+    });
   }
 
   private checkClass(evt: any) {
