@@ -17,6 +17,11 @@ export class OrderGuard implements CanActivate, CanActivateChild {
     const lockType = this.storage.getScreenLockType();
     const batchinfo = this.storage.getBatchInfo();
     const islogin = this.storage.isLogin();
+    if (islogin === false) {
+      this.logger.set('order.guard', 'pos is not login!!!').debug();
+      this.router.navigate(['/dashboard']);
+      return false;
+    }
     if (lockType === LockType.LOCK) {
       this.logger.set('order.guard', 'pos is locked!!!').debug();
       redictCheck = true;

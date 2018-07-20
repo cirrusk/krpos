@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PreloadAllModules, Routes, RouterModule, Router } from '@angular/router';
+import { PreloadAllModules, Routes, RouterModule } from '@angular/router';
 
-import { LoginGuard, OrderGuard } from './core';
+import { LoginGuard, OrderGuard, OrderDeactivateGuard } from './core';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OrderComponent } from './order/order.component';
@@ -14,7 +14,7 @@ import { NoticeResolver } from './order/notice/notice.resolver';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/dashboard', },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'order', component: OrderComponent, canActivate: [OrderGuard], resolve: {notice: NoticeResolver} },
+  { path: 'order', component: OrderComponent, canActivate: [OrderGuard], canDeactivate: [OrderDeactivateGuard], resolve: {notice: NoticeResolver} },
   { path: 'order-complete', component: OrderCompleteComponent, canActivate: [OrderGuard]},
   { path: 'client', component: ClientComponent, resolve: {notice: NoticeResolver}  },
   { path: 'test', component: TestComponent },
@@ -28,6 +28,6 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
   declarations: [],
-  providers: [LoginGuard, OrderGuard, NoticeResolver]
+  providers: [LoginGuard, OrderGuard, OrderDeactivateGuard, NoticeResolver]
 })
 export class AppRoutingModule { }

@@ -33,3 +33,4 @@ export * from './peripheral/niceterminal/vo/iccard.cancel.result';
 
 export * from './guard/login.guard';
 export * from './guard/order.guard';
+export * from './guard/order-deactivate.guard';
