@@ -1,3 +1,4 @@
+import { BatchInfo } from './../../data/models/common/batch-info';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -5,8 +6,8 @@ import 'rxjs/add/operator/timeout';
 
 import { ApiService, StorageService, Config } from '../../core';
 import {
-  Balance, CouponList, HttpData,
-  PaymentModeList, PaymentModeListByMain, PaymentDetails, PaymentCapture, VoucherList, ResponseData, BankInfoList, CapturePaymentInfo, Coupon
+  Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
+  ResponseData, BankInfoList, CapturePaymentInfo, Coupon
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
@@ -89,12 +90,6 @@ export class PaymentService {
     const data = new HttpData('recash', pathvariables, null, params);
     return this.api.get(data);
   }
-  /**
-   * 쿠폰 목록 조회
-   *
-   * @param accountid 회원 아이디
-   * @param userid 회원 아이디
-   */
 
   /**
    * 쿠폰 목록 조회
@@ -109,20 +104,20 @@ export class PaymentService {
   searchCoupons(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = { currentPage: currentpage, pageSize: pagesize, sort: sort, asc: asc, feilds: 'DEFAULT' };
-    const data = new HttpData('searchCoupons', pathvariables, null, params, 'b');
+    const data = new HttpData('searchCoupons', pathvariables, null, params, 'json');
     return this.api.get(data);
   }
 
   /**
    * 쿠폰 조회
-   *  @param accountid 회원 아이디
+   * @param accountid 회원 아이디
    * @param userid 회원 아이디
    * @param couponcode 쿠폰코드
    */
   searchCoupon(accountid: string, userid: string, couponcode: string): Observable<Coupon> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = { voucherId: couponcode, feilds: 'DEFAULT' };
-    const data = new HttpData('searchCoupon', pathvariables, null, params, 'b');
+    const data = new HttpData('searchCoupon', pathvariables, null, params, 'json');
     return this.api.get(data);
   }
 
@@ -136,7 +131,7 @@ export class PaymentService {
   applyCoupon(userid: string, cartid: string, couponcode: string): Observable<Cart> {
     const pathvariables = { userId: userid, cartId: cartid };
     const param = { voucherId: couponcode, fields: 'FULL' };
-    const data = new HttpData('applyCoupon', pathvariables, null, param, 'b');
+    const data = new HttpData('applyCoupon', pathvariables, null, param, 'json');
     return this.api.post(data);
   }
 
@@ -158,9 +153,11 @@ export class PaymentService {
    * @param paymentcapture Payment Capture 정보
    */
   placeOrder(userid: string, cartid: string, paymentcapture: CapturePaymentInfo): Observable<Order> {
+    const batch: BatchInfo = this.storage.getBatchInfo();
+    console.log('********* batch no : ' + batch.batchNo);
     const pathvariables = { userId: userid, cartId: cartid };
     const param = { fields: 'FULL' };
-    const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'b');
+    const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'json');
     return this.api.post(data);
   }
 

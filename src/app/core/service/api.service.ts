@@ -113,9 +113,9 @@ export class ApiService {
    */
   private generateHeaders(headertype: string): HttpHeaders {
     let headers: HttpHeaders;
-    if (headertype === 'b' || headertype === 'json') {
+    if (headertype === 'json') {
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    } else if (headertype === 't') {
+    } else if (headertype === 'text') {
       headers = new HttpHeaders().set('Content-Type', 'text/plain');
     } else {
       headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');

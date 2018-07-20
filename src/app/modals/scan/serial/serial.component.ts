@@ -30,8 +30,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnInit() {
     this.productInfo = this.callerData.productInfo;
-    const psize: number = this.callerData.productQty ? this.callerData.productQty : 1;
-    this.productCount = range(0, psize - 1);
+    const psize: number = this.callerData.productQty ? this.callerData.productQty : 0;
+    if (psize === 0) {
+      this.productCount = range(0, 1);
+    } else {
+      this.productCount = range(0, psize - 1);
+    }
     if (this.productInfo) {
       if (this.productInfo.rfid && !this.productInfo.serialNumber) {
         this.regLabel = 'RFID 스캔';
