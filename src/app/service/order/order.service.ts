@@ -164,4 +164,30 @@ export class OrderService {
     const data = new HttpData('receipt', pathvariables, body, param, 'json');
     return this.api.post(data);
   }
+
+  /**
+   * 영수증 출력 처리 완료 요청
+   *
+   * @param userid 회원 아이디
+   * @param ordercode 주문번호
+   */
+  issueReceipt(userid: string, ordercode: string): Observable<ResponseMessage>  {
+    const pathvariables = { userId: userid, orderCode: ordercode };
+    const param = { fields: 'DEFAULT' };
+    const data = new HttpData('issueReceipt', pathvariables, null, param, 'json');
+    return this.api.post(data);
+  }
+
+  /**
+   * 영수증 발급 취소 요청
+   *
+   * @param userid 회원 아이디
+   * @param ordercode 주문번호
+   */
+  cancelReceipt(userid: string, ordercode: string) {
+    const pathvariables = { userId: userid, orderCode: ordercode };
+    const param = { fields: 'DEFAULT' };
+    const data = new HttpData('cancelReceipt', pathvariables, null, param, 'json');
+    return this.api.post(data);
+  }
 }

@@ -147,6 +147,7 @@ export class PaymentService {
 
   /**
    * Payment Capture와 Place Order를 진행
+   * 2018.07.20 배치 정보 추가
    *
    * @param userid 회원 아이디
    * @param cartid 카트 아이디
@@ -154,9 +155,8 @@ export class PaymentService {
    */
   placeOrder(userid: string, cartid: string, paymentcapture: CapturePaymentInfo): Observable<Order> {
     const batch: BatchInfo = this.storage.getBatchInfo();
-    console.log('********* batch no : ' + batch.batchNo);
     const pathvariables = { userId: userid, cartId: cartid };
-    const param = { fields: 'FULL' };
+    const param = { batchId: batch.batchNo, fields: 'FULL' };
     const data = new HttpData('placeOrder', pathvariables, paymentcapture, param, 'json');
     return this.api.post(data);
   }
