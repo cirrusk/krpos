@@ -1360,6 +1360,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.groupSelectedCart = this.amwayExtendedOrdering.orders[existedIdx];
         this.getCartList(null);
       }
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
     }
   }
 
