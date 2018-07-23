@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from '../../core';
-import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering } from '../../data';
+import { HttpData, OrderSearchParameters, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData } from '../../data';
 import { Order, OrderList } from '../../data/models/order/order';
 
 @Injectable()
@@ -171,7 +171,7 @@ export class OrderService {
    * @param userid 회원 아이디
    * @param ordercode 주문번호
    */
-  issueReceipt(userid: string, ordercode: string): Observable<ResponseMessage>  {
+  issueReceipt(userid: string, ordercode: string): Observable<ResponseData>  {
     const pathvariables = { userId: userid, orderCode: ordercode };
     const param = { fields: 'DEFAULT' };
     const data = new HttpData('issueReceipt', pathvariables, null, param, 'json');

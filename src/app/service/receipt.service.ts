@@ -11,14 +11,18 @@ import {
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
 import { Utils } from '../core/utils';
-import { PaymentService } from './payment/payment.service';
 import { MessageService } from '../message/message.service';
+import { OrderService } from './order/order.service';
+import { PaymentService } from './payment/payment.service';
+import { PathLocationStrategy } from '../../../node_modules/@angular/common';
 
 @Injectable()
 export class ReceiptService implements OnDestroy {
 
     private paymentsubscription: Subscription;
+    private ordersubscription: Subscription;
     constructor(private receitDataProvider: ReceiptDataProvider,
+        private orders: OrderService,
         private payment: PaymentService,
         private printer: PrinterService,
         private storage: StorageService,
@@ -36,8 +40,8 @@ export class ReceiptService implements OnDestroy {
      * 향후 버전업 시 implement 될 수 도 있음.
      */
     dispose() {
-        this.logger.set('receipt.service', 'paymentsubscription dispose!!!').debug();
         if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+        if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
     }
 
     public aboNormal(data: any): string {
@@ -154,6 +158,15 @@ export class ReceiptService implements OnDestroy {
                     paymentCapture: paymentCapture, point: result.amount ? result.amount : 0
                 };
                 rtn = this.makeTextAndPrint(printInfo);
+                if (rtn) {
+                    this.ordersubscription = this.orders.issueReceipt(account.parties[0].uid, order.code).subscribe(
+                        receipt => {
+                            this.logger.set('receipt.service', `receipt issued : ${receipt.result}`).debug();
+                        },
+                        error => {
+                            this.logger.set('receipt.service', `receipt issued : ${error}`).error();
+                        });
+                }
             },
             error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
                 this.logger.set('receipt.service', `${error}`).error();
