@@ -397,13 +397,21 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 제품 수량 수정 팝업
+   * Serial 이 있는 제품의 경우 수량변경 불가
+   * 사유 : 이미 Add to Cart 한 상품에 대해서 수량 증/감에 대해서 처리 불가
    */
   callUpdateItemQty() {
     if (this.selectedCartNum === -1) {
       this.alert.warn({ message: this.message.get('selectProductUpdate') });
     } else {
-      const code = this.currentCartList[this.selectedCartNum].product.code;
-      const qty = this.currentCartList[this.selectedCartNum].quantity;
+      const selectedCart = this.currentCartList[this.selectedCartNum];
+      if (selectedCart.product.serialNumber) {
+        this.alert.warn({ message: 'Serial이 있는 상품은 개별 스캔해주세요.' });
+        this.selectedCartNum = -1;
+        return;
+      }
+      const code = selectedCart.product.code;
+      const qty = selectedCart.quantity;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
       // const product = this.currentCartList[this.selectedCartNum].product;
       this.modal.openModalByComponent(UpdateItemQtyComponent, {
