@@ -167,6 +167,7 @@ export class OrderService {
 
   /**
    * 영수증 출력 처리 완료 요청
+   * 결과값 : 영수증 번호
    *
    * @param userid 회원 아이디
    * @param ordercode 주문번호
