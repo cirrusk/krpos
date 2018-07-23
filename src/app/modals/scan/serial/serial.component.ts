@@ -18,14 +18,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   apprmessage: string;
   productInfo: Product;
   productCount = [];
-  serials: Array<string>;
   private dupcheck = false;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
-    this.serials = new Array<string>();
   }
 
   ngOnInit() {
@@ -99,7 +97,6 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             return false;
           } else {
             serial = cd.nativeElement.value;
-            this.serials.push(cd.nativeElement.value);
           }
         }
       });
