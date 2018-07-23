@@ -66,17 +66,16 @@ export class CartService {
    * @param cartId 카트 아이디
    * @param code 제품 코드
    */
-  addCartEntry(userId: string, cartId: string, code: string): Observable<ResCartInfo> {
+  addCartEntry(userId: string, cartId: string, code: string, serialNumbers?: Array<string>): Observable<ResCartInfo> {
     const orderList = new OrderEntryList();
     const orderEntries: OrderEntry[] = [];
-    const entry = new OrderEntry(new ProductInfo(code));
+    const entry: OrderEntry = new OrderEntry(new ProductInfo(code));
     entry.quantity = 1;
+    if (serialNumbers) {
+      entry.serialNumbers = serialNumbers;
+    }
     orderEntries.push(entry);
     orderList.orderEntries = orderEntries;
-
-    // const pathvariables = {userId : userId, cartId: cartId};
-    // const data = new HttpData('addToCart', pathvariables, orderList, null, 'json');
-    // return this.api.post(data);
     return this.addCartEntries(userId, cartId, orderList.orderEntries);
   }
 

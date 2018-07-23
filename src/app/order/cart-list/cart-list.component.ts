@@ -54,8 +54,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
   private resCartInfo: ResCartInfo;                                         // Cart 정보
   private domain: string;                                                   // api root 도메인
-  private serials: Array<string>;                                           // Serial 정보 받기
-  private serialsByProduct: Map<string, Array<string>>;                     // product 별 Serial 정보 받기
+  private serialNumbers: Array<string>;                                     // Serial 정보 받기
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -308,8 +307,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
-    this.serials = new Array<string>();
-    this.serialsByProduct = new Map<string, Array<string>>();
+    this.serialNumbers = new Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -388,7 +386,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     }).subscribe(data => {
       if (data) {
         console.log('SearchProductComponent serial number : ' + data.serialNumber);
-        this.serials.push(data.serialNumber);
+        this.serialNumbers.push(data.serialNumber);
         this.addToCart(data.productCode);
       }
       this.searchText.nativeElement.focus();
@@ -398,7 +396,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 제품 수량 수정 팝업
    * Serial 이 있는 제품의 경우 수량변경 불가
-   * 사유 : 이미 Add to Cart 한 상품에 대해서 수량 증/감에 대해서 처리 불가
+   * 사유 : 이미 Add to Cart 한 상품에 대해서 수량 증/감에 따른 Serial 처리 불가
    */
   callUpdateItemQty() {
     if (this.selectedCartNum === -1) {
@@ -413,7 +411,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       const code = selectedCart.product.code;
       const qty = selectedCart.quantity;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
-      // const product = this.currentCartList[this.selectedCartNum].product;
       this.modal.openModalByComponent(UpdateItemQtyComponent, {
         callerData: { code: code, qty: qty },
         actionButtonLabel: '선택',
@@ -636,7 +633,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 }).subscribe(data => {
                   if (data) {
                     console.log('cart-list#selectProductInfo serial => ' + data.serialNumber);
-                    this.serials.push(data.serialNumber);
+                    this.serialNumbers.push(data.serialNumber);
                     this.addCartEntries(productCode);
                   }
                 });
@@ -819,6 +816,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 담기
+   * 시리얼 넘버가 있을 경우 해당 Serial Number포함하여 전송
+   *
    * @param code
    */
   addCartEntries(code: string): void {
@@ -827,7 +826,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
-      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase()).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers).subscribe(
         result => {
           this.resCartInfo = result;
           this.addCartModel = this.resCartInfo.cartModification;
@@ -842,6 +841,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
           } else {
+            this.serialNumbers.pop(); // 제한조건에 걸렸으므로 마지막으로 추가된 요소 삭제
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
             this.restrictionMessageList.push(this.restrictionModel);
@@ -916,7 +916,6 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
             } else {
-              this.serials.pop(); // 제한조건에 걸렸으므로 마지막으로 추가된 요소 삭제
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
               this.modal.openModalByComponent(RestrictComponent, {
