@@ -159,13 +159,7 @@ export class ReceiptService implements OnDestroy {
                 };
                 rtn = this.makeTextAndPrint(printInfo);
                 if (rtn) {
-                    this.ordersubscription = this.orders.issueReceipt(account.parties[0].uid, order.code).subscribe(
-                        receipt => {
-                            this.logger.set('receipt.service', `receipt issued invoice number : ${receipt.result}`).debug();
-                        },
-                        error => {
-                            this.logger.set('receipt.service', `receipt issued : ${error}`).error();
-                        });
+                    this.issueReceipt(account, order);
                 }
             },
             error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
@@ -175,8 +169,25 @@ export class ReceiptService implements OnDestroy {
                     macAndCoNum: macAndCoNum, cancelFlag: cancelFlag, paymentCapture: paymentCapture, point: 0
                 };
                 rtn = this.makeTextAndPrint(printInfo);
+                if (rtn) {
+                    this.issueReceipt(account, order);
+                }
             });
         return rtn;
+    }
+
+    /**
+     * 영수증 출력 정보를 기록
+     *
+     * @param account 회원정보
+     * @param order 주문정보
+     */
+    private issueReceipt(account: Accounts, order: Order) {
+        this.ordersubscription = this.orders.issueReceipt(account.parties[0].uid, order.code).subscribe(receipt => {
+            this.logger.set('receipt.service', `receipt issued invoice number : ${receipt.result}`).debug();
+        }, error => {
+            this.logger.set('receipt.service', `receipt issued : ${error}`).error();
+        });
     }
 
     /**
