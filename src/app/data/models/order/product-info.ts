@@ -32,9 +32,9 @@ export class ProductInfo {
     alias: string;
     weight: number;
     dimensions: any; // AmwayDimensionWsDTO
-    productAttributes: any; // Map<String,String>
+    productAttributes: Map<string, string>;
     onlineSince: Date;
-    kitEntry: any; // Set<AmwayKitEntryProductWsDTO>
+    kitEntry: Set<KitEntryProduct>; // Set<AmwayKitEntryProductWsDTO>
     kitPrice: number;
     retailPrice: Price;
     deliveryModes: any; // List<DeliveryModeWsDTO>
@@ -45,4 +45,11 @@ export class ProductInfo {
     constructor(_code?: string) {
         this.code = _code;
     }
+}
+
+export class KitEntryProduct {
+    entry: ProductInfo; // ProductWsDTO
+    configuredQty: number; // Double
+    code: string;
+    isMajor: boolean;
 }
