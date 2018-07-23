@@ -683,7 +683,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
       let cartType = 'POS';
       if (this.orderType === 'g') {
-        cartType = 'WEBGROUP';
+        cartType = 'POSGROUP'; // cartType = 'WEBGROUP';
       }
 
       this.spinner.show();

@@ -287,16 +287,19 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       result => {
         if (result) {
           this.paymentModeListByMain = result;
+          if (result.paymentModes && result.paymentModes.length > 0) {
+            this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
 
-          this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
-
-          this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
-            this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
-          });
-          // this.logger.set('complex.payment.component', `cash : ${this.paymentModes.get('cash')}`).debug();
-          this.paymentModes.forEach((data, key) => {
-            this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
-          });
+            this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
+              this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
+            });
+            // this.logger.set('complex.payment.component', `cash : ${this.paymentModes.get('cash')}`).debug();
+            this.paymentModes.forEach((data, key) => {
+              this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
+            });
+          } else {
+            this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+          }
         }
       },
       error => {
@@ -321,36 +324,42 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    */
   private setSelected(evt: any, num: number, type: string) {
     evt.stopPropagation();
-    if (this.enableMenu.length === 0) {
-      const chk = evt.target.classList.contains('on');
-      const parent = this.renderer.parentNode(evt.target);
-      if (chk) {
-        const index = this.popupList.indexOf(num);
-        this.popupList.splice(index, 1);
-        this.renderer.removeClass(parent, 'on');
-        this.renderer.removeClass(evt.target, 'on');
-      } else {
-        this.popupList.push(num);
+    if (this.paymentModeListByMain.paymentModes && this.paymentModeListByMain.paymentModes.length > 0) {
+      if (this.enableMenu.length === 0) {
+        const chk = evt.target.classList.contains('on');
+        const parent = this.renderer.parentNode(evt.target);
+        if (chk) {
+          const index = this.popupList.indexOf(num);
+          this.popupList.splice(index, 1);
+          this.renderer.removeClass(parent, 'on');
+          this.renderer.removeClass(evt.target, 'on');
+        } else {
+          this.popupList.push(num);
 
-        if (this.enableMenu.length < 1) {
-          this.setEnableMenu(type);
+          if (this.enableMenu.length < 1) {
+            this.setEnableMenu(type);
+          }
+
+          this.renderer.addClass(parent, 'on');
+          this.renderer.addClass(evt.target, 'on');
         }
-
-        this.renderer.addClass(parent, 'on');
-        this.renderer.addClass(evt.target, 'on');
       }
+    } else {
+      this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
     }
   }
 
   setEnableMenu(type: string) {
-    const existedIdx: number = this.paymentModeListByMain.paymentModes.findIndex(
-      function (obj) {
-        return obj.code.substring(obj.code.lastIndexOf('-') + 1) === type;
-      }
-    );
+    if (this.paymentModeListByMain.paymentModes) {
+      const existedIdx: number = this.paymentModeListByMain.paymentModes.findIndex(
+        function (obj) {
+          return obj.code.substring(obj.code.lastIndexOf('-') + 1) === type;
+        }
+      );
 
-    this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
-      this.enableMenu.push(paymentType.code);
-    });
+      this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
+        this.enableMenu.push(paymentType.code);
+      });
+    }
   }
 }
