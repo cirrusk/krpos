@@ -161,7 +161,7 @@ export class ReceiptService implements OnDestroy {
                 if (rtn) {
                     this.ordersubscription = this.orders.issueReceipt(account.parties[0].uid, order.code).subscribe(
                         receipt => {
-                            this.logger.set('receipt.service', `receipt issued : ${receipt.result}`).debug();
+                            this.logger.set('receipt.service', `receipt issued invoice number : ${receipt.result}`).debug();
                         },
                         error => {
                             this.logger.set('receipt.service', `receipt issued : ${error}`).error();
