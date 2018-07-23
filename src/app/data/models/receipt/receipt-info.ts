@@ -3,6 +3,8 @@ import { BonusInfo } from './bonus-info';
 import { PaymentInfo } from './payment-info';
 import { PriceInfo } from './price-info';
 import { ProductsEntryInfo } from './products-entry-info';
+import { Enumeration } from '../common/enumeration';
+import { Customer } from '../order/customer';
 
 export class ReceiptInfo {
     orderInfo: OrderInfo;
@@ -33,4 +35,35 @@ export class ReceiptInfo {
         this.price = price;
         this.productList = productList;
     }
+}
+
+export class Receipt {
+    receiptType: string; // ReceiptType //NO, TAX, CASH
+    receiptTypeData: Enumeration; // EnumerationWsDTO
+    receiptIssuanceType: string; // ReceiptIssuanceType // INCOME_DEDUCTION, EXPENDITURE_PROOF
+    receiptNumberType: string; // ReceiptNumberType // CPN, CDN, BRN
+    receiptIssuanceNumber: string;
+    receiptNumber: string;
+    businessEntityRegistration: BusinessEntry; // BusinessEntityRegistrationWsDTO
+    printInvoicePrice: boolean;
+    printInvoicePvBv: boolean;
+}
+
+export class BusinessEntry {
+    code: string;
+    company: string;
+    number: string;
+    name: string;
+    creationtime: Date;
+    addressText: string;
+    businessType: string;
+    businessItem: string;
+    recipient: string;
+    recipientMobile: string;
+    recipientAgreeSms: boolean;
+    recipientEmail: string;
+    sellerMobile: string;
+    sellerAgreeSms: boolean;
+    sellerEmail: string;
+    customer: Customer; // CustomerWsDTO
 }

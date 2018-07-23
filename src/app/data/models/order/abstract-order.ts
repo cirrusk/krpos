@@ -10,6 +10,7 @@ import { PointOfService } from '../common/point-of-service';
 export class AbstractOrder {
     code: string;                                           // 주문번호
     net: boolean;                                           // net 여부
+    totalPriceInclTax: Price;                               // 금액
     totalPriceWithTax: Price;                               // 세금 포함 총 금액
     totalPrice: Price;                                      // 총 금액
     totalTax: Price;                                        // 총 세금 금액
@@ -53,7 +54,6 @@ export class AbstractOrder {
     value: AmwayValue;                                      // PV/BV AmwayValueWsDTO
     totalWeight: number;                                    // 무게
     paymentDetails: PaymentDetails;                         // 결제 상세 정보 AmwayPaymentDetailsWsDTO
-    deductionNumber: string;                                // Mac&Co
     constructor() { }
 }
 

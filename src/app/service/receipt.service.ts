@@ -149,14 +149,21 @@ export class ReceiptService implements OnDestroy {
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string, type?: string, macAndCoNum?: string): boolean {
         let rtn = true;
+        const printInfo = {
+            order: order, account: account, cartInfo: cartInfo, type: type,
+            macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
+            paymentCapture: paymentCapture
+        };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         this.paymentsubscription = this.payment.getBalance(account.parties[0].uid).subscribe(
             result => {
-                const printInfo = {
-                    order: order, account: account, cartInfo: cartInfo, type: type,
-                    macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
-                    paymentCapture: paymentCapture, point: result.amount ? result.amount : 0
-                };
+                // const printInfo = {
+                //     order: order, account: account, cartInfo: cartInfo, type: type,
+                //     macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
+                //     paymentCapture: paymentCapture, point: result.amount ? result.amount : 0
+                // };
+                Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                console.log('================= ' + printInfo);
                 rtn = this.makeTextAndPrint(printInfo);
                 if (rtn) {
                     this.issueReceipt(account, order);
@@ -164,10 +171,11 @@ export class ReceiptService implements OnDestroy {
             },
             error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
                 this.logger.set('receipt.service', `${error}`).error();
-                const printInfo = {
-                    order: order, account: account, cartInfo: cartInfo, type: type,
-                    macAndCoNum: macAndCoNum, cancelFlag: cancelFlag, paymentCapture: paymentCapture, point: 0
-                };
+                // const printInfo = {
+                //     order: order, account: account, cartInfo: cartInfo, type: type,
+                //     macAndCoNum: macAndCoNum, cancelFlag: cancelFlag, paymentCapture: paymentCapture, point: 0
+                // };
+                Object.assign(printInfo, { point: 0 });
                 rtn = this.makeTextAndPrint(printInfo);
                 if (rtn) {
                     this.issueReceipt(account, order);

@@ -1,8 +1,8 @@
-import { OrderInfoVO } from "./order.info";
-import { BonusInfoVO } from "./bonus.info";
-import { PaymentsVO } from "./payments";
-import { PriceVO } from "./price";
-import { ProductEntryVO } from "./product";
+import { OrderInfoVO } from './order.info';
+import { BonusInfoVO } from './bonus.info';
+import { PaymentsVO } from './payments';
+import { PriceVO } from './price';
+import { ProductEntryVO } from './product';
 
 export class ReceiptVO {
     orderInfo: OrderInfoVO;

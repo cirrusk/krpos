@@ -2,10 +2,10 @@ import { AbstractOrder, Consignment, OrderEntry, Address, Enumeration } from '..
 import { Price } from './price';
 import { PaymentDetails } from '../payment/payment-details';
 import { PointOfService } from '../common/point-of-service';
+import { Receipt } from '../receipt/receipt-info';
 
 export class Order extends AbstractOrder {
     created: Date;
-    date: Date;
     status: string;
     statusDisplay: string;
     guestCustomer: boolean;
@@ -14,11 +14,9 @@ export class Order extends AbstractOrder {
     deliveryStatusDisplay: string;
     unconsignedEntries: Array<OrderEntry>;
     paymentAddress: Address;
-    channel: Enumeration;
-    orderPeriodStartDate: Date;
-    bonusPeriodStartDate: Date;
     totalUnitCount: number;
-
+    deductionNumber: string;                // Mac&Co
+    receiptInfo: Receipt;                   // ReceiptWsDTO
     constructor() {
         super();
     }
@@ -44,3 +42,5 @@ export class GroupOrder {
     paymentDetails: PaymentDetails; // AmwayPaymentDetailsWsDTO
     deliveryPointOfService: PointOfService; // PointOfServiceWsDTO
 }
+
+
