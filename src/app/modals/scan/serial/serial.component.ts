@@ -87,7 +87,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     let serial: string;
     if (this.productInfo.rfid && !this.productInfo.serialNumber) {
       this.checktype = 0;
-      this.result = { serialNumber: null, serials: null, rfid: 'dummy_rfid'};
+      this.result = { serialNumber: '', rfid: 'dummy_rfid'};
       this.close();
     } else {
       this.codes.forEach(cd => {
@@ -111,7 +111,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         return;
       } else {
         this.checktype = 0;
-        this.result = { serialNumber: serial, serialNumbers: this.serials, rfid: null};
+        this.result = { serialNumber: serial, rfid: ''};
         this.close();
       }
     }
