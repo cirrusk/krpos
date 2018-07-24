@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { StorageService } from '../core';
+import { CartListComponent } from './cart-list/cart-list.component';
+import { Accounts } from '../data';
 
 @Component({
   selector: 'pos-order',
@@ -9,6 +11,7 @@ import { StorageService } from '../core';
 export class OrderComponent implements OnInit {
   public noticeList: string[] = [];
   public promotionList: any[] = [];
+  @ViewChild(CartListComponent) cartList: CartListComponent;
   constructor(private storage: StorageService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -25,4 +28,24 @@ export class OrderComponent implements OnInit {
     this.promotionList = data[1];
   }
 
+  isCheck(): boolean {
+    const accountInfo: Accounts = this.cartList.accountInfo;
+    const groupAccountInfo: Array<Accounts> = this.cartList.groupAccountInfo;
+    const cartList = this.cartList.cartList;
+    let check = true;
+    if (accountInfo !== null) {
+      check = false;
+    }
+    if (groupAccountInfo && groupAccountInfo.length > 0) {
+      check = false;
+    }
+    if (cartList && cartList.length > 0) {
+      check = false;
+    }
+    console.log('accountinfo : ' + JSON.stringify(accountInfo));
+    console.log('groupAccountInfo : ' + JSON.stringify(groupAccountInfo));
+    console.log('cartList : ' + JSON.stringify(cartList));
+    console.log('check : ' + check);
+    return check;
+  }
 }

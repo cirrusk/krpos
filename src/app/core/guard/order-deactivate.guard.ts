@@ -6,15 +6,20 @@ import { Logger } from '../logger/logger';
 
 @Injectable()
 export class OrderDeactivateGuard implements CanDeactivate<OrderComponent> {
-
   constructor(private logger: Logger) { }
   canDeactivate(
     component: OrderComponent,
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    state: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-      this.logger.set('order.deactivate.guard', `${state.url}`).debug();
-
+    if (component.isCheck()) {
       return true;
+    } else {
+      this.logger.set('order.deactivate.guard[route]', `${route}`).debug();
+      this.logger.set('order.deactivate.guard[state]', `${state}`).debug();
+      this.logger.set('order.deactivate.guard[nextState]', `${nextState}`).debug();
+      return confirm('결제 진행중입니다. 계속 진행하시겠습니까?');
+    }
   }
 }
