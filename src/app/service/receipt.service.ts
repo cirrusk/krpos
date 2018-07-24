@@ -199,9 +199,10 @@ export class ReceiptService implements OnDestroy {
      * @param cancelFlag 취소 문구 삽입 (Y : 취소, N : 승인)
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
+     * @param reIssue 영수증 재발행 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string,
-                 groupInfo?: string, type?: string, macAndCoNum?: string): boolean {
+                 groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean): boolean {
         let rtn = true;
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
@@ -214,13 +215,13 @@ export class ReceiptService implements OnDestroy {
             result => {
                 Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
                 rtn = this.makeTextAndPrint(printInfo);
-                if (rtn) { this.issueReceipt(account, order); }
+                if (rtn && reIssue) { this.issueReceipt(account, order); }
             },
             error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
                 this.logger.set('receipt.service', `${error}`).error();
                 Object.assign(printInfo, { point: 0 });
                 rtn = this.makeTextAndPrint(printInfo);
-                if (rtn) { this.issueReceipt(account, order); }
+                if (rtn && reIssue) { this.issueReceipt(account, order); }
             });
         return rtn;
     }
