@@ -17,18 +17,18 @@
                     <tbody>
                         <tr>
                             <th scope="row">내신금액</th>
-                            <td><input #paid type="number" class="w110 ar" title="내신금액" (keyup)="cashCal()" (keydown.enter)="paidBlur()"></td>
+                            <td><input #paid type="number" class="w110 ar" title="내신금액" (keyup)="cashCal()" (keydown.enter)="paidBlur()"> 원</td>
                         </tr>
                         <tr>
                             <th scope="row">결제금액</th>
-                            <td><input #payment type="number" class="w110 ar" title="결제금액" (keyup)="cashCal()" (keydown.enter)="paymentBlur();"></td>
+                            <td><input #payment type="number" class="w110 ar" title="결제금액" (keyup)="cashCal()" (keydown.enter)="paymentBlur();"> 원</td>
                         </tr>
                         <tr>
                             <th scope="row">거스름돈</th>
                             <td>
-                                <span #change class="won" *ngIf="paid.value - payment.value > 0; else notChange">{{ paid.value - payment.value | number}}</span>
+                                <span #change class="won" *ngIf="paid.value - payment.value > 0; else notChange">{{ paid.value - payment.value | number}} 원</span>
                                 <ng-template #notChange>
-                                    <span #change class="won">0</span>
+                                    <span #change class="won">0 원</span>
                                 </ng-template>
                             </td>
                         </tr>

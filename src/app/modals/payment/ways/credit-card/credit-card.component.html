@@ -19,19 +19,19 @@
                         <tr>
                             <th scope="row">실결제금액</th>
                             <td>
-                                <input #paid type="number" class="w110 ar" title="실결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="paidBlur()">
+                                <input #paid type="number" class="w110 ar" title="실결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="paidBlur()"> 원
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">총 매출</th>
                             <td>
-                                <span class="won">{{paidamount | number}}</span>
+                                <span class="won">{{paidamount | number}} 원</span>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">잔액</th>
                             <td>
-                                <span class="won">{{change | number}}</span>
+                                <span class="won">{{change | number}} 원</span>
                             </td>
                         </tr>
                         <tr>

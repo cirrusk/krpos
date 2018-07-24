@@ -12,6 +12,7 @@ import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { Utils } from '../../../../core/utils';
 import { InfoBroker } from '../../../../broker';
+import { ChecksComponent } from '../checks/checks.component';
 
 @Component({
   selector: 'pos-cash',
@@ -81,7 +82,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   searchCheque() {
-
+    this.modal.openModalByComponent(ChecksComponent, {
+      closeByClickOutside: false,
+      closeByEscape: true,
+      modalId: 'ChecksComponent'
+    }).subscribe(result => {
+      if (result) {
+        this.paid.nativeElement.value = result;
+      }
+    });
   }
 
   cashCal() {
