@@ -1,170 +1,179 @@
 <div id="container" class="customer">
-  <!-- 좌측영역 -->
-  <div class="m_cont">
-      <!-- 상품리스트 -->
-      <div class="section01">
+    <!-- 좌측영역 -->
+    <div class="m_cont">
+        <!-- 20180724 수정 -->
+        <div class="mc_top">
+            <!-- 공지사항 -->
+            <pos-notice tagmsg="알립니다" [noticeList]="noticeList"></pos-notice>
+            <!-- //공지사항 -->
+        </div>
+        <!-- //20180724 수정 -->
+
+        <!-- 상품리스트 -->
+        <div class="section01">
             <div class="list_wrap">
                 <!-- 상품이 n개가 넘을 시 노출  -->
                 <div class="paging" *ngIf="cartList.length > cartListCount">
                     <button type="button" [disabled]="pager.currentPage === pager.startPage" class="ico_comm prev01" (click)="setPage(pager.currentPage - 1,true)">이전</button>
                     <button type="button" [disabled]="pager.currentPage === pager.endPage" class="ico_comm next01" (click)="setPage(pager.currentPage + 1,true)">다음</button>
                 </div>
-                <!-- //상품이 n개가 넘을 시 노출  -->              
-              <div class="list click_add">
-                  <table>
-                  <caption>상품리스트</caption>
-                 <!-- 20180504 수정 -->
-                  <colgroup>
-                      <col style="width:50px">
-                      <col style="width:110px">
-                      <col>
-                      <col style="width:50px">
-                      <col style="width:100px">
-                      <col style="width:100px">
-                      <col style="width:140px">
-                  </colgroup>
-                  <!-- //20180504 수정 -->
-                  <thead>
-                      <tr>
-                          <th scope="col">No.</th>
-                          <th scope="col">상품코드</th>
-                          <th scope="col">상품명</th>
-                          <th scope="col">수량</th>
-                          <th scope="col">단가</th>
-                          <th scope="col">합계</th>
-                          <th scope="col">비고</th>
-                      </tr>
-                  </thead>
-                  <tbody>
- 
-                  </tbody>
-                    <tr [class.on]="selectedCartNum == i" *ngFor="let cartEntry of currentCartList; let i = index;" (click)="activeRowCart(i)">
-                      <td *ngIf="cartList[0].entryNumber === 0">{{ cartEntry.entryNumber + 1}}</td>
-                      <td *ngIf="cartList[0].entryNumber !== 0">{{ cartEntry.entryNumber}}</td>
-                      <td class="al">{{cartEntry.product.code}}</td>
-                      <td class="al"><span class="elips">{{cartEntry.product.name}}</span></td>
-                      <td>{{cartEntry.quantity}}</td>
-                      <td class="ar">{{cartEntry.basePrice.value | number}}</td>
-                      <td class="ar">{{cartEntry.totalPrice.value | number}}</td>
-                      <td></td>
-                    </tr>                  
-                  </table>
-              </div>
-          </div>
-      </div>
-      <!-- //상품리스트 -->
+                <!-- //상품이 n개가 넘을 시 노출  -->
+                <div class="list click_add">
+                    <table>
+                        <caption>상품리스트</caption>
+                        <!-- 20180504 수정 -->
+                        <colgroup>
+                            <col style="width:50px">
+                            <col style="width:110px">
+                            <col>
+                            <col style="width:50px">
+                            <col style="width:100px">
+                            <col style="width:100px">
+                            <col style="width:140px">
+                        </colgroup>
+                        <!-- //20180504 수정 -->
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">상품코드</th>
+                                <th scope="col">상품명</th>
+                                <th scope="col">수량</th>
+                                <th scope="col">단가</th>
+                                <th scope="col">합계</th>
+                                <th scope="col">비고</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-      <!-- 회원정보 및 계산 -->
-      <div class="section02">
-          <div class="left">
-              <!-- 회원정보 -->
-              <div class="member_info">
-                 <!-- 20180504 수정 -->
-                  <div class="info_top">
-                      <!-- 비회원시 삭제1 -->
-                      <em *ngIf="accountInfo">{{accountType === memberType.CONSUMER ? accountInfo?.parties[0]?.name : accountInfo?.name}}  회원님</em>
-                      <span class="t01" *ngIf="accountInfo">{{accountType === memberType.CONSUMER ? accountInfo?.parties[0]?.uid : accountInfo?.uid}}</span>
-                      <span class="t02" *ngIf="accountInfo">{{apprtype}}</span>
-                      <!-- //비회원시 삭제1 -->
-                  </div>
-                  <!-- //20180504 수정 -->
-                  <div class="info_cont">
-                      <div class="ic01">
-                          <!-- 비회원시 삭제2 -->
-                          <dl *ngIf="accountInfo && accountType === memberType.ABO">
-                              <dt>A 포인트</dt>
-                              <dd>{{balance | number}}P</dd>
-                          </dl>
-                          <dl *ngIf="accountInfo && accountType === memberType.MEMBER">
-                              <dt>Member 포인트</dt>
-                              <dd>{{balance | number}}P</dd>
-                          </dl>
-                          <!-- //비회원시 삭제2 -->
-                      </div>
-                      <!-- 20180504 추가 -->
-                      <div class="ic04">
-                          <!-- 비회원시 삭제5 -->
-                            <dl *ngIf="accountInfo">
-                              <dt>프로모션</dt>
-                              <dd></dd><!--신규 ABO 적용대상-->
+                        </tbody>
+                        <tr [class.on]="selectedCartNum == i" *ngFor="let cartEntry of currentCartList; let i = index;" (click)="activeRowCart(i)">
+                            <td *ngIf="cartList[0].entryNumber === 0">{{ cartEntry.entryNumber + 1}}</td>
+                            <td *ngIf="cartList[0].entryNumber !== 0">{{ cartEntry.entryNumber}}</td>
+                            <td class="al">{{cartEntry.product.code}}</td>
+                            <td class="al">
+                                <span class="elips">{{cartEntry.product.name}}</span>
+                            </td>
+                            <td>{{cartEntry.quantity}}</td>
+                            <td class="ar">{{cartEntry.basePrice.value | number}}</td>
+                            <td class="ar">{{cartEntry.totalPrice.value | number}}</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- //상품리스트 -->
+
+        <!-- 회원정보 및 계산 -->
+        <div class="section02">
+            <div class="left">
+                <!-- 회원정보 -->
+                <div class="member_info">
+                    <!-- 20180504 수정 -->
+                    <div class="info_top">
+                        <!-- 비회원시 삭제1 -->
+                        <em *ngIf="accountInfo">{{accountType === memberType.CONSUMER ? accountInfo?.parties[0]?.name : accountInfo?.name}} 회원님</em>
+                        <span class="t01" *ngIf="accountInfo">{{accountType === memberType.CONSUMER ? accountInfo?.parties[0]?.uid : accountInfo?.uid}}</span>
+                        <span class="t02" *ngIf="accountInfo">{{apprtype}}</span>
+                        <!-- //비회원시 삭제1 -->
+                    </div>
+                    <!-- //20180504 수정 -->
+                    <div class="info_cont">
+                        <div class="ic01">
+                            <!-- 비회원시 삭제2 -->
+                            <dl *ngIf="accountInfo && accountType === memberType.ABO">
+                                <dt>A 포인트</dt>
+                                <dd>{{balance | number}}P</dd>
                             </dl>
-                          <!-- //비회원시 삭제5 -->
-                      </div>
-                      <!-- //20180504 추가 -->
-                      <div class="ic02">
-                          <!-- 비회원시 삭제3 -->
-                          <dl *ngIf="accountInfo && accountType !== memberType.CONSUMER">
-                              <dt>Re-Cash</dt>
-                              <dd>{{recash | number}}원</dd>
-                          </dl>
-                          <!-- //비회원시 삭제3 -->
-                      </div>
-                      <div class="ic03">
-                          <!-- 비회원시 삭제4 -->
-                          <ul *ngIf="accountInfo">
-                              <li class="credit">
-                                  <span>신용카드</span>
-                                  <em>{{ccamount | number}}<span>{{installment}}</span></em>
-                              </li>
-                              <li>
-                                  <span>현금</span>
-                                  <em>{{cashamount | number}}</em>
-                              </li>
-                              <li>
-                                  <span>포인트</span>
-                                  <em>{{pointamount | number}}</em>
-                              </li>
-                              <li>
-                                  <span>Re-Cash</span>
-                                  <em>{{recashamount | number}}</em>
-                              </li>
-                              <li>
-                                  <span>자동이체</span>
-                                  <em>{{ddamount | number}}</em>
-                              </li>
-                          </ul>
-                          <!-- //비회원시 삭제4 -->
-                      </div>
-                  </div>
-              </div>
-              <!-- //회원정보 -->
-          </div>
-          <div class="right">
-              <ul class="calc01">
-                  <li>
-                      <span>총수량</span>
-                      <em>{{totalItem | number}}</em>
-                  </li>
-                  <li>
-                      <span>할인금액</span>
-                      <em class="sale">{{discount | number}}</em>
-                  </li>
-                  <li>
-                      <span class="t01">Total PV/BV</span>
-                      <em>{{ totalPV | number }} / {{ totalBV | number }}</em>
-                  </li>
-              </ul>
-              <ul class="calc02">
-                  <li>
-                      <span>결제금액</span>
-                      <em>{{ totalPrice | number }}</em>
-                  </li>
-                  <li>
-                      <span>내신금액</span>
-                      <em>{{ received | number }}</em>
-                  </li>
-                  <li>
-                      <span>거스름</span>
-                      <em>{{ change | number }}</em>
-                  </li>
-              </ul>
-          </div>
-      </div>
-      <!-- //회원정보 및 계산 -->
-
-      <!-- 공지사항 -->
-      <pos-notice tagmsg="알립니다" [noticeList]="noticeList"></pos-notice>      
-      <!-- //공지사항 -->
-  </div>
-  <!-- //좌측영역 -->
+                            <dl *ngIf="accountInfo && accountType === memberType.MEMBER">
+                                <dt>Member 포인트</dt>
+                                <dd>{{balance | number}}P</dd>
+                            </dl>
+                            <!-- //비회원시 삭제2 -->
+                        </div>
+                        <!-- 20180504 추가 -->
+                        <div class="ic04">
+                            <!-- 비회원시 삭제5 -->
+                            <dl *ngIf="accountInfo">
+                                <dt>프로모션</dt>
+                                <dd></dd>
+                                <!--신규 ABO 적용대상-->
+                            </dl>
+                            <!-- //비회원시 삭제5 -->
+                        </div>
+                        <!-- //20180504 추가 -->
+                        <div class="ic02">
+                            <!-- 비회원시 삭제3 -->
+                            <dl *ngIf="accountInfo && accountType !== memberType.CONSUMER">
+                                <dt>Re-Cash</dt>
+                                <dd>{{recash | number}}원</dd>
+                            </dl>
+                            <!-- //비회원시 삭제3 -->
+                        </div>
+                        <div class="ic03">
+                            <!-- 비회원시 삭제4 -->
+                            <ul *ngIf="accountInfo">
+                                <li class="credit">
+                                    <span>신용카드</span>
+                                    <em>{{ccamount | number}}
+                                        <span>{{installment}}</span>
+                                    </em>
+                                </li>
+                                <li>
+                                    <span>현금</span>
+                                    <em>{{cashamount | number}}</em>
+                                </li>
+                                <li>
+                                    <span>포인트</span>
+                                    <em>{{pointamount | number}}</em>
+                                </li>
+                                <li>
+                                    <span>Re-Cash</span>
+                                    <em>{{recashamount | number}}</em>
+                                </li>
+                                <li>
+                                    <span>자동이체</span>
+                                    <em>{{ddamount | number}}</em>
+                                </li>
+                            </ul>
+                            <!-- //비회원시 삭제4 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- //회원정보 -->
+            </div>
+            <div class="right">
+                <ul class="calc01">
+                    <li>
+                        <span>총수량</span>
+                        <em>{{totalItem | number}}</em>
+                    </li>
+                    <li>
+                        <span>할인금액</span>
+                        <em class="sale">{{discount | number}}</em>
+                    </li>
+                    <li>
+                        <span class="t01">Total PV/BV</span>
+                        <em>{{ totalPV | number }} / {{ totalBV | number }}</em>
+                    </li>
+                </ul>
+                <ul class="calc02">
+                    <li>
+                        <span>결제금액</span>
+                        <em>{{ totalPrice | number }}</em>
+                    </li>
+                    <li>
+                        <span>내신금액</span>
+                        <em>{{ received | number }}</em>
+                    </li>
+                    <li>
+                        <span>거스름</span>
+                        <em>{{ change | number }}</em>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- //회원정보 및 계산 -->
+    </div>
+    <!-- //좌측영역 -->
 </div>
