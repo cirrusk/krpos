@@ -6,7 +6,7 @@ import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard, AmwayExtendedOrdering
+    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -14,7 +14,6 @@ import { Utils } from '../core/utils';
 import { MessageService } from '../message/message.service';
 import { OrderService } from './order/order.service';
 import { PaymentService } from './payment/payment.service';
-import { PathLocationStrategy } from '../../../node_modules/@angular/common';
 
 @Injectable()
 export class ReceiptService implements OnDestroy {
@@ -132,6 +131,14 @@ export class ReceiptService implements OnDestroy {
 
     }
 
+    /**
+     * 그룹주문 영수증 출력
+     *
+     * @param account 회원 정보
+     * @param order 주문정보
+     * @param paymentCapture Payment Capture 정보
+     * @param cancelFlag 취소 여부
+     */
     public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
         let gCartInfo = new Cart();
         let gPaymentCapture = new PaymentCapture();
@@ -249,9 +256,9 @@ export class ReceiptService implements OnDestroy {
         const cancelFlag: string = printInfo.cancelFlag;
         const paymentCapture: PaymentCapture = printInfo.paymentCapture;
         const pointValue: number = printInfo.point;
-        const posId = this.storage.getTerminalInfo().id;
-        const token = this.storage.getTokenInfo();
-        const groupInfo = printInfo.groupInfo;
+        const posId: string = this.storage.getTerminalInfo().id;
+        const token: AccessToken = this.storage.getTokenInfo();
+        const groupInfo: string = printInfo.groupInfo;
         // 영수증 출력 파라미터 설정 - END
 
         // orderSummery - START
