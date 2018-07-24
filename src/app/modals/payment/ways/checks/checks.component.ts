@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 
 import { ModalComponent, ModalService, Logger, StorageService, SpinnerService } from '../../../../core';
-import { PaymentService } from '../../../../service';
+import { PaymentService, MessageService } from '../../../../service';
 import { Utils, StringBuilder } from '../../../../core/utils';
 import { StatusDisplay, KeyCode } from '../../../../data';
 
@@ -19,16 +19,16 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   allowedChars = new Set('0123456789'.split('').map(c => c.charCodeAt(0)));
   private checksubscription: Subscription;
   private dupcheck = false;
-  @ViewChild('checkyr') checkyr: ElementRef;        // 년
-  @ViewChild('checkmm') checkmm: ElementRef;        // 월
-  @ViewChild('checkdd') checkdd: ElementRef;        // 일
-  @ViewChild('checkno') checkno: ElementRef;        // 수표번호
-  @ViewChild('checkpoint') checkpoint: ElementRef;    // 발행점,발행지점 지로코드
+  @ViewChild('checkyr') checkyr: ElementRef;            // 년
+  @ViewChild('checkmm') checkmm: ElementRef;            // 월
+  @ViewChild('checkdd') checkdd: ElementRef;            // 일
+  @ViewChild('checkno') checkno: ElementRef;            // 수표번호
+  @ViewChild('checkpoint') checkpoint: ElementRef;      // 발행점,발행지점 지로코드
   @ViewChild('checkvalcode') checkvalcode: ElementRef;  // 검증코드
-  @ViewChild('checktype') checktype: ElementRef;    // 수표종류
-  @ViewChild('checkprice') checkprice: ElementRef;  // 수표금액
-
-  constructor(protected modalService: ModalService, private payments: PaymentService,
+  @ViewChild('checktype') checktype: ElementRef;        // 수표종류
+  @ViewChild('checkprice') checkprice: ElementRef;      // 수표금액
+  @ViewChild('checkpopup') checkpopup: ElementRef;      // 팝업
+  constructor(protected modalService: ModalService, private payments: PaymentService, private message: MessageService,
     private spinner: SpinnerService, private storage: StorageService, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
@@ -45,33 +45,41 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checks() {
-    if (!this.validDate()) {
-      this.check = -9;
-      this.apprmessage = '발행일 정보가 부정확합니다.';
+    if (!this.validValue()) {
+      this.check = -10;
+      this.apprmessage = this.message.get('check.invalid.value'); // '수표 입력 정보가 부정확합니다.';
+      this.dupcheck = false;
       return;
     }
-
+    if (!this.validDate()) {
+      this.check = -9;
+      this.apprmessage = this.message.get('check.invalid.date'); // '발행일 정보가 부정확합니다.';
+      this.dupcheck = false;
+      return;
+    }
     const checknum = this.makeCheckNumber();
     this.spinner.show();
     this.checksubscription = this.payments.searchCheque(checknum).subscribe(
       result => {
         if (result && result.result === 'true') {
           this.finishStatus = StatusDisplay.PAID;
-          this.apprmessage = '수표가 정상 인증되었습니다.';
+          this.apprmessage = this.message.get('check.success'); // '수표가 정상 인증되었습니다.';
         } else {
           this.finishStatus = 'fail';
-          this.apprmessage = '수표 조회에 실패 하였습니다.';
+          this.apprmessage = this.message.get('check.fail'); // '수표 조회에 실패 하였습니다.';
+          this.dupcheck = false;
         }
       },
       error => {
         this.spinner.hide();
         this.logger.set('checks.component', `${error}`).error();
         this.finishStatus = 'fail';
-        this.apprmessage = '수표 조회에 실패 하였습니다.';
+        this.apprmessage = this.message.get('check.fail'); // '수표 조회에 실패 하였습니다.';
+        this.dupcheck = false;
       },
-    () => {
-      this.spinner.hide();
-    });
+      () => {
+        this.spinner.hide();
+      });
 
   }
 
@@ -93,6 +101,42 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     return buff.toString();
   }
 
+  private validValue(): boolean {
+    const yr = this.checkyr.nativeElement.value;
+    if (Utils.isEmpty(yr) || yr.length !== 4) {
+      return false;
+    }
+    const mm = this.checkmm.nativeElement.value;
+    if (Utils.isEmpty(mm) || mm.length !== 2) {
+      return false;
+    }
+    const dd = this.checkdd.nativeElement.value;
+    if (Utils.isEmpty(dd) || dd.length !== 2) {
+      return false;
+    }
+    const no = this.checkno.nativeElement.value;
+    if (Utils.isEmpty(no) || no.length !== 8) {
+      return false;
+    }
+    const cd = this.checkpoint.nativeElement.value;
+    if (Utils.isEmpty(cd) || cd.length !== 6) {
+      return false;
+    }
+    const vl = this.checkvalcode.nativeElement.value;
+    if (Utils.isEmpty(vl) || vl.length !== 6) {
+      return false;
+    }
+    const tp = this.checktype.nativeElement.value;
+    if (Utils.isEmpty(tp) || tp.length !== 2) {
+      return false;
+    }
+    const pr = this.checkprice.nativeElement.value;
+    if (Utils.isEmpty(pr)) {
+      return false;
+    }
+    return true;
+  }
+
   private validDate(): boolean {
     const yr = this.checkyr.nativeElement.value;
     const mm = this.checkmm.nativeElement.value;
@@ -108,27 +152,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const yr = this.checkyr.nativeElement.value;
     if (Utils.isEmpty(yr) || yr.length !== 4) {
       this.check = -1;
-      this.apprmessage = '발행 년도를 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.yr'); // '발행 년도를 정확히 입력하세요.';
       this.dupcheck = false;
     } else {
-      const rtn = moment(yr, 'YYYY').isValid();
-      if (rtn) {
-        this.check = 0;
-      } else {
-        this.check = -1;
-        this.apprmessage = '발행 년도를 정확히 입력하세요.';
-        this.dupcheck = false;
-      }
-    }
-  }
-
-  checkYrBlur() {
-    const yr = this.checkyr.nativeElement.value;
-    if (Utils.isEmpty(yr) || yr.length !== 4) {
-      this.check = -1;
-      this.apprmessage = '발행 년도를 정확히 입력하세요.';
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkyr.nativeElement.focus(); }, 50);
+      this.check = 0;
     }
   }
 
@@ -147,26 +174,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const mm = this.checkmm.nativeElement.value;
     if (Utils.isEmpty(mm) || mm.length !== 2) {
       this.check = -2;
-      this.apprmessage = '발행 월을 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.mm'); // '발행 월을 정확히 입력하세요.';
       this.dupcheck = false;
     } else {
-      const rtn = moment(mm, 'MM').isValid();
-      if (rtn) {
-        this.check = 0;
-      } else {
-        this.check = -2;
-        this.apprmessage = '발행 월을 정확히 입력하세요.';
-        this.dupcheck = false;
-      }
-    }
-  }
-
-  checkMmBlur() {
-    const mm = this.checkmm.nativeElement.value;
-    if (Utils.isEmpty(mm) || mm.length !== 2) {
-      this.check = -2;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkmm.nativeElement.focus(); }, 50);
+      this.check = 0;
     }
   }
 
@@ -185,26 +196,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const dd = this.checkdd.nativeElement.value;
     if (Utils.isEmpty(dd) || dd.length !== 2) {
       this.check = -3;
-      this.apprmessage = '발행 일을 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.dd'); // '발행 일을 정확히 입력해주세요.';
       this.dupcheck = false;
     } else {
-      const rtn = moment(dd, 'DD').isValid();
-      if (rtn) {
-        this.check = 0;
-      } else {
-        this.check = -3;
-        this.apprmessage = '발행 일을 정확히 입력하세요.';
-        this.dupcheck = false;
-      }
-    }
-  }
-
-  checkDdBlur() {
-    const dd = this.checkdd.nativeElement.value;
-    if (Utils.isEmpty(dd) || dd.length !== 2) {
-      this.check = -3;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkdd.nativeElement.focus(); }, 50);
+      this.check = 0;
     }
   }
 
@@ -223,26 +218,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const no = this.checkno.nativeElement.value;
     if (Utils.isEmpty(no) || no.length !== 8) {
       this.check = -4;
-      this.apprmessage = '수표번호를 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.no'); // '수표번호를 정확히 입력해주세요.';
       this.dupcheck = false;
     } else {
-      const rtn = moment(no, 'DD').isValid();
-      if (rtn) {
         this.check = 0;
-      } else {
-        this.check = -4;
-        this.apprmessage = '수표번호를 정확히 입력하세요.';
-        this.dupcheck = false;
-      }
-    }
-  }
-
-  checkNoBlur() {
-    const no = this.checkno.nativeElement.value;
-    if (Utils.isEmpty(no) || no.length !== 8) {
-      this.check = -4;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkno.nativeElement.focus(); }, 50);
     }
   }
 
@@ -261,19 +240,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const point = this.checkpoint.nativeElement.value;
     if (Utils.isEmpty(point) || point.length !== 6) {
       this.check = -5;
-      this.apprmessage = '발행점,발행지점 지로코드를 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.point'); // '발행점,발행지점 지로코드를 정확히 입력해주세요.';
       this.dupcheck = false;
     } else {
       this.check = 0;
-    }
-  }
-
-  checkPointBlur() {
-    const point = this.checkpoint.nativeElement.value;
-    if (Utils.isEmpty(point) || point.length !== 6) {
-      this.check = -5;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkpoint.nativeElement.focus(); }, 50);
     }
   }
 
@@ -292,19 +262,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const valcode = this.checkvalcode.nativeElement.value;
     if (Utils.isEmpty(valcode) || valcode.length !== 6) {
       this.check = -6;
-      this.apprmessage = '검증코드를 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.code'); // '검증코드를 정확히 입력해주세요.';
       this.dupcheck = false;
     } else {
       this.check = 0;
-    }
-  }
-
-  checkValCodeBlur() {
-    const valcode = this.checkvalcode.nativeElement.value;
-    if (Utils.isEmpty(valcode) || valcode.length !== 6) {
-      this.check = -6;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkvalcode.nativeElement.focus(); }, 50);
     }
   }
 
@@ -323,19 +284,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const type = this.checktype.nativeElement.value;
     if (Utils.isEmpty(type) || type.length !== 2) {
       this.check = -7;
-      this.apprmessage = '수표종류를 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.type'); // '수표종류를 정확히 입력해주세요.';
       this.dupcheck = false;
     } else {
       this.check = 0;
-    }
-  }
-
-  checkTypeBlur() {
-    const type = this.checktype.nativeElement.value;
-    if (Utils.isEmpty(type) || type.length !== 2) {
-      this.check = -7;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checktype.nativeElement.focus(); }, 50);
     }
   }
 
@@ -355,19 +307,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (Utils.isEmpty(price)) {
       this.dupcheck = false;
       this.check = -8;
-      this.apprmessage = '금액정보를 정확히 입력하세요.';
+      this.apprmessage = this.message.get('check.invalid.price'); // '금액정보를 입력해주세요.';
       this.dupcheck = false;
     } else {
       this.check = 0;
-    }
-  }
-
-  checkPriceBlur() {
-    const price = this.checkprice.nativeElement.value;
-    if (Utils.isEmpty(price)) {
-      this.check = -8;
-      this.dupcheck = false;
-      // setTimeout(() => { this.checkprice.nativeElement.focus(); }, 50);
     }
   }
 
@@ -392,7 +335,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   close() {
-    this.closeModal();
+    setTimeout(() => {
+      this.checkpopup.nativeElement.focus();
+      this.closeModal();
+    }, 100);
   }
 
   private payFinishByEnter() {

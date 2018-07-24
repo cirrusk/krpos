@@ -1,4 +1,4 @@
-<div class="pop_wrap pop_l" tabindex="1" [posFocusBlur]="'focus'">
+<div #checkpopup class="pop_wrap pop_l" tabindex="1" [posFocusBlur]="'focus'">
     <div class="pop_header">
         <h1>수표 조회</h1>
         <button type="button" class="ico_comm pop_close01" (click)="close()">닫기</button>
@@ -9,19 +9,19 @@
             <p class="check_txt">수표 정보를 입력해주세요</p>
             <div class="check_form">
                 <div class="check_date">
-                    <input type="text" title="년" maxlength=4 (blur)="checkYrBlur()" (keyup)="checkYrNext()" (keydown)="checkYr($event)" #checkyr>
+                    <input type="text" title="년" maxlength=4 (keyup)="checkYrNext()" (keydown)="checkYr($event)" #checkyr>
                     <span class="txt">년</span>
-                    <input type="text" title="월" maxlength=2 (blur)="checkMmBlur()" (keyup)="checkMmNext()" (keydown)="checkMm($event)" #checkmm>
+                    <input type="text" title="월" maxlength=2 (keyup)="checkMmNext()" (keydown)="checkMm($event)" #checkmm>
                     <span class="txt">월</span>
-                    <input type="text" title="일" maxlength=2 (blur)="checkDdBlur()" (keyup)="checkDdNext()" (keydown)="checkDd($event)" #checkdd>
+                    <input type="text" title="일" maxlength=2 (keyup)="checkDdNext()" (keydown)="checkDd($event)" #checkdd>
                     <span class="txt">일</span>
                 </div>
                 <div class="check_etc">
-                    <input type="text" title="수표번호" maxlength=8 (blur)="checkNoBlur()" (keyup)="checkNoNext()" (keydown)="checkNo($event)" #checkno>
-                    <input type="text" title="발행점,발행지점 지로코드" maxlength=6 (blur)="checkPointBlur()" (keyup)="checkPointNext()" (keydown)="checkPoint($event)" #checkpoint>
-                    <input type="text" title="검증코드" maxlength=6 (blur)="checkValCodeBlur()" (keyup)="checkValCodeNext()" (keydown)="checkValcode($event)" #checkvalcode>
-                    <input type="text" title="수표종류" maxlength=2 (blur)="checkTypeBlur()" (keyup)="checkTypeNext()" (keydown)="checkType($event)" #checktype>
-                    <input type="text" title="수표금액" (blur)="checkPriceBlur()" (keyup)="checkPriceNext()" (keydown)="checkPrice($event)" (keydown.enter)="checkPriceFinal()" #checkprice>
+                    <input type="text" title="수표번호" maxlength=8 (keyup)="checkNoNext()" (keydown)="checkNo($event)" #checkno>
+                    <input type="text" title="발행점,발행지점 지로코드" maxlength=6 (keyup)="checkPointNext()" (keydown)="checkPoint($event)" #checkpoint>
+                    <input type="text" title="검증코드" maxlength=6 (keyup)="checkValCodeNext()" (keydown)="checkValCode($event)" #checkvalcode>
+                    <input type="text" title="수표종류" maxlength=2 (keyup)="checkTypeNext()" (keydown)="checkType($event)" #checktype>
+                    <input type="text" title="수표금액" (keyup)="checkPriceNext()" (keydown)="checkPrice($event)" (keydown.enter)="checkPriceFinal()" #checkprice>
                 </div>
             </div>
             <em *ngIf="finishStatus === null && check < 0" class="finish fail">{{apprmessage}}</em>

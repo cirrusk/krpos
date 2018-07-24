@@ -54,4 +54,16 @@ export const LANG_KO_MSGS = {
     'receipt.reg.number.emp': '고객번호를 입력해주세요.',
     'receipt.reg.number.biz': '고객번호를 입력해주세요.',
     'receipt.reg.number.success': '영수증 신청이 정상적으로 처리되었습니다.',
+    'check.invalid.value': '수표 입력 정보가 부정확합니다.',
+    'check.invalid.date': '발행일 정보가 부정확합니다.',
+    'check.success': '수표가 정상 인증되었습니다.',
+    'check.fail': '수표 조회에 실패 하였습니다.',
+    'check.invalid.yr': '발행 년도를 정확히 입력하세요.',
+    'check.invalid.mm': '발행 월을 정확히 입력하세요.',
+    'check.invalid.dd': '발행 일을 정확히 입력해주세요.',
+    'check.invalid.no': '수표번호를 정확히 입력해주세요.',
+    'check.invalid.point': '발행점,발행지점 지로코드를 정확히 입력해주세요.',
+    'check.invalid.code': '검증코드를 정확히 입력해주세요.',
+    'check.invalid.type': '수표종류를 정확히 입력해주세요.',
+    'check.invalid.price': '금액정보를 입력해주세요.'
 };

@@ -208,7 +208,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.checkChar();
     this.printerService.init();
-    setTimeout(() => { this.searchText.nativeElement.focus(); }, 10);
+    setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
     this.phytoCafeSubscription = this.info.getInfo().subscribe(
       result => {
         if (result && result.type === 'pyt') {
