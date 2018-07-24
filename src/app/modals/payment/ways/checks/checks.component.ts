@@ -16,7 +16,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   apprmessage: string;
   finishStatus: string;                             // 결제완료 상태
   yrMaxlength: number;
-  allowedChars = new Set('0123456789'.split('').map(c => c.charCodeAt(0)));
+  private allowedChars = new Set('0123456789'.split('').map(c => c.charCodeAt(0)));
   private checksubscription: Subscription;
   private dupcheck = false;
   @ViewChild('checkyr') checkyr: ElementRef;            // 년
@@ -145,7 +145,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
 
-  checkYr(evt: any) {
+  checkYr(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -167,7 +167,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkMm(evt: any) {
+  checkMm(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -189,7 +189,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkDd(evt: any) {
+  checkDd(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -211,7 +211,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkNo(evt: any) {
+  checkNo(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -233,7 +233,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkPoint(evt: any) {
+  checkPoint(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -255,7 +255,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkValCode(evt: any) {
+  checkValCode(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -277,7 +277,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkType(evt: any) {
+  checkType(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
@@ -299,7 +299,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  checkPrice(evt: any) {
+  checkPrice(evt: KeyboardEvent) {
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
