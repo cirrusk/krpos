@@ -148,22 +148,26 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const yr = this.checkyr.nativeElement.value;
     const mm = this.checkmm.nativeElement.value;
     const dd = this.checkdd.nativeElement.value;
-    let rtn = moment(yr, 'YYYY').isValid();
+    let rtn = moment(yr + mm + dd, 'YYYYMMDD').isValid();
     if (!rtn) {
-      setTimeout(() => { this.checkyr.nativeElement.select(); this.checkyr.nativeElement.focus(); }, 100);
-      return false;
+      rtn = moment(yr, 'YYYY').isValid();
+      if (!rtn) {
+        setTimeout(() => { this.checkyr.nativeElement.select(); this.checkyr.nativeElement.focus(); }, 100);
+        return false;
+      }
+      rtn = moment(mm, 'MM').isValid();
+      if (!rtn) {
+        setTimeout(() => { this.checkmm.nativeElement.select(); this.checkmm.nativeElement.focus(); }, 100);
+        return false;
+      }
+      rtn = moment(dd, 'DD').isValid();
+      if (!rtn) {
+        setTimeout(() => { this.checkdd.nativeElement.select(); this.checkdd.nativeElement.focus(); }, 100);
+        return false;
+      }
+      return true;
     }
-    rtn = moment(mm, 'MM').isValid();
-    if (!rtn) {
-      setTimeout(() => { this.checkmm.nativeElement.select(); this.checkmm.nativeElement.focus(); }, 100);
-      return false;
-    }
-    rtn = moment(dd, 'DD').isValid();
-    if (!rtn) {
-      setTimeout(() => { this.checkdd.nativeElement.select(); this.checkdd.nativeElement.focus(); }, 100);
-      return false;
-    }
-    return moment(yr + mm + dd, 'YYYYMMDD').isValid();
+    return true;
   }
 
 
