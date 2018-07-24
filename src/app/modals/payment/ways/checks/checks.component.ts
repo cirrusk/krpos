@@ -15,7 +15,6 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   check: number;
   apprmessage: string;
   finishStatus: string;                             // 결제완료 상태
-  yrMaxlength: number;
   private allowedChars = new Set('0123456789'.split('').map(c => c.charCodeAt(0)));
   private checksubscription: Subscription;
   private dupcheck = false;
@@ -33,7 +32,6 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     super(modalService);
     this.finishStatus = null;
     this.check = 0;
-    this.yrMaxlength = 4;
   }
 
   ngOnInit() {
