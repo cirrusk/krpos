@@ -19,7 +19,7 @@ export class OrderHistory {
     id: string;
     warehouseCode: string;
     invoiceNumber: string;
-    isCancellable: boolean;
+    cancellable: boolean;
     parentOrder: string;
 
     constructor() {}

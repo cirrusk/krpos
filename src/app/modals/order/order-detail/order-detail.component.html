@@ -101,7 +101,16 @@
                             <li class="fx"><span>GROUP PV</span><em></em></li>
                             <li class="fx"><span>GROUP BV</span><em></em></li>
                             <li><span>잔여 A 포인트</span><em>00</em></li>
-                            <li><span>공제번호</span><em>{{orderDetail.orders[0].deductionNumber}}</em></li>
+                            <li><span>공제번호</span>
+                                <em *ngIf="orderDetail.orders[0].deductionNumber; else elseTemplate">
+                                    {{orderDetail.orders[0].deductionNumber}}
+                                </em>
+                                <ng-template #elseTemplate>
+                                    <em>
+                                        공제조합홈페이지 확인
+                                    </em>
+                                </ng-template>
+                            </li>
                         </ul>
                         <p class="txt">*** 정상 승인 완료 ***</p>
                     </div>

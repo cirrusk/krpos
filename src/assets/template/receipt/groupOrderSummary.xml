@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Precompile 금지 -->
+<document>
+    <text-line>    
+        주문형태: {{orderInfo.type}}
+    </text-line>
+    <text-line>
+    </text-line>
+    <text-line>
+        {{productListHelper productList}}
+    </text-line>
+    <dash-line/>    
+    <text-line>
+        {{priceFormatHelper '상품수량' price.totalQty}}
+    </text-line>
+    <text-line>
+    </text-line>
+    <dash-line/>    
+    <text-line>    
+        반품 시 본 그룹 결제 요약을 영수증으로 사용할 수 없습니다.
+    </text-line>
+    <dash-line/>
+</document>
