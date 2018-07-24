@@ -6,7 +6,7 @@ import { MessageService, PaymentService, ReceiptService } from '../../../../serv
 import { ModalComponent, ModalService, PrinterService, SpinnerService, Logger, Modal, StorageService } from '../../../../core';
 import {
   Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
-  CurrencyData, KeyCode, StatusDisplay, CapturePaymentInfo
+  CurrencyData, KeyCode, StatusDisplay, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -30,6 +30,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentsubscription: Subscription;
   @ViewChild('cashPanel') private cashPanel: ElementRef;
   @ViewChild('paid') private paid: ElementRef;         // 내신금액
@@ -53,6 +54,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     setTimeout(() => {
       this.paid.nativeElement.value = 0;
@@ -199,7 +201,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: receivedAmount, payAmount: payAmount, change: change
+        paidAmount: receivedAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

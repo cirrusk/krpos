@@ -12,6 +12,7 @@ export class OrderInfo {
     protected account: Account;
     protected date: string;
     protected cancelFlag: string;
+    protected groupInfo: string;
     public set setCashier(cashier: Cashier) {
         this.cashier = cashier;
     }
@@ -29,6 +30,9 @@ export class OrderInfo {
     }
     public set setCancelFlag(_cancelFlag: string) {
         this.cancelFlag = _cancelFlag;
+    }
+    public set setGroupInfo(_groupInfo: string) {
+        this.groupInfo = _groupInfo;
     }
     constructor(posId: string, number: string, type?: string, macAndCoNum?: string) {
         this.posId = posId;

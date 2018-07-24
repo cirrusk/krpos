@@ -19,11 +19,14 @@ import { PathLocationStrategy } from '../../../node_modules/@angular/common';
 @Injectable()
 export class ReceiptService implements OnDestroy {
 
+    private groupOrderTotalCount;
+
     private paymentsubscription: Subscription;
     private ordersubscription: Subscription;
     constructor(private receitDataProvider: ReceiptDataProvider,
         private orders: OrderService,
         private payment: PaymentService,
+        private order: OrderService,
         private printer: PrinterService,
         private storage: StorageService,
         private message: MessageService,
@@ -129,10 +132,53 @@ export class ReceiptService implements OnDestroy {
 
     }
 
-    public groupPrint(account: Accounts, amwayExtendedOrdering: AmwayExtendedOrdering, order: Order, paymentCapture: PaymentCapture) {
-        // amwayExtendedOrdering.orders.forEach(order => {
+    public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
+        let gCartInfo = new Cart();
+        let gPaymentCapture = new PaymentCapture();
+        let gAccount = new Accounts();
+        let gOrderDetail = new Order();
 
-        // });
+        this.order.groupOrder(order.user.uid, order.code).subscribe( result => {
+            if (result) {
+                const groupOrder = result;
+                this.groupOrderTotalCount = (groupOrder.orders.length).toString();
+                groupOrder.orders.forEach((gOrder, index) => {
+                    setTimeout(() => {
+                        const gJsonCartData = {
+                            'user': {'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name},
+                            'entries': gOrder.entries,
+                            'totalPrice': gOrder.totalPrice,
+                            'subTotal': gOrder.subTotal,
+                            'totalUnitCount': 10, // gOrder.totalUnitCount,
+                            'totalPriceWithTax': gOrder.totalPriceWithTax,
+                            'totalTax': gOrder.totalTax,
+                            'totalDiscounts': gOrder.totalDiscounts
+                        };
+
+                        gCartInfo = gJsonCartData as Cart;
+                        gOrderDetail = gOrder as Order;
+
+                        if (index === 0) {
+                            gPaymentCapture = paymentCapture;
+                        } else {
+                            gPaymentCapture = new PaymentCapture();
+                        }
+
+                        gAccount = gOrder.volumeABOAccount;
+                        const jsonData = { 'parties': [{'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name}] };
+
+                        Object.assign(gAccount, jsonData);
+                        const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
+
+                        if (cancelFlag) {
+                            this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo);
+                        } else {
+                            this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo);
+                        }
+                    }, 500);
+                });
+            }
+        });
     }
 
     /**
@@ -147,12 +193,13 @@ export class ReceiptService implements OnDestroy {
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      */
-    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string, type?: string, macAndCoNum?: string): boolean {
+    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string,
+                 groupInfo?: string, type?: string, macAndCoNum?: string): boolean {
         let rtn = true;
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
-            paymentCapture: paymentCapture
+            paymentCapture: paymentCapture, groupInfo: groupInfo
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         this.paymentsubscription = this.payment.getBalance(account.parties[0].uid).subscribe(
@@ -202,6 +249,7 @@ export class ReceiptService implements OnDestroy {
         const pointValue: number = printInfo.point;
         const posId = this.storage.getTerminalInfo().id;
         const token = this.storage.getTokenInfo();
+        const groupInfo = printInfo.groupInfo;
         // 영수증 출력 파라미터 설정 - END
 
         // orderSummery - START
@@ -216,6 +264,11 @@ export class ReceiptService implements OnDestroy {
             member.setAbo = new AccountInfo(cartInfo.user.uid, cartInfo.user.name);
             orderInfo.setAccount = member;
         }
+
+        if (groupInfo) {
+            orderInfo.setGroupInfo = groupInfo;
+        }
+
         orderInfo.setType = type || this.message.get('default.order.type'); // '현장구매';
         orderInfo.setDate = Utils.convertDateToString(new Date());
         // orderSummary - END

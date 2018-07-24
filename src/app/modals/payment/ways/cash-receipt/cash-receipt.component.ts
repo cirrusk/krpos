@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { OrderService, MessageService } from '../../../../service';
 import { ModalComponent, ModalService, SpinnerService } from '../../../../core';
-import { Accounts, StatusDisplay, KeyCode } from '../../../../data';
+import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { Utils } from '../../../../core/utils';
@@ -23,6 +23,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   private accountInfo: Accounts;
   private cartInfo: Cart;
   private orderInfo: Order;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private receiptsubscription: Subscription;
   @ViewChild('clientnum') private clientnum: ElementRef;       // 고객번호
   @ViewChild('income') private income: ElementRef;
@@ -40,6 +41,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.orderInfo = this.callerData.orderInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     this.paymentamount = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
     setTimeout(() => { this.clientnum.nativeElement.focus(); }, 50);
   }

@@ -10,7 +10,7 @@ import {
 } from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
-  StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType
+  StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType, AmwayExtendedOrdering
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -33,6 +33,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private cardresult: ICCardApprovalResult;
@@ -50,6 +51,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.storage.removePay(); // 단독결재만 하므로 초기화
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.paymentType === 'n') {
       this.paidamount = this.cartInfo.totalPrice.value;
     } else {
@@ -301,7 +303,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

@@ -207,7 +207,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
 
     this.modal.openModalByComponent(this.paymentComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       modalId: modalId,
       pointType: pointtype,

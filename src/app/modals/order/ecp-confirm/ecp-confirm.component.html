@@ -19,8 +19,6 @@
                       <caption>ECP 컨펌 확인</caption>
                       <colgroup>
                         <col style="width:60px">
-                        <!-- <col style="width:100px">
-                        <col style="width:90px"> -->
                         <col>
                         <col style="width:80px">
                         <col style="width:80px">
@@ -28,8 +26,6 @@
                       <thead>
                           <tr>
                             <th scope="col">번호</th>
-                            <!-- <th scope="col">주문번호</th>
-                            <th scope="col">ABO번호</th> -->
                             <th scope="col">상품명</th>
                             <th scope="col">수량</th>
                             <th scope="col">완료여부</th>
@@ -39,8 +35,6 @@
                           <!-- 내역 선택시 tr에 on클래스 추가 -->
                           <tr *ngFor="let orderEntry of currentOrderList; let i = index;">
                               <td><span>{{pager.startIndex + (i+1)}}</span></td>
-                              <!-- <td><span>{{orderList.orders[orderEntry.entryNumber].code}}</span></td> -->
-                              <!-- <td><span>{{orderList.orders[orderEntry.entryNumber].user.uid}}</span></td> -->
                               <td class="tit"><span class="elips mx400">{{orderEntry.product.name}}</span></td>
                               <td><span>{{orderEntry.quantity}}</span></td>
                               <td><span>{{orderEntry.quantity === orderEntry.ecpConfirmQty ? 'O' : 'X' }}</span></td>

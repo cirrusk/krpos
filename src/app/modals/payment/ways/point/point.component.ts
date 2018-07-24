@@ -6,7 +6,7 @@ import { PaymentService, MessageService, ReceiptService } from '../../../../serv
 import { ModalComponent, ModalService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
-  PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo
+  PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
 import { Cart } from './../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -31,6 +31,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private paymentcapture: PaymentCapture;
   private cartInfo: Cart;
   private accountInfo: Accounts;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentType: string;
   private balance: Balance;
   private balancesubscription: Subscription;
@@ -61,6 +62,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     if (this.paymentType === 'n') {
       this.paymentprice = this.cartInfo.totalPrice.value;
@@ -306,7 +308,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

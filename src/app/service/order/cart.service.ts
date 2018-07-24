@@ -22,7 +22,7 @@ export class CartService {
    * @param accountId
    * @param userId
    * @param pickupStore
-   * @param cartType ex) POS -> 일반주문, WEBGROUP -> 그룹주문
+   * @param cartType ex) POS -> 일반주문, POSGROUP -> 그룹주문
    */
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
     const macAddress = this.storage.getMacAddress(); // this.networkService.getLocalMacAddress('-');

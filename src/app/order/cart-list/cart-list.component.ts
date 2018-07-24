@@ -688,7 +688,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
       let cartType = 'POS';
       if (this.orderType === 'g') {
-        cartType = 'POSGROUP'; // cartType = 'WEBGROUP';
+        cartType = 'POSGROUP';
       }
 
       this.spinner.show();
@@ -1007,7 +1007,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               // 그룹주문 사용자 페이지 전환
               this.setUserPage(page);
               // 사용자 선택하여 CartList 호출
-              this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
+              this.choiceGroupUser(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
               // 그룹 카트 조회
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
@@ -1036,7 +1036,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;
           const page = this.selectedUserIndex - 1 === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
           this.setUserPage(page);
-          this.selectUserInfo(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
+          this.choiceGroupUser(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
         }
       }
     }
@@ -1350,7 +1350,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param index
    * @param uid
    */
-  selectUserInfo(index: number, uid: string): void {
+  choiceGroupUser(index: number, uid: string): void {
     this.selectedUserIndex = index;
     this.selectedUserId = uid;
     if (this.amwayExtendedOrdering) {
@@ -1424,13 +1424,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (result) {
           this.amwayExtendedOrdering = result;
           let uid = '';
-          // 복수 인원 확인
-          if (volumeAccount.indexOf(',') > -1) {
-            // 선택한 사용자로 페이지 이동
-            uid = this.currentGroupAccountInfo[this.selectedUserIndex].parties[0].uid;
-          } else {
-            uid = volumeAccount;
-          }
+          uid = this.selectedUserId;
+
           const existedIdx: number = this.amwayExtendedOrdering.orders.findIndex(
             function (obj) {
               return obj.volumeABOAccount.uid === uid;

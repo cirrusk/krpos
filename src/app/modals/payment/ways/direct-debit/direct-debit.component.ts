@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
-  CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo
+  CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -32,6 +32,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private paymentsubscription: Subscription;
@@ -50,6 +51,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.setDirectDebitInfo();
     if (!this.accountnumber) {
@@ -276,7 +278,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

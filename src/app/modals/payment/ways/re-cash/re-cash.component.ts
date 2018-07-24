@@ -6,7 +6,7 @@ import { PaymentService, ReceiptService, MessageService } from '../../../../serv
 import { ModalComponent, ModalService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
-  PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo
+  PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -29,6 +29,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private paymentsubscription: Subscription;
@@ -49,6 +50,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     if (this.paymentType === 'n') {
       this.paidamount = this.cartInfo.totalPrice.value;
@@ -251,7 +253,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

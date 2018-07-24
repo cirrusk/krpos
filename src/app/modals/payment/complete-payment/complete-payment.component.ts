@@ -9,7 +9,7 @@ import {
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
 import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering } from '../../../data';
-import { ReceiptService, PaymentService, MessageService } from '../../../service';
+import { ReceiptService, PaymentService, MessageService, OrderService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 
@@ -36,6 +36,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private alertsubscription: Subscription;
   private keyboardsubscription: Subscription;
   constructor(protected modalService: ModalService,
+    private orderService: OrderService,
     private printer: PrinterService, private receipt: ReceiptService,
     private payments: PaymentService, private keyboard: KeyboardService,
     private storage: StorageService, private spinner: SpinnerService,
@@ -56,6 +57,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.accountInfo = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
+
     this.paymentcapture = this.callerData.paymentInfo;
     this.paidamount = this.cartInfo.totalPrice.value;
     this.payamount = this.cartInfo.totalPrice.value; // this.callerData.payAmount;
@@ -198,8 +200,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private printAndCartInit() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      if (this.orderType === 'GROUP_COMBINED_ORDER') {
-        this.receipt.groupPrint(this.accountInfo, this.amwayExtendedOrdering, this.orderInfo, this.paymentcapture);
+      if (this.amwayExtendedOrdering !== undefined) {
+        this.receipt.groupPrint(this.accountInfo, this.orderInfo, this.paymentcapture);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       } else {
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
@@ -249,7 +251,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
       this.info.sendInfo('orderClear', 'clear');
       this.close();
-    }
+   }
   }
 
   @HostListener('document:keydown', ['$event'])

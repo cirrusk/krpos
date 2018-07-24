@@ -12,7 +12,7 @@ import {
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
-  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType, CapturePaymentInfo
+  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -38,6 +38,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
+  private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
   private paymentType: string;
   private cardresult: CardApprovalResult;
@@ -60,6 +61,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     if (this.paymentType === 'n') {
       this.paidamount = this.cartInfo.totalPrice.value;
@@ -408,7 +410,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

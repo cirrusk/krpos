@@ -10,9 +10,10 @@ export class OrderData {
     phoneNumber: string;
     confirm: boolean;
     amwayBusinessNature: string;
+    isEasyPickupOrder: boolean;
     sorts: string | Array<SortData>; // List<SortData>
     constructor(amwayBusinessNature: string, salesChannels?: Array<string>, orderTypes?: Array<string>,
-        deliveryModes?: Array<string>, statuses?: Array<string>, confirm?: boolean, sorts?: string | Array<SortData>
+        deliveryModes?: Array<string>, statuses?: Array<string>, confirm?: boolean, isEasyPickupOrder?: boolean, sorts?: string | Array<SortData>
     ) {
         this.amwayBusinessNature = amwayBusinessNature;
         this.salesChannels = salesChannels;
@@ -20,6 +21,7 @@ export class OrderData {
         this.deliveryModes = deliveryModes;
         this.statuses = statuses;
         this.confirm = confirm;
+        this.isEasyPickupOrder = isEasyPickupOrder;
         if (Array.isArray(sorts)) {
             this.sorts = sorts;
         } else {

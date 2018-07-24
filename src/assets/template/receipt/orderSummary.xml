@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <text-line>
+    {{#if orderInfo.groupInfo}}
+    <text-line>    
+        주문형태: 그룹주문 [P. {{orderInfo.groupInfo}} ]
+    </text-line>
+    {{else}}
+    <text-line>    
         주문형태: {{orderInfo.type}}
     </text-line>
+    {{/if}}    
     {{#if orderInfo.account.abo}}
         <text-line>
             ABO정보: {{orderInfo.account.abo.id}} {{orderInfo.account.abo.name}}

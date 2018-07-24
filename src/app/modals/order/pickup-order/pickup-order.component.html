@@ -34,14 +34,14 @@
                         <colgroup>
                             <col>
                             <col style="width:63px">
-                            <col style="width:68px">
-                            <col style="width:76px">
-                            <col style="width:114px">
+                            <col style="width:60px">
+                            <col style="width:70px">
+                            <col style="width:104px">
                         </colgroup>
                         <thead>
                             <!-- 전체 선택 : 선택시 tr에 on클래스 추가 -->
                             <tr>
-                                <th scope="col" class="al chk">주문번호</th>
+                                <th scope="col" class="al chk" (click)="activeAll($event)">주문번호</th>
                                 <th scope="col">ABO번호</th>
                                 <th scope="col">성명</th>
                                 <th scope="col">실주문일자</th>
@@ -50,7 +50,7 @@
                         </thead>
                         <tbody>
                             <!-- 선택시 tr에 on클래스 추가 -->
-                            <tr class="" *ngFor="let order of sourceOrderHistoryList.orders; let i = index;" (click)="moveOrder($event, order.code)">
+                            <tr  #ecporders class="" *ngFor="let order of sourceOrderHistoryList.orders; let i = index;" (click)="moveOrder($event, order.code)">
                                 <td class="al"><span class="chk">{{order.code}}</span></td>
                                 <td><span>{{order.user.uid}}</span></td>
                                 <td class="tit"><span class="elips">{{order.user.name}}</span></td>
@@ -63,7 +63,7 @@
                 <!-- //왼쪽테이블 -->
                 <!-- 오른쪽테이블 -->
                 <div class="tbl_col fr bg_bar">
-                    <p class="txt" ><strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
+                    <p class="txt" ><strong><span class="fc_red">{{targetUserList.size}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
                     <!-- 5줄이 넘을 시 노출 -->
                     <div class="paging" *ngIf="targetOrderHistoryList.pagination && targetOrderHistoryList.pagination.totalResults > 5">
                         <button type="button" class="ico_comm prev01">이전</button>
@@ -75,9 +75,9 @@
                         <colgroup>
                             <col>
                             <col style="width:63px">
-                            <col style="width:68px">
-                            <col style="width:76px">
-                            <col style="width:114px">
+                            <col style="width:60px">
+                            <col style="width:70px">
+                            <col style="width:104px">
                         </colgroup>
                         <thead>
                             <tr>
@@ -90,7 +90,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let order of targetOrderHistoryList.orders; let i = index;" (click)="deleteOrder(order.code)">
-                                <td class="al"><span class="chk">{{order.code}}</span></td>
+                                <td class="al"><span>{{order.code}}</span></td>
                                 <td><span>{{order.user.uid}}</span></td>
                                 <td class="tit"><span class="elips">{{order.user.name}}</span></td>
                                 <td><span>{{order.placed | date:'yy/MM/dd'}}</span></td>
@@ -102,64 +102,11 @@
                 <!-- //오른쪽테이블 -->
             </div>
             <!-- //검색결과 영역 : 검색 후 -->
-            
-            <!-- 검색결과 영역 : 검색 전 
-            <div class="mbinfo_list type04 clearfix">
-                <div class="tbl_col fl bg_bar">
-                    <table>
-                        <caption>ABO 주문정보</caption>
-                        <colgroup>
-                            <col>
-                            <col style="width:63px">
-                            <col style="width:68px">
-                            <col style="width:76px">
-                            <col style="width:114px">
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th scope="col" class="al chk">주문번호</th>
-                                <th scope="col">ABO번호</th>
-                                <th scope="col">성명</th>
-                                <th scope="col">실주문일자</th>
-                                <th scope="col">금액</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5" class="no_data"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="tbl_col fr bg_bar">
-                    <p class="txt"><strong><span class="fc_red">0</span>명</strong> ABO의 <strong><span class="fc_red">0</span>건</strong>의 주문정보가 선택되었습니다.</p>
-                    <table>
-                        <caption>선택된 ABO 주문정보</caption>
-                        <colgroup>
-                            <col>
-                            <col style="width:63px">
-                            <col style="width:68px">
-                            <col style="width:76px">
-                            <col style="width:114px">
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th scope="col" class="ar">주문번호</th>
-                                <th scope="col">ABO번호</th>
-                                <th scope="col">성명</th>
-                                <th scope="col">실주문일자</th>
-                                <th scope="col">금액</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5" class="no_data"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="scan">
+                <label for="bcs">바코드 스캔</label>
+                <input #barcodeScan type="text" id="bcs" (keydown.enter)="searchOrder('orderCode', barcodeScan.value, true)">
             </div>
-             //검색결과 영역 : 검색 전 -->
+            <!-- //20180713 추가 -->
         </div>
     </div>
     <!-- //pop_container -->
