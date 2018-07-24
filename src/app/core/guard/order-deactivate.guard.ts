@@ -19,7 +19,8 @@ export class OrderDeactivateGuard implements CanDeactivate<OrderComponent> {
       this.logger.set('order.deactivate.guard[route]', `${route}`).debug();
       this.logger.set('order.deactivate.guard[state]', `${state}`).debug();
       this.logger.set('order.deactivate.guard[nextState]', `${nextState}`).debug();
-      return confirm('결제 진행중입니다. 계속 진행하시겠습니까?');
+      // return confirm('결제 진행중입니다. 계속 진행하시겠습니까?');
+      return true;
     }
   }
 }
