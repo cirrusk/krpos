@@ -202,7 +202,8 @@ export class ReceiptService implements OnDestroy {
             paymentCapture: paymentCapture, groupInfo: groupInfo
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
-        this.paymentsubscription = this.payment.getBalance(account.parties[0].uid).subscribe(
+        const uid = account.parties ? account.parties[0].uid : account.uid;
+        this.paymentsubscription = this.payment.getBalance(uid).subscribe(
             result => {
                 Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
                 rtn = this.makeTextAndPrint(printInfo);
@@ -224,7 +225,8 @@ export class ReceiptService implements OnDestroy {
      * @param order 주문정보
      */
     private issueReceipt(account: Accounts, order: Order) {
-        this.ordersubscription = this.orders.issueReceipt(account.parties[0].uid, order.code).subscribe(receipt => {
+        const uid = account.parties ? account.parties[0].uid : account.uid;
+        this.ordersubscription = this.orders.issueReceipt(uid, order.code).subscribe(receipt => {
             this.logger.set('receipt.service', `receipt issued invoice number : ${receipt.result}`).debug();
         }, error => {
             this.logger.set('receipt.service', `receipt issued : ${error}`).error();
