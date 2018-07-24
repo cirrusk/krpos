@@ -279,7 +279,7 @@ table input[type='text'] {font-family:'NSM';}
 .tbl_row table {width:100%; border-top:1px solid #ddd}
 .tbl_row tr {height:50px; border-bottom:1px solid #ddd}
 .tbl_row tr:nth-child(even) {background-color:#f2f2f5}
-.tbl_row td .won {display:inline-block; width:110px; padding-right:10px; box-sizing:border-box; text-align:right;}
+.tbl_row td .won {display:inline-block; width:110px; /* padding-right:10px; */ box-sizing:border-box; text-align:right;}
 .tbl_row td .txt_inp01 {display:inline-block; margin-left:13px; box-sizing:border-box; vertical-align:middle; line-height:18px; font-family:'NSR'; font-size:13px}
 .tbl_row tr input[type='text'] {font-size:14px}
 .tbl_row th, .tbl_row td {text-align:left; padding:0 20px; box-sizing:border-box;}
@@ -466,6 +466,22 @@ table input[type='text'] {font-family:'NSM';}
 .scan label {display:inline-block; height:35px; line-height:30px; font-family:'NSB'; font-size:16px; color:#21243d; margin-right:10px}
 .scan input {width:370px}
 .scan input.w250 {width:250px}
+
+/* 수표 */
+.check_txt {text-align:center; margin-top:-5px}
+.check_form {position:relative; width:740px; height:352px; margin-top:17px; background:url(/assets/images/common/img_check.gif) no-repeat}
+.check_form input {text-align:center; font-size:14px}
+.check_form input + input {margin-left:7px}
+.check_form .check_date {position:absolute; top:162px; left:364px}
+.check_form .check_date input {width:50px}
+.check_form .check_date input:nth-of-type(1) {width:80px}
+.check_form .check_date input + .txt {display:inline-block; margin:5px 8px 0 4px}
+.check_form .check_etc {position:absolute; top:296px; left:51px}
+.check_form .check_etc input:nth-of-type(1) {width:120px}
+.check_form .check_etc input:nth-of-type(2) {width:100px}
+.check_form .check_etc input:nth-of-type(3) {width:100px}
+.check_form .check_etc input:nth-of-type(4) {width:50px}
+.check_form .check_etc input:nth-of-type(5) {width:150px}
 
 /* tab */
 .tab_type01 {display:block; text-align:center; font-size:0}
