@@ -55,6 +55,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
       this.dupcheck = false;
       return;
     }
+    this.check = 0;
     const checknum = this.makeCheckNumber();
     this.spinner.show();
     this.checksubscription = this.payments.searchCheque(checknum).subscribe(
@@ -102,34 +103,42 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   private validValue(): boolean {
     const yr = this.checkyr.nativeElement.value;
     if (Utils.isEmpty(yr) || yr.length !== 4) {
+      setTimeout(() => { this.checkyr.nativeElement.select(); this.checkyr.nativeElement.focus(); }, 100);
       return false;
     }
     const mm = this.checkmm.nativeElement.value;
     if (Utils.isEmpty(mm) || mm.length !== 2) {
+      setTimeout(() => { this.checkmm.nativeElement.select(); this.checkmm.nativeElement.focus(); }, 100);
       return false;
     }
     const dd = this.checkdd.nativeElement.value;
     if (Utils.isEmpty(dd) || dd.length !== 2) {
+      setTimeout(() => { this.checkdd.nativeElement.select(); this.checkdd.nativeElement.focus(); }, 100);
       return false;
     }
     const no = this.checkno.nativeElement.value;
     if (Utils.isEmpty(no) || no.length !== 8) {
+      setTimeout(() => { this.checkno.nativeElement.select(); this.checkno.nativeElement.focus(); }, 100);
       return false;
     }
     const cd = this.checkpoint.nativeElement.value;
     if (Utils.isEmpty(cd) || cd.length !== 6) {
+      setTimeout(() => { this.checkpoint.nativeElement.select(); this.checkpoint.nativeElement.focus(); }, 100);
       return false;
     }
     const vl = this.checkvalcode.nativeElement.value;
     if (Utils.isEmpty(vl) || vl.length !== 6) {
+      setTimeout(() => { this.checkvalcode.nativeElement.select(); this.checkvalcode.nativeElement.focus(); }, 100);
       return false;
     }
     const tp = this.checktype.nativeElement.value;
     if (Utils.isEmpty(tp) || tp.length !== 2) {
+      setTimeout(() => { this.checktype.nativeElement.select(); this.checktype.nativeElement.focus(); }, 100);
       return false;
     }
     const pr = this.checkprice.nativeElement.value;
     if (Utils.isEmpty(pr)) {
+      setTimeout(() => { this.checkprice.nativeElement.select(); this.checkprice.nativeElement.focus(); }, 100);
       return false;
     }
     return true;
@@ -139,6 +148,21 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const yr = this.checkyr.nativeElement.value;
     const mm = this.checkmm.nativeElement.value;
     const dd = this.checkdd.nativeElement.value;
+    let rtn = moment(yr, 'YYYY').isValid();
+    if (!rtn) {
+      setTimeout(() => { this.checkyr.nativeElement.select(); this.checkyr.nativeElement.focus(); }, 100);
+      return false;
+    }
+    rtn = moment(mm, 'MM').isValid();
+    if (!rtn) {
+      setTimeout(() => { this.checkmm.nativeElement.select(); this.checkmm.nativeElement.focus(); }, 100);
+      return false;
+    }
+    rtn = moment(dd, 'DD').isValid();
+    if (!rtn) {
+      setTimeout(() => { this.checkdd.nativeElement.select(); this.checkdd.nativeElement.focus(); }, 100);
+      return false;
+    }
     return moment(yr + mm + dd, 'YYYYMMDD').isValid();
   }
 
@@ -219,7 +243,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
       this.apprmessage = this.message.get('check.invalid.no'); // '수표번호를 정확히 입력해주세요.';
       this.dupcheck = false;
     } else {
-        this.check = 0;
+      this.check = 0;
     }
   }
 
