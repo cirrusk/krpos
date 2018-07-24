@@ -6,7 +6,7 @@ import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken
+    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -58,8 +58,8 @@ export class ReceiptService implements OnDestroy {
         return this.getReceipt(data, ReceiptTypeEnum.ConsumerNormal);
     }
 
-    public orderingABOGroup(data: any): string {
-        return this.getReceipt(data, ReceiptTypeEnum.OrderingABOGroup);
+    public groupOrderSummary(data: any): string {
+        return this.getReceipt(data, ReceiptTypeEnum.GroupSummary);
     }
 
     private getReceipt(data: any, format: ReceiptTypeEnum): string {
@@ -90,7 +90,7 @@ export class ReceiptService implements OnDestroy {
      * @param cancelFlag 취소여부
      */
     public reissueReceipts(orderData: OrderList, cancelFlag = false): void {
-        const cartInfo = new Cart();
+        let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
 
@@ -105,7 +105,7 @@ export class ReceiptService implements OnDestroy {
                 'totalTax': order.totalTax,
                 'totalDiscounts': order.totalDiscounts
             };
-            Object.assign(cartInfo, jsonCartData);
+            cartInfo = jsonCartData as Cart;
 
             order.paymentDetails.paymentInfos.forEach(paymentInfo => {
                 switch (paymentInfo.paymentMode.code) {
@@ -445,15 +445,75 @@ export class ReceiptService implements OnDestroy {
         receiptInfo.setPrice = price;
         receiptInfo.setProductList = productEntryList;
         let text = '';
-        if (account.accountTypeCode === 'group') { // Group
-            text = this.orderingABOGroup(receiptInfo);
-        } else if (account.accountTypeCode === MemberType.ABO) { // ABO
+        if (account.accountTypeCode === MemberType.ABO) { // ABO
             text = this.aboNormal(receiptInfo);
         } else if (account.accountTypeCode === MemberType.MEMBER) {
             text = this.memberNormal(receiptInfo);
         } else {
             text = this.consumerNormal(receiptInfo);
         }
+        // 최종 영수증 데이터 구성 - END
+
+        // 영수증 출력 - START
+        try {
+            this.printer.printText(text);
+        } catch (e) {
+            this.logger.set('receipt.service', `${e.description}`).error();
+            rtn = false;
+        }
+        // 영수증 출력 - END
+        return rtn;
+    }
+
+    makeTextAndGroupSummaryPrint(orderEntry: Array<OrderEntry>, type: string): boolean {
+        let rtn = true;
+        // 영수증 출력 파라미터 설정 - START
+        const posId: string = this.storage.getTerminalInfo().id;
+        // 영수증 출력 파라미터 설정 - END
+
+        // orderSummery - START
+        const orderInfo = new OrderInfo(posId, '0', type);
+        orderInfo.setDate = Utils.convertDateToString(new Date());
+        // orderSummary - END
+
+        // productList - START
+        const productList = Array<any>();
+        let totalQty = 0;
+        let totalPrice = 0;
+        orderEntry.forEach((entry, index) => {
+            productList.push({
+                'idx': (index + 1).toString(),
+                'skuCode': entry.product.code,
+                'productName': entry.product.name,
+                'price': entry.basePrice.value.toString(),
+                'qty': entry.quantity.toString(),
+                'totalPrice': entry.totalPrice.value.toString()
+            });
+            totalQty = totalQty + entry.quantity;
+            totalPrice = totalPrice + (entry.basePrice.value * entry.quantity);
+        });
+        const productEntryList = new Array<ProductsEntryInfo>();
+        const data = productList;
+        Object.assign(productEntryList, data);
+        // productList - END
+
+        // prices - START
+        const sumAmount = 0; // 합계
+        const totalAmount = totalPrice; // 결제금액
+        const amountVAT = 0; // 부가세
+        const amountWithoutVAT = 0; // 과세 물품
+
+        //                          상품수량   과세 물품          부가세     합계       결제금액       할인금액         할인금액정보
+        //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
+        const price = new PriceInfo(totalQty, amountWithoutVAT, amountVAT, sumAmount, totalAmount);
+        // prices - END
+
+        // 최종 영수증 데이터 구성 - START
+        const receiptInfo = new ReceiptInfo();
+        receiptInfo.setOrderInfo = orderInfo;
+        receiptInfo.setPrice = price;
+        receiptInfo.setProductList = productEntryList;
+        const text = this.groupOrderSummary(receiptInfo);
         // 최종 영수증 데이터 구성 - END
 
         // 영수증 출력 - START

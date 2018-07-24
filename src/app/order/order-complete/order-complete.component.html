@@ -33,20 +33,18 @@
                       <caption>조회결과</caption>
                       <colgroup>
                           <col style="width:5%">
-                          <col style="width:10%">                          
+                          <col style="width:15%">
+                          <col style="width:13%">
+                          <col style="width:15%">
+                          <col style="width:15%">
+                          <col style="width:12%">
                           <col style="width:10%">
-                          <col style="width:10%">
-                          <col style="width:16%">
-                          <col style="width:10%">
-                          <col style="width:7%">
-                          <col style="width:7%">
                           <col style="width:15%">
                       </colgroup>
                       <thead>
                           <tr>
                               <th scope="col">번호</th>
                               <th scope="col">주문번호</th>
-                              <th scope="col">ABO번호/아이디</th>
                               <th scope="col">성명</th>
                               <th scope="col">결제금액</th>
                               <th scope="col">실주문일자</th>
@@ -60,7 +58,6 @@
                           <tr [class.on]="selectedOrderNum == i" *ngFor="let order of orderHistoryList.orders; let i = index;" (click)="activeRowCart(i, order.code, order.user.uid)">
                               <td><span>{{(orderHistoryList.pagination.pageSize * orderHistoryList.pagination.currentPage)+(i+1)}}</span></td>
                               <td><span>{{order.code}}</span></td>
-                              <td><span>{{order.user.uid}}</span></td>
                               <td><span class="elips mx90 ac">{{order.user.name}}</span></td>
                               <td class="ar"><span>{{order.total.value | number}}원</span></td>
                               <td><span>{{order.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>

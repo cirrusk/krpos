@@ -4,6 +4,7 @@ import { ModalComponent, ModalService, AlertService, Modal, SpinnerService, Logg
 import { PagerService, OrderService, MessageService } from '../../../service';
 import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
 import { Utils } from '../../../core/utils';
+import { OrderList } from '../../../data/models/order/order';
 
 @Component({
   selector: 'pos-ecp-confirm',
@@ -68,8 +69,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       this.orderService.orderDetails(orderList.orders[0].user.uid, orderCodes).subscribe(
         orderDetail => {
           if (orderDetail) {
-            this.entryList = orderDetail.orders[0].entries;
-            this.setPage(Math.ceil(this.entryList.length / this.PAGE_SIZE));
+            this.setEntryList(orderDetail);
           }
         },
         error => {
@@ -83,6 +83,29 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         },
         () => { this.spinner.hide(); }
       );
+  }
+
+  setEntryList(orderList: OrderList): void {
+    this.entryList = orderList.orders[0].entries;
+
+    orderList.orders.forEach((order, index) => {
+      if (index > 0) {
+        order.entries.forEach(entry => {
+          const existedIdx = this.entryList.findIndex(
+            function (obj) {
+              return obj.product.code === entry.product.code;
+            }
+          );
+          if (existedIdx === -1) {
+            this.entryList.push(entry);
+          } else {
+            this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + entry.quantity);
+          }
+        });
+      }
+    });
+
+    this.setPage(Math.ceil(this.entryList.length / this.PAGE_SIZE));
   }
 
   /**

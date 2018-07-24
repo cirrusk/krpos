@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
 import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService, StorageService } from '../../../core';
 import { OrderService, MessageService, ReceiptService } from '../../../service';
-import { OrderHistoryList, OrderHistory } from '../../../data';
-import { Order } from '../../../data/models/order/order';
+import { OrderHistoryList, OrderHistory, OrderEntry } from '../../../data';
+import { Order, OrderList } from '../../../data/models/order/order';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -24,6 +24,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   orderType: string;
   orderTypeName: string;
   targetUserList: Map<string, number>;
+  entryList: Array<OrderEntry>;
 
   private confirmFlag = false;
   private searchType: string;
@@ -229,7 +230,82 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    */
   printECP(evt: any) {
     this.setSelected(evt);
+    const orderCodes = new Array<string>();
+      this.targetOrderHistoryList.orders.forEach(order => {
+        orderCodes.push(order.code);
+      });
+      this.spinner.show();
+      this.orderService.orderDetails(this.targetOrderHistoryList.orders[0].user.uid, orderCodes).subscribe(
+        orderDetail => {
+          if (orderDetail) {
+            this.setEntryList(orderDetail);
+          }
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
+            this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
 
+    // if (this.targetOrderHistoryList) {
+    //   const orderCodes = new Array<string>();
+    //   this.targetOrderHistoryList.orders.forEach(order => {
+    //     orderCodes.push(order.code);
+    //   });
+    //   this.spinner.show();
+    //   this.orderService.orderDetails(this.targetOrderHistoryList.orders[0].user.uid, orderCodes).subscribe(
+    //     orderDetail => {
+    //       if (orderDetail) {
+    //         try {
+    //           this.receiptService.reissueReceipts(orderDetail);
+    //           this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+    //         } catch (e) {
+    //           this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
+    //           this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+    //         }
+    //       }
+    //     },
+    //     error => {
+    //       this.spinner.hide();
+    //       const errdata = Utils.getError(error);
+    //       if (errdata) {
+    //         this.logger.set('pickup-order.component', `Reissue Receipts error type : ${errdata.type}`).error();
+    //         this.logger.set('pickup-order.component', `Reissue Receipts error message : ${errdata.message}`).error();
+    //         this.alert.error({ message: `${errdata.message}` });
+    //       }
+    //     },
+    //     () => { this.spinner.hide(); }
+    //   );
+    // }
+  }
+
+  setEntryList(orderList: OrderList): void {
+    this.entryList = orderList.orders[0].entries;
+
+    orderList.orders.forEach((order, index) => {
+      if (index > 0) {
+        order.entries.forEach(entry => {
+          const existedIdx = this.entryList.findIndex(
+            function (obj) {
+              return obj.product.code === entry.product.code;
+            }
+          );
+          if (existedIdx === -1) {
+            this.entryList.push(entry);
+          } else {
+            this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + entry.quantity);
+          }
+        });
+      }
+    });
+
+    this.receiptService.makeTextAndGroupSummaryPrint(this.entryList , this.orderTypeName);
     if (this.targetOrderHistoryList) {
       const orderCodes = new Array<string>();
       this.targetOrderHistoryList.orders.forEach(order => {
