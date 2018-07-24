@@ -89,6 +89,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }).subscribe(result => {
       if (result) {
         this.paid.nativeElement.value = result;
+        setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
       }
     });
   }
@@ -210,7 +211,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: receivedAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
+        paidAmount: receivedAmount, payAmount: payAmount, change: change, amwayExtendedOrdering: this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,
