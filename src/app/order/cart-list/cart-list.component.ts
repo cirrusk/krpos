@@ -408,7 +408,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.serialNumbers.push(data.serialNumber);
         this.addToCart(data.productCode);
       }
-      this.searchText.nativeElement.focus();
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
     });
   }
 
@@ -712,8 +712,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
       this.spinner.show();
       this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
-                                                                  accountId,
-                                                                  terminalInfo.pointOfService.name, cartType).subscribe(
+        accountId,
+        terminalInfo.pointOfService.name, cartType).subscribe(
           cartResult => {
             this.cartInfo = cartResult;
             this.sendRightMenu('c', true);
@@ -1005,8 +1005,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
         () => {
-            this.init();
-            this.storage.clearClient();
+          this.init();
+          this.storage.clearClient();
         },
         error => {
           this.spinner.hide();
