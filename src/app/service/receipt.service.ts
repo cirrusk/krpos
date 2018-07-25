@@ -140,38 +140,34 @@ export class ReceiptService implements OnDestroy {
      * @param cancelFlag 취소 여부
      */
     public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
-        let gCartInfo = new Cart();
-        let gPaymentCapture = new PaymentCapture();
-        let gAccount = new Accounts();
-        let gOrderDetail = new Order();
+
 
         this.order.groupOrder(order.user.uid, order.code).subscribe( result => {
             if (result) {
                 const groupOrder = result;
                 this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
                 groupOrder.orderList.forEach((gOrder, index) => {
-                    setTimeout(() => {
+                    // setTimeout(() => {
+                        let gPaymentCapture = new PaymentCapture();
                         const gJsonCartData = {
                             'user': {'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name},
                             'entries': gOrder.entries,
                             'totalPrice': gOrder.totalPrice,
                             'subTotal': gOrder.subTotal,
-                            'totalUnitCount': 10, // gOrder.totalUnitCount,
+                            'totalUnitCount': gOrder.totalUnitCount,
                             'totalPriceWithTax': gOrder.totalPriceWithTax,
                             'totalTax': gOrder.totalTax,
                             'totalDiscounts': gOrder.totalDiscounts
                         };
 
-                        gCartInfo = gJsonCartData as Cart;
-                        gOrderDetail = gOrder as Order;
+                        const gCartInfo = gJsonCartData as Cart;
+                        const gOrderDetail = gOrder as Order;
 
                         if (index === 0) {
                             gPaymentCapture = paymentCapture;
-                        } else {
-                            gPaymentCapture = new PaymentCapture();
                         }
 
-                        gAccount = gOrder.volumeABOAccount;
+                        const gAccount = gOrder.volumeABOAccount;
                         const jsonData = { 'parties': [{'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name}] };
 
                         Object.assign(gAccount, jsonData);
@@ -182,7 +178,7 @@ export class ReceiptService implements OnDestroy {
                         } else {
                             this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo);
                         }
-                    }, 500);
+                    // }, 1000);
                 });
             }
         });
@@ -456,7 +452,6 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
-            console.log({}, text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();
@@ -525,7 +520,6 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
-            console.log({}, text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();

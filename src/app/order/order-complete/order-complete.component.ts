@@ -19,6 +19,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   @Input() chkSearchTypeABO = true;
   @Input() chkSearchTypeC = false;
   @ViewChild('inputSearchText') private inputSearchText: ElementRef;
+  @ViewChild('searchMemberType') private searchMemberType: ElementRef;
   @ViewChild('searchType1') private searchTypeABO: ElementRef;
   @ViewChild('searchType2') private searchTypeC: ElementRef;
 
@@ -174,5 +175,13 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    */
   goOrder() {
     this.router.navigate(['/order']);
+  }
+
+  setInit() {
+    setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
+    this.inputSearchText.nativeElement.value = '';
+    this.searchMemberType.nativeElement.value = 'A';
+    this.changeMemberType('A');
+    this.init();
   }
 }

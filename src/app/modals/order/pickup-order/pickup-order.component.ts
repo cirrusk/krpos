@@ -14,7 +14,7 @@ import { Utils } from '../../../core/utils';
   templateUrl: './pickup-order.component.html'
 })
 export class PickupOrderComponent extends ModalComponent implements OnInit, OnDestroy {
-  private PAGE_SIZE = 5;
+  PAGE_SIZE = 5;
 
   private orderListSubscription: Subscription;
 
