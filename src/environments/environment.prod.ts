@@ -11,6 +11,9 @@ export const environment = {
   phytoCafeUserId: '8000003',
   serviceUserId: '8000004',
 
+  smallBagCode: '', // 비닐봉투 소 Product Code
+  bigBagCode: '',   // 비닐봉투 대 Product Code
+
   // pos configurations
   baseSiteId: 'amwaykorea',
   apiDomain: 'https://api.amway.co.kr',

@@ -16,6 +16,9 @@ export const environment = {
   phytoCafeUserId: '8000003',
   serviceUserId: '8000004',
 
+  smallBagCode: '', // 비닐봉투 소 Product Code
+  bigBagCode: '',   // 비닐봉투 대 Product Code
+
   // 임시 - 추후 삭제
   occEndpointDomain: 'http://localhost:4200',
 
