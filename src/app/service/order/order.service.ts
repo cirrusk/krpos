@@ -91,12 +91,13 @@ export class OrderService {
 
   /**
    * 그룹주문 상세 조회
+   *
    * @param ordercodes 주문코드 배열
    */
-  groupOrderDetails(ordercodes: Array<string>): Observable<OrderList> {
+  orderDetailsByOrderCodes(ordercodes: Array<string>): Observable<OrderList> {
     const param = { codes: ordercodes, fields: 'FULL' };
     const body = { codes: ordercodes };
-    const data = new HttpData('groupOrderDetails', null, body, param, 'json');
+    const data = new HttpData('orderDetailsByOrderCodes', null, body, param, 'json');
     return this.api.get(data);
   }
 
@@ -169,7 +170,7 @@ export class OrderService {
    * @param userid 회원 아이디
    * @param ordercode 주문번호
    */
-  issueReceipt(userid: string, ordercode: string): Observable<ResponseData>  {
+  issueReceipt(userid: string, ordercode: string): Observable<ResponseData> {
     const pathvariables = { userId: userid, orderCode: ordercode };
     const param = { fields: 'DEFAULT' };
     const data = new HttpData('issueReceipt', pathvariables, null, param, 'json');

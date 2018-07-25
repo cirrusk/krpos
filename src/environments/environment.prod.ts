@@ -53,7 +53,7 @@ export const environment = {
     searchCheque: '/{baseSiteId}/validateCheckNumber',
     orderList: '/{baseSiteId}/order/search',
     orderDetails: '/{baseSiteId}/users/{userId}/order-details',
-    groupOrderDetails: '/{baseSiteId}/order-details',
+    orderDetailsByOrderCodes: '/{baseSiteId}/order-details',
     createGroupCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/groupcart',
     getGroupCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/groupcart',
     getGroupOrder: '/{baseSiteId}/users/{userId}/orders/{orderId}/grouporder',
