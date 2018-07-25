@@ -123,9 +123,9 @@ export class ReceiptService implements OnDestroy {
             });
 
             if (cancelFlag) {
-                this.print(order.account, cartInfo, order, paymentCapture, 'Y');
+                this.print(order.account, cartInfo, order, paymentCapture, 'Y', null, null, null, true);
             } else {
-                this.print(order.account, cartInfo, order, paymentCapture);
+                this.print(order.account, cartInfo, order, paymentCapture, null, null, null, null, true);
             }
         });
 
@@ -465,6 +465,12 @@ export class ReceiptService implements OnDestroy {
         return rtn;
     }
 
+    /**
+     * 그룹주문 요약 영수증 출력
+     *
+     * @param orderEntry 주문 엔트리 정보
+     * @param type 주문유형 정보
+     */
     makeTextAndGroupSummaryPrint(orderEntry: Array<OrderEntry>, type: string): boolean {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
