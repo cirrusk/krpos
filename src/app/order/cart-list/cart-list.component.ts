@@ -385,7 +385,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       modalId: 'SearchProductComponent'
     }).subscribe(data => {
       if (data) {
-        console.log('SearchProductComponent serial number : ' + data.serialNumber);
+        this.logger.set('cart.list.component', `callSearchProduct : ${data.serialNumber}`).debug();
         this.serialNumbers.push(data.serialNumber);
         this.addToCart(data.productCode);
       }
@@ -632,7 +632,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   modalId: 'SerialComponent'
                 }).subscribe(data => {
                   if (data) {
-                    console.log('cart-list#selectProductInfo serial => ' + data.serialNumber);
+                    this.logger.set('cart.list.component', `selectProductInfo : ${data.serialNumber}`).debug();
                     this.serialNumbers.push(data.serialNumber);
                     this.addCartEntries(productCode);
                   }
