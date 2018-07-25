@@ -52,7 +52,7 @@ export class SearchService {
       params = { query: searchdata, fields: 'FULL', currentPage: currentpage + '', sort: '', pageSize: '5' };
     }
     const pathvariables = { userId: userId, cartId: cartId };
-    const data = new HttpData('productSearch', pathvariables, null, params);
+    const data = new HttpData('productSearchByCart', pathvariables, null, params);
     return this.api.get(data);
   }
 
