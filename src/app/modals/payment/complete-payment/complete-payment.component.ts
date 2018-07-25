@@ -9,7 +9,7 @@ import {
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
 import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering } from '../../../data';
-import { ReceiptService, PaymentService, MessageService, OrderService } from '../../../service';
+import { ReceiptService, PaymentService, MessageService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 
@@ -36,7 +36,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private alertsubscription: Subscription;
   private keyboardsubscription: Subscription;
   constructor(protected modalService: ModalService,
-    private orderService: OrderService,
     private printer: PrinterService, private receipt: ReceiptService,
     private payments: PaymentService, private keyboard: KeyboardService,
     private storage: StorageService, private spinner: SpinnerService,
