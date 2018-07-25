@@ -36,7 +36,7 @@ export class SearchService {
   }
 
   /**
-   * 기본 상품 검색
+   * 기본 상품 검색(재고포함)
    *
    * @param searchtype 검색유형(sku, vps : 일치 검색, 그외(상품명) : 유사검색)
    * @param searchdata 검색어 (SKU ID, BARCODE, 상품명)
@@ -44,7 +44,7 @@ export class SearchService {
    * @param cartId 카트 아이디
    * @param currentpage 현재페이지
    */
-  getBasicProductInfo(searchtype: string, searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
+  getBasicProductInfoByCart(searchtype: string, searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
     let params: any;
     if (searchtype === 'sku' || searchtype === 'vps') {
       params = { query: searchdata, fields: 'FULL', searchQueryContext: 'BARCODE', currentPage: currentpage + '', sort: '', pageSize: '5' };
@@ -53,6 +53,18 @@ export class SearchService {
     }
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('productSearchByCart', pathvariables, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * 기본 상품 검색
+   *
+   * @param searchdata 검색어 (SKU ID, BARCODE, 상품명)
+   */
+  getBasicProductInfo(searchdata: string): Observable<Products> {
+    const params = { query: searchdata, fields: 'FULL', currentPage: '0', sort: '', pageSize: '1' };
+
+    const data = new HttpData('productSearch', null, null, params);
     return this.api.get(data);
   }
 

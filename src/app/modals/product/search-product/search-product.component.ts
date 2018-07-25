@@ -107,7 +107,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
 
     this.spinner.show();
-    this.spsubscription = this.search.getBasicProductInfo(this.searchType, sval, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(
+    this.spsubscription = this.search.getBasicProductInfoByCart(this.searchType, sval, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(
       data => {
         this.products = data;
         this.productCount = data.pagination.totalResults;

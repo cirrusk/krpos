@@ -148,8 +148,8 @@ export class ReceiptService implements OnDestroy {
         this.order.groupOrder(order.user.uid, order.code).subscribe( result => {
             if (result) {
                 const groupOrder = result;
-                this.groupOrderTotalCount = (groupOrder.orders.length).toString();
-                groupOrder.orders.forEach((gOrder, index) => {
+                this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
+                groupOrder.orderList.forEach((gOrder, index) => {
                     setTimeout(() => {
                         const gJsonCartData = {
                             'user': {'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name},
@@ -456,6 +456,7 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
+            console.log({}, text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();
@@ -524,6 +525,7 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
+            console.log({}, text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();

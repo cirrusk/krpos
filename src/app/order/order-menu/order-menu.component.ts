@@ -83,6 +83,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       } else if (data.type === 'group') {
         if (data.data) {
           this.amwayExtendedOrdering = data.data;
+          this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order, index) {
+            return order.entries.length === 0;
+          });
         }
       }
     }
@@ -242,9 +245,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   private transformCartInfo(amwayExtendedOrdering: AmwayExtendedOrdering) {
     const jsonData = {
-      'user': amwayExtendedOrdering.orders[0].user,
+      'user': amwayExtendedOrdering.orderList[0].user,
       'totalPrice': amwayExtendedOrdering.totalValue,
-      'code': amwayExtendedOrdering.orders[0].code
+      'code': amwayExtendedOrdering.orderList[0].code
     };
     Object.assign(this.cartInfo, jsonData);
   }

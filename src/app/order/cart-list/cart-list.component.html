@@ -92,21 +92,21 @@
                 <ng-container *ngIf="orderType == 'n' || orderType == ''">
                     <!-- 비회원시 삭제1 -->
                     <em *ngIf="accountInfo;">
-                        {{accountInfo.accountTypeCode.toUpperCase() === memberType.CONSUMER ? accountInfo.parties[0].name : accountInfo.name}} 회원님
+                        {{accountInfo.accountTypeCode.toUpperCase() === memberType.ABO ? accountInfo.name: accountInfo.parties[0].name}} 회원님
                     </em>
 
-                    <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountTypeCode.toUpperCase() === memberType.CONSUMER ? accountInfo.parties[0].uid : accountInfo.uid}}</span>
+                    <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountTypeCode.toUpperCase() === memberType.ABO ? accountInfo.uid: accountInfo.parties[0].uid}}</span>
                     <span class="t02" *ngIf="accountInfo;">{{apprtype}}</span>
                     <!-- //비회원시 삭제1 -->
                 </ng-container>
                 <ng-container *ngIf="orderType == 'g'">
                     <!-- 비회원시 삭제1 -->
                     <em *ngIf="groupAccountInfo.length > 0;">
-                        {{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.CONSUMER ? groupAccountInfo[selectedUserIndex].parties[0].name
-                        : groupAccountInfo[selectedUserIndex].name}} 회원님
+                        {{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.ABO ? groupAccountInfo[selectedUserIndex].name
+                            : groupAccountInfo[selectedUserIndex].parties[0].name}} 회원님
                     </em>
-                    <span *ngIf="groupAccountInfo.length > 0;" class="t01">{{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.CONSUMER ? groupAccountInfo[selectedUserIndex].parties[0].uid
-                        : groupAccountInfo[selectedUserIndex].uid}}</span>
+                    <span *ngIf="groupAccountInfo.length > 0;" class="t01">{{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.ABO ? groupAccountInfo[selectedUserIndex].uid
+                        : groupAccountInfo[selectedUserIndex].parties[0].uid}}</span>
                     <span class="t02" *ngIf="groupAccountInfo.length > 0;">{{apprtype}}(그룹)</span>
                     <!-- //비회원시 삭제1 -->
                 </ng-container>

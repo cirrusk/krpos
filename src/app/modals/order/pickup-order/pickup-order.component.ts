@@ -1,10 +1,11 @@
+import { PagerService } from './../../../service/common/pager.service';
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
 import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService, StorageService } from '../../../core';
 import { OrderService, MessageService, ReceiptService } from '../../../service';
-import { OrderHistoryList, OrderHistory, OrderEntry } from '../../../data';
+import { OrderHistoryList, OrderHistory, OrderEntry, Pagination } from '../../../data';
 import { Order, OrderList } from '../../../data/models/order/order';
 import { Utils } from '../../../core/utils';
 
@@ -19,11 +20,13 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   @ViewChildren('ecporders') ecporders: QueryList<ElementRef>;
   @ViewChild('inputSearchText') searchValue: ElementRef;
-  sourceOrderHistoryList: OrderHistoryList;
-  targetOrderHistoryList: OrderHistoryList;
+  sourceList: OrderHistoryList;
+  targetList: OrderHistoryList;
+  currentTargetList: OrderHistoryList;
   orderType: string;
   orderTypeName: string;
   targetUserList: Map<string, number>;
+  targetListPager: Pagination;
   entryList: Array<OrderEntry>;
 
   private confirmFlag = false;
@@ -36,6 +39,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   constructor(protected modalService: ModalService,
               private orderService: OrderService,
+              private pagerService: PagerService,
               private modal: Modal,
               private spinner: SpinnerService,
               private messageService: MessageService,
@@ -48,9 +52,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   init() {
-    this.sourceOrderHistoryList = new OrderHistoryList(new Array<OrderHistory>());
-    this.targetOrderHistoryList = new OrderHistoryList(new Array<OrderHistory>());
+    this.sourceList = new OrderHistoryList(new Array<OrderHistory>());
+    this.targetList = new OrderHistoryList(new Array<OrderHistory>());
+    this.currentTargetList = new OrderHistoryList(new Array<OrderHistory>());
     this.targetUserList = new Map<string, number>();
+    this.targetListPager = new Pagination();
     this.searchType = '';
     this.searchText = '';
   }
@@ -97,8 +103,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     }
 
     let targetExistedIdx = -1;
-    if (this.targetOrderHistoryList.orders) {
-      targetExistedIdx = this.targetOrderHistoryList.orders.findIndex(
+    if (this.targetList.orders) {
+      targetExistedIdx = this.targetList.orders.findIndex(
         function (obj) {
           return obj.code === orderCode;
         }
@@ -108,14 +114,15 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     }
 
     if (targetExistedIdx === -1) {
-      const sourceExistedIdx: number = this.sourceOrderHistoryList.orders.findIndex(
+      const sourceExistedIdx: number = this.sourceList.orders.findIndex(
         function (obj) {
           return obj.code === orderCode;
         }
       );
-      this.checkUserDuplicate(this.sourceOrderHistoryList.orders[sourceExistedIdx].user.uid, 'a');
-      this.targetOrderHistoryList.orders.push(this.sourceOrderHistoryList.orders[sourceExistedIdx]);
+      this.checkUserDuplicate(this.sourceList.orders[sourceExistedIdx].user.uid, 'a');
+      this.targetList.orders.push(this.sourceList.orders[sourceExistedIdx]);
     }
+    this.setTargetPage(Math.ceil(this.targetList.orders.length / this.PAGE_SIZE), false);
   }
 
   /**
@@ -123,13 +130,14 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param orderCode
    */
   deleteOrder(orderCode: string): void {
-    const existedIdx: number = this.targetOrderHistoryList.orders.findIndex(
+    const existedIdx: number = this.targetList.orders.findIndex(
       function (obj) {
         return obj.code === orderCode;
       }
     );
-    this.checkUserDuplicate(this.targetOrderHistoryList.orders[existedIdx].user.uid, 'd');
-    this.targetOrderHistoryList.orders.splice(existedIdx, 1);
+    this.checkUserDuplicate(this.targetList.orders[existedIdx].user.uid, 'd');
+    this.targetList.orders.splice(existedIdx, 1);
+    this.setTargetPage(Math.ceil(this.targetList.orders.length / this.PAGE_SIZE), false);
   }
 
   /**
@@ -151,6 +159,21 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     this.getOrderList(this.searchType, this.channels, this.deliveryModes, this.orderStatus, 'A', this.searchText, page, false);
   }
 
+  setTargetPage(page: number, pagerFlag: boolean) {
+    if ((page < 1 || page > this.targetListPager.totalPages) && pagerFlag) {
+      return;
+    }
+
+    const currentUserData = this.pagerService.getCurrentPage(this.targetList.orders, page, this.PAGE_SIZE);
+
+    // pagination 생성 데이터 조회
+    this.targetListPager = currentUserData.get('pager') as Pagination;
+
+    // 출력 리스트 생성
+    // 리스트 결과가 없을 경우 리스트 초기화
+    this.currentTargetList.orders = currentUserData.get('list') as Array<OrderHistory>;
+  }
+
   /**
    * 주문 조회
    * @param searchType
@@ -165,9 +188,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
                                                              page, this.PAGE_SIZE, orderStatus).subscribe(
       resultData => {
         if (resultData) {
-          this.sourceOrderHistoryList = resultData;
-          if (barcodeFlag && this.sourceOrderHistoryList.orders.length === 1) {
-            this.moveOrder(null, this.sourceOrderHistoryList.orders[0].code);
+          this.sourceList = resultData;
+          if (barcodeFlag && this.sourceList.orders.length === 1) {
+            this.moveOrder(null, this.sourceList.orders[0].code);
           }
         }
       },
@@ -193,7 +216,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
     this.modal.openModalByComponent(EcpConfirmComponent,
       {
-        callerData: { orderList: this.targetOrderHistoryList  },
+        callerData: { orderList: this.targetList  },
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         modalId: 'EcpConfirmComponent'
@@ -202,7 +225,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   checkUserDuplicate(userId: string, type: string) {
-    const existedIdx: number = this.targetOrderHistoryList.orders.findIndex(
+    const existedIdx: number = this.targetList.orders.findIndex(
       function (obj) {
         return obj.user.uid === userId;
       }
@@ -231,11 +254,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   printECP(evt: any) {
     this.setSelected(evt);
     const orderCodes = new Array<string>();
-      this.targetOrderHistoryList.orders.forEach(order => {
+      this.targetList.orders.forEach(order => {
         orderCodes.push(order.code);
       });
       this.spinner.show();
-      this.orderService.orderDetails(this.targetOrderHistoryList.orders[0].user.uid, orderCodes).subscribe(
+      this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
         orderDetail => {
           if (orderDetail) {
             this.setEntryList(orderDetail);
@@ -306,13 +329,14 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     });
 
     this.receiptService.makeTextAndGroupSummaryPrint(this.entryList , this.orderTypeName);
-    if (this.targetOrderHistoryList) {
+
+    if (this.targetList) {
       const orderCodes = new Array<string>();
-      this.targetOrderHistoryList.orders.forEach(order => {
+      this.targetList.orders.forEach(order => {
         orderCodes.push(order.code);
       });
       this.spinner.show();
-      this.orderService.orderDetails(this.targetOrderHistoryList.orders[0].user.uid, orderCodes).subscribe(
+      this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
         orderDetail => {
           if (orderDetail) {
             try {
@@ -372,11 +396,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   selectAllRows(type: string) {
     if (type.toUpperCase() === 'A') {
-      this.sourceOrderHistoryList.orders.forEach(order => {
+      this.sourceList.orders.forEach(order => {
         this.moveOrder(null, order.code);
       });
     } else {
-      this.sourceOrderHistoryList.orders.forEach(order => {
+      this.sourceList.orders.forEach(order => {
         this.deleteOrder(order.code);
       });
     }

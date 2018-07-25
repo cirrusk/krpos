@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, AlertService, Modal, SpinnerService, Logger } from '../../../core';
-import { PagerService, OrderService, MessageService } from '../../../service';
+import { PagerService, OrderService, MessageService, SearchService } from '../../../service';
 import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
@@ -31,7 +31,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
               private messageService: MessageService,
               private logger: Logger,
               private orderService: OrderService,
-              private pagerService: PagerService) {
+              private pagerService: PagerService,
+              private searchService: SearchService) {
     super(modalService);
     this.init();
   }
@@ -67,9 +68,9 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       });
       this.spinner.show();
       this.orderService.orderDetails(orderList.orders[0].user.uid, orderCodes).subscribe(
-        orderDetail => {
-          if (orderDetail) {
-            this.setEntryList(orderDetail);
+        orderDetails => {
+          if (orderDetails) {
+            this.setEntryList(orderDetails);
           }
         },
         error => {
@@ -122,22 +123,42 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         }
       );
       if (existedIdx !== -1) {
-        this.spinner.hide();
         const confirmCount = this.entryList[existedIdx].ecpConfirmQty ? this.entryList[existedIdx].ecpConfirmQty : 0;
 
         if (this.entryList[existedIdx].quantity > confirmCount) {
           this.entryList[existedIdx].ecpConfirmQty = confirmCount + 1;
           this.setPage(page);
         } else {
+          this.spinner.hide();
           const errorCount = (confirmCount + 1) - this.entryList[existedIdx].quantity;
           this.popupExceed(this.entryList[existedIdx].product.code, this.entryList[existedIdx].product.name, this.entryList[existedIdx].quantity, errorCount);
         }
       } else {
-        this.spinner.hide();
-        this.popupNoProduct(productCode, 'test');
+        this.searchProductInfoSubscription = this.searchService.getBasicProductInfo(productCode).subscribe(
+          result => {
+            this.spinner.hide();
+            if (result) {
+              this.popupNoProduct(result.products[0].code, result.products[0].name);
+            }
+          },
+          error => {
+            this.spinner.hide();
+            const errdata = Utils.getError(error);
+            if (errdata) {
+              this.logger.set('ecp-confirm.component', `get order detail error type : ${errdata.type}`).error();
+              this.logger.set('ecp-confirm.component', `get order detail error message : ${errdata.message}`).error();
+              this.alert.error({ message: `${errdata.message}` });
+            }
+          },
+          () => { this.spinner.hide(); }
+        );
       }
     } catch (e) {
       this.spinner.hide();
+    } finally {
+      setTimeout(() => {
+        this.spinner.hide();
+      }, 500);
     }
   }
 
@@ -148,7 +169,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
       return;
     }
-
 
     const currentData = this.pagerService.getCurrentPage(this.entryList, page, this.PAGE_SIZE);
     // pagination 생성 데이터 조회
@@ -194,15 +214,17 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       });
 
     } catch (e) {
-      console.log(e);
+      this.logger.set('ecp-confirm.component', `confirm error type : ${e}`).error();
       this.spinner.hide();
     }
 
     // 이상이 있을 경우 메시지 전시
     if (errorType === 'S') {
+      // 수량 부족
       this.spinner.hide();
       this.popupShortage(productCode, productName, productQty, errorQty);
     } else if (errorType === 'E') {
+      // 수량 초과
       this.spinner.hide();
       this.popupExceed(productCode, productName, productQty, errorQty);
     } else {
@@ -210,7 +232,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       this.alert.info({ title: '',
                          message: this.messageService.get('ecpReceiptComplete'),
                          timer: true,
-                         interval: 1000});
+                         interval: 1500});
       this.close();
     }
   }

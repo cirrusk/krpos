@@ -24,9 +24,9 @@
                 <!-- 왼쪽테이블 -->
                 <div class="tbl_col fl bg_bar">
                     <!-- 5줄이 넘을 시 노출  -->
-                    <div class="paging" *ngIf="sourceOrderHistoryList.pagination && sourceOrderHistoryList.pagination.totalResults > 5">
-                        <button type="button" class="ico_comm prev01" [disabled]="sourceOrderHistoryList.pagination.currentPage === 0" (click)="setPage(sourceOrderHistoryList.pagination.currentPage - 1)">이전</button>
-                        <button type="button" class="ico_comm next01" [disabled]="sourceOrderHistoryList.pagination.currentPage === sourceOrderHistoryList.pagination.totalPages - 1" (click)="setPage(sourceOrderHistoryList.pagination.currentPage + 1)">다음</button>
+                    <div class="paging" *ngIf="sourceList.pagination && sourceList.pagination.totalResults > 5">
+                        <button type="button" class="ico_comm prev01" [disabled]="sourceList.pagination.currentPage === 0" (click)="setPage(sourceList.pagination.currentPage - 1)">이전</button>
+                        <button type="button" class="ico_comm next01" [disabled]="sourceList.pagination.currentPage === sourceList.pagination.totalPages - 1" (click)="setPage(sourceList.pagination.currentPage + 1)">다음</button>
                     </div>
                     <!-- //5줄이 넘을 시 노출  -->
                     <table>
@@ -50,7 +50,7 @@
                         </thead>
                         <tbody>
                             <!-- 선택시 tr에 on클래스 추가 -->
-                            <tr  #ecporders class="" *ngFor="let order of sourceOrderHistoryList.orders; let i = index;" (click)="moveOrder($event, order.code)">
+                            <tr  #ecporders class="" *ngFor="let order of sourceList.orders; let i = index;" (click)="moveOrder($event, order.code)">
                                 <td class="al"><span class="chk">{{order.code}}</span></td>
                                 <td><span>{{order.user.uid}}</span></td>
                                 <td class="tit"><span class="elips">{{order.user.name}}</span></td>
@@ -63,11 +63,11 @@
                 <!-- //왼쪽테이블 -->
                 <!-- 오른쪽테이블 -->
                 <div class="tbl_col fr bg_bar">
-                    <p class="txt" ><strong><span class="fc_red">{{targetUserList.size}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetOrderHistoryList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
+                    <p class="txt" ><strong><span class="fc_red">{{targetUserList.size}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
                     <!-- 5줄이 넘을 시 노출 -->
-                    <div class="paging" *ngIf="targetOrderHistoryList.pagination && targetOrderHistoryList.pagination.totalResults > 5">
-                        <button type="button" class="ico_comm prev01">이전</button>
-                        <button type="button" class="ico_comm next01">다음</button>
+                    <div class="paging" *ngIf="targetList.orders.length > PAGE_SIZE">
+                        <button type="button" [disabled]="targetListPager.currentPage === targetListPager.startPage" class="ico_comm prev01" (click)="setTargetPage(targetListPager.currentPage - 1, true)">이전</button>
+                        <button type="button" [disabled]="targetListPager.currentPage === targetListPager.endPage" class="ico_comm next01" (click)="setTargetPage(targetListPager.currentPage + 1, true)">다음</button>
                     </div>
                      <!-- 5줄이 넘을 시 노출  -->
                     <table>
@@ -89,7 +89,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let order of targetOrderHistoryList.orders; let i = index;" (click)="deleteOrder(order.code)">
+                            <tr *ngFor="let order of currentTargetList.orders; let i = index;" (click)="deleteOrder(order.code)">
                                 <td class="al"><span>{{order.code}}</span></td>
                                 <td><span>{{order.user.uid}}</span></td>
                                 <td class="tit"><span class="elips">{{order.user.name}}</span></td>
