@@ -17,11 +17,11 @@
                     <span class="txt">일</span>
                 </div>
                 <div class="check_etc">
-                    <input type="text" title="수표번호" maxlength=8 (keyup)="checkNoNext()" (keydown)="checkNo($event)" #checkno>
-                    <input type="text" title="발행점,발행지점 지로코드" maxlength=6 (keyup)="checkPointNext()" (keydown)="checkPoint($event)" #checkpoint>
-                    <input type="text" title="검증코드" maxlength=6 (keyup)="checkValCodeNext()" (keydown)="checkValCode($event)" #checkvalcode>
-                    <input type="text" title="수표종류" maxlength=2 (keyup)="checkTypeNext()" (keydown)="checkType($event)" #checktype>
-                    <input type="text" title="수표금액" (keyup)="checkPriceNext()" (keydown)="checkPrice($event)" (keydown.enter)="checkPriceFinal()" #checkprice>
+                    <input type="text" placeholder="수표번호" title="수표번호" maxlength=8 (keyup)="checkNoNext()" (keydown)="checkNo($event)" #checkno>
+                    <input type="text" placeholder="지로코드" title="발행점,발행지점 지로코드" maxlength=6 (keyup)="checkPointNext()" (keydown)="checkPoint($event)" #checkpoint>
+                    <input type="text" placeholder="검증코드" title="검증코드" maxlength=6 (keyup)="checkValCodeNext()" (keydown)="checkValCode($event)" #checkvalcode>
+                    <input type="text" placeholder="종류" title="수표종류" maxlength=2 (keyup)="checkTypeNext()" (keydown)="checkType($event)" #checktype>
+                    <input type="text" placeholder="수표금액" title="수표금액" (keyup)="checkPriceNext()" (keydown)="checkPrice($event)" (keydown.enter)="checkPriceFinal()" #checkprice>
                 </div>
             </div>
             <em *ngIf="finishStatus === null && check < 0" class="finish fail">{{apprmessage}}</em>
