@@ -254,9 +254,24 @@ export class CartListComponent implements OnInit, OnDestroy {
     //   });
   }
 
+  /**
+   * 메뉴에서 전달한 타입 정보를 받음.
+   * @param data 타입정보
+   */
   setType(data) {
     if (data) {
       this.apprtype = data.type;
+    }
+  }
+
+  /**
+   * 메뉴에서 전달한 프로모션 제품코드를 받음.
+   * @param data 프로모션 제품코드
+   */
+  setPromotion(data) {
+    if (data && data.product) {
+      this.searchMode = 'P';
+      this.popupSearch(data.product);
     }
   }
 
