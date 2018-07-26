@@ -208,7 +208,7 @@ export class ReceiptService implements OnDestroy {
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
-        if (isGroupOrder) {
+        if (isGroupOrder) { // 그룹주문의 경우 포인트 조회 subscribe 시 async 로 인해 출력 순서 꼬임.
             Object.assign(printInfo, { point: 0 });
             rtn = this.makeTextAndPrint(printInfo);
             if (rtn && reIssue) { this.issueReceipt(account, order); }
@@ -227,24 +227,6 @@ export class ReceiptService implements OnDestroy {
                 });
         }
         return rtn;
-        // this.paymentsubscription = this.payment.getBalance(uid).flatMap((result: Balance) => {
-        //     Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
-        //     return this.makeTextAndPrint(printInfo);
-        // }).subscribe(
-        //     print => {
-        //         this.printResult = print;
-        //         if (print && reIssue) {
-        //             this.issueReceipt(account, order);
-        //         }
-        //     }, error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
-        //         this.logger.set('receipt.service', `${error}`).error();
-        //         Object.assign(printInfo, { point: 0 });
-        //         this.makeTextAndPrint(printInfo).subscribe(print => {
-        //             this.printResult = print;
-        //             if (print && reIssue) { this.issueReceipt(account, order); }
-        //         });
-        //     });
-        // return this.printResult;
     }
 
     /**
@@ -267,7 +249,7 @@ export class ReceiptService implements OnDestroy {
      *
      * @param printInfo 영수증 출력 정보
      */
-    private makeTextAndPrint(printInfo: any): boolean { // Observable<boolean> {
+    private makeTextAndPrint(printInfo: any): boolean {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
         const order: Order = printInfo.order;
@@ -484,7 +466,6 @@ export class ReceiptService implements OnDestroy {
         }
         // 영수증 출력 - END
         return rtn;
-        // return Observable.of(rtn);
     }
 
     /**
