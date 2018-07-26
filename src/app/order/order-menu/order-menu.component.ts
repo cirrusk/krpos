@@ -25,7 +25,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private couponsubscription: Subscription;
   private accountInfo: Accounts;
   private cartInfo: Cart;
-  private orderInfoList: OrderHistoryList;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private orderType: string;
   @Input() promotionList: any;
@@ -42,7 +41,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.amwayExtendedOrdering = new AmwayExtendedOrdering();
+   }
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
@@ -65,10 +66,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.hasAccount = data.flag;
         if (data.data) {
           this.accountInfo = data.data;
-        }
-        if (!data.flag) {
+        } else {
           this.orderType = '';
-          this.amwayExtendedOrdering = new AmwayExtendedOrdering();
+          this.cartInfo = null;
+          this.amwayExtendedOrdering = null;
         }
       } else if (data.type === 'product') {
         if (this.orderType !== 'g') {
@@ -81,13 +82,17 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.hasCart = data.flag;
         if (data.data) {
           this.cartInfo = data.data;
+        } else {
+          this.cartInfo = null;
         }
       } else if (data.type === 'group') {
         if (data.data) {
           this.amwayExtendedOrdering = data.data;
-          this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order, index) {
+          this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order) {
             return order.entries.length === 0;
           });
+        } else {
+          this.amwayExtendedOrdering = null;
         }
       }
     }

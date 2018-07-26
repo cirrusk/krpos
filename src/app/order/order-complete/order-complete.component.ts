@@ -13,7 +13,7 @@ import { OrderDetailComponent } from '../../modals/order/order-detail/order-deta
   templateUrl: './order-complete.component.html'
 })
 export class OrderCompleteComponent implements OnInit, OnDestroy {
-  private PAGE_SIZE = 8;
+  private PAGE_SIZE = 7;
   private orderListSubscription: Subscription;
 
   @Input() chkSearchTypeABO = true;

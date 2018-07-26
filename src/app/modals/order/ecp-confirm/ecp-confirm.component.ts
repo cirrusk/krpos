@@ -67,7 +67,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         orderCodes.push(order.code);
       });
       this.spinner.show();
-      this.orderService.orderDetails(orderList.orders[0].user.uid, orderCodes).subscribe(
+      this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
         orderDetails => {
           if (orderDetails) {
             this.setEntryList(orderDetails);
