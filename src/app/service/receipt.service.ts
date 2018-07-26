@@ -1,12 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 
 import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry
+    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry, Balance
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -142,42 +143,42 @@ export class ReceiptService implements OnDestroy {
     public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
 
 
-        this.order.groupOrder(order.user.uid, order.code).subscribe( result => {
+        this.order.groupOrder(order.user.uid, order.code).subscribe(result => {
             if (result) {
                 const groupOrder = result;
                 this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
                 groupOrder.orderList.forEach((gOrder, index) => {
                     // setTimeout(() => {
-                        let gPaymentCapture = new PaymentCapture();
-                        const gJsonCartData = {
-                            'user': {'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name},
-                            'entries': gOrder.entries,
-                            'totalPrice': gOrder.totalPrice,
-                            'subTotal': gOrder.subTotal,
-                            'totalUnitCount': gOrder.totalUnitCount,
-                            'totalPriceWithTax': gOrder.totalPriceWithTax,
-                            'totalTax': gOrder.totalTax,
-                            'totalDiscounts': gOrder.totalDiscounts
-                        };
+                    let gPaymentCapture = new PaymentCapture();
+                    const gJsonCartData = {
+                        'user': { 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name },
+                        'entries': gOrder.entries,
+                        'totalPrice': gOrder.totalPrice,
+                        'subTotal': gOrder.subTotal,
+                        'totalUnitCount': gOrder.totalUnitCount,
+                        'totalPriceWithTax': gOrder.totalPriceWithTax,
+                        'totalTax': gOrder.totalTax,
+                        'totalDiscounts': gOrder.totalDiscounts
+                    };
 
-                        const gCartInfo = gJsonCartData as Cart;
-                        const gOrderDetail = gOrder as Order;
+                    const gCartInfo = gJsonCartData as Cart;
+                    const gOrderDetail = gOrder as Order;
 
-                        if (index === 0) {
-                            gPaymentCapture = paymentCapture;
-                        }
+                    if (index === 0) {
+                        gPaymentCapture = paymentCapture;
+                    }
 
-                        const gAccount = gOrder.volumeABOAccount;
-                        const jsonData = { 'parties': [{'uid' : gOrder.volumeABOAccount.uid, 'name' : gOrder.volumeABOAccount.name}] };
+                    const gAccount = gOrder.volumeABOAccount;
+                    const jsonData = { 'parties': [{ 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name }] };
 
-                        Object.assign(gAccount, jsonData);
-                        const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
+                    Object.assign(gAccount, jsonData);
+                    const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
 
-                        if (cancelFlag) {
-                            this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo);
-                        } else {
-                            this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo);
-                        }
+                    if (cancelFlag) {
+                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo);
+                    } else {
+                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo);
+                    }
                     // }, 1000);
                 });
             }
@@ -193,13 +194,14 @@ export class ReceiptService implements OnDestroy {
      * @param paymentCapture 결제캡쳐 정보
      * @param point 회원 포인트 정보(항상 출력 전에 새로 조회해야함.)
      * @param cancelFlag 취소 문구 삽입 (Y : 취소, N : 승인)
+     * @param groupInfo 그룹주문 페이지 정보
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      * @param reIssue 영수증 재발행 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string,
-                 groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean): boolean {
-        let rtn = true;
+        groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean): boolean {
+        const rtn = true;
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
@@ -207,18 +209,35 @@ export class ReceiptService implements OnDestroy {
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
-        this.paymentsubscription = this.payment.getBalance(uid).subscribe(
-            result => {
-                Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
-                rtn = this.makeTextAndPrint(printInfo);
-                if (rtn && reIssue) { this.issueReceipt(account, order); }
-            },
-            error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
-                this.logger.set('receipt.service', `${error}`).error();
-                Object.assign(printInfo, { point: 0 });
-                rtn = this.makeTextAndPrint(printInfo);
-                if (rtn && reIssue) { this.issueReceipt(account, order); }
+        // this.paymentsubscription = this.payment.getBalance(uid).subscribe(
+        //     result => {
+        //         Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+        //         rtn = this.makeTextAndPrint(printInfo);
+        //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+        //     },
+        //     error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+        //         this.logger.set('receipt.service', `${error}`).error();
+        //         Object.assign(printInfo, { point: 0 });
+        //         rtn = this.makeTextAndPrint(printInfo);
+        //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+        //     });
+
+        this.paymentsubscription = this.payment.getBalance(uid).flatMap((result: Balance) => {
+            Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+            return this.makeTextAndPrint(printInfo);
+        }).subscribe(print => {
+            if (print && reIssue) {
+                this.issueReceipt(account, order);
+            }
+        }, error => {
+            this.logger.set('receipt.service', `${error}`).error();
+            Object.assign(printInfo, { point: 0 });
+            this.makeTextAndPrint(printInfo).subscribe(print => {
+                if (print && reIssue) { this.issueReceipt(account, order); }
             });
+        });
+
+
         return rtn;
     }
 
@@ -242,7 +261,7 @@ export class ReceiptService implements OnDestroy {
      *
      * @param printInfo 영수증 출력 정보
      */
-    private makeTextAndPrint(printInfo: any): boolean {
+    private makeTextAndPrint(printInfo: any): Observable<boolean> {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
         const order: Order = printInfo.order;
@@ -458,7 +477,8 @@ export class ReceiptService implements OnDestroy {
             rtn = false;
         }
         // 영수증 출력 - END
-        return rtn;
+        // return rtn;
+        return Observable.of(rtn);
     }
 
     /**
