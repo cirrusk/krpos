@@ -6,7 +6,6 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, Modal } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
-import { AddCartBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 import { CartInfo } from './../../../data/models/order/cart-info';
 import { SerialComponent } from '../../scan/serial/serial.component';
@@ -38,7 +37,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private search: SearchService,
     private alert: AlertService,
     private spinner: SpinnerService,
-    private addCartBroker: AddCartBroker,
+    // private addCartBroker: AddCartBroker,
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
@@ -190,7 +189,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
           // this.addCartBroker.sendInfo(this.product);
         });
       } else {
-        this.result = { productCode: this.product.code, serialNumber: null };
+        this.result = { productCode: this.product.code, serialNumber: '' };
         // this.addCartBroker.sendInfo(this.product);
         this.close();
       }
