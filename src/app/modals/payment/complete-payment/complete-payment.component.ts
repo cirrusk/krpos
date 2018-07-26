@@ -235,8 +235,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       paymentType: 'c'
     }).subscribe(result => {
       if (result && result === '200') {
-        // 현금영수증 출력.
-        this.payFinishByEnter(true);
+        this.payFinishByEnter(true); // 현금영수증 출력.
       }
     });
   }
