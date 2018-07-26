@@ -29,7 +29,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private orderType: string;
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
-  @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();    // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
+  @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();      // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
+  @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 프로모션 팝업에서 제품코드를 받아 카트 컴포넌트에 전달
   constructor(private modal: Modal,
     private storage: StorageService,
     private payment: PaymentService,
@@ -220,10 +221,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   promotionOrder(evt: any) {
     if (!this.hasAccount) { return; }
-    // this.checkPromotionClass(evt);
     this.modal.openModalByComponent(PromotionOrderComponent, {
       closeByClickOutside: false,
       modalId: 'PromotionOrderComponent'
+    }).subscribe(result => {
+      if (result) {
+        this.posPromotion.emit({ product: result });
+      }
     });
   }
 
