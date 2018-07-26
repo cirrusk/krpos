@@ -468,7 +468,7 @@ table input[type='text'] {font-family:'NSM';}
 .scan input.w250 {width:250px}
 
 /* 수표 */
-.check_txt {text-align:center; margin-top:-5px; font-size:15px}
+.check_txt {text-align:center; margin-top:-4px; font-size:15px}
 .check_form {position:relative; width:740px; height:352px; margin-top:17px; background:url(/assets/images/common/img_check.gif) no-repeat}
 .check_form input {text-align:center; font-size:14px}
 .check_form input + input {margin-left:7px}
