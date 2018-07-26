@@ -71,7 +71,7 @@ export class CartService {
     const orderEntries: OrderEntry[] = [];
     const entry: OrderEntry = new OrderEntry(new ProductInfo(code));
     entry.quantity = 1;
-    if (serialNumbers) {
+    if (serialNumbers && serialNumbers.length > 0) {
       entry.serialNumbers = serialNumbers;
     }
     orderEntries.push(entry);

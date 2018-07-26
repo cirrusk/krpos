@@ -2,13 +2,10 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { PrinterDriver } from './printer.driver';
-// import { FormatReader } from '../common/format-reader';
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
 import { PrinterCommands } from './helper/printer-commands';
 import { PrinterConfigs } from './helper/printer-configs';
 import { Logger } from '../../logger/logger';
-// import { EscPos } from './helper/escpos/escpos';
-// import { Utils } from '../../utils';
 
 @Injectable()
 export class PrinterService {
@@ -18,7 +15,6 @@ export class PrinterService {
     private prtCmd: PrinterCommands;
     constructor(private printerDriver: PrinterDriver,
         private dirverReadyBroker: DriverReadyBroker,
-        // private formatReaderService: FormatReader,
         private logger: Logger) {
         this.prtCmd = new PrinterCommands();
         // Wait
