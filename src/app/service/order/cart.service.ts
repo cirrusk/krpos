@@ -71,7 +71,7 @@ export class CartService {
     const orderEntries: OrderEntry[] = [];
     const entry: OrderEntry = new OrderEntry(new ProductInfo(code));
     entry.quantity = 1;
-    serialNumbers = serialNumbers.filter(arr => arr != null) as string[];
+    serialNumbers = serialNumbers.filter(arr => (arr !== null && arr !== '')) as string[];
     if (serialNumbers && serialNumbers.length > 0) { // null값이 들어갈 경우 체크
       entry.serialNumbers = serialNumbers;
     }
