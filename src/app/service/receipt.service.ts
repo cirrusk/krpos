@@ -226,7 +226,7 @@ export class ReceiptService implements OnDestroy {
                     if (rtn && reIssue) { this.issueReceipt(account, order); }
                 });
         }
-        return true;
+        return rtn;
         // this.paymentsubscription = this.payment.getBalance(uid).flatMap((result: Balance) => {
         //     Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
         //     return this.makeTextAndPrint(printInfo);
