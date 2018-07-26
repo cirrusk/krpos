@@ -72,7 +72,7 @@ export class CartService {
     const entry: OrderEntry = new OrderEntry(new ProductInfo(code));
     entry.quantity = 1;
     if (serialNumbers && serialNumbers.length > 0) { // null값이 들어갈 경우 체크
-      entry.serialNumbers = serialNumbers;
+      entry.serialNumbers = serialNumbers.filter(arr => arr != null) as string[];
     }
     orderEntries.push(entry);
     orderList.orderEntries = orderEntries;
