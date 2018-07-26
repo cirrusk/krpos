@@ -20,7 +20,7 @@ import { PaymentService } from './payment/payment.service';
 export class ReceiptService implements OnDestroy {
 
     private groupOrderTotalCount;
-
+    private printResult = true;
     private paymentsubscription: Subscription;
     private ordersubscription: Subscription;
     constructor(private receitDataProvider: ReceiptDataProvider,
@@ -221,24 +221,24 @@ export class ReceiptService implements OnDestroy {
         //         rtn = this.makeTextAndPrint(printInfo);
         //         if (rtn && reIssue) { this.issueReceipt(account, order); }
         //     });
-
         this.paymentsubscription = this.payment.getBalance(uid).flatMap((result: Balance) => {
             Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
             return this.makeTextAndPrint(printInfo);
-        }).subscribe(print => {
-            if (print && reIssue) {
-                this.issueReceipt(account, order);
-            }
-        }, error => {
-            this.logger.set('receipt.service', `${error}`).error();
-            Object.assign(printInfo, { point: 0 });
-            this.makeTextAndPrint(printInfo).subscribe(print => {
-                if (print && reIssue) { this.issueReceipt(account, order); }
+        }).subscribe(
+            print => {
+                this.printResult = print;
+                if (print && reIssue) {
+                    this.issueReceipt(account, order);
+                }
+            }, error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+                this.logger.set('receipt.service', `${error}`).error();
+                Object.assign(printInfo, { point: 0 });
+                this.makeTextAndPrint(printInfo).subscribe(print => {
+                    this.printResult = print;
+                    if (print && reIssue) { this.issueReceipt(account, order); }
+                });
             });
-        });
-
-
-        return rtn;
+        return this.printResult;
     }
 
     /**
