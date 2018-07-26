@@ -1,13 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
 
 import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry, Balance
+    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -20,7 +19,6 @@ import { PaymentService } from './payment/payment.service';
 export class ReceiptService implements OnDestroy {
 
     private groupOrderTotalCount;
-    private printResult = true;
     private paymentsubscription: Subscription;
     private ordersubscription: Subscription;
     constructor(private receitDataProvider: ReceiptDataProvider,
@@ -140,7 +138,7 @@ export class ReceiptService implements OnDestroy {
      * @param paymentCapture Payment Capture 정보
      * @param cancelFlag 취소 여부
      */
-    public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
+    public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false, isCashReceipt = false) {
 
         this.order.groupOrder(order.user.uid, order.code).subscribe(result => {
             if (result) {
@@ -174,9 +172,9 @@ export class ReceiptService implements OnDestroy {
                     const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
 
                     if (cancelFlag) {
-                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo, null, null, false, true);
+                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo, null, null, false, true, false);
                     } else {
-                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true);
+                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true, isCashReceipt);
                     }
                     // }, 1000);
                 });
@@ -197,14 +195,16 @@ export class ReceiptService implements OnDestroy {
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      * @param reIssue 영수증 재발행 여부
+     * @param isGroupOrder 그룹주문 여부
+     * @param isCashReceipt 현금영수증(소득공제) 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string,
-        groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean): boolean {
+        groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean, isCashReceipt?: boolean): boolean {
         let rtn = true;
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
-            paymentCapture: paymentCapture, groupInfo: groupInfo
+            paymentCapture: paymentCapture, groupInfo: groupInfo, cashReceipt: isCashReceipt
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
@@ -263,6 +263,7 @@ export class ReceiptService implements OnDestroy {
         const posId: string = this.storage.getTerminalInfo().id;
         const token: AccessToken = this.storage.getTokenInfo();
         const groupInfo: string = printInfo.groupInfo;
+        const cashReceipt: boolean = printInfo.cashReceipt;
         // 영수증 출력 파라미터 설정 - END
 
         // orderSummery - START
@@ -290,7 +291,7 @@ export class ReceiptService implements OnDestroy {
         if (macAndCoNum) {
             orderInfo.setMacAndCoNum = macAndCoNum;
         } else {
-            if (order.deductionNumber) { // order.deductionNumber
+            if (order.deductionNumber) {
                 orderInfo.setMacAndCoNum = Utils.isEmpty(order.deductionNumber) ? this.message.get('deduction.msg') : order.deductionNumber;
             } else {
                 orderInfo.setMacAndCoNum = this.message.get('deduction.msg'); // '공제조합홈페이지 확인';
@@ -303,6 +304,10 @@ export class ReceiptService implements OnDestroy {
             orderInfo.setCancelFlag = cancelFlag;
         }
         // 영수증 취소 플래그 - END
+
+        // Additional Info - START
+        orderInfo.setCashReceipt = cashReceipt; // 현금 영수증 소득공제
+        // Additional Info - END
 
         // productList - START
         const productList = Array<any>();

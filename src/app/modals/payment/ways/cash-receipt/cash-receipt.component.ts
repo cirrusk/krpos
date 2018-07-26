@@ -89,6 +89,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
       this.receiptsubscription = this.order.receipt(userid, ordercode, params).subscribe(
         result => {
           if (result.code === '200') {
+            this.result = result.code;
             this.finishStatus = StatusDisplay.PAID;
             this.clientnum.nativeElement.blur();
             setTimeout(() => {

@@ -197,13 +197,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   /**
    * 영수증 출력 및 카트 초기화
    */
-  private printAndCartInit() {
+  private printAndCartInit(isCashReceipt?: boolean) {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.amwayExtendedOrdering !== undefined) {
-        this.receipt.groupPrint(this.accountInfo, this.orderInfo, this.paymentcapture);
+        this.receipt.groupPrint(this.accountInfo, this.orderInfo, this.paymentcapture, false, isCashReceipt);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       } else {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, null, null, null, null, false, false, isCashReceipt);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       }
     }
@@ -233,18 +233,23 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       closeByClickOutside: false,
       modalId: 'CashReceiptComponent',
       paymentType: 'c'
+    }).subscribe(result => {
+      if (result && result === '200') {
+        // 현금영수증 출력.
+        this.payFinishByEnter(true);
+      }
     });
   }
 
   /**
    * 결제 최종 엔터키 입력 시
    */
-  private payFinishByEnter() {
+  private payFinishByEnter(isCashReceipt?: boolean) {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
         this.printer.openCashDrawer();
       }
-      this.printAndCartInit();
+      this.printAndCartInit(isCashReceipt);
       this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 삭제
       this.storage.removePay(); // 복합결제 남은 금액 정보 초기화
       this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();

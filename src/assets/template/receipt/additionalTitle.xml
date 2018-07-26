@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    {{#if additional.title}}
-        {{#if additional.title.cashreceipt}}
+    {{#if orderInfo.cashReceipt}}
+        <line-feed lines='1'/>
             <align mode="center">
                 <text-line>
                     현금 (소득공제)
                 </text-line>
             </align>
-        {{/if}}
-        {{#if additional.title.cardcancel}}
-            <align mode="center">
-                <text-line>
-                    [{{additional.title.cardcancel.cardtype}} 결제취소]
-                </text-line>
-            </align>
-        {{/if}}
+        <line-feed lines='1'/>
     {{/if}}
 </document>

@@ -13,6 +13,7 @@ export class OrderInfo {
     protected date: string;
     protected cancelFlag: string;
     protected groupInfo: string;
+    protected cashReceipt: boolean;
     public set setCashier(cashier: Cashier) {
         this.cashier = cashier;
     }
@@ -33,6 +34,9 @@ export class OrderInfo {
     }
     public set setGroupInfo(_groupInfo: string) {
         this.groupInfo = _groupInfo;
+    }
+    public set setCashReceipt(cashReceipt: boolean) {
+        this.cashReceipt = cashReceipt;
     }
     constructor(posId: string, number: string, type?: string, macAndCoNum?: string) {
         this.posId = posId;

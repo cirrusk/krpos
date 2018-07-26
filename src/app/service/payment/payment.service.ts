@@ -1,4 +1,3 @@
-import { BatchInfo } from './../../data/models/common/batch-info';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -7,7 +6,7 @@ import 'rxjs/add/operator/timeout';
 import { ApiService, StorageService, Config } from '../../core';
 import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
-  ResponseData, BankInfoList, CapturePaymentInfo, Coupon
+  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, TerminalInfo, BatchInfo
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
@@ -16,7 +15,9 @@ import { Cart } from '../../data/models/order/cart';
 export class PaymentService {
 
   private directdebitTimeout: number;
-  constructor(private api: ApiService, private storage: StorageService, private config: Config) {
+  constructor(private api: ApiService,
+    private storage: StorageService,
+    private config: Config) {
     this.directdebitTimeout = this.config.getConfig('directdebitTimeout');
   }
 
@@ -172,4 +173,19 @@ export class PaymentService {
   placeOrderWithTimeout(userid: string, cartid: string, paymentcapture: CapturePaymentInfo, timeout = this.directdebitTimeout): Observable<Order> {
     return this.placeOrder(userid, cartid, paymentcapture).timeout(1000 * timeout);
   }
+
+  /**
+   * Cash Drawer open 로그 기록하기
+   * AD 계정, 시간, AP 정보, POS 정보. 돈통 열렸을 때만 기록
+   * cashier AD 번호
+   * open 시간
+   */
+  cashDrawerLogging() {
+    const batch: BatchInfo = this.storage.getBatchInfo();
+    const pos: TerminalInfo = this.storage.getTerminalInfo();
+
+    const data = new HttpData('cashdrawerLog', null, null, null, 'json');
+    return this.api.post(data);
+  }
+
 }
