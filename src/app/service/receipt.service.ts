@@ -142,7 +142,6 @@ export class ReceiptService implements OnDestroy {
      */
     public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
 
-
         this.order.groupOrder(order.user.uid, order.code).subscribe(result => {
             if (result) {
                 const groupOrder = result;
@@ -175,9 +174,9 @@ export class ReceiptService implements OnDestroy {
                     const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
 
                     if (cancelFlag) {
-                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo);
+                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo, null, null, false, true);
                     } else {
-                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo);
+                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true);
                     }
                     // }, 1000);
                 });
@@ -200,8 +199,8 @@ export class ReceiptService implements OnDestroy {
      * @param reIssue 영수증 재발행 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string,
-        groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean): boolean {
-        const rtn = true;
+        groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean): boolean {
+        let rtn = true;
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
@@ -209,36 +208,43 @@ export class ReceiptService implements OnDestroy {
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
-        // this.paymentsubscription = this.payment.getBalance(uid).subscribe(
-        //     result => {
-        //         Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
-        //         rtn = this.makeTextAndPrint(printInfo);
-        //         if (rtn && reIssue) { this.issueReceipt(account, order); }
-        //     },
-        //     error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+        if (isGroupOrder) {
+            Object.assign(printInfo, { point: 0 });
+            rtn = this.makeTextAndPrint(printInfo);
+            if (rtn && reIssue) { this.issueReceipt(account, order); }
+        } else {
+            this.paymentsubscription = this.payment.getBalance(uid).subscribe(
+                result => {
+                    Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                    rtn = this.makeTextAndPrint(printInfo);
+                    if (rtn && reIssue) { this.issueReceipt(account, order); }
+                },
+                error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+                    this.logger.set('receipt.service', `${error}`).error();
+                    Object.assign(printInfo, { point: 0 });
+                    rtn = this.makeTextAndPrint(printInfo);
+                    if (rtn && reIssue) { this.issueReceipt(account, order); }
+                });
+        }
+        return true;
+        // this.paymentsubscription = this.payment.getBalance(uid).flatMap((result: Balance) => {
+        //     Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+        //     return this.makeTextAndPrint(printInfo);
+        // }).subscribe(
+        //     print => {
+        //         this.printResult = print;
+        //         if (print && reIssue) {
+        //             this.issueReceipt(account, order);
+        //         }
+        //     }, error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
         //         this.logger.set('receipt.service', `${error}`).error();
         //         Object.assign(printInfo, { point: 0 });
-        //         rtn = this.makeTextAndPrint(printInfo);
-        //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+        //         this.makeTextAndPrint(printInfo).subscribe(print => {
+        //             this.printResult = print;
+        //             if (print && reIssue) { this.issueReceipt(account, order); }
+        //         });
         //     });
-        this.paymentsubscription = this.payment.getBalance(uid).flatMap((result: Balance) => {
-            Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
-            return this.makeTextAndPrint(printInfo);
-        }).subscribe(
-            print => {
-                this.printResult = print;
-                if (print && reIssue) {
-                    this.issueReceipt(account, order);
-                }
-            }, error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
-                this.logger.set('receipt.service', `${error}`).error();
-                Object.assign(printInfo, { point: 0 });
-                this.makeTextAndPrint(printInfo).subscribe(print => {
-                    this.printResult = print;
-                    if (print && reIssue) { this.issueReceipt(account, order); }
-                });
-            });
-        return this.printResult;
+        // return this.printResult;
     }
 
     /**
@@ -261,7 +267,7 @@ export class ReceiptService implements OnDestroy {
      *
      * @param printInfo 영수증 출력 정보
      */
-    private makeTextAndPrint(printInfo: any): Observable<boolean> {
+    private makeTextAndPrint(printInfo: any): boolean { // Observable<boolean> {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
         const order: Order = printInfo.order;
@@ -477,8 +483,8 @@ export class ReceiptService implements OnDestroy {
             rtn = false;
         }
         // 영수증 출력 - END
-        // return rtn;
-        return Observable.of(rtn);
+        return rtn;
+        // return Observable.of(rtn);
     }
 
     /**
