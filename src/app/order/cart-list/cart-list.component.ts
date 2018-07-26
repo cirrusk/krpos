@@ -146,7 +146,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     );
 
-    // 그룹 회원 선택, 파이토 카페 회원 선택
+    // 그룹 회원 선택
     this.accountInfoSubscription = this.searchAccountBroker.getInfo().subscribe(
       accountInfo => {
         if (accountInfo && accountInfo.type === 'g') {
@@ -164,15 +164,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     );
-
-    // 제품 선택 - modal result로 결과 받도록 수정 오류 시 복구처리
-    // this.productSubscription = this.addCartBroker.getInfo().subscribe(
-    //   productInfo => {
-    //     if (productInfo) {
-    //       this.addToCart(productInfo.code);
-    //     }
-    //   }
-    // );
 
     // 보류 복원
     this.restoreCartSubscription = this.restoreCartBroker.getInfo().subscribe(
@@ -1342,6 +1333,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private searchPhytoCafeAccount() {
     const phytoUserId = this.config.getConfig('phytoCafeUserId');
     if (phytoUserId) {
+      this.spinner.show();
       this.searchSubscription = this.searchService.getAccountList('C', phytoUserId).subscribe(
         result => {
           const account = result.accounts[0];
@@ -1349,7 +1341,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           const jsonData = { 'balance': [{ amount: 0 }, { amount: 0 }] };
           Object.assign(account, jsonData);
           this.storage.setCustomer(account);
-        }
+        },
+        () => { this.spinner.hide(); }
       );
     }
   }
