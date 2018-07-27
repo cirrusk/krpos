@@ -265,6 +265,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 메뉴에서 파이토 카페 선택 시 전달된 이벤트 받아
    * 파이토 카페 회원 설정
+   * @param data 파이토 카페 여부
    */
   setPytoCafe(data) {
     if (data && data.pytocafe) {
