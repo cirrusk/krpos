@@ -42,9 +42,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  ngOnInit() {
-    this.amwayExtendedOrdering = new AmwayExtendedOrdering();
-   }
+  ngOnInit() {}
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
@@ -70,7 +68,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         } else {
           this.orderType = '';
           this.cartInfo = null;
-          this.amwayExtendedOrdering = null;
+          this.amwayExtendedOrdering = data.data;
         }
       } else if (data.type === 'product') {
         if (this.orderType !== 'g') {
@@ -93,7 +91,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             return order.entries.length === 0;
           });
         } else {
-          this.amwayExtendedOrdering = null;
+          this.amwayExtendedOrdering = data.data;
         }
       }
     }

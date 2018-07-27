@@ -145,7 +145,6 @@ export class ReceiptService implements OnDestroy {
                 const groupOrder = result;
                 this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
                 groupOrder.orderList.forEach((gOrder, index) => {
-                    // setTimeout(() => {
                     let gPaymentCapture = new PaymentCapture();
                     const gJsonCartData = {
                         'user': { 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name },
@@ -176,7 +175,6 @@ export class ReceiptService implements OnDestroy {
                     } else {
                         this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true, isCashReceipt);
                     }
-                    // }, 1000);
                 });
             }
         });
@@ -213,18 +211,33 @@ export class ReceiptService implements OnDestroy {
             rtn = this.makeTextAndPrint(printInfo);
             if (rtn && reIssue) { this.issueReceipt(account, order); }
         } else {
-            this.paymentsubscription = this.payment.getBalance(uid).subscribe(
+            // promist 로 변경후 임시 주석
+            // 문제 없을 경우 삭제 처리
+            // this.paymentsubscription = this.payment.getBalance(uid).subscribe(
+            //     result => {
+            //         Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+            //         rtn = this.makeTextAndPrint(printInfo);
+            //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+            //     },
+            //     error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+            //         this.logger.set('receipt.service', `${error}`).error();
+            //         Object.assign(printInfo, { point: 0 });
+            //         rtn = this.makeTextAndPrint(printInfo);
+            //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+            //     });
+            this.payment.getBalance(uid).toPromise().then(
                 result => {
                     Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
                     rtn = this.makeTextAndPrint(printInfo);
                     if (rtn && reIssue) { this.issueReceipt(account, order); }
                 },
-                error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+                error => {
                     this.logger.set('receipt.service', `${error}`).error();
                     Object.assign(printInfo, { point: 0 });
                     rtn = this.makeTextAndPrint(printInfo);
                     if (rtn && reIssue) { this.issueReceipt(account, order); }
-                });
+                }
+            );
         }
         return rtn;
     }
