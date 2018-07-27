@@ -200,7 +200,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private printAndCartInit(isCashReceipt?: boolean) {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.amwayExtendedOrdering !== undefined) {
-        this.receipt.groupPrint(this.accountInfo, this.orderInfo, this.paymentcapture, false, isCashReceipt);
+        this.receipt.groupPrint(this.orderInfo, this.paymentcapture, false, isCashReceipt);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       } else {
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, null, null, null, null, false, false, isCashReceipt);

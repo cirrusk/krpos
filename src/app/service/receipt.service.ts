@@ -88,7 +88,7 @@ export class ReceiptService implements OnDestroy {
      * @param orderData 주문 정보
      * @param cancelFlag 취소여부
      */
-    public reissueReceipts(orderData: OrderList, cancelFlag = false): void {
+    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false): void {
         let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
@@ -121,10 +121,14 @@ export class ReceiptService implements OnDestroy {
                 jsonPaymentData = {};
             });
 
-            if (cancelFlag) {
-                this.print(order.account, cartInfo, order, paymentCapture, 'Y', null, null, null, true);
+            if (groupOrderFlag) {
+                this.groupPrint(order, paymentCapture, cancelFlag);
             } else {
-                this.print(order.account, cartInfo, order, paymentCapture, null, null, null, null, true);
+                if (cancelFlag) {
+                    this.print(order.account, cartInfo, order, paymentCapture, 'Y', null, null, null, true);
+                } else {
+                    this.print(order.account, cartInfo, order, paymentCapture, null, null, null, null, true);
+                }
             }
         });
 
@@ -138,7 +142,7 @@ export class ReceiptService implements OnDestroy {
      * @param paymentCapture Payment Capture 정보
      * @param cancelFlag 취소 여부
      */
-    public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false, isCashReceipt = false) {
+    public groupPrint(order: Order, paymentCapture: PaymentCapture, cancelFlag = false, isCashReceipt = false) {
 
         this.order.groupOrder(order.user.uid, order.code).subscribe(result => {
             if (result) {

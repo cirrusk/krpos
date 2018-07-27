@@ -23,6 +23,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   cancelSymbol: string;
   cancelFlag: boolean;
   activeFlag: boolean;
+  orderType: string;
   paymentCapture: PaymentCapture;
 
   constructor(protected modalService: ModalService,
@@ -44,6 +45,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   ngOnInit() {
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+    if (this.orderInfo.parentOrder !== '') {
+      this.orderType = 'g';
+    }
     this.checkCancelStatus(this.orderInfo);
     this.clientId = this.storageService.getClientId();
     this.emloyeeName = this.storageService.getEmloyeeName();
@@ -57,6 +61,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.cancelSymbol = '';
     this.cancelFlag = false;
     this.activeFlag = false;
+    this.orderType = 'n';
     this.paymentCapture = new PaymentCapture();
   }
 
@@ -193,11 +198,17 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    */
   reissueReceipts() {
     try {
-      this.receiptService.reissueReceipts(this.orderDetail);
-      this.alert.info({ title: '영수증 재발행',
-                        message: this.messageService.get('receiptComplete'),
-                        timer: true,
-                        interval: 1000});
+      const cancelFlag = this.cancelSymbol === '-' ? true : false;
+
+      if (this.orderType === 'g') {
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true);
+      } else {
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag);
+        this.alert.info({ title: '영수증 재발행',
+                          message: this.messageService.get('receiptComplete'),
+                          timer: true,
+                          interval: 1000});
+      }
     } catch (e) {
       this.logger.set('order-detail.component', `Reissue Receipts error type : ${e}`).error();
       this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail'),
