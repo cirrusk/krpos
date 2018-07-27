@@ -203,7 +203,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.receipt.groupPrint(this.orderInfo, this.paymentcapture, false, isCashReceipt);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       } else {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, null, null, null, null, false, false, isCashReceipt);
+        const params = {
+          isCashReceipt: isCashReceipt
+        };
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, params);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       }
     }
@@ -254,7 +257,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       this.logger.set('complete.payment.component', '결제 장바구니 초기화...').debug();
       this.info.sendInfo('orderClear', 'clear');
       this.close();
-   }
+    }
   }
 
   @HostListener('document:keydown', ['$event'])

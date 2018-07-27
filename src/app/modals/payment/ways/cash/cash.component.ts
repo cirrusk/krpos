@@ -335,7 +335,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private payFinishByEnter() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
         this.info.sendInfo('orderClear', 'clear');
       }
       this.close();

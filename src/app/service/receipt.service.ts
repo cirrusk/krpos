@@ -285,7 +285,7 @@ export class ReceiptService implements OnDestroy {
      * @param isCashReceipt 현금영수증(소득공제) 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture,
-        { cancelFlag = 'N', groupInfo = '', type = '', macAndCoNum = '', reIssue = false, isGroupOrder = false, isCashReceipt = false }:
+        { cancelFlag = 'N', groupInfo = null, type = null, macAndCoNum = null, reIssue = false, isGroupOrder = false, isCashReceipt = false }:
             { cancelFlag?: string, groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean, isCashReceipt?: boolean }
     ): boolean {
         let rtn = true;

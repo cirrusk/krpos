@@ -257,7 +257,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private payFinishByEnter() {
     if (this.paymentType === 'n') { // 일반결제
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
         this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
         this.info.sendInfo('orderClear', 'clear');
       }

@@ -464,7 +464,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private payFinishByEnter() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentType === 'n') { // 일반결제
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
+        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
         this.logger.set('credit.card.component', '일반결제 장바구니 초기화...').debug();
         this.info.sendInfo('orderClear', 'clear');
         this.close();
