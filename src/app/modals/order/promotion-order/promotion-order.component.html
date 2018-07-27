@@ -16,7 +16,7 @@
               <div class="chc_wrap">
                   <!-- 결제수단 선택시 on클래스 추가 -->
                   <ng-container *ngFor="let product of promotionProducts; let i = index;">
-                  <a #promotions href *ngIf="checkPaging(i)" (click)="!!promotion($event, product)" class="chc_type02"><span>프로모션{{i + 1}}</span><i class="ico_comm prom00"></i></a>
+                  <a #promotions href *ngIf="checkPaging(i)" (click)="!!promotion($event, product)" class="chc_type02"><span>Test 프로모션 프로모션 프로모션{{i + 1}}</span><i class="ico_comm prom00"></i></a>
                   </ng-container>
                   <a #promotions href *ngIf="checkPaging(promotionProducts.length)" (click)="!!promotionBasic($event, 's')" class="chc_type04"><span>비닐봉투 소</span><i class="ico_comm prom01"></i></a>
                   <a #promotions href *ngIf="checkPaging(promotionProducts.length + 1)" (click)="!!promotionBasic($event, 'b')" class="chc_type04"><span>비닐봉투 대</span><i class="ico_comm prom02"></i></a>
