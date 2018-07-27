@@ -86,7 +86,8 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
   }
 
   phytoCafeOrder() {
-    this.info.sendInfo('pyt', { action: true }); // order 에 이벤트 전송 파이토 유저로 변경
+    // this.info.sendInfo('pyt', { action: true }); // order 에 이벤트 전송 파이토 유저로 변경
+    this.result = 'pyt';
     this.close();
   }
 

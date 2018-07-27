@@ -10,7 +10,13 @@
   <!-- 우측영역 -->
   <div class="m_right">
       <!-- 메뉴 -->
-      <pos-order-menu [promotionList]="promotionList" (posMenu)="posCart.setType($event)" (posPromotion)="posCart.setPromotion($event)" #posMenu></pos-order-menu>
+      <pos-order-menu 
+        [promotionList]="promotionList" 
+        (posMenu)="posCart.setType($event)" 
+        (posPromotion)="posCart.setPromotion($event)" 
+        (posPytoCafe)="posCart.setPytoCafe($event)" 
+        #posMenu>
+      </pos-order-menu>
       <!-- //메뉴 -->
   </div>
   <!-- //우측영역-->

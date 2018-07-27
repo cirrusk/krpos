@@ -28,7 +28,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateVolumeAccountSubscription: Subscription;
   private addCartSubscription: Subscription;
   private updateCartSubscription: Subscription;
-  // private productSubscription: Subscription;
   private removeEntrySubscription: Subscription;
   private removeCartSubscription: Subscription;
   private restoreCartSubscription: Subscription;
@@ -37,7 +36,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   private productInfoSubscription: Subscription;
   private copyCartEntriesSubscription: Subscription;
   private updateItemQtySubscription: Subscription;
-  private phytoCafeSubscription: Subscription;
   private searchSubscription: Subscription;
   private infoSubscription: Subscription;
   private paymentsubscription: Subscription;
@@ -105,7 +103,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     private spinner: SpinnerService,
     private payment: PaymentService,
     private message: MessageService,
-    // private addCartBroker: AddCartBroker,
     private searchAccountBroker: SearchAccountBroker,
     private restoreCartBroker: RestoreCartBroker,
     private cancleOrderBroker: CancleOrderBroker,
@@ -197,26 +194,17 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     );
-
   }
 
   ngOnInit() {
     this.checkChar();
     this.printerService.init();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
-    this.phytoCafeSubscription = this.info.getInfo().subscribe(
-      result => {
-        if (result && result.type === 'pyt') {
-          this.searchPhytoCafeAccount();
-        }
-      }
-    );
   }
 
   ngOnDestroy() {
     if (this.cartInfoSubscription) { this.cartInfoSubscription.unsubscribe(); }
     if (this.accountInfoSubscription) { this.accountInfoSubscription.unsubscribe(); }
-    // if (this.productSubscription) { this.productSubscription.unsubscribe(); }
     if (this.updateVolumeAccountSubscription) { this.updateVolumeAccountSubscription.unsubscribe(); }
     if (this.addCartSubscription) { this.addCartSubscription.unsubscribe(); }
     if (this.removeEntrySubscription) { this.removeEntrySubscription.unsubscribe(); }
@@ -228,7 +216,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.productInfoSubscription) { this.productInfoSubscription.unsubscribe(); }
     if (this.copyCartEntriesSubscription) { this.copyCartEntriesSubscription.unsubscribe(); }
     if (this.updateItemQtySubscription) { this.updateItemQtySubscription.unsubscribe(); }
-    if (this.phytoCafeSubscription) { this.phytoCafeSubscription.unsubscribe(); }
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
@@ -272,6 +259,16 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (data && data.product) {
       this.searchMode = 'P';
       this.popupSearch(data.product);
+    }
+  }
+
+  /**
+   * 메뉴에서 파이토 카페 선택 시 전달된 이벤트 받아
+   * 파이토 카페 회원 설정
+   */
+  setPytoCafe(data) {
+    if (data && data.pytocafe) {
+      this.searchPhytoCafeAccount();
     }
   }
 

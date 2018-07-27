@@ -31,6 +31,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();      // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
   @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 프로모션 팝업에서 제품코드를 받아 카트 컴포넌트에 전달
+  @Output() public posPytoCafe: EventEmitter<any> = new EventEmitter<any>();      // 파이토 카페 선택 시 카트컴포넌트에 전달
   constructor(private modal: Modal,
     private storage: StorageService,
     private payment: PaymentService,
@@ -42,7 +43,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
@@ -241,6 +242,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       callerData: { accountInfo: this.accountInfo },
       closeByClickOutside: false,
       modalId: 'EtcOrderComponent'
+    }).subscribe(result => {
+      if (result && result === 'pyt') {
+        this.posPytoCafe.emit({ pytocafe: true });
+      }
     });
   }
 
