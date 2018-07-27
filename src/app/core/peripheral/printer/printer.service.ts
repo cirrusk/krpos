@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/delay';
 
 import { PrinterDriver } from './printer.driver';
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';
@@ -56,18 +57,32 @@ export class PrinterService {
         );
     }
 
-    public printText(rawData: string) {
-        this.printerDriver.printRawModeText(rawData).subscribe(
-            () => {
+    public printText(rawData: string, delay?: number) {
+        if (delay) {
+            this.printerDriver.printRawModeText(rawData).delay(delay).subscribe(
+                () => {
 
-            },
-            (err) => {
-                throw err;
-            },
-            () => {
-                this.logger.set('printer.service', 'Printing[Text] is complete').debug();
-            }
-        );
+                },
+                (err) => {
+                    throw err;
+                },
+                () => {
+                    this.logger.set('printer.service', 'Printing[Text] is complete').debug();
+                }
+            );
+        } else {
+            this.printerDriver.printRawModeText(rawData).subscribe(
+                () => {
+
+                },
+                (err) => {
+                    throw err;
+                },
+                () => {
+                    this.logger.set('printer.service', 'Printing[Text] is complete').debug();
+                }
+            );
+        }
     }
 
     public sendCommand(cmd: string) {
