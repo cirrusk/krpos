@@ -126,6 +126,14 @@ export class CartService {
       });
   }
 
+  // copyGroupCartEntries(subUserInfo: Accounts, cartInfo: CartInfo, orderEntries: Array<OrderEntry>): any {
+  //   this.createGroupCart(cartInfo.user.uid, cartInfo.code, subUserInfo.parties[0].uid)
+  //     .flatMap((amwayExtendedOrdering: AmwayExtendedOrdering) => {
+  //       return this.addCartEntries(cartInfo.user.uid, amwayExtendedOrdering.orders[amwayExtendedOrdering.orders.length - 1].code, orderEntries)
+  //       .map(addEntries => addEntries as Object);
+  //     });
+  // }
+
   /**
    * 제품 수량 수정
    * @param userId
