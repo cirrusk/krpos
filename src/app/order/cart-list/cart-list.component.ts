@@ -1242,6 +1242,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 
+    this.selectedCartNum = this.currentCartList.length - 1;
+
     this.totalPriceInfo();
   }
 
