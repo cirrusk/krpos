@@ -57,32 +57,18 @@ export class PrinterService {
         );
     }
 
-    public printText(rawData: string, delay?: number) {
-        if (delay) {
-            this.printerDriver.printRawModeText(rawData).delay(delay).subscribe(
-                () => {
+    public printText(rawData: string) {
+        this.printerDriver.printRawModeText(rawData).subscribe(
+            () => {
 
-                },
-                (err) => {
-                    throw err;
-                },
-                () => {
-                    this.logger.set('printer.service', 'Printing[Text] is complete').debug();
-                }
-            );
-        } else {
-            this.printerDriver.printRawModeText(rawData).subscribe(
-                () => {
-
-                },
-                (err) => {
-                    throw err;
-                },
-                () => {
-                    this.logger.set('printer.service', 'Printing[Text] is complete').debug();
-                }
-            );
-        }
+            },
+            (err) => {
+                throw err;
+            },
+            () => {
+                this.logger.set('printer.service', 'Printing[Text] is complete').debug();
+            }
+        );
     }
 
     public sendCommand(cmd: string) {
