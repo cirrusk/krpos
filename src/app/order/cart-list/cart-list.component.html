@@ -136,7 +136,7 @@
                     <!-- 비회원시 삭제3 -->
                     <dl *ngIf="accountInfo && accountInfo.accountTypeCode !== memberType.CONSUMER;">
                         <dt>Re-Cash</dt>
-                        <dd>{{recash | number}}원</dd>
+                        <dd>{{recash < 0 ? 0 : recash | number}}원</dd>
                     </dl>
                     <!-- //비회원시 삭제3 -->
                 </div>
