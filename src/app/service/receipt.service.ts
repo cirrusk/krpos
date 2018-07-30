@@ -1,13 +1,15 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/toPromise';
 
 import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry, Balance
+    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry,
+    GroupResponseData, AmwayExtendedOrdering
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -20,9 +22,9 @@ import { PaymentService } from './payment/payment.service';
 export class ReceiptService implements OnDestroy {
 
     private groupOrderTotalCount;
-    private printResult = true;
     private paymentsubscription: Subscription;
     private ordersubscription: Subscription;
+    private groupordersubscription: Subscription;
     constructor(private receitDataProvider: ReceiptDataProvider,
         private orders: OrderService,
         private payment: PaymentService,
@@ -45,6 +47,7 @@ export class ReceiptService implements OnDestroy {
     dispose() {
         if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
         if (this.ordersubscription) { this.ordersubscription.unsubscribe(); }
+        if (this.groupordersubscription) { this.groupordersubscription.unsubscribe(); }
     }
 
     public aboNormal(data: any): string {
@@ -90,7 +93,7 @@ export class ReceiptService implements OnDestroy {
      * @param orderData 주문 정보
      * @param cancelFlag 취소여부
      */
-    public reissueReceipts(orderData: OrderList, cancelFlag = false): void {
+    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false): void {
         let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
@@ -123,10 +126,17 @@ export class ReceiptService implements OnDestroy {
                 jsonPaymentData = {};
             });
 
-            if (cancelFlag) {
-                this.print(order.account, cartInfo, order, paymentCapture, 'Y', null, null, null, true);
+            if (groupOrderFlag) {
+                this.groupPrint(order, paymentCapture, cancelFlag);
             } else {
-                this.print(order.account, cartInfo, order, paymentCapture, null, null, null, null, true);
+                const params = {
+                    cancelFlag: cancelFlag ? 'Y' : 'N',
+                    groupInfo: null,
+                    reIssue: true,
+                    isGroupOrder: false,
+                    isCashReceipt: false
+                };
+                this.print(order.account, cartInfo, order, paymentCapture, params);
             }
         });
 
@@ -140,46 +150,122 @@ export class ReceiptService implements OnDestroy {
      * @param paymentCapture Payment Capture 정보
      * @param cancelFlag 취소 여부
      */
-    public groupPrint(account: Accounts, order: Order, paymentCapture: PaymentCapture, cancelFlag = false) {
+    public groupPrint(order: Order, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) {
 
-        this.order.groupOrder(order.user.uid, order.code).subscribe(result => {
-            if (result) {
-                const groupOrder = result;
-                this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
-                groupOrder.orderList.forEach((gOrder, index) => {
-                    let gPaymentCapture = new PaymentCapture();
-                    const gJsonCartData = {
-                        'user': { 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name },
-                        'entries': gOrder.entries,
-                        'totalPrice': gOrder.totalPrice,
-                        'subTotal': gOrder.subTotal,
-                        'totalUnitCount': gOrder.totalUnitCount,
-                        'totalPriceWithTax': gOrder.totalPriceWithTax,
-                        'totalTax': gOrder.totalTax,
-                        'totalDiscounts': gOrder.totalDiscounts
+        this.groupordersubscription = this.order.groupOrder(order.user.uid, order.code).subscribe(
+            result => {
+                if (result) {
+                    const groupOrder: AmwayExtendedOrdering = result;
+                    this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
+
+                    this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt);
+
+                    // groupOrder.orderList.forEach((gOrder, index) => {
+                    //     let gPaymentCapture = new PaymentCapture();
+                    //     const gJsonCartData = {
+                    //         'user': { 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name },
+                    //         'entries': gOrder.entries,
+                    //         'totalPrice': gOrder.totalPrice,
+                    //         'subTotal': gOrder.subTotal,
+                    //         'totalUnitCount': gOrder.totalUnitCount,
+                    //         'totalPriceWithTax': gOrder.totalPriceWithTax,
+                    //         'totalTax': gOrder.totalTax,
+                    //         'totalDiscounts': gOrder.totalDiscounts
+                    //     };
+
+                    //     const gCartInfo = gJsonCartData as Cart;
+                    //     const gOrderDetail = gOrder as Order;
+
+                    //     if (index === 0) {
+                    //         gPaymentCapture = paymentCapture;
+                    //     }
+
+                    //     const gAccount = gOrder.volumeABOAccount;
+                    //     const jsonData = { 'parties': [{ 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name }] };
+
+                    //     Object.assign(gAccount, jsonData);
+                    //     const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
+
+                    //     if (cancelFlag) {
+                    //         this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo, null, null, false, true, false);
+                    //     } else {
+                    //         this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true, isCashReceipt);
+                    //     }
+                    // });
+                }
+            });
+    }
+
+    private printByGroup(orderList: Array<Order>, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false): Observable<boolean> {
+        const orderingOrder = orderList[0];
+        const ordering: GroupResponseData = this.getGroupDetailInfo(orderingOrder, 0);
+        const printInfo = {
+            order: ordering.order, account: ordering.account, cartInfo: ordering.cart, cancelFlag: cancelFlag,
+            paymentCapture: paymentCapture, groupInfo: ordering.info, cashReceipt: isCashReceipt
+        };
+        let rtn = true;
+        // 현재 포인트를 조회 후에 프린트 정보 설정
+        const uid = ordering.account.parties ? ordering.account.parties[0].uid : ordering.account.uid;
+        this.logger.set('receipt.service', `ordering abo : ${uid}`).info();
+        this.paymentsubscription = this.payment.getBalance(uid).subscribe(
+            result => {
+                Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                rtn = this.makeTextAndPrint(printInfo);
+                if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
+                orderList.filter((o, index) => index !== 0).map(o => o).forEach((subOrder, index) => {
+                    const sub: GroupResponseData = this.getGroupDetailInfo(subOrder, index + 1);
+                    this.logger.set('receipt.service', `sub abo : ${sub.account.uid}`).info();
+                    const params = {
+                        cancelFlag: cancelFlag ? 'Y' : 'N',
+                        groupInfo: sub.info,
+                        reIssue: reIssue,
+                        isGroupOrder: true,
+                        isCashReceipt: isCashReceipt
                     };
-
-                    const gCartInfo = gJsonCartData as Cart;
-                    const gOrderDetail = gOrder as Order;
-
-                    if (index === 0) {
-                        gPaymentCapture = paymentCapture;
-                    }
-
-                    const gAccount = gOrder.volumeABOAccount;
-                    const jsonData = { 'parties': [{ 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name }] };
-
-                    Object.assign(gAccount, jsonData);
-                    const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
-
-                    if (cancelFlag) {
-                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo, null, null, false, true);
-                    } else {
-                        this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true);
-                    }
+                    this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
+                });
+            },
+            error => {
+                this.logger.set('receipt.service', `${error}`).error();
+                Object.assign(printInfo, { point: 0 });
+                rtn = this.makeTextAndPrint(printInfo);
+                if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
+                orderList.filter((o, index) => index !== 0).map(o => o).forEach((o, index) => {
+                    const gPaymentCapture = new PaymentCapture();
+                    const sub: GroupResponseData = this.getGroupDetailInfo(o, index + 1);
+                    const params = {
+                        cancelFlag: cancelFlag ? 'Y' : 'N',
+                        groupInfo: sub.info,
+                        reIssue: reIssue,
+                        isGroupOrder: true,
+                        isCashReceipt: isCashReceipt
+                    };
+                    this.print(sub.account, sub.cart, sub.order, gPaymentCapture, params);
                 });
             }
-        });
+        );
+
+        return Observable.of(true);
+    }
+
+    private getGroupDetailInfo(order: Order, index: number): GroupResponseData {
+        const gJsonCartData = {
+            'user': { 'uid': order.volumeABOAccount.uid, 'name': order.volumeABOAccount.name },
+            'entries': order.entries,
+            'totalPrice': order.totalPrice,
+            'subTotal': order.subTotal,
+            'totalUnitCount': order.totalUnitCount,
+            'totalPriceWithTax': order.totalPriceWithTax,
+            'totalTax': order.totalTax,
+            'totalDiscounts': order.totalDiscounts
+        };
+        const groupCart = gJsonCartData as Cart;
+        const groupOrder = order as Order;
+        const groupAccount = order.volumeABOAccount;
+        const jsonData = { 'parties': [{ 'uid': order.volumeABOAccount.uid, 'name': order.volumeABOAccount.name }] };
+        Object.assign(groupAccount, jsonData);
+        const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
+        return new GroupResponseData(groupOrder, groupCart, groupAccount, groupInfo);
     }
 
     /**
@@ -195,14 +281,18 @@ export class ReceiptService implements OnDestroy {
      * @param type 주문형태(default, 현장구매)
      * @param macAndCoNum 공제번호
      * @param reIssue 영수증 재발행 여부
+     * @param isGroupOrder 그룹주문 여부
+     * @param isCashReceipt 현금영수증(소득공제) 여부
      */
-    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture, cancelFlag?: string,
-        groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean): boolean {
+    public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture,
+        { cancelFlag = 'N', groupInfo = null, type = null, macAndCoNum = null, reIssue = false, isGroupOrder = false, isCashReceipt = false }:
+            { cancelFlag?: string, groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean, isCashReceipt?: boolean }
+    ): boolean {
         let rtn = true;
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
-            paymentCapture: paymentCapture, groupInfo: groupInfo
+            paymentCapture: paymentCapture, groupInfo: groupInfo, cashReceipt: isCashReceipt
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
@@ -211,6 +301,8 @@ export class ReceiptService implements OnDestroy {
             rtn = this.makeTextAndPrint(printInfo);
             if (rtn && reIssue) { this.issueReceipt(account, order); }
         } else {
+            // promist 로 변경후 임시 주석
+            // 문제 없을 경우 삭제 처리
             this.paymentsubscription = this.payment.getBalance(uid).subscribe(
                 result => {
                     Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
@@ -223,6 +315,19 @@ export class ReceiptService implements OnDestroy {
                     rtn = this.makeTextAndPrint(printInfo);
                     if (rtn && reIssue) { this.issueReceipt(account, order); }
                 });
+            // this.payment.getBalance(uid).toPromise().then(
+            //     result => {
+            //         Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+            //         rtn = this.makeTextAndPrint(printInfo);
+            //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+            //     },
+            //     error => {
+            //         this.logger.set('receipt.service', `${error}`).error();
+            //         Object.assign(printInfo, { point: 0 });
+            //         rtn = this.makeTextAndPrint(printInfo);
+            //         if (rtn && reIssue) { this.issueReceipt(account, order); }
+            //     }
+            // );
         }
         return rtn;
     }
@@ -247,7 +352,7 @@ export class ReceiptService implements OnDestroy {
      *
      * @param printInfo 영수증 출력 정보
      */
-    private makeTextAndPrint(printInfo: any): boolean { // Observable<boolean> {
+    private makeTextAndPrint(printInfo: any): boolean {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
         const order: Order = printInfo.order;
@@ -261,6 +366,7 @@ export class ReceiptService implements OnDestroy {
         const posId: string = this.storage.getTerminalInfo().id;
         const token: AccessToken = this.storage.getTokenInfo();
         const groupInfo: string = printInfo.groupInfo;
+        const cashReceipt: boolean = printInfo.cashReceipt;
         // 영수증 출력 파라미터 설정 - END
 
         // orderSummery - START
@@ -288,7 +394,7 @@ export class ReceiptService implements OnDestroy {
         if (macAndCoNum) {
             orderInfo.setMacAndCoNum = macAndCoNum;
         } else {
-            if (order.deductionNumber) { // order.deductionNumber
+            if (order.deductionNumber) {
                 orderInfo.setMacAndCoNum = Utils.isEmpty(order.deductionNumber) ? this.message.get('deduction.msg') : order.deductionNumber;
             } else {
                 orderInfo.setMacAndCoNum = this.message.get('deduction.msg'); // '공제조합홈페이지 확인';
@@ -301,6 +407,10 @@ export class ReceiptService implements OnDestroy {
             orderInfo.setCancelFlag = cancelFlag;
         }
         // 영수증 취소 플래그 - END
+
+        // Additional Info - START
+        orderInfo.setCashReceipt = cashReceipt; // 현금 영수증 소득공제
+        // Additional Info - END
 
         // productList - START
         const productList = Array<any>();
@@ -464,7 +574,6 @@ export class ReceiptService implements OnDestroy {
         }
         // 영수증 출력 - END
         return rtn;
-        // return Observable.of(rtn);
     }
 
     /**
