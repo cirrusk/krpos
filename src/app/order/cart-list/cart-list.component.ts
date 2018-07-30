@@ -426,16 +426,16 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.alert.warn({ message: this.message.get('selectProductUpdate') });
     } else {
       const selectedCart = this.currentCartList[this.selectedCartNum];
-      if (selectedCart.product.serialNumber) {
-        this.alert.warn({ message: 'Serial이 있는 상품은 개별 스캔해주세요.' });
-        this.selectedCartNum = -1;
-        return;
-      }
+      // if (selectedCart.product.serialNumber) {
+      //   this.alert.warn({ message: 'Serial이 있는 상품은 개별 스캔해주세요.' });
+      //   this.selectedCartNum = -1;
+      //   return;
+      // }
       const code = selectedCart.product.code;
       const qty = selectedCart.quantity;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
       this.modal.openModalByComponent(UpdateItemQtyComponent, {
-        callerData: { code: code, qty: qty },
+        callerData: { code: code, qty: qty, product: selectedCart.product },
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
         modalId: 'UpdateItemQtyComponent'

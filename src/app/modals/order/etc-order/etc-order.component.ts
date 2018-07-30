@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchBerComponent } from '../../account/search-ber/search-ber.component';
-import { InfoBroker } from '../../../broker';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { Accounts } from '../../../data';
 import { PickupOrderComponent } from '../pickup-order/pickup-order.component';
@@ -17,7 +16,6 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
   constructor(
     protected modalService: ModalService,
     private modal: Modal,
-    private info: InfoBroker,
     private renderer: Renderer2,
     private router: Router) {
     super(modalService);

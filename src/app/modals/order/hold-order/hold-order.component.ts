@@ -4,11 +4,11 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Modal, Logger, SpinnerService, AlertService, AlertType } from '../../../core';
 
 import { CartService, PagerService } from '../../../service';
-import { RestoreCartBroker } from '../../../broker';
+import { RestoreCartBroker, InfoBroker } from '../../../broker';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
 
-import { InfoBroker } from '../../../broker/info.broker';
+
 import { Pagination } from '../../../data';
 
 @Component({
