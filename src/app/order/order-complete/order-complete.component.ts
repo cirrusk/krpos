@@ -177,7 +177,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.router.navigate(['/order']);
   }
 
-  setInit() {
+  initialize() {
     setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.inputSearchText.nativeElement.value = '';
     this.searchMemberType.nativeElement.value = 'A';

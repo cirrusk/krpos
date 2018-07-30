@@ -874,6 +874,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               modalId: 'RestictComponent_Cart'
             });
           }
+          this.spinner.hide();
         },
         error => {
           this.spinner.hide();
@@ -882,7 +883,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.alert.error({ message: `${errdata.message}` });
           }
         },
-        () => { this.spinner.hide(); setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
+        () => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
       );
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
