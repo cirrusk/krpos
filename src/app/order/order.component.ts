@@ -42,10 +42,6 @@ export class OrderComponent implements OnInit {
     if (cartList && cartList.length > 0) {
       check = false;
     }
-    console.log('accountinfo : ' + JSON.stringify(accountInfo));
-    console.log('groupAccountInfo : ' + JSON.stringify(groupAccountInfo));
-    console.log('cartList : ' + JSON.stringify(cartList));
-    console.log('check : ' + check);
     return check;
   }
 }
