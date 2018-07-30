@@ -9,7 +9,7 @@ import { CartService, PagerService, SearchService, MessageService, PaymentServic
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
-  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder
+  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
@@ -53,6 +53,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private resCartInfo: ResCartInfo;                                         // Cart 정보
   private domain: string;                                                   // api root 도메인
   private serialNumbers: Array<string>;                                     // Serial 정보 받기
+  private rfIds: Array<string>;                                             // RFID 정보 받기
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -316,6 +317,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
     this.serialNumbers = new Array<string>();
+    this.rfIds = new Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -409,7 +411,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     }).subscribe(data => {
       if (data) {
         this.logger.set('cart.list.component', `callSearchProduct : ${data.serialNumber}`).debug();
-        this.serialNumbers.push(data.serialNumber);
+        // this.serialNumbers.push(data.serialNumber);
+        // this.rfIds.push(data.rfid);
+        this.setSerialAndRfids(data);
         this.addToCart(data.productCode);
       }
       setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
@@ -441,7 +445,25 @@ export class CartListComponent implements OnInit, OnDestroy {
         modalId: 'UpdateItemQtyComponent'
       }).subscribe(result => {
         if (result) {
-          this.updateItemQtyCart(cartId, result.code, result.qty);
+          const product: ProductInfo = selectedCart.product;
+          // RFID, SERIAL 입력 받음.
+          if (product && (product.rfid || product.serialNumber)) {
+            this.modal.openModalByComponent(SerialComponent, {
+              callerData: { productInfo: product, productQty: result.qty },
+              closeByClickOutside: false,
+              modalId: 'SerialComponent'
+            }).subscribe(data => {
+              if (data) {
+                this.logger.set('cart.list.component', `selectProductInfo : ${data.serialNumber}`).debug();
+                // this.serialNumbers.push(data.serialNumber);
+                this.setSerialAndRfids(data);
+                this.updateItemQtyCart(cartId, result.code, result.qty);
+              }
+            });
+          } else {
+            this.updateItemQtyCart(cartId, result.code, result.qty);
+          }
+          // this.updateItemQtyCart(cartId, result.code, result.qty);
         }
       });
     }
@@ -656,7 +678,8 @@ export class CartListComponent implements OnInit, OnDestroy {
                 }).subscribe(data => {
                   if (data) {
                     this.logger.set('cart.list.component', `selectProductInfo : ${data.serialNumber}`).debug();
-                    this.serialNumbers.push(data.serialNumber);
+                    // this.serialNumbers.push(data.serialNumber);
+                    this.setSerialAndRfids(data);
                     this.addCartEntries(productCode);
                   }
                 });
@@ -849,7 +872,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
-      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers, this.rfIds).subscribe(
         result => {
           this.resCartInfo = result;
           this.addCartModel = this.resCartInfo.cartModification;
@@ -874,7 +897,6 @@ export class CartListComponent implements OnInit, OnDestroy {
               modalId: 'RestictComponent_Cart'
             });
           }
-          this.spinner.hide();
         },
         error => {
           this.spinner.hide();
@@ -883,7 +905,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.alert.error({ message: `${errdata.message}` });
           }
         },
-        () => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
+        () => { this.spinner.hide(); setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
       );
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
@@ -1527,6 +1549,21 @@ export class CartListComponent implements OnInit, OnDestroy {
       },
       () => { this.spinner.hide(); }
     );
+  }
+
+  private setSerialAndRfids(data: any) {
+    this.serialNumbers.push(data.serialNumber);
+    this.rfIds.push(data.rfid);
+    if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
+      data.serialNumbers.forEach(serial => {
+        this.serialNumbers.push(serial);
+      });
+    }
+    if (data.rfIds && Array.isArray(data.rfIds)) {
+      data.rfIds.forEach(rfid => {
+        this.rfIds.push(rfid);
+      });
+    }
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])

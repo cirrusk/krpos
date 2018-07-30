@@ -1,9 +1,8 @@
-import { StatusDisplay } from './../../../data/models/payment/payment.enum';
 import { Component, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
 
 import { range } from 'lodash';
 import { ModalComponent, ModalService } from '../../../core';
-import { KeyCode } from '../../../data';
+import { KeyCode, StatusDisplay } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { Product } from '../../../data/models/cart/cart-data';
 
@@ -19,6 +18,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   productInfo: Product;
   productCount = [];
   private dupcheck = false;
+  private serialNumbers = [];
+  private rfIds = [];
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService) {
     super(modalService);
@@ -37,8 +38,6 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.productInfo) {
       if (this.productInfo.rfid && !this.productInfo.serialNumber) {
         this.regLabel = 'RFID 스캔';
-        this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = `${this.productInfo.name}의 ${this.regLabel} 후 진행해주세요.`;
       } else if (this.productInfo.serialNumber && !this.productInfo.rfid) {
         this.regLabel = '시리얼 번호 입력';
       } else if (this.productInfo.serialNumber && this.productInfo.rfid) {
@@ -82,35 +81,42 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     let chkidx = 0;
     let prdname: string;
     let pelm: any;
-    let serial: string;
-    if (this.productInfo.rfid && !this.productInfo.serialNumber) {
-      this.checktype = 0;
-      this.result = { serialNumber: '', rfid: 'dummy_rfid'};
-      this.close();
-    } else {
-      this.codes.forEach(cd => {
-        if (cd.nativeElement.getAttribute('type') === 'text') {
-          if (Utils.isEmpty(cd.nativeElement.value)) {
-            chkidx++;
-            prdname = cd.nativeElement.getAttribute('data-prdname');
-            pelm = cd;
-            return false;
-          } else {
+    let stype: boolean;
+    let rtype: boolean;
+    let serial = '';
+    let rfid = '';
+
+    this.codes.forEach(cd => {
+      if (cd.nativeElement.getAttribute('type') === 'text') {
+        if (Utils.isEmpty(cd.nativeElement.value)) {
+          chkidx++;
+          prdname = cd.nativeElement.getAttribute('data-prdname');
+          pelm = cd;
+          return false;
+        } else {
+          stype = cd.nativeElement.getAttribute('data-serial');
+          rtype = cd.nativeElement.getAttribute('data-rfid');
+          if (stype === true && rtype === false) {
             serial = cd.nativeElement.value;
+            this.serialNumbers.push(serial);
+          }
+          if (stype === false && rtype === true) {
+            rfid = cd.nativeElement.value;
+            this.rfIds.push(rfid);
           }
         }
-      });
-
-      if (chkidx !== 0) {
-        this.checktype = -1;
-        this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
-        if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
-        return;
-      } else {
-        this.checktype = 0;
-        this.result = { serialNumber: serial, rfid: ''};
-        this.close();
       }
+    });
+
+    if (chkidx !== 0) {
+      this.checktype = -1;
+      this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
+      if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
+      return;
+    } else {
+      this.checktype = 0;
+      this.result = { serialNumber: serial, rfid: rfid, serialNumbers: this.serialNumbers, rfIds: this.rfIds };
+      this.close();
     }
   }
 

@@ -9,9 +9,9 @@
             <div class="ac">
                 <p class="txt04">제품의 {{regLabel}}해 주세요.</p>
                 <ng-container *ngFor="let p of productCount">
-                <input *ngIf="productInfo.serialNumber && !productInfo.rfid;" #codes type="text" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
+                <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
                 </ng-container>
-                <input *ngIf="!productInfo.serialNumber && productInfo.rfid;" #codes type="hidden" [attr.data-prdname]="productInfo.name">
+                <!-- <input *ngIf="!productInfo.serialNumber && productInfo.rfid;" #codes type="hidden" [attr.data-prdname]="productInfo.name"> -->
             </div>
             <p *ngIf="finishStatus === null && checktype === -1" class="txt_info02 type02 mgt20">{{apprmessage}}</p>
             <p *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="txt_info02 type02 mgt20">{{apprmessage}}</p>

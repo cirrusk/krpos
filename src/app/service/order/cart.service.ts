@@ -55,7 +55,7 @@ export class CartService {
    */
   getCartList(userId: string, cartId: string): Observable<Cart> {
     const pathvariables = { userId: userId, cartId: cartId };
-    const param = { fields: 'FULL'};
+    const param = { fields: 'FULL' };
     const data = new HttpData('getCartList', pathvariables, null, param, 'json');
     return this.api.get(data);
   }
@@ -66,7 +66,7 @@ export class CartService {
    * @param cartId 카트 아이디
    * @param code 제품 코드
    */
-  addCartEntry(userId: string, cartId: string, code: string, serialNumbers?: Array<string>): Observable<ResCartInfo> {
+  addCartEntry(userId: string, cartId: string, code: string, serialNumbers?: Array<string>, rfIds?: Array<string>): Observable<ResCartInfo> {
     const orderList = new OrderEntryList();
     const orderEntries: OrderEntry[] = [];
     const entry: OrderEntry = new OrderEntry(new ProductInfo(code));
@@ -74,6 +74,10 @@ export class CartService {
     serialNumbers = serialNumbers.filter(arr => (arr !== null && arr !== '')) as string[];
     if (serialNumbers && serialNumbers.length > 0) { // null값이 들어갈 경우 체크
       entry.serialNumbers = serialNumbers;
+    }
+    rfIds = rfIds.filter(arr => (arr != null && arr !== '')) as string[];
+    if (rfIds && rfIds.length > 0) {
+      entry.rfids = rfIds;
     }
     orderEntries.push(entry);
     orderList.orderEntries = orderEntries;
@@ -92,11 +96,11 @@ export class CartService {
     orderList.orderEntries = orderEntries;
 
     const pathvariables = { userId: userId, cartId: cartId };
-    const param = { fields: 'FULL'};
+    const param = { fields: 'FULL' };
     const data = new HttpData('addToCart', pathvariables, orderList, param, 'json');
     return this.api.post(data).flatMap((cartModification: CartModification[]) => {
       return this.getCartList(userId, cartId)
-      .map(cart => new ResCartInfo(cart, cartModification) as ResCartInfo);
+        .map(cart => new ResCartInfo(cart, cartModification) as ResCartInfo);
     });
   }
 
@@ -133,13 +137,13 @@ export class CartService {
   updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number): Observable<ResCartInfo> {
     const o1: OrderEntries = new OrderEntries(new Product(code), qty.toString());
     const pathvariables = { userId: userId, cartId: cartId, entryNumber: entryNumber };
-    const param = { fields: 'FULL'};
+    const param = { fields: 'FULL' };
     const data = new HttpData('updateItemQtyCart', pathvariables, o1, param, 'json');
     return this.api.put(data).flatMap((cartModification: CartModification) => {
       const arrayCart = new Array<CartModification>();
       arrayCart.push(cartModification);
       return this.getCartList(userId, cartId)
-      .map(cart => new ResCartInfo(cart, arrayCart) as ResCartInfo);
+        .map(cart => new ResCartInfo(cart, arrayCart) as ResCartInfo);
     });
   }
 
@@ -155,7 +159,7 @@ export class CartService {
 
     return this.httpClient.delete<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response' }).flatMap((httpRes: HttpResponseBase) => {
       return this.getCartList(userId, cartId)
-      .map(cart => new ResCartInfo(cart) as ResCartInfo);
+        .map(cart => new ResCartInfo(cart) as ResCartInfo);
     });
   }
 
@@ -222,13 +226,13 @@ export class CartService {
    * @param cartId
    * @param volumeAccounts // ex) 7480001,7460002
    */
-  createGroupCart(userId: string, cartId: string, volumeAccounts: string): Observable<AmwayExtendedOrdering>  {
+  createGroupCart(userId: string, cartId: string, volumeAccounts: string): Observable<AmwayExtendedOrdering> {
     const arrVolumeAccount = new Array<string>();
     volumeAccounts.split(',').forEach(volumeAccount => {
       arrVolumeAccount.push(volumeAccount.trim());
     });
 
-    const param = { fields: 'FULL', volumeAccounts : arrVolumeAccount};
+    const param = { fields: 'FULL', volumeAccounts: arrVolumeAccount };
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('createGroupCart', pathvariables, null, param, 'json');
     return this.api.post(data);
@@ -240,7 +244,7 @@ export class CartService {
    * @param cartId
    */
   getGroupCart(userId: string, cartId: string): Observable<AmwayExtendedOrdering> {
-    const param = { fields: 'FULL'};
+    const param = { fields: 'FULL' };
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('getGroupCart', pathvariables, null, param, 'json');
     return this.api.get(data);
