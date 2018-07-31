@@ -19,7 +19,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   productCount = [];
   private dupcheck = false;
   private serialNumbers = [];
-  private rfIds = [];
+  private rfids = [];
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService) {
     super(modalService);
@@ -81,8 +81,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     let chkidx = 0;
     let prdname: string;
     let pelm: any;
-    let stype: boolean;
-    let rtype: boolean;
+    let stype: string;
+    let rtype: string;
     let serial = '';
     let rfid = '';
 
@@ -94,20 +94,19 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
           pelm = cd;
           return false;
         } else {
-          stype = cd.nativeElement.getAttribute('data-serial');
-          rtype = cd.nativeElement.getAttribute('data-rfid');
-          if (stype === true && rtype === false) {
+          stype = cd.nativeElement.getAttribute('data-serial') ? cd.nativeElement.getAttribute('data-serial') : 'false';
+          rtype = cd.nativeElement.getAttribute('data-rfid') ? cd.nativeElement.getAttribute('data-rfid') : 'false';
+          if (stype === 'true' && rtype === 'false') {
             serial = cd.nativeElement.value;
             this.serialNumbers.push(serial);
           }
-          if (stype === false && rtype === true) {
+          if (stype === 'false' && rtype === 'true') {
             rfid = cd.nativeElement.value;
-            this.rfIds.push(rfid);
+            this.rfids.push(rfid);
           }
         }
       }
     });
-
     if (chkidx !== 0) {
       this.checktype = -1;
       this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
@@ -115,7 +114,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       return;
     } else {
       this.checktype = 0;
-      this.result = { serialNumber: serial, rfid: rfid, serialNumbers: this.serialNumbers, rfIds: this.rfIds };
+      this.result = { serialNumber: serial, serialNumbers: this.serialNumbers, rfid: rfid, rfids: this.rfids };
       this.close();
     }
   }
