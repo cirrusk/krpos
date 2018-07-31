@@ -66,7 +66,7 @@ export class CartService {
    * @param cartId 카트 아이디
    * @param code 제품 코드
    */
-  addCartEntry(userId: string, cartId: string, code: string, serialNumbers?: Array<string>, rfIds?: Array<string>): Observable<ResCartInfo> {
+  addCartEntry(userId: string, cartId: string, code: string, serialNumbers?: Array<string>, rfids?: Array<string>): Observable<ResCartInfo> {
     const orderList = new OrderEntryList();
     const orderEntries: OrderEntry[] = [];
     const entry: OrderEntry = new OrderEntry(new ProductInfo(code));
@@ -75,9 +75,9 @@ export class CartService {
     if (serialNumbers && serialNumbers.length > 0) { // null값이 들어갈 경우 체크
       entry.serialNumbers = serialNumbers;
     }
-    rfIds = rfIds.filter(arr => (arr != null && arr !== '')) as string[];
-    if (rfIds && rfIds.length > 0) {
-      entry.rfids = rfIds;
+    rfids = rfids.filter(arr => (arr != null && arr !== '')) as string[];
+    if (rfids && rfids.length > 0) {
+      entry.rfids = rfids;
     }
     orderEntries.push(entry);
     orderList.orderEntries = orderEntries;
