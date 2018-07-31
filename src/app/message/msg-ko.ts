@@ -65,5 +65,7 @@ export const LANG_KO_MSGS = {
     'check.invalid.point': '발행점,발행지점 지로코드를 정확히 입력해주세요.',
     'check.invalid.code': '검증코드를 정확히 입력해주세요.',
     'check.invalid.type': '수표종류를 정확히 입력해주세요.',
-    'check.invalid.price': '금액정보를 입력해주세요.'
+    'check.invalid.price': '금액정보를 입력해주세요.',
+    'order.capable.notfound': '주문 가능 제품이 없습니다.',
+    'entry.product.empty': '제품의 재고가 부족합니다.'
 };
