@@ -53,7 +53,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private resCartInfo: ResCartInfo;                                         // Cart 정보
   private domain: string;                                                   // api root 도메인
   private serialNumbers: Array<string>;                                     // Serial 정보 받기
-  private rfIds: Array<string>;                                             // RFID 정보 받기
+  private rfids: Array<string>;                                             // RFID 정보 받기
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -317,7 +317,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
     this.serialNumbers = new Array<string>();
-    this.rfIds = new Array<string>();
+    this.rfids = new Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -872,7 +872,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
-      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers, this.rfIds).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers, this.rfids).subscribe(
         result => {
           this.resCartInfo = result;
           this.addCartModel = this.resCartInfo.cartModification;
@@ -1320,10 +1320,11 @@ export class CartListComponent implements OnInit, OnDestroy {
 
     model.messages.forEach(message => {
       // if (message.severity === 'ERROR') {
+      const msg = this.message.get(message.message) ? this.message.get(message.message) : message.message;
       if (appendMessage === '') {
-        appendMessage += message.message;
+        appendMessage += msg;
       } else {
-        appendMessage += '<br/>' + message.message;
+        appendMessage += '<br/>' + msg;
       }
       // }
     });
@@ -1552,16 +1553,20 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   private setSerialAndRfids(data: any) {
+    console.log('1------------- serialnumnber : ' + data.serialNumber);
+    console.log('2------------- rfid : ' + data.rfid);
     this.serialNumbers.push(data.serialNumber);
-    this.rfIds.push(data.rfid);
+    this.rfids.push(data.rfid);
     if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
       data.serialNumbers.forEach(serial => {
+        console.log('3------------- serialnumnber : ' + serial);
         this.serialNumbers.push(serial);
       });
     }
     if (data.rfIds && Array.isArray(data.rfIds)) {
       data.rfIds.forEach(rfid => {
-        this.rfIds.push(rfid);
+        console.log('4------------- rfid : ' + rfid);
+        this.rfids.push(rfid);
       });
     }
   }
