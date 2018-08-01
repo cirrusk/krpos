@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 
 import { ReceiptService } from '../../../../service';
 import { PrinterService, PrinterCommands } from '../../../../core';
-import { Utils } from '../../../../core/utils';
 import { OrderInfoVO } from '../../../../data/models/receipt/order.info';
 import { BonusInfoVO } from '../../../../data/models/receipt/bonus.info';
 import { PaymentsVO } from '../../../../data/models/receipt/payments';
@@ -11,9 +11,7 @@ import { ProductEntryVO } from '../../../../data/models/receipt/product';
 import { ReceiptVO } from '../../../../data/models/receipt/receipt.vo';
 import { NicePaymentService } from '../../../../core/peripheral/niceterminal/nice.payment.service';
 import { CardApprovalResult } from '../../../../core/peripheral/niceterminal/vo/card.approval.result';
-import { Subject } from 'rxjs';
 import { CardCancelResult } from '../../../../core/peripheral/niceterminal/vo/card.cancel.result';
-import { CardCancelRequest } from '../../../../core/peripheral/niceterminal/vo/card.cancel.reqeust';
 
 @Component({
     selector: 'pos-receipt-print',
@@ -255,7 +253,7 @@ export class PosReceiptPrintComponent implements OnInit {
 
     public niceApproval() {
         const resultNotifier: Subject<CardApprovalResult> = this.paymentService.cardApproval(this.amount, this.installment);
-        console.log("Component Listening on : " + resultNotifier);
+        console.log('Component Listening on : ' + resultNotifier);
         resultNotifier.subscribe(
             (res: CardApprovalResult) => {
                 this.approvalResult = res.stringify();
