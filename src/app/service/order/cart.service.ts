@@ -23,7 +23,7 @@ export class CartService {
   /**
    * 장바구니(Cart) 생성
    *
-   * @param {sring} accountId 회원 아이디
+   * @param {string} accountId 회원 아이디
    * @param {string} userId 회원 아이디
    * @param {string} pickupStore AP명
    * @param {string} cartType ex) POS -> 일반주문, POSGROUP -> 그룹주문
