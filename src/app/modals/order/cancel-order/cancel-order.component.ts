@@ -7,6 +7,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 
+/**
+ * 주문 취소 화면
+ */
 @Component({
   selector: 'pos-cancel-order',
   templateUrl: './cancel-order.component.html'
@@ -20,12 +23,12 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   cancelFlag: boolean;
 
   constructor(protected modalService: ModalService,
-              private orderService: OrderService,
-              private spinner: SpinnerService,
-              private receiptService: ReceiptService,
-              private messageService: MessageService,
-              private logger: Logger,
-              private alert: AlertService) {
+    private orderService: OrderService,
+    private spinner: SpinnerService,
+    private receiptService: ReceiptService,
+    private messageService: MessageService,
+    private logger: Logger,
+    private alert: AlertService) {
     super(modalService);
     this.cancelFlag = false;
   }
@@ -66,8 +69,9 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 취소 영수증 출력
-   * @param userId
-   * @param orderCode
+   *
+   * @param userId 회원 아이디
+   * @param orderCode 주문 코드
    */
   cancelReceipts(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
@@ -80,18 +84,22 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
             this.orderList = orderDetail;
             this.receiptService.reissueReceipts(orderDetail, true);
             this.cancelFlag = true;
-            this.alert.info({ title: '취소 영수증 발행',
-                              message: this.messageService.get('cancelReceiptComplete'),
-                              timer: true,
-                              interval: 1000});
+            this.alert.info({
+              title: '취소 영수증 발행',
+              message: this.messageService.get('cancelReceiptComplete'),
+              timer: true,
+              interval: 1000
+            });
             this.close();
           } catch (e) {
             this.cancelFlag = false;
             this.logger.set('cancel-order.component', `Reissue Receipts error type : ${e}`).error();
-            this.alert.error({ title: '취소 영수증 발행',
-                               message: this.messageService.get('cancelReceiptFail'),
-                               timer: true,
-                               interval: 1000});
+            this.alert.error({
+              title: '취소 영수증 발행',
+              message: this.messageService.get('cancelReceiptFail'),
+              timer: true,
+              interval: 1000
+            });
 
           }
         }

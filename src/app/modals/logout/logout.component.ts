@@ -4,7 +4,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Logger, Modal, StorageService, SpinnerService } from '../../core';
 import { BatchService } from '../../service';
 
-
+/**
+ * 로그아웃 팝업 화면
+ */
 @Component({
   selector: 'pos-logout',
   templateUrl: './logout.component.html'
@@ -41,10 +43,12 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
+   * @description
    * 근무 종료 상단 클릭 시 팝업
+   *`
    * 종료시 주문 건수가 1건 이상 있으면 해당 메시지로 변경해야함.
    * 1. POS 종료 확인 팝업
-   *
+   *`
    */
   logout() {
     if (this.storage.getBatchInfo() == null) { // Start Shift를 하지 않았으면

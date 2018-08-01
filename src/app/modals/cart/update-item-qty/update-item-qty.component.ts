@@ -2,6 +2,9 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ModalService, ModalComponent, AlertService } from '../../../core';
 import { ProductInfo } from '../../../data';
 
+/**
+ * 장바구니 추가 제품의 수량변경
+ */
 @Component({
   selector: 'pos-update-item-qty',
   templateUrl: './update-item-qty.component.html'
@@ -23,6 +26,13 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
     setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 100); // 숫자를 지우고 입력해야해서 불편, 바로 수정가능하도록 수정
   }
 
+  /**
+   * 제품 수량 변경 업데이트
+   * `
+   * Serial /RFID 가 있을 경우는 수량 감소는 처리하지 않음.
+   * `
+   * @param quantity 변경 제품 수량
+   */
   updateItemQty(quantity: number) {
     if (quantity < 1) {
       this.alert.warn({ message: '수량이 1보다 작습니다.' });
@@ -34,7 +44,6 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
         setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 250);
         return;
       }
-
       this.result = { code: this.code, qty: quantity };
       this.close();
     }

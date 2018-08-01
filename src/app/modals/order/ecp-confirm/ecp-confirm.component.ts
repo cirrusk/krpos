@@ -25,14 +25,14 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   totalCount: number;
 
   constructor(private modal: Modal,
-              protected modalService: ModalService,
-              private spinner: SpinnerService,
-              private alert: AlertService,
-              private messageService: MessageService,
-              private logger: Logger,
-              private orderService: OrderService,
-              private pagerService: PagerService,
-              private searchService: SearchService) {
+    protected modalService: ModalService,
+    private spinner: SpinnerService,
+    private alert: AlertService,
+    private messageService: MessageService,
+    private logger: Logger,
+    private orderService: OrderService,
+    private pagerService: PagerService,
+    private searchService: SearchService) {
     super(modalService);
     this.init();
   }
@@ -52,8 +52,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   init() {
     this.pager = new Pagination();
     this.totalCount = 0;
-    this.entryList = new  Array<OrderEntry>();
-    this.currentOrderList = new  Array<OrderEntry>();
+    this.entryList = new Array<OrderEntry>();
+    this.currentOrderList = new Array<OrderEntry>();
     this.orderList = new OrderHistoryList();
   }
 
@@ -63,27 +63,27 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    */
   getOrderDetail(orderList: OrderHistoryList): void {
     const orderCodes = new Array<string>();
-      orderList.orders.forEach(order => {
-        orderCodes.push(order.code);
-      });
-      this.spinner.show();
-      this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
-        orderDetails => {
-          if (orderDetails) {
-            this.setEntryList(orderDetails);
-          }
-        },
-        error => {
-          this.spinner.hide();
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
-            this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        },
-        () => { this.spinner.hide(); }
-      );
+    orderList.orders.forEach(order => {
+      orderCodes.push(order.code);
+    });
+    this.spinner.show();
+    this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
+      orderDetails => {
+        if (orderDetails) {
+          this.setEntryList(orderDetails);
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
+          this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
   }
 
   setEntryList(orderList: OrderList): void {
@@ -229,10 +229,12 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       this.popupExceed(productCode, productName, productQty, errorQty);
     } else {
       this.spinner.hide();
-      this.alert.info({ title: '',
-                         message: this.messageService.get('ecpReceiptComplete'),
-                         timer: true,
-                         interval: 1500});
+      this.alert.info({
+        title: '',
+        message: this.messageService.get('ecpReceiptComplete'),
+        timer: true,
+        interval: 1500
+      });
       this.close();
     }
   }
@@ -254,8 +256,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       {
         title: 'ECP 컨펌',
         message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량은 ` +
-                  `<em class="fc_red">${productQty}</em>개로<br>` +
-                  `해당상품이 <em class="fc_red">${exceedQty}</em>개 더 담겼습니다.</p>`,
+          `<em class="fc_red">${productQty}</em>개로<br>` +
+          `해당상품이 <em class="fc_red">${exceedQty}</em>개 더 담겼습니다.</p>`,
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
@@ -276,7 +278,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       {
         title: 'ECP 컨펌',
         message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량이 <em class="fc_red">(${productQty})</em>개<br>` +
-                 `<em class="fc_red">${shortageQty}</em>개 수량이 더 필요합니다.</p> <span class="blck">해당 상품을 바코드로 스캔하세요!</span>`,
+          `<em class="fc_red">${shortageQty}</em>개 수량이 더 필요합니다.</p> <span class="blck">해당 상품을 바코드로 스캔하세요!</span>`,
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
