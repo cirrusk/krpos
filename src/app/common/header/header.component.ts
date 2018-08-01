@@ -15,14 +15,19 @@ import { Utils } from '../../core/utils';
 
 /**
  * @description
+ * 공통 헤더 영역
+ * Dash-board action 이벤트를 받아 버튼 처리
+ * ` --> 근무시작, Start Shift, Stop Shift, POS 종료`
+ * 장바구니 화면에서 화면잠금 이벤트를 받아 버튼 처리
  *
+ * -----------------------------------------------------------------------------------------
  * 1. 보류
- * 2. 근무시작 : 아이콘을 터치하면 비밀번호 입력 페이지로 이동
+ * 2. 근무시작 : 아이콘을 터치하면 비밀번호 입력 팝업 호출
  * 3. 화면 풀림 : 화면 잠금 기능 화면 잠금 후 대시보드 메인으로 이동
- * 4. 판매등록 : 근무 시작 후, 장바구니로 이동(일반 결제 Default)
+ * 4. 판매등록 : 근무 시작 후, 장바구니로 이동(통합결제 Default)
  * 5. 판매정산 : 근무 시작 후, 계산원 판매 정산(EOD)내역으로 이동
- * 6. Start Shift : 로그인 페이지로 이동, 로그인 및 배치 저장 후, 대시보드 메인 노출
- * 7. POS 종료 : POS 종료 터치 시 확인 팝업 출력 후, POS 종료 (근무 종료 된 후, 포스 화면 닫기)
+ * 6. Start Shift : 로그인 팝업 호출, 로그인 및 배치 저장 후, 대시보드 메인 노출
+ * 7. POS 종료 : POS 종료 터치 시 확인 팝업 출력 후, POS 종료 (근무 종료 된 후, POS 화면 닫기)
  */
 @Component({
   selector: 'pos-header',
@@ -126,9 +131,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.networkCheck();
   }
 
+  /**
+   * QZ Tray alive 체크
+   * QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
+   * 3분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
+   */
   private isQzCheck() {
-    // QZ websocket alive 정보를 이용하여 QZ Tray 가 살아 있는지 여부 체크
-    // 3분에 한번씩 체크, 메모리 문제등이 발생할 경우 다른 방안을 찾자.
     if (this.qzCheck) {
       this.qzsubscription = this.networkstatus.isQzAlive.subscribe(isalive => {
         if (isalive) {
@@ -161,6 +169,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
+  /**
+   * 헤더 타이머 Date Format 설정
+   */
   private getPosTimer(): string {
     return this.datePipe.transform(new Date(), 'yyyy.MM.dd HH:mm:ss');
   }
@@ -191,13 +202,15 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+   * @description
    * Terminal 정보 가져오기
    *
-   * @description
-   * qz tray 와 시간차 때문에 mac address를 조회할때 network service를 waiting 하게 하고 mac address 취득
-   * 그래야 정상적으로 QZ tray web socket established 된후 처리할 수 있음. 관련 작업은 이후에 해주어야함.
-   * 별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
-   * 처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고 이후에는 세션에서 취득하도록 수정
+   * `QZ tray 와 시간차 때문에 mac address를 조회할때 network service를 waiting 하게 하고
+   *  mac address 취득, 그래야 정상적으로 QZ tray web socket established 된후 처리할 수 있음.
+   *  관련 작업은 이후에 해주어야함.
+   *  별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
+   *  처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고
+   *  이후에는 세션에서 취득하도록 수정`
    */
   private getTerminalInfo() {
     let macAddress = this.storage.getMacAddress();
@@ -225,6 +238,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * 맥어드레스로 터미널 정보 얻기
    *
+   * `터미널 정보는 세션 스토리지에 저장
+   *  터미널 정보 조회 실패 시 미등록 기기 알림 메시지 출력`
+   *
    * @param macAddr MAC ADDRESS
    */
   private getTerminal(macAddr: string) {
@@ -244,6 +260,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * 보류 내역 조회
+   * 대시보드에서 보류건을 클릭했을 경우 장바구니로 이동
    */
   holdOrder() {
     if (this.screenLockType === LockType.LOCK) { return; }
@@ -255,7 +272,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * 보류 건수 조회하기
+   * 화면출력 용 보류 건수 조회하기
    */
   getHoldTotalCount() {
     if (this.storage.getMacAddress() && this.isLogin) {
@@ -266,7 +283,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('header.component', `${errdata.message}`).error();
+            // this.alert.error({ message: `${errdata.message}` });
           }
         }
       );
@@ -274,7 +292,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * 헤더 영역 근무 시작
+   * 근무 시작
+   * 로그인 팝업 호출
    */
   startWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
@@ -290,12 +309,14 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+   * @description
    * 근무 종료
    *
-   * @description
-   * 1. 근무종료 팝업
-   * 2. 배치 정보 저장 팝업
-   * 3. 대시보드 메인으로 이동
+   * `
+   *  1. 근무종료 팝업
+   *  2. 배치 정보 저장 팝업
+   *  3. 대시보드 메인으로 이동
+   * `
    */
   endWork() {
     if (this.screenLockType === LockType.LOCK) { return; }
@@ -314,12 +335,14 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+   * @description
    * 화면 잠금
    *
-   * @description
-   * 캐셔 로그인되어 있을 경우만 체크함.
-   * 카트 페이지 에서 화면 잠금 버튼 클릭 시 대시보드로 이동
-   * 이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
+   *`
+   *  캐셔 로그인되어 있을 경우만 체크함.
+   *  카트 페이지 에서 화면 잠금 버튼 클릭 시 대시보드로 이동
+   *  이 경우 대시보드에서는 어떤 버튼도 동작하지 않음.
+   * `
    */
   screenLock() {
     this.storage.setScreenLockType(LockType.LOCK);
@@ -328,13 +351,15 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
+   * @description
    * 화면 풀림
    *
-   * @description
+   *`
    * 대시보드 에서 화면 풀림 버튼 클릭 시 비밀번호 입력 창뜨게함.
    * 비밀번호 입력 정상 처리되면 잠금 플래그를 삭제.
    * 카트 페이지로 이동할 경우 header 에서 url을 보고 있다가 /order로 들어올 경우 잠금버튼을 활성화함.
    * 이후에는 카트 페이지에서 화면 잠금 버튼을 클릭하면 잠금 플래그를 설정하고 대시보드로 이동.
+   * `
    */
   screenRelease() {
     this.modalsubscription = this.modal.openModalByComponent(PasswordComponent, {
@@ -355,16 +380,18 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * 로그인 후 배치 처리 상세 조건
-   *
    * @description
-   * 1. 닫지 않은 배치가 존재
-   * 1-1. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 같으면 동일 POS 기기
-   * 1-2. 닫지 않은 배치 정보를 그대로 사용
-   * 2. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 다르면 다른 POS 기기
-   * 2-1. 배치는 존재하나 다른 POS 이므로 배치를 삭제함.
-   * 3. 닫지 않은 배치가 존재하지 않음.
-   * 3-1. 아무 처리도 하지 않음.
+   * 로그인 후 배치 처리
+   *
+   *`
+   *  1. 닫지 않은 배치가 존재
+   *  1-1. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 같으면 동일 POS 기기
+   *  1-2. 닫지 않은 배치 정보를 그대로 사용
+   *  2. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 다르면 다른 POS 기기
+   *  2-1. 배치는 존재하나 다른 POS 이므로 배치를 삭제함.
+   *  3. 닫지 않은 배치가 존재하지 않음.
+   *  3-1. 아무 처리도 하지 않음.
+   * `
    */
   private checkBatchAfterLogin() {
     this.batchsubscription = this.batch.getBatch().subscribe(

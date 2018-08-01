@@ -10,9 +10,10 @@ export class SearchBroker {
   constructor(private logger: Logger) { }
 
   /**
+   * 검색 이벤트 메시지 전송 broker
    *
-   * @param type
-   * @param message
+   * @param type 메시지 타입
+   * @param message 메시지
    */
   sendInfo(type: string, message: any) {
     const data = {type: type, data: message };
@@ -20,14 +21,14 @@ export class SearchBroker {
   }
 
   /**
-   *
+   * @ignore
    */
   clear() {
     this.subject.next();
   }
 
   /**
-   *
+   * 검색 이벤트 메시지 전송 Observable
    */
   getInfo(): Observable<any> {
     return this.subject.asObservable();

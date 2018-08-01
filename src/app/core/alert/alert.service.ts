@@ -10,6 +10,10 @@ export interface AlertState {
   timer?: boolean;
   interval?: number;
 }
+
+/**
+ * alert 메시지 이벤트 처리 Observable 생성 및 처리
+ */
 @Injectable()
 export class AlertService {
   private alertSubject = new Subject<AlertState>();

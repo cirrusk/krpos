@@ -10,9 +10,10 @@ export class PaymentBroker {
   private subject = new Subject<any>();
 
   /**
+   * payment broker
    *
-   * @param type
-   * @param message
+   * @param type 메시지 타입
+   * @param message 메시지
    */
   sendInfo(type: string, message: any) {
     const data = {type: type, data: message };
@@ -27,7 +28,7 @@ export class PaymentBroker {
   }
 
   /**
-   * @ignore
+   * payment 정보 전송 Observable
    */
   getInfo(): Observable<any> {
     return this.subject.asObservable();

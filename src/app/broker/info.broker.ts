@@ -19,10 +19,16 @@ export class InfoBroker {
     this.subject.next(data);
   }
 
+  /**
+   * @ignore
+   */
   clear() {
     this.subject.next();
   }
 
+  /**
+   * 정보 전송 Observable
+   */
   getInfo(): Observable<any> {
     return this.subject.asObservable();
   }

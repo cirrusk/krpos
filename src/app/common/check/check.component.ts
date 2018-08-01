@@ -13,6 +13,14 @@ import 'rxjs/add/operator/takeWhile';
 import { Config, Logger } from '../../core';
 import { Utils } from '../../core/utils';
 
+/**
+ * @description
+ * Hybris Server 가 alive 상태인지 체크
+ *
+ * 원래는 ping 체크하거나 별도의 alive 체크 URL 호출로 체크해야하나
+ * 해당 프로그램을 사용할 수 없고 체크 URL 이 별도로 없으므로
+ * 접근이 쉬운 swagger URL을 호출함
+ */
 @Component({
   selector: 'pos-check',
   templateUrl: './check.component.html'
