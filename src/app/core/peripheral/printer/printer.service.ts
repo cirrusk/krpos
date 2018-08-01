@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/delay';
+// import 'rxjs/add/operator/delay';
 
 import { PrinterDriver } from './printer.driver';
 import { DriverReadyBroker } from '../../broker/driverstatus.broker';

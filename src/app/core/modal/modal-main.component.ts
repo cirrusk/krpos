@@ -11,8 +11,7 @@ import { KeyCode } from '../../data/models/key-code';
 @Component({
   moduleId: module.id,
   selector: 'pos-modal-main',
-  templateUrl: './modal-main.component.html',
-  styleUrls: ['./modal-main.component.css']
+  templateUrl: './modal-main.component.html'
 })
 export class ModalMainComponent {
 

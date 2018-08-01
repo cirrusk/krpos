@@ -1,5 +1,9 @@
 import { Directive, AfterViewInit, Input, ElementRef } from '@angular/core';
 
+/**
+ * 모달 포커스 설정 디렉티브
+ * 팝업이 떴을 경우 포커스를 잃으면 키이벤트 바인딩이 되지 않음
+ */
 @Directive({
   selector: '[posFocusBlur]'
 })

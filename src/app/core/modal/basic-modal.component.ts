@@ -4,6 +4,9 @@ import { ModalComponent } from './modal.component';
 import { ModalService } from './modal.service';
 import { StorageService } from '../service/storage.service';
 
+/**
+ * 기본 모달 팝업 형태 컴포넌트
+ */
 @Component({
   moduleId: module.id,
   selector: 'pos-basic-modal',

@@ -15,7 +15,7 @@ import { Product } from '../../../data/models/cart/cart-data';
  *   1.	제품의 바코드를 스캔
  *   2.	POS 는 바코드 값으로 Hybris 에 제품 검색
  *   3.	검색 결과 Serial 또는 RFID 포함 제품인 경우,
- *     1)	“1 개 입력용 Serial, RFID 입력 팝업” 출력
+ *     1)	'1 개 입력용 Serial, RFID 입력 팝업' 출력
  *         -	입력용 text 필드 있어야 함
  *         -	text 필드가 비어 있어도 닫을 수 있음 (Backoffice 를 활용해 후처리)
  *   4.	1 부터 제품 스캔을 계속 또는 아래 5번 수량변경 기능으로 이동
@@ -55,20 +55,26 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   private dupcheck = false;
   private serialNumbers = [];
   private rfids = [];
+  private scanInputSize: number;
+  private scannedCount: number;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
+    this.scanInputSize = 0;
+    this.scannedCount = 0;
   }
 
   ngOnInit() {
     this.productInfo = this.callerData.productInfo;
-    const psize: number = this.callerData.productQty ? this.callerData.productQty : 0;
+    const osize: number = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
+    const psize: number = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
     if (psize === 0) {
       this.productCount = range(0, 1);
     } else {
-      this.productCount = range(0, psize - 1);
+      this.scanInputSize = psize - osize;
+      this.productCount = range(0, this.scanInputSize);
     }
     if (this.productInfo) {
       if (this.productInfo.rfid && !this.productInfo.serialNumber) {
@@ -87,19 +93,25 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   /**
    * 입력 체크하기
    *
-   * @param codes 입력한 input 요소
-   * @param evt 이벤트
+   * @param {any} codes 입력한 input 요소
+   * @param {any} evt 이벤트
    */
   check(codes: any, evt: any) {
     evt.preventDefault();
+    const code = codes.value;
     if (evt.srcElement.nextElementSibling) { // 다음 요소가 있음.
       evt.srcElement.nextElementSibling.focus();
+      if (Utils.isNotEmpty(code)) {
+        this.scannedCount++;
+      }
     } else { // 마지막 요소임.
+      if (Utils.isNotEmpty(code)) {
+        this.scannedCount++;
+      }
       evt.srcElement.blur();
     }
     let chkidx = 0;
     let prdname: string;
-    const code = codes.value;
     if (Utils.isEmpty(code)) {
       chkidx++;
       prdname = codes.getAttribute('data-prdname');
@@ -112,8 +124,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       return;
     } else {
       this.checktype = 0;
-      this.finishStatus = StatusDisplay.PAID;
-      this.apprmessage = '스캔이 완료되었습니다.';
+      if (this.scanInputSize === this.scannedCount) {
+        this.finishStatus = StatusDisplay.PAID;
+        this.apprmessage = '스캔이 완료되었습니다.';
+      }
       if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
     }
   }
@@ -158,8 +172,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       return;
     } else {
       this.checktype = 0;
-      this.result = { serialNumber: serial, serialNumbers: this.serialNumbers, rfid: rfid, rfids: this.rfids };
-      this.close();
+      if (this.scanInputSize === this.scannedCount) {
+        this.result = { serialNumber: serial, serialNumbers: this.serialNumbers, rfid: rfid, rfids: this.rfids };
+        this.close();
+      }
     }
   }
 

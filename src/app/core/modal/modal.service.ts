@@ -1,5 +1,7 @@
-import { Injectable, ComponentFactoryResolver, ApplicationRef, Injector,
-  EmbeddedViewRef, Type } from '@angular/core';
+import {
+  Injectable, ComponentFactoryResolver, ApplicationRef, Injector,
+  EmbeddedViewRef, Type
+} from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { ModalComponent } from './modal.component';
@@ -17,7 +19,7 @@ export class ModalService {
   addModal(component: Type<ModalComponent>, data?: any, index?: number): Observable<any> {
     // Create an instance of dialogMainComponent if not exist.
     if (!this.modalHostComponent) {
-        this.modalHostComponent = this.createModalHost();
+      this.modalHostComponent = this.createModalHost();
     }
     // Populate dialogs array for access by service caller.
     this.modals = this.modalHostComponent.modals;

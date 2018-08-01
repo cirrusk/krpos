@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { ModalComponent } from './modal.component';
 import { ModalMainComponent } from './modal-main.component';
 import { StorageService } from '../service/storage.service';
+
 @Component({
   selector: 'pos-modal-host',
   template: '<template #element></template>'

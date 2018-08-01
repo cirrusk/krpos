@@ -17,6 +17,9 @@ import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
 import { SerialComponent } from '../../modals/scan/serial/serial.component';
 
+/**
+ * 장바구니(Cart) 리스트 컴포넌트
+ */
 @Component({
   selector: 'pos-cart-list',
   templateUrl: './cart-list.component.html'
@@ -225,6 +228,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 한글이나 특수문자 제거
+   * @ignore
    */
   private checkChar() {
     // const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
@@ -244,7 +248,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 메뉴에서 전달한 타입 정보를 받음.
-   * @param data 타입정보
+   * @param {any} data 타입정보
    */
   setType(data) {
     if (data) {
@@ -254,7 +258,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 메뉴에서 전달한 프로모션 제품코드를 받음.
-   * @param data 프로모션 제품코드
+   * @param {any} data 프로모션 제품코드
    */
   setPromotion(data) {
     if (data && data.product) {
@@ -266,7 +270,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 메뉴에서 파이토 카페 선택 시 전달된 이벤트 받아
    * 파이토 카페 회원 설정
-   * @param data 파이토 카페 여부
+   * @param {any} data 파이토 카페 여부
    */
   setPytoCafe(data) {
     if (data && data.pytocafe) {
@@ -325,7 +329,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * Search 모드 변경
    * 상품검색일 경우 입력창에 포커스
    *
-   * @param mode
+   * @param {string} mode 검색 모드
    */
   activeSearchMode(mode: string): void {
     setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
@@ -334,7 +338,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 현재 선택한 로우
-   * @param index
+   * @param {number} index 선택 로우 넘버
    */
   activeRowCart(index: number): void {
     this.selectedCartNum = index;
@@ -342,7 +346,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 검색 팝업 호출
-   * @param searchText
+   * @param {string} searchText 검색어
    */
   popupSearch(searchText: string): void {
     const searchKey = searchText.toUpperCase();
@@ -376,7 +380,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 유저 정보 검색
-   * @param params 검색 파라미터값
+   * @param {any} params 검색 파라미터값
    */
   callSearchAccount(params?: any): void {
     this.modal.openModalByComponent(SearchAccountComponent, {
@@ -400,7 +404,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 제품 검색 후 입력창에 포커스가 있어야함.
    * 이유 : 스캐너가 read 한 값을 올바르게 받음.
    *
-   * @param params 검색 파라미터값
+   * @param {any} params 검색 파라미터값
    */
   callSearchProduct(params?: any): void {
     this.modal.openModalByComponent(SearchProductComponent, {
@@ -449,7 +453,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           // RFID, SERIAL 입력 받음.
           if (product && (product.rfid || product.serialNumber)) {
             this.modal.openModalByComponent(SerialComponent, {
-              callerData: { productInfo: product, productQty: result.qty },
+              callerData: { productInfo: product, cartQty: qty, productQty: result.qty },
               closeByClickOutside: false,
               modalId: 'SerialComponent'
             }).subscribe(data => {
