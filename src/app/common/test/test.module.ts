@@ -7,8 +7,6 @@ import { FormatReader, ReceiptDataProvider, EscPos } from '../../core';
 import { ReceiptService } from '../../service';
 import { TestComponent } from './test.component';
 
-import { AddCartBroker } from '../../broker/cart/addcart.broker';
-
 import { PosReceiptPrintComponent } from './order/pos-receipt-print/pos-receipt-print.component';
 import { NicePaymentService } from '../../core/peripheral/niceterminal/nice.payment.service';
 import { NiceDriver } from '../../core/peripheral/niceterminal/nice.driver';
@@ -25,7 +23,6 @@ import { NiceDriver } from '../../core/peripheral/niceterminal/nice.driver';
     ReactiveFormsModule
   ],
   providers: [
-    AddCartBroker,
     EscPos,
     FormatReader,
     ReceiptDataProvider,
