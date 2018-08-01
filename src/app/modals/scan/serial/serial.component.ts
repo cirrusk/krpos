@@ -141,7 +141,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   reg() {
     let chkidx = 0;
     let prdname: string;
-    let pelm: any;
+    let pelm: ElementRef;
     let stype: string;
     let rtype: string;
     let serial = '';
