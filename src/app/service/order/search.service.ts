@@ -4,9 +4,10 @@ import 'rxjs/add/observable/forkJoin';
 import { ApiService, StorageService } from '../../core';
 import { AccountList, MemberType, HttpData, BerResult } from '../../data';
 import { Products } from '../../data/models/cart/cart-data';
-// import { Utils } from '../../core/utils';
 
-
+/**
+ * 검색 서비스
+ */
 @Injectable()
 export class SearchService {
 
@@ -17,6 +18,7 @@ export class SearchService {
    *
    * @param searchMemberType 멤버 타입
    * @param searchText 검색어(4자리 : 전화번호, 그 외 : 사용자 아이디)
+   * @returns {AccountList} 회원 정보 목록
    */
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
     let memberType = '';
@@ -43,6 +45,7 @@ export class SearchService {
    * @param userId 사용자아이디
    * @param cartId 카트 아이디
    * @param currentpage 현재페이지
+   * @returns {Products} 상품 목록
    */
   getBasicProductInfoByCart(searchtype: string, searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
     let params: any;
@@ -60,6 +63,7 @@ export class SearchService {
    * 기본 상품 검색
    *
    * @param searchdata 검색어 (SKU ID, BARCODE, 상품명)
+   * @returns {Products} 상품 목록
    */
   getBasicProductInfo(searchdata: string): Observable<Products> {
     const params = { query: searchdata, fields: 'FULL', currentPage: '0', sort: '', pageSize: '1' };
@@ -73,7 +77,7 @@ export class SearchService {
    * API 적용 시 파라미터 재확인 필요.
    *
    * @param noticeType 공지사항 타입(ca : 캐셔화면, cl : 클라이언트화면)
-   *
+   * @returns {any} 공지사항 데이터
    */
   getNoticeList(noticeType: string): Observable<any> {
     const terminal = this.storage.getTerminalInfo();
@@ -98,6 +102,7 @@ export class SearchService {
    * @param berName 업체명
    * @param aboNum ABO 회원번호
    * @param accessToken 액세스 토큰
+   * @returns {BerResult} 사업자등록증 목록
    */
   getBerSearch(berName: string, aboNum: string, accessToken?: string, pageSize = 5, currentPage = 1): Observable<BerResult> {
     const accesstoken = (accessToken) ? accessToken : this.storage.getTokenInfo().access_token;

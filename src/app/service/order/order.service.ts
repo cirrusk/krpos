@@ -4,6 +4,9 @@ import { ApiService } from '../../core';
 import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData } from '../../data';
 import { OrderList } from '../../data/models/order/order';
 
+/**
+ * 주문 처리 서비스
+ */
 @Injectable()
 export class OrderService {
 
@@ -18,6 +21,7 @@ export class OrderService {
    * @param deliveryModes 배송모드 (delivery,install, pickup) 복수의 경우 ,(콤마) 구분
    * @param sort 정렬조건값
    * @param asc asc 정렬 여부
+   * @returns {OrderHistoryList} 주문 목록
    */
   orderList(searchText: string, memberType: string, searchType: string, orderTypes: string, channels: string,
     deliveryModes: string, confirmFlag = false, isEasyPickupOrder = false, currentPage = 0, pageSize = 10,
@@ -80,6 +84,7 @@ export class OrderService {
    *
    * @param userid 회원 아이디
    * @param ordercodes 주문코드 배열
+   * @returns {OrderList} 주문내역
    */
   orderDetails(userid: string, ordercodes: Array<string>): Observable<OrderList> {
     const param = { codes: ordercodes, fields: 'FULL' };
@@ -93,6 +98,7 @@ export class OrderService {
    * 그룹주문 상세 조회
    *
    * @param ordercodes 주문코드 배열
+   * @returns {OrderList} 주문내역
    */
   orderDetailsByOrderCodes(ordercodes: Array<string>): Observable<OrderList> {
     const param = { codes: ordercodes, fields: 'FULL' };
@@ -121,6 +127,7 @@ export class OrderService {
    *
    * @param userid 회원아이디
    * @param ordercode Ordering ABO 주문번호
+   * @returns {AmwayExtendedOrdering} 그룹주문 정보
    */
   groupOrder(userid: string, ordercode: string): Observable<AmwayExtendedOrdering> {
     const pathvariables = { userId: userid, orderId: ordercode };
@@ -135,6 +142,7 @@ export class OrderService {
    * @param userid 회원아이디
    * @param ordercode 주문번호
    * @param entries Data Parameter
+   * @returns {ResponseMessage} 응답정보
    */
   serialAndRfid(userid: string, ordercode: string, entries: any): Observable<ResponseMessage> {
     const pathvariables = { userId: userid, orderCode: ordercode };
@@ -149,6 +157,7 @@ export class OrderService {
    * @param userid 회원아이디
    * @param ordercode 주문번호
    * @param params Data Pameter
+   * @returns {ResponseMessage} 응답정보
    */
   receipt(userid: string, ordercode: string, params: any): Observable<ResponseMessage> {
     const pathvariables = { userId: userid, orderCode: ordercode };
@@ -169,6 +178,7 @@ export class OrderService {
    *
    * @param userid 회원 아이디
    * @param ordercode 주문번호
+   * @returns {ResponseData} 응답정보
    */
   issueReceipt(userid: string, ordercode: string): Observable<ResponseData> {
     const pathvariables = { userId: userid, orderCode: ordercode };
