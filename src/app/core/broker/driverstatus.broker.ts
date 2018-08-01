@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Logger } from '../logger/logger';
 
+/**
+ * 각종 Device Driver에 대한 이벤트 처리 broker
+ */
 @Injectable()
 export class DriverReadyBroker {
     private waitQz: Subject<any> = new Subject();

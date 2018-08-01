@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { LogLevels } from '../../data';
 import { Config } from '../config/config';
-import { Utils } from '../utils';
 
+/**
+ * 브라우저 콘솔 로그 기록용 wrapper
+ */
 @Injectable()
 export class Logger {
   private confLogLevel: string;
@@ -13,8 +15,8 @@ export class Logger {
   }
 
   /**
-   * 적절한 메시지를 구성하여
-   * console 정보를 return 함.
+   * @description
+   * 적절한 메시지를 구성하여 console 정보를 return 함.
    * 출력하고자 하는 로그레벨이 환경설정의 로그레벨보다 크면 로그 출력하지 않음.
    *
    * @param level 로그레벨
@@ -52,6 +54,7 @@ export class Logger {
   }
 
   /**
+   * @description
    * 로그를 남길 경우 로그 정보를 설정
    *
    * @param name 소스의 대표 명칭

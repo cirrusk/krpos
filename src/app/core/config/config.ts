@@ -4,14 +4,21 @@ import { environment } from '../../../environments/environment';
 import { Utils } from '../utils';
 export const CLIENT_SECRET = new InjectionToken<string>('CLIENT_SECRET');
 
+/**
+ * environment에서 환경설정 정보를 취득함
+ * build 시 해당 environment로 build되는지 체크 필요
+ * package.json 함수 확인!
+ */
 @Injectable()
 export class Config {
 
   /**
+   * @description
    * API URL 가져오기
+   *`
    * baseSiteId는 기본적으로 변환.
    * URL에 Root URL 이 없으면 자동으로 붙힘.
-   *
+   *`
    * @param key API URL key
    * @param params replace 할 path variable json
    */
@@ -33,9 +40,12 @@ export class Config {
   }
 
   /**
+   * @description
    * Config 정보 가져오기
+   * 현재까지는 depth 3까지만 처리하도록 함.
    *
-   * @param key
+   * @param key  API key
+   * @param defaultVal 기본값
    */
   public getConfig(key: string, defaultVal?: any) {
     let cnf: any;

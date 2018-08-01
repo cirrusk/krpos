@@ -5,6 +5,9 @@ import { StorageService } from '../service/storage.service';
 import { Logger } from '../logger/logger';
 import { LockType } from '../../data/models/lock-type';
 
+/**
+ * 주문페이지 접근권한 체크 guard
+ */
 @Injectable()
 export class OrderGuard implements CanActivate, CanActivateChild {
 

@@ -4,6 +4,9 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService } from '../service/storage.service';
 import { Logger } from '../logger/logger';
 
+/**
+ * 로그인 여부 체크하여 페이지 guard
+ */
 @Injectable()
 export class LoginGuard implements CanActivate, CanActivateChild {
   constructor(private storage: StorageService, private router: Router, private logger: Logger) { }
