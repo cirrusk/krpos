@@ -16,8 +16,8 @@ export class SearchService {
   /**
    * 회원 정보 조회
    *
-   * @param searchMemberType 멤버 타입
-   * @param searchText 검색어(4자리 : 전화번호, 그 외 : 사용자 아이디)
+   * @param {string} searchMemberType 멤버 타입
+   * @param {string} searchText 검색어(4자리 : 전화번호, 그 외 : 사용자 아이디)
    * @returns {AccountList} 회원 정보 목록
    */
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
@@ -40,11 +40,11 @@ export class SearchService {
   /**
    * 기본 상품 검색(재고포함)
    *
-   * @param searchtype 검색유형(sku, vps : 일치 검색, 그외(상품명) : 유사검색)
-   * @param searchdata 검색어 (SKU ID, BARCODE, 상품명)
-   * @param userId 사용자아이디
-   * @param cartId 카트 아이디
-   * @param currentpage 현재페이지
+   * @param {string} searchtype 검색유형(sku, vps : 일치 검색, 그외(상품명) : 유사검색)
+   * @param {string} searchdata 검색어 (SKU ID, BARCODE, 상품명)
+   * @param {string} userId 사용자아이디
+   * @param {string} cartId 카트 아이디
+   * @param {number} currentpage 현재페이지
    * @returns {Products} 상품 목록
    */
   getBasicProductInfoByCart(searchtype: string, searchdata: string, userId: string, cartId: string, currentpage: number): Observable<Products> {
@@ -62,7 +62,7 @@ export class SearchService {
   /**
    * 기본 상품 검색
    *
-   * @param searchdata 검색어 (SKU ID, BARCODE, 상품명)
+   * @param {string} searchdata 검색어 (SKU ID, BARCODE, 상품명)
    * @returns {Products} 상품 목록
    */
   getBasicProductInfo(searchdata: string): Observable<Products> {
@@ -76,7 +76,7 @@ export class SearchService {
    * 캐셔 및 고객용 공지사항 조회
    * API 적용 시 파라미터 재확인 필요.
    *
-   * @param noticeType 공지사항 타입(ca : 캐셔화면, cl : 클라이언트화면)
+   * @param {string} noticeType 공지사항 타입(ca : 캐셔화면, cl : 클라이언트화면)
    * @returns {any} 공지사항 데이터
    */
   getNoticeList(noticeType: string): Observable<any> {
@@ -99,9 +99,9 @@ export class SearchService {
   /**
    * 사업자 등록증 조회
    *
-   * @param berName 업체명
-   * @param aboNum ABO 회원번호
-   * @param accessToken 액세스 토큰
+   * @param {string}  berName 업체명
+   * @param {string} aboNum ABO 회원번호
+   * @param {string} accessToken 액세스 토큰
    * @returns {BerResult} 사업자등록증 목록
    */
   getBerSearch(berName: string, aboNum: string, accessToken?: string, pageSize = 5, currentPage = 1): Observable<BerResult> {

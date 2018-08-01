@@ -13,9 +13,9 @@ export class PagerService {
   /**
    * pagination 생성
    *
-   * @param totalItems 총개수
-   * @param currentPage 현재 페이지
-   * @param pageSize 페이지 사이즈
+   * @param {number} totalItems 총개수
+   * @param {number} currentPage 현재 페이지
+   * @param {number} pageSize 페이지 사이즈
    * @returns {Pagination} 페이지객체
    */
   getPager(totalItems: number, currentPage: number = 1, pageSize: number = 8): Pagination {
@@ -44,9 +44,9 @@ export class PagerService {
   /**
    * 현재 페이지 생성
    *
-   * @param totalList 전체 목록 객체
-   * @param page 현재 페이지
-   * @param pageSize 페이지 사이즈
+   * @param {any} totalList 전체 목록 객체
+   * @param {number} page 현재 페이지
+   * @param {number} pageSize 페이지 사이즈
    * @returns {Map<string, object>} 현재 페이지 정보
    */
   getCurrentPage(totalList: any, page: number, pageSize: number): Map<string, object> {

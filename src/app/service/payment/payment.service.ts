@@ -27,7 +27,7 @@ export class PaymentService {
   /**
    * AP 별 결제 수단 조회하기
    *
-   * @param storeid AP Name
+   * @param {string} storeid AP Name
    * @returns {PaymentModeList} AP 별 결제 수단목록
    */
   getPaymentModes(storeid?: string): Observable<PaymentModeList> {
@@ -40,8 +40,8 @@ export class PaymentService {
   /**
    * 주결제 수단에 대한 사용가능한 결제 수단 조회하기
    *
-   * @param userid 사용자아이디
-   * @param cartid 카트아이디
+   * @param {string} userid 사용자아이디
+   * @param {string} cartid 카트아이디
    * @returns {PaymentModeListByMain} 사용가능한 결제 수단
    */
   getPaymentModesByMain(userid: string, cartid: string): Observable<PaymentModeListByMain> {
@@ -55,7 +55,6 @@ export class PaymentService {
   /**
    * 신용카드 무이자 할부 정보 조회
    *
-   * @param code 카드사코드
    * @returns {BankInfoList} 신용카드 무이자 할부 정보
    */
   getInstallmentPlan(): Observable<BankInfoList> {
@@ -68,7 +67,7 @@ export class PaymentService {
    * 회원의 포인트 정보와 Recash 정보 조회
    * 장바구니에 회원 검색 시 사용
    *
-   * @param userid 회원아이디
+   * @param {string} userid 회원아이디
    * @returns {Balance[]} 회원의 포인트 / Re-Cash 정보
    */
   getBalanceAndRecash(userid: string): Observable<Balance[]> {
@@ -78,7 +77,7 @@ export class PaymentService {
   /**
    * 회원의 가용 포인트 조회
    *
-   * @param userid 회원아이디
+   * @param {string} userid 회원아이디
    * @returns {Balance} 회원의 포인트 정보
    */
   getBalance(userid: string): Observable<Balance> {
@@ -91,7 +90,7 @@ export class PaymentService {
   /**
    * 회원의 Re-Cash 조회
    *
-   * @param userid 회원아이디
+   * @param {string} userid 회원아이디
    * @returns {Balance} 회원의 Re-Cash 정보
    */
   getRecash(userid: string): Observable<Balance> {
@@ -104,13 +103,12 @@ export class PaymentService {
   /**
    * 쿠폰 목록 조회
    *
-   * @param accountid 회원 아이디
-   * @param userid 회원 아이디
-   * @param couponcode 쿠폰코드
-   * @param currentpage 현재 페이지
-   * @param pagesize 페이지사이즈
-   * @param sort 정렬값
-   * @param asc 정렬
+   * @param {string} accountid 회원 아이디
+   * @param {string} userid 회원 아이디
+   * @param {number} currentpage 현재 페이지
+   * @param {number} pagesize 페이지사이즈
+   * @param {string} sort 정렬값
+   * @param {string} asc 정렬
    * @returns {CouponList} 쿠폰 목록
    */
   searchCoupons(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
@@ -122,9 +120,10 @@ export class PaymentService {
 
   /**
    * 쿠폰 조회
-   * @param accountid 회원 아이디
-   * @param userid 회원 아이디
-   * @param couponcode 쿠폰코드
+   * @param {string} accountid 회원 아이디
+   * @param {string} userid 회원 아이디
+   * @param {string} couponcode 쿠폰코드
+   * @returns {Coupon} 쿠폰정보
    */
   searchCoupon(accountid: string, userid: string, couponcode: string): Observable<Coupon> {
     const pathvariables = { accountId: accountid, userId: userid };
@@ -136,9 +135,10 @@ export class PaymentService {
   /**
    * 쿠폰 적용
    *
-   * @param userid 회원 아이디
-   * @param cartid 카트 아이디
-   * @param couponcode 쿠폰 코드
+   * @param {string} userid 회원 아이디
+   * @param {string} cartid 카트 아이디
+   * @param {string} couponcode 쿠폰 코드
+   * @returns {Cart} 카트 정보
    */
   applyCoupon(userid: string, cartid: string, couponcode: string): Observable<Cart> {
     const pathvariables = { userId: userid, cartId: cartid };
@@ -149,7 +149,9 @@ export class PaymentService {
 
   /**
    * 수표 조회
-   * @param checknumber 수표번호(42 자리, 0으로 right padding)
+   *
+   * @param {string} checknumber 수표번호(42 자리, 0으로 right padding)
+   * @returns {ResponseData} 수표 조회 응답
    */
   searchCheque(checknumber: string): Observable<ResponseData> {
     const params = { checkNumber: checknumber };
@@ -161,9 +163,10 @@ export class PaymentService {
    * Payment Capture와 Place Order를 진행
    * 2018.07.20 배치 정보 추가
    *
-   * @param userid 회원 아이디
-   * @param cartid 카트 아이디
-   * @param paymentcapture Payment Capture 정보
+   * @param {string} userid 회원 아이디
+   * @param {string} cartid 카트 아이디
+   * @param {CapturePaymentInfo} paymentcapture Payment Capture 정보
+   * @returns {Order} 주문 정보
    */
   placeOrder(userid: string, cartid: string, paymentcapture: CapturePaymentInfo): Observable<Order> {
     const batch: BatchInfo = this.storage.getBatchInfo();
@@ -177,9 +180,10 @@ export class PaymentService {
    * Payment Capture와 Place Order를 진행
    * 타임아웃 지정(자동이체 등)
    *
-   * @param userid 회원 아이디
-   * @param cartid 카트 아이디
-   * @param paymentcapture Payment Capture 정보
+   * @param {string} userid 회원 아이디
+   * @param {string} cartid 카트 아이디
+   * @param {CapturePaymentInfo} paymentcapture Payment Capture 정보
+   * @param {number} timeout 타임아웃 설정
    */
   placeOrderWithTimeout(userid: string, cartid: string, paymentcapture: CapturePaymentInfo, timeout = this.directdebitTimeout): Observable<Order> {
     return this.placeOrder(userid, cartid, paymentcapture).timeout(1000 * timeout);

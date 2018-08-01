@@ -23,10 +23,10 @@ export class CartService {
   /**
    * 장바구니(Cart) 생성
    *
-   * @param accountId 회원 아이디
-   * @param userId 회원 아이디
-   * @param pickupStore AP명
-   * @param cartType ex) POS -> 일반주문, POSGROUP -> 그룹주문
+   * @param {sring} accountId 회원 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} pickupStore AP명
+   * @param {string} cartType ex) POS -> 일반주문, POSGROUP -> 그룹주문
    * @returns {CartInfo} Cart 정보
    */
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
@@ -41,9 +41,9 @@ export class CartService {
   /**
    * VolumeAccount 수정
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
-   * @param volumeAccount 볼륨 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {string} volumeAccount 볼륨 아이디
    * @returns {HttpResponseBase} Http 응답
    */
   updateVolumeAccount(userId: string, cartId: string, volumeAccount: string): Observable<HttpResponseBase> {
@@ -57,8 +57,8 @@ export class CartService {
   /**
    * 카트 조회
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    * @returns {Cart} 카트 정보
    */
   getCartList(userId: string, cartId: string): Observable<Cart> {
@@ -71,9 +71,11 @@ export class CartService {
   /**
    * 장바구니에 제품 추가
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
-   * @param code 제품 코드
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {string} code 제품 코드
+   * @param {Array<string>} serialNumbers 시리얼 넘버 배열
+   * @param {Array<string>} rfids RFID 배열
    * @returns {ResCartInfo} 카트 정보
    */
   addCartEntry(userId: string, cartId: string, code: string, serialNumbers?: Array<string>, rfids?: Array<string>): Observable<ResCartInfo> {
@@ -97,9 +99,9 @@ export class CartService {
   /**
    * 장바구니 복제 시 사용
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
-   * @param orderEntries 주문 엔트리 배열정보
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {Array<OrderEntry>} orderEntries 주문 엔트리 배열정보
    * @returns {ResCartInfo} 카트 정보
    */
   addCartEntries(userId: string, cartId: string, orderEntries: Array<OrderEntry>): Observable<ResCartInfo> {
@@ -118,8 +120,8 @@ export class CartService {
   /**
    * 장바구니 복제
    *
-   * @param changeCartInfo 변경 회원 정보
-   * @param orderEntries 주문 엔트리 배열정보
+   * @param {Accounts} changeCartInfo 변경 회원 정보
+   * @param {Array<OrderEntry>} orderEntries 주문 엔트리 배열정보
    * @returns {CopyCartEntries} 복제한 카트 엔트리 정보
    */
   copyCartEntries(changeUserInfo: Accounts,
@@ -150,11 +152,11 @@ export class CartService {
   /**
    * 제품 수량 수정
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
-   * @param entryNumber 엔트리 넘버
-   * @param code 제품 코드
-   * @param qty 수량
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {number} entryNumber 엔트리 넘버
+   * @param {string} code 제품 코드
+   * @param {number} qty 수량
    * @returns {ResCartInfo} 카트 정보
    */
   updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number): Observable<ResCartInfo> {
@@ -173,9 +175,9 @@ export class CartService {
   /**
    * 장바구니 개별 삭제
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
-   * @param entryNumber 엔트리 넘버
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {number} entryNumber 엔트리 넘버
    * @returns {ResCartInfo} 삭제후 재조회한 카트 정보
    */
   deleteCartEntries(userId: string, cartId: string, entryNumber: number): Observable<ResCartInfo> {
@@ -190,8 +192,8 @@ export class CartService {
   /**
    * 장바구니 삭제
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    * @returns {HttpResponseBase} Http 응답
    */
   deleteCart(userId: string, cartId: string): Observable<HttpResponseBase> {
@@ -205,7 +207,7 @@ export class CartService {
   /**
    * 보류된 장바구니 리스트 가져오기
    *
-   * @param userId 회원 아이디
+   * @param {string} userId 회원 아이디
    * @returns {CartList} 카트 목록
    */
   getSaveCarts(userId?: string): Observable<CartList> {
@@ -225,19 +227,17 @@ export class CartService {
   /**
    * 장바구니 보류
    *
-   * @param accountId 회원 아이디
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
+   * @param {string} accountId 회원 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    * @returns {SaveCartResult} 보류되어 저장된 카트 결과
    */
   saveCart(accountId: string, userId: string, cartId: string): Observable<SaveCartResult> {
     const tokenInfo = this.storage.getTokenInfo();
     const cashierId = tokenInfo.employeeId;
     const macAddress = this.storage.getMacAddress();
-
     const apiURL = this.config.getApiUrl('saveCart', { 'accountId': accountId, 'userId': userId, 'cashierId': cashierId, 'macAddress': macAddress, 'cartId': cartId });
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
     return this.httpClient.patch<SaveCartResult>(apiURL, { headers: httpHeaders, observe: 'response' })
       .map(data => data as SaveCartResult);
   }
@@ -245,8 +245,8 @@ export class CartService {
   /**
    * 보류된 장바구니 복원
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    * @returns {SaveCartResult} 보류에서 복원된 카트 결과
    */
   restoreSavedCart(userId: string, cartId: string): Observable<SaveCartResult> {
@@ -260,9 +260,9 @@ export class CartService {
   /**
    * 그룹 장바구니 생성
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
-   * @param volumeAccounts 볼륨회원정보 (여러 회원을 ,로 구분 ex) 7480001,7460002)
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {string} volumeAccounts 볼륨회원정보 (여러 회원을 ,로 구분 ex) 7480001,7460002)
    * @returns {AmwayExtendedOrdering} 그룹주문 정보
    */
   createGroupCart(userId: string, cartId: string, volumeAccounts: string): Observable<AmwayExtendedOrdering> {
@@ -280,8 +280,8 @@ export class CartService {
   /**
    * 그룹 장바구니 조회
    *
-   * @param userId 회원 아이디
-   * @param cartId 카트 아이디
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    * @returns {AmwayExtendedOrdering} 그룹주문 정보
    */
   getGroupCart(userId: string, cartId: string): Observable<AmwayExtendedOrdering> {

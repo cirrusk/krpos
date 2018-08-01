@@ -26,8 +26,8 @@ export class AuthService {
    * Employee Identification - User authentication
    * 2018.04.04 add param mac address
    *
-   * @param userid 회원 로그인 아이디
-   * @param userpassword 회원 로그인 비밀번호
+   * @param {string} userid 회원 로그인 아이디
+   * @param {string} userpassword 회원 로그인 비밀번호
    * @return {any} 인증 토큰 정보
    */
   public authentication(userid: string, userpassword: string): Observable<any> {
@@ -45,7 +45,7 @@ export class AuthService {
    * Employee Identification - Access Token
    * client_secret 값 확인 필요!!!
    *
-   * @param authCode authentication 에서 취득한 인증 토큰
+   * @param {string} authCode authentication 에서 취득한 인증 토큰
    * @returns {AccessToken} 엑세스 토큰 정보
    */
   public accessToken(authCode: string): Observable<AccessToken> {
@@ -61,8 +61,8 @@ export class AuthService {
   /**
    * User authentication and Access Token
    *
-   * @param userid 로그인 아이디
-   * @param userpassword 로그인 비밀번호
+   * @param {string} userid 로그인 아이디
+   * @param {string} userpassword 로그인 비밀번호
    * @returns {any} 엑세스 토큰 정보
    */
   public authAndToken(userid: string, userpassword: string): Observable<any> {

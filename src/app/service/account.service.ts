@@ -16,9 +16,9 @@ export class AccountService {
   /**
    * 비회원 등록
    *
-   * @param registerType 등록 타입
-   * @param phoneContactInfoType 전화번호 타입
-   * @param phoneNumber 전화번호
+   * @param {string} registerType 등록 타입
+   * @param {string} phoneContactInfoType 전화번호 타입
+   * @param {string} phoneNumber 전화번호
    * @returns {AccountList} 등록된 회원 정보
    */
   createNewAccount(registerType: string, phoneContactInfoType: string, phoneNumber: string): Observable<AccountList> {

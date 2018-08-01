@@ -15,12 +15,19 @@ export class OrderService {
   /**
    * 주문 목록 조회
    *
-   * @param userid 회원 아이디
-   * @param orderType 주문 타입 (NORMAL_ORDER) 복수의 경우 ,(콤마) 구분
-   * @param channels 채널 (Web,WebMobile,pos) 복수의 경우 ,(콤마) 구분
-   * @param deliveryModes 배송모드 (delivery,install, pickup) 복수의 경우 ,(콤마) 구분
-   * @param sort 정렬조건값
-   * @param asc asc 정렬 여부
+   * @param {string} searchText 검색어
+   * @param {string} memberType 회원타입
+   * @param {string} searchType 검색 타입
+   * @param {string} orderTypes 주문 타입 (NORMAL_ORDER) 복수의 경우 ,(콤마) 구분
+   * @param {string} channels 채널 (Web,WebMobile,pos) 복수의 경우 ,(콤마) 구분
+   * @param {string} deliveryModes 배송모드 (delivery,install, pickup) 복수의 경우 ,(콤마) 구분
+   * @param {boolean} confirmFlag 컨펌 플래그
+   * @param {boolean} isEasyPickupOrder 픽업주문여부
+   * @param {number} currentPage 현재 페이지
+   * @param {number} pageSize 페이지 사이즈
+   * @param {string} sort 정렬 attribute
+   * @param {boolean} asc 내림차순 여부
+   * @param {string} orderStatus 주문 상태
    * @returns {OrderHistoryList} 주문 목록
    */
   orderList(searchText: string, memberType: string, searchType: string, orderTypes: string, channels: string,
@@ -82,8 +89,8 @@ export class OrderService {
   /**
    * 주문 상세 조회
    *
-   * @param userid 회원 아이디
-   * @param ordercodes 주문코드 배열
+   * @param {string} userid 회원 아이디
+   * @param {Array<string>} ordercodes 주문코드 배열
    * @returns {OrderList} 주문내역
    */
   orderDetails(userid: string, ordercodes: Array<string>): Observable<OrderList> {
@@ -97,7 +104,7 @@ export class OrderService {
   /**
    * 그룹주문 상세 조회
    *
-   * @param ordercodes 주문코드 배열
+   * @param {Array<string>} ordercodes 주문코드 배열
    * @returns {OrderList} 주문내역
    */
   orderDetailsByOrderCodes(ordercodes: Array<string>): Observable<OrderList> {
@@ -110,9 +117,9 @@ export class OrderService {
   /**
    * 주문취소
    *
-   * @param accountid account 아이디
-   * @param userid 회원아이디
-   * @param ordercode 주문번호
+   * @param {string} accountid account 아이디
+   * @param {string} userid 회원아이디
+   * @param {string} ordercode 주문번호
    */
   orderCancel(accountid: string, userid: string, ordercode: string) {
     const pathvariables = { accountId: accountid, userId: userid, orderCode: ordercode };
@@ -125,8 +132,8 @@ export class OrderService {
    * 사유 : OrderWsDTO 는 단일 주문 결과로 그룹 정보를 넣을 수 없음.
    * 처리 : POS 에서 그룹 주문인 경우 별도 호출 하여 정보 확인
    *
-   * @param userid 회원아이디
-   * @param ordercode Ordering ABO 주문번호
+   * @param {string} userid 회원아이디
+   * @param {string} ordercode Ordering ABO 주문번호
    * @returns {AmwayExtendedOrdering} 그룹주문 정보
    */
   groupOrder(userid: string, ordercode: string): Observable<AmwayExtendedOrdering> {
@@ -154,9 +161,9 @@ export class OrderService {
   /**
    * 영수증 신청
    *
-   * @param userid 회원아이디
-   * @param ordercode 주문번호
-   * @param params Data Pameter
+   * @param {string} userid 회원아이디
+   * @param {string} ordercode 주문번호
+   * @param {any} params Data Pameter
    * @returns {ResponseMessage} 응답정보
    */
   receipt(userid: string, ordercode: string, params: any): Observable<ResponseMessage> {
@@ -176,8 +183,8 @@ export class OrderService {
    * 영수증 출력 처리 완료 요청
    * 결과값 : 영수증 번호
    *
-   * @param userid 회원 아이디
-   * @param ordercode 주문번호
+   * @param {string} userid 회원 아이디
+   * @param {string} ordercode 주문번호
    * @returns {ResponseData} 응답정보
    */
   issueReceipt(userid: string, ordercode: string): Observable<ResponseData> {
@@ -190,8 +197,8 @@ export class OrderService {
   /**
    * 영수증 발급 취소 요청
    *
-   * @param userid 회원 아이디
-   * @param ordercode 주문번호
+   * @param {string} userid 회원 아이디
+   * @param {string} ordercode 주문번호
    */
   cancelReceipt(userid: string, ordercode: string) {
     const pathvariables = { userId: userid, orderCode: ordercode };

@@ -55,7 +55,7 @@ export class ReceiptService implements OnDestroy {
     /**
      * 일반 ABO 출력 정보
      *
-     * @param data 영수증 데이터
+     * @param {any} data 영수증 데이터
      * @returns {string} 출력 정보
      */
     public aboNormal(data: any): string {
@@ -65,7 +65,7 @@ export class ReceiptService implements OnDestroy {
     /**
      * 일반 멤버 출력 정보
      *
-     * @param data 영수증 데이터
+     * @param {any} data 영수증 데이터
      * @returns {string} 출력 정보
      */
     public memberNormal(data: any): string {
@@ -75,7 +75,7 @@ export class ReceiptService implements OnDestroy {
     /**
      * 일반 소비자 출력 정보
      *
-     * @param data 영수증 데이터
+     * @param {any} data 영수증 데이터
      * @returns {string} 출력 정보
      */
     public consumerNormal(data: any): string {
@@ -84,7 +84,7 @@ export class ReceiptService implements OnDestroy {
     /**
      * 그룹주문 요약 출력 정보
      *
-     * @param data 영수증 데이터
+     * @param {any} data 영수증 데이터
      * @returns {string} 출력 정보
      */
     public groupOrderSummary(data: any): string {
@@ -94,8 +94,8 @@ export class ReceiptService implements OnDestroy {
     /**
      * 영수증 출력용 데이터 생성
      *
-     * @param data 영수증 데이터
-     * @param format 영수증 포맷
+     * @param {any} data 영수증 데이터
+     * @param {ReceiptTypeEnum} format 영수증 포맷
      * @returns {string} 영수증 출력 데이터
      */
     private getReceipt(data: any, format: ReceiptTypeEnum): string {
@@ -118,8 +118,9 @@ export class ReceiptService implements OnDestroy {
     /**
      * 영수증 재출력
      *
-     * @param orderData 주문 정보
-     * @param cancelFlag 취소여부
+     * @param {OrderList} orderData 주문 정보
+     * @param {boolean} cancelFlag 취소여부
+     * @param {boolean} groupOrderFlag 그룹주문 여부
      */
     public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false): void {
         let cartInfo = new Cart();
@@ -173,10 +174,11 @@ export class ReceiptService implements OnDestroy {
     /**
      * 그룹주문 영수증 출력
      *
-     * @param account 회원 정보
-     * @param order 주문정보
-     * @param paymentCapture Payment Capture 정보
-     * @param cancelFlag 취소 여부
+     * @param {Order} order 주문정보
+     * @param {PaymentCapture} paymentCapture Payment Capture 정보
+     * @param {boolean} cancelFlag 취소여부
+     * @param {boolean} reIssue 재발행 여부
+     * @param {boolean} isCashReceipt 현금영수증 증빙 신청 여부
      */
     public groupPrint(order: Order, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) {
 
@@ -227,11 +229,11 @@ export class ReceiptService implements OnDestroy {
     /**
      * 그룹 주문 인쇄
      *
-     * @param orderList 주문정보 배열
-     * @param paymentCapture payment Capture 정보(Ordering ABO만 필요)
-     * @param cancelFlag 주문취소 여부
-     * @param reIssue 영수증 재출력 여부
-     * @param isCashReceipt 영수증 증빙 신청 여부
+     * @param {Array<Order>} orderList 주문정보 배열
+     * @param {PaymentCapture} paymentCapture payment Capture 정보(Ordering ABO만 필요)
+     * @param {boolean} cancelFlag 주문취소 여부
+     * @param {boolean} reIssue 영수증 재출력 여부
+     * @param {boolean} isCashReceipt 영수증 증빙 신청 여부
      */
     private printByGroup(orderList: Array<Order>, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) /*: Observable<boolean>*/ {
         const orderingOrder = orderList[0];
@@ -286,8 +288,8 @@ export class ReceiptService implements OnDestroy {
     /**
      * 그룹주문 인쇄 정보 재구성
      *
-     * @param order 주문정보
-     * @param index 인쇄 페이지 인덱스
+     * @param {Order} order 주문정보
+     * @param {number} index 인쇄 페이지 인덱스
      * @returns {GroupResponseData} 그룹주문 데이터
      */
     private getGroupDetailInfo(order: Order, index: number): GroupResponseData {
@@ -313,18 +315,17 @@ export class ReceiptService implements OnDestroy {
     /**
      * 영수증 출력
      *
-     * @param account 회원정보
-     * @param cartInfo 카트정보
-     * @param order 주문정보
-     * @param paymentCapture 결제캡쳐 정보
-     * @param point 회원 포인트 정보(항상 출력 전에 새로 조회해야함.)
-     * @param cancelFlag 취소 문구 삽입 (Y : 취소, N : 승인)
-     * @param groupInfo 그룹주문 페이지 정보
-     * @param type 주문형태(default, 현장구매)
-     * @param macAndCoNum 공제번호
-     * @param reIssue 영수증 재발행 여부
-     * @param isGroupOrder 그룹주문 여부
-     * @param isCashReceipt 현금영수증(소득공제) 여부
+     * @param {Accounts} account 회원정보
+     * @param {Cart} cartInfo 카트정보
+     * @param {Order} order 주문정보
+     * @param {PaymentCapture} paymentCapture 결제캡쳐 정보
+     * @param {boolean} cancelFlag 취소 문구 삽입 (Y : 취소, N : 승인)
+     * @param {string} groupInfo 그룹주문 페이지 정보
+     * @param {string} type 주문형태(default, 현장구매)
+     * @param {string} macAndCoNum 공제번호
+     * @param {boolean} reIssue 영수증 재발행 여부
+     * @param {boolean} isGroupOrder 그룹주문 여부
+     * @param {boolean} isCashReceipt 현금영수증(소득공제) 여부
      * @returns {boolean} 성공/실패 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture,
@@ -378,8 +379,8 @@ export class ReceiptService implements OnDestroy {
     /**
      * 영수증 출력 정보를 기록
      *
-     * @param account 회원정보
-     * @param order 주문정보
+     * @param {Accounts} account 회원정보
+     * @param {Order} order 주문정보
      */
     private issueReceipt(account: Accounts, order: Order) {
         const uid = account.parties ? account.parties[0].uid : account.uid;
@@ -393,7 +394,7 @@ export class ReceiptService implements OnDestroy {
     /**
      * 영수증 출력 정보를 이용하여 영수증 문구를 생성하고 출력
      *
-     * @param printInfo 영수증 출력 정보
+     * @param {any} printInfo 영수증 출력 정보
      * @returns {boolean} 성공/실패 여부
      */
     private makeTextAndPrint(printInfo: any): boolean {
@@ -623,8 +624,8 @@ export class ReceiptService implements OnDestroy {
     /**
      * 그룹주문 요약 영수증 출력
      *
-     * @param orderEntry 주문 엔트리 정보
-     * @param type 주문유형 정보
+     * @param {Array<OrderEntry>} orderEntry 주문 엔트리 정보
+     * @param {string} type 주문유형 정보
      * @returns {boolean} 성공/실패 여부
      */
     makeTextAndGroupSummaryPrint(orderEntry: Array<OrderEntry>, type: string): boolean {

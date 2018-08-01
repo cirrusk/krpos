@@ -26,7 +26,7 @@ export class TerminalService {
    * wait하고 이때 Terminal 정보를 읽기 위해 http 호출되면서
    * pending 되는 현상, timeout을 주어 오류 발생하도록 처리.
    *`
-   * @param macaddress 맥어드레스
+   * @param {string} macaddress 맥어드레스
    * @returns {TerminalInfo} 터미널 정보
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
