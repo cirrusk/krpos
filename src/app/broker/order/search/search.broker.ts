@@ -9,15 +9,26 @@ export class SearchBroker {
 
   constructor(private logger: Logger) { }
 
+  /**
+   *
+   * @param type
+   * @param message
+   */
   sendInfo(type: string, message: any) {
     const data = {type: type, data: message };
     this.subject.next(data);
   }
 
+  /**
+   *
+   */
   clear() {
     this.subject.next();
   }
 
+  /**
+   *
+   */
   getInfo(): Observable<any> {
     return this.subject.asObservable();
   }

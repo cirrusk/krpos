@@ -33,6 +33,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private paymentType: string;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentsubscription: Subscription;
+  private isChecks: boolean;
   @ViewChild('cashPanel') private cashPanel: ElementRef;
   @ViewChild('paid') private paid: ElementRef;         // 내신금액
   @ViewChild('payment') private payment: ElementRef;   // 결제금액
@@ -50,6 +51,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
+    this.isChecks = false;
   }
 
   ngOnInit() {
@@ -89,6 +91,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }).subscribe(result => {
       if (result) {
         this.paid.nativeElement.value = result;
+        // payment 구성할때 수표지불처리해야함.
+        this.isChecks = true;
         setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
       }
     });
@@ -294,7 +298,11 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         const paymentcapture = new PaymentCapture();
         paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
         paymentcapture.setCashPaymentInfo = cash;
-        capturepaymentinfo.setPaymentModeCode = PaymentModes.CASH;
+        if (this.isChecks) {
+          capturepaymentinfo.setPaymentModeCode = PaymentModes.CHEQUE;
+        } else {
+          capturepaymentinfo.setPaymentModeCode = PaymentModes.CASH;
+        }
         capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
       } else {
         this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!

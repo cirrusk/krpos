@@ -14,6 +14,8 @@ import { BatchInfo, LockType, TerminalInfo } from '../../data';
 import { Utils } from '../../core/utils';
 
 /**
+ * @description
+ *
  * 1. 보류
  * 2. 근무시작 : 아이콘을 터치하면 비밀번호 입력 페이지로 이동
  * 3. 화면 풀림 : 화면 잠금 기능 화면 잠금 후 대시보드 메인으로 이동
