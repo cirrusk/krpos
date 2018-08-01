@@ -39,7 +39,8 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     const loginPwd = this.loginPassword;
 
     if (Utils.isEmpty(loginPwd)) {
-      this.alert.warn({message: '비밀번호가 공란입니다.'});
+      this.alert.warn({message: '비밀번호가 공란입니다.', timer: true, interval: 1500});
+      setTimeout(() => this.loginPwdInput.nativeElement.focus(), 350);
       return;
     }
     this.spinner.show();
