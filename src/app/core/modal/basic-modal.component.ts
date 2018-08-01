@@ -3,13 +3,11 @@ import { Component, OnInit, AfterViewInit, Renderer2, ViewChild, ElementRef } fr
 import { ModalComponent } from './modal.component';
 import { ModalService } from './modal.service';
 import { StorageService } from '../service/storage.service';
-import { FocusBlurDirective } from './focus-blur.directive';
 
 @Component({
   moduleId: module.id,
   selector: 'pos-basic-modal',
-  templateUrl: './basic-modal.component.html',
-  styleUrls: ['./basic-modal.component.css']
+  templateUrl: './basic-modal.component.html'
 })
 export class BasicModalComponent extends ModalComponent implements AfterViewInit {
 
