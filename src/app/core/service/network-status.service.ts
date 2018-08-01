@@ -18,6 +18,10 @@ declare interface Window {
 }
 
 declare const window: Window;
+
+/**
+ * 네트워크 상태 체크 서비스
+ */
 @Injectable()
 export class NetworkStatusService {
 
@@ -33,7 +37,7 @@ export class NetworkStatusService {
   /**
    * QZ Tray 체크
    *
-   * @param interval
+   * @param {number} interval 체크 간격
    */
   private qzCheck(interval = 180000) { // 기본 3분
     const use: boolean = this.config.getConfig('qzCheck');
@@ -51,7 +55,7 @@ export class NetworkStatusService {
    * 네트워크 온라인 여부 체크 - 동작하지 않음.
    * WIFI 연결을 끌때 체크되지 않음.
    *
-   * @param interval
+   * @param {number} interval 체크 간격
    */
   private networkCheck(interval = 6000) { // 기본 1분
     this.networkStatus = Observable
@@ -69,7 +73,7 @@ export class NetworkStatusService {
   /**
    * Hybris(API 서버) Alive 체크
    *
-   * @param interval
+   * @param {number} interval 체크 간격
    */
   private hybrisCheck(interval = this.config.getConfig('healthCheckInterval')) {
     const use: boolean = this.config.getConfig('healthCheckUse');

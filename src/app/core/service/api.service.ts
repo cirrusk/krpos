@@ -11,6 +11,9 @@ import { Config } from '../config/config';
 import { HttpData } from '../../data';
 import { Utils } from '../utils';
 
+/**
+ * API 호출 서비스
+ */
 @Injectable()
 export class ApiService {
 
@@ -20,12 +23,11 @@ export class ApiService {
    * API GET METHOD 처리
    *
    * Avoid Duplicate HTTP Requests
-   * https://blog.angular-university.io/angular-http/
+   * @link https://blog.angular-university.io/angular-http/
+   * @link https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en
    *
-   *
-   * https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en
-   *
-   * @param data request data
+   * @param {HttpData} data request data
+   * @returns {any} 응답 데이터
    */
   get(data: HttpData): Observable<any> {
     return this.callApi('GET', data.apikey, data.pathvariables, data.body, data.param, data.headertype).shareReplay();
@@ -34,7 +36,8 @@ export class ApiService {
   /**
    * API POST METHOD 처리
    *
-   * @param data request data
+   * @param {HttpData} data request data
+   * @returns {any} 응답 데이터
    */
   post(data: HttpData): Observable<any> {
     return this.callApi('POST', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
@@ -43,7 +46,8 @@ export class ApiService {
   /**
    * API PUT METHOD 처리
    *
-   * @param data request data
+   * @param {HttpData} data request data
+   * @returns {any} 응답 데이터
    */
   put(data: HttpData): Observable<any> {
     return this.callApi('PUT', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
@@ -52,7 +56,8 @@ export class ApiService {
   /**
    * API PATCH METHOD 처리
    *
-   * @param data request data
+   * @param {HttpData} data request data
+   * @returns {any} 응답 데이터
    */
   patch(data: HttpData): Observable<any> {
     return this.callApi('PATCH', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
@@ -61,7 +66,8 @@ export class ApiService {
   /**
    * API DELETE METHOD 처리
    *
-   * @param data request data
+   * @param {HttpData} data request data
+   * @returns {any} 응답 데이터
    */
   delete(data: HttpData): Observable<any> {
     return this.callApi('DELETE', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
@@ -70,7 +76,9 @@ export class ApiService {
   /**
    * API URL 가져오기
    *
-   * @param data request data
+   * @param {string} apikey API 키값
+   * @param {any} pathvariables URL Pathvariables 취환값
+   * @return {string} API URL 문자열
    */
   private getApiUrl(apikey: string, pathvariables: any): string {
     let apiUrl;
@@ -85,31 +93,33 @@ export class ApiService {
   /**
    * API 처리하기
    *
-   * @param method HTTP METHOD TYPE
-   * @param apikey API URL KEY
-   * @param pathvariables API PATH VARIABLES
-   * @param body BODY 전송 파라미터값
-   * @param params HTTP PARAMETER 값
-   * @param headertype HTTP HEADER TYPE
+   * @param {string} method HTTP METHOD TYPE
+   * @param {string} apikey API URL KEY
+   * @param {any} pathvariables API PATH VARIABLES
+   * @param {object} body BODY 전송 파라미터값
+   * @param {any} params HTTP PARAMETER 값
+   * @param {string} headertype HTTP HEADER TYPE
+   * @returns {any} 응답 데이터
    */
   private callApi(method: string, apikey: string, pathvariables: any, body: object = null, params: any, headertype?: string): Observable<any> {
     const apiUrl = this.getApiUrl(apikey, pathvariables);
     this.logger.set('api.service', `[${method.toUpperCase()}] URL : ${apiUrl}`).debug();
     return this.http.request(method, apiUrl,
-    {
-      body: body,
-      headers: this.generateHeaders(headertype),
-      params: this.generateParams(params),
-      responseType: 'json'
-    })
-    .map(Utils.extractData)
-    .catch(Utils.handleError);
+      {
+        body: body,
+        headers: this.generateHeaders(headertype),
+        params: this.generateParams(params),
+        responseType: 'json'
+      })
+      .map(Utils.extractData)
+      .catch(Utils.handleError);
   }
 
   /**
    * HTTP HEADER 설정
    *
-   * @param headertype 헤더 타입 결정값
+   * @param {string} headertype 헤더 타입 결정값
+   * @returns {HttpHeaders} 설정된 헤더
    */
   private generateHeaders(headertype: string): HttpHeaders {
     let headers: HttpHeaders;
@@ -126,7 +136,8 @@ export class ApiService {
   /**
    * HTTP PARAMETER 설정
    *
-   * @param params 설정 파라미터 json
+   * @param {any} params 설정 파라미터 json
+   * @returns {HttpParams} 설정된 파라미터
    */
   private generateParams(params: any): HttpParams {
     this.logger.set('api.service', `Http Params : ${Utils.stringify(params)}`).debug();

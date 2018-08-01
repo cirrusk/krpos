@@ -18,6 +18,9 @@ export class KeyCommand {
   ev: KeyboardEvent;
 }
 
+/**
+ * 키보드 이벤트 처리 서비스
+ */
 @Injectable()
 export class KeyboardService {
   private subject: Subject<KeyCommand>;
@@ -35,6 +38,14 @@ export class KeyboardService {
     });
   }
 
+  /**
+   * 키보드 이벤트 전송
+   *
+   * @param {KeyboardEvent} evt 키보드 이벤트
+   * @param {string} combo 키보드 콤보값
+   * @param {string[]} commands 실행 명령함수배열
+   * @returns {boolean} 성공/실패 여부(현재는 무조건 성공으로 전송)
+   */
   private sendHotkeyEvent(evt: KeyboardEvent, combo: string, commands: string[]): boolean {
     commands.forEach(c => {
       const command = {

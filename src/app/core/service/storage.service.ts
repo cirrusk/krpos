@@ -5,7 +5,9 @@ import { InfoBroker } from '../../broker/info.broker';
 import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain } from '../../data';
 import { Utils } from '../utils';
 
-
+/**
+ * 세션 및 로컬 스토리지 저장/삭제 서비스
+ */
 @Injectable()
 export class StorageService implements OnDestroy {
 
@@ -33,8 +35,8 @@ export class StorageService implements OnDestroy {
   /**
    * 세션 정보 저장하기
    *
-   * @param key 세션 정보 키 문자열
-   * @param value 세션 저장 정보 객체
+   * @param {string} key 세션 정보 키 문자열
+   * @param {T} data 세션 저장 정보 객체
    */
   public setSessionItem<T>(key: string, data: T): void {
     this.sstorage.setItem(key, Utils.stringify(data));
@@ -43,7 +45,7 @@ export class StorageService implements OnDestroy {
   /**
    * 세션 정보 조회하기
    *
-   * @param key 세션 정보 조회 키
+   * @param {string} key 세션 정보 조회 키
    */
   public getSessionItem<T>(key: string) {
     return Utils.parse(this.sstorage.getItem(key));
@@ -52,7 +54,7 @@ export class StorageService implements OnDestroy {
   /**
    * 특정 세션 정보 삭제하기
    *
-   * @param key 세션 정보 삭제 키
+   * @param {string} key 세션 정보 삭제 키
    */
   public removeSessionItem(key: string): void {
     this.sstorage.removeItem(key);
@@ -68,7 +70,7 @@ export class StorageService implements OnDestroy {
   /**
    * 로컬 맥어드레스 저장(base64 인코딩)
    *
-   * @param data 맥어드레스
+   * @param {string} data 맥어드레스
    */
   public setMacAddress(data: string): void {
     this.setSessionItem('macaddress', btoa(data));
@@ -76,6 +78,8 @@ export class StorageService implements OnDestroy {
 
   /**
    * 로컬 맥어드레스 취득(base64 디코딩)
+   *
+   * @returns {string} 맥어드레스
    */
   public getMacAddress(): string {
     const data = this.getSessionItem('macaddress');
@@ -95,7 +99,7 @@ export class StorageService implements OnDestroy {
    * subscribe 할 수 있지만 값이 계속 남아 타 사용자가 들어왔을 경우 적용됨.
    * 따라서 sessionstorage 에 저장하고 broker에 이벤트를 날리는 방식으로 전환   *
    *
-   * @param data
+   * @param {number} data 잠금 처리 값
    */
   public setScreenLockType(data: number): void {
     this.removeSessionItem('screenLockType');
@@ -105,6 +109,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * 화면 잠금 플래그 여부 가져오기
+   * @returns {number} 잠금 여부 값
    */
   public getScreenLockType(): number {
     const data = this.getSessionItem('screenLockType');
@@ -123,6 +128,7 @@ export class StorageService implements OnDestroy {
    * 모달 팝업을 띄울때
    * modal-main.component.ts 에서 마지막 모달 띄운 id 를 가져와서
    * 키 이벤트(HostListner) 에서 해당 모달만 이벤트 처리되도록 함.
+   * @returns {any} 마지막 모달 아이디
    */
   public getLatestModalId(): any {
     const data: Array<string> = [];
@@ -141,6 +147,7 @@ export class StorageService implements OnDestroy {
    * this.modal.openModalByComponent 형식으로 띄워줄 경우
    * modalId: '<Component 이름>' 을 지정하여
    * 모달 닫기 키 이벤트가 동작할때 해당 모달만 이벤트 처리되도록 함.
+   * @param {string} item 모달 아이디
    */
   public setLatestModalId(item: string): void {
     const data: Array<string> = [];
@@ -188,73 +195,112 @@ export class StorageService implements OnDestroy {
 
   /**
    * Terminal 정보 가져오기
+   * @returns {TerminalInfo} 터미널 정보
    */
   public getTerminalInfo(): TerminalInfo {
     const terminalinfo: TerminalInfo = this.getSessionItem('terminalInfo');
     return terminalinfo;
   }
 
+  /**
+   * Terminal 정보 저장하기
+   * @param {any} data 터미널 정보
+   */
   public setTerminalInfo(data: any): void {
     this.setSessionItem('terminalInfo', data);
   }
 
+  /**
+   *  Terminal 정보 삭제하기
+   */
   public removeTerminalInfo(): void {
     this.removeSessionItem('terminalInfo');
   }
 
+  /**
+   * 터미널 정보를 가지고 있는지 여부 체크
+   * @returns {boolean} 가지고 있으면 true, 아니면 false
+   */
   public hasTerminalAuth(): boolean {
     const terminalinfo: TerminalInfo = this.getTerminalInfo();
     return (terminalinfo !== null && Utils.isNotEmpty(terminalinfo.id));
   }
 
   /**
-   * 복합결제 시 남은 금액을 기록
+   * 복합결제 시 남은 금액을 조회
+   * @returns {number} 남은 금액
    */
   public getPay(): number {
     return this.getSessionItem('pay') ? this.getSessionItem('pay') : 0;
   }
 
+  /**
+   * 복합결제 시 남은 금액 기록
+   * @param {number} data 남은 금액
+   */
   public setPay(data: number): void {
     this.setSessionItem('pay', data);
   }
 
+  /**
+   * 복합결제 시 남은 금액 세션 정보 삭제
+   */
   public removePay() {
     this.removeSessionItem('pay');
   }
 
   /**
-   * 복합결제 시 주결제 수단을 기록
+   * 복합결제 시 주결제 수단을 조회
+   *
+   * @returns {string} 주결제수단
    */
   public getPaymentModeCode(): string {
     return this.getSessionItem('paymentmode');
   }
 
+  /**
+   * 복합결제 시 주결제 수단을 기록
+   *
+   * @param {string} data 주결제 수단
+   */
   public setPaymentModeCode(data: string): void {
     this.setSessionItem('paymentmode', data);
   }
 
+  /**
+   * 복합결제 시 주결제 수단 세션정보 삭제
+   */
   public removePaymentModeCode(): void {
     this.removeSessionItem('paymentmode');
   }
 
   /**
    * Access Token 정보 가져오기
+   * @returns {AccessToken} 액세스 토큰 정보
    */
   public getTokenInfo(): AccessToken {
     const tokeninfo: AccessToken = this.getSessionItem('tokenInfo');
     return tokeninfo;
   }
 
+  /**
+   * Access Token 정보 저장하기
+   * @param {any} data 액세스 토큰 정보
+   */
   public setTokenInfo(data: any): void {
     this.setSessionItem('tokenInfo', data);
   }
 
+  /**
+   * Access Token 정보 세션 삭제하기
+   */
   public removeTokenInfo(): void {
     this.removeSessionItem('tokenInfo');
   }
 
   /**
    * Start 시 저장한 Batch 정보 가져오기
+   * @returns {BatchInfo} 배치정보
    */
   public getBatchInfo(): BatchInfo {
     const batchinfo: BatchInfo = this.getSessionItem('batchInfo');
@@ -264,34 +310,46 @@ export class StorageService implements OnDestroy {
   /**
    * 배치 정보 저장
    *
-   * @param data
+   * @param {any} data 배치정보
    */
   public setBatchInfo(data: any): void {
     this.setSessionItem('batchInfo', data);
   }
 
   /**
-   * 배치 정보 삭제
+   * 배치 세션 정보 삭제
    */
   public removeBatchInfo(): void {
     this.removeSessionItem('batchInfo');
   }
 
+  /**
+   * 클라이언트 아이디 조회
+   * @returns {string} 클라이언트 아이디
+   */
   public getClientId(): string {
     return this.getSessionItem('clientId');
   }
 
+  /**
+   * 클라이언트 아이디 세션 정보 저장하기
+   * @param {string} data 클라이언트 아이디
+   */
   public setClientId(data: string) {
     this.setSessionItem('clientId', data);
   }
 
   /**
+   * @description
    * 로그인 되어있는지 여부 체크
-   * 로그인 상태 : 로그인과정을 거쳐서 token 정보를 취득한 상태.
-   * 로그인 과정
-   * 1. POS 단말기 인증
-   * 2. 사용자 Authentication
-   * 3. 사용자 Access Token
+   *`
+   *  로그인 상태 : 로그인과정을 거쳐서 token 정보를 취득한 상태.
+   *  로그인 과정
+   *   1. POS 단말기 인증
+   *   2. 사용자 Authentication
+   *   3. 사용자 Access Token
+   *`
+   * @returns {boolean} 로그인 여부
    */
   public isLogin(): boolean {
     const tokeninfo: AccessToken = this.getTokenInfo();
@@ -316,8 +374,8 @@ export class StorageService implements OnDestroy {
    * local storage 에 저장하기
    * local storage event listener data 전달
    *
-   * @param key local 정보 조회키
-   * @param value 저장할 값
+   * @param {string} key local 정보 조회키
+   * @param {T} data 저장할 값
    */
   public setLocalItem<T>(key: string, data: T): void {
     this.lstorage.setItem(key, Utils.stringify(data));
@@ -327,9 +385,10 @@ export class StorageService implements OnDestroy {
   /**
    * local storage 조회하기
    *
-   * @param key local 정보 조회키
+   * @param {string} key local 정보 조회키
+   * @returns {any} 로컬스토리지 값 조회
    */
-  public getLocalItem<T>(key: string) {
+  public getLocalItem<T>(key: string): any {
     return Utils.parse(this.lstorage.getItem(key));
   }
 
@@ -337,16 +396,18 @@ export class StorageService implements OnDestroy {
    * 특정 local storage 값 삭제하기
    * local storage event listener data 전달
    *
-   * @param key local 정보 삭제키
+   * @param {string} key local 정보 삭제키
    */
   public removeLocalItem(key: string): void {
     this.lstorage.removeItem(key);
     this.storageSubject.next({ key: key, value: null });
   }
 
+
   /**
    * 고객화면 담당자(캐셔) 지정
    * 듀얼모니터 event 처리
+   * @param {string} data 담당자명
    */
   public setEmployeeName(data: string) {
     this.setLocalItem('employeeName', data);
@@ -354,6 +415,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * 고객화면 담당자(캐셔) 정보 가져오기
+   * @returns {string} 담당자명
    */
   public getEmloyeeName(): string {
     return this.getLocalItem('employeeName');
@@ -361,6 +423,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * 담당자(캐셔) Id 저장
+   * @param {string} data 담당자 아이디
    */
   public setEmployeeId(data: string) {
     this.setLocalItem('employeeId', data);
@@ -368,6 +431,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * 담당자(캐셔) Id 가져오기
+   * @returns {string} 담당자 아이디
    */
   public getEmloyeeId(): string {
     return this.getLocalItem('employeeId');
@@ -385,16 +449,23 @@ export class StorageService implements OnDestroy {
    * 회원 검색 시 회원 정보 저장
    * 회원 검색 시 클라이언트에 뿌려줌.
    *
-   * @param data 회원정보
+   * @param {Accounts} data 회원정보
    */
   public setCustomer(data: Accounts): void {
     this.setLocalItem('customer', data);
   }
 
+  /**
+   * 회원 정보 조회
+   * @returns {Accounts} 회원 정보
+   */
   public getCustomer(): Accounts {
     return this.getLocalItem('customer');
   }
 
+  /**
+   * 회원 정보 삭제하기
+   */
   public removeCustomer(): void {
     this.removeLocalItem('customer');
   }
@@ -403,22 +474,29 @@ export class StorageService implements OnDestroy {
    * 상품 검색 시 장바구니에 담길 상품 정보 저장
    * 상품 검색 시 클라이언트에 뿌려줌.
    *
-   * @param data 상품정보
+   * @param {any | any[]} data 상품정보
    */
   public setOrderEntry(data: any | any[]): void {
     this.setLocalItem('orderentry', data);
   }
 
+  /**
+   * 상품 정보 삭제
+   */
   public removeOrderEntry(): void {
     this.removeLocalItem('orderentry');
   }
 
+  /**
+   * 클라이언트용 로컬스토리지 정보 삭제
+   */
   public clearClient(): void {
     this.removeEmployeeName();
     this.removeCustomer();
     this.removeOrderEntry();
     this.clearLocal();
   }
+
   /**
    * local storage 전체 삭제
    */
@@ -426,6 +504,9 @@ export class StorageService implements OnDestroy {
     this.lstorage.clear();
   }
 
+  /**
+   * @ignore
+   */
   private isSessionStorageSupported(): boolean {
     let supported = true;
     if (!this.sstorage) {
@@ -434,6 +515,9 @@ export class StorageService implements OnDestroy {
     return supported;
   }
 
+  /**
+   * @ignore
+   */
   private isLocalStorageSupported(): boolean {
     let supported = true;
     if (!this.lstorage) {
@@ -459,6 +543,7 @@ export class StorageService implements OnDestroy {
 
   /**
    * local storage event listener define
+   * @param event 스토리지 이벤트
    */
   private storageEventListner(event: StorageEvent) {
     if (event.storageArea === this.lstorage) {
