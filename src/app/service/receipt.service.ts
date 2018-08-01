@@ -1,5 +1,4 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/toPromise';
 
@@ -18,6 +17,9 @@ import { MessageService } from '../message/message.service';
 import { OrderService } from './order/order.service';
 import { PaymentService } from './payment/payment.service';
 
+/**
+ * 영수증 출력 서비스
+ */
 @Injectable()
 export class ReceiptService implements OnDestroy {
 
@@ -50,32 +52,59 @@ export class ReceiptService implements OnDestroy {
         if (this.groupordersubscription) { this.groupordersubscription.unsubscribe(); }
     }
 
+    /**
+     * 일반 ABO 출력 정보
+     *
+     * @param data 영수증 데이터
+     * @returns {string} 출력 정보
+     */
     public aboNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.ABONormal);
     }
 
+    /**
+     * 일반 멤버 출력 정보
+     *
+     * @param data 영수증 데이터
+     * @returns {string} 출력 정보
+     */
     public memberNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.MemberNormal);
     }
 
+    /**
+     * 일반 소비자 출력 정보
+     *
+     * @param data 영수증 데이터
+     * @returns {string} 출력 정보
+     */
     public consumerNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.ConsumerNormal);
     }
-
+    /**
+     * 그룹주문 요약 출력 정보
+     *
+     * @param data 영수증 데이터
+     * @returns {string} 출력 정보
+     */
     public groupOrderSummary(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.GroupSummary);
     }
 
+    /**
+     * 영수증 출력용 데이터 생성
+     *
+     * @param data 영수증 데이터
+     * @param format 영수증 포맷
+     * @returns {string} 영수증 출력 데이터
+     */
     private getReceipt(data: any, format: ReceiptTypeEnum): string {
         const templateList: Array<string> = this.receitDataProvider.getReceiptTemplates(format);
-
         let retText = '';
-
         templateList.forEach((templateName) => {
             const templateText = this.receitDataProvider.getXmlTemplate(templateName);
             const parsed = EscPos.fillData(templateText, data);
             const isCompiled = this.receitDataProvider.isPrecompiled(templateName);
-
             if (isCompiled) {
                 retText += EscPos.unescapeNull(parsed);
             } else {
@@ -83,7 +112,6 @@ export class ReceiptService implements OnDestroy {
                 retText += transformed;
             }
         });
-
         return EscPos.unescapeLeadingSpace(retText);
     }
 
@@ -260,6 +288,7 @@ export class ReceiptService implements OnDestroy {
      *
      * @param order 주문정보
      * @param index 인쇄 페이지 인덱스
+     * @returns {GroupResponseData} 그룹주문 데이터
      */
     private getGroupDetailInfo(order: Order, index: number): GroupResponseData {
         const gJsonCartData = {
@@ -296,6 +325,7 @@ export class ReceiptService implements OnDestroy {
      * @param reIssue 영수증 재발행 여부
      * @param isGroupOrder 그룹주문 여부
      * @param isCashReceipt 현금영수증(소득공제) 여부
+     * @returns {boolean} 성공/실패 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture,
         { cancelFlag = 'N', groupInfo = null, type = null, macAndCoNum = null, reIssue = false, isGroupOrder = false, isCashReceipt = false }:
@@ -364,6 +394,7 @@ export class ReceiptService implements OnDestroy {
      * 영수증 출력 정보를 이용하여 영수증 문구를 생성하고 출력
      *
      * @param printInfo 영수증 출력 정보
+     * @returns {boolean} 성공/실패 여부
      */
     private makeTextAndPrint(printInfo: any): boolean {
         let rtn = true;
@@ -594,6 +625,7 @@ export class ReceiptService implements OnDestroy {
      *
      * @param orderEntry 주문 엔트리 정보
      * @param type 주문유형 정보
+     * @returns {boolean} 성공/실패 여부
      */
     makeTextAndGroupSummaryPrint(orderEntry: Array<OrderEntry>, type: string): boolean {
         let rtn = true;

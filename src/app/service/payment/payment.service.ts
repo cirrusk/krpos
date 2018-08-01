@@ -11,6 +11,9 @@ import {
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
 
+/**
+ * 지불 처리 서비스
+ */
 @Injectable()
 export class PaymentService {
 
@@ -25,6 +28,7 @@ export class PaymentService {
    * AP 별 결제 수단 조회하기
    *
    * @param storeid AP Name
+   * @returns {PaymentModeList} AP 별 결제 수단목록
    */
   getPaymentModes(storeid?: string): Observable<PaymentModeList> {
     const params = { feilds: 'DEFAULT' };
@@ -38,6 +42,7 @@ export class PaymentService {
    *
    * @param userid 사용자아이디
    * @param cartid 카트아이디
+   * @returns {PaymentModeListByMain} 사용가능한 결제 수단
    */
   getPaymentModesByMain(userid: string, cartid: string): Observable<PaymentModeListByMain> {
     const macAddress = this.storage.getMacAddress();
@@ -51,6 +56,7 @@ export class PaymentService {
    * 신용카드 무이자 할부 정보 조회
    *
    * @param code 카드사코드
+   * @returns {BankInfoList} 신용카드 무이자 할부 정보
    */
   getInstallmentPlan(): Observable<BankInfoList> {
     const params = { feilds: 'DEFAULT' };
@@ -63,6 +69,7 @@ export class PaymentService {
    * 장바구니에 회원 검색 시 사용
    *
    * @param userid 회원아이디
+   * @returns {Balance[]} 회원의 포인트 / Re-Cash 정보
    */
   getBalanceAndRecash(userid: string): Observable<Balance[]> {
     return Observable.forkJoin(this.getBalance(userid), this.getRecash(userid));
@@ -72,6 +79,7 @@ export class PaymentService {
    * 회원의 가용 포인트 조회
    *
    * @param userid 회원아이디
+   * @returns {Balance} 회원의 포인트 정보
    */
   getBalance(userid: string): Observable<Balance> {
     const pathvariables = { userId: userid };
@@ -84,6 +92,7 @@ export class PaymentService {
    * 회원의 Re-Cash 조회
    *
    * @param userid 회원아이디
+   * @returns {Balance} 회원의 Re-Cash 정보
    */
   getRecash(userid: string): Observable<Balance> {
     const pathvariables = { userId: userid };
@@ -94,6 +103,7 @@ export class PaymentService {
 
   /**
    * 쿠폰 목록 조회
+   *
    * @param accountid 회원 아이디
    * @param userid 회원 아이디
    * @param couponcode 쿠폰코드
@@ -101,6 +111,7 @@ export class PaymentService {
    * @param pagesize 페이지사이즈
    * @param sort 정렬값
    * @param asc 정렬
+   * @returns {CouponList} 쿠폰 목록
    */
   searchCoupons(accountid: string, userid: string, currentpage = 0, pagesize = 5, sort = 'startDate', asc = true): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
