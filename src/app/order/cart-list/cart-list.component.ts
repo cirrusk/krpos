@@ -1553,19 +1553,17 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   private setSerialAndRfids(data: any) {
-    console.log('1------------- serialnumnber : ' + data.serialNumber);
-    console.log('2------------- rfid : ' + data.rfid);
     this.serialNumbers.push(data.serialNumber);
     this.rfids.push(data.rfid);
     if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
-      data.serialNumbers.forEach(serial => {
-        console.log('3------------- serialnumnber : ' + serial);
+      data.serialNumbers.forEach((serial, index) => {
+        console.log('[' + index + '] ------------- serialnumnbers : ' + serial);
         this.serialNumbers.push(serial);
       });
     }
     if (data.rfIds && Array.isArray(data.rfIds)) {
-      data.rfIds.forEach(rfid => {
-        console.log('4------------- rfid : ' + rfid);
+      data.rfIds.forEach((rfid, index) => {
+        console.log('[' + index + '] ------------- rfids : ' + rfid);
         this.rfids.push(rfid);
       });
     }
