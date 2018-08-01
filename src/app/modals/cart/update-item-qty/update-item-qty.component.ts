@@ -30,7 +30,7 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
       const hasSerialOrRfid = this.product.serialNumber || this.product.rfid;
       const baseqty = this.callerData.qty;
       if (hasSerialOrRfid && (baseqty > quantity)) {
-        this.alert.warn({ message: `제품 수량을 감소할 경우<br>해당 제품 취소 후 다시 진행해주세요.`, timer: true, interval: 1000 });
+        this.alert.warn({ message: `Serial / RFID 상품은 상품 삭제 후 처음부터 다시 입력하여야 합니다.`, timer: true, interval: 1000 });
         setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 250);
         return;
       }
