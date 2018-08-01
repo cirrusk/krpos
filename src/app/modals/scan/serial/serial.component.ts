@@ -143,6 +143,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     let rtype: string;
     let serial = '';
     let rfid = '';
+    let scannedRegCount = 0;
 
     this.codes.forEach(cd => {
       if (cd.nativeElement.getAttribute('type') === 'text') {
@@ -157,10 +158,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
           if (stype === 'true' && rtype === 'false') {
             serial = cd.nativeElement.value;
             this.serialNumbers.push(serial);
+            scannedRegCount++;
           }
           if (stype === 'false' && rtype === 'true') {
             rfid = cd.nativeElement.value;
             this.rfids.push(rfid);
+            scannedRegCount++;
           }
         }
       }
@@ -172,8 +175,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       return;
     } else {
       this.checktype = 0;
-      if (this.scanInputSize === this.scannedCount) {
-        this.result = { serialNumber: serial, serialNumbers: this.serialNumbers, rfid: rfid, rfids: this.rfids };
+      if (this.scanInputSize === scannedRegCount) {
+        this.result = { serialNumber: '', serialNumbers: this.serialNumbers, rfid: '', rfids: this.rfids };
         this.close();
       }
     }
