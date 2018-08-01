@@ -134,6 +134,9 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
 
   /**
    * Serial / RFID 입력하기
+   * Serial / RFID 가 배열로 입력되도록
+   * API가 변경되었으므로 기존의 string 은
+   * 빈값으로 처리하거나 제거하도록 함.
    */
   reg() {
     let chkidx = 0;
