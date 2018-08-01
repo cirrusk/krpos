@@ -46,7 +46,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   private searchParams: SearchParam;                                        // 조회 파라미터
   private cartInfo: CartInfo;                                               // 장바구니 기본정보
-  private productInfo: OrderEntry;                                          // 제품 정보
+  private productInfo: OrderEntry;                                          // 상품 정보
   private addCartModel: CartModification[];                                 // 장바구니 담기 응답모델
   private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
   private pager: Pagination;                                                // pagination 정보
@@ -257,8 +257,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 메뉴에서 전달한 프로모션 제품코드를 받음.
-   * @param {any} data 프로모션 제품코드
+   * 메뉴에서 전달한 프로모션 상품코드를 받음.
+   * @param {any} data 프로모션 상품코드
    */
   setPromotion(data) {
     if (data && data.product) {
@@ -320,9 +320,16 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
+    this.initSerialRfid();
+    setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
+  }
+
+  /**
+   * Serial 과 RFID 변수 초기화
+   */
+  private initSerialRfid() {
     this.serialNumbers = new Array<string>();
     this.rfids = new Array<string>();
-    setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
   /**
@@ -354,7 +361,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.searchParams.searchText = searchKey;
     if (this.searchMode === 'A') { // 회원검색
       this.selectAccountInfo(this.searchMode, searchText);
-    } else { // 제품 검색
+    } else { // 상품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
         this.createCartInfo(true, searchKey);
       } else {
@@ -400,8 +407,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 제품 검색
-   * 제품 검색 후 입력창에 포커스가 있어야함.
+   * 상품 검색
+   * 상품 검색 후 입력창에 포커스가 있어야함.
    * 이유 : 스캐너가 read 한 값을 올바르게 받음.
    *
    * @param {any} params 검색 파라미터값
@@ -414,9 +421,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       modalId: 'SearchProductComponent'
     }).subscribe(data => {
       if (data) {
-        this.logger.set('cart.list.component', `callSearchProduct : ${data.serialNumber}`).debug();
-        // this.serialNumbers.push(data.serialNumber);
-        // this.rfIds.push(data.rfid);
         this.setSerialAndRfids(data);
         this.addToCart(data.productCode);
       }
@@ -425,8 +429,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 제품 수량 수정 팝업
-   * Serial 이 있는 제품의 경우 수량변경 불가
+   * 상품 수량 수정 팝업
+   * Serial 이 있는 상품의 경우 수량변경 불가
    * 사유 : 이미 Add to Cart 한 상품에 대해서 수량 증/감에 따른 Serial 처리 불가
    */
   callUpdateItemQty() {
@@ -458,8 +462,6 @@ export class CartListComponent implements OnInit, OnDestroy {
               modalId: 'SerialComponent'
             }).subscribe(data => {
               if (data) {
-                this.logger.set('cart.list.component', `selectProductInfo : ${data.serialNumber}`).debug();
-                // this.serialNumbers.push(data.serialNumber);
                 this.setSerialAndRfids(data);
                 this.updateItemQtyCart(cartId, result.code, result.qty);
               }
@@ -662,7 +664,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 제품 검색 ->  결과 값이 1일 경우 Add to cart
+   * 상품 검색 ->  결과 값이 1일 경우 Add to cart
+   *
+   * @param {string} productCode 상품코드
    */
   private selectProductInfo(productCode?: string): void {
     if (productCode) {
@@ -681,8 +685,6 @@ export class CartListComponent implements OnInit, OnDestroy {
                   modalId: 'SerialComponent'
                 }).subscribe(data => {
                   if (data) {
-                    this.logger.set('cart.list.component', `selectProductInfo : ${data.serialNumber}`).debug();
-                    // this.serialNumbers.push(data.serialNumber);
                     this.setSerialAndRfids(data);
                     this.addCartEntries(productCode);
                   }
@@ -694,7 +696,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (product.sellableStatusForStock === 'OUTOFSTOCK') {
                 this.alert.show({ message: '재고가 부족합니다.', timer: true, interval: 1500 });
               } else if (product.sellableStatusForStock === 'ENDOFSALE') {
-                this.alert.show({ message: '단종된 제품입니다.', timer: true, interval: 1500 });
+                this.alert.show({ message: '단종된 상품입니다.', timer: true, interval: 1500 });
               }
               setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
             }
@@ -720,11 +722,11 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 생성
-   *  - 제품 추가시 생성
+   *  - 상품 추가시 생성
    *  - Productcode 가 없을 경우 카트 생성 후 조회
    *
-   * @param popupFlag 팝업플래그
-   * @param productCode  상품 코드
+   * @param {boolean} popupFlag 팝업플래그
+   * @param {string} productCode  상품 코드
    */
   createCartInfo(popupFlag: boolean, productCode?: string): void {
     const terminalInfo = this.storage.getTerminalInfo();
@@ -760,13 +762,13 @@ export class CartListComponent implements OnInit, OnDestroy {
               // 그룹 카트 생성
               this.createGroupCart(accountId, this.cartInfo.code, strUserId.slice(1), popupFlag, productCode);
             } else {
-              // 제품 검색이 필요 할경우 true
+              // 상품 검색이 필요 할경우 true
               if (popupFlag) {
-                // 제품 코드가 있을 경우 바로 검색
+                // 상품 코드가 있을 경우 바로 검색
                 if (productCode !== undefined) {
                   this.selectProductInfo(productCode);
                 } else {
-                  // 제품 코드가 없을 경우 제품검색 팝업 노출
+                  // 상품 코드가 없을 경우 상품검색 팝업 노출
                   this.searchParams.data = this.cartInfo;
                   this.callSearchProduct(this.searchParams);
                 }
@@ -792,7 +794,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * Update VolumeAccount
    *
-   * @param cartInfo
+   * @param {CartInfo} cartInfo 카트 정보
    */
   updateVolumeAccount(cartInfo: CartInfo): void {
     if (this.cartInfo.code !== undefined) {
@@ -819,8 +821,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 현재 장바구니 조회
-   * @param cartInfo 카트 정보
-   * @param page 페이지
+   *
+   * @param {number} page 페이지 정보
    */
   getCartList(page?: number): void {
     this.spinner.show();
@@ -850,7 +852,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 담기 function
-   * @param code
+   * @param {string} code 상품코드
    */
   addToCart(code?: string): void {
     if (!this.accountInfo) {
@@ -861,6 +863,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         this.addCartEntries(code);
       }
+      this.initSerialRfid();
     }
   }
 
@@ -868,7 +871,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 담기
    * 시리얼 넘버가 있을 경우 해당 Serial Number포함하여 전송
    *
-   * @param code
+   * @param {string} code 상품코드
    */
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
@@ -890,8 +893,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.orderType === 'g') {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
+            this.initSerialRfid();
           } else {
-            this.serialNumbers.pop(); // 제한조건에 걸렸으므로 마지막으로 추가된 요소 삭제
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
             this.restrictionMessageList.push(this.restrictionModel);
@@ -919,8 +922,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 주문 리스트 추가
    *
-   * @param orderEntry 주문정보
-   * @param index 인덱스
+   * @param {Cart} cartList 카트 정보
+   * @param {number} index 카트 인덱스 정보
    */
   addCartEntry(cartList: Cart, index?: number) {
     this.cartList = cartList.entries;
@@ -939,8 +942,10 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 수량 업데이트
-   * @param code
-   * @param qty
+   *
+   * @param {string} cartCode 카트 코드
+   * @param {string} code 상품코드
+   * @param {number} qty 상품 변경 수량
    */
   updateItemQtyCart(cartCode: string, code: string, qty: number): void {
     if (this.cartInfo.code !== undefined || cartCode !== undefined) {
@@ -965,6 +970,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (this.orderType === 'g') {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
+              this.initSerialRfid();
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -991,7 +997,9 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 개별 삭제
-   * @param code
+   *
+   * @param {string} cartId 카트 아이디
+   * @param {string} code 상품코드
    */
   removeItemCart(cartId: string, code: string): void {
     if (this.cartInfo.code !== undefined || cartId !== undefined) {
@@ -1187,8 +1195,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 결제 내역 설정
-   * @param paymentcapture
-   * @param order
+   * @param {PaymentCapture} paymentcapture Payment Capture 정보
+   * @param {Order} order 주문정보
    */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
     if (paymentcapture) {
@@ -1232,7 +1240,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
   /**
    * 장바구니 복원 데이터 설정
-   * @param cartData
+   * @param {Cart} cartData 카트 데이터
    */
   setCartInfo(cartData: Cart): void {
     this.cartList.length = 0;
@@ -1250,8 +1258,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 출력 데이터 생성
    *
-   * @param page 페이지 번호
-   * @param pagerFlag 페이징 여부
+   * @param {number} page 페이지 번호
+   * @param {boolean} pagerFlag 페이징 여부
    */
   setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
@@ -1276,8 +1284,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 사용자 출력 데이터 생성
-   * @param page 페이지 번호
-   * @param pagerFlag 페이징 여부
+   * @param {number}} page 페이지 번호
+   * @param {boolean} pagerFlag 페이징 여부
    */
   setUserPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.userPager.totalPages) && pagerFlag) {
@@ -1311,7 +1319,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * Restriction Message 생성
-   * @param model
+   * @param {CartModification} model 카트정보
    */
   private makeRestrictionMessage(model: CartModification) {
     let appendMessage = '';
@@ -1351,9 +1359,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 오른쪽 메뉴에 이벤트 전달하기
    *
-   * @param modelType 모델타입
-   * @param useflag 사용플래그
-   * @param model 모델객체
+   * @param {string} modelType 모델타입
+   * @param {boolean} useflag 사용플래그
+   * @param {any} model 모델객체
    */
   private sendRightMenu(modelType: string, useflag: boolean, model?: any): void {
     switch (modelType.toUpperCase()) {
@@ -1420,8 +1428,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 사용자 선택
-   * @param index
-   * @param uid
+   * @param {number} index 선택된 회원의 인덱스 정보
+   * @param {string} uid 회원 아이디
    */
   choiceGroupUser(index: number, uid: string): void {
     this.selectedUserIndex = index;
@@ -1451,7 +1459,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 유저 중복 검사
-   * @param uid
+   * @param {string} uid 회원 아이디
    */
   checkGroupUserId(uid: string): number {
     const existedIdx: number = this.groupAccountInfo.findIndex(
@@ -1464,8 +1472,8 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 카트 조회
-   * @param userId
-   * @param cartId
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    */
   getGroupCart(userId: string, cartId: string) {
     this.spinner.show();
@@ -1489,9 +1497,11 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 카트 생성
-   * @param userId
-   * @param cartId
-   * @param volumeAccount ex) 7480001,7480002 or 7480001
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
+   * @param {string} volumeAccount ex) 7480001,7480002 or 7480001
+   * @param {boolean} popupFlag 팝업 여부
+   * @param {string} productCode 상품코드
    * sub 추가시 volumeAccount
    * 추가시 가장 앞에 있는 구매자로 조회
    */
@@ -1556,18 +1566,26 @@ export class CartListComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Serial / RFID 정보 설정
+   *
+   * @param {any} data Serial / RFID 스캔 정보
+   */
   private setSerialAndRfids(data: any) {
-    this.serialNumbers.push(data.serialNumber);
-    this.rfids.push(data.rfid);
+    this.logger.set('cart.list.component', `serial / rfid : ${Utils.stringify(data)}`).debug();
+    if (Utils.isNotEmpty(data.serialNumber)) {
+      this.serialNumbers.push(data.serialNumber);
+    }
+    if (Utils.isNotEmpty(data.rfid)) {
+      this.rfids.push(data.rfid);
+    }
     if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
-      data.serialNumbers.forEach((serial, index) => {
-        console.log('[' + index + '] ------------- serialnumnbers : ' + serial);
+      data.serialNumbers.forEach(serial => {
         this.serialNumbers.push(serial);
       });
     }
-    if (data.rfIds && Array.isArray(data.rfIds)) {
-      data.rfIds.forEach((rfid, index) => {
-        console.log('[' + index + '] ------------- rfids : ' + rfid);
+    if (data.rfids && Array.isArray(data.rfids)) {
+      data.rfids.forEach(rfid => {
         this.rfids.push(rfid);
       });
     }
