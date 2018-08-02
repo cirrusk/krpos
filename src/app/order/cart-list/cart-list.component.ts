@@ -275,6 +275,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   setPytoCafe(data) {
     if (data && data.pytocafe) {
+      this.init();
       this.searchPhytoCafeAccount();
     }
   }
