@@ -13,12 +13,11 @@ export const CLIENT_SECRET = new InjectionToken<string>('CLIENT_SECRET');
 export class Config {
 
   /**
-   * @description
    * API URL 가져오기
-   *`
+   *
    * baseSiteId는 기본적으로 변환.
    * URL에 Root URL 이 없으면 자동으로 붙힘.
-   *`
+   *
    * @param key API URL key
    * @param params replace 할 path variable json
    */
@@ -40,7 +39,6 @@ export class Config {
   }
 
   /**
-   * @description
    * Config 정보 가져오기
    * 현재까지는 depth 3까지만 처리하도록 함.
    *

@@ -8,7 +8,6 @@ import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
 
 /**
- * @description
  * 로그인 입력 화면
  *
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.
@@ -75,10 +74,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   /**
-   * @description
    * 로그인 팝업창의 근무 시작 버튼 클릭
    *
-   *`
    * AD 계정 입력 형식이 맞지 않은 경우,
    * AD 계정 입력 형식이 맞지 않습니다  Alert 뜸
    * 비밀번호가 미입력 된 경우, 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
@@ -92,7 +89,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 3. 배치가 있으면 : 같은 POS 기기 여부 체크
    * 4. 같은 POS 기기 : 해당 배치 그냥 사용
    * 5. 다른 POS 기기 : 메시지 뿌리고 무조건 배치 종료.
-   *`
+   *
    */
   startWork() {
     if (this.loginId) { this.logger.set('login.component', `login id : ${this.loginId}`).debug(); }

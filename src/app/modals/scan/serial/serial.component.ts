@@ -7,10 +7,8 @@ import { Utils } from '../../../core/utils';
 import { Product } from '../../../data/models/cart/cart-data';
 
 /**
- * @description
  * Serial / RFID 입력
  *
- * `
  * 처리 절차
  *   1.	제품의 바코드를 스캔
  *   2.	POS 는 바코드 값으로 Hybris 에 제품 검색
@@ -39,7 +37,6 @@ import { Product } from '../../../data/models/cart/cart-data';
  * 스크롤은 vertical scrollbar (페이지 X)
  * 다음 빈 칸으로 자동 포커싱 되어야 함
  * (처음에는 2행에 포커싱, 입력 후 엔터키 치면 3행으로 포커스 이동) 스캐너에서 자동 엔터키 입력됨
- * `
  */
 @Component({
   selector: 'pos-serial',

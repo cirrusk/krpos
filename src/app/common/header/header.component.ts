@@ -14,7 +14,6 @@ import { BatchInfo, LockType, TerminalInfo } from '../../data';
 import { Utils } from '../../core/utils';
 
 /**
- * @description
  * 공통 헤더 영역
  * Dash-board action 이벤트를 받아 버튼 처리
  * ` --> 근무시작, Start Shift, Stop Shift, POS 종료`
@@ -202,7 +201,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @description
    * Terminal 정보 가져오기
    *
    * `QZ tray 와 시간차 때문에 mac address를 조회할때 network service를 waiting 하게 하고
@@ -309,7 +307,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @description
    * 근무 종료
    *
    * `
@@ -335,7 +332,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @description
    * 화면 잠금
    *
    *`
@@ -351,7 +347,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @description
    * 화면 풀림
    *
    *`
@@ -380,7 +375,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**
-   * @description
    * 로그인 후 배치 처리
    *
    *`

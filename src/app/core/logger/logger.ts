@@ -15,7 +15,6 @@ export class Logger {
   }
 
   /**
-   * @description
    * 적절한 메시지를 구성하여 console 정보를 return 함.
    * 출력하고자 하는 로그레벨이 환경설정의 로그레벨보다 크면 로그 출력하지 않음.
    *
@@ -54,7 +53,6 @@ export class Logger {
   }
 
   /**
-   * @description
    * 로그를 남길 경우 로그 정보를 설정
    *
    * @param name 소스의 대표 명칭

@@ -36,14 +36,13 @@ export class AlertComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @description
    * alert display 처리함.
-   *`
+   *
    * 중요)
    * input 요소가 아닌 element에 focus를 지정하기 위해서는
    * 해당 element 에 반드시 tabindex를 지정(값은 상관없음)하고
    * focus를 설정해야함.
-   *`
+   *
    * @param state
    */
   private display(state: AlertState) {

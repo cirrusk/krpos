@@ -340,15 +340,14 @@ export class StorageService implements OnDestroy {
   }
 
   /**
-   * @description
    * 로그인 되어있는지 여부 체크
-   *`
+   *
    *  로그인 상태 : 로그인과정을 거쳐서 token 정보를 취득한 상태.
    *  로그인 과정
    *   1. POS 단말기 인증
    *   2. 사용자 Authentication
    *   3. 사용자 Access Token
-   *`
+   *
    * @returns {boolean} 로그인 여부
    */
   public isLogin(): boolean {

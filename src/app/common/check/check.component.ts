@@ -14,7 +14,6 @@ import { Config, Logger } from '../../core';
 import { Utils } from '../../core/utils';
 
 /**
- * @description
  * Hybris Server 가 alive 상태인지 체크
  *
  * 원래는 ping 체크하거나 별도의 alive 체크 URL 호출로 체크해야하나
