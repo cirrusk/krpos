@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, AlertService, Modal, Logger } from '../../../core';
-import { PagerService, OrderService, MessageService, SearchService } from '../../../service';
+import { ModalComponent, ModalService, AlertService, Modal, Logger, SpinnerService } from '../../../core';
+import { PagerService, OrderService, MessageService, SearchService, ReceiptService } from '../../../service';
 import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
@@ -17,9 +17,12 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   private searchProductInfoSubscription: Subscription;
   private confirmSubscription: Subscription;
+  private orderDetailsSubscription: Subscription;
 
   private orderList: OrderHistoryList;
+  private orderDetailList: OrderList;
   private orderCodes: string;
+  private orderTypeName: string;
 
   entryList: Array<OrderEntry>;
   pager: Pagination;                                     // pagination 정보
@@ -33,6 +36,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     private logger: Logger,
     private orderService: OrderService,
     private pagerService: PagerService,
+    private receiptService: ReceiptService,
+    private spinnerService: SpinnerService,
     private searchService: SearchService) {
     super(modalService);
     this.init();
@@ -42,12 +47,14 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     setTimeout(() => { this.barcode.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     if (this.callerData.orderList) {
       this.orderList = this.callerData.orderList;
+      this.orderTypeName = this.callerData.orderTypeName;
       this.getOrderDetail(this.orderList);
     }
   }
 
   ngOnDestroy() {
     if (this.searchProductInfoSubscription) { this.searchProductInfoSubscription.unsubscribe(); }
+    if (this.orderDetailsSubscription) { this.orderDetailsSubscription.unsubscribe(); }
     if (this.confirmSubscription) { this.confirmSubscription.unsubscribe(); }
   }
 
@@ -72,6 +79,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
       orderDetails => {
         if (orderDetails) {
+          this.orderDetailList = orderDetails;
           this.setEntryList(orderDetails);
         }
       },
@@ -119,23 +127,28 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {number} page 페이지번호
    */
   productConfirm(productCode: string, page?: number): void {
-    try {
       const existedIdx = this.entryList.findIndex(
         function (obj) {
           return obj.product.code === productCode;
         }
       );
       if (existedIdx !== -1) {
-        const confirmCount = this.entryList[existedIdx].ecpConfirmQty ? this.entryList[existedIdx].ecpConfirmQty : 0;
-        if (this.entryList[existedIdx].quantity > confirmCount) {
-          this.entryList[existedIdx].ecpConfirmQty = confirmCount + 1;
-          this.setPage(page);
-        } else {
-          const errorCount = (confirmCount + 1) - this.entryList[existedIdx].quantity;
-          this.popupExceed(this.entryList[existedIdx].product.code,
-            this.entryList[existedIdx].product.name,
-            this.entryList[existedIdx].quantity,
-            errorCount);
+        this.spinnerService.show();
+        try {
+          const confirmCount = this.entryList[existedIdx].ecpConfirmQty ? this.entryList[existedIdx].ecpConfirmQty : 0;
+          if (this.entryList[existedIdx].quantity > confirmCount) {
+            this.entryList[existedIdx].ecpConfirmQty = confirmCount + 1;
+            this.setPage(Math.ceil((existedIdx + 1) / this.PAGE_SIZE));
+          } else {
+            const errorCount = (confirmCount + 1) - this.entryList[existedIdx].quantity;
+            this.popupExceed(this.entryList[existedIdx].product.code,
+              this.entryList[existedIdx].product.name,
+              this.entryList[existedIdx].quantity,
+              errorCount);
+          }
+          setTimeout(() => { this.spinnerService.hide(); }, 500);
+        } catch (e) {
+          this.spinnerService.hide();
         }
       } else {
         this.searchProductInfoSubscription = this.searchService.getBasicProductInfo(productCode).subscribe(
@@ -153,8 +166,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
             }
           });
       }
-    } catch (e) {
-    }
   }
 
   /**
@@ -244,9 +255,52 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
+  /**
+   * 영수증 출력
+   */
   receiptPrint() {
-    // 영수증 출력
+    this.makeReceiptPrintData(this.orderDetailList);
+  }
 
+  /**
+   * 영수증 출력 DATA 생성
+   *  - 복수 선택인 경우 summary도 출력함.
+   * @param {OrderList} orderList 주문상세리스트
+   */
+  makeReceiptPrintData(orderList: OrderList): void {
+    // 복수개인 경우 Summary 출력
+    if (orderList.orders.length > 1) {
+      this.receiptService.makeTextAndGroupSummaryPrint(this.entryList , this.orderTypeName);
+    }
+
+    // 사용자별 영수증 출력
+    if (orderList) {
+      const orderCodes = new Array<string>();
+      orderList.orders.forEach(order => {
+        orderCodes.push(order.code);
+      });
+      this.orderDetailsSubscription = this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
+        orderDetails => {
+          if (orderDetails) {
+            try {
+              this.receiptService.reissueReceipts(orderDetails);
+              this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+            } catch (e) {
+              this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${e}`).error();
+              this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+            }
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${errdata.type}`).error();
+            this.logger.set('ecp-confirm.component', `makeReceiptPrintData error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        }
+      );
+    }
   }
 
   /**

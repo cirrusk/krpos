@@ -2,6 +2,7 @@ import { BasePrice } from './base-price';
 import { Pagination } from '../common/pagination';
 import { AmwayValue } from '../common/amway-value';
 import { Promotion } from '../order/promotion';
+import { ProductInfo } from '../..';
 
 /**
  * Add to Cart Response 객체 - CartModificationWsDTO
@@ -88,7 +89,7 @@ export class Product {
     dimensions: any; // AmwayDimensionWsDTO
     productAttributes: string; // Map<String,String>
     onlineSince: string; // Date
-    kitEntry: string; // Set<AmwayKitEntryProductWsDTO>
+    kitEntry: Set<KitEntryProduct>; // Set<AmwayKitEntryProductWsDTO>
     kitPrice: number; // double
     retailPrice: RetailPrice; // PriceWsDTO
     deliveryModes: any; // List<DeliveryModeWsDTO>
@@ -106,3 +107,10 @@ export class Stock {
 export class Price extends BasePrice { }
 
 export class RetailPrice extends BasePrice { }
+
+export class KitEntryProduct {
+    entry: ProductInfo; // ProductWsDTO
+    configuredQty: number; // Double
+    code: string;
+    isMajor: boolean;
+}

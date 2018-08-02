@@ -279,12 +279,14 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    */
   confirmECP() {
     if (this.targetList.orders.length > 0) {
-      this.modal.openModalByComponent(EcpConfirmComponent, {
-        callerData: { orderList: this.targetList },
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        modalId: 'EcpConfirmComponent'
-      });
+      this.modal.openModalByComponent(EcpConfirmComponent,
+        {
+          callerData: { orderList: this.targetList , orderTypeName: this.orderTypeName },
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          modalId: 'EcpConfirmComponent'
+        }
+      );
     } else {
       this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder') });
     }

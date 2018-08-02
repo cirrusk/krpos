@@ -163,8 +163,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.orderInfo = result;
         this.logger.set('complete.payment.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
         this.finishStatus = result.statusDisplay;
-        this.orderType = result.orderType.code;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
+          this.orderType = result.orderType.code;
           if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
             this.paidDate = result.created ? result.created : new Date();
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';

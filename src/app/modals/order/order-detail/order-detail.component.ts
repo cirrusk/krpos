@@ -5,7 +5,7 @@ import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance, MemberType } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 
@@ -28,6 +28,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   activeFlag: boolean;
   orderType: string;
   paymentCapture: PaymentCapture;
+  ABOFlag: boolean;
 
   constructor(protected modalService: ModalService,
     private router: Router,
@@ -163,6 +164,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       orderDetail => {
         if (orderDetail) {
           let jsonPaymentData = {};
+          this.ABOFlag = orderDetail.orders[0].account.accountTypeCode === MemberType.ABO ? true : false;
           orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
             switch (paymentInfo.paymentMode.code) {
               case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
