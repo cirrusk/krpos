@@ -44,11 +44,13 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   /**
-   * 취소 요청
+   * 주문 취소 요청
    */
   cancelOrder() {
     this.spinner.show();
-    this.cancelOrderSubscription = this.orderService.orderCancel(this.orderInfo.amwayAccount.uid, this.orderInfo.user.uid, this.orderInfo.code).subscribe(
+    this.cancelOrderSubscription = this.orderService.orderCancel(this.orderInfo.amwayAccount.uid,
+                                                                 this.orderInfo.user.uid,
+                                                                 this.orderInfo.code).subscribe(
       cancelData => {
         if (cancelData) {
           this.cancelReceipts(this.orderInfo.user.uid, this.orderInfo.code);
@@ -70,8 +72,8 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   /**
    * 취소 영수증 출력
    *
-   * @param userId 회원 아이디
-   * @param orderCode 주문 코드
+   * @param {string} userId 회원 아이디
+   * @param {string} orderCode 주문 코드
    */
   cancelReceipts(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();

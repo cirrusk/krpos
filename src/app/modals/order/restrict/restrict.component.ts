@@ -28,6 +28,7 @@ export class RestrictComponent extends ModalComponent implements OnInit {
 
   /**
    * 출력 데이터 생성
+   * @param {number} page 페이지번호
    */
   setPage(page: number) {
     if (page < 1 || page > this.pager.totalPages) {

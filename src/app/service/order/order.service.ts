@@ -102,8 +102,8 @@ export class OrderService {
   }
 
   /**
-   * 그룹주문 상세 조회
-   *
+   * 주문 상세 조회
+   *  - 주문 여러건 동시 조회
    * @param {Array<string>} ordercodes 주문코드 배열
    * @returns {OrderList} 주문내역
    */
@@ -205,5 +205,21 @@ export class OrderService {
     const param = { fields: 'DEFAULT' };
     const data = new HttpData('cancelReceipt', pathvariables, null, param, 'json');
     return this.api.post(data);
+  }
+
+  /**
+   * 픽업 컨펌
+   *  - 픽업 완료 후 주문 완료로 상태값 변경
+   *  ex) 110-11111111,110-11111112
+   * @param {string} orderCode 주문번호
+   */
+  confirmPickup(orderCodes: string): Observable<ResponseData> {
+    const arrOrderCode = new Array<String>();
+    orderCodes.split(',').forEach(orderCode => {
+      arrOrderCode.push(orderCode.trim());
+    });
+    const pathvariables = { orderCode: orderCodes };
+    const data = new HttpData('confirmPickup', pathvariables, arrOrderCode, null, 'json');
+    return this.api.put(data);
   }
 }

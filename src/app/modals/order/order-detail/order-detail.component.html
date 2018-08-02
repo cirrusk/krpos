@@ -94,13 +94,13 @@
                             </div>
                         </ul>
                         <ul class="list">
-                            <li class="fx"><span>PV</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalPriceWithTax.amwayValue.pointValue}}</em></li>
-                            <li class="fx"><span>BV</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalPriceWithTax.amwayValue.businessVolume}}</em></li>
-                            <li class="fx"><span>PV SUM</span><em></em></li>
-                            <li class="fx"><span>BV SUM</span><em></em></li>
-                            <li class="fx"><span>GROUP PV</span><em></em></li>
-                            <li class="fx"><span>GROUP BV</span><em></em></li>
-                            <li><span>잔여 A 포인트</span><em>00</em></li>
+                            <li class="fx"><span>PV</span><em *ngIf="orderDetail.orders[0].totalPrice.amwayValue">{{cancelSymbol}}{{orderDetail.orders[0].totalPrice.amwayValue.pointValue | number}}</em></li>
+                            <li class="fx"><span>BV</span><em *ngIf="orderDetail.orders[0].totalPrice.amwayValue">{{cancelSymbol}}{{orderDetail.orders[0].totalPrice.amwayValue.businessVolume | number}}</em></li>
+                            <li class="fx"><span>PV SUM</span><em *ngIf="orderDetail.orders[0].value">{{orderDetail.orders[0].value.pointValue | number}}</em></li>
+                            <li class="fx"><span>BV SUM</span><em *ngIf="orderDetail.orders[0].value">{{orderDetail.orders[0].value.businessVolume | number}}</em></li>
+                            <li class="fx"><span>GROUP PV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount">{{orderDetail.orders[0].volumeABOAccount.totalPV | number}}</em></li>
+                            <li class="fx"><span>GROUP BV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount">{{orderDetail.orders[0].volumeABOAccount.totalBV | number}}</em></li>
+                            <li><span>잔여 A 포인트</span><em>{{balance.amount | number}}</em></li>
                             <li><span>공제번호</span>
                                 <em *ngIf="orderDetail.orders[0].deductionNumber; else elseTemplate">
                                     {{orderDetail.orders[0].deductionNumber}}

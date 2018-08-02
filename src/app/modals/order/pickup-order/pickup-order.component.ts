@@ -69,37 +69,42 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.orderType = this.callerData.searchType;
 
+    // 간편선물 설정
     if (this.orderType === 'e') {
       this.orderTypeName = '간편선물';
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes  = 'pickup';
-      this.orderStatus = 'COMPLETED';
+      this.orderStatus = 'READY';
       this.isEasyPickupOrder = true;
+      // 설치주문 설정
     } else if (this.orderType === 'i') {
       this.orderTypeName = '설치주문';
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes  = 'install';
-      this.orderStatus = 'COMPLETED';
+      this.orderStatus = 'READY';
       this.isEasyPickupOrder = false;
+      // 픽업예약주문 설정
     } else {
       this.orderTypeName = '픽업예약주문';
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes  = 'pickup';
-      this.orderStatus = 'COMPLETED';
+      this.orderStatus = 'READY';
       this.isEasyPickupOrder = false;
     }
   }
 
   ngOnDestroy() {
+    if (this.orderListSubscription) { this.orderListSubscription.unsubscribe(); }
     this.receiptService.dispose();
   }
 
   /**
    * 컨펌 리스트로 이동
-   * @param orderCode
+   * @param {string} orderCode 주문번호
+   * @param {string} type      동작유형 ex) a = ADD, d =  DELETE
    */
   moveOrder(evt: any, orderCode: string, type: string): void {
     let selectedFlag = false;
@@ -109,8 +114,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       selectedFlag = type === 'a' ? true :  false;
     }
 
+    // source List 에서 row 활성화 일때 target list 로 추가
     if (selectedFlag) {
       let targetExistedIdx = -1;
+      // target list 이동시 중복 확인
       if (this.targetList.orders) {
         targetExistedIdx = this.targetList.orders.findIndex(
           function (obj) {
@@ -121,17 +128,22 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         targetExistedIdx = -1;
       }
 
+      // 중복이 없을 경우 추가
       if (targetExistedIdx === -1) {
         const sourceExistedIdx: number = this.sourceList.orders.findIndex(
           function (obj) {
             return obj.code === orderCode;
           }
         );
+        // 유저 count 를 위한 체크
         this.checkUserDuplicate(this.sourceList.orders[sourceExistedIdx].user.uid, 'a');
+        // targetList 추가
         this.targetList.orders.push(this.sourceList.orders[sourceExistedIdx]);
       }
+      // target list 페이지 갱신
       this.setTargetPage(Math.ceil(this.targetList.orders.length / this.PAGE_SIZE), false);
     } else {
+      // target list 에서 삭제
       this.deleteOrder(orderCode);
     }
 
@@ -139,10 +151,13 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 컨펌 리스트에서 제거
-   * @param orderCode
+   *  - target list 에서 row 선택시
+   * @param {string} orderCode 주문번호
    */
   deleteOrder(orderCode: string): void {
     const renderer2 = this.renderer;
+    // 현재 source list 페이지에서 삭제 되는 orderCode가 있는지 확인
+    // 있을 경우 활성화 해제
     this.ecporders.some(function (ecpOrder) {
         if (ecpOrder.nativeElement.firstElementChild.innerText.trim() === orderCode) {
         renderer2.removeClass(ecpOrder.nativeElement, 'on');
@@ -154,20 +169,25 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         return obj.code === orderCode;
       }
     );
+    // 유저 count 를 위한 체크
     this.checkUserDuplicate(this.targetList.orders[existedIdx].user.uid, 'd');
+    // target list에서 삭제
     this.targetList.orders.splice(existedIdx, 1);
+    // target list 페이지 갱신
     this.setTargetPage(Math.ceil(this.targetList.orders.length / this.PAGE_SIZE), false);
   }
 
   /**
-   * 조회
-   * @param searchType
-   * @param searchText
+   * 주문 검색
+   * @param {string} searchType 검색유형
+   * @param {string} searchText 검색어
+   * @param {boolean} barcodeFlag 바코드조회
    */
   searchOrder(searchType: string, searchText: string, barcodeFlag= false) {
     if (searchText === '' || searchText === undefined || searchText === null) {
       this.alert.info({ message: this.messageService.get('noSearchText') });
     } else {
+      // source list 페이지 이동을 위해 search 정보 저장
       this.searchType = searchType;
       this.searchText = searchText;
       this.getOrderList(searchType, this.channels, this.deliveryModes, this.orderStatus, 'A', searchText, 0, barcodeFlag);
@@ -176,7 +196,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 주문 리스트 페이지 설정
-   * @param page
+   * @param {number} page 페이지번호
    */
   setPage(page: number) {
     this.getOrderList(this.searchType, this.channels, this.deliveryModes, this.orderStatus, 'A', this.searchText, page, false);
@@ -189,8 +209,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 컨펀 리스트 페이지 설정
-   * @param page
-   * @param pagerFlag
+   * @param {string} page 페이지번호
+   * @param {boolean} pagerFlag
    */
   setTargetPage(page: number, pagerFlag: boolean) {
     if ((page < 1 || page > this.targetListPager.totalPages) && pagerFlag) {
@@ -209,19 +229,34 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 주문 조회
-   * @param searchType
-   * @param memberType
-   * @param searchText
-   * @param page
+   * @param {string} searchType 검색유형
+   * @param {string} memberType 유저유형
+   * @param {string} searchText 검색어
+   * @param {number} page       페이지번호
    */
-  getOrderList(searchType: string, channels: string, deliveryModes: string, orderStatus: string,  memberType: string, searchText: string, page = 0, barcodeFlag: boolean) {
+  getOrderList(searchType: string, channels: string, deliveryModes: string, orderStatus: string,
+               memberType: string, searchText: string, page = 0, barcodeFlag: boolean) {
     this.spinner.show();
-    this.orderListSubscription = this.orderService.orderList(searchText, memberType,
-                                                             searchType, 'NORMAL_ORDER', channels, deliveryModes, this.confirmFlag, this.isEasyPickupOrder,
-                                                             page, this.PAGE_SIZE, orderStatus).subscribe(
+    const orderTypes = 'NORMAL_ORDER';
+    const sort = 'code';
+    const asc = false;
+    this.orderListSubscription = this.orderService.orderList(searchText,
+                                                             memberType,
+                                                             searchType,
+                                                             orderTypes,
+                                                             channels,
+                                                             deliveryModes,
+                                                             this.confirmFlag,
+                                                             this.isEasyPickupOrder,
+                                                             page,
+                                                             this.PAGE_SIZE,
+                                                             sort,
+                                                             asc,
+                                                             orderStatus).subscribe(
       resultData => {
         if (resultData) {
           this.sourceList = resultData;
+          // barcode 조회시 결과값이 하나면 바로 ADD
           if (barcodeFlag && this.sourceList.orders.length === 1) {
             this.moveOrder(null, this.sourceList.orders[0].code, 'a');
           }
@@ -242,9 +277,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 컨펌 진행
+   *  - 컨펌 팝업
    * @param evt
    */
-  confirmECP(evt: any) {
+  confirmECP() {
     if (this.targetList.orders.length > 0) {
       this.modal.openModalByComponent(EcpConfirmComponent,
         {
@@ -261,8 +297,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 사용자별 컨펌 리스트 count
-   * @param userId
-   * @param type
+   * @param {string} userId 유저아이디
+   * @param {string} type   동작유형 ex) a = ADD, d =  DELETE
    */
   checkUserDuplicate(userId: string, type: string) {
     const existedIdx: number = this.targetList.orders.findIndex(
@@ -291,7 +327,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * 영수증 출력
    * @param evt
    */
-  printECP(evt: any) {
+  printECP() {
     const orderCodes = new Array<string>();
       this.targetList.orders.forEach(order => {
         orderCodes.push(order.code);
@@ -300,80 +336,52 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
         orderDetail => {
           if (orderDetail) {
-            this.setEntryList(orderDetail);
+            this.makeReceiptPrintData(orderDetail);
           }
         },
         error => {
           this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
-            this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
+            this.logger.set('pickup-order.component', `printECP error type : ${errdata.type}`).error();
+            this.logger.set('pickup-order.component', `printECP error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
         },
         () => { this.spinner.hide(); }
       );
-
-    // if (this.targetOrderHistoryList) {
-    //   const orderCodes = new Array<string>();
-    //   this.targetOrderHistoryList.orders.forEach(order => {
-    //     orderCodes.push(order.code);
-    //   });
-    //   this.spinner.show();
-    //   this.orderService.orderDetails(this.targetOrderHistoryList.orders[0].user.uid, orderCodes).subscribe(
-    //     orderDetail => {
-    //       if (orderDetail) {
-    //         try {
-    //           this.receiptService.reissueReceipts(orderDetail);
-    //           this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
-    //         } catch (e) {
-    //           this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
-    //           this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
-    //         }
-    //       }
-    //     },
-    //     error => {
-    //       this.spinner.hide();
-    //       const errdata = Utils.getError(error);
-    //       if (errdata) {
-    //         this.logger.set('pickup-order.component', `Reissue Receipts error type : ${errdata.type}`).error();
-    //         this.logger.set('pickup-order.component', `Reissue Receipts error message : ${errdata.message}`).error();
-    //         this.alert.error({ message: `${errdata.message}` });
-    //       }
-    //     },
-    //     () => { this.spinner.hide(); }
-    //   );
-    // }
   }
 
   /**
-   * 주문별 상품 통합
-   *  - 주문별 동일한 상품 통합
-   * @param orderList
+   * 영수증 출력 DATA 생성
+   *  - 복수 선택인 경우 summary도 출력함.
+   * @param {OrderList} orderList 주문리스트
    */
-  setEntryList(orderList: OrderList): void {
+  makeReceiptPrintData(orderList: OrderList): void {
     this.entryList = orderList.orders[0].entries;
 
-    orderList.orders.forEach((order, index) => {
-      if (index > 0) {
-        order.entries.forEach(entry => {
-          const existedIdx = this.entryList.findIndex(
-            function (obj) {
-              return obj.product.code === entry.product.code;
+    // 복수 선택의 경우 Summary 영수증 출력
+    if (orderList.orders.length > 1) {
+      orderList.orders.forEach((order, index) => {
+        if (index > 0) {
+          order.entries.forEach(entry => {
+            const existedIdx = this.entryList.findIndex(
+              function (obj) {
+                return obj.product.code === entry.product.code;
+              }
+            );
+            if (existedIdx === -1) {
+              this.entryList.push(entry);
+            } else {
+              this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + entry.quantity);
             }
-          );
-          if (existedIdx === -1) {
-            this.entryList.push(entry);
-          } else {
-            this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + entry.quantity);
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+      this.receiptService.makeTextAndGroupSummaryPrint(this.entryList , this.orderTypeName);
+    }
 
-    this.receiptService.makeTextAndGroupSummaryPrint(this.entryList , this.orderTypeName);
-
+    // 사용자별 영수증 출력
     if (this.targetList) {
       const orderCodes = new Array<string>();
       this.targetList.orders.forEach(order => {
@@ -450,7 +458,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 전체 선택 type 별 처리
-   * @param type
+   * @param {string} type 동작유형 ex) a = ADD, d =  DELETE
    */
   selectAllRows(type: string) {
     if (type.toUpperCase() === 'A') {

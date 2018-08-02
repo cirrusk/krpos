@@ -349,7 +349,7 @@ table input[type='text'] {font-family:'NSM';}
 
 .mbinfo_list.type04 {padding-top:0; height:333px; box-sizing:border-box} /* ECP픽업 주문리스트 */
 .mbinfo_list.type04 .tbl_col {position:relative}
-.mbinfo_list.type04 .tbl_col.fl {width:437px; margin-top:60px}
+.mbinfo_list.type04 .tbl_col.fl {width:437px; padding-top:60px}
 .mbinfo_list.type04 .tbl_col.fr {width:422px}
 .mbinfo_list.type04 .tbl_col th.ar {padding-right:25px}
 .mbinfo_list.type04 .tbl_col .al {padding-left:15px}
@@ -357,8 +357,8 @@ table input[type='text'] {font-family:'NSM';}
 .mbinfo_list.type04 .tbl_col .elips {max-width:63px; padding:0 8px; text-align:center}
 .mbinfo_list.type04 .tbl_col .txt {height:60px; line-height:57px;}
 .mbinfo_list.type04 .tbl_col .paging > button {position:absolute; right:5px; z-index:10}
-.mbinfo_list.type04 .tbl_col .paging .prev01 {bottom:207px;}
-.mbinfo_list.type04 .tbl_col .paging .next01 {bottom:5px;}
+.mbinfo_list.type04 .tbl_col .paging .prev01 {top:65px;}
+.mbinfo_list.type04 .tbl_col .paging .next01 {top:268px;}
 .mbinfo_list.type04 .tbl_col .no_data {background-color:transparent; border:0}
 
 .mbinfo_list.type03 {} /* 보류내역 조회 */

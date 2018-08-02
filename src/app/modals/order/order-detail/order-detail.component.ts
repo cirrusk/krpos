@@ -5,10 +5,13 @@ import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 
+/**
+ * 주문 상세 페이지
+ */
 @Component({
   selector: 'pos-order-detail',
   templateUrl: './order-detail.component.html'
@@ -17,6 +20,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
 
   orderDetail: OrderList;
   orderInfo: OrderHistory;
+  balance: Balance;
 
   clientId: string;
   emloyeeName: string;
@@ -30,6 +34,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
               private router: Router,
               private orderService: OrderService,
               private receiptService: ReceiptService,
+              private paymentService: PaymentService,
               private messageService: MessageService,
               private modal: Modal,
               private spinner: SpinnerService,
@@ -45,6 +50,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   ngOnInit() {
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+    this.getBalance(this.orderInfo.user.uid);
     if (this.orderInfo.parentOrder !== '') {
       this.orderType = 'g';
     }
@@ -65,6 +71,10 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.paymentCapture = new PaymentCapture();
   }
 
+  /**
+   * 주문 취소 활성화 여부 확인
+   * @param {OrderHistory} orderInfo 주문정보
+   */
   checkCancelStatus(orderInfo: OrderHistory) {
     if (orderInfo.orderStatus.code === 'CANCELLED') {
       this.cancelSymbol = '-';
@@ -99,6 +109,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         this.activeFlag = true;
         this.result = this.activeFlag;
         this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+        this.getBalance(this.orderInfo.user.uid);
       }
     }
 
@@ -152,8 +163,8 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
 
   /**
    * 주문 상세 정보 조회
-   * @param userId
-   * @param orderCode
+   * @param {string} userId    유저아이디
+   * @param {string} orderCode 주문번호
    */
   getOrderDetail(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
@@ -192,6 +203,31 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       () => { this.spinner.hide(); }
     );
   }
+
+  /**
+   * 포인트 정보 조회
+   * @param {string} userId 유저아이디
+   */
+  getBalance(userId: string): void {
+    this.paymentService.getBalance(userId).subscribe(
+      balance => {
+        if (balance) {
+          this.balance = balance;
+        }
+      },
+      error => {
+        this.spinner.hide();
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('order-detail.component', `Get Balance error type : ${errdata.type}`).error();
+          this.logger.set('order-detail.component', `Get Balance error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
 
   /**
    * 영수증 재발행

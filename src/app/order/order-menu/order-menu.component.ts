@@ -250,6 +250,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * 선택 row 활성화
+   * @param evt
+   */
   private checkClass(evt: any) {
     evt.stopPropagation();
     this.menus.forEach(menu => {
@@ -258,6 +262,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.renderer.addClass(evt.target, 'on');
   }
 
+  /**
+   * 장바구니정보 생성
+   *  - 그룹주문의 경우 cartInfo 를 생성하여 결제 진행함.
+   * @param amwayExtendedOrdering
+   */
   private transformCartInfo(amwayExtendedOrdering: AmwayExtendedOrdering) {
     const jsonData = {
       'user': amwayExtendedOrdering.orderList[0].user,

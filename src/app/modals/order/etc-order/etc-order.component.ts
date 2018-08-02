@@ -83,17 +83,27 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     setTimeout(() => { this.close(); }, 270);
   }
 
+  /**
+   * 파이토카페 주문
+   */
   phytoCafeOrder() {
     // this.info.sendInfo('pyt', { action: true }); // order 에 이벤트 전송 파이토 유저로 변경
     this.result = 'pyt';
     this.close();
   }
 
+  /**
+   * 대시 보드로 이동
+   */
   dashboard() {
     this.router.navigate(['/dashboard']);
     setTimeout(() => { this.close(); }, 270);
   }
 
+  /**
+   * 간편 선물 팝업
+   * @param evt
+   */
   easyPickup(evt: any) {
     this.setSelected(evt);
     this.close();
@@ -109,6 +119,10 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     );
   }
 
+  /**
+   * 설치 주문 팝업
+   * @param evt
+   */
   installationOrder(evt: any) {
     this.setSelected(evt);
     this.close();
@@ -128,6 +142,10 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
     this.closeModal();
   }
 
+  /**
+   * 선택 CSS
+   * @param evt
+   */
   private setSelected(evt: any) {
     evt.stopPropagation();
     this.etcorders.forEach(etcorder => {

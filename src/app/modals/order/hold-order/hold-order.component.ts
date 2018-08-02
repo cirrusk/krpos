@@ -19,7 +19,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
   private PAGE_SIZE = 5;
 
   private currentPage: number;                    // 현재 페이지 번호
-  private pager: Pagination;                        // pagination 정보
+  private pager: Pagination;                      // pagination 정보
   private selectedCartNum: number;                // 선택된 카트번호
 
   cartList: Array<Cart>;
@@ -50,7 +50,10 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
     if (this.holdsubscription) { this.holdsubscription.unsubscribe(); }
   }
 
-  // 테이블 로우 Class 적용(on)
+  /**
+   * 선택 row 활성화
+   * @param index
+   */
   activeRow(index: number): void {
     this.activeNum = index;
     this.restoreCartBroker.sendInfo(this.currentCartList[index]);
@@ -60,6 +63,7 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
 
   /**
    * 보류된 장바구니 리스트 가져오기
+   * @param {string} userId 유저아이디
    */
   getSaveCarts(userId?: string) {
     this.spinner.show();
@@ -83,6 +87,8 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
 
   /**
    * 출력 데이터 생성
+   * @param {number} page 페이지 번호
+   * @param {boolean} 페이지 이동
    */
   setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {

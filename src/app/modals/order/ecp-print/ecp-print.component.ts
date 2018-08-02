@@ -11,6 +11,9 @@ export class EcpPrintComponent extends ModalComponent implements OnInit {
     super(modalService);
   }
 
+  /**
+   * 출력 완료 Alert
+   */
   print() {
     this.alert.info({title: 'ECP 컨펌/출력', message: '픽업 주문 영수증 출력이 완료되었습니다.'});
   }

@@ -24,6 +24,9 @@ export class CancelEcpPrintComponent extends ModalComponent implements OnInit {
     this.orderInfo = this.callerData.orderInfo;
   }
 
+  /**
+   * ECP 출력 취소
+   */
   cancelEcpPrint() {
     this.spinner.show();
     this.orderService.cancelReceipt(this.orderInfo.user.uid, this.orderInfo.code).subscribe(

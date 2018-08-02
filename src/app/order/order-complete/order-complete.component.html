@@ -55,7 +55,7 @@
                       </thead>
                       <tbody>
                           <!-- 회원 선택시 tr에 on클래스 추가 -->
-                          <tr [class.on]="selectedOrderNum == i" *ngFor="let order of orderHistoryList.orders; let i = index;" (click)="activeRowCart(i, order.code, order.user.uid)">
+                          <tr [class.on]="selectedOrderNum == i" *ngFor="let order of orderHistoryList.orders; let i = index;" (click)="activeRowCart(i, order.code)">
                               <td><span>{{(orderHistoryList.pagination.pageSize * orderHistoryList.pagination.currentPage)+(i+1)}}</span></td>
                               <td><span>{{order.code}}</span></td>
                               <td><span class="elips mx90 ac">{{order.user.name}}</span></td>

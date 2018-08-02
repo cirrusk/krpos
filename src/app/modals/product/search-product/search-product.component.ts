@@ -68,6 +68,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     });
   }
 
+  /**
+   * 이전페이지 이동
+   */
   prev() {
     if (this.currentPage > 0) {
       this.currentPage--;
@@ -75,6 +78,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     }
   }
 
+  /**
+   * 다음페이지 이동
+   */
   next() {
     if (this.totalPages >= this.currentPage) {
       this.currentPage++;
@@ -142,10 +148,18 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     );
   }
 
+  /**
+   * 검색 Type 저장
+   * @param evt
+   */
   searchOption(evt: any) {
     this.searchType = evt.target.value;
   }
 
+  /**
+   * 현재 페이지 초기화
+   * @param evt
+   */
   resetCurrentPage(evt: any) {
     if (this.currentPage > 0) { this.currentPage = 0; }
   }

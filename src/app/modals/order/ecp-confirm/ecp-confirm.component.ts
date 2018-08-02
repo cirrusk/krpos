@@ -16,8 +16,10 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('barcode') private barcode: ElementRef;
 
   private searchProductInfoSubscription: Subscription;
+  private confirmSubscription: Subscription;
 
   private orderList: OrderHistoryList;
+  private orderCodes: string;
 
   entryList: Array<OrderEntry>;
   pager: Pagination;                                     // pagination 정보
@@ -47,19 +49,21 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   ngOnDestroy() {
     if (this.searchProductInfoSubscription) { this.searchProductInfoSubscription.unsubscribe(); }
+    if (this.confirmSubscription) { this.confirmSubscription.unsubscribe(); }
   }
 
   init() {
     this.pager = new Pagination();
     this.totalCount = 0;
-    this.entryList = new Array<OrderEntry>();
-    this.currentOrderList = new Array<OrderEntry>();
+    this.orderCodes = '';
+    this.entryList = new  Array<OrderEntry>();
+    this.currentOrderList = new  Array<OrderEntry>();
     this.orderList = new OrderHistoryList();
   }
 
   /**
    * 컨펌 리스트 조회
-   * @param orderList
+   * @param {OrderHistoryList} orderList 주문 리스트
    */
   getOrderDetail(orderList: OrderHistoryList): void {
     const orderCodes = new Array<string>();
@@ -86,10 +90,15 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     );
   }
 
+  /**
+   * Order 상품별 그룹핑
+   * @param {OrderList} orderList 주문 리스트
+   */
   setEntryList(orderList: OrderList): void {
     this.entryList = orderList.orders[0].entries;
 
     orderList.orders.forEach((order, index) => {
+      this.orderCodes += ',' + order.code;
       if (index > 0) {
         order.entries.forEach(entry => {
           const existedIdx = this.entryList.findIndex(
@@ -111,8 +120,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 상품 컨펌
-   * @param productCode
-   * @param page
+   * @param {string} productCode 제품 코드
+   * @param {number} page 페이지번호
    */
   productConfirm(productCode: string, page?: number): void {
     this.spinner.show();
@@ -131,7 +140,10 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         } else {
           this.spinner.hide();
           const errorCount = (confirmCount + 1) - this.entryList[existedIdx].quantity;
-          this.popupExceed(this.entryList[existedIdx].product.code, this.entryList[existedIdx].product.name, this.entryList[existedIdx].quantity, errorCount);
+          this.popupExceed(this.entryList[existedIdx].product.code,
+                           this.entryList[existedIdx].product.name,
+                           this.entryList[existedIdx].quantity,
+                           errorCount);
         }
       } else {
         this.searchProductInfoSubscription = this.searchService.getBasicProductInfo(productCode).subscribe(
@@ -164,6 +176,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 출력 데이터 생성
+   * @param {number} page 페이지 번호
+   * @param {boolean} pagerFlag 페이징
    */
   setPage(page: number, pagerFlag: boolean = false) {
     if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
@@ -186,11 +200,12 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     let productQty = 0;
     let errorQty = 0;
     let errorType = '';
+    let isConfirm = false;
     // 완료 여부 확인
     try {
       this.spinner.show();
 
-      this.entryList.some(function (entry, index, arr) {
+      isConfirm = this.entryList.some(function (entry, index, arr) {
         if (!entry.ecpConfirmQty) {
           entry.ecpConfirmQty = 0;
         }
@@ -212,30 +227,43 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
           return true;
         }
       });
-
     } catch (e) {
       this.logger.set('ecp-confirm.component', `confirm error type : ${e}`).error();
       this.spinner.hide();
     }
 
     // 이상이 있을 경우 메시지 전시
-    if (errorType === 'S') {
+    if (isConfirm && errorType === 'S') {
       // 수량 부족
       this.spinner.hide();
       this.popupShortage(productCode, productName, productQty, errorQty);
-    } else if (errorType === 'E') {
+    } else if (isConfirm && errorType === 'E') {
       // 수량 초과
       this.spinner.hide();
       this.popupExceed(productCode, productName, productQty, errorQty);
     } else {
-      this.spinner.hide();
-      this.alert.info({
-        title: '',
-        message: this.messageService.get('ecpReceiptComplete'),
-        timer: true,
-        interval: 1500
-      });
-      this.close();
+      this.confirmSubscription = this.orderService.confirmPickup(this.orderCodes.slice(1)).subscribe(
+        result => {
+          this.spinner.hide();
+          if (result) {
+            this.alert.info({ title: '',
+                                message: this.messageService.get('ecpReceiptComplete'),
+                                timer: true,
+                                interval: 1500});
+            this.close();
+          }
+        },
+        error => {
+          this.spinner.hide();
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('ecp-confirm.component', `confirm error type : ${errdata.type}`).error();
+            this.logger.set('ecp-confirm.component', `confirm error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { this.spinner.hide(); }
+      );
     }
   }
 
@@ -246,10 +274,10 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 초과 팝업
-   * @param productCode
-   * @param productName
-   * @param productQty
-   * @param exceedQty
+   * @param {string} productCode 제품코드
+   * @param {string} productName 제품명
+   * @param {number} productQty  제품수량
+   * @param {number} exceedQty   초과수량
    */
   popupExceed(productCode: string, productName: string, productQty: number, exceedQty: number) {
     this.modal.openConfirm(
@@ -268,10 +296,10 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 수량이 더 필요할때 팝업
-   * @param productCode
-   * @param productName
-   * @param productQty
-   * @param shortageQty
+   * @param {string} productCode 제품코드
+   * @param {string} productName 제품명
+   * @param {number} productQty  제품수량
+   * @param {number} shortageQty 부족수량
    */
   popupShortage(productCode: string, productName: string, productQty: number, shortageQty: number) {
     this.modal.openConfirm(
@@ -289,7 +317,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 없는 제품을 추가 했을 경우
-   * @param productCode
+   * @param {string} productCode 제품코드
+   * @param {string} productName 제품명
    */
   popupNoProduct(productCode: string, productName: string) {
     this.modal.openConfirm(

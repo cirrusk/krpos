@@ -32,6 +32,9 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     if (this.authsubscription) { this.authsubscription.unsubscribe(); }
   }
 
+  /**
+   * 비밀번호 체크
+   */
   checkPassword() {
 
     const token = this.storage.getTokenInfo();
@@ -58,6 +61,9 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     () => { this.spinner.hide(); });
   }
 
+  /**
+   * 로그인 검사
+   */
   authUserCheck() {
     this.checkPassword();
   }

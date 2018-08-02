@@ -59,18 +59,18 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   /**
    * 주문 상세 팝업 전시
-   * @param index
-   * @param orderCode
-   * @param userId
+   * @param {number} index     row번호
+   * @param {string} orderCode 주문번호
+   * @param {string} userId    사용자아이디
    */
-  activeRowCart(index: number, orderCode: string, userId: string): void {
+  activeRowCart(index: number, orderCode: string): void {
     this.selectedOrderNum = index;
-    this.popupOrderDetail(orderCode, userId);
+    this.popupOrderDetail(orderCode);
   }
 
   /**
    * 맴버타입별 초기화 및 Disable 처리
-   * @param memberType
+   * @param {string} memberType 사용자유형
    */
   changeMemberType(memberType: string) {
     if (memberType === 'C') {
@@ -90,10 +90,9 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   /**
    * 주문 상세 팝업 호출
-   * @param orderCode
-   * @param userId
+   * @param {string}} orderCode
    */
-  popupOrderDetail(orderCode: string, userId: string) {
+  popupOrderDetail(orderCode: string) {
     const existedIdx: number = this.orderHistoryList.orders.findIndex(
       function (obj) {
         return obj.code === orderCode;
@@ -118,8 +117,8 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   /**
    * 주문 조회
-   * @param _memberType
-   * @param _searchText
+   * @param {string} _memberType 사용자유형
+   * @param {string} _searchText 검색어
    */
   searchOrder(_memberType: string, _searchText: string) {
     if (_searchText === '' || _searchText === undefined || _searchText === null) {
@@ -133,10 +132,10 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   /**
    * 주문 리스트 조회
-   * @param searchType
-   * @param memberType
-   * @param searchText
-   * @param page
+   * @param {string} searchType 검색유형
+   * @param {string} memberType 사용자유형
+   * @param {string} searchText 검색어
+   * @param {number} page       페이지번호
    */
   getOrderList(searchType: string, memberType: string, searchText: string, page: number) {
     this.spinner.show();
@@ -162,7 +161,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   /**
    * 주문완료 내역 페이지 이동
-   * @param page
+   * @param {number} page 페이지번호
    */
   setPage(page: number) {
     if (page > -1 && page < this.orderHistoryList.pagination.totalPages ) {
@@ -177,6 +176,10 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.router.navigate(['/order']);
   }
 
+  /**
+   * 초기화
+   *  - 취소버튼
+   */
   initialize() {
     setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.inputSearchText.nativeElement.value = '';

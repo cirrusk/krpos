@@ -76,7 +76,8 @@ export const environment = {
     receipt: '/{baseSiteId}/users/{userId}/receipt/{orderCode}',
     cashdrawerLog: '',
     issueReceipt: '/{baseSiteId}/users/{userId}/issue-receipt/{orderCode}',
-    cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}'
+    cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}',
+    confirmPickup: '/{baseSiteId}/confirm-pickup/{orderCode}'
   },
   logLevel: 'info',
   terminalTimeout: 20,
