@@ -2,7 +2,10 @@ import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Inpu
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
-import { SearchAccountComponent, ClientAccountComponent, SearchProductComponent, HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent } from '../../modals';
+import {
+  SerialComponent, SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
+  HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent
+} from '../../modals';
 import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
@@ -15,7 +18,6 @@ import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
-import { SerialComponent } from '../../modals/scan/serial/serial.component';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
