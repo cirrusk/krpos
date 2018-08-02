@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, Input, ElementRef } from '@ang
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
-import { ModalComponent, ModalService, StorageService, Logger, AlertService, SpinnerService } from '../../core';
+import { ModalComponent, ModalService, StorageService, Logger, AlertService } from '../../core';
 import { AuthService } from '../../service';
 import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
@@ -40,7 +40,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     private storage: StorageService,
     private info: InfoBroker,
     private alert: AlertService,
-    private spinner: SpinnerService,
     private logger: Logger) {
     super(modalService);
   }
@@ -103,7 +102,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       setTimeout(() => { this.loginPwdInput.nativeElement.focus(); }, 250);
       return;
     }
-    this.spinner.show();
+    // this.spinner.show();
     // 1. authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     // 2. access token  취득 및 session 저장
     this.authsubscription = this.auth.authAndToken(loginid, loginpwd).subscribe(result => {
@@ -118,15 +117,13 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       this.close();
     },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('login.component', `auth and token error type : ${errdata.type}`).error();
           this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); });
+      });
   }
 
   close() {
