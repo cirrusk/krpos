@@ -1,6 +1,10 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
 import { ModalComponent, ModalService, Config } from '../../../core';
 
+/**
+ * 프로모션 상품 컴포넌트
+ * 비닐봉투 소/대의 Product code는 environment에서 조회.
+ */
 @Component({
   selector: 'pos-promotion-order',
   templateUrl: './promotion-order.component.html'
@@ -29,6 +33,10 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
 
   }
 
+  /**
+   * 프로모션 상품 목록 가져오기
+   * 상품명 / 상품코드
+   */
   private getPromotionProducts() {
     this.promotionProducts = [
       '100099A',
@@ -62,6 +70,9 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
     this.endPage = totalPages;
   }
 
+  /**
+   * 이전 페이지 이동
+   */
   prevPaging() {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -70,6 +81,9 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
     this.endIndex = Math.min(this.startIndex + this.pageSize - 1, this.totalCount - 1);
   }
 
+  /**
+   * 다음 페이지 이동
+   */
   nextPaging() {
     if (this.currentPage < this.endPage) {
       this.currentPage++;
@@ -78,6 +92,9 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
     this.endIndex = Math.min(this.startIndex + this.pageSize - 1, this.totalCount - 1) - 1;
   }
 
+  /**
+   * 비닐 봉투 소/대 프로모션
+   */
   promotionBasic(evt: any, type: string) {
     this.setSelected(evt);
     let bagProductCode = '';
@@ -90,6 +107,11 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
     this.close();
   }
 
+  /**
+   * 일반 프로모션 상품
+   * @param {any} evt 이벤트
+   * @param {string} productcode 상품코드
+   */
   promotion(evt: any, productcode: string) {
     this.setSelected(evt);
     console.log(`product code : ${productcode}`);
@@ -97,6 +119,11 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
     this.close();
   }
 
+  /**
+   * 페이징 시 페이징 목록으로 전달하지 않기 때문에
+   * show / hidden을 구해야함.
+   * @param {number} idx 해당 프로모션 상품의 인덱스 정보
+   */
   checkPaging(idx: number) {
     const sidx = (this.currentPage - 1) * 9;
     const eidx = (this.currentPage * 9 - 1);
