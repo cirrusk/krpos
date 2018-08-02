@@ -13,6 +13,34 @@ import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.compone
 import { SearchAccountBroker } from '../../broker';
 import { PaymentService } from '../../service';
 
+/**
+ * 주문 메뉴 구성
+ *
+ * 통합결제
+ *    초기 비활성화
+ *    회원 조회 시 활성화
+ *    클릭 시 쿠폰이 있는지 먼저 체크하고 있으면 쿠폰 화면을 먼저 띄우고 진행
+ *
+ * 그룹주문
+ *    초기 활성화
+ *    그룹주문을 선택하기 위한 회원 검색팝업화면
+ *
+ * 픽업주문
+ *    초기 활성화
+ *
+ * 주문취소
+ *    초기 비활성화
+ *    회원 조회 시 활성화
+ *
+ * 프로모션 상품
+ *    초기 비활성화
+ *    회원 조회 시 활성화
+ *
+ * 기타
+ *    초기 활성화
+ *    사업자등록증 조회의 경우는 회원 조회시 검색가능함.
+ *
+ */
 @Component({
   selector: 'pos-order-menu',
   templateUrl: './order-menu.component.html'
@@ -56,7 +84,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * cart list 에서 보내준 이벤트를 받음
    *
-   * @param data 보내준 데이터
+   * @param {any} data 보내준 데이터
    */
   setFlag(data) {
     if (data) {
@@ -164,7 +192,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * orderType = 'g' 그룹 결제
    * orderType = 'n' 일반 결제
    *
-   * @param evt
+   * @param {any} evt 이벤트
    */
   groupPayment(evt: any) {
     this.checkClass(evt);
@@ -183,7 +211,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 픽업 오더 팝업
    *
-   * @param evt
+   * @param {any} evt 이벤트
    */
   pickupOrder(evt: any) {
     this.checkClass(evt);
@@ -198,7 +226,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 구매 취소
    *
-   * @param evt
+   * @param {any} evt 이벤트
    */
   cancelOrder(evt: any) {
     if (!this.hasAccount) { return; }
@@ -214,7 +242,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 프로모션
    *
-   * @param evt
+   * @param {any} evt 이벤트
    */
   promotionOrder(evt: any) {
     if (!this.hasAccount) { return; }
@@ -231,7 +259,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 기타
    *
-   * @param evt
+   * @param {any} evt 이벤트
    */
   etcOrder(evt: any) {
     // if (!this.hasAccount) { return; }
@@ -250,7 +278,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   /**
    * 선택 row 활성화
-   * @param evt
+   * @param {any} evt 이벤트
    */
   private checkClass(evt: any) {
     evt.stopPropagation();
@@ -263,7 +291,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 장바구니정보 생성
    *  - 그룹주문의 경우 cartInfo 를 생성하여 결제 진행함.
-   * @param amwayExtendedOrdering
+   * @param {AmwayExtendedOrdering} amwayExtendedOrdering 그룹주문
    */
   private transformCartInfo(amwayExtendedOrdering: AmwayExtendedOrdering) {
     const jsonData = {

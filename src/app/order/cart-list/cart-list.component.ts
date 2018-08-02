@@ -21,6 +21,16 @@ import { Utils } from '../../core/utils';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
+ *
+ *
+ * infobroker : 주문 완료 후 화면 초기화
+ * paymentbroker : 결제수단 변경
+ * searchaccountbroker : 그룹 회원 선택
+ * restorecartbroker : 보류 복원
+ * cancelorderbroker : 주문 취소
+ *
+ * 한글 특수 문자 제거가 필요할 경우 checkChar 함수의 내용을 복원
+ * 현재는 문자열 체크는 별도로 하지 않음.
  */
 @Component({
   selector: 'pos-cart-list',
@@ -229,7 +239,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 한글이나 특수문자 제거
-   * @ignore
+   *
    */
   private checkChar() {
     // const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
