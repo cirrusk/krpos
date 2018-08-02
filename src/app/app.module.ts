@@ -14,6 +14,7 @@ import { OrderModule } from './order/order.module';
 import { Config, CLIENT_SECRET } from './core/config/config';
 
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
+import { SpinnerInterceptor } from './core/interceptor/spinner.interceptor';
 import { MESSAGE_PROVIDER } from './message/message';
 
 @NgModule({
@@ -34,10 +35,11 @@ import { MESSAGE_PROVIDER } from './message/message';
   ],
   providers: [
     Config,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true },
+    MESSAGE_PROVIDER,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true },
     { provide: COMPOSITION_BUFFER_MODE, useValue: false },
-    { provide: CLIENT_SECRET, useValue: '83d8f684-7a35-47f7-96fd-b6587d3ed736' },
-    MESSAGE_PROVIDER
+    { provide: CLIENT_SECRET, useValue: '83d8f684-7a35-47f7-96fd-b6587d3ed736' }
   ],
   bootstrap: [AppComponent]
 })

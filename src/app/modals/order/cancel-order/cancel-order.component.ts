@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger } from '../../../core';
+import { ModalComponent, ModalService, AlertService, Logger } from '../../../core';
 import { OrderHistory } from '../../../data';
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Subscription } from 'rxjs/Subscription';
@@ -24,7 +24,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
 
   constructor(protected modalService: ModalService,
     private orderService: OrderService,
-    private spinner: SpinnerService,
     private receiptService: ReceiptService,
     private messageService: MessageService,
     private logger: Logger,
@@ -47,26 +46,22 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
    * 주문 취소 요청
    */
   cancelOrder() {
-    this.spinner.show();
     this.cancelOrderSubscription = this.orderService.orderCancel(this.orderInfo.amwayAccount.uid,
-                                                                 this.orderInfo.user.uid,
-                                                                 this.orderInfo.code).subscribe(
-      cancelData => {
-        if (cancelData) {
-          this.cancelReceipts(this.orderInfo.user.uid, this.orderInfo.code);
-        }
-      },
-      error => {
-        this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('cancel-order.component', `cancel order error type : ${errdata.type}`).error();
-          this.logger.set('cancel-order.component', `cancel order error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
-        }
-      },
-      () => { this.spinner.hide(); }
-    );
+      this.orderInfo.user.uid,
+      this.orderInfo.code).subscribe(
+        cancelData => {
+          if (cancelData) {
+            this.cancelReceipts(this.orderInfo.user.uid, this.orderInfo.code);
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('cancel-order.component', `cancel order error type : ${errdata.type}`).error();
+            this.logger.set('cancel-order.component', `cancel order error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        });
   }
 
   /**
@@ -78,7 +73,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   cancelReceipts(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);
-    this.spinner.show();
     this.orderDetailsSubscription = this.orderService.orderDetails(userId, orderCodes).subscribe(
       orderDetail => {
         if (orderDetail) {
@@ -102,21 +96,17 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
               timer: true,
               interval: 1000
             });
-
           }
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cancel-order.component', `Get Order Detail error type : ${errdata.type}`).error();
           this.logger.set('cancel-order.component', `Get Order Detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   close() {

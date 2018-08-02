@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, Logger, StorageService, AlertService, SpinnerService } from '../../core';
+import { ModalComponent, ModalService, Logger, StorageService, AlertService } from '../../core';
 
 import { AuthService } from '../../service/auth.service';
 import { Utils } from '../../core/utils';
@@ -19,7 +19,6 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
     private authService: AuthService,
     private storage: StorageService,
     private alert: AlertService,
-    private spinner: SpinnerService,
     private logger: Logger) {
     super(modalService);
   }
@@ -46,7 +45,6 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
       setTimeout(() => this.loginPwdInput.nativeElement.focus(), 350);
       return;
     }
-    this.spinner.show();
     this.authsubscription = this.authService.authentication(lognId, loginPwd).subscribe(
     data => {
       this.result = true;
@@ -57,8 +55,7 @@ export class PasswordComponent extends ModalComponent implements OnInit, OnDestr
       if (errdata) {
         this.logger.set('login.component', `authentication error message : ${errdata.message}`).error();
       }
-    },
-    () => { this.spinner.hide(); });
+    });
   }
 
   /**

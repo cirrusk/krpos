@@ -6,7 +6,7 @@ import {
   SerialComponent, SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
   HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent
 } from '../../modals';
-import { Modal, StorageService, AlertService, SpinnerService, Logger, Config, PrinterService } from '../../core';
+import { Modal, StorageService, AlertService, Logger, Config, PrinterService } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
@@ -106,7 +106,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private alert: AlertService,
     private pagerService: PagerService,
-    private spinner: SpinnerService,
     private payment: PaymentService,
     private message: MessageService,
     private searchAccountBroker: SearchAccountBroker,
@@ -471,7 +470,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           } else {
             this.updateItemQtyCart(cartId, result.code, result.qty);
           }
-          // this.updateItemQtyCart(cartId, result.code, result.qty);
         }
       });
     }
@@ -598,7 +596,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (!cartList) {
       return;
     }
-    this.spinner.show();
     this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
       this.init();
       this.accountInfo = account;
@@ -629,12 +626,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.getSaveCarts();
       }
     }, error => {
-      this.spinner.hide();
       const errdata = Utils.getError(error);
       if (errdata) {
         this.alert.error({ message: `${errdata.message}` });
       }
-    }, () => { this.spinner.hide(); });
+    });
   }
 
   /**
@@ -644,7 +640,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private selectAccountInfo(searchMode: string, accountid?: string): void {
     if (accountid) {
-      this.spinner.show();
       this.searchSubscription = this.searchService.getAccountList(searchMode, accountid).subscribe(
         result => {
           const accountsize = result.accounts.length;
@@ -657,9 +652,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.callSearchAccount(this.searchParams);
           }
         },
-        error => { this.logger.set('cart.list.component', `${error}`).error(); },
-        () => { this.spinner.hide(); }
-      );
+        error => { this.logger.set('cart.list.component', `${error}`).error(); });
     } else {
       this.callSearchAccount(this.searchParams);
     }
@@ -672,7 +665,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private selectProductInfo(productCode?: string): void {
     if (productCode) {
-      this.spinner.show();
       this.productInfoSubscription = this.searchService.getBasicProductInfoByCart('sku', productCode, this.cartInfo.user.uid, this.cartInfo.code, 0).subscribe(
         result => {
           const totalCount = result.pagination.totalResults;
@@ -708,14 +700,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           }
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     } else { // 검색어가 없을 경우는 바로 검색팝업
       this.searchParams.data = this.cartInfo;
       this.callSearchProduct(this.searchParams);
@@ -744,7 +733,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
 
       const cartType = this.orderType === 'g' ? 'POSGROUP' : 'POS';
-      this.spinner.show();
       this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
         accountId,
         terminalInfo.pointOfService.name, cartType).subscribe(
@@ -779,14 +767,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             }
           },
           error => {
-            this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
               this.alert.error({ message: `${errdata.message}` });
             }
-          },
-          () => { this.spinner.hide(); }
-        );
+          });
     } else {
       this.alert.error({ message: this.message.get('notSelectedUser') });
     }
@@ -799,7 +784,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   updateVolumeAccount(cartInfo: CartInfo): void {
     if (this.cartInfo.code !== undefined) {
-      this.spinner.show();
       this.updateVolumeAccountSubscription = this.cartService.updateVolumeAccount(this.cartInfo ? this.cartInfo.user.uid : '',
         this.cartInfo ? this.cartInfo.code : '',
         this.cartInfo ? this.cartInfo.volumeABOAccount.uid : '').subscribe(
@@ -807,14 +791,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.logger.set('cartList.component', `update Volume Account status : ${res.status}`).debug();
           },
           error => {
-            this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
               this.alert.error({ message: `${errdata.message}` });
             }
-          },
-          () => { this.spinner.hide(); }
-        );
+          });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -826,7 +807,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {number} page 페이지 정보
    */
   getCartList(page?: number): void {
-    this.spinner.show();
     const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
     const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
@@ -841,14 +821,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.setPage(page ? page : Math.ceil(this.cartList.length / this.cartListCount));
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**
@@ -876,7 +853,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
-      this.spinner.show();
       const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
@@ -907,13 +883,12 @@ export class CartListComponent implements OnInit, OnDestroy {
           }
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.alert.error({ message: `${errdata.message}` });
           }
         },
-        () => { this.spinner.hide(); setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
+        () => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
       );
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
@@ -953,7 +928,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       const index = this.cartList.findIndex(function (obj) {
         return obj.product.code === code;
       });
-      this.spinner.show();
       this.updateCartSubscription = this.cartService.updateItemQuantityCart(this.cartInfo.user.uid,
         cartCode,
         this.cartList[index].entryNumber,
@@ -983,14 +957,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             }
           },
           error => {
-            this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
               this.alert.error({ message: `${errdata.message}` });
             }
-          },
-          () => { this.spinner.hide(); }
-        );
+          });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1008,7 +979,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         return obj.product.code === code;
       });
 
-      this.spinner.show();
       this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
         cartId,
         this.cartList[index].entryNumber).subscribe(
@@ -1021,14 +991,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             }
           },
           error => {
-            this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
               this.alert.error({ message: `${errdata.message}` });
             }
-          },
-          () => { this.spinner.hide(); }
-        );
+          });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1039,24 +1006,19 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   removeCart(): void {
     if (this.cartInfo.code !== undefined) {
-      this.spinner.show();
       const userId = this.cartInfo.user.uid;
       const cartId = this.cartInfo.code;
-
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
         () => {
           this.init();
           this.storage.clearClient();
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     } else {
       this.init();
       this.storage.clearClient();
@@ -1068,10 +1030,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   removeGroupCart(): void {
     if (this.cartInfo.code !== undefined && this.groupSelectedCart.code !== undefined) {
-      this.spinner.show();
       const userId = this.groupAccountInfo[0].parties[0].uid;
       const cartId = this.groupSelectedCart.code;
-
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
         () => {
           // 확인 필요
@@ -1096,14 +1056,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           }
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     } else {
       const groupAccountIndex = this.checkGroupUserId(this.selectedUserId);
       if (groupAccountIndex <= 0) {
@@ -1123,7 +1080,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 보류된 장바구니 리스트 가져오기
    */
   getSaveCarts() {
-    this.spinner.show();
     this.cartService.getSaveCarts(this.accountInfo.parties[0].uid).subscribe(
       result => {
         if (result.carts.length > 0) {
@@ -1131,14 +1087,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**
@@ -1146,7 +1099,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   saveCart() {
     if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
-      this.spinner.show();
       this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         () => {
           this.init();
@@ -1154,14 +1106,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1172,7 +1121,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   restoreSavedCart() {
     if (this.cartInfo.code !== undefined) {
-      this.spinner.show();
       this.cartService.restoreSavedCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
           this.resCartInfo.cartList = result.savedCartData;
@@ -1181,14 +1129,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.info.sendInfo('hold', 'add');
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1385,7 +1330,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   private searchPhytoCafeAccount() {
     const phytoUserId = this.config.getConfig('phytoCafeUserId');
     if (phytoUserId) {
-      this.spinner.show();
       this.searchSubscription = this.searchService.getAccountList('C', phytoUserId).subscribe(
         result => {
           const account = result.accounts[0];
@@ -1393,9 +1337,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           const jsonData = { 'balance': [{ amount: 0 }, { amount: 0 }] };
           Object.assign(account, jsonData);
           this.storage.setCustomer(account);
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     }
   }
 
@@ -1477,7 +1419,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {string} cartId 카트 아이디
    */
   getGroupCart(userId: string, cartId: string) {
-    this.spinner.show();
     this.cartService.getGroupCart(userId, cartId).subscribe(
       result => {
         if (result) {
@@ -1486,14 +1427,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**
@@ -1507,7 +1445,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 추가시 가장 앞에 있는 구매자로 조회
    */
   createGroupCart(userId: string, cartId: string, volumeAccount: string, popupFlag: boolean, productCode?: string) {
-    this.spinner.show();
     this.cartService.createGroupCart(userId, cartId, volumeAccount).subscribe(
       result => {
         if (result) {
@@ -1557,14 +1494,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**

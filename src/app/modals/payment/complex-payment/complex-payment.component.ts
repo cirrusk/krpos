@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, Modal, SpinnerService, AlertService, Logger, StorageService } from '../../../core';
+import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService } from '../../../core';
 import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -41,7 +41,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private paymentService: PaymentService,
     private modal: Modal,
     private alert: AlertService,
-    private spinner: SpinnerService,
     private storage: StorageService,
     private logger: Logger,
     private info: InfoBroker,
@@ -282,7 +281,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param cartId
    */
   private getPaymentModesByMain(userId: string, cartId: string): void {
-    this.spinner.show();
     this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
       result => {
         if (result) {
@@ -294,23 +292,20 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
               this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
             });
             // this.logger.set('complex.payment.component', `cash : ${this.paymentModes.get('cash')}`).debug();
-            this.paymentModes.forEach((data, key) => {
-              this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
-            });
+            // this.paymentModes.forEach((data, key) => {
+            //   this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
+            // });
           } else {
             this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
           }
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   close() {

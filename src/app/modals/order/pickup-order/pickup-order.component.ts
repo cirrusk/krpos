@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, View
 import { Subscription } from 'rxjs/Subscription';
 
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
-import { ModalComponent, ModalService, Modal, SpinnerService, Logger, AlertService, StorageService } from '../../../core';
+import { ModalComponent, ModalService, Modal, Logger, AlertService } from '../../../core';
 import { OrderService, MessageService, ReceiptService } from '../../../service';
 import { OrderHistoryList, OrderHistory, OrderEntry, Pagination } from '../../../data';
 import { Order, OrderList } from '../../../data/models/order/order';
@@ -41,15 +41,14 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   private isEasyPickupOrder = false;
 
   constructor(protected modalService: ModalService,
-              private orderService: OrderService,
-              private pagerService: PagerService,
-              private modal: Modal,
-              private spinner: SpinnerService,
-              private messageService: MessageService,
-              private receiptService: ReceiptService,
-              private logger: Logger,
-              private alert: AlertService,
-              private renderer: Renderer2) {
+    private orderService: OrderService,
+    private pagerService: PagerService,
+    private modal: Modal,
+    private messageService: MessageService,
+    private receiptService: ReceiptService,
+    private logger: Logger,
+    private alert: AlertService,
+    private renderer: Renderer2) {
     super(modalService);
     this.init();
   }
@@ -74,7 +73,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.orderTypeName = '간편선물';
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
-      this.deliveryModes  = 'pickup';
+      this.deliveryModes = 'pickup';
       this.orderStatus = 'READY';
       this.isEasyPickupOrder = true;
       // 설치주문 설정
@@ -82,7 +81,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.orderTypeName = '설치주문';
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
-      this.deliveryModes  = 'install';
+      this.deliveryModes = 'install';
       this.orderStatus = 'READY';
       this.isEasyPickupOrder = false;
       // 픽업예약주문 설정
@@ -90,7 +89,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.orderTypeName = '픽업예약주문';
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
-      this.deliveryModes  = 'pickup';
+      this.deliveryModes = 'pickup';
       this.orderStatus = 'READY';
       this.isEasyPickupOrder = false;
     }
@@ -111,7 +110,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     if (evt) {
       selectedFlag = this.setSelected(evt);
     } else {
-      selectedFlag = type === 'a' ? true :  false;
+      selectedFlag = type === 'a' ? true : false;
     }
 
     // source List 에서 row 활성화 일때 target list 로 추가
@@ -159,7 +158,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     // 현재 source list 페이지에서 삭제 되는 orderCode가 있는지 확인
     // 있을 경우 활성화 해제
     this.ecporders.some(function (ecpOrder) {
-        if (ecpOrder.nativeElement.firstElementChild.innerText.trim() === orderCode) {
+      if (ecpOrder.nativeElement.firstElementChild.innerText.trim() === orderCode) {
         renderer2.removeClass(ecpOrder.nativeElement, 'on');
         return true;
       }
@@ -183,7 +182,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param {string} searchText 검색어
    * @param {boolean} barcodeFlag 바코드조회
    */
-  searchOrder(searchType: string, searchText: string, barcodeFlag= false) {
+  searchOrder(searchType: string, searchText: string, barcodeFlag = false) {
     if (searchText === '' || searchText === undefined || searchText === null) {
       this.alert.info({ message: this.messageService.get('noSearchText') });
     } else {
@@ -235,44 +234,42 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param {number} page       페이지번호
    */
   getOrderList(searchType: string, channels: string, deliveryModes: string, orderStatus: string,
-               memberType: string, searchText: string, page = 0, barcodeFlag: boolean) {
-    this.spinner.show();
+    memberType: string, searchText: string, page = 0, barcodeFlag: boolean) {
     const orderTypes = 'NORMAL_ORDER';
     const sort = 'code';
     const asc = false;
     this.orderListSubscription = this.orderService.orderList(searchText,
-                                                             memberType,
-                                                             searchType,
-                                                             orderTypes,
-                                                             channels,
-                                                             deliveryModes,
-                                                             this.confirmFlag,
-                                                             this.isEasyPickupOrder,
-                                                             page,
-                                                             this.PAGE_SIZE,
-                                                             sort,
-                                                             asc,
-                                                             orderStatus).subscribe(
-      resultData => {
-        if (resultData) {
-          this.sourceList = resultData;
-          // barcode 조회시 결과값이 하나면 바로 ADD
-          if (barcodeFlag && this.sourceList.orders.length === 1) {
-            this.moveOrder(null, this.sourceList.orders[0].code, 'a');
+      memberType,
+      searchType,
+      orderTypes,
+      channels,
+      deliveryModes,
+      this.confirmFlag,
+      this.isEasyPickupOrder,
+      page,
+      this.PAGE_SIZE,
+      sort,
+      asc,
+      orderStatus).subscribe(
+        resultData => {
+          if (resultData) {
+            this.sourceList = resultData;
+            // barcode 조회시 결과값이 하나면 바로 ADD
+            if (barcodeFlag && this.sourceList.orders.length === 1) {
+              this.moveOrder(null, this.sourceList.orders[0].code, 'a');
+            }
           }
-        }
-      },
-      error => {
-        this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('pickup-order.component', `Get order list error type : ${errdata.type}`).error();
-          this.logger.set('pickup-order.component', `Get order list error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
-        }
-      },
-      () => { if (barcodeFlag) { this.barcodeScan.nativeElement.value = ''; } this.spinner.hide(); }
-    );
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('pickup-order.component', `Get order list error type : ${errdata.type}`).error();
+            this.logger.set('pickup-order.component', `Get order list error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        },
+        () => { if (barcodeFlag) { this.barcodeScan.nativeElement.value = ''; } }
+      );
   }
 
   /**
@@ -282,14 +279,12 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    */
   confirmECP() {
     if (this.targetList.orders.length > 0) {
-      this.modal.openModalByComponent(EcpConfirmComponent,
-        {
-          callerData: { orderList: this.targetList  },
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          modalId: 'EcpConfirmComponent'
-        }
-      );
+      this.modal.openModalByComponent(EcpConfirmComponent, {
+        callerData: { orderList: this.targetList },
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        modalId: 'EcpConfirmComponent'
+      });
     } else {
       this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder') });
     }
@@ -329,27 +324,23 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    */
   printECP() {
     const orderCodes = new Array<string>();
-      this.targetList.orders.forEach(order => {
-        orderCodes.push(order.code);
+    this.targetList.orders.forEach(order => {
+      orderCodes.push(order.code);
+    });
+    this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
+      orderDetail => {
+        if (orderDetail) {
+          this.makeReceiptPrintData(orderDetail);
+        }
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('pickup-order.component', `printECP error type : ${errdata.type}`).error();
+          this.logger.set('pickup-order.component', `printECP error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
       });
-      this.spinner.show();
-      this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
-        orderDetail => {
-          if (orderDetail) {
-            this.makeReceiptPrintData(orderDetail);
-          }
-        },
-        error => {
-          this.spinner.hide();
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('pickup-order.component', `printECP error type : ${errdata.type}`).error();
-            this.logger.set('pickup-order.component', `printECP error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        },
-        () => { this.spinner.hide(); }
-      );
   }
 
   /**
@@ -378,7 +369,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           });
         }
       });
-      this.receiptService.makeTextAndGroupSummaryPrint(this.entryList , this.orderTypeName);
+      this.receiptService.makeTextAndGroupSummaryPrint(this.entryList, this.orderTypeName);
     }
 
     // 사용자별 영수증 출력
@@ -387,7 +378,6 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.targetList.orders.forEach(order => {
         orderCodes.push(order.code);
       });
-      this.spinner.show();
       this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
         orderDetail => {
           if (orderDetail) {
@@ -401,16 +391,13 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           }
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.logger.set('pickup-order.component', `Reissue Receipts error type : ${errdata.type}`).error();
             this.logger.set('pickup-order.component', `Reissue Receipts error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     }
   }
 

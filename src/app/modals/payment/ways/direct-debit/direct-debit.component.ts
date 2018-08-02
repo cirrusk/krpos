@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering
@@ -41,7 +41,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
     private storage: StorageService, private payments: PaymentService, private message: MessageService,
-    private logger: Logger, private info: InfoBroker, private spinner: SpinnerService, private renderer: Renderer2) {
+    private logger: Logger, private info: InfoBroker, private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -199,7 +199,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   private approvalAndPayment() {
-    this.spinner.show();
     const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('direct.debit.component', 'direct.debit payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -231,12 +230,11 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.storage.removePay();
       }, error => {
         this.finishStatus = 'fail';
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.apprmessage = errdata.message;
         }
-      }, () => { this.spinner.hide(); });
+      });
   }
 
   /**

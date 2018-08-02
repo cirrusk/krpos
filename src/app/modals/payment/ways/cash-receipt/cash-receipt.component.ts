@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Rend
 import { Subscription } from 'rxjs/Subscription';
 
 import { OrderService, MessageService } from '../../../../service';
-import { ModalComponent, ModalService, SpinnerService } from '../../../../core';
+import { ModalComponent, ModalService } from '../../../../core';
 import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -29,8 +29,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('income') private income: ElementRef;
   @ViewChild('outcome') private outcome: ElementRef;
   constructor(protected modalService: ModalService, private order: OrderService,
-    private spinner: SpinnerService, private message: MessageService,
-    private renderer: Renderer2) {
+    private message: MessageService, private renderer: Renderer2) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
@@ -69,7 +68,6 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
         this.apprmessage = this.message.get('receipt.reg.number.biz'); // 사업자 등록번호, 현금영수증 카드번호
       }
     } else {
-      this.spinner.show();
       let issuancetype, numbertype;
       const receipttype = 'CASH'; // CASH(현금영수증), TAX(세금계산서)
       if (this.divcheck === 'i') {
@@ -107,14 +105,11 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
         },
         error => {
           this.finishStatus = 'fail';
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.apprmessage = errdata.message;
           }
-        },
-        () => { this.spinner.hide(); });
-
+        });
     }
   }
 

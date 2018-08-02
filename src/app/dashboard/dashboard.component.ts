@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Modal, Logger, StorageService, AlertService, AlertState, SpinnerService } from '../core';
+import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
 import { BatchService } from '../service';
 import { InfoBroker } from '../broker';
 import { AccessToken, LockType } from '../data';
@@ -28,7 +28,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private batch: BatchService,
     private storage: StorageService,
     private alert: AlertService,
-    private spinner: SpinnerService,
     private logger: Logger,
     private router: Router) {
     this.orderCount = 0;
@@ -83,28 +82,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
   startShift() {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
-      this.spinner.show();
-      this.batchsubscription = this.batch.startBatch().subscribe(result => {
-        if (result && Utils.isNotEmpty(result.batchNo)) {
-          this.logger.set('dashboard.component', 'start batch...').debug();
-          this.storage.setBatchInfo(result);
-          this.info.sendInfo('bat', result);
-          this.alert.info({ message: '배치가 시작되었습니다.' });
-          this.alertsubscription = this.alert.alertState.subscribe(
-            (state: AlertState) => {
-              if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
-            }
-          );
-        }
-      },
-        error => {
-          this.spinner.hide();
-          const errdt = Utils.getError(error);
-          if (errdt) {
-            this.alert.error({ message: `${errdt.message}` });
+      this.batchsubscription = this.batch.startBatch().subscribe(
+        result => {
+          if (result && Utils.isNotEmpty(result.batchNo)) {
+            this.logger.set('dashboard.component', 'start batch...').debug();
+            this.storage.setBatchInfo(result);
+            this.info.sendInfo('bat', result);
+            this.alert.info({ message: '배치가 시작되었습니다.' });
+            this.alertsubscription = this.alert.alertState.subscribe(
+              (state: AlertState) => {
+                if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
+              }
+            );
           }
         },
-        () => { this.spinner.hide(); });
+        error => {
+          const errdt = Utils.getError(error);
+          if (errdt) {
+            if (errdt.type === 'AmbiguousIdentifierError') {
+              this.logger.set('dashboard.component', `${errdt.message}`).error();
+            }
+            this.alert.error({ message: `${errdt.message}` });
+          }
+        });
     }
   }
 
@@ -137,7 +137,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       ).subscribe(result => {
         if (result) {
-          this.spinner.show();
           this.logger.set('dashboard.component', 'stop shift, stop batch...').debug();
           this.batchsubscription = this.batch.endBatch().subscribe(
             () => {
@@ -151,8 +150,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 closeByClickOutside: false,
                 modalId: 'STOPSHIFT_LAST'
               });
-            },
-            () => { this.spinner.hide(); });
+            });
         }
       });
     }
@@ -196,7 +194,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           if (isloginBatch) {
-            this.spinner.show();
             this.batchsubscription = this.batch.endBatch().subscribe(
               () => {
                 this.storage.logout();
@@ -215,9 +212,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     Utils.kioskModeEnd();
                   }
                 });
-              },
-              (error) => { },
-              () => { this.spinner.hide(); });
+              });
           } else {
             Utils.kioskModeEnd();
           }

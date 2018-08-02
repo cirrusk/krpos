@@ -20,14 +20,13 @@ export class BatchService {
   /**
    * Start Shift
    *
-   *`
    * 1. 로그인 팝업
    * 2. 로그인/배치저장
    * 3. 대시보드 메인
    * terminal: Terminal id of POS machine.
    * startingBalance: Starting Cash drawer balance. | (string) e.g 120
    * pickupStore: Store associated with terminal. | (string) e.g 01
-   *`
+   *
    * @returns {BatchInfo} 배치 정보
    */
   startBatch(): Observable<BatchInfo> {

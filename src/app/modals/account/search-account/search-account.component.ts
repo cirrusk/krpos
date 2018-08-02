@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, AlertService, SpinnerService } from '../../../core';
+import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
 import { SearchService, PagerService } from '../../../service';
 import { AccountList, Accounts, Pagination } from '../../../data';
@@ -30,18 +30,14 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     private logger: Logger,
     private searchService: SearchService,
     private pagerService: PagerService,
-    private alert: AlertService,
-    private spinner: SpinnerService
+    private alert: AlertService
   ) {
     super(modalService);
-    this.spinner.hide();
     this.init();
   }
 
   ngOnInit() {
-    this.logger.set('search.account.component', `결제 타입 --------------> ${this.paymentType}`).debug();
     setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
-
     if (this.callerData) {
       const searchParams = this.callerData.data;
       if (searchParams.searchText.trim() !== '') {
@@ -93,10 +89,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   getAccountList(searchMemberType: string, searchText: string): void {
     if (searchText.trim()) {
       this.activeNum = -1;
-      this.spinner.show();
-
-      this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText)
-        .subscribe(
+      this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText).subscribe(
           result => {
             if (result) {
               this.accountList = result;
@@ -105,16 +98,13 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
             }
           },
           error => {
-            this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
               this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
               this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
-          },
-          () => { this.spinner.hide(); }
-        );
+          });
     } else {
       this.alert.warn({ title: '검색어 미입력', message: '검색어를 입력해주세요.' });
       return;

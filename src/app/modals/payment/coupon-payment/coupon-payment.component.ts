@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, SpinnerService, Logger, StorageService, AlertService } from '../../../core';
+import { ModalComponent, ModalService, Modal, Logger, StorageService } from '../../../core';
 import { ComplexPaymentComponent } from '../complex-payment/complex-payment.component';
 import { Accounts, Coupon, PaymentCapture, VoucherPaymentInfo, PaymentModeData, PaymentModes, CurrencyData, StatusDisplay, KeyCode } from '../../../data';
 import { Cart } from '../../../data/models/order/cart';
@@ -29,7 +29,7 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
   private paymentsubscription: Subscription;
   private couponsubscription: Subscription;
   @ViewChild('couponcode') private couponcode: ElementRef;
-  constructor(protected modalService: ModalService, private modal: Modal, private spinner: SpinnerService,
+  constructor(protected modalService: ModalService, private modal: Modal,
     private info: InfoBroker, private payment: PaymentService, private message: MessageService,
     private storage: StorageService, private logger: Logger, private renderer: Renderer2) {
     super(modalService);
@@ -67,7 +67,6 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
       this.apprmessage = this.message.get('empty.coupon'); // '검색할 쿠폰번호를 입력해주세요.';
       return;
     }
-    this.spinner.show();
     this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
       result => {
         if (result) {
@@ -81,13 +80,10 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         }
       },
       error => {
-        this.spinner.hide();
-        // this.alert.info({ message: `해당 쿠폰이 존재하지 않습니다. 쿠폰 정보를 다시 확인해주세요.` });
         this.checktype = -1;
         this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
         this.logger.set('coupon.component', `${error}`).error();
-      },
-      () => { this.spinner.hide(); });
+      });
   }
 
   couponDone() {
@@ -119,13 +115,11 @@ export class CouponPaymentComponent extends ModalComponent implements OnInit, On
         },
         error => {
           this.finishStatus = 'fail';
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.apprmessage = this.message.get(errdata.message);
           }
-        },
-        () => { this.spinner.hide(); });
+        });
     }
   }
 

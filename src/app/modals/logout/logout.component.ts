@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, Modal, StorageService, SpinnerService } from '../../core';
+import { ModalComponent, ModalService, Logger, Modal, StorageService } from '../../core';
 import { BatchService } from '../../service';
 
 /**
@@ -20,7 +20,6 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private storage: StorageService,
-    private spinner: SpinnerService,
     private batch: BatchService,
     private logger: Logger) {
     super(modalService);
@@ -77,23 +76,21 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       ).subscribe(
         result => {
           if (result) {
-            this.spinner.show();
             this.logger.set('logout.component', 'end work, stop batch...').debug();
-            this.batchsubscription = this.batch.endBatch().subscribe(data => {
-              this.storage.logout();
-              // this.storage.removeEmployeeName(); // client 담당자 삭제
-              this.storage.clearClient();
-              this.modal.openConfirm({
-                title: '근무 종료',
-                message: `배치 정보 저장이 완료되었습니다.`,
-                actionButtonLabel: '확인',
-                closeButtonLabel: '취소',
-                closeByClickOutside: false,
-                modalId: 'ENDWORK_LAST'
+            this.batchsubscription = this.batch.endBatch().subscribe(
+              data => {
+                this.storage.logout();
+                // this.storage.removeEmployeeName(); // client 담당자 삭제
+                this.storage.clearClient();
+                this.modal.openConfirm({
+                  title: '근무 종료',
+                  message: `배치 정보 저장이 완료되었습니다.`,
+                  actionButtonLabel: '확인',
+                  closeButtonLabel: '취소',
+                  closeByClickOutside: false,
+                  modalId: 'ENDWORK_LAST'
+                });
               });
-            },
-              (error) => { },
-              () => { this.spinner.hide(); });
           } else {
             // this.router.navigate(['/order']);
           }

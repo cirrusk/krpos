@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { Modal, Logger, StorageService, SpinnerService } from '../../core';
+import { Modal, Logger, StorageService } from '../../core';
 import {
   PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent,
@@ -35,7 +35,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   constructor(private modal: Modal,
     private storage: StorageService,
     private payment: PaymentService,
-    private spinner: SpinnerService,
     private logger: Logger,
     private searchAccountBroker: SearchAccountBroker,
     private renderer: Renderer2
@@ -106,7 +105,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   /**
    * 통합 결제 팝업
-   * @param evt
+   * 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
+   * @param {any} evt 이벤트
    */
   complexPayment(evt: any) {
     if (!this.hasAccount || !this.hasProduct) { return; }
@@ -115,7 +115,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('apprtype', 'c');
     if (this.orderType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
-      this.spinner.show();
       // 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
       this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
         result => {
@@ -126,8 +125,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             this.popupPayment();
           }
         },
-        error => { this.spinner.hide(); this.popupPayment(); this.logger.set('order.menu.component', `${error}`).error(); },
-        () => { this.spinner.hide(); });
+        error => { this.popupPayment(); this.logger.set('order.menu.component', `${error}`).error(); });
     } else {
       this.popupPayment();
     }

@@ -2,14 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { PaymentService } from '../../../../../service';
-import { ModalComponent, ModalService, Logger, SpinnerService } from '../../../../../core';
+import { ModalComponent, ModalService, Logger } from '../../../../../core';
 import { Accounts, BankInfoList } from '../../../../../data';
 
 @Component({
   selector: 'pos-installment-plan',
   templateUrl: './installment-plan.component.html'
 })
-export class InstallmentPlanComponent  extends ModalComponent implements OnInit, OnDestroy {
+export class InstallmentPlanComponent extends ModalComponent implements OnInit, OnDestroy {
 
   private installmentPlanSubscription: Subscription;
 
@@ -17,9 +17,8 @@ export class InstallmentPlanComponent  extends ModalComponent implements OnInit,
   bankList: BankInfoList;
 
   constructor(protected modalService: ModalService,
-              private paymentService: PaymentService,
-              private logger: Logger,
-              private spinner: SpinnerService) {
+    private paymentService: PaymentService,
+    private logger: Logger) {
     super(modalService);
   }
 
@@ -33,16 +32,13 @@ export class InstallmentPlanComponent  extends ModalComponent implements OnInit,
   }
 
   getInstallmentPlan() {
-    this.spinner.show();
     this.installmentPlanSubscription = this.paymentService.getInstallmentPlan().subscribe(
       result => {
         if (result) {
           this.bankList = result;
         }
       },
-      error => { this.spinner.hide(); this.logger.set('installment-plan.component', `${error}`).error(); },
-      () => { this.spinner.hide(); }
-    );
+      error => { this.logger.set('installment-plan.component', `${error}`).error(); });
   }
 
   close() {

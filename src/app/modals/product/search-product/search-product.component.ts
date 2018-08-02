@@ -3,7 +3,7 @@ import {
   ElementRef, QueryList, OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, ModalService, AlertService, SpinnerService, Logger, Modal } from '../../../core';
+import { ModalComponent, ModalService, AlertService, Logger, Modal } from '../../../core';
 import { SearchService } from '../../../service/order/search.service';
 import { Product, Products } from '../../../data/models/cart/cart-data';
 import { Utils } from '../../../core/utils';
@@ -36,8 +36,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     private modal: Modal,
     private search: SearchService,
     private alert: AlertService,
-    private spinner: SpinnerService,
-    // private addCartBroker: AddCartBroker,
     private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
@@ -110,8 +108,6 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.renderer.removeClass(p.nativeElement, 'on');
       }
     }
-
-    this.spinner.show();
     this.spsubscription = this.search.getBasicProductInfoByCart(this.searchType, sval, this.cartInfo.user.uid, this.cartInfo.code, this.currentPage).subscribe(
       data => {
         this.products = data;
@@ -136,16 +132,13 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
           this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**
@@ -200,11 +193,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
             this.activeNum = -1;
             this.product = null;
           }
-          // this.addCartBroker.sendInfo(this.product);
         });
       } else {
         this.result = { productCode: this.product.code, serialNumber: '' };
-        // this.addCartBroker.sendInfo(this.product);
         this.close();
       }
     }

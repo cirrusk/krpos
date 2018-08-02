@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
 import {
-  ModalComponent, ModalService, PrinterService, StorageService, SpinnerService,
+  ModalComponent, ModalService, PrinterService, StorageService,
   KeyboardService, KeyCommand, Modal, Logger
 } from '../../../core';
 import { Order } from '../../../data/models/order/order';
@@ -38,8 +38,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   constructor(protected modalService: ModalService,
     private printer: PrinterService, private receipt: ReceiptService,
     private payments: PaymentService, private keyboard: KeyboardService,
-    private storage: StorageService, private spinner: SpinnerService,
-    private message: MessageService, private modal: Modal, private info: InfoBroker, private logger: Logger
+    private storage: StorageService, private message: MessageService, private modal: Modal, private info: InfoBroker, private logger: Logger
   ) {
     super(modalService);
     this.finishStatus = null;
@@ -155,7 +154,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * @param change 거스름돈
    */
   private paymentCaptureAndPlaceOrder() {
-    this.spinner.show();
     const capturepaymentinfo = new CapturePaymentInfo();
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
     capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
@@ -185,13 +183,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.storage.removePay();
       }, error => {
         this.finishStatus = 'fail';
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('complete.payment.component', `${errdata.message}`).error();
           this.apprmessage = errdata.message;
         }
-      }, () => { this.spinner.hide(); });
+      });
   }
 
   /**

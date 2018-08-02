@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, AlertService, ModalService, SpinnerService, Logger, Modal } from '../../../core';
-import { SearchAccountBroker } from '../../../broker';
+import { ModalComponent, AlertService, ModalService, Logger, Modal } from '../../../core';
 import { Utils } from '../../../core/utils';
 import { AccountList } from '../../../data';
 import { AccountService } from '../../../service';
@@ -26,8 +25,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     private modal: Modal,
     private alert: AlertService,
     private accountService: AccountService,
-    private spinner: SpinnerService,
-    private searchAccountBroker: SearchAccountBroker,
     private logger: Logger) {
     super(modalService);
     this.phonetype = 'MOBILE';
@@ -85,9 +82,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
         }
       ).subscribe(result => {
         if (result) {
-          this.spinner.show();
           this.registerType = this.guser ? 'ECP' : 'CONSUMER';
-
           this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
             userInfo => {
               if (userInfo) {
@@ -97,16 +92,13 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
               }
             },
             error => {
-              this.spinner.hide();
               const errdata = Utils.getError(error);
               if (errdata) {
                 this.logger.set('newAccount.component', `Save new customer error type : ${errdata.type}`).error();
                 this.logger.set('newAccount.component', `Save new customer error message : ${errdata.message}`).error();
                 this.alert.error({ message: `${errdata.message}` });
               }
-            },
-            () => { this.spinner.hide(); }
-          );
+            });
         }
       });
     }

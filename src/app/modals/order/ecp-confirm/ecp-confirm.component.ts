@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, AlertService, Modal, SpinnerService, Logger } from '../../../core';
+import { ModalComponent, ModalService, AlertService, Modal, Logger } from '../../../core';
 import { PagerService, OrderService, MessageService, SearchService } from '../../../service';
 import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
 import { Utils } from '../../../core/utils';
@@ -28,7 +28,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
 
   constructor(private modal: Modal,
     protected modalService: ModalService,
-    private spinner: SpinnerService,
     private alert: AlertService,
     private messageService: MessageService,
     private logger: Logger,
@@ -56,8 +55,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     this.pager = new Pagination();
     this.totalCount = 0;
     this.orderCodes = '';
-    this.entryList = new  Array<OrderEntry>();
-    this.currentOrderList = new  Array<OrderEntry>();
+    this.entryList = new Array<OrderEntry>();
+    this.currentOrderList = new Array<OrderEntry>();
     this.orderList = new OrderHistoryList();
   }
 
@@ -70,7 +69,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     orderList.orders.forEach(order => {
       orderCodes.push(order.code);
     });
-    this.spinner.show();
     this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
       orderDetails => {
         if (orderDetails) {
@@ -78,16 +76,13 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
           this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**
@@ -124,7 +119,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {number} page 페이지번호
    */
   productConfirm(productCode: string, page?: number): void {
-    this.spinner.show();
     try {
       const existedIdx = this.entryList.findIndex(
         function (obj) {
@@ -133,44 +127,33 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       );
       if (existedIdx !== -1) {
         const confirmCount = this.entryList[existedIdx].ecpConfirmQty ? this.entryList[existedIdx].ecpConfirmQty : 0;
-
         if (this.entryList[existedIdx].quantity > confirmCount) {
           this.entryList[existedIdx].ecpConfirmQty = confirmCount + 1;
           this.setPage(page);
         } else {
-          this.spinner.hide();
           const errorCount = (confirmCount + 1) - this.entryList[existedIdx].quantity;
           this.popupExceed(this.entryList[existedIdx].product.code,
-                           this.entryList[existedIdx].product.name,
-                           this.entryList[existedIdx].quantity,
-                           errorCount);
+            this.entryList[existedIdx].product.name,
+            this.entryList[existedIdx].quantity,
+            errorCount);
         }
       } else {
         this.searchProductInfoSubscription = this.searchService.getBasicProductInfo(productCode).subscribe(
           result => {
-            this.spinner.hide();
             if (result) {
               this.popupNoProduct(result.products[0].code, result.products[0].name);
             }
           },
           error => {
-            this.spinner.hide();
             const errdata = Utils.getError(error);
             if (errdata) {
               this.logger.set('ecp-confirm.component', `get order detail error type : ${errdata.type}`).error();
               this.logger.set('ecp-confirm.component', `get order detail error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
-          },
-          () => { this.spinner.hide(); }
-        );
+          });
       }
     } catch (e) {
-      this.spinner.hide();
-    } finally {
-      setTimeout(() => {
-        this.spinner.hide();
-      }, 500);
     }
   }
 
@@ -203,8 +186,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     let isConfirm = false;
     // 완료 여부 확인
     try {
-      this.spinner.show();
-
       isConfirm = this.entryList.some(function (entry, index, arr) {
         if (!entry.ecpConfirmQty) {
           entry.ecpConfirmQty = 0;
@@ -229,41 +210,37 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       });
     } catch (e) {
       this.logger.set('ecp-confirm.component', `confirm error type : ${e}`).error();
-      this.spinner.hide();
     }
 
     // 이상이 있을 경우 메시지 전시
     if (isConfirm && errorType === 'S') {
       // 수량 부족
-      this.spinner.hide();
       this.popupShortage(productCode, productName, productQty, errorQty);
     } else if (isConfirm && errorType === 'E') {
       // 수량 초과
-      this.spinner.hide();
       this.popupExceed(productCode, productName, productQty, errorQty);
     } else {
       this.confirmSubscription = this.orderService.confirmPickup(this.orderCodes.slice(1)).subscribe(
         result => {
-          this.spinner.hide();
+          // this.spinner.hide();
           if (result) {
-            this.alert.info({ title: '',
-                                message: this.messageService.get('ecpReceiptComplete'),
-                                timer: true,
-                                interval: 1500});
+            this.alert.info({
+              title: '',
+              message: this.messageService.get('ecpReceiptComplete'),
+              timer: true,
+              interval: 1500
+            });
             this.close();
           }
         },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           if (errdata) {
             this.logger.set('ecp-confirm.component', `confirm error type : ${errdata.type}`).error();
             this.logger.set('ecp-confirm.component', `confirm error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); }
-      );
+        });
     }
   }
 
@@ -280,18 +257,16 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {number} exceedQty   초과수량
    */
   popupExceed(productCode: string, productName: string, productQty: number, exceedQty: number) {
-    this.modal.openConfirm(
-      {
-        title: 'ECP 컨펌',
-        message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량은 ` +
-          `<em class="fc_red">${productQty}</em>개로<br>` +
-          `해당상품이 <em class="fc_red">${exceedQty}</em>개 더 담겼습니다.</p>`,
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: false,
-        modalId: 'ECPCONFIRM'
-      }
-    );
+    this.modal.openConfirm({
+      title: 'ECP 컨펌',
+      message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량은 ` +
+        `<em class="fc_red">${productQty}</em>개로<br>` +
+        `해당상품이 <em class="fc_red">${exceedQty}</em>개 더 담겼습니다.</p>`,
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: 'ECPCONFIRM'
+    });
   }
 
   /**
@@ -302,17 +277,15 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {number} shortageQty 부족수량
    */
   popupShortage(productCode: string, productName: string, productQty: number, shortageQty: number) {
-    this.modal.openConfirm(
-      {
-        title: 'ECP 컨펌',
-        message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량이 <em class="fc_red">(${productQty})</em>개<br>` +
-          `<em class="fc_red">${shortageQty}</em>개 수량이 더 필요합니다.</p> <span class="blck">해당 상품을 바코드로 스캔하세요!</span>`,
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: false,
-        modalId: 'ECPCONFIRM'
-      }
-    );
+    this.modal.openConfirm({
+      title: 'ECP 컨펌',
+      message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량이 <em class="fc_red">(${productQty})</em>개<br>` +
+        `<em class="fc_red">${shortageQty}</em>개 수량이 더 필요합니다.</p> <span class="blck">해당 상품을 바코드로 스캔하세요!</span>`,
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: 'ECPCONFIRM'
+    });
   }
 
   /**
@@ -321,16 +294,14 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {string} productName 제품명
    */
   popupNoProduct(productCode: string, productName: string) {
-    this.modal.openConfirm(
-      {
-        title: 'ECP 컨펌',
-        message: `<p class="txt_info02 type02">${productCode}  ${productName} <br> 주문하지 않은 상품이 <em class="fc_red">1</em>개 담겼습니다.</p>`,
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: false,
-        modalId: 'ECPCONFIRM'
-      }
-    );
+    this.modal.openConfirm({
+      title: 'ECP 컨펌',
+      message: `<p class="txt_info02 type02">${productCode}  ${productName} <br> 주문하지 않은 상품이 <em class="fc_red">1</em>개 담겼습니다.</p>`,
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: 'ECPCONFIRM'
+    });
   }
 
   close() {

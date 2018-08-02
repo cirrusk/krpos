@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener } fro
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 
-import { ModalComponent, ModalService, Logger, StorageService, SpinnerService } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService } from '../../../../core';
 import { PaymentService, MessageService } from '../../../../service';
 import { Utils, StringBuilder } from '../../../../core/utils';
 import { StatusDisplay, KeyCode } from '../../../../data';
@@ -28,7 +28,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('checkprice') checkprice: ElementRef;      // 수표금액
   @ViewChild('checkpopup') checkpopup: ElementRef;      // 팝업
   constructor(protected modalService: ModalService, private payments: PaymentService, private message: MessageService,
-    private spinner: SpinnerService, private storage: StorageService, private logger: Logger) {
+    private storage: StorageService, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
     this.check = 0;
@@ -57,7 +57,6 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
     this.check = 0;
     const checknum = this.makeCheckNumber();
-    this.spinner.show();
     this.checksubscription = this.payments.searchCheque(checknum).subscribe(
       result => {
         if (result && result.result === 'true') {
@@ -70,14 +69,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
         }
       },
       error => {
-        this.spinner.hide();
         this.logger.set('checks.component', `${error}`).error();
         this.finishStatus = 'fail';
         this.apprmessage = this.message.get('check.fail'); // '수표 조회에 실패 하였습니다.';
         this.dupcheck = false;
-      },
-      () => {
-        this.spinner.hide();
       });
 
   }

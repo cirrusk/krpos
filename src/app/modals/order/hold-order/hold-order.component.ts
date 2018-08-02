@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Modal, Logger, SpinnerService, AlertService, AlertType } from '../../../core';
+import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
 import { CartService, PagerService } from '../../../service';
 import { RestoreCartBroker, InfoBroker } from '../../../broker';
@@ -15,7 +15,7 @@ import { Pagination } from '../../../data';
   selector: 'pos-hold-order',
   templateUrl: './hold-order.component.html'
 })
-export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDestroy {
+export class HoldOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   private PAGE_SIZE = 5;
 
   private currentPage: number;                    // 현재 페이지 번호
@@ -29,13 +29,12 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
   private holdsubscription: Subscription;
 
   constructor(modalService: ModalService,
-              private cartService: CartService,
-              private spinner: SpinnerService,
-              private alert: AlertService,
-              private pagerService: PagerService,
-              private restoreCartBroker: RestoreCartBroker,
-              private info: InfoBroker,
-              private logger: Logger) {
+    private cartService: CartService,
+    private alert: AlertService,
+    private pagerService: PagerService,
+    private restoreCartBroker: RestoreCartBroker,
+    private info: InfoBroker,
+    private logger: Logger) {
     super(modalService);
     this.cartList = new Array<Cart>();
     this.activeNum = -1;
@@ -66,23 +65,19 @@ export class HoldOrderComponent extends ModalComponent  implements OnInit, OnDes
    * @param {string} userId 유저아이디
    */
   getSaveCarts(userId?: string) {
-    this.spinner.show();
     this.holdsubscription = this.cartService.getSaveCarts(userId).subscribe(
       result => {
         this.cartList = result.carts;
         this.setPage(Math.ceil(this.cartList.length / 5));
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
           this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**

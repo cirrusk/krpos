@@ -1,6 +1,6 @@
 import { PaymentService } from './../../../service/payment/payment.service';
-import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
-import { ModalComponent, ModalService, Modal, SpinnerService, StorageService, Logger, AlertService } from '../../../core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../core';
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
@@ -21,7 +21,6 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   orderDetail: OrderList;
   orderInfo: OrderHistory;
   balance: Balance;
-
   clientId: string;
   emloyeeName: string;
   cancelSymbol: string;
@@ -31,18 +30,16 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   paymentCapture: PaymentCapture;
 
   constructor(protected modalService: ModalService,
-              private router: Router,
-              private orderService: OrderService,
-              private receiptService: ReceiptService,
-              private paymentService: PaymentService,
-              private messageService: MessageService,
-              private modal: Modal,
-              private spinner: SpinnerService,
-              private storageService: StorageService,
-              private logger: Logger,
-              private alert: AlertService,
-              private info: InfoBroker,
-              private renderer: Renderer2) {
+    private router: Router,
+    private orderService: OrderService,
+    private receiptService: ReceiptService,
+    private paymentService: PaymentService,
+    private messageService: MessageService,
+    private modal: Modal,
+    private storageService: StorageService,
+    private logger: Logger,
+    private alert: AlertService,
+    private info: InfoBroker) {
     super(modalService);
     this.init();
   }
@@ -94,15 +91,14 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * 주문 취소 팝업
    */
   popupCancel() {
-    this.modal.openModalByComponent(CancelOrderComponent,
-      {
-        callerData: { orderInfo : this.orderInfo },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        closeByEscape: false,
-        modalId: 'CancelOrderComponent'
-      }
-    ).subscribe( result => {
+    this.modal.openModalByComponent(CancelOrderComponent, {
+      callerData: { orderInfo: this.orderInfo },
+      closeByClickOutside: false,
+      closeByEnter: false,
+      closeByEscape: false,
+      modalId: 'CancelOrderComponent'
+    }
+    ).subscribe(result => {
       if (result) {
         this.cancelSymbol = '-';
         this.cancelFlag = true;
@@ -111,23 +107,20 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
         this.getBalance(this.orderInfo.user.uid);
       }
-    }
-
-    );
+    });
   }
 
   /**
    * 결제수단변경/재결제
    */
   paymentChange() {
-    this.modal.openModalByComponent(CancelOrderComponent,
-      {
-        callerData: { orderInfo : this.orderInfo },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        closeByEscape: false,
-        modalId: 'CancelOrderComponent'
-      }
+    this.modal.openModalByComponent(CancelOrderComponent, {
+      callerData: { orderInfo: this.orderInfo },
+      closeByClickOutside: false,
+      closeByEnter: false,
+      closeByEscape: false,
+      modalId: 'CancelOrderComponent'
+    }
     ).subscribe(
       result => {
         if (result) {
@@ -136,29 +129,26 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
           this.goOrder();
           this.close();
         }
-      }
-    );
+      });
   }
 
   /**
    * ECP 출력 취소
    */
   cancelECPPrint() {
-    this.modal.openModalByComponent(CancelEcpPrintComponent,
-      {
-        callerData: { orderInfo : this.orderInfo },
-        closeByClickOutside: false,
-        closeByEnter: false,
-        closeByEscape: false,
-        modalId: 'CancelEcpPrintComponent'
-      }
+    this.modal.openModalByComponent(CancelEcpPrintComponent, {
+      callerData: { orderInfo: this.orderInfo },
+      closeByClickOutside: false,
+      closeByEnter: false,
+      closeByEscape: false,
+      modalId: 'CancelEcpPrintComponent'
+    }
     ).subscribe(
       result => {
         if (result) {
           this.close();
         }
-      }
-    );
+      });
   }
 
   /**
@@ -169,39 +159,35 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   getOrderDetail(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);
-    this.spinner.show();
     this.orderService.orderDetails(userId, orderCodes).subscribe(
       orderDetail => {
         if (orderDetail) {
           let jsonPaymentData = {};
           orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
-              switch (paymentInfo.paymentMode.code) {
-                  case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
-                  case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
-                  case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
-                  case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
-                  case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
-                  case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
-                  case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
-                  default: { jsonPaymentData = {}; } break;
-              }
-              Object.assign(this.paymentCapture, jsonPaymentData);
-              jsonPaymentData = {};
+            switch (paymentInfo.paymentMode.code) {
+              case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
+              case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
+              case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
+              case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
+              case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
+              case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
+              case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
+              default: { jsonPaymentData = {}; } break;
+            }
+            Object.assign(this.paymentCapture, jsonPaymentData);
+            jsonPaymentData = {};
           });
           this.orderDetail = orderDetail;
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('order-detail.component', `Get Order Detail error type : ${errdata.type}`).error();
           this.logger.set('order-detail.component', `Get Order Detail error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
   /**
@@ -216,16 +202,13 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         }
       },
       error => {
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('order-detail.component', `Get Balance error type : ${errdata.type}`).error();
           this.logger.set('order-detail.component', `Get Balance error message : ${errdata.message}`).error();
           this.alert.error({ message: `${errdata.message}` });
         }
-      },
-      () => { this.spinner.hide(); }
-    );
+      });
   }
 
 
@@ -235,21 +218,24 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   reissueReceipts() {
     try {
       const cancelFlag = this.cancelSymbol === '-' ? true : false;
-
       if (this.orderType === 'g') {
         this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true);
       } else {
         this.receiptService.reissueReceipts(this.orderDetail, cancelFlag);
-        this.alert.info({ title: '영수증 재발행',
-                          message: this.messageService.get('receiptComplete'),
-                          timer: true,
-                          interval: 1000});
+        this.alert.info({
+          title: '영수증 재발행',
+          message: this.messageService.get('receiptComplete'),
+          timer: true,
+          interval: 1000
+        });
       }
     } catch (e) {
       this.logger.set('order-detail.component', `Reissue Receipts error type : ${e}`).error();
-      this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail'),
-                         timer: true,
-                         interval: 1000});
+      this.alert.error({
+        title: '영수증 재발행', message: this.messageService.get('receiptFail'),
+        timer: true,
+        interval: 1000
+      });
     }
   }
 

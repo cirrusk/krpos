@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, ReceiptService, MessageService } from '../../../../service';
-import { ModalComponent, ModalService, SpinnerService, Logger, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo, AmwayExtendedOrdering
@@ -38,7 +38,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
-    private storage: StorageService, private message: MessageService, private spinner: SpinnerService, private info: InfoBroker,
+    private storage: StorageService, private message: MessageService, private info: InfoBroker,
     private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.isAllPay = false;
@@ -163,7 +163,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private paymentAndPlaceOrder() {
-    this.spinner.show();
     const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('recash.component', 'recash payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -194,12 +193,11 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.storage.removePay();
     }, error => {
       this.finishStatus = 'fail';
-      this.spinner.hide();
       const errdata = Utils.getError(error);
       if (errdata) {
         this.apprmessage = errdata.message;
       }
-    }, () => { this.spinner.hide(); });
+    });
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {

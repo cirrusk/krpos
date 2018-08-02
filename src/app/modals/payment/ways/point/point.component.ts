@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, MessageService, ReceiptService } from '../../../../service';
-import { ModalComponent, ModalService, Logger, SpinnerService, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
   PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo, AmwayExtendedOrdering
@@ -44,7 +44,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     private payments: PaymentService,
     private receipt: ReceiptService,
     private message: MessageService,
-    private spinner: SpinnerService,
     private storage: StorageService,
     private info: InfoBroker,
     private logger: Logger) {
@@ -77,7 +76,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   private getBalance() {
-    this.spinner.show();
     this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(
       result => {
         this.balance = result;
@@ -85,8 +83,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         const changeprice = this.point - this.paymentprice;
         this.change = (changeprice < 0) ? 0 : changeprice;
       },
-      error => { this.spinner.hide(); this.logger.set('point.component', `${error}`).error(); },
-      () => { this.spinner.hide(); });
+      error => { this.logger.set('point.component', `${error}`).error(); });
   }
 
   ngOnDestroy() {
@@ -227,7 +224,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   private paymentCaptureAndPlaceOrder() {
-    this.spinner.show();
     const capturepaymentinfo = this.makePaymentCaptureData(this.paymentprice);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -255,12 +251,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.storage.removePay();
       }, error => {
         this.finishStatus = 'fail';
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.apprmessage = errdata.message;
         }
-      }, () => { this.spinner.hide(); });
+      });
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {

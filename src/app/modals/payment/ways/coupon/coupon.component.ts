@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
-import { ModalComponent, ModalService, Modal, StorageService, SpinnerService, Logger, AlertService } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../../core';
 import { PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
 import {
@@ -36,7 +36,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   private coupon: Coupon;
   private page: Pagination;
   private pagesize = 5;
-  constructor(protected modalService: ModalService, private modal: Modal, private spinner: SpinnerService,
+  constructor(protected modalService: ModalService, private modal: Modal,
     private info: InfoBroker, private payment: PaymentService, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private logger: Logger) {
     super(modalService);
@@ -74,7 +74,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private searchCoupons(pagenum: number) {
-    this.spinner.show();
     this.couponssubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
       result => {
         this.couponlist = result.coupons;
@@ -84,8 +83,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           this.paging(this.couponCount, pagenum, this.pagesize);
         }
       },
-      error => { this.logger.set('coupon.component', `${error}`).error(); },
-      () => { this.spinner.hide(); });
+      error => { this.logger.set('coupon.component', `${error}`).error(); });
   }
 
   searchCoupon(couponcode: string) {
@@ -94,7 +92,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       this.apprmessage = this.message.get('empty.coupon'); // '검색할 쿠폰번호를 입력해주세요.';
       return;
     }
-    this.spinner.show();
     this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
       result => {
         if (result) {
@@ -108,12 +105,10 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
         }
       },
       error => {
-        this.spinner.hide();
         this.checktype = -1;
         this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
         this.logger.set('coupon.component', `${error}`).error();
-      },
-      () => { this.spinner.hide(); });
+      });
   }
 
   /**
@@ -157,7 +152,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private applyCouponAndPaymentCapture(): void {
-    this.spinner.show();
     let pcap: PaymentCapture;
     this.paymentsubscription = this.payment.applyCoupon(this.accountInfo.parties[0].uid, this.cartInfo.code, this.coupon.couponCode).subscribe(
       result => {
@@ -174,13 +168,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           this.sendPaymentAndOrder(pcap, null);
           this.openComplexPayment();
         } else {
-          this.spinner.hide();
           this.finishStatus = 'notexist';
           this.logger.set('coupon.component', `no apply or exist cart`).error();
         }
       },
       error => {
-        this.spinner.hide();
         // this.finishStatus = 'fail';
         const errdata = Utils.getError(error);
         if (errdata) {
@@ -188,8 +180,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           this.coupon = null;
           this.alert.show({ message: this.message.get(errdata.message) });
         }
-      },
-      () => { this.spinner.hide(); });
+      });
   }
 
   activeRow(index: number, coupon: Coupon) {

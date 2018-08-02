@@ -7,7 +7,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService,
-  Logger, AlertService, SpinnerService, AlertState, Modal, StorageService,
+  Logger, AlertService, AlertState, Modal, StorageService,
   CardApprovalResult, CardCancelResult, NiceConstants
 } from '../../../../core';
 import {
@@ -49,7 +49,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
-    private message: MessageService, private alert: AlertService, private spinner: SpinnerService, private info: InfoBroker,
+    private message: MessageService, private alert: AlertService, private info: InfoBroker,
     private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = '00';
@@ -286,12 +286,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (this.change >= 0) {
       const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
       this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-      this.spinner.show();
       const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
       this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
       resultNotifier.subscribe(
         (res: CardApprovalResult) => {
-          this.spinner.hide();
           this.cardresult = res;
           if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
             this.finishStatus = 'retry';
@@ -321,11 +319,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         },
         error => {
           this.logger.set('credit.card.component', `${error}`).error();
-          this.spinner.hide();
           this.storage.removePaymentModeCode();
-        },
-        () => {
-          this.spinner.hide();
         });
     } else {
       this.checktype = -2;
@@ -338,13 +332,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private cardPayAndPlaceOrder() {
     const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
-    this.spinner.show();
     const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
     resultNotifier.subscribe((res: CardApprovalResult) => {
       this.cardresult = res;
       if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        this.spinner.hide();
         this.finishStatus = 'retry';
         this.apprmessage = res.msg;
         this.dupcheck = false;
@@ -387,16 +379,14 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               }
             }, error => {
               this.finishStatus = 'fail';
-              this.spinner.hide();
               this.storage.removePaymentModeCode();
               const errdata = Utils.getError(error);
               if (errdata) {
                 this.apprmessage = errdata.message;
               }
-            }, () => { this.spinner.hide(); });
+            });
         } else {
           this.finishStatus = 'fail';
-          this.spinner.hide();
           this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
           this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
         }

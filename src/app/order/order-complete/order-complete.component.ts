@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input }
 import { Router } from '@angular/router';
 import { Pagination, OrderHistoryList, OrderHistory } from '../../data';
 import { MessageService, OrderService } from '../../service';
-import { Modal, Logger, SpinnerService, AlertService } from '../../core';
+import { Modal, Logger, AlertService } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
@@ -30,13 +30,12 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   searchText: string;
 
   constructor(private router: Router,
-              private modal: Modal,
-              private orderService: OrderService,
-              private spinner: SpinnerService,
-              private alert: AlertService,
-              private messageService: MessageService,
-              private renderer: Renderer2,
-              private logger: Logger) {
+    private modal: Modal,
+    private orderService: OrderService,
+    private alert: AlertService,
+    private messageService: MessageService,
+    private renderer: Renderer2,
+    private logger: Logger) {
     this.init();
 
   }
@@ -51,7 +50,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   init() {
     this.orderHistoryList = new OrderHistoryList();
-    this.orderHistoryList.orders =  new Array<OrderHistory>();
+    this.orderHistoryList.orders = new Array<OrderHistory>();
     this.orderHistoryList.pagination = new Pagination();
     this.selectedOrderNum = -1;
     this.searchType = 'abo';
@@ -100,13 +99,12 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     );
 
     if (existedIdx !== -1) {
-      this.modal.openModalByComponent(OrderDetailComponent,
-        {
-          callerData: { orderInfo : this.orderHistoryList.orders[existedIdx] },
-          actionButtonLabel: '선택',
-          closeButtonLabel: '취소',
-          modalId: 'OrderDetailComponent'
-        }
+      this.modal.openModalByComponent(OrderDetailComponent, {
+        callerData: { orderInfo: this.orderHistoryList.orders[existedIdx] },
+        actionButtonLabel: '선택',
+        closeButtonLabel: '취소',
+        modalId: 'OrderDetailComponent'
+      }
       ).subscribe(result => {
         if (result) {
           this.getOrderList(this.searchType, this.memberType, this.searchText, this.orderHistoryList.pagination.currentPage);
@@ -138,25 +136,21 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    * @param {number} page       페이지번호
    */
   getOrderList(searchType: string, memberType: string, searchText: string, page: number) {
-    this.spinner.show();
     this.orderListSubscription = this.orderService.orderList(searchText, memberType,
-                                                             searchType, 'NORMAL_ORDER', 'pos,Web,WebMobile', 'pickup', false, false, page, this.PAGE_SIZE).subscribe(
-      resultData => {
-        if (resultData) {
-          this.orderHistoryList = resultData;
-        }
-      },
-      error => {
-        this.spinner.hide();
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
-          this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
-        }
-      },
-      () => { this.spinner.hide(); }
-    );
+      searchType, 'NORMAL_ORDER', 'pos,Web,WebMobile', 'pickup', false, false, page, this.PAGE_SIZE).subscribe(
+        resultData => {
+          if (resultData) {
+            this.orderHistoryList = resultData;
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
+            this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
+            this.alert.error({ message: `${errdata.message}` });
+          }
+        });
   }
 
   /**
@@ -164,7 +158,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    * @param {number} page 페이지번호
    */
   setPage(page: number) {
-    if (page > -1 && page < this.orderHistoryList.pagination.totalPages ) {
+    if (page > -1 && page < this.orderHistoryList.pagination.totalPages) {
       this.getOrderList(this.searchType, this.memberType, this.searchText, page);
     }
   }

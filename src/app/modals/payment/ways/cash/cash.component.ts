@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { MessageService, PaymentService, ReceiptService } from '../../../../service';
-import { ModalComponent, ModalService, PrinterService, SpinnerService, Logger, Modal, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, PrinterService, Logger, Modal, StorageService } from '../../../../core';
 import {
   Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
   CurrencyData, KeyCode, StatusDisplay, CapturePaymentInfo, AmwayExtendedOrdering
@@ -44,7 +44,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private receipt: ReceiptService,
     private payments: PaymentService,
     private storage: StorageService,
-    private spinner: SpinnerService,
     private info: InfoBroker,
     private logger: Logger,
     private renderer: Renderer2) {
@@ -232,7 +231,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param change 거스름돈
    */
   private paymentCaptureAndPlaceOrder(receivedAmount: number, paidAmount: number, change: number) {
-    this.spinner.show();
     const capturepaymentinfo = this.makePaymentCaptureData(receivedAmount, paidAmount, change);
     this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
     this.logger.set('cash.component', 'cash payment : ' + Utils.stringify(this.paymentcapture)).debug();
@@ -267,12 +265,11 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         this.storage.removePay();
       }, error => {
         this.finishStatus = 'fail';
-        this.spinner.hide();
         const errdata = Utils.getError(error);
         if (errdata) {
           this.apprmessage = errdata.message;
         }
-      }, () => { this.spinner.hide(); });
+      });
   }
 
   /**

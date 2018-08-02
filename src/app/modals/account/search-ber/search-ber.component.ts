@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, ModalService, SpinnerService, Logger, AlertService } from '../../../core';
+import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 import { SearchService } from '../../../service';
 import { BerData } from '../../../data/models/common/ber-result';
 import { Utils } from '../../../core/utils';
@@ -19,7 +19,6 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   @ViewChild('inputSearchBer') inputSearchBer: ElementRef;
   constructor(protected modalService: ModalService,
     private search: SearchService,
-    private spinner: SpinnerService,
     private alert: AlertService,
     private logger: Logger) {
     super(modalService);
@@ -55,7 +54,6 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
       this.alert.warn({ message: `법인명이 공란입니다.` });
       return;
     }
-    this.spinner.show();
     this.bersubscription = this.search.getBerSearch(bername, this.aboNum)
       .subscribe(result => {
         if (result) {
@@ -65,7 +63,6 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
         }
       },
         error => {
-          this.spinner.hide();
           const errdata = Utils.getError(error);
           this.berSeachMarker = -1;
           if (errdata) {
@@ -73,8 +70,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
             this.logger.set('search.ber.component', `search ber error message : ${errdata.message}`).error();
             this.alert.error({ message: `${errdata.message}` });
           }
-        },
-        () => { this.spinner.hide(); });
+        });
   }
 
   close() {
