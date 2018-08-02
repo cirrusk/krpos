@@ -136,10 +136,17 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
     return false;
   }
 
+  /**
+   * @ignore
+   */
   close() {
     this.closeModal();
   }
 
+  /**
+   * @ignore
+   * @param evt 이벤트
+   */
   private setSelected(evt: any) {
     evt.stopPropagation();
     this.promotions.forEach(promotion => {
