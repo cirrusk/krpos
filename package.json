@@ -1,6 +1,6 @@
 {
   "name": "akl-pos",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -13,7 +13,8 @@
     "buildProd": "ng build --prod --environment=prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "doc": "compodoc -p src/tsconfig.app.json -d pos-doc"
   },
   "private": true,
   "dependencies": {
