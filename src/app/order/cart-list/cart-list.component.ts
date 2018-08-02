@@ -724,25 +724,24 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 생성
    *  - 상품 추가시 생성
    *  - Productcode 가 없을 경우 카트 생성 후 조회
-   *
+   *`
+   * 중요처리사항) OCC를 사용하는 모든 시스템은 주문 시점(Cart 생성 시점) 마다
+   * 주문 블록 체크 API를 호출해야함.
+   *`
    * @param {boolean} popupFlag 팝업플래그
    * @param {string} productCode  상품 코드
    */
   createCartInfo(popupFlag: boolean, productCode?: string): void {
-    const terminalInfo = this.storage.getTerminalInfo();
     let accountId = '';
     if (this.accountInfo) {
+      const terminalInfo = this.storage.getTerminalInfo();
       if (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.CONSUMER || this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.MEMBER) {
         accountId = this.accountInfo.parties[0].uid;
       } else {
         accountId = this.accountInfo.uid;
       }
 
-      let cartType = 'POS';
-      if (this.orderType === 'g') {
-        cartType = 'POSGROUP';
-      }
-
+      const cartType = this.orderType === 'g' ? 'POSGROUP' : 'POS';
       this.spinner.show();
       this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
         accountId,
