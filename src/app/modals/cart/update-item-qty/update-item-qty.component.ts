@@ -28,10 +28,11 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
 
   /**
    * 제품 수량 변경 업데이트
-   * `
+   *
    * Serial /RFID 가 있을 경우는 수량 감소는 처리하지 않음.
-   * `
-   * @param quantity 변경 제품 수량
+   * 해당 상품 취소 후 다시 입력 처리
+   *
+   * @param {number} quantity 변경 제품 수량
    */
   updateItemQty(quantity: number) {
     if (quantity < 1) {

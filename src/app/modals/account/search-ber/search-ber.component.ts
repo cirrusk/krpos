@@ -54,23 +54,23 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
       this.alert.warn({ message: `법인명이 공란입니다.` });
       return;
     }
-    this.bersubscription = this.search.getBerSearch(bername, this.aboNum)
-      .subscribe(result => {
+    this.bersubscription = this.search.getBerSearch(bername, this.aboNum).subscribe(
+      result => {
         if (result) {
           this.berCount = result.totalCount;
           this.berSeachMarker = result.totalCount;
           this.berList = result.result;
         }
       },
-        error => {
-          const errdata = Utils.getError(error);
-          this.berSeachMarker = -1;
-          if (errdata) {
-            this.logger.set('search.ber.component', `search ber error type : ${errdata.type}`).error();
-            this.logger.set('search.ber.component', `search ber error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        });
+      error => {
+        const errdata = Utils.getError(error);
+        this.berSeachMarker = -1;
+        if (errdata) {
+          this.logger.set('search.ber.component', `search ber error type : ${errdata.type}`).error();
+          this.logger.set('search.ber.component', `search ber error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      });
   }
 
   close() {

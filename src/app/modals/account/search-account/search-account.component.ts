@@ -28,9 +28,9 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   constructor(modalService: ModalService,
     private logger: Logger,
+    private alert: AlertService,
     private searchService: SearchService,
-    private pagerService: PagerService,
-    private alert: AlertService
+    private pagerService: PagerService
   ) {
     super(modalService);
     this.init();
@@ -100,8 +100,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
           error => {
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.logger.set('cartList.component', `Add cart error type : ${errdata.type}`).error();
-              this.logger.set('cartList.component', `Add cart error message : ${errdata.message}`).error();
+              this.logger.set('search.account.component', `get account error type : ${errdata.type}`).error();
+              this.logger.set('search.account.component', `get account error message : ${errdata.message}`).error();
               this.alert.error({ message: `${errdata.message}` });
             }
           });
