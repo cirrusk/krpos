@@ -67,7 +67,8 @@ export const environment = {
     cashdrawerLog: '',
     issueReceipt: '/{baseSiteId}/users/{userId}/issue-receipt/{orderCode}',
     cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}',
-    confirmPickup: '/{baseSiteId}/confirm-pickup/{orderCode}'
+    confirmPickup: '/{baseSiteId}/confirm-pickup/{orderCode}',
+    cartblock: '/{baseSiteId}/check-order-block/{userId}'
   },
   logLevel: 'error',
   terminalTimeout: 20,
