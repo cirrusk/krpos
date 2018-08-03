@@ -67,7 +67,7 @@
                             <li *ngIf="paymentCapture.getVoucherPaymentInfo && orderDetail.orders[0].totalDiscounts.value > 0"><span>할인 쿠폰({{paymentCapture.getVoucherPaymentInfo.paymentMode.name}})</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>                            
                             <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPrice.value | number }}</em></li>
                         </ul>
-                        <ul class="list" *ngIf="!cancelFlag">
+                        <ul class="list" *ngIf="groupMainFlag">
                             <div>
                                 <ng-container *ngIf="paymentCapture.getCcPaymentInfo">
                                     <li>[{{ paymentCapture.getCcPaymentInfo.paymentMode.name }}]</li>

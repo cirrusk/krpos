@@ -127,6 +127,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {number} page 페이지번호
    */
   productConfirm(productCode: string, page?: number): void {
+    if (productCode.length > 0) {
       const existedIdx = this.entryList.findIndex(
         function (obj) {
           return obj.product.code === productCode;
@@ -154,7 +155,11 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         this.searchProductInfoSubscription = this.searchService.getBasicProductInfo(productCode).subscribe(
           result => {
             if (result) {
-              this.popupNoProduct(result.products[0].code, result.products[0].name);
+              if (result.products.length > 0) {
+                this.popupNoProduct(result.products[0].code, result.products[0].name);
+              } else {
+                this.alert.warn({ message: this.messageService.get('wrongProductCode') });
+              }
             }
           },
           error => {
@@ -166,6 +171,12 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
             }
           });
       }
+    } else {
+      this.alert.warn({message: this.messageService.get('noProductSearchText'),
+                       timer: true,
+                       interval: 1500});
+      setTimeout(() => { this.barcode.nativeElement.focus(); }, 100);
+    }
   }
 
   /**
@@ -233,16 +244,17 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     } else {
       this.confirmSubscription = this.orderService.confirmPickup(this.orderCodes.slice(1)).subscribe(
         result => {
+          console.log('1');
           // this.spinner.hide();
-          if (result) {
-            this.alert.info({
-              title: '',
-              message: this.messageService.get('ecpReceiptComplete'),
-              timer: true,
-              interval: 1500
-            });
-            this.close();
-          }
+          // 영수증 출력시
+          this.receiptPrint();
+          this.alert.info({
+            title: '',
+            message: this.messageService.get('ecpReceiptComplete'),
+            timer: true,
+            interval: 1500
+          });
+          this.close();
         },
         error => {
           const errdata = Utils.getError(error);

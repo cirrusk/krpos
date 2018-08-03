@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { ApiService } from '../../core';
+import { ApiService, Config } from '../../core';
 import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData } from '../../data';
 import { OrderList } from '../../data/models/order/order';
+import { HttpParams, HttpClient, HttpHeaders, HttpResponseBase } from '../../../../node_modules/@angular/common/http';
 
 /**
  * 주문 처리 서비스
@@ -10,7 +11,9 @@ import { OrderList } from '../../data/models/order/order';
 @Injectable()
 export class OrderService {
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService,
+    private httpClient: HttpClient,
+    private config: Config) { }
 
   /**
    * 주문 목록 조회
@@ -213,13 +216,14 @@ export class OrderService {
    *  ex) 110-11111111,110-11111112
    * @param {string} orderCode 주문번호
    */
-  confirmPickup(orderCodes: string): Observable<ResponseData> {
-    const arrOrderCode = new Array<String>();
+  confirmPickup(orderCodes: string): Observable<HttpResponseBase> {
+    let params = '?';
     orderCodes.split(',').forEach(orderCode => {
-      arrOrderCode.push(orderCode.trim());
+      params += 'codes=' + orderCode.trim();
     });
-    const pathvariables = { orderCode: orderCodes };
-    const data = new HttpData('confirmPickup', pathvariables, arrOrderCode, null, 'json');
-    return this.api.put(data);
+    const apiURL = this.config.getApiUrl('confirmPickup') + params;
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+    return this.httpClient.put<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response'} )
+      .map(data => data as HttpResponseBase);
   }
 }

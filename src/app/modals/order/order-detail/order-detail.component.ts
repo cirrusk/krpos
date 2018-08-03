@@ -25,6 +25,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   emloyeeName: string;
   cancelSymbol: string;
   cancelFlag: boolean;
+  groupMainFlag: boolean;
   activeFlag: boolean;
   orderType: string;
   paymentCapture: PaymentCapture;
@@ -65,6 +66,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.cancelSymbol = '';
     this.cancelFlag = false;
     this.activeFlag = false;
+    this.groupMainFlag = true;
     this.orderType = 'n';
     this.paymentCapture = new PaymentCapture();
   }
@@ -77,14 +79,13 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     if (orderInfo.orderStatus.code === 'CANCELLED') {
       this.cancelSymbol = '-';
       this.cancelFlag = true;
-
     } else {
       this.cancelSymbol = '';
       this.cancelFlag = false;
+    }
 
-      if (this.orderInfo.parentOrder !== '' && orderInfo.user.uid !== orderInfo.volumeAccount.uid) {
-        this.cancelFlag = true;
-      }
+    if (this.orderInfo.parentOrder !== undefined && this.orderInfo.code !== this.orderInfo.parentOrder) {
+      this.groupMainFlag = false;
     }
   }
 
@@ -100,7 +101,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       modalId: 'CancelOrderComponent'
     }
     ).subscribe(result => {
-      if (result) {
+      if (result.cancelFlag) {
         this.cancelSymbol = '-';
         this.cancelFlag = true;
         this.activeFlag = true;
@@ -124,9 +125,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     }
     ).subscribe(
       result => {
-        if (result) {
+        if (result.cancelFlag) {
           // 재결제 추가
-          this.info.sendInfo('paymentChange', result);
+          this.info.sendInfo('paymentChange', result.data);
           this.goOrder();
           this.close();
         }

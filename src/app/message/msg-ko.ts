@@ -12,6 +12,8 @@ export const LANG_KO_MSGS = {
     'notinputPaid' : '내신 금액을 입력해 주세요.',
     'notEnoughPaid' : '내신 금액이 결제금액보다 작습니다.',
     'noSearchText' : '검색어를 입력해주세요.',
+    'noProductSearchText' : '제품코드를 입력해주세요.',
+    'wrongProductCode' : '잘못된 코드 입니다.',
     'receiptComplete' : '영수증 발행이 완료되었습니다.',
     'ecpReceiptComplete' : '픽업 주문 영수증 출력이 완료되었습니다.',
     'receiptFail' : '영수증 발행이 실패되었습니다.',

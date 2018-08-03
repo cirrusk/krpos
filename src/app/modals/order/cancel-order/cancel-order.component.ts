@@ -110,7 +110,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   close() {
-    this.result = this.cancelFlag;
+    this.result = { 'cancelFlag' : this.cancelFlag, 'data' : this.orderList };
     this.closeModal();
   }
 }
