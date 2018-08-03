@@ -58,6 +58,7 @@ export * from './models/common/batch-info';
 export * from './models/common/consignment';
 export * from './models/common/consignment-entry';
 export * from './models/common/country';
+export * from './models/common/customer-block';
 export * from './models/common/delivery-mode';
 export * from './models/common/enumeration';
 export * from './models/common/http-data';

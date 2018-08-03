@@ -12,7 +12,7 @@ import { CartService, PagerService, SearchService, MessageService, PaymentServic
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
-  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo
+  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block, Error, TerminalInfo
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
@@ -450,11 +450,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.alert.warn({ message: this.message.get('selectProductUpdate') });
     } else {
       const selectedCart = this.currentCartList[this.selectedCartNum];
-      // if (selectedCart.product.serialNumber) {
-      //   this.alert.warn({ message: 'Serial이 있는 상품은 개별 스캔해주세요.' });
-      //   this.selectedCartNum = -1;
-      //   return;
-      // }
       const code = selectedCart.product.code;
       const qty = selectedCart.quantity;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
@@ -646,8 +641,9 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 회원 검색 ->  결과 값이 1일 경우 display and create cart
-   * searchMode ex) A = ABO, M = MEMBER, C = Customer
-   * @param accountid 회원아이디(ABO검색 기본)
+   *
+   * @param {string} searchMode ex) A = ABO, M = MEMBER, C = Customer
+   * @param {string} accountid 회원아이디(ABO검색 기본)
    */
   private selectAccountInfo(searchMode: string, accountid?: string): void {
     if (accountid) {
@@ -699,9 +695,9 @@ export class CartListComponent implements OnInit, OnDestroy {
               }
             } else {
               if (product.sellableStatusForStock === 'OUTOFSTOCK') {
-                this.alert.show({ message: '재고가 부족합니다.', timer: true, interval: 1500 });
+                this.alert.show({ message: '재고가 부족합니다.', timer: true, interval: 1200 });
               } else if (product.sellableStatusForStock === 'ENDOFSALE') {
-                this.alert.show({ message: '단종된 상품입니다.', timer: true, interval: 1500 });
+                this.alert.show({ message: '단종된 상품입니다.', timer: true, interval: 1200 });
               }
               setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
             }
@@ -736,56 +732,102 @@ export class CartListComponent implements OnInit, OnDestroy {
   createCartInfo(popupFlag: boolean, productCode?: string): void {
     let accountId = '';
     if (this.accountInfo) {
-      const terminalInfo = this.storage.getTerminalInfo();
+      const terminalInfo: TerminalInfo = this.storage.getTerminalInfo();
       if (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.CONSUMER || this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.MEMBER) {
         accountId = this.accountInfo.parties[0].uid;
       } else {
         accountId = this.accountInfo.uid;
       }
-
-      const cartType = this.orderType === 'g' ? 'POSGROUP' : 'POS';
-      this.cartInfoSubscription = this.cartService.createCartInfo(this.accountInfo ? this.accountInfo.uid : '',
-        accountId,
-        terminalInfo.pointOfService.name, cartType).subscribe(
-          cartResult => {
-            this.cartInfo = cartResult;
-            this.sendRightMenu('c', true);
-            // 그룹 결제일 경우 그룹생성
-            if (this.orderType === 'g') {
-              let strUserId = '';
-              // Ordering ABO 를 제외한 ABO 설정
-              this.groupAccountInfo.forEach((account, index) => {
-                if (index > 0) {
-                  strUserId += ',' + account.parties[0].uid;
-                }
-              });
-              // 그룹 카트 생성
-              this.createGroupCart(accountId, this.cartInfo.code, strUserId.slice(1), popupFlag, productCode);
-            } else {
-              // 상품 검색이 필요 할경우 true
-              if (popupFlag) {
-                // 상품 코드가 있을 경우 바로 검색
-                if (productCode !== undefined) {
-                  this.selectProductInfo(productCode);
-                } else {
-                  // 상품 코드가 없을 경우 상품검색 팝업 노출
-                  this.searchParams.data = this.cartInfo;
-                  this.callSearchProduct(this.searchParams);
-                }
-              } else if (productCode !== undefined) {
-                this.addCartEntries(productCode);
-              }
+      this.cartService.checkBlock(accountId).subscribe(
+        resp => {
+          if (this.checkBlock(resp.returnMessage)) {
+            this.alert.error({ title: '구매제한', message: '구매제한 회원입니다.' });
+          } else {
+            this.createCart(accountId, terminalInfo, popupFlag, productCode);
+          }
+        },
+        error => {
+          if (error) {
+            if (this.checkBlock(error.error.returnMessage)) {
+              this.alert.error({ title: '구매제한', message: '구매제한 회원입니다.' });
             }
-          },
-          error => {
-            const errdata = Utils.getError(error);
-            if (errdata) {
-              this.alert.error({ message: `${errdata.message}` });
-            }
-          });
+          }
+        });
     } else {
       this.alert.error({ message: this.message.get('notSelectedUser') });
     }
+  }
+
+  /**
+   * 주문 블럭 체크하기
+   *
+   * VALID = 'validcustomer',
+   * INVALID = 'invalidcustomer',
+   * NOT_RENEWAL = 'notrenewalcustomer',
+   * LOGIN_BLOCKED = 'loginblockedcustomer',
+   * CAN_NOT_UPDATE_PROFILE = 'loggincustomercantupdateprofile',
+   * ORDER_BLOCK = 'orderblockedcustomer'
+   *
+   * @param {ResponseMessage} resp 블럭체크 응답
+   */
+  private checkBlock(msg: string): boolean {
+    this.logger.set('cart.list.component', `customer block check : ${msg}`).debug();
+    msg = msg.replace(/(\s*)/g, '').replace(/'/g, '').toLocaleLowerCase();
+    this.logger.set('cart.list.component', `customer block check : ${msg}`).debug();
+    if (msg === Block.ORDER_BLOCK) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 카트 생성하기
+   *
+   * @param {string} accountId 회원 아이디
+   * @param {TerminalInfo} terminalInfo 터미널 정보
+   * @param {boolean} popupFlag 팝업 여부
+   * @param {string} productCode 상품 코드
+   */
+  private createCart(accountId: string, terminalInfo: TerminalInfo, popupFlag: boolean, productCode: string) {
+    const cartType = this.orderType === 'g' ? 'POSGROUP' : 'POS';
+    const uid = this.accountInfo ? this.accountInfo.uid : '';
+    const tnm = terminalInfo.pointOfService.name;
+    this.cartInfoSubscription = this.cartService.createCartInfo(uid, accountId, tnm, cartType).subscribe(
+      cartResult => {
+        this.cartInfo = cartResult;
+        this.sendRightMenu('c', true);
+        // 그룹 결제일 경우 그룹생성
+        if (this.orderType === 'g') {
+          let strUserId = '';
+          // Ordering ABO 를 제외한 ABO 설정
+          this.groupAccountInfo.forEach((account, index) => {
+            if (index > 0) {
+              strUserId += ',' + account.parties[0].uid;
+            }
+          });
+          // 그룹 카트 생성
+          this.createGroupCart(accountId, this.cartInfo.code, strUserId.slice(1), popupFlag, productCode);
+        } else {
+          // 상품 검색이 필요 할경우 true
+          if (popupFlag) {
+            // 상품 코드가 있을 경우 바로 검색
+            if (productCode !== undefined) {
+              this.selectProductInfo(productCode);
+            } else {
+              // 상품 코드가 없을 경우 상품검색 팝업 노출
+              this.searchParams.data = this.cartInfo;
+              this.callSearchProduct(this.searchParams);
+            }
+          } else if (productCode !== undefined) {
+            this.addCartEntries(productCode);
+          }
+        }
+      }, error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      });
   }
 
   /**

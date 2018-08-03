@@ -4,8 +4,8 @@ import { Observable } from 'rxjs/Observable';
 
 import { StorageService, Config, ApiService } from '../../core';
 import {
-  CartInfo, CartParams, CartModification,
-  OrderEntries, OrderEntryList, Product, Accounts, OrderEntry, ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering
+  CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
+  ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering, ResponseMessage
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -289,5 +289,27 @@ export class CartService {
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('getGroupCart', pathvariables, null, param, 'json');
     return this.api.get(data);
+  }
+
+  /**
+   * OCC를 사용하는 모든 시스템은 주문 시점(Cart 생성 시점) 마다 해당 해당 API를 호출
+   *
+   * 1. 기본체크 : 회원 탈퇴 및 존재여부
+   *    Invalid Customer
+   * 2. 프로필 업데이트 : 자동갱신, 일반 갱신 기간에 갱신 하지 않은 회원
+   *    Not Renewal Customer
+   * 2. 프로필 업데이트 : 일반 로그인 제한 대상자
+   *    Login Blocked Customer
+   * 2. 프로필 업데이트 : 로그인한 사용자가 프로필 업데이트 시도
+   *    Loggin Customer can't update profile
+   * 3. 주문 블락 체크 :
+   *    Order Blocked Customer
+   *
+   * @param {string} userId 회원 아이디
+   */
+  checkBlock(userId: string): Observable<ResponseMessage> {
+    const pathvariables = { userId: userId };
+    const data = new HttpData('checkBlock', pathvariables, null, null, 'json');
+    return this.api.put(data);
   }
 }

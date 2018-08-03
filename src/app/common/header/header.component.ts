@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, NavigationStart } from '@angular/router';
-
 import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
