@@ -32,7 +32,7 @@ export const LANG_KO_MSGS = {
     'credit.valid.smallpaid': '실결제금액이 총 매출보다 작습니다.',
     'no.accountnumber': '회원의 계좌번호를 확인하시기 바랍니다.',
     'empty.password': '비밀번호가 공란입니다.',
-    'notuse.directdeit': '즉시 출금이 불가합니다.<br>다른 결제 수단을 이용해주세요.',
+    'notuse.directdeit': '즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.',
     'abo.point.label': 'A포인트',
     'member.point.label': 'Member 포인트',
     'point.overpaid': '사용 포인트가 결제금액보다 많습니다.',
