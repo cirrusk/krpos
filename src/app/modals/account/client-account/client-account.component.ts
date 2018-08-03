@@ -70,38 +70,42 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     }
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
     if (this.agree) {
-      this.modal.openConfirm(
-        {
-          title: '개인정보 수집 및 이용 동의 확인',
-          message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
-          modalAddClass: 'pop_s',
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          closeByClickOutside: false,
-          modalId: 'AGREE'
+      this.modal.openConfirm({
+        title: '개인정보 수집 및 이용 동의 확인',
+        message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
+        modalAddClass: 'pop_s',
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByClickOutside: false,
+        modalId: 'AGREE'
+      }).subscribe(
+        result => {
+          if (result) { this.createCustomerAccount(); }
+        });
+    }
+  }
+
+  /**
+   * 신규 소비자 생성
+   */
+  private createCustomerAccount() {
+    this.registerType = this.guser ? 'ECP' : 'CONSUMER';
+    this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
+      userInfo => {
+        if (userInfo) {
+          this.account = userInfo;
+          this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
+          this.close();
         }
-      ).subscribe(result => {
-        if (result) {
-          this.registerType = this.guser ? 'ECP' : 'CONSUMER';
-          this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
-            userInfo => {
-              if (userInfo) {
-                this.account = userInfo;
-                this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
-                this.close();
-              }
-            },
-            error => {
-              const errdata = Utils.getError(error);
-              if (errdata) {
-                this.logger.set('newAccount.component', `Save new customer error type : ${errdata.type}`).error();
-                this.logger.set('newAccount.component', `Save new customer error message : ${errdata.message}`).error();
-                this.alert.error({ message: `${errdata.message}` });
-              }
-            });
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('client.account.component', `create new customer error type : ${errdata.type}`).error();
+          this.logger.set('client.account.component', `create new customer error message : ${errdata.message}`).error();
+          this.alert.error({ message: `${errdata.message}` });
         }
       });
-    }
   }
 
   close() {
