@@ -122,7 +122,7 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} cancelFlag 취소여부
      * @param {boolean} groupOrderFlag 그룹주문 여부
      */
-    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false): void {
+    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false, type?: string): void {
         let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
@@ -161,6 +161,7 @@ export class ReceiptService implements OnDestroy {
                 const params = {
                     cancelFlag: cancelFlag ? 'Y' : 'N',
                     groupInfo: null,
+                    type: type,
                     reIssue: true,
                     isGroupOrder: false,
                     isCashReceipt: false

@@ -329,7 +329,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     this.targetList.orders.forEach(order => {
       orderCodes.push(order.code);
     });
-    this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
+    this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
       orderDetail => {
         if (orderDetail) {
           this.makeReceiptPrintData(orderDetail);
@@ -372,35 +372,19 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         }
       });
       this.receiptService.makeTextAndGroupSummaryPrint(this.entryList, this.orderTypeName);
-    }
 
-    // 사용자별 영수증 출력
-    if (this.targetList) {
-      const orderCodes = new Array<string>();
-      this.targetList.orders.forEach(order => {
-        orderCodes.push(order.code);
-      });
-      this.orderService.orderDetails(this.targetList.orders[0].user.uid, orderCodes).subscribe(
-        orderDetail => {
-          if (orderDetail) {
-            try {
-              this.receiptService.reissueReceipts(orderDetail);
-              this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
-            } catch (e) {
-              this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
-              this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
-            }
-          }
-        },
-        error => {
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('pickup-order.component', `Reissue Receipts error type : ${errdata.type}`).error();
-            this.logger.set('pickup-order.component', `Reissue Receipts error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
-        });
     }
+    // 사용자별 영수증 출력
+    setTimeout(() => {
+      try {
+        this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
+        this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+      } catch (e) {
+        this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
+        this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
+      }
+    }, 500);
+
   }
 
   close() {

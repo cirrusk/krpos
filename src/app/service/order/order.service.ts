@@ -218,8 +218,12 @@ export class OrderService {
    */
   confirmPickup(orderCodes: string): Observable<HttpResponseBase> {
     let params = '?';
-    orderCodes.split(',').forEach(orderCode => {
-      params += 'codes=' + orderCode.trim();
+    orderCodes.split(',').forEach((orderCode, index) => {
+      if (index === 0) {
+        params += 'codes=' + orderCode.trim();
+      } else {
+        params += '&codes=' + orderCode.trim();
+      }
     });
     const apiURL = this.config.getApiUrl('confirmPickup') + params;
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');

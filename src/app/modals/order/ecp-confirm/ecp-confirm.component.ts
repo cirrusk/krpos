@@ -244,7 +244,6 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     } else {
       this.confirmSubscription = this.orderService.confirmPickup(this.orderCodes.slice(1)).subscribe(
         result => {
-          console.log('1');
           // this.spinner.hide();
           // 영수증 출력시
           this.receiptPrint();
@@ -286,32 +285,16 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     }
 
     // 사용자별 영수증 출력
-    if (orderList) {
-      const orderCodes = new Array<string>();
-      orderList.orders.forEach(order => {
-        orderCodes.push(order.code);
-      });
-      this.orderDetailsSubscription = this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
-        orderDetails => {
-          if (orderDetails) {
-            try {
-              this.receiptService.reissueReceipts(orderDetails);
-              this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
-            } catch (e) {
-              this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${e}`).error();
-              this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
-            }
-          }
-        },
-        error => {
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${errdata.type}`).error();
-            this.logger.set('ecp-confirm.component', `makeReceiptPrintData error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
-          }
+    if (orderList.orders.length > 0) {
+      setTimeout(() => {
+        try {
+          this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
+          this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+        } catch (e) {
+          this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${e}`).error();
+          this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
         }
-      );
+      }, 500);
     }
   }
 
