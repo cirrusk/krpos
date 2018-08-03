@@ -6,7 +6,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService, Logger,
-  StorageService, Modal, ICCardApprovalResult, NiceConstants, ICCardCancelResult
+  StorageService, Modal, ICCardApprovalResult, NiceConstants, ICCardCancelResult, SpinnerService
 } from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
@@ -39,9 +39,9 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private cardresult: ICCardApprovalResult;
   private paymentsubscription: Subscription;
   private dupcheck = false;
-  constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private message: MessageService,
-    private payments: PaymentService, private nicepay: NicePaymentService, private storage: StorageService,
-    private info: InfoBroker, private logger: Logger) {
+  constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService,
+    private message: MessageService, private payments: PaymentService, private nicepay: NicePaymentService,
+    private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -153,6 +153,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
    * 카드결제만 진행
    */
   private cardPay() {
+    this.spinner.show();
     const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.paidamount));
     this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
     resultNotifier.subscribe(
@@ -183,15 +184,18 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         }
       },
       error => {
+        this.spinner.hide();
         this.logger.set('ic.card.component', `${error}`).error();
         this.storage.removePaymentModeCode();
-      });
+      },
+      () => { this.spinner.hide(); });
   }
 
   /**
    * 결제, Payment capture
    */
   private cardPayAndPlaceOrder() {
+    this.spinner.show();
     const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.paidamount));
     this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
     resultNotifier.subscribe((res: ICCardApprovalResult) => {
@@ -234,13 +238,16 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
               }
               this.storage.removePay();
             }, error => {
+              this.spinner.hide();
               this.finishStatus = 'fail';
               const errdata = Utils.getError(error);
               if (errdata) {
                 this.apprmessage = errdata.message;
               }
-            });
+            },
+            () => { this.spinner.hide(); });
         } else {
+          this.spinner.hide();
           this.finishStatus = 'fail';
           this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
         }
@@ -269,6 +276,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
    */
   payCancel() {
     if (this.cardresult && this.cardresult.approved) {
+      this.spinner.show();
       const apprnum = this.cardresult.approvalNumber;
       const apprdate = this.cardresult.approvalDateTime ? this.cardresult.approvalDateTime.substring(0, 6) : '';
       const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(this.paidamount), apprnum, apprdate);
@@ -280,8 +288,11 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
             this.logger.set('ic.card.component', `card cancel error : ${res.resultMsg1}, ${res.resultMsg2}`).error();
           }
         },
-        error => { this.logger.set('ic.card.component', `${error}`).error(); },
-        () => { /*this.close();*/ }
+        error => {
+          this.spinner.hide();
+          this.logger.set('ic.card.component', `${error}`).error();
+        },
+        () => { this.spinner.hide(); /*this.close();*/ }
       );
     } else {
       /*this.close();*/
@@ -293,7 +304,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering: this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

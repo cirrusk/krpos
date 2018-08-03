@@ -8,7 +8,7 @@ import { ReceiptService, PaymentService, MessageService } from '../../../../serv
 import {
   ModalComponent, ModalService, NicePaymentService,
   Logger, AlertService, AlertState, Modal, StorageService,
-  CardApprovalResult, CardCancelResult, NiceConstants
+  CardApprovalResult, CardCancelResult, NiceConstants, SpinnerService
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
@@ -47,7 +47,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private dupcheck = false;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService,
+  constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService,
     private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private info: InfoBroker,
     private logger: Logger, private renderer: Renderer2) {
@@ -284,6 +284,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private cardPay() {
     if (this.change >= 0) {
+      this.spinner.show();
       const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
       this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
@@ -318,9 +319,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           }
         },
         error => {
+          this.spinner.hide();
           this.logger.set('credit.card.component', `${error}`).error();
           this.storage.removePaymentModeCode();
-        });
+        },
+        () => { this.spinner.hide(); });
     } else {
       this.checktype = -2;
       this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
@@ -331,6 +334,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 카드 결제 VAN사에 전송하고 Payment처리
    */
   private cardPayAndPlaceOrder() {
+    this.spinner.show();
     const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
     const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
     this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
@@ -378,13 +382,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
                 this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
               }
             }, error => {
+              this.spinner.hide();
               this.finishStatus = 'fail';
               this.storage.removePaymentModeCode();
               const errdata = Utils.getError(error);
               if (errdata) {
                 this.apprmessage = errdata.message;
               }
-            });
+            },
+            () => { this.spinner.hide(); });
         } else {
           this.finishStatus = 'fail';
           this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
@@ -400,7 +406,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering: this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,
@@ -426,6 +432,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   payCancel() {
     if (this.cardresult && this.cardresult.approved) {
+      this.spinner.show();
       const payprice = this.paid.nativeElement.value;
       const apprnum = this.cardresult.approvalNumber;
       const apprdate = this.cardresult.approvalDateTime ? this.cardresult.approvalDateTime.substring(0, 6) : '';
@@ -438,8 +445,11 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.logger.set('credit.card.component', `card cancel error : ${res.resultMsg1}, ${res.resultMsg2}`).error();
           }
         },
-        error => { this.logger.set('credit.card.component', `${error}`).error(); },
-        () => { /*this.close();*/ }
+        error => {
+          this.spinner.hide();
+          this.logger.set('credit.card.component', `${error}`).error();
+        },
+        () => { this.spinner.hide(); /*this.close();*/ }
       );
     } else {
       /*this.close();*/
