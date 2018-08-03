@@ -45,6 +45,15 @@ export class AuthService {
    * Employee Identification - Access Token
    * client_secret 값 확인 필요!!!
    *
+   * client_id : (string) e.g pos-client
+   *     클라이언트 응용 프로그램을 식별하는 데 사용 액세스를 요청하는 클라이언트의 단말기ID
+   * client_secret : (string) e.g secret
+   *     <client_id>의 <secret>. 리소스에 대한 액세스를 요청하는 클라이언트 응용 프로그램을 식별하는 데 사용
+   * grant_type : (string) e.g password, refresh_token, authorization_code
+   *     토큰 엔드 포인트에 액세스하고자하는 것을 알림. 현재 amwaycore에 대한 암호 흐름이 구현
+   * code : Authorization Code
+   *     사용자 인증을 통해 받은 Authorization Code(권한코드) 는 authorization_code방식으로 Access Token을 발급받는데 사용
+   *
    * @param {string} authCode authentication 에서 취득한 인증 토큰
    * @returns {AccessToken} 엑세스 토큰 정보
    */
