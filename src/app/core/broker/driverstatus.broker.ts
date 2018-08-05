@@ -17,26 +17,44 @@ export class DriverReadyBroker {
         this.logger.set('driver.ready.broker', '0. Broker init...').debug();
     }
 
+    /**
+     * QZ Tray Observer 취득
+     */
     public getQzObserver(): Subject<any> {
         return this.waitQz;
     }
 
+    /**
+     * QZ Tray 준비 메시지 전송
+     */
     public sendQzReadyMsg() {
         this.waitQz.next();
     }
 
+    /**
+     * Printer Observer 취득
+     */
     public getPrinterObserver(): Subject<any> {
         return this.waitPrinterDriver;
     }
 
+    /**
+     * Printer 준비 메시지 전송
+     */
     public sendPrinterReadyMsg() {
         this.waitPrinterDriver.next();
     }
 
+    /**
+     * 네트워크 Observer 취득
+     */
     public getNetworkObserver(): Subject<any> {
         return this.waitNetworkDriver;
     }
 
+    /**
+     * 네트워크 준비 메시지 전송
+     */
     public sendNetworkReadyMsg() {
         this.waitNetworkDriver.next();
     }

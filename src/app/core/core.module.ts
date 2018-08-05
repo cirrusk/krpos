@@ -10,13 +10,13 @@ import { SpinnerModule } from './spinner/spinner.module';
 import { AlertModule } from './alert/alert.module';
 
 import {
-  AuthService, BatchService, CartService, SearchService, TerminalService, MessageService,
-  PagerService, AccountService, OrderService, PaymentService
+  AuthService, BatchService, CartService, SearchService, TerminalService,
+  MessageService, PagerService, AccountService, OrderService, PaymentService
 } from '../service';
 import { InfoBroker, CancleOrderBroker, RestoreCartBroker, SearchAccountBroker } from '../broker';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
-import { ApiService, StorageService, Logger, CacheService, KeyboardService, NetworkStatusService } from '.';
+import { ApiService, StorageService, Logger, KeyboardService, NetworkStatusService } from '.';
 import { PaymentBroker } from '../broker/order/payment.broker';
 
 @NgModule({
@@ -53,7 +53,6 @@ import { PaymentBroker } from '../broker/order/payment.broker';
     PagerService,
     MessageService,
     AccountService,
-    CacheService,
     KeyboardService,
     NetworkStatusService,
     InfoBroker,

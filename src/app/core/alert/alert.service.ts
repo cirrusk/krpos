@@ -22,7 +22,7 @@ export class AlertService {
     if (prior) { return prior; }
   }
 
-  show(params: any) {
+  public show(params: any) {
     this.alertSubject.next(<AlertState>
     {
       show: true,
@@ -34,23 +34,23 @@ export class AlertService {
     });
   }
 
-  hide() {
+  public hide() {
     this.alertSubject.next(<AlertState> { show: false });
   }
 
-  info(params: any) {
+  public info(params: any) {
     params.alertType = AlertType.info;
     params.title = (params.title) ? params.title : '확인';
     this.show(params);
   }
 
-  warn(params: any) {
+  public warn(params: any) {
     params.alertType = AlertType.warn;
     params.title = (params.title) ? params.title : '확인';
     this.show(params);
   }
 
-  error(params: any) {
+  public error(params: any) {
     params.alertType = AlertType.error;
     params.title = (params.title) ? params.title : '오류';
     this.show(params);

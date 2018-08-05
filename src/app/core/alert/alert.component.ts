@@ -5,10 +5,10 @@ import { AlertService, AlertState, AlertType } from '..';
 
 /**
  * alert 메시지 출력
- * `
+ *
  * 버튼 없이 키 이벤트(ESC, ENTER)로 화면 닫음.
  * 타이머를 이용하여 toast popup과 동일한 기능 처리 가능.
- * `
+ *
  */
 @Component({
   moduleId: module.id,
@@ -43,7 +43,7 @@ export class AlertComponent implements OnInit, OnDestroy {
    * 해당 element 에 반드시 tabindex를 지정(값은 상관없음)하고
    * focus를 설정해야함.
    *
-   * @param state
+   * @param {AlertState} state alert 상태 객체
    */
   private display(state: AlertState) {
     this.show = state.show;

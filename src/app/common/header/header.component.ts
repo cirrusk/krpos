@@ -202,12 +202,12 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Terminal 정보 가져오기
    *
-   * `QZ tray 와 시간차 때문에 mac address를 조회할때 network service를 waiting 하게 하고
+   *  QZ tray 와 시간차 때문에 mac address를 조회할때 network service를 waiting 하게 하고
    *  mac address 취득, 그래야 정상적으로 QZ tray web socket established 된후 처리할 수 있음.
    *  관련 작업은 이후에 해주어야함.
    *  별도로 분리하여 처리할 경우 async 이므로 mac address 취득하는 부분보다 먼저 수행되니 주의 필요.
-   *  처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고
-   *  이후에는 세션에서 취득하도록 수정`
+   *
+   *  처음 브라우저 기동시만 Mac Address를 Networkdriver 에서 취득하고 이후에는 세션에서 취득하도록 수정
    */
   private getTerminalInfo() {
     let macAddress = this.storage.getMacAddress();
@@ -235,8 +235,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * 맥어드레스로 터미널 정보 얻기
    *
-   * `터미널 정보는 세션 스토리지에 저장
-   *  터미널 정보 조회 실패 시 미등록 기기 알림 메시지 출력`
+   * 터미널 정보는 세션 스토리지에 저장
+   * 터미널 정보 조회 실패 시 미등록 기기 알림 메시지 출력
    *
    * @param macAddr MAC ADDRESS
    */
@@ -245,7 +245,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       result => {
         this.posName = result.id; // pointOfService.displayName;
         this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
-        this.storage.setTerminalInfo(result); // 혹시 몰라서 전체 저장
+        this.storage.setTerminalInfo(result);
         this.hasTerminal = true;
       }, error => {
         this.posName = '-';
@@ -376,7 +376,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * 로그인 후 배치 처리
    *
-   *`
+   *
    *  1. 닫지 않은 배치가 존재
    *  1-1. 닫지 않은 배치 정보의 터미널 정보 와 현재 터미널 정보가 같으면 동일 POS 기기
    *  1-2. 닫지 않은 배치 정보를 그대로 사용
@@ -384,7 +384,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    *  2-1. 배치는 존재하나 다른 POS 이므로 배치를 삭제함.
    *  3. 닫지 않은 배치가 존재하지 않음.
    *  3-1. 아무 처리도 하지 않음.
-   * `
+   *
    */
   private checkBatchAfterLogin() {
     this.batchsubscription = this.batch.getBatch().subscribe(
