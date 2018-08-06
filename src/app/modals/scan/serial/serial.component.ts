@@ -102,13 +102,13 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     const code = codes.value;
     if (evt.srcElement.nextElementSibling) { // 다음 요소가 있음.
       evt.srcElement.nextElementSibling.focus();
-      if (Utils.isNotEmpty(code)) {
+      // if (Utils.isNotEmpty(code)) {
         this.scannedCount++;
-      }
+      // }
     } else { // 마지막 요소임.
-      if (Utils.isNotEmpty(code)) {
+      // if (Utils.isNotEmpty(code)) {
         this.scannedCount++;
-      }
+      // }
       evt.srcElement.blur();
     }
     let chkidx = 0;
@@ -124,10 +124,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       // if (target) { setTimeout(() => { target.focus(); }, 50); }
       // return;
     } else {
-      this.checktype = 0;
+      // this.checktype = 0;
       if (this.scanInputSize === this.scannedCount) {
         this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = '스캔이 완료되었습니다.';
+        // this.apprmessage = '스캔이 완료되었습니다.';
       }
       if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
     }
@@ -140,9 +140,9 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
    * 빈값으로 처리하거나 제거하도록 함.
    */
   reg() {
-    let chkidx = 0;
-    let prdname: string;
-    let pelm: ElementRef;
+    // let chkidx = 0;
+    // let prdname: string;
+    // let pelm: ElementRef;
     let stype: string;
     let rtype: string;
     let serial = '';
@@ -152,10 +152,11 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     this.codes.forEach(cd => {
       if (cd.nativeElement.getAttribute('type') === 'text') {
         if (Utils.isEmpty(cd.nativeElement.value)) {
-          chkidx++;
-          prdname = cd.nativeElement.getAttribute('data-prdname');
-          pelm = cd;
-          return false;
+          // chkidx++;
+          // prdname = cd.nativeElement.getAttribute('data-prdname');
+          // pelm = cd;
+          // return false;
+          scannedRegCount++;
         } else {
           stype = cd.nativeElement.getAttribute('data-serial') ? cd.nativeElement.getAttribute('data-serial') : 'false';
           rtype = cd.nativeElement.getAttribute('data-rfid') ? cd.nativeElement.getAttribute('data-rfid') : 'false';
@@ -172,19 +173,19 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         }
       }
     });
-    if (chkidx !== 0) {
+    // if (chkidx !== 0) {
       // this.checktype = -1;
       // this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
       // if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
       // return;
-    } else {
-      this.checktype = 0;
-      this.apprmessage = '스캔이 완료되었습니다.';
+    // } else {
+      // this.checktype = 0;
+      // this.apprmessage = '스캔이 완료되었습니다.';
       if (this.scanInputSize === scannedRegCount) {
         this.result = { serialNumber: '', serialNumbers: this.serialNumbers, rfid: '', rfids: this.rfids };
         this.close();
       }
-    }
+    // }
   }
 
   close() {
