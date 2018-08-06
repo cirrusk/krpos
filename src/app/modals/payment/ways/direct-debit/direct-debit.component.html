@@ -78,7 +78,7 @@
         <em *ngIf="checktype === -2" class="finish fail">{{apprmessage}}</em>
         <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
         <ng-template #payFail>
-            <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail" [innerHTML]="apprmessage"></em>
         </ng-template>
     </div>
 </div>
