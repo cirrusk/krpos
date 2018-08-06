@@ -1,6 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/zip';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/observable/of';
 
 import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
@@ -236,54 +240,110 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 영수증 재출력 여부
      * @param {boolean} isCashReceipt 영수증 증빙 신청 여부
      */
-    private printByGroup(orderList: Array<Order>, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) /*: Observable<boolean>*/ {
+    private printByGroup(orderList: Array<Order>, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) {
         const orderingOrder = orderList[0];
         const ordering: GroupResponseData = this.getGroupDetailInfo(orderingOrder, 0);
         const printInfo = {
             order: ordering.order, account: ordering.account, cartInfo: ordering.cart, cancelFlag: cancelFlag,
             paymentCapture: paymentCapture, groupInfo: ordering.info, cashReceipt: isCashReceipt
         };
-        let rtn = true;
+        const rtn = true;
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = ordering.account.parties ? ordering.account.parties[0].uid : ordering.account.uid;
         this.logger.set('receipt.service', `ordering abo : ${uid}`).info();
         this.paymentsubscription = this.payment.getBalance(uid).subscribe(
             result => {
-                Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
-                rtn = this.makeTextAndPrint(printInfo);
-                if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
-                orderList.filter((o, index) => index !== 0).map(o => o).forEach((subOrder, index) => {
-                    const sub: GroupResponseData = this.getGroupDetailInfo(subOrder, index + 1);
-                    this.logger.set('receipt.service', `[${index + 1}]sub abo : ${sub.account.uid}`).info();
-                    const params = {
-                        cancelFlag: cancelFlag ? 'Y' : 'N',
-                        groupInfo: sub.info,
-                        reIssue: reIssue,
-                        isGroupOrder: true,  // balance 조회 없이 print
-                        isCashReceipt: isCashReceipt
-                    };
-                    this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
+                const prints = [];
+                // Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                // rtn = this.makeTextAndPrint(printInfo);
+                // if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
+                prints.push(this.printMainOrder(ordering, printInfo, result.amount, reIssue));
+
+                const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
+
+                subOrderList.forEach((order, index) => {
+                    prints.push(this.printSubOrder(order, index, cancelFlag, reIssue, isCashReceipt));
                 });
+                // Observable.forkJoin(prints).subscribe(resp => {
+                //     this.logger.set('receipt.service', `${resp}`).debug();
+                // });
+                Observable.zip(prints).subscribe(resp => {
+                    this.logger.set('receipt.service', `${resp}`).debug();
+                });
+                // orderList.filter((o, index) => index !== 0).map(o => o).forEach((subOrder, index) => {
+                //     const sub: GroupResponseData = this.getGroupDetailInfo(subOrder, index + 1);
+                //     this.logger.set('receipt.service', `[${index + 1}]sub abo : ${sub.account.uid}`).info();
+                //     const params = {
+                //         cancelFlag: cancelFlag ? 'Y' : 'N',
+                //         groupInfo: sub.info,
+                //         reIssue: reIssue,
+                //         isGroupOrder: true,  // balance 조회 없이 print
+                //         isCashReceipt: isCashReceipt
+                //     };
+                //     this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
+                // });
             },
             error => {
                 this.logger.set('receipt.service', `${error}`).error();
-                Object.assign(printInfo, { point: 0 });
-                rtn = this.makeTextAndPrint(printInfo);
-                if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
-                orderList.filter((o, index) => index !== 0).map(o => o).forEach((o, index) => {
-                    const sub: GroupResponseData = this.getGroupDetailInfo(o, index + 1);
-                    const params = {
-                        cancelFlag: cancelFlag ? 'Y' : 'N',
-                        groupInfo: sub.info,
-                        reIssue: reIssue,
-                        isGroupOrder: true, // balance 조회 없이 print
-                        isCashReceipt: isCashReceipt
-                    };
-                    this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
+                const prints = [];
+                // Object.assign(printInfo, { point: 0 });
+                // rtn = this.makeTextAndPrint(printInfo);
+                // if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
+                prints.push(this.printMainOrder(ordering, printInfo, 0, reIssue));
+
+                const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
+
+                subOrderList.forEach((order, index) => {
+                    prints.push(this.printSubOrder(order, index, cancelFlag, reIssue, isCashReceipt));
                 });
+                // Observable.forkJoin(prints).subscribe(resp => {
+                //     this.logger.set('receipt.service', `${resp}`).debug();
+                // });
+                Observable.zip(prints).subscribe(resp => {
+                    this.logger.set('receipt.service', `${resp}`).debug();
+                });
+
+                // orderList.filter((o, index) => index !== 0).map(o => o).forEach((o, index) => {
+                //     const sub: GroupResponseData = this.getGroupDetailInfo(o, index + 1);
+                //     const params = {
+                //         cancelFlag: cancelFlag ? 'Y' : 'N',
+                //         groupInfo: sub.info,
+                //         reIssue: reIssue,
+                //         isGroupOrder: true, // balance 조회 없이 print
+                //         isCashReceipt: isCashReceipt
+                //     };
+                //     this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
+                // });
             }
         );
-        // return Observable.of(true);
+    }
+
+    private printMainOrder(ordering: GroupResponseData, printInfo: any, balance: number, reIssue = false): Observable<boolean> {
+        Object.assign(printInfo, { point: balance ? balance : 0 });
+        const rtn = this.makeTextAndPrint(printInfo);
+        if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
+        return Observable.of(rtn);
+    }
+    /**
+     * 그룹 주문 서브 주문 인쇄
+     *
+     * @param {Order} order 주문 정보
+     * @param {number} index 인덱스 정보
+     * @param {boolean} cancelFlag 취소 여부
+     * @param {boolean} reIssue 재출력 여부
+     * @param {boolean} isCashReceipt 현금 영수증 증빙여부
+     */
+    private printSubOrder(order: Order, index: number, cancelFlag = false, reIssue = false, isCashReceipt = false): Observable<boolean> {
+        const sub: GroupResponseData = this.getGroupDetailInfo(order, index + 1);
+        const params = {
+            cancelFlag: cancelFlag ? 'Y' : 'N',
+            groupInfo: sub.info,
+            reIssue: reIssue,
+            isGroupOrder: true, // balance 조회 없이 print
+            isCashReceipt: isCashReceipt
+        };
+        const rtn = this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
+        return Observable.of(rtn);
     }
 
     /**
@@ -347,17 +407,17 @@ export class ReceiptService implements OnDestroy {
             if (rtn && reIssue) { this.issueReceipt(account, order); }
         } else {
             this.paymentsubscription = this.payment.getBalance(uid).subscribe(
-            result => {
-                Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
-                rtn = this.makeTextAndPrint(printInfo);
-                if (rtn && reIssue) { this.issueReceipt(account, order); }
-            },
-            error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
-                this.logger.set('receipt.service', `${error}`).error();
-                Object.assign(printInfo, { point: 0 });
-                rtn = this.makeTextAndPrint(printInfo);
-                if (rtn && reIssue) { this.issueReceipt(account, order); }
-            });
+                result => {
+                    Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                    rtn = this.makeTextAndPrint(printInfo);
+                    if (rtn && reIssue) { this.issueReceipt(account, order); }
+                },
+                error => { // 포인트 조회 에러 발생 시 정상적으로 출력해야 함.
+                    this.logger.set('receipt.service', `${error}`).error();
+                    Object.assign(printInfo, { point: 0 });
+                    rtn = this.makeTextAndPrint(printInfo);
+                    if (rtn && reIssue) { this.issueReceipt(account, order); }
+                });
         }
         return rtn;
     }
