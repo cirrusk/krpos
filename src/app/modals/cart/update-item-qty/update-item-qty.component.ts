@@ -44,7 +44,7 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
       const hasSerialOrRfid = this.product.serialNumber || this.product.rfid;
       const baseqty = this.callerData.qty;
       if (hasSerialOrRfid && (baseqty > quantity)) {
-        this.alert.warn({ message: this.message.get('update.qty.invalid'), timer: true, interval: 1000 });
+        this.alert.warn({ message: this.message.get('update.qty.invalid'), timer: true, interval: 1500 });
         setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 250);
         return;
       }
