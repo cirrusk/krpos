@@ -69,5 +69,6 @@ export const LANG_KO_MSGS = {
     'check.invalid.type': '수표종류를 정확히 입력해주세요.',
     'check.invalid.price': '금액정보를 입력해주세요.',
     'order.capable.notfound': '주문 가능 제품이 없습니다.',
-    'entry.product.empty': '제품의 재고가 부족합니다.'
+    'entry.product.empty': '제품의 재고가 부족합니다.',
+    'update.qty.invalid': '현재보다 시리얼 번호 입력 / RFID 스캔 상품 수량이 적어지는 경우 처음부터 다시 진행 해야 합니다.'
 };

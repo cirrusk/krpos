@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ModalService, ModalComponent, AlertService } from '../../../core';
 import { ProductInfo } from '../../../data';
+import { MessageService } from '../../../service';
 
 /**
  * 장바구니 추가 제품의 수량변경
@@ -15,7 +16,9 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
   private product: ProductInfo;
   @ViewChild('quantity') quantity: ElementRef;
 
-  constructor(protected modalService: ModalService, private alert: AlertService) {
+  constructor(protected modalService: ModalService,
+    private message: MessageService,
+    private alert: AlertService) {
     super(modalService);
   }
 
@@ -41,7 +44,7 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
       const hasSerialOrRfid = this.product.serialNumber || this.product.rfid;
       const baseqty = this.callerData.qty;
       if (hasSerialOrRfid && (baseqty > quantity)) {
-        this.alert.warn({ message: `Serial / RFID 상품은 상품 삭제 후 처음부터 다시 입력하여야 합니다.`, timer: true, interval: 1000 });
+        this.alert.warn({ message: this.message.get('update.qty.invalid'), timer: true, interval: 1000 });
         setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 250);
         return;
       }
