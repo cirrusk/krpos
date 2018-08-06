@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
 import { SearchService, PagerService } from '../../../service';
-import { AccountList, Accounts, Pagination } from '../../../data';
+import { AccountList, Accounts, Pagination, MemberType } from '../../../data';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -24,6 +24,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   totalCnt: number;                          // 검색 총 합계
   paymentType: string;
   orderType: string;
+  memberType = MemberType;                                                  // HTML 사용(enum)
   @ViewChild('inputSearchText') private searchValue: ElementRef;
 
   constructor(modalService: ModalService,

@@ -10,7 +10,10 @@
         </span>
         <span>
             <a href="javascript:void(0)" [class.on]="selectedUserIndex == i" *ngFor="let accountInfo of currentGroupAccountInfo; let i = index;"
-                (click)="choiceGroupUser(i, accountInfo.parties[0].uid)">{{accountInfo.parties[0].name}}</a>
+                (click)="choiceGroupUser(i, accountInfo.parties[0].uid)">
+                <!-- {{accountInfo.parties[0].name}} -->
+                {{accountInfo.accountTypeCode.toUpperCase() === memberType.ABO ? accountInfo.name: accountInfo.parties[0].name}}
+            </a>
         </span>
     </div>
     <!-- //고객리스트 : 그룹결제시 노출 -->
