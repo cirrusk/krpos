@@ -9,6 +9,10 @@ export class ResponseData {
 export class ResponseMessage {
     code: string;
     returnMessage: string;
+    constructor(code: string, returnMessage?: string) {
+        this.code = code;
+        this.returnMessage = returnMessage;
+    }
 }
 
 export class GroupResponseData {

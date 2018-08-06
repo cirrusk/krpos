@@ -642,27 +642,79 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 회원 검색 ->  결과 값이 1일 경우 display and create cart
    *
+   * 회원 검색시 회원 블록 체크를 반드시 수행해야함.
+   * 체크 후 2번인 경우 메시지 다음 메시지 출력
+   * @example
+   * 홍길동 회원님 (7480028410)은
+   * 미갱신 상태 입니다. 회원 갱신이 필요합니다.
+   * (갱신기간: 2018.03~08)
+   *
+   * 0. 정상체크 : 0
+   * 1. 기본체크 : 회원 탈퇴 및 존재여부
+   * 2. 프로필 업데이트 : 자동갱신, 일반 갱신 기간에 갱신 하지 않은 회원
+   * 3. 주문 블락 체크
+   *
    * @param {string} searchMode ex) A = ABO, M = MEMBER, C = Customer
    * @param {string} accountid 회원아이디(ABO검색 기본)
    */
   private selectAccountInfo(searchMode: string, accountid?: string): void {
     if (accountid) {
-      this.searchSubscription = this.searchService.getAccountList(searchMode, accountid).subscribe(
-        result => {
-          const accountsize = result.accounts.length;
-          if (accountsize === 1) {
-            if (this.orderType === '') {
-              this.orderType = 'n';
-            }
-            this.getAccountAndSaveCart(result.accounts[0]);
-          } else {
-            this.callSearchAccount(this.searchParams);
+      this.cartService.checkBlock(accountid).subscribe(
+        resp => {
+          const code = this.userBlockCheck(resp);
+          if (code === Block.VALID) {
+            this.getAccount(searchMode, accountid);
           }
         },
-        error => { this.logger.set('cart.list.component', `${error}`).error(); });
+        error => {
+          if (error) {
+            const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
+            this.userBlockCheck(resp, accountid);
+          }
+        });
     } else {
       this.callSearchAccount(this.searchParams);
     }
+  }
+
+  /**
+   * 회원 블록 체크
+   *
+   * @param {ResponseMessage} resp 응답값
+   * @param {string} accountid 회원 정보
+   */
+  private userBlockCheck(resp: ResponseMessage, accountid?: string): string {
+    if (resp.code === Block.INVALID) {
+      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 1200 });
+    } else if (resp.code === Block.NOT_RENEWAL) {
+      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', accountid, resp.returnMessage), timer: true, interval: 1200 });
+    } else if (resp.code === Block.LOGIN_BLOCKED) {
+      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 1200 });
+    } else if (resp.code === Block.ORDER_BLOCK) {
+      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+    }
+    if (resp.code !== Block.VALID) {
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+    }
+    return resp.code;
+  }
+
+  private getAccount(searchMode: string, accountid: string) {
+    this.searchSubscription = this.searchService.getAccountList(searchMode, accountid).subscribe(
+      result => {
+        const accountsize = result.accounts.length;
+        if (accountsize === 1) {
+          if (this.orderType === '') {
+            this.orderType = 'n';
+          }
+          this.getAccountAndSaveCart(result.accounts[0]);
+        } else {
+          this.callSearchAccount(this.searchParams);
+        }
+      },
+      error => {
+        this.logger.set('cart.list.component', `${error}`).error();
+      });
   }
 
   /**
@@ -740,16 +792,18 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
       this.cartService.checkBlock(accountId).subscribe(
         resp => {
-          if (this.checkBlock(resp.returnMessage)) {
-            this.alert.error({ title: '구매제한', message: '구매제한 회원입니다.' });
+          if (this.checkOrderBlock(resp.code)) {
+            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+            setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
           } else {
             this.createCart(accountId, terminalInfo, popupFlag, productCode);
           }
         },
         error => {
           if (error) {
-            if (this.checkBlock(error.error.returnMessage)) {
-              this.alert.error({ title: '구매제한', message: '구매제한 회원입니다.' });
+            if (this.checkOrderBlock(error.error.code)) {
+              this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+              setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
             }
           }
         });
@@ -761,20 +815,16 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 주문 블럭 체크하기
    *
-   * VALID = 'validcustomer',
-   * INVALID = 'invalidcustomer',
-   * NOT_RENEWAL = 'notrenewalcustomer',
-   * LOGIN_BLOCKED = 'loginblockedcustomer',
-   * CAN_NOT_UPDATE_PROFILE = 'loggincustomercantupdateprofile',
-   * ORDER_BLOCK = 'orderblockedcustomer'
+   * VALID = '0000',
+   * INVALID = '0001',
+   * NOT_RENEWAL = '0002',
+   * LOGIN_BLOCKED = '0003',
+   * ORDER_BLOCK = '0005'
    *
-   * @param {ResponseMessage} resp 블럭체크 응답
+   * @param {string} code 블럭체크 응답 코드
    */
-  private checkBlock(msg: string): boolean {
-    this.logger.set('cart.list.component', `customer block check : ${msg}`).debug();
-    msg = msg.replace(/(\s*)/g, '').replace(/'/g, '').toLocaleLowerCase();
-    this.logger.set('cart.list.component', `customer block check : ${msg}`).debug();
-    if (msg === Block.ORDER_BLOCK) {
+  private checkOrderBlock(code: string): boolean {
+    if (code === Block.ORDER_BLOCK) {
       return true;
     }
     return false;

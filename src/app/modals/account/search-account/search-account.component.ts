@@ -3,8 +3,8 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
-import { SearchService, PagerService } from '../../../service';
-import { AccountList, Accounts, Pagination, MemberType } from '../../../data';
+import { SearchService, PagerService, MessageService, CartService } from '../../../service';
+import { AccountList, Accounts, Pagination, MemberType, ResponseMessage, Block } from '../../../data';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -28,6 +28,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   @ViewChild('inputSearchText') private searchValue: ElementRef;
 
   constructor(modalService: ModalService,
+    private cartService: CartService,
+    private message: MessageService,
     private logger: Logger,
     private alert: AlertService,
     private searchService: SearchService,
@@ -84,32 +86,87 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   /**
    * account 검색
-   * @param searchMemberType
-   * @param searchText
+   *
+   * 회원 검색시 회원 블록 체크를 반드시 수행해야함.
+   * 체크 후 2번인 경우 메시지 다음 메시지 출력
+   * @example
+   * 홍길동 회원님 (7480028410)은
+   * 미갱신 상태 입니다. 회원 갱신이 필요합니다.
+   * (갱신기간: 2018.03~08)
+   *
+   * 0. 정상체크 : 0
+   * 1. 기본체크 : 회원 탈퇴 및 존재여부
+   * 2. 프로필 업데이트 : 자동갱신, 일반 갱신 기간에 갱신 하지 않은 회원
+   * 3. 주문 블락 체크
+   *
+   * @param {string} searchMemberType 검색 회원 타입
+   * @param {string} searchText 검색어
    */
   getAccountList(searchMemberType: string, searchText: string): void {
     if (searchText.trim()) {
       this.activeNum = -1;
-      this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText).subscribe(
-          result => {
-            if (result) {
-              this.accountList = result;
-              this.totalCnt = this.accountList.accounts.length;
-              this.setPage(1);
-            }
-          },
-          error => {
-            const errdata = Utils.getError(error);
-            if (errdata) {
-              this.logger.set('search.account.component', `get account error type : ${errdata.type}`).error();
-              this.logger.set('search.account.component', `get account error message : ${errdata.message}`).error();
-              this.alert.error({ message: `${errdata.message}` });
-            }
-          });
+      this.cartService.checkBlock(searchText).subscribe(
+        resp => {
+          const code = this.userBlockCheck(resp, searchText);
+          if (code === Block.VALID) {
+            this.getAccount(searchMemberType, searchText);
+          }
+        },
+        error => {
+          if (error) {
+            const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
+            this.userBlockCheck(resp, searchText);
+          }
+        });
     } else {
       this.alert.warn({ title: '검색어 미입력', message: '검색어를 입력해주세요.' });
       return;
     }
+  }
+
+  /**
+   * 회원 조회하기
+   *
+   * @param {string} searchMemberType 검색 회원 타입
+   * @param {string} searchText 검색어
+   */
+  private getAccount(searchMemberType: string, searchText: string) {
+    this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText).subscribe(result => {
+      if (result) {
+        this.accountList = result;
+        this.totalCnt = this.accountList.accounts.length;
+        this.setPage(1);
+      }
+    }, error => {
+      const errdata = Utils.getError(error);
+      if (errdata) {
+        this.logger.set('search.account.component', `get account error type : ${errdata.type}`).error();
+        this.logger.set('search.account.component', `get account error message : ${errdata.message}`).error();
+        this.alert.error({ message: `${errdata.message}` });
+      }
+    });
+  }
+
+  /**
+   * 회원 블록 체크
+   *
+   * @param {ResponseMessage} resp 응답값
+   * @param {string} accountid 회원 정보
+   */
+  private userBlockCheck(resp: ResponseMessage, accountid?: string): string {
+    if (resp.code === Block.INVALID) {
+      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 1200 });
+    } else if (resp.code === Block.NOT_RENEWAL) {
+      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', accountid, resp.returnMessage), timer: true, interval: 1200 });
+    } else if (resp.code === Block.LOGIN_BLOCKED) {
+      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 1200 });
+    } else if (resp.code === Block.ORDER_BLOCK) {
+      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+    }
+    if (resp.code !== Block.VALID) {
+      setTimeout(() => { this.searchValue.nativeElement.focus(); }, 500);
+    }
+    return resp.code;
   }
 
   /**

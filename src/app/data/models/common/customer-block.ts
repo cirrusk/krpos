@@ -1,8 +1,7 @@
 export enum Block {
-    VALID = 'validcustomer',
-    INVALID = 'invalidcustomer',
-    NOT_RENEWAL = 'notrenewalcustomer',
-    LOGIN_BLOCKED = 'loginblockedcustomer',
-    CAN_NOT_UPDATE_PROFILE = 'loggincustomercantupdateprofile',
-    ORDER_BLOCK = 'orderblockedcustomer'
+    VALID = '0000',
+    INVALID = '0001',
+    NOT_RENEWAL = '0002',
+    LOGIN_BLOCKED = '0003',
+    ORDER_BLOCK = '0005'
 }

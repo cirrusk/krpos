@@ -75,19 +75,19 @@ export class TemplateParser {
         block = cloneDeep(context);
         context = undefined;
       }
-
       return this.numeral(context).format(block.hash.format);
     });
   }
 
   // 영수증 가격 리스트의 포맷을 양쪽 정렬로 맞추기 위한 Helper
+  // 취소 영수증인 경우 앞에 prefix로 '-'가 붙으므로 공백값을 하나더 빼주어야함.
   private registerPriceFormatHelper() {
     this.handlebars.registerHelper('priceFormatHelper', (priceName: string, price: string, cancelFlag?: string) => {
       const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(priceName);
       const localePrice: string = ReceiptUtils.convertToLocalePrice(price);
-      const blankLenth: number = 42 - utf8ItemLen - localePrice.length;
+      const localPriceLen = cancelFlag === 'Y' ? localePrice.length + 1 : localePrice.length;
+      const blankLenth: number = 42 - utf8ItemLen - localPriceLen;
       const cancelSymbol: string = cancelFlag === 'Y' ? '-' : '';
-
       return new handlebars.SafeString(priceName + ReceiptUtils.spaces(blankLenth) + cancelSymbol + localePrice);
     });
   }
@@ -104,17 +104,13 @@ export class TemplateParser {
     this.handlebars.registerHelper('productListHelper', (productList: Array<ReceiptProductFieldInterface>) => {
       const localedProductList = ReceiptUtils.convertProductListPrices(productList);
       const maxLengths = ReceiptUtils.findMaxLengths(localedProductList);
-
       const formatted: Array<string> = [];
-
       formatted.push(ReceiptUtils.getProductListTitle(maxLengths));
-
       productList.forEach(
         (product) => {
           formatted.push(ReceiptUtils.getFormattedProductField(product, maxLengths));
         }
       );
-
       return new handlebars.SafeString(formatted.join(''));
     });
   }
@@ -124,11 +120,9 @@ export class TemplateParser {
     this.handlebars.registerHelper('bonusDataHelper', (title1: string, value1: string, title2: string, value2: string, cancelFlag?: string) => {
       const formatted: Array<string> = [];
       const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
-
       formatted.push('<text-line>');
       formatted.push(ReceiptUtils.fitTextsEqual(title1 + cancelSymbol + value1, title2 + cancelSymbol + value2));
       formatted.push('</text-line>');
-
       return new handlebars.SafeString(formatted.join(''));
     });
   }
