@@ -126,11 +126,11 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} cancelFlag 취소여부
      * @param {boolean} groupOrderFlag 그룹주문 여부
      */
-    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false, type?: string): void {
+    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false, type?: string): Observable<boolean> {
+        let rtn = true;
         let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
-
         orderData.orders.forEach(order => {
             const jsonCartData = {
                 'user': order.user,
@@ -143,7 +143,6 @@ export class ReceiptService implements OnDestroy {
                 'totalDiscounts': order.totalDiscounts
             };
             cartInfo = jsonCartData as Cart;
-
             order.paymentDetails.paymentInfos.forEach(paymentInfo => {
                 switch (paymentInfo.paymentMode.code) {
                     case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
@@ -161,6 +160,7 @@ export class ReceiptService implements OnDestroy {
 
             if (groupOrderFlag) {
                 this.groupPrint(order, paymentCapture, cancelFlag);
+                return Observable.of(true);
             } else {
                 const params = {
                     cancelFlag: cancelFlag ? 'Y' : 'N',
@@ -170,10 +170,11 @@ export class ReceiptService implements OnDestroy {
                     isGroupOrder: false,
                     isCashReceipt: false
                 };
-                this.print(order.account, cartInfo, order, paymentCapture, params);
+                rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
+
             }
         });
-
+        return Observable.of(rtn);
     }
 
     /**

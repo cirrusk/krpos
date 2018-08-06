@@ -78,15 +78,27 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
         if (orderDetail) {
           try {
             this.orderList = orderDetail;
-            this.receiptService.reissueReceipts(orderDetail, true);
-            this.cancelFlag = true;
-            this.alert.info({
-              title: '취소 영수증 발행',
-              message: this.messageService.get('cancelReceiptComplete'),
-              timer: true,
-              interval: 1000
-            });
-            this.close();
+            this.receiptService.reissueReceipts(orderDetail, true).subscribe(
+              () => {
+                this.cancelFlag = true;
+                setTimeout(() => { this.close(); }, 1000);
+                this.alert.info({
+                  title: '취소 영수증 발행',
+                  message: this.messageService.get('cancelReceiptComplete'),
+                  timer: true,
+                  interval: 1200
+                });
+
+              });
+            // this.receiptService.reissueReceipts(orderDetail, true);
+            // this.cancelFlag = true;
+            // this.alert.info({
+            //   title: '취소 영수증 발행',
+            //   message: this.messageService.get('cancelReceiptComplete'),
+            //   timer: true,
+            //   interval: 1000
+            // });
+            // this.close();
           } catch (e) {
             this.cancelFlag = false;
             this.logger.set('cancel-order.component', `Reissue Receipts error type : ${e}`).error();
@@ -110,7 +122,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   close() {
-    this.result = { 'cancelFlag' : this.cancelFlag, 'data' : this.orderList };
+    this.result = { 'cancelFlag': this.cancelFlag, 'data': this.orderList };
     this.closeModal();
   }
 }
