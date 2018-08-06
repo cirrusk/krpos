@@ -36,6 +36,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private paymentModeListByMain: PaymentModeListByMain;
   private paymentcapture: PaymentCapture;
   private paymentModes: Map<string, string>;
+  private custname: string;
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService,
     private paymentService: PaymentService,
@@ -72,6 +73,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
     this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
     this.popupList.push(0);
+    this.custname = this.accountInfo.accountTypeCode.toUpperCase() === MemberType.ABO ? this.accountInfo.name : this.accountInfo.parties[0].name;
   }
 
   init() {
@@ -110,7 +112,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   amwayPoint(evt: any) { // point
     // this.setSelected(evt, 2, 'point');
     if (this.point <= 0) {
-      this.alert.show({ message: this.message.get('no.point', this.accountInfo.parties[0].name) });
+      this.alert.show({ message: this.message.get('no.point', this.custname) });
       return;
     }
     if (this.enableMenu.indexOf('point') > -1) {
@@ -126,7 +128,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   memberPoint(evt: any) { // point
     // this.setSelected(evt, 3, 'point');
     if (this.point <= 0) {
-      this.alert.show({ message: this.message.get('no.point', this.accountInfo.parties[0].name) });
+      this.alert.show({ message: this.message.get('no.point', this.custname) });
       return;
     }
     if (this.enableMenu.indexOf('point') > -1) {
@@ -162,7 +164,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   reCashPayment(evt: any) { // arCredit
     if (this.recash <= 0) {
-      this.alert.show({ message: this.message.get('no.recash', this.accountInfo.parties[0].name) });
+      this.alert.show({ message: this.message.get('no.recash', this.custname) });
       return;
     }
     this.setSelected(evt, 7, 'arCredit');
