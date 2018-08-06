@@ -90,6 +90,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   /**
    * 입력 체크하기
    *
+   * 중요 변경 사항)
+   * 시리얼 번호 또는 RFID 가 인식되지 않는 경우
+   * Blank 상태로 [확인] Btn 터치 or [ENTER] KEY 입력/처리 가능
+   *
    * @param {any} codes 입력한 input 요소
    * @param {any} evt 이벤트
    */
@@ -108,17 +112,17 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       evt.srcElement.blur();
     }
     let chkidx = 0;
-    let prdname: string;
+    // let prdname: string;
     if (Utils.isEmpty(code)) {
       chkidx++;
-      prdname = codes.getAttribute('data-prdname');
+      // prdname = codes.getAttribute('data-prdname');
     }
     const target = evt.target || evt.srcElement || evt.currentTarget;
     if (chkidx !== 0) {
-      this.checktype = -1;
-      this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
-      if (target) { setTimeout(() => { target.focus(); }, 50); }
-      return;
+      // this.checktype = -1;
+      // this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
+      // if (target) { setTimeout(() => { target.focus(); }, 50); }
+      // return;
     } else {
       this.checktype = 0;
       if (this.scanInputSize === this.scannedCount) {
@@ -169,12 +173,13 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       }
     });
     if (chkidx !== 0) {
-      this.checktype = -1;
-      this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
-      if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
-      return;
+      // this.checktype = -1;
+      // this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
+      // if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
+      // return;
     } else {
       this.checktype = 0;
+      this.apprmessage = '스캔이 완료되었습니다.';
       if (this.scanInputSize === scannedRegCount) {
         this.result = { serialNumber: '', serialNumbers: this.serialNumbers, rfid: '', rfids: this.rfids };
         this.close();

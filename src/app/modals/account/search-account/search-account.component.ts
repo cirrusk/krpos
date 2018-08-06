@@ -105,19 +105,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   getAccountList(searchMemberType: string, searchText: string): void {
     if (searchText.trim()) {
       this.activeNum = -1;
-      this.cartService.checkBlock(searchText).subscribe(
-        resp => {
-          const code = this.userBlockCheck(resp, searchText);
-          if (code === Block.VALID) {
-            this.getAccount(searchMemberType, searchText);
-          }
-        },
-        error => {
-          if (error) {
-            const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
-            this.userBlockCheck(resp, searchText);
-          }
-        });
+      this.getAccount(searchMemberType, searchText);
     } else {
       this.alert.warn({ title: '검색어 미입력', message: '검색어를 입력해주세요.' });
       return;
@@ -151,17 +139,18 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
    * 회원 블록 체크
    *
    * @param {ResponseMessage} resp 응답값
-   * @param {string} accountid 회원 정보
+   * @param {Accounts} accountid 회원 정보
    */
-  private userBlockCheck(resp: ResponseMessage, accountid?: string): string {
+  private checkUserBlock(resp: ResponseMessage, account: Accounts): string {
     if (resp.code === Block.INVALID) {
-      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 1200 });
+      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 1500 });
     } else if (resp.code === Block.NOT_RENEWAL) {
-      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', accountid, resp.returnMessage), timer: true, interval: 1200 });
+      const custname = account.accountTypeCode === MemberType.ABO ? account.name : account.parties[0].name;
+      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 1500 });
     } else if (resp.code === Block.LOGIN_BLOCKED) {
-      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 1200 });
+      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 1500 });
     } else if (resp.code === Block.ORDER_BLOCK) {
-      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
     }
     if (resp.code !== Block.VALID) {
       setTimeout(() => { this.searchValue.nativeElement.focus(); }, 500);
@@ -180,6 +169,10 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
 
   /**
    * account 정보 전달
+   *
+   * 중요 체크 내용)
+   * 검색된 사용자에 대해서 확인 버튼을 클릭할 경우
+   * 회원 블록체크를 수행함.
    */
   sendAccountInfo(): void {
     if (this.activeNum > -1) {
@@ -189,8 +182,21 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
           return obj.parties[0].uid === uid;
         }
       );
-      this.result = this.accountList.accounts[existedIdx]; // result로 본창에 전송(broker 삭제!)
-      this.close();
+      const account: Accounts = this.accountList.accounts[existedIdx];
+      this.cartService.checkBlock(uid).subscribe(
+        resp => {
+          const code = this.checkUserBlock(resp, account);
+          if (code === Block.VALID) {
+            this.result = this.accountList.accounts[existedIdx]; // result로 본창에 전송(broker 삭제!)
+            this.close();
+          }
+        },
+        error => {
+          if (error) {
+            const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
+            this.checkUserBlock(resp, account);
+          }
+        });
     } else {
       this.alert.warn({ message: `회원을 선택해주시기 바랍니다.` });
     }
