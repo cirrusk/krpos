@@ -118,19 +118,19 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       // prdname = codes.getAttribute('data-prdname');
     }
     const target = evt.target || evt.srcElement || evt.currentTarget;
-    if (chkidx !== 0) {
+    // if (chkidx !== 0) {
       // this.checktype = -1;
       // this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
       // if (target) { setTimeout(() => { target.focus(); }, 50); }
       // return;
-    } else {
+    // } else {
       // this.checktype = 0;
       if (this.scanInputSize === this.scannedCount) {
         this.finishStatus = StatusDisplay.PAID;
-        // this.apprmessage = '스캔이 완료되었습니다.';
+        this.apprmessage = '스캔이 완료되었습니다.';
       }
       if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
-    }
+    // }
   }
 
   /**
@@ -179,8 +179,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       // if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
       // return;
     // } else {
-      // this.checktype = 0;
-      // this.apprmessage = '스캔이 완료되었습니다.';
+      this.checktype = 0;
+      this.apprmessage = '스캔이 완료되었습니다.';
+      console.log(this.scanInputSize);
+      console.log(scannedRegCount);
       if (this.scanInputSize === scannedRegCount) {
         this.result = { serialNumber: '', serialNumbers: this.serialNumbers, rfid: '', rfids: this.rfids };
         this.close();
