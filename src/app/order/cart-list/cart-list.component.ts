@@ -69,6 +69,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private domain: string;                                                   // api root 도메인
   private serialNumbers: Array<string>;                                     // Serial 정보 받기
   private rfids: Array<string>;                                             // RFID 정보 받기
+  private serialRfid: any;                                                  // Serial 또는 RFID 값 입력 화면 첫번째에 뿌리도록.
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -464,7 +465,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           // RFID, SERIAL 입력 받음.
           if (product && (product.rfid || product.serialNumber)) {
             this.modal.openModalByComponent(SerialComponent, {
-              callerData: { productInfo: product, cartQty: qty, productQty: result.qty },
+              callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serialRfids: this.serialRfid },
               closeByClickOutside: false,
               modalId: 'SerialComponent'
             }).subscribe(data => {
@@ -1060,7 +1061,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         qty).subscribe(
           result => {
             this.resCartInfo = result;
-            console.log('...' + JSON.stringify(this.resCartInfo, null, 2));
             // this.updateCartModel = this.resCartInfo.cartModifications[0];
             this.updateCartModel = this.resCartInfo.cartModifications.cartModifications[0];
             // 정상적으로 수정이 됐을 경우
@@ -1651,6 +1651,18 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.rfids.push(rfid);
       });
     }
+    this.setSerialRfid();
+  }
+
+  /**
+   * Serial / RFID 정보 조회 - 시리얼 입력 컴포넌트에 전달
+   * 화면 출력용으로만 사용
+   */
+  private setSerialRfid(): void {
+    this.serialRfid = {
+      serial: (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null,
+      rfid: (this.rfids.length > 0) ? this.rfids[0] : null
+    };
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])

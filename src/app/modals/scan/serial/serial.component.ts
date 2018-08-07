@@ -54,6 +54,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   private rfids = [];
   private scanInputSize: number;
   private scannedCount: number;
+  private serialRfids: any;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService) {
     super(modalService);
@@ -65,6 +66,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnInit() {
     this.productInfo = this.callerData.productInfo;
+    this.serialRfids = this.callerData.serialRfids;
     const osize: number = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
     const psize: number = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
     if (psize === 0) {
@@ -82,6 +84,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         this.regLabel = '시리얼 번호 입력 / RFID 스캔';
       }
     }
+    // console.log(this.codes.first.nativeElement);
     setTimeout(() => { this.codes.first.nativeElement.focus(); }, 50);
   }
 
@@ -100,8 +103,15 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   check(codes: any, evt: any) {
     evt.preventDefault();
     const code = codes.value;
-    if (evt.srcElement.nextElementSibling) { // 다음 요소가 있음.
-      evt.srcElement.nextElementSibling.focus();
+    // if (evt.srcElement.nextElementSibling) { // 다음 요소가 있음.(INPUT 요소끼리 인접해있을 경우)
+    // evt.srcElement.nextElementSibling.focus();
+    if (evt.srcElement.parentElement.nextElementSibling) { // INPUT 요소를 한번 감싸고 있을 경우
+      const elms = evt.srcElement.parentElement.nextElementSibling.childNodes;
+      elms.forEach(elm => {
+        if (elm.nodeType === 1 && elm.nodeName === 'INPUT') {
+          elm.focus();
+        }
+      });
       // if (Utils.isNotEmpty(code)) {
         this.scannedCount++;
       // }
@@ -129,7 +139,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         this.finishStatus = StatusDisplay.PAID;
         this.apprmessage = '스캔이 완료되었습니다.';
       }
-      if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
+      // if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
     // }
   }
 
