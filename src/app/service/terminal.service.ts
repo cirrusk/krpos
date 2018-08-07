@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+// import { TimeoutError } from 'rxjs/util/TimeoutError';
 import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/finally';
+// import 'rxjs/add/operator/retryWhen';
+// import 'rxjs/add/operator/take';
 
-import { ApiService, Config } from '../core';
+import { ApiService, Config, SpinnerService } from '../core';
 import { TerminalInfo, HttpData } from '../data';
 
 /**
@@ -13,8 +16,8 @@ import { TerminalInfo, HttpData } from '../data';
 export class TerminalService {
 
   private terminalTimeout: number;
-  constructor(private api: ApiService, private config: Config) {
-    this.terminalTimeout = this.config.getConfig('terminalTimeout');
+  constructor(private api: ApiService, private config: Config, private spinner: SpinnerService) {
+    this.terminalTimeout = this.config.getConfig('terminalTimeout', 20);
   }
 
   /**
@@ -31,7 +34,18 @@ export class TerminalService {
    */
   public getTerminalInfo(macaddress: string): Observable<TerminalInfo> {
     const data = new HttpData('terminal', null, null, { macAddress: macaddress, fields: 'DEFAULT' });
-    return this.api.post(data).timeout(1000 * this.terminalTimeout).finally(() => { });
+    return this.api.post(data)
+      .timeout(1000 * this.terminalTimeout)
+      // .retryWhen(errors => {
+      //   if (errors instanceof TimeoutError) {
+      //     console.log(errors);
+      //     return Observable.of(null);
+      //   }
+      //   errors.subscribe(sourceError => console.log(sourceError));
+      //   return Observable.create(obs => obs.error('inner error')); // errors.delay(1000);
+      // })
+      // .take(10)
+      .finally(() => { this.spinner.hide(); });
   }
 
 }

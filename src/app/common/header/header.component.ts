@@ -238,6 +238,10 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
    * 터미널 정보는 세션 스토리지에 저장
    * 터미널 정보 조회 실패 시 미등록 기기 알림 메시지 출력
    *
+   * 최초 서버 기동 시 호출될 경우 class loading 지연으로 인해
+   * 미등록 기기 알림 메시지 alert 뜰 수 있음.
+   *
+   *
    * @param macAddr MAC ADDRESS
    */
   private getTerminal(macAddr: string) {
