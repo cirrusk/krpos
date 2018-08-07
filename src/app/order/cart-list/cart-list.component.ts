@@ -716,8 +716,13 @@ export class CartListComponent implements OnInit, OnDestroy {
             },
             error => {
               if (error) {
-                const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
-                this.checkUserBlock(resp, account);
+                const errdata = Utils.getError(error);
+                if (errdata && errdata.type === 'InvalidDmsError') {
+                  this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1200 });
+                } else {
+                  const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
+                  this.checkUserBlock(resp, account);
+                }
               }
             });
         } else {

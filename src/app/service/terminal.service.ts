@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-// import { TimeoutError } from 'rxjs/util/TimeoutError';
 import 'rxjs/add/operator/timeout';
 import 'rxjs/add/operator/finally';
+// import 'rxjs/add/operator/mergeMap';
 // import 'rxjs/add/operator/retryWhen';
 // import 'rxjs/add/operator/take';
 
@@ -37,9 +37,14 @@ export class TerminalService {
     return this.api.post(data)
       .timeout(1000 * this.terminalTimeout)
       // .retryWhen(errors => {
+      //   console.log(errors);
+      //   return errors.mergeMap(error => (error.status === 500) ? Observable.throw(error) : Observable.of(error)).take(3);
+      // })
+      // .retryWhen(errors => {
+      //   console.log(errors);
       //   if (errors instanceof TimeoutError) {
-      //     console.log(errors);
-      //     return Observable.of(null);
+      //     console.log('====== ' + errors);
+      //     return Observable.throw(errors);
       //   }
       //   errors.subscribe(sourceError => console.log(sourceError));
       //   return Observable.create(obs => obs.error('inner error')); // errors.delay(1000);
