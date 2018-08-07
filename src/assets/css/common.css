@@ -483,13 +483,21 @@ table input[type='text'] {font-family:'NSM';}
 .check_form .check_etc input:nth-of-type(4) {width:50px}
 .check_form .check_etc input:nth-of-type(5) {width:150px}
 
+/* 다중 시리얼 번호 입력 */
+.list_serial {height:250px; overflow:auto; box-sizing:border-box; margin:20px -30px 0; padding:20px; background-color:#f2f2f5; counter-reset:li; }
+.list_serial:after {content:''; display:inline-block; height:100%; vertical-align:middle}
+.list_serial ol {display:inline-block; vertical-align:middle}
+.list_serial li + li {margin-top:10px}
+.list_serial li input[readonly]{width:237px; padding-bottom:6px; font-size:14px; border-color:transparent; background-color:transparent}
+.list_serial li:before {content:counter(li)'.'; counter-increment:li; display:inline-block; width:40px; padding-right:8px; text-align:right}
+
 /* tab */
 .tab_type01 {display:block; text-align:center; font-size:0}
 .tab_type01 > span {position:relative; display:inline-block; width:160px; height:35px; line-height:31px; box-sizing:border-box; color:#999; font-size:16px; border:1px solid #999; background-color:#f2f2f5}
 .tab_type01 > span + span {margin-left:-1px}
 .tab_type01 > .on {font-family:'NSB'; border-color:#08132f; background-color:#fff; color:#21243d; z-index:1}
 
-.bg_bar span + span:before {content:''; display:inline-block; width:1px; height:12px; margin:-3px 13px 0; vertical-align:middle; background-color:#cfd3dc}
+.bg_bar span + span:before {content:''; display:inline-block; width:1px; height:12px; margin1:-3px 13px 0; vertical-align:middle; background-color:#cfd3dc}
 
 .no_data {height:94px; box-sizing:border-box; text-align:center; padding-top:32px; border-top:1px solid #ccc; border-bottom:1px solid #ccc; font-family:'NSB'; font-size:13px}
 
