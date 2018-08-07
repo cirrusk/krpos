@@ -1,4 +1,5 @@
 import { AmwayValue, Price, ProductInfo, DeliveryMode, PointOfService } from '../..';
+import { KitProductChildOrderEntry } from './cart-modification';
 
 export class OrderEntry {
     entryNumber: number;
@@ -17,6 +18,8 @@ export class OrderEntry {
     totalPriceInclTax: Price;
     isKitProductOrderEntry: boolean;
     totalTax: Price;
+    bundleDescription: Array<KitProductChildOrderEntry>; // AmwayKitProductChildOrderEntryWsDTO
+    kitEntryNumber: number;
     aboBasePrice: number;
     retailBasePrice: number;
     proRatedPrice: number;
@@ -30,10 +33,7 @@ export class OrderEntry {
     quantityPending: number;
     quantityShipped: number;
     quantityReturned: number;
-
-    // Ecp 컨펌 (숫자, true='완료')
-    ecpConfirmQty: any;
-
+    ecpConfirmQty: any; // Ecp 컨펌 (숫자, true='완료')
     rfids: Array<string>;
     serialNumbers: Array<string>;
 

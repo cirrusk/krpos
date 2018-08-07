@@ -8,9 +8,15 @@ export class CartModification {
     deliveryModeChanged: boolean;
     statusMessage: string;
     messages: Array<CartMessage>;
-    bundleDescription: any; // List<AmwayKitProductChildOrderEntryWsDTO>
+    bundleDescription: Array<KitProductChildOrderEntry>; // List<AmwayKitProductChildOrderEntryWsDTO>
 
     constructor() {
 
     }
+}
+
+export class KitProductChildOrderEntry {
+    productCode: string;
+    name: string;
+    quantity: number;
 }

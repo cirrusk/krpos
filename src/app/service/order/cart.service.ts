@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
-  ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering, ResponseMessage
+  ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering, ResponseMessage, CartModifications
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -111,9 +111,9 @@ export class CartService {
     const pathvariables = { userId: userId, cartId: cartId };
     const param = { fields: 'FULL' };
     const data = new HttpData('addToCart', pathvariables, orderList, param, 'json');
-    return this.api.post(data).flatMap((cartModification: CartModification[]) => {
+    return this.api.post(data).flatMap((cartModifications: CartModifications) => {
       return this.getCartList(userId, cartId)
-        .map(cart => new ResCartInfo(cart, cartModification) as ResCartInfo);
+        .map(cart => new ResCartInfo(cart, cartModifications) as ResCartInfo);
     });
   }
 
@@ -167,8 +167,9 @@ export class CartService {
     return this.api.put(data).flatMap((cartModification: CartModification) => {
       const arrayCart = new Array<CartModification>();
       arrayCart.push(cartModification);
+      const carts = new CartModifications(arrayCart);
       return this.getCartList(userId, cartId)
-        .map(cart => new ResCartInfo(cart, arrayCart) as ResCartInfo);
+      .map(cart => new ResCartInfo(cart, carts) as ResCartInfo);
     });
   }
 
