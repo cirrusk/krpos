@@ -12,8 +12,8 @@
                     <br>입력 없이 확인 버튼 또는 ENTER 키를 입력해 주세요.</p>
                 <div class="list_serial" *ngIf="serialRfids; else singleInput">
                     <ol>
-                        <li *ngIf="serialRfids.serial"><input type="number" value="{{serialRfids?.serial}}" readonly></li>
-                        <li *ngIf="serialRfids.rfid"><input type="number" value="{{serialRfids?.rfid}}" readonly></li>
+                        <li *ngIf="serialRfids.serial"><input type="text" value="{{serialRfids?.serial}}" readonly></li>
+                        <li *ngIf="serialRfids.rfid"><input type="text" value="{{serialRfids?.rfid}}" readonly></li>
                         <li *ngFor="let p of productCount">
                             <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" (keydown.enter)="check(codes, $event)">
                         </li>
