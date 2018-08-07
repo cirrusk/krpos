@@ -74,5 +74,6 @@ export const LANG_KO_MSGS = {
     'block.invalid': '탈퇴되거나 존재하지 않는 회원 혹은 블랙리스트 회원입니다.',
     'block.notrenewal': '{0} 회원님({1})은<br>미갱신 상태입니다.<br>회원 갱신이 필요합니다.<br>(갱신기간 : {2})',
     'block.loginblock': '일반 로그인이 제한된 회원입니다.',
-    'block.orderblock': '구매제한 회원입니다.'
+    'block.orderblock': '구매제한 회원입니다.',
+    'dms.error': 'MDMS 서버에 오류가 발생하였습니다.<br>{0}'
 };

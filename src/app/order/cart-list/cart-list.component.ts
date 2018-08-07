@@ -611,7 +611,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.sendRightMenu('a', true, account);
       this.sendRightMenu('all', true);
       this.resCartInfo = resultData.resCartInfo;
-      this.addCartModel = resultData.resCartInfo.cartModification;
+      this.addCartModel = resultData.resCartInfo.cartModifications.cartModifications;
       this.addCartModel.forEach(model => {
         if (model.statusCode === 'success') {
           this.productInfo = model.entry;
@@ -718,7 +718,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (error) {
                 const errdata = Utils.getError(error);
                 if (errdata && errdata.type === 'InvalidDmsError') {
-                  this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1500 });
+                  this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 2000 });
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -820,7 +820,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (error) {
             const errdata = Utils.getError(error);
             if (errdata && errdata.type === 'InvalidDmsError') {
-              this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1200 });
+              this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 2000 });
             } else {
               if (this.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
@@ -984,7 +984,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers, this.rfids).subscribe(
         result => {
           this.resCartInfo = result;
-          this.addCartModel = this.resCartInfo.cartModification;
+          this.addCartModel = this.resCartInfo.cartModifications.cartModifications;
           // 정상적으로 담았을 경우
           if (this.addCartModel[0].statusCode === 'success') {
             this.addCartModel.forEach(addModel => {
@@ -1060,7 +1060,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         qty).subscribe(
           result => {
             this.resCartInfo = result;
-            this.updateCartModel = this.resCartInfo.cartModification[0];
+            console.log('...' + JSON.stringify(this.resCartInfo, null, 2));
+            // this.updateCartModel = this.resCartInfo.cartModifications[0];
+            this.updateCartModel = this.resCartInfo.cartModifications.cartModifications[0];
             // 정상적으로 수정이 됐을 경우
             if (this.updateCartModel.statusCode === 'success') {
               this.productInfo = this.updateCartModel.entry;
