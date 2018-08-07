@@ -719,7 +719,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (error) {
                 const errdata = Utils.getError(error);
                 if (errdata && errdata.type === 'InvalidDmsError') {
-                  this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 2000 });
+                  this.alert.error({ message: this.message.get('dms.error', errdata.message) });
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -821,7 +821,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (error) {
             const errdata = Utils.getError(error);
             if (errdata && errdata.type === 'InvalidDmsError') {
-              this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 2000 });
+              this.alert.error({ message: this.message.get('dms.error', errdata.message) });
             } else {
               if (this.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
