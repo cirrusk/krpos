@@ -718,7 +718,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (error) {
                 const errdata = Utils.getError(error);
                 if (errdata && errdata.type === 'InvalidDmsError') {
-                  this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1200 });
+                  this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1500 });
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -810,7 +810,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.cartService.checkBlock(accountId).subscribe(
         resp => {
           if (this.checkOrderBlock(resp.code)) {
-            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
             setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
           } else {
             this.createCart(accountId, terminalInfo, popupFlag, productCode);
@@ -823,7 +823,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1200 });
             } else {
               if (this.checkOrderBlock(error.error.code)) {
-                this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+                this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
                 setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
               }
             }
