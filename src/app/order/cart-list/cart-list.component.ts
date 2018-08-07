@@ -818,9 +818,14 @@ export class CartListComponent implements OnInit, OnDestroy {
         },
         error => {
           if (error) {
-            if (this.checkOrderBlock(error.error.code)) {
-              this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
-              setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+            const errdata = Utils.getError(error);
+            if (errdata && errdata.type === 'InvalidDmsError') {
+              this.alert.error({ message: `${errdata.message}`, timer: true, interval: 1200 });
+            } else {
+              if (this.checkOrderBlock(error.error.code)) {
+                this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1200 });
+                setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+              }
             }
           }
         });
