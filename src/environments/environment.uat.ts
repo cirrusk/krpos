@@ -78,7 +78,8 @@ export const environment = {
     issueReceipt: '/{baseSiteId}/users/{userId}/issue-receipt/{orderCode}',
     cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}',
     confirmPickup: '/{baseSiteId}/confirm-pickup',
-    checkBlock: '/{baseSiteId}/check-order-block/{userId}'
+    checkBlock: '/{baseSiteId}/check-order-block/{userId}',
+    getFavoriteProducts: ''
   },
   logLevel: 'debug',
   terminalTimeout: 10,

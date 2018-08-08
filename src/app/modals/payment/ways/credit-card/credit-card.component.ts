@@ -12,7 +12,7 @@ import {
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
-  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType, CapturePaymentInfo, AmwayExtendedOrdering
+  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType, CapturePaymentInfo, AmwayExtendedOrdering, VanTypes
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -171,19 +171,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   /**
-   * 임시로 카드 매핑, 나중에 매핑되면 제거
-   */
-  private getCardCodes(): Map<string, string> {
-    const map = new Map([
-      ['01', 'C0G'], // AMEX
-      ['02', 'C0B'], // 국민은행
-      ['08', 'C04']  // 현대카드
-    ]
-    );
-    return map;
-  }
-
-  /**
    * 할부 개월 수 패딩처리
    */
   private getInstallment(): string {
@@ -233,7 +220,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setCardNumber = this.cardresult.maskedCardNumber;
     ccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
     ccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
-    ccard.setCardCompanyCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
+    ccard.setCardCompanyCode = this.cardresult.issuerCode;
+    ccard.setVanType = VanTypes.NICE;
     ccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
     ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
     ccard.setCardApprovalNumber = this.cardresult.approvalNumber;
