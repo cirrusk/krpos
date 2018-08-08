@@ -333,16 +333,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
-    this.initSerialRfid();
+    this.initSerialAndRfids();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
-  }
-
-  /**
-   * Serial 과 RFID 변수 초기화
-   */
-  private initSerialRfid() {
-    this.serialNumbers = new Array<string>();
-    this.rfids = new Array<string>();
   }
 
   /**
@@ -967,7 +959,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         this.addCartEntries(code);
       }
-      this.initSerialRfid();
+      this.initSerialAndRfids();
     }
   }
 
@@ -996,7 +988,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.orderType === 'g') {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
-            this.initSerialRfid();
+            this.initSerialAndRfids();
           } else {
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -1072,7 +1064,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (this.orderType === 'g') {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
-              this.initSerialRfid();
+              this.initSerialAndRfids();
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -1652,6 +1644,14 @@ export class CartListComponent implements OnInit, OnDestroy {
       });
     }
     this.setSerialRfid();
+  }
+
+  /**
+   * Serial 과 RFID 변수 초기화
+   */
+  private initSerialAndRfids() {
+    this.serialNumbers = new Array<string>();
+    this.rfids = new Array<string>();
   }
 
   /**
