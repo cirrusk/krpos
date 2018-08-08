@@ -108,8 +108,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setCardNumber = this.cardresult.iccardSerialNumber;
     iccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
     iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
-    iccard.setCardCompanyCode = this.cardresult.issuerCode;
-    iccard.setVanType = VanTypes.NICE;
+    iccard.setCardCompanyCode = this.cardresult.issuerCode; // NICE 단말 reading 된 카드사코드 전송
+    iccard.setVanType = VanTypes.NICE; // NICE 단말 사용
     iccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
     iccard.setInstallmentPlan = '00';
     iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
