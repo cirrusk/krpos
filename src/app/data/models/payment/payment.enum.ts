@@ -56,6 +56,11 @@ export enum BankTypes {
     BONUS = 'BONUS'
 }
 
+export enum VanTypes {
+    NICE = 'NICE',
+    LGU = 'LGU'
+}
+
 export enum ProductScanTypes {
     SERIALNUMBER = 'SERIAL_NUMBER',
     RFID = 'RFID'

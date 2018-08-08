@@ -467,6 +467,3 @@ export class VoucherPaymentInfo extends AmwayPaymentInfoData {
         super(amount, 'creditvoucher');
     }
 }
-
-
-
