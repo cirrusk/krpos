@@ -262,6 +262,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     protected validFromMonth: string; // 유효기간 시작 월 필수값 임의설정
     protected validFromYear: string; // 유효기간 시작 년 필수값 임의설정
     protected xPayResponseData: any; // 안심결제
+    vanType: string; // VanType
 
     public set setCardAcquirerCode(cardAcquirerCode: string) {
         this.cardAcquirerCode = cardAcquirerCode;
@@ -295,6 +296,9 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     public set setCardNumber(cardNumber: string) {
         this.cardNumber = cardNumber;
+    }
+    public set setVanType(vanType: string) {
+        this.vanType = vanType;
     }
     public get getCardNumber(): string {
         return this.cardNumber;
@@ -334,7 +338,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,
-        validToMonth?: string, validToYear?: string) {
+        validToMonth?: string, validToYear?: string, vanType?: string) {
         super(amount, 'creditcard');
         this.paymentType = paymentType || 'GENERAL';
         this.cardCompanyCode = cardCompanyCode;
@@ -345,6 +349,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
         this.cardAuthNumber = cardAuthNumber;
         this.validToMonth = validToMonth;
         this.validToYear = validToYear;
+        this.vanType = vanType;
     }
 }
 

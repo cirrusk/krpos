@@ -10,7 +10,7 @@ import {
 } from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
-  StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType, AmwayExtendedOrdering
+  StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType, AmwayExtendedOrdering, VanTypes
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -69,19 +69,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
-   * 임시로 카드 매핑, 나중에 매핑되면 제거
-   */
-  private getCardCodes(): Map<string, string> {
-    const map = new Map([
-      ['01', 'C0G'], // AMEX
-      ['02', 'C0B'], // 국민은행
-      ['08', 'C04']  // 현대카드
-    ]
-    );
-    return map;
-  }
-
-  /**
    * IC Card Payment Capture 데이터 생성
    *
    * @param paidamount 결제금액
@@ -121,7 +108,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setCardNumber = this.cardresult.iccardSerialNumber;
     iccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
     iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
-    iccard.setCardCompanyCode = this.getCardCodes().get(this.cardresult.issuerCode); // this.cardresult.issuerCode;
+    iccard.setCardCompanyCode = this.cardresult.issuerCode;
+    iccard.setVanType = VanTypes.NICE;
     iccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
     iccard.setInstallmentPlan = '00';
     iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
