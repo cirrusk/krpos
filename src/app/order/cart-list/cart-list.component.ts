@@ -12,7 +12,7 @@ import { CartService, PagerService, SearchService, MessageService, PaymentServic
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
-  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block, Error, TerminalInfo
+  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block, TerminalInfo
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
