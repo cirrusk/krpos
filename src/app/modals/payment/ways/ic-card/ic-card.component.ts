@@ -163,6 +163,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.finishStatus = 'retry';
           this.apprmessage = res.msg;
           this.dupcheck = false;
+          this.spinner.hide();
         } else {
           if (res.approved) {
             this.checktype = 0;

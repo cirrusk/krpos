@@ -296,6 +296,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.finishStatus = 'retry';
             this.apprmessage = res.msg;
             this.dupcheck = false;
+            this.spinner.hide();
           } else {
             if (res.approved) {
               this.finishStatus = StatusDisplay.PAID;
