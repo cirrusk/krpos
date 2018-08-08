@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { ApiService, Config } from '../../core';
-import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData } from '../../data';
+import { ApiService, Config, StorageService } from '../../core';
+import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo } from '../../data';
 import { OrderList } from '../../data/models/order/order';
 import { HttpParams, HttpClient, HttpHeaders, HttpResponseBase } from '../../../../node_modules/@angular/common/http';
 
@@ -13,6 +13,7 @@ export class OrderService {
 
   constructor(private api: ApiService,
     private httpClient: HttpClient,
+    private storage: StorageService,
     private config: Config) { }
 
   /**
@@ -69,7 +70,10 @@ export class OrderService {
       });
     }
 
-    const orderData = new OrderData(amwayBusinessNature, arrChannels, arrOrderTypes, arrDeliveryModes, statuses, confirm, isEasyPickupOrder, sort);
+    const terminal: TerminalInfo = this.storage.getTerminalInfo();
+    const apname: string = terminal.pointOfService.name;
+
+    const orderData = new OrderData(amwayBusinessNature, arrChannels, arrOrderTypes, arrDeliveryModes, statuses, confirm, isEasyPickupOrder, sort, apname);
 
     if (searchType === 'phone') {
       orderData.phoneNumber = searchText;

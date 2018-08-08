@@ -12,8 +12,11 @@ export class OrderData {
     amwayBusinessNature: string;
     isEasyPickupOrder: boolean;
     sorts: string | Array<SortData>; // List<SortData>
+    pickupStore: string;
     constructor(amwayBusinessNature: string, salesChannels?: Array<string>, orderTypes?: Array<string>,
-        deliveryModes?: Array<string>, statuses?: Array<string>, confirm?: boolean, isEasyPickupOrder?: boolean, sorts?: string | Array<SortData>
+        deliveryModes?: Array<string>, statuses?: Array<string>, confirm?: boolean,
+        isEasyPickupOrder?: boolean, sorts?: string | Array<SortData>,
+        pickupStore?: string
     ) {
         this.amwayBusinessNature = amwayBusinessNature;
         this.salesChannels = salesChannels;
@@ -30,6 +33,7 @@ export class OrderData {
             s.push(new SortData(sorts, false));
             this.sorts = s;
         }
+        this.pickupStore = pickupStore;
     }
 }
 
