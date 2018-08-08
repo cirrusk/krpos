@@ -17,7 +17,7 @@ export class OrderService {
     private config: Config) { }
 
   /**
-   * 주문 목록 조회
+   * 주문 목록 조회 - AP별로 처리되어야함.
    *
    * @param {string} searchText 검색어
    * @param {string} memberType 회원타입
