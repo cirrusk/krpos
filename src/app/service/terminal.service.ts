@@ -7,8 +7,8 @@ import 'rxjs/add/operator/retryWhen';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/concat';
 
-import { ApiService, Config, SpinnerService } from '../core';
-import { TerminalInfo, HttpData, ErrorInfo } from '../data';
+import { ApiService, Config, SpinnerService, Logger } from '../core';
+import { TerminalInfo, HttpData } from '../data';
 
 /**
  * 터미널 정보 취득 서비스
@@ -17,7 +17,7 @@ import { TerminalInfo, HttpData, ErrorInfo } from '../data';
 export class TerminalService {
 
   private terminalTimeout: number;
-  constructor(private api: ApiService, private config: Config, private spinner: SpinnerService) {
+  constructor(private api: ApiService, private config: Config, private spinner: SpinnerService, private logger: Logger) {
     this.terminalTimeout = this.config.getConfig('terminalTimeout', 20);
   }
 
@@ -39,13 +39,14 @@ export class TerminalService {
       .retryWhen(errors => {
         return errors
           .flatMap((error: any) => {
+            this.logger.set('terminal.service', error).error();
             if (error.name === 'TimeoutError') {
               return Observable.of(error.status).delay(1000);
             }
-            return Observable.throw({ error: { name: 'error...', message: 'message...' } });
+            return Observable.throw(error);
           })
           .take(5)
-          .concat(Observable.throw({ error: { name: 'error...', message: 'message...' } }));
+          .concat(Observable.throw(errors));
       })
       .finally(() => { this.spinner.hide(); });
   }
