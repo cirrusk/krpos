@@ -81,7 +81,7 @@ export const environment = {
     checkBlock: '/{baseSiteId}/check-order-block/{userId}'
   },
   logLevel: 'info',
-  terminalTimeout: 20,
+  terminalTimeout: 10,
   directdebitTimeout: 60,
   qzCheck: false,
   healthCheckUse: false,

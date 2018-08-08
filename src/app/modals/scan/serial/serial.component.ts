@@ -49,12 +49,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   apprmessage: string;
   productInfo: Product;
   productCount = [];
+  serialRfids: any;
   private dupcheck = false;
   private serialNumbers = [];
   private rfids = [];
   private scanInputSize: number;
   private scannedCount: number;
-  private serialRfids: any;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService) {
     super(modalService);
