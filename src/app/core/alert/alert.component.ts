@@ -1,7 +1,6 @@
-
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { AlertService, AlertState, AlertType } from '..';
+import { AlertService, AlertState } from '..';
 
 /**
  * alert 메시지 출력
