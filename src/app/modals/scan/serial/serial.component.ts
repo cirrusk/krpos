@@ -37,6 +37,8 @@ import { Product } from '../../../data/models/cart/cart-data';
  * 스크롤은 vertical scrollbar (페이지 X)
  * 다음 빈 칸으로 자동 포커싱 되어야 함
  * (처음에는 2행에 포커싱, 입력 후 엔터키 치면 3행으로 포커스 이동) 스캐너에서 자동 엔터키 입력됨
+ *
+ * @since 2018.08.09 RFID를 Serial에 통합
  */
 @Component({
   selector: 'pos-serial',
