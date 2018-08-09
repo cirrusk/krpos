@@ -1554,13 +1554,14 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 그룹 카트 생성
+   * sub 추가시 volumeAccount
+   * 추가시 가장 앞에 있는 구매자로 조회
+   *
    * @param {string} userId 회원 아이디
    * @param {string} cartId 카트 아이디
    * @param {string} volumeAccount ex) 7480001,7480002 or 7480001
    * @param {boolean} popupFlag 팝업 여부
    * @param {string} productCode 상품코드
-   * sub 추가시 volumeAccount
-   * 추가시 가장 앞에 있는 구매자로 조회
    */
   createGroupCart(userId: string, cartId: string, volumeAccount: string, popupFlag: boolean, productCode?: string) {
     this.cartService.createGroupCart(userId, cartId, volumeAccount).subscribe(
