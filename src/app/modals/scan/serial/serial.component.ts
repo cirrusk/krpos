@@ -148,8 +148,6 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     });
     this.checktype = 0;
     this.apprmessage = '스캔이 완료되었습니다.';
-    console.log(this.scanInputSize);
-    console.log(scannedRegCount);
     if (this.scanInputSize === scannedRegCount) {
       this.result = { serialNumbers: this.serialNumbers };
       this.close();
