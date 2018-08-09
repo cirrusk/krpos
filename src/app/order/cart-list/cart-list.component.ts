@@ -1622,7 +1622,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * Serial/RFID 정보 설정
-   * 
+   *
    * @since 2018.08.09 기존에 Serial 과 RFID로 구분하던 값을
    * Serial 로 통합하고 RFID도 Serial에 저장
    * AS400도 동일하게 하나의 필드로 관리함.
