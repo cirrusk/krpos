@@ -729,6 +729,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 상품 검색 ->  결과 값이 1일 경우 Add to cart
    *
+   * KitProduct 인 경우 Serial, RFID가 있는 제품의 경우
+   * 해당 kitEntry의 quantity 만큼 입력창을 뚫어주어야함.
+   *
    * @param {string} productCode 상품코드
    */
   private selectProductInfo(productCode?: string): void {
