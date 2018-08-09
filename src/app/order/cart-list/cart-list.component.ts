@@ -67,9 +67,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
   private resCartInfo: ResCartInfo;                                         // Cart 정보
   private domain: string;                                                   // api root 도메인
-  private serialNumbers: Array<string>;                                     // Serial 정보 받기
-  private rfids: Array<string>;                                             // RFID 정보 받기
-  private serialRfid: any;                                                  // Serial 또는 RFID 값 입력 화면 첫번째에 뿌리도록.
+  private serialNumbers: Array<string>;                                     // Serial/RFID 정보 받기
+  private serial: string;                                                   // Serial/RFID 값 입력 화면 첫번째에 뿌리도록.
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -333,7 +332,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.setLocalItem('clearclient', {});
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
-    this.initSerialAndRfids();
+    this.initSerials();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -426,7 +425,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       modalId: 'SearchProductComponent'
     }).subscribe(data => {
       if (data) {
-        this.setSerialAndRfids(data);
+        this.setSerials(data);
         this.addToCart(data.productCode);
       }
       setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
@@ -457,12 +456,12 @@ export class CartListComponent implements OnInit, OnDestroy {
           // RFID, SERIAL 입력 받음.
           if (product && (product.rfid || product.serialNumber)) {
             this.modal.openModalByComponent(SerialComponent, {
-              callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serialRfids: this.serialRfid },
+              callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
               closeByClickOutside: false,
               modalId: 'SerialComponent'
             }).subscribe(data => {
               if (data) {
-                this.setSerialAndRfids(data);
+                this.setSerials(data);
                 this.updateItemQtyCart(cartId, result.code, result.qty);
               }
             });
@@ -748,7 +747,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   modalId: 'SerialComponent'
                 }).subscribe(data => {
                   if (data) {
-                    this.setSerialAndRfids(data);
+                    this.setSerials(data);
                     this.addCartEntries(productCode);
                   }
                 });
@@ -959,7 +958,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         this.addCartEntries(code);
       }
-      this.initSerialAndRfids();
+      this.initSerials();
     }
   }
 
@@ -974,7 +973,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
-      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers, this.rfids).subscribe(
+      this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers).subscribe(
         result => {
           this.resCartInfo = result;
           this.addCartModel = this.resCartInfo.cartModifications.cartModifications;
@@ -988,7 +987,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.orderType === 'g') {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
-            this.initSerialAndRfids();
+            this.initSerials();
           } else {
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -1064,7 +1063,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (this.orderType === 'g') {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
-              this.initSerialAndRfids();
+              this.initSerials();
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -1621,48 +1620,25 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Serial / RFID 정보 설정
+   * Serial/RFID 정보 설정
    *
-   * @param {any} data Serial / RFID 스캔 정보
+   * @param {any} data Serial/RFID 스캔 정보
    */
-  private setSerialAndRfids(data: any) {
-    this.logger.set('cart.list.component', `serial / rfid : ${Utils.stringify(data)}`).debug();
-    if (Utils.isNotEmpty(data.serialNumber)) {
-      this.serialNumbers.push(data.serialNumber);
-    }
-    if (Utils.isNotEmpty(data.rfid)) {
-      this.rfids.push(data.rfid);
-    }
+  private setSerials(data: any) {
+    this.logger.set('cart.list.component', `serial/rfid : ${Utils.stringify(data)}`).debug();
     if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
       data.serialNumbers.forEach(serial => {
         this.serialNumbers.push(serial);
       });
     }
-    if (data.rfids && Array.isArray(data.rfids)) {
-      data.rfids.forEach(rfid => {
-        this.rfids.push(rfid);
-      });
-    }
-    this.setSerialRfid();
+    this.serial = (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null; // 초기값 출력 세팅
   }
 
   /**
-   * Serial 과 RFID 변수 초기화
+   * Serial/RFID 변수 초기화
    */
-  private initSerialAndRfids() {
+  private initSerials() {
     this.serialNumbers = new Array<string>();
-    this.rfids = new Array<string>();
-  }
-
-  /**
-   * Serial / RFID 정보 조회 - 시리얼 입력 컴포넌트에 전달
-   * 화면 출력용으로만 사용
-   */
-  private setSerialRfid(): void {
-    this.serialRfid = {
-      serial: (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null,
-      rfid: (this.rfids.length > 0) ? this.rfids[0] : null
-    };
   }
 
   @HostListener('document: keydown', ['$event', '$event.target'])

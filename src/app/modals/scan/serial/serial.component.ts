@@ -49,10 +49,9 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   apprmessage: string;
   productInfo: Product;
   productCount = [];
-  serialRfids: any;
+  serial: string;
   private dupcheck = false;
   private serialNumbers = [];
-  private rfids = [];
   private scanInputSize: number;
   private scannedCount: number;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
@@ -66,7 +65,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnInit() {
     this.productInfo = this.callerData.productInfo;
-    this.serialRfids = this.callerData.serialRfids;
+    this.serial = this.callerData.serial;
     const osize: number = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
     const psize: number = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
     if (psize === 0) {
@@ -76,15 +75,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       this.productCount = range(0, this.scanInputSize);
     }
     if (this.productInfo) {
-      if (this.productInfo.rfid && !this.productInfo.serialNumber) {
-        this.regLabel = 'RFID 스캔';
-      } else if (this.productInfo.serialNumber && !this.productInfo.rfid) {
-        this.regLabel = '시리얼 번호 입력';
-      } else if (this.productInfo.serialNumber && this.productInfo.rfid) {
-        this.regLabel = '시리얼 번호 입력 / RFID 스캔';
-      }
+      this.regLabel = '시리얼 번호 입력 / RFID 스캔';
     }
-    // console.log(this.codes.first.nativeElement);
     setTimeout(() => { this.codes.first.nativeElement.focus(); }, 50);
   }
 
@@ -112,35 +104,19 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
           elm.focus();
         }
       });
-      // if (Utils.isNotEmpty(code)) {
-        this.scannedCount++;
-      // }
+      this.scannedCount++;
     } else { // 마지막 요소임.
-      // if (Utils.isNotEmpty(code)) {
-        this.scannedCount++;
-      // }
+      this.scannedCount++;
       evt.srcElement.blur();
     }
     let chkidx = 0;
-    // let prdname: string;
     if (Utils.isEmpty(code)) {
       chkidx++;
-      // prdname = codes.getAttribute('data-prdname');
     }
-    const target = evt.target || evt.srcElement || evt.currentTarget;
-    // if (chkidx !== 0) {
-      // this.checktype = -1;
-      // this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
-      // if (target) { setTimeout(() => { target.focus(); }, 50); }
-      // return;
-    // } else {
-      // this.checktype = 0;
-      if (this.scanInputSize === this.scannedCount) {
-        this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = '스캔이 완료되었습니다.';
-      }
-      // if (target) { setTimeout(() => { target.setAttribute('readonly', 'readonly'); target.blur(); }, 50); }
-    // }
+    if (this.scanInputSize === this.scannedCount) {
+      this.finishStatus = StatusDisplay.PAID;
+      this.apprmessage = '스캔이 완료되었습니다.';
+    }
   }
 
   /**
@@ -150,54 +126,32 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
    * 빈값으로 처리하거나 제거하도록 함.
    */
   reg() {
-    // let chkidx = 0;
-    // let prdname: string;
-    // let pelm: ElementRef;
     let stype: string;
     let rtype: string;
-    let serial = '';
-    let rfid = '';
     let scannedRegCount = 0;
 
     this.codes.forEach(cd => {
       if (cd.nativeElement.getAttribute('type') === 'text') {
         if (Utils.isEmpty(cd.nativeElement.value)) {
-          // chkidx++;
-          // prdname = cd.nativeElement.getAttribute('data-prdname');
-          // pelm = cd;
-          // return false;
           scannedRegCount++;
         } else {
           stype = cd.nativeElement.getAttribute('data-serial') ? cd.nativeElement.getAttribute('data-serial') : 'false';
           rtype = cd.nativeElement.getAttribute('data-rfid') ? cd.nativeElement.getAttribute('data-rfid') : 'false';
-          if (stype === 'true' && rtype === 'false') {
-            serial = cd.nativeElement.value;
-            this.serialNumbers.push(serial);
-            scannedRegCount++;
-          }
-          if (stype === 'false' && rtype === 'true') {
-            rfid = cd.nativeElement.value;
-            this.rfids.push(rfid);
+          if (stype === 'true' || rtype === 'true') {
+            this.serialNumbers.push(cd.nativeElement.value);
             scannedRegCount++;
           }
         }
       }
     });
-    // if (chkidx !== 0) {
-      // this.checktype = -1;
-      // this.apprmessage = `${prdname} 상품을 스캔해주세요.`;
-      // if (pelm) { setTimeout(() => { pelm.nativeElement.focus(); }, 50); }
-      // return;
-    // } else {
-      this.checktype = 0;
-      this.apprmessage = '스캔이 완료되었습니다.';
-      console.log(this.scanInputSize);
-      console.log(scannedRegCount);
-      if (this.scanInputSize === scannedRegCount) {
-        this.result = { serialNumber: '', serialNumbers: this.serialNumbers, rfid: '', rfids: this.rfids };
-        this.close();
-      }
-    // }
+    this.checktype = 0;
+    this.apprmessage = '스캔이 완료되었습니다.';
+    console.log(this.scanInputSize);
+    console.log(scannedRegCount);
+    if (this.scanInputSize === scannedRegCount) {
+      this.result = { serialNumbers: this.serialNumbers };
+      this.close();
+    }
   }
 
   close() {
