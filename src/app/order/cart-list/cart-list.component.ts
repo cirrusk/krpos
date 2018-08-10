@@ -626,7 +626,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     }, error => {
       const errdata = Utils.getError(error);
       if (errdata) {
-        this.alert.error({ message: `${errdata.message}` });
+        this.logger.set('cart.list.component', `${errdata.message}`).error();
+        this.alert.error({ message: this.message.get('server.error') });
       }
     });
   }
@@ -773,7 +774,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('cart.list.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error') });
           }
         });
     } else { // 검색어가 없을 경우는 바로 검색팝업
@@ -892,7 +894,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       }, error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.alert.error({ message: `${errdata.message}` });
+          this.logger.set('cart.list.component', `${errdata.message}`).error();
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }
@@ -913,7 +916,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           error => {
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.alert.error({ message: `${errdata.message}` });
+              this.logger.set('cart.list.component', `${errdata.message}`).error();
+              this.alert.error({ message: this.message.get('server.error') });
             }
           });
     } else {
@@ -943,7 +947,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.alert.error({ message: `${errdata.message}` });
+          this.logger.set('cart.list.component', `${errdata.message}`).error();
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }
@@ -1005,7 +1010,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('cart.list.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error') });
           }
         },
         () => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
@@ -1080,7 +1086,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           error => {
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.alert.error({ message: `${errdata.message}` });
+              this.logger.set('cart.list.component', `${errdata.message}`).error();
+              this.alert.error({ message: this.message.get('server.error') });
             }
           });
     } else {
@@ -1114,7 +1121,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           error => {
             const errdata = Utils.getError(error);
             if (errdata) {
-              this.alert.error({ message: `${errdata.message}` });
+              this.logger.set('cart.list.component', `${errdata.message}`).error();
+              this.alert.error({ message: this.message.get('server.error') });
             }
           });
     } else {
@@ -1137,7 +1145,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('cart.list.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error') });
           }
         });
     } else {
@@ -1179,7 +1188,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('cart.list.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error') });
           }
         });
     } else {
@@ -1210,7 +1220,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.alert.error({ message: `${errdata.message}` });
+          this.logger.set('cart.list.component', `${errdata.message}`).error();
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }
@@ -1229,7 +1240,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('cart.list.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error') });
           }
         });
     } else {
@@ -1252,7 +1264,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           const errdata = Utils.getError(error);
           if (errdata) {
-            this.alert.error({ message: `${errdata.message}` });
+            this.logger.set('cart.list.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error') });
           }
         });
     } else {
@@ -1550,7 +1563,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.alert.error({ message: `${errdata.message}` });
+          this.logger.set('cart.list.component', `${errdata.message}`).error();
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }
@@ -1618,7 +1632,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.alert.error({ message: `${errdata.message}` });
+          this.logger.set('cart.list.component', `${errdata.message}`).error();
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }
