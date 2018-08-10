@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalComponent, ModalService, AlertService, Logger } from '../../../../core';
 import { OrderHistory } from '../../../../data';
-import { OrderService } from '../../../../service';
+import { OrderService, MessageService } from '../../../../service';
 import { Utils } from '../../../../core/utils';
 
 @Component({
@@ -14,6 +14,7 @@ export class CancelEcpPrintComponent extends ModalComponent implements OnInit {
 
   constructor(protected modalService: ModalService,
     private orderService: OrderService,
+    private message: MessageService,
     private logger: Logger,
     private alert: AlertService) {
     super(modalService);
@@ -38,7 +39,7 @@ export class CancelEcpPrintComponent extends ModalComponent implements OnInit {
         if (errdata) {
           this.logger.set('cancel-ecp-print.component', `Cancel Ecp Print error type : ${errdata.type}`).error();
           this.logger.set('cancel-ecp-print.component', `Cancel Ecp Print error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }

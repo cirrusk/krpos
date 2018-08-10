@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
-import { BatchService } from '../service';
+import { BatchService, MessageService } from '../service';
 import { InfoBroker } from '../broker';
 import { AccessToken, LockType } from '../data';
 import { Utils } from '../core/utils';
@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private batch: BatchService,
     private storage: StorageService,
     private alert: AlertService,
+    private message: MessageService,
     private logger: Logger,
     private router: Router) {
     this.orderCount = 0;
@@ -102,7 +103,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             if (errdt.type === 'AmbiguousIdentifierError') {
               this.logger.set('dashboard.component', `${errdt.message}`).error();
             }
-            this.alert.error({ message: `${errdt.message}` });
+            this.logger.set('dashboard.component', `${errdt.message}`).error();
+            this.alert.error({ message: this.message.get('server.error')  });
           }
         });
     }

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
 import { ModalComponent, ModalService, StorageService, Logger, AlertService } from '../../core';
-import { AuthService } from '../../service';
+import { AuthService, MessageService } from '../../service';
 import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
 
@@ -37,6 +37,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
   constructor(
     protected modalService: ModalService,
     private auth: AuthService,
+    private message: MessageService,
     private storage: StorageService,
     private info: InfoBroker,
     private alert: AlertService,
@@ -119,9 +120,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('login.component', `auth and token error type : ${errdata.type}`).error();
           this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
-import { SearchService } from '../../../service';
+import { SearchService, MessageService } from '../../../service';
 import { BerData } from '../../../data/models/common/ber-result';
 import { Utils } from '../../../core/utils';
 
@@ -19,6 +19,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   @ViewChild('inputSearchBer') inputSearchBer: ElementRef;
   constructor(protected modalService: ModalService,
     private search: SearchService,
+    private message: MessageService,
     private alert: AlertService,
     private logger: Logger) {
     super(modalService);
@@ -66,9 +67,8 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
         const errdata = Utils.getError(error);
         this.berSeachMarker = -1;
         if (errdata) {
-          this.logger.set('search.ber.component', `search ber error type : ${errdata.type}`).error();
           this.logger.set('search.ber.component', `search ber error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }

@@ -285,7 +285,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           const errdata = Utils.getError(error);
           if (errdata) {
             this.logger.set('header.component', `${errdata.message}`).error();
-            // this.alert.error({ message: `${errdata.message}` });
           }
         }
       );

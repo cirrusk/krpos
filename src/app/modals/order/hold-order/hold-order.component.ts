@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
-import { CartService, PagerService } from '../../../service';
+import { CartService, PagerService, MessageService } from '../../../service';
 import { RestoreCartBroker, InfoBroker } from '../../../broker';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
@@ -30,6 +30,7 @@ export class HoldOrderComponent extends ModalComponent implements OnInit, OnDest
 
   constructor(modalService: ModalService,
     private cartService: CartService,
+    private message: MessageService,
     private alert: AlertService,
     private pagerService: PagerService,
     private restoreCartBroker: RestoreCartBroker,
@@ -75,7 +76,7 @@ export class HoldOrderComponent extends ModalComponent implements OnInit, OnDest
         if (errdata) {
           this.logger.set('holdOrder.component', `Get Carts error type : ${errdata.type}`).error();
           this.logger.set('holdOrder.component', `Get Carts error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }

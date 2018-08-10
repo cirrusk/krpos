@@ -305,7 +305,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.alert.error({ message: `${errdata.message}` });
+          this.logger.set('complex.payment.component', `${errdata.message}`).error();
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }

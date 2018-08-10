@@ -88,7 +88,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
         if (errdata) {
           this.logger.set('ecp_confirm.component', `get order detail error type : ${errdata.type}`).error();
           this.logger.set('ecp_confirm.component', `get order detail error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.messageService.get('server.error') });
         }
       });
   }
@@ -167,7 +167,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
             if (errdata) {
               this.logger.set('ecp-confirm.component', `get order detail error type : ${errdata.type}`).error();
               this.logger.set('ecp-confirm.component', `get order detail error message : ${errdata.message}`).error();
-              this.alert.error({ message: `${errdata.message}` });
+              this.alert.error({ message: this.messageService.get('server.error') });
             }
           });
       }
@@ -260,7 +260,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
           if (errdata) {
             this.logger.set('ecp-confirm.component', `confirm error type : ${errdata.type}`).error();
             this.logger.set('ecp-confirm.component', `confirm error message : ${errdata.message}`).error();
-            this.alert.error({ message: `${errdata.message}` });
+            this.alert.error({ message: this.messageService.get('server.error') });
           }
         });
     }

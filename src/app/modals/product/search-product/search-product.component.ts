@@ -9,6 +9,7 @@ import { Product, Products } from '../../../data/models/cart/cart-data';
 import { Utils } from '../../../core/utils';
 import { CartInfo } from './../../../data/models/order/cart-info';
 import { SerialComponent } from '../../scan/serial/serial.component';
+import { MessageService } from '../../../service';
 
 @Component({
   selector: 'pos-search-product',
@@ -35,6 +36,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private search: SearchService,
+    private message: MessageService,
     private alert: AlertService,
     private logger: Logger,
     private renderer: Renderer2) {
@@ -136,7 +138,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         if (errdata) {
           this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
           this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }

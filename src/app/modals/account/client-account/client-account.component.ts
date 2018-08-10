@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, AlertService, ModalService, Logger, Modal } from '../../../core';
 import { Utils } from '../../../core/utils';
 import { AccountList } from '../../../data';
-import { AccountService } from '../../../service';
+import { AccountService, MessageService } from '../../../service';
 
 @Component({
   selector: 'pos-client-account',
@@ -23,6 +23,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   phoneNumInput: FormControl = new FormControl('');
   constructor(protected modalService: ModalService,
     private modal: Modal,
+    private message: MessageService,
     private alert: AlertService,
     private accountService: AccountService,
     private logger: Logger) {
@@ -101,9 +102,8 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('client.account.component', `create new customer error type : ${errdata.type}`).error();
           this.logger.set('client.account.component', `create new customer error message : ${errdata.message}`).error();
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: this.message.get('server.error') });
         }
       });
   }
