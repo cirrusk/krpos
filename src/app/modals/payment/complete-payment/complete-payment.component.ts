@@ -13,6 +13,11 @@ import { ReceiptService, PaymentService, MessageService } from '../../../service
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
 
+/**
+ * 결제 완료 컴포넌트
+ * 모든 결제 수행 시 최종 결제 완료 창을 출력해야함.
+ * 카드결제 시 최소 결제 금액은 200원 이상임.
+ */
 @Component({
   selector: 'pos-complete-payment',
   templateUrl: './complete-payment.component.html'
@@ -193,6 +198,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   /**
    * 영수증 출력 및 카트 초기화
+   *
+   * @param isCashReceipt 현금영수증 증빙 여부
    */
   private printAndCartInit(isCashReceipt?: boolean) {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
@@ -242,6 +249,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   /**
    * 결제 최종 엔터키 입력 시
+   *
+   * @param isCashReceipt 현금영수증 증빙 여부
    */
   private payFinishByEnter(isCashReceipt?: boolean) {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
@@ -308,13 +317,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   /**
    * 현금 결제가 포함되면 현금 영수증 신청이 가능
    * directDebitPaymentInfo // 자동이체
-   * monetaryPaymentInfo // AR/AP
+   * monetaryPaymentInfo // Re-Cash
    * cashPaymentInfo // 현금
    */
   private isReceiptEnable() {
     if (this.paymentcapture.cashPaymentInfo // 현금
       || this.paymentcapture.monetaryPaymentInfo // AP
-      // || this.paymentcapture.directDebitPaymentInfo // 자동이체
+      || this.paymentcapture.directDebitPaymentInfo // 자동이체
     ) {
       return true;
     }
