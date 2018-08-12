@@ -64,18 +64,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       }, 50);
     } else {
       this.paidamount = this.cartInfo.totalPrice.value;
-      if (this.paymentType === 'n') {
-        this.paid.nativeElement.value = this.paidamount;
-        setTimeout(() => {
-          this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
-          this.ddpassword.nativeElement.focus();
-        }, 50);
-      } else {
-        if (this.storage.getPay() > 0) {
-          this.paidamount = this.storage.getPay();
-        }
-        setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
+      if (this.storage.getPay() > 0) {
+        this.paidamount = this.storage.getPay();
       }
+      setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
     }
   }
 
@@ -133,18 +125,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     directdebit.paymentMode = new PaymentModeData(PaymentModes.DIRECTDEBIT);
     directdebit.currency = new CurrencyData();
     if (this.paymentcapture) {
-      if (this.paymentType === 'n') {
-        const paymentcapture = new PaymentCapture();
-        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        paymentcapture.directDebitPaymentInfo = directdebit;
-        capturepaymentinfo.paymentModeCode = PaymentModes.DIRECTDEBIT;
-        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-      } else {
-        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        this.paymentcapture.directDebitPaymentInfo = directdebit;
-        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-      }
+      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      this.paymentcapture.directDebitPaymentInfo = directdebit;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
@@ -172,28 +156,24 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       setTimeout(() => { this.ddpassword.nativeElement.blur(); }, 50);
       const nPaidAmount = Number(this.paidamount);
       const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0; // 결제금액
-      if (this.paymentType === 'n') {
-        if (nPaidAmount === paid) {
-          this.approvalAndPayment();
-        }
+
+      if (nPaidAmount < paid) {
+        this.checktype = -3;
+        this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 큽니다.';
+      } else if (nPaidAmount > paid) { // 다음결제수단
+        this.checktype = 0;
+        this.storage.setPay(nPaidAmount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+        this.makePaymentCaptureData(paid);
+        this.result = this.paymentcapture;
+        this.finishStatus = StatusDisplay.PAID;
+        this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
       } else {
-        if (nPaidAmount < paid) {
-          this.checktype = -3;
-          this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 큽니다.';
-        } else if (nPaidAmount > paid) { // 다음결제수단
-          this.checktype = 0;
-          this.storage.setPay(nPaidAmount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-          this.makePaymentCaptureData(paid);
-          this.result = this.paymentcapture;
-          this.finishStatus = StatusDisplay.PAID;
-          this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
-        } else {
-          // this.approvalAndPayment();
-          this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
-          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-          this.completePayPopup(nPaidAmount, paid, 0);
-        }
+        // this.approvalAndPayment();
+        this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
+        this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
+        this.completePayPopup(nPaidAmount, paid, 0);
       }
+
     } else {
       this.checktype = -2;
       this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
@@ -256,22 +236,15 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   private payFinishByEnter() {
-    if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
-        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
+
+    if (this.change === 0) {
+      const paid = this.paid.nativeElement.value; // 결제금액
+      if (Number(this.paidamount) === Number(paid)) { // 결제완료
+        this.completePayPopup(paid, this.paidamount, this.change);
       }
-      this.close();
-    } else { // 복합결제
-      if (this.change === 0) {
-        const paid = this.paid.nativeElement.value; // 결제금액
-        if (Number(this.paidamount) === Number(paid)) { // 결제완료
-          this.completePayPopup(paid, this.paidamount, this.change);
-        }
-      }
-      this.close();
     }
+    this.close();
+
   }
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
@@ -279,7 +252,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering: this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,

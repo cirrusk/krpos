@@ -203,4 +203,11 @@ export class PaymentService {
     return this.api.post(data);
   }
 
+
+  // 1.Cash
+  // 2.CreditCard
+  // 3.DirectDebit
+  // 4.IcCard
+  // 5.Point
+  // 6.ReCash
 }

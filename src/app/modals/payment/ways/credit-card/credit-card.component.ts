@@ -63,19 +63,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    if (this.paymentType === 'n') {
+    if (this.storage.getPay() === 0) {
       this.paidamount = this.cartInfo.totalPrice.value;
-      this.paid.nativeElement.value = this.paidamount;
-      setTimeout(() => { this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly'); }, 50);
-      this.change = 0;
     } else {
-      if (this.storage.getPay() === 0) {
-        this.paidamount = this.cartInfo.totalPrice.value;
-      } else {
-        this.paidamount = this.storage.getPay();
-      }
-      setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
+      this.paidamount = this.storage.getPay();
     }
+    setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
   }
 
   ngOnDestroy() {
@@ -91,25 +84,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   paidCal(paid: number) {
     const nPaid = paid ? Number(paid) : 0;
     this.change = this.paidamount - nPaid;
-    if (this.paymentType === 'c') {
-      if (this.change < 0) {
-        this.checktype = -2;
-        this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
-      } else {
-        this.checktype = 0;
-        this.apprmessage = '';
-      }
+    if (this.change < 0) {
+      this.checktype = -2;
+      this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
     } else {
-      if (this.change > 0) {
-        this.checktype = -1;
-        this.apprmessage = this.message.get('credit.valid.smallpaid'); // '실결제금액이 총 매출보다 작습니다.';
-      } else if (this.change < 0) {
-        this.checktype = -2;
-        this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
-      } else {
-        this.checktype = 0;
-        this.apprmessage = '';
-      }
+      this.checktype = 0;
+      this.apprmessage = '';
     }
   }
 
@@ -189,18 +169,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     const capturepaymentinfo = new CapturePaymentInfo();
     const ccard = this.makePaymentInfo(paidamount);
     if (this.paymentcapture) {
-      if (this.paymentType === 'n') {
-        const paymentcapture = new PaymentCapture();
-        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        paymentcapture.setCcPaymentInfo = ccard;
-        capturepaymentinfo.paymentModeCode = PaymentModes.CREDITCARD;
-        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-      } else {
-        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        this.paymentcapture.setCcPaymentInfo = ccard;
-        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-      }
+      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      this.paymentcapture.setCcPaymentInfo = ccard;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
+      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
@@ -231,8 +203,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setPaymentType = CCPaymentType.GENERAL;
     ccard.setCardType = PaymentModes.CREDITCARD;
     ccard.setTransactionId = this.cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
-    // ccard.setValidToMonth = '';
-    // ccard.setValidToYear = '';
     const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
     if (Utils.isNotEmpty(signdata)) {
       ccard.setPaymentSignature = signdata;
@@ -258,13 +228,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         }
       }
     );
-    if (this.paymentType === 'n') {
-      if (this.change === 0) {
-        this.cardPayAndPlaceOrder();
-      }
-    } else {
-      this.cardPay();
-    }
+    this.cardPay();
   }
 
   /**
@@ -297,7 +261,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
               if (this.change === 0) { // 더이상 결제할 금액이 없으므로 완료처리함.
                 this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
-                // this.completePayPopup(paidprice, this.paidamount, this.change);
               } else {
                 this.apprmessage = this.message.get('card.payment.success.next'); // '카드결제 승인이 완료되었습니다.';
               }
@@ -452,23 +415,13 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private payFinishByEnter() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      if (this.paymentType === 'n') { // 일반결제
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
-        this.logger.set('credit.card.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
+      const change = this.paidamount - this.paid.nativeElement.value;
+      if (change === 0) {
+        const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
+        this.completePayPopup(paidprice, this.paidamount, this.change);
+      } else {
+        this.result = this.paymentcapture;
         this.close();
-      } else { // 복합결제
-        const change = this.paidamount - this.paid.nativeElement.value;
-        if (change === 0) {
-          const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
-          this.completePayPopup(paidprice, this.paidamount, this.change);
-          // this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-          // this.logger.set('credit.card.component', '복합 결제 장바구니 초기화...').debug();
-          // this.info.sendInfo('orderClear', 'clear');
-        } else {
-          this.result = this.paymentcapture;
-          this.close();
-        }
       }
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);

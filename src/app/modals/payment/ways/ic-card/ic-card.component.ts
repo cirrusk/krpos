@@ -52,15 +52,13 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
-    if (this.paymentType === 'n') {
+
+    if (this.storage.getPay() === 0) {
       this.paidamount = this.cartInfo.totalPrice.value;
     } else {
-      if (this.storage.getPay() === 0) {
-        this.paidamount = this.cartInfo.totalPrice.value;
-      } else {
-        this.paidamount = this.storage.getPay();
-      }
+      this.paidamount = this.storage.getPay();
     }
+
   }
 
   ngOnDestroy() {
@@ -77,18 +75,12 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     const capturepaymentinfo = new CapturePaymentInfo();
     const iccard = this.makePaymentInfo(paidamount);
     if (this.paymentcapture) {
-      if (this.paymentType === 'n') {
-        const paymentcapture = new PaymentCapture();
-        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        paymentcapture.setIcCardPaymentInfo = iccard;
-        capturepaymentinfo.paymentModeCode = PaymentModes.ICCARD;
-        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-      } else {
-        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        this.paymentcapture.setIcCardPaymentInfo = iccard;
-        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-      }
+
+      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      this.paymentcapture.setIcCardPaymentInfo = iccard;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
+
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
@@ -304,14 +296,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   private payFinishByEnter() {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      if (this.paymentType === 'n') { // 일반결제
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
-        this.logger.set('cash.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
-      } else {
-        this.completePayPopup(this.paidamount, this.paidamount, 0);
-      }
+      this.completePayPopup(this.paidamount, this.paidamount, 0);
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');

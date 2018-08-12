@@ -63,15 +63,13 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    if (this.paymentType === 'n') {
+
+    if (this.storage.getPay() === 0) {
       this.paymentprice = this.cartInfo.totalPrice.value;
     } else {
-      if (this.storage.getPay() === 0) {
-        this.paymentprice = this.cartInfo.totalPrice.value;
-      } else {
-        this.paymentprice = this.storage.getPay();
-      }
+      this.paymentprice = this.storage.getPay();
     }
+
     this.getBalance();
   }
 
@@ -265,18 +263,12 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
     point.setCurrencyData = new CurrencyData();
     if (this.paymentcapture) {
-      if (this.paymentType === 'n') {
-        const paymentcapture = new PaymentCapture();
-        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        paymentcapture.setPointPaymentInfo = point;
-        capturepaymentinfo.paymentModeCode = PaymentModes.POINT;
-        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-      } else {
-        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        this.paymentcapture.setPointPaymentInfo = point;
-        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-      }
+
+      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      this.paymentcapture.setPointPaymentInfo = point;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
+
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
@@ -303,7 +295,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering: this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,
@@ -318,28 +310,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
    * 복합결제 : 카트 및 클라이언트 갱신
    */
   private payFinishByEnter() {
-    if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
-        this.info.sendInfo('orderClear', 'clear');
-      }
-      this.close();
-    } else { // 복합결제
-      // const payment = this.paymentprice; // 결제금액
-      // let usepoint;
-      // if (this.isAllPay) {
-      //   usepoint = this.paymentprice;
-      // } else {
-      //   usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-      // }
-      // if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      //   if (usepoint === payment) { // 금액이 같을 경우만 영수증 출력
-      //     this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture);
-      //     this.info.sendInfo('orderClear', 'clear');
-      //   }
-      // }
-      this.close();
-    }
+    this.close();
   }
 
   close() {

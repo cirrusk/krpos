@@ -52,15 +52,13 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    if (this.paymentType === 'n') {
+
+    if (this.storage.getPay() === 0) {
       this.paidamount = this.cartInfo.totalPrice.value;
     } else {
-      if (this.storage.getPay() === 0) {
-        this.paidamount = this.cartInfo.totalPrice.value;
-      } else {
-        this.paidamount = this.storage.getPay();
-      }
+      this.paidamount = this.storage.getPay();
     }
+
     this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
       this.recash = result;
     });
@@ -117,7 +115,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     evt.preventDefault();
     const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
     const check = this.paidamount - usepoint;
-    console.log('=====' + this.change);
     if (this.change < 0) {
       this.checktype = -3;
       this.dupcheck = false;
@@ -126,78 +123,25 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       this.checktype = 0;
     }
-    if (this.paymentType === 'n') {
-      // 전체결제금액을 Re-Cash로 적용 후 A포인트에 추가 금액 입력 후, 실물 키보드의 Enter 키가 입력된 경우, 경고 팝업 뜸 (반대 경우도 포함)
-      // : 이미 Re-Cash(A포인트)로 전체 결제금액을 사용 중입니다. A포인트(Re-Cash)금액은 제외 됩니다.
-      if (check > 0) {
-        this.checktype = -1;
-        this.dupcheck = false;
-        this.apprmessage = this.message.get('recash.smallpaid'); // '결제 사용할 금액이 부족합니다.';
-      } else if (check < 0) {
-        this.checktype = -2;
-        this.dupcheck = false;
-        this.apprmessage = this.message.get('recash.overpaid'); // '잔액보다 사용하려는 금액이 클 수 없습니다.';
-      } else {
-        this.checktype = 0;
-        this.paymentAndPlaceOrder();
-      }
-    } else {
-      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
-      let paid: number = this.paidamount;
-      if (!this.isAllPay) {
-        paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
-      }
-      this.paymentcapture = this.makePaymentCaptureData(paid).capturePaymentInfoData;
-      this.result = this.paymentcapture;
-      if (check > 0) { // 결제할것이 남음.
-        this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-        this.sendPaymentAndOrder(this.paymentcapture, null);
-        this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = this.message.get('payment.success.next');
-      } else if (check === 0) {
-        this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = this.message.get('payment.success');
-        this.completePayPopup(this.paidamount, usepoint, check);
-      }
-    }
-  }
 
-  private paymentAndPlaceOrder() {
-    const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
-    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
-    this.logger.set('recash.component', 'recash payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(result => {
-      this.orderInfo = result;
-      this.logger.set('cash.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-      this.finishStatus = result.statusDisplay;
-      if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-          setTimeout(() => {
-            this.usePoint.nativeElement.blur(); // keydown.enter 처리 안되도록
-            this.renderer.setAttribute(this.usePoint.nativeElement, 'readonly', 'readonly');
-          }, 5);
-          this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-        } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-          this.finishStatus = 'recart';
-        } else { // CART 삭제된 상태
-          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-          this.finishStatus = 'recart';
-        }
-      } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-        // cart-list.component에 재생성 이벤트 보내서 처리
-        this.finishStatus = 'fail';
-        this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-      }
-      this.storage.removePay();
-    }, error => {
-      this.finishStatus = 'fail';
-      const errdata = Utils.getError(error);
-      if (errdata) {
-        this.apprmessage = errdata.message;
-      }
-    });
+    setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+    let paid: number = this.paidamount;
+    if (!this.isAllPay) {
+      paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
+    }
+    this.paymentcapture = this.makePaymentCaptureData(paid).capturePaymentInfoData;
+    this.result = this.paymentcapture;
+    if (check > 0) { // 결제할것이 남음.
+      this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.finishStatus = StatusDisplay.PAID;
+      this.apprmessage = this.message.get('payment.success.next');
+    } else if (check === 0) {
+      this.finishStatus = StatusDisplay.PAID;
+      this.apprmessage = this.message.get('payment.success');
+      this.completePayPopup(this.paidamount, usepoint, check);
+    }
+
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
@@ -206,18 +150,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
     recash.setCurrencyData = new CurrencyData();
     if (this.paymentcapture) {
-      if (this.paymentType === 'n') {
-        const paymentcapture = new PaymentCapture();
-        paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        paymentcapture.setMonetaryPaymentInfo = recash;
-        capturepaymentinfo.paymentModeCode = PaymentModes.ARCREDIT;
-        capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-      } else {
-        this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-        this.paymentcapture.setMonetaryPaymentInfo = recash;
-        capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-        capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-      }
+
+      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      this.paymentcapture.setMonetaryPaymentInfo = recash;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
+
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
@@ -251,7 +189,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: {
         account: this.accountInfo, cartInfo: this.cartInfo, paymentInfo: this.paymentcapture,
-        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering : this.amwayExtendedOrdering
+        paidAmount: paidAmount, payAmount: payAmount, change: change, amwayExtendedOrdering: this.amwayExtendedOrdering
       },
       closeByClickOutside: false,
       closeByEscape: false,
@@ -264,16 +202,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
    * 결제 종료 후 엔터키 처리
    */
   private payFinishByEnter() {
-    if (this.paymentType === 'n') { // 일반결제
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, {});
-        this.logger.set('recash.component', '일반결제 장바구니 초기화...').debug();
-        this.info.sendInfo('orderClear', 'clear');
-      }
-      this.close();
-    } else {
-      this.close();
-    }
+    this.close();
   }
 
   close() {
