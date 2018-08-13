@@ -50,7 +50,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
     this.getBalance(this.orderInfo.user.uid);
-    if (this.orderInfo.parentOrder !== '') {
+    if (this.orderInfo.isGroupCombinationOrder) {
       this.orderType = 'g';
     }
     this.checkCancelStatus(this.orderInfo);
@@ -84,7 +84,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.cancelFlag = false;
     }
 
-    if (this.orderInfo.parentOrder !== undefined && this.orderInfo.code !== this.orderInfo.parentOrder) {
+    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
       this.groupMainFlag = false;
     }
   }

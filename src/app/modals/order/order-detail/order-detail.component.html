@@ -14,7 +14,7 @@
                         <span class="logo"><img src="/assets/images/common/bill_logo.png" alt="Amway"></span>
                         <ul class="list">                            
                             <li><span>주문형태</span><em *ngIf="orderInfo.deliveryMode.code === 'pickup' && orderInfo.channel.code === 'pos'; else elseTemplate1">현장구매</em><ng-template #elseTemplate1><em>픽업예약주문</em></ng-template></li>
-                            <li><span>ABO정보</span><em *ngIf="orderInfo.parentOrder; else elseTemplate2">{{orderDetail.orders[0].volumeABOAccount.uid}} {{orderDetail.orders[0].volumeABOAccount.name}}</em><ng-template #elseTemplate2><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></ng-template></li>
+                            <li><span>ABO정보</span><em *ngIf="orderInfo.isGroupCombinationOrder; else elseTemplate2">{{orderDetail.orders[0].volumeABOAccount.uid}} {{orderDetail.orders[0].volumeABOAccount.name}}</em><ng-template #elseTemplate2><em>{{orderDetail.orders[0].user.uid}} {{orderDetail.orders[0].user.name}}</em></ng-template></li>
                             <li><span>구매일자</span><em>{{orderDetail.orders[0].created | date:'yyyy/MM/dd  HH:mm:ss'}}</em></li>
                             <li><span>POS번호</span><em>{{clientId}}</em></li>
                             <li><span>캐셔정보</span><em>{{emloyeeName}}</em></li>
@@ -101,16 +101,10 @@
                             <li class="fx" *ngIf="ABOFlag"><span>GROUP PV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount">{{orderDetail.orders[0].volumeABOAccount.totalPV | number}}</em></li>
                             <li class="fx" *ngIf="ABOFlag"><span>GROUP BV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount">{{orderDetail.orders[0].volumeABOAccount.totalBV | number}}</em></li>
                             <li *ngIf="ABOFlag"><span>잔여 A 포인트</span><em *ngIf="balance">{{balance.amount | number}}</em></li>
-                            <li><span>공제번호</span><em *ngIf="orderDetail.orders[0].deductionNumber; else elseTemplate">{{orderDetail.orders[0].deductionNumber}}
-                                </em>
-                                <ng-template #elseTemplate>
-                                    <em>
-                                        공제조합홈페이지 확인
-                                    </em>
-                                </ng-template>
+                            <li><span>공제번호</span><em *ngIf="orderDetail.orders[0].deductionNumber; else elseTemplate">{{orderDetail.orders[0].deductionNumber}}</em><ng-template #elseTemplate><em>공제조합홈페이지 확인</em></ng-template>
                             </li>
                         </ul>
-                        <p class="txt" *ngIf="orderInfo.orderStatus.code === 'COMPLETED'">*** 정상 승인 완료 ***</p>
+                        <p class="txt" *ngIf="orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED'">*** 정상 승인 완료 ***</p>
                         <p class="txt" *ngIf="orderInfo.orderStatus.code === 'CANCELLED'">*** 취소 승인 완료 ***</p>
                     </div>
                 </div>
@@ -124,7 +118,7 @@
         <a href="javascript:void(0)" class="fl mgl20" (click)= "close()">이전<i class="ico_comm prev"></i></a>
         <span class="fr" *ngIf="!cancelFlag">            
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable" class="btn01_blue" (click)="popupCancel()">주문취소</a>
-            <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && orderInfo.orderStatus.code === 'COMPLETED'" class="btn01_blue" (click)="reissueReceipts()">영수증재발행</a>            
+            <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && (orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED')" class="btn01_blue" (click)="reissueReceipts()">영수증재발행</a>            
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable" class="btn01_blue" (click)="paymentChange()">결제수단변경/재결제</a>
             <a href="javascript:void(0)" *ngIf="orderInfo.orderType.code === 'NORMAL_ORDER' && orderInfo.channel.code === 'Web'" class="btn01_blue" (click)="cancelECPPrint()">ECP 출력 취소</a>
         </span>

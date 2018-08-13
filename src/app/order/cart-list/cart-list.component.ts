@@ -8,7 +8,7 @@ import {
 } from '../../modals';
 import { Modal, StorageService, AlertService, Logger, Config, PrinterService } from '../../core';
 
-import { CartService, PagerService, SearchService, MessageService, PaymentService } from '../../service';
+import { CartService, PagerService, SearchService, MessageService, PaymentService, OrderService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
@@ -18,6 +18,7 @@ import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
+import { Observable } from '../../../../node_modules/rxjs/Observable';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
@@ -55,6 +56,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   private infoSubscription: Subscription;
   private paymentsubscription: Subscription;
   private paymentChangesubscription: Subscription;
+  private paymentGroupListsubscription: Subscription;
+  private paymentGroupEntriessubscription: Subscription;
 
   private searchParams: SearchParam;                                        // 조회 파라미터
   private cartInfo: CartInfo;                                               // 장바구니 기본정보
@@ -113,6 +116,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
+    private orderService: OrderService,
     private storage: StorageService,
     private alert: AlertService,
     private pagerService: PagerService,
@@ -151,6 +155,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         const type = result && result.type;
         if (result != null && type === 'paymentChange') {
           this.orderType = 'n';
+          // 그룹 주문확인 로직 필요
+          // this.orderType = 'g';
           this.paymentChange = true;
           this.orderList = result.data;
           this.selectAccountInfo(this.searchMode, this.orderList.orders[0].user.uid);
@@ -192,6 +198,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
           this.cartInfo.guid = result.guid;
+          // 그룹 주문확인 로직 필요
+          // this.orderType = 'g';
           this.restoreSavedCart();
         }
       }
@@ -235,6 +243,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.infoSubscription) { this.infoSubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.paymentChangesubscription) { this.paymentChangesubscription.unsubscribe(); }
+    if (this.paymentGroupEntriessubscription) { this.paymentGroupEntriessubscription.unsubscribe(); }
+    if (this.paymentGroupListsubscription) { this.paymentGroupListsubscription.unsubscribe(); }
   }
 
   /**
@@ -505,35 +515,40 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param account 회원정보
    */
   private getAccountAndSaveCart(account: Accounts) {
-    if (this.accountInfo && this.orderType === 'n') {
+    if (this.accountInfo && !this.paymentChange && this.orderType === 'n') {
       this.sendRightMenu('a', true, account);
       this.changeUser(account);
     } else {
       // 그룹 결제시
       if (this.orderType === 'g') {
-        // ordering주문자 저장
-        if (this.accountInfo === null) {
-          this.accountInfo = account;
-          this.sendRightMenu('a', true, account);
-        }
-        // 그룹 주문 사용자 중복확인
-        if (this.checkGroupUserId(account.uid) === -1) {
-          this.groupAccountInfo.push(account);
-          // 그룹주문 사용자 페이징처리
-          this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
-          // 그룹주문 장바구니 생성되어 있는경우 새로운 사용자로 장바구니 초기화
-          if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList.length > 0) {
-            this.sendRightMenu('p', false);
-            this.cartList.length = 0;
-            this.storage.setOrderEntry(this.cartList);
-            this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
-          }
+        // 재결제시
+        if (this.paymentChange) {
+          this.copyGroupCartByEntries(this.orderList);
         } else {
-          this.alert.info({
-            message: this.message.get('addedABO'),
-            timer: true,
-            interval: 1500
-          });
+          // ordering주문자 저장
+          if (this.accountInfo === null) {
+            this.accountInfo = account;
+            this.sendRightMenu('a', true, account);
+          }
+          // 그룹 주문 사용자 중복확인
+          if (this.checkGroupUserId(account.uid) === -1) {
+            this.groupAccountInfo.push(account);
+            // 그룹주문 사용자 페이징처리
+            this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
+            // 그룹주문 장바구니 생성되어 있는경우 새로운 사용자로 장바구니 초기화
+            if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList.length > 0) {
+              this.sendRightMenu('p', false);
+              this.cartList.length = 0;
+              this.storage.setOrderEntry(this.cartList);
+              this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
+            }
+          } else {
+            this.alert.info({
+              message: this.message.get('addedABO'),
+              timer: true,
+              interval: 1500
+            });
+          }
         }
       } else {
         this.accountInfo = account;
@@ -632,6 +647,72 @@ export class CartListComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * 주문 정보 이용하여 그룹 주문 복제
+   *  - Ordering ABO의 주문상세내역으로 그룹주문 조회
+   * @param orderList Ordering ABO 주문정보
+   */
+  private copyGroupCartByEntries(orderList: OrderList): void {
+    this.orderService.groupOrder(orderList.orders[0].user.uid, orderList.orders[0].code).subscribe(
+      groupOrderList => {
+        this.copyGroupCart(groupOrderList);
+      }, error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      }
+    );
+  }
+
+
+  /**
+   * 그룹 주문 생성
+   *  -> 카트 및 그룹장바구니 생성
+   * @param {AmwayExtendedOrdering} groupOrderList 그룹 주문 정보
+   */
+  private copyGroupCart(groupOrderList: AmwayExtendedOrdering) {
+    this.cartService.copyGroupCart(groupOrderList).subscribe(
+      groupInfo => {
+        this.cartInfo = groupInfo.cartInfo;
+        this.amwayExtendedOrdering = groupInfo.amwayExtendedOrdering;
+
+        this.copyGroupCartEntries(groupOrderList, this.amwayExtendedOrdering);
+      }, error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      }
+    );
+  }
+
+  /**
+   * 그룹주문 엔트리 확인
+   *  - 주문정보의 Entries 정보를 복제함.
+   * @param {AmwayExtendedOrdering} groupOrderList 주문정보(Source)
+   * @param {AmwayExtendedOrdering} newGroupOrderList 복제될 장바구니 정보(Target)
+   */
+  private copyGroupCartEntries(groupOrderList: AmwayExtendedOrdering, newGroupOrderList: AmwayExtendedOrdering) {
+    const addCart = [];
+    const arrayAccount = new Array<Accounts>();
+    newGroupOrderList.orderList.forEach((order, index) => {
+      arrayAccount.push(order.volumeABOAccount);
+      const existedIdx: number = groupOrderList.orderList.findIndex(
+        function (obj) {
+          return obj.volumeABOAccount.uid === order.volumeABOAccount.uid;
+        }
+      );
+
+      addCart.push(this.cartService.addCartEntries(this.cartInfo.user.uid, newGroupOrderList.orderList[index].code, groupOrderList.orderList[existedIdx].entries));
+    });
+    this.groupAccountInfo = arrayAccount;
+    this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
+
+    Observable.zip<Array<ResCartInfo>>(addCart).subscribe(resp => {
+      this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+    });
+  }
   /**
    * 회원 검색 ->  결과 값이 1일 경우 display and create cart
    *
@@ -931,7 +1012,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {number} page 페이지 정보
    */
   getCartList(page?: number): void {
-    const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+    const userId = this.orderType === 'g' ? this.groupAccountInfo[0].uid : this.cartInfo.user.uid;
     const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
     this.cartListSubscription = this.cartService.getCartList(userId, cartId).subscribe(
@@ -978,7 +1059,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   addCartEntries(code: string): void {
     if (this.cartInfo.code !== undefined) {
-      const userId = this.orderType === 'g' ? this.groupAccountInfo[0].parties[0].uid : this.cartInfo.user.uid;
+      const userId = this.orderType === 'g' ? this.groupAccountInfo[0].uid : this.cartInfo.user.uid;
       const cartId = this.orderType === 'g' ? this.groupSelectedCart.code : this.cartInfo.code;
 
       this.addCartSubscription = this.cartService.addCartEntry(userId, cartId, code.toUpperCase(), this.serialNumbers).subscribe(
@@ -1257,8 +1338,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.cartService.restoreSavedCart(this.cartInfo.user.uid, this.cartInfo.code).subscribe(
         result => {
           this.resCartInfo.cartList = result.savedCartData;
-          this.setCartInfo(this.resCartInfo.cartList);
-          this.sendRightMenu('all', true);
+          if (this.orderType === 'g') {
+            this.restoreGroupCart(this.cartInfo);
+          } else {
+            this.setCartInfo(this.resCartInfo.cartList);
+            this.sendRightMenu('all', true);
+          }
           this.info.sendInfo('hold', 'add');
         },
         error => {
@@ -1271,6 +1356,31 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
+  }
+
+  /**
+   * 그룹카트 보류 복원
+   * @param cartInfo
+   */
+  restoreGroupCart(cartInfo: CartInfo): void {
+    this.cartService.getGroupCart(cartInfo.user.uid, cartInfo.code).subscribe(
+      result => {
+        if (result) {
+          this.amwayExtendedOrdering = result;
+          this.sendRightMenu('g', true, this.amwayExtendedOrdering);
+          this.amwayExtendedOrdering.orderList.forEach(order => {
+            this.groupAccountInfo.push(order.volumeABOAccount);
+          });
+          this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
+          this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
+        }
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.alert.error({ message: `${errdata.message}` });
+        }
+      });
   }
 
   /**
@@ -1382,7 +1492,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.currentGroupAccountInfo = currentUserData.get('list') as Array<Accounts>;
 
     this.selectedUserIndex = this.currentGroupAccountInfo.length === 0 ? -1 : this.currentGroupAccountInfo.length - 1;
-    this.selectedUserId = this.currentGroupAccountInfo.length === 0 ? '' : this.currentGroupAccountInfo[this.selectedUserIndex].parties[0].uid;
+    this.selectedUserId = this.currentGroupAccountInfo.length === 0 ? '' : this.currentGroupAccountInfo[this.selectedUserIndex].uid;
   }
 
   /**

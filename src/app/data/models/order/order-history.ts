@@ -21,6 +21,7 @@ export class OrderHistory {
     invoiceNumber: string;
     cancellable: boolean;
     parentOrder: string;
+    isGroupCombinationOrder: boolean;
 
     constructor() {}
 }

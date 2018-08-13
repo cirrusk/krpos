@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
-  ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering, ResponseMessage, CartModifications
+  ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering,
+  ResponseMessage, CartModifications, TerminalInfo, CopyGroupCartEntries
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -136,13 +137,26 @@ export class CartService {
       });
   }
 
-  // copyGroupCartEntries(subUserInfo: Accounts, cartInfo: CartInfo, orderEntries: Array<OrderEntry>): any {
-  //   this.createGroupCart(cartInfo.user.uid, cartInfo.code, subUserInfo.parties[0].uid)
-  //     .flatMap((amwayExtendedOrdering: AmwayExtendedOrdering) => {
-  //       return this.addCartEntries(cartInfo.user.uid, amwayExtendedOrdering.orders[amwayExtendedOrdering.orders.length - 1].code, orderEntries)
-  //       .map(addEntries => addEntries as Object);
-  //     });
-  // }
+  /**
+   * 그룹정보로 그룹장바구니 생성
+   * @param orderList 그룹주문정보
+   */
+  copyGroupCart(orderList: AmwayExtendedOrdering): Observable<CopyGroupCartEntries> {
+    const terminalInfo: TerminalInfo = this.storage.getTerminalInfo();
+    const pickupStore = terminalInfo.pointOfService.name;
+    return this.createCartInfo(orderList.orderList[0].user.uid, orderList.orderList[0].user.uid, pickupStore, 'POSGROUP')
+      .flatMap((cartInfo: CartInfo) => {
+        let accountUid = '';
+        orderList.orderList.forEach((order, index) => {
+          if (index > 0) {
+            accountUid += ',' + order.volumeABOAccount.uid;
+          }
+        });
+
+        return this.createGroupCart(cartInfo.user.uid, cartInfo.code, accountUid.slice(1))
+          .map(amwayExtendedOrdering => new CopyGroupCartEntries(cartInfo, amwayExtendedOrdering) as CopyGroupCartEntries);
+      });
+  }
 
   /**
    * 제품 수량 수정

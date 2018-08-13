@@ -4,7 +4,8 @@ import { Modal, Logger, StorageService } from '../../core';
 import {
   PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent,
-  CancelCartComponent
+  CancelCartComponent,
+  SearchBerComponent
 } from '../../modals';
 import { Accounts, OrderHistoryList, MemberType, AmwayExtendedOrdering } from '../../data';
 import { Cart } from '../../data/models/order/cart';
@@ -113,6 +114,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           this.cartInfo = null;
         }
       } else if (data.type === 'group') {
+        if (this.orderType === '') {
+          this.orderType = 'g';
+        }
+
         if (data.data) {
           this.amwayExtendedOrdering = data.data;
           this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order) {
@@ -221,6 +226,24 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       closeByClickOutside: true,
       modalId: 'PickupOrderComponent'
     });
+  }
+
+  /**
+   * 중개 주문 팝업
+   * @param {any} evt 이벤트
+   */
+  mediateOrder(evt: any) {
+    if (!this.hasAccount) { return; }
+    this.checkClass(evt);
+    this.modal.openModalByComponent(SearchBerComponent,
+      {
+        callerData: { aboNum: this.accountInfo.parties[0].uid },
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByClickOutside: false,
+        modalId: 'SearchBerComponent'
+      }
+    );
   }
 
   /**

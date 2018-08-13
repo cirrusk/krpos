@@ -62,7 +62,7 @@
                               <td class="ar"><span>{{order.total.value | number}}원</span></td>
                               <td><span>{{order.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>
                               <td><span *ngIf="order.deliveryMode.code === 'pickup' && order.channel.code === 'pos'; else elseTemplate1">{{order.deliveryMode.name }}</span><ng-template #elseTemplate1><span>픽업예약주문</span></ng-template></td>
-                              <td><span *ngIf="order.parentOrder; else elseTemplate2">그룹주문</span><ng-template #elseTemplate2><span>일반주문</span></ng-template></td>
+                              <td><span *ngIf="order.isGroupCombinationOrder; else elseTemplate2">그룹주문</span><ng-template #elseTemplate2><span>일반주문</span></ng-template></td>
                               <td><span>{{order.orderStatus.label}}</span></td>
                           </tr>                         
                       </tbody>
