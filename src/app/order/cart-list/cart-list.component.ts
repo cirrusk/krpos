@@ -156,7 +156,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (result != null && type === 'paymentChange') {
           this.orderType = 'n';
           // 그룹 주문확인 로직 필요
-          // this.orderType = 'g';
+          // if (result) {
+          //   this.orderType = 'g';
+          // } else {
+          //   this.orderType = 'n';
+          // }
           this.paymentChange = true;
           this.orderList = result.data;
           this.selectAccountInfo(this.searchMode, this.orderList.orders[0].user.uid);
@@ -199,7 +203,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
           this.cartInfo.guid = result.guid;
           // 그룹 주문확인 로직 필요
-          // this.orderType = 'g';
+          // if (result) {
+          //   this.orderType = 'g';
+          // } else {
+          //   this.orderType = 'n';
+          // }
           this.restoreSavedCart();
         }
       }
@@ -697,19 +705,24 @@ export class CartListComponent implements OnInit, OnDestroy {
     const addCart = [];
     const arrayAccount = new Array<Accounts>();
     newGroupOrderList.orderList.forEach((order, index) => {
-      arrayAccount.push(order.volumeABOAccount);
+      const accountInfo = order.volumeABOAccount;
+      const jsonData = { 'parties': [{uid  : order.volumeABOAccount.uid,
+                                      name : order.volumeABOAccount.name}] };
+      Object.assign(accountInfo, jsonData);
+
+      arrayAccount.push(accountInfo);
       const existedIdx: number = groupOrderList.orderList.findIndex(
         function (obj) {
           return obj.volumeABOAccount.uid === order.volumeABOAccount.uid;
         }
       );
-
+      groupOrderList.orderList[existedIdx].entries[0].quantity = index + 1;
       addCart.push(this.cartService.addCartEntries(this.cartInfo.user.uid, newGroupOrderList.orderList[index].code, groupOrderList.orderList[existedIdx].entries));
     });
     this.groupAccountInfo = arrayAccount;
     this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
 
-    Observable.zip<Array<ResCartInfo>>(addCart).subscribe(resp => {
+    Observable.zip<Array<ResCartInfo>>(addCart).subscribe(result => {
       this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
     });
   }
@@ -1369,7 +1382,12 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.amwayExtendedOrdering = result;
           this.sendRightMenu('g', true, this.amwayExtendedOrdering);
           this.amwayExtendedOrdering.orderList.forEach(order => {
-            this.groupAccountInfo.push(order.volumeABOAccount);
+            const accountInfo = order.volumeABOAccount;
+            const jsonData = { 'parties': [{uid  : order.volumeABOAccount.uid,
+                                            name : order.volumeABOAccount.name}] };
+            Object.assign(accountInfo, jsonData);
+
+            this.groupAccountInfo.push(accountInfo);
           });
           this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
           this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
