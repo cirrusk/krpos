@@ -114,11 +114,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           this.cartInfo = null;
         }
       } else if (data.type === 'group') {
-        if (this.orderType === '') {
-          this.orderType = 'g';
-        }
-
         if (data.data) {
+          if (this.orderType === '') {
+            this.orderType = 'g';
+          }
           this.amwayExtendedOrdering = data.data;
           this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order) {
             return order.entries.length === 0;
