@@ -193,8 +193,12 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         error => {
           if (error) {
             const errdata = Utils.getError(error);
-            if (errdata && errdata.type === 'InvalidDmsError') {
-              this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+            if (errdata) {
+              if (errdata.type === 'InvalidTokenError') {
+                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+              } else if (errdata.type === 'InvalidDmsError') {
+                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+              }
             } else {
               const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
               this.checkUserBlock(resp, account);

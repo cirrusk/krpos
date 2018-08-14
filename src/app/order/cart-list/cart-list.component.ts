@@ -156,11 +156,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (result != null && type === 'paymentChange') {
           this.orderType = 'n';
           // 그룹 주문확인 로직 필요
-          // if (result) {
-          //   this.orderType = 'g';
-          // } else {
-          //   this.orderType = 'n';
-          // }
+          // this.orderType = 'g';
           this.paymentChange = true;
           this.orderList = result.data;
           this.selectAccountInfo(this.searchMode, this.orderList.orders[0].user.uid);
@@ -203,11 +199,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
           this.cartInfo.guid = result.guid;
           // 그룹 주문확인 로직 필요
-          // if (result) {
-          //   this.orderType = 'g';
-          // } else {
-          //   this.orderType = 'n';
-          // }
+          // this.orderType = 'g';
           this.restoreSavedCart();
         }
       }
@@ -705,24 +697,19 @@ export class CartListComponent implements OnInit, OnDestroy {
     const addCart = [];
     const arrayAccount = new Array<Accounts>();
     newGroupOrderList.orderList.forEach((order, index) => {
-      const accountInfo = order.volumeABOAccount;
-      const jsonData = { 'parties': [{uid  : order.volumeABOAccount.uid,
-                                      name : order.volumeABOAccount.name}] };
-      Object.assign(accountInfo, jsonData);
-
-      arrayAccount.push(accountInfo);
+      arrayAccount.push(order.volumeABOAccount);
       const existedIdx: number = groupOrderList.orderList.findIndex(
         function (obj) {
           return obj.volumeABOAccount.uid === order.volumeABOAccount.uid;
         }
       );
-      groupOrderList.orderList[existedIdx].entries[0].quantity = index + 1;
+
       addCart.push(this.cartService.addCartEntries(this.cartInfo.user.uid, newGroupOrderList.orderList[index].code, groupOrderList.orderList[existedIdx].entries));
     });
     this.groupAccountInfo = arrayAccount;
     this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
 
-    Observable.zip<Array<ResCartInfo>>(addCart).subscribe(result => {
+    Observable.zip<Array<ResCartInfo>>(addCart).subscribe(resp => {
       this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
     });
   }
@@ -804,8 +791,12 @@ export class CartListComponent implements OnInit, OnDestroy {
             error => {
               if (error) {
                 const errdata = Utils.getError(error);
-                if (errdata && errdata.type === 'InvalidDmsError') {
-                  this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                if (errdata) {
+                  if (errdata.type === 'InvalidTokenError') {
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                  } else if (errdata.type === 'InvalidDmsError') {
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                  }
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -910,8 +901,12 @@ export class CartListComponent implements OnInit, OnDestroy {
         error => {
           if (error) {
             const errdata = Utils.getError(error);
-            if (errdata && errdata.type === 'InvalidDmsError') {
-              this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+            if (errdata) {
+              if (errdata.type === 'InvalidTokenError') {
+                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+              } else if (errdata.type === 'InvalidDmsError') {
+                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+              }
             } else {
               if (this.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
@@ -1382,12 +1377,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.amwayExtendedOrdering = result;
           this.sendRightMenu('g', true, this.amwayExtendedOrdering);
           this.amwayExtendedOrdering.orderList.forEach(order => {
-            const accountInfo = order.volumeABOAccount;
-            const jsonData = { 'parties': [{uid  : order.volumeABOAccount.uid,
-                                            name : order.volumeABOAccount.name}] };
-            Object.assign(accountInfo, jsonData);
-
-            this.groupAccountInfo.push(accountInfo);
+            this.groupAccountInfo.push(order.volumeABOAccount);
           });
           this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
           this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
