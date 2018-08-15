@@ -35,7 +35,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private accountInfo: Accounts;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
-  private paymentType: string;
   private cardresult: ICCardApprovalResult;
   private paymentsubscription: Subscription;
   private dupcheck = false;

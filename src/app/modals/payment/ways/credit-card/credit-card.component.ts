@@ -40,7 +40,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private accountInfo: Accounts;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
-  private paymentType: string;
   private cardresult: CardApprovalResult;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
