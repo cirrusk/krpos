@@ -62,10 +62,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
 
     this.paymentcapture = this.callerData.paymentInfo;
-    this.paidamount = this.cartInfo.totalPrice.value;
-    this.payamount = this.cartInfo.totalPrice.value; // this.callerData.payAmount;
+    this.paidamount = this.cartInfo.totalPrice.value; // 내신금액
+    this.payamount = this.cartInfo.totalPrice.value;  // 결제금액
     this.paidAmount();
-    // this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
   }
 
   ngOnDestroy() {
@@ -132,7 +131,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   /**
-   * 결제금액 설정
+   * 내신금액 설정
    */
   private paidAmount() {
     let paid = 0;
@@ -140,15 +139,23 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       const p = this.paymentcapture.cashPaymentInfo.received;
       if (p) {
         paid += Number(p);
-      } else {
-        paid = this.cartInfo.totalPrice.value;
       }
       const strchange = this.paymentcapture.cashPaymentInfo.change;
       this.change = strchange ? Number(strchange) : 0;
-      this.paidamount = paid;
-    } else {
-      this.paidamount = this.cartInfo.totalPrice.value;
     }
+    if (this.paymentcapture.pointPaymentInfo) { // 포인트결제
+      const p = this.paymentcapture.pointPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+    if (this.paymentcapture.monetaryPaymentInfo) { // Re-Cash결제
+      const p = this.paymentcapture.monetaryPaymentInfo.amount;
+      if (p) {
+        paid += Number(p);
+      }
+    }
+    this.paidamount = paid;
   }
 
   /**
