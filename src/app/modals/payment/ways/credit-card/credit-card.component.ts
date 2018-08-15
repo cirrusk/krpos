@@ -282,77 +282,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
-  /**
-   * 카드 결제 VAN사에 전송하고 Payment처리
-   */
-  private cardPayAndPlaceOrder() {
-    this.spinner.show();
-    const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
-    const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
-    this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
-    resultNotifier.subscribe((res: CardApprovalResult) => {
-      this.cardresult = res;
-      if (res.code !== NiceConstants.ERROR_CODE.NORMAL) {
-        this.finishStatus = 'retry';
-        this.apprmessage = res.msg;
-        this.dupcheck = false;
-      } else {
-        if (res.approved) {
-          this.cardnumber = res.maskedCardNumber;
-          this.cardcompany = res.issuerName;
-          this.cardauthnumber = res.approvalNumber;
-          this.paidDate = Utils.convertDate(res.approvalDateTime);
-          const capturepaymentinfo = this.makePaymentCaptureData(paidprice);
-          this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
-          this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
-          this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
-            result => {
-              this.orderInfo = result;
-              this.logger.set('credit.card.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-              this.finishStatus = result.statusDisplay;
-              if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-                if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-                  this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-                  this.paidDate = result.created ? result.created : new Date();
-                  // 장바구니에 정보를 보내야함. capture 정보, order 정보
-                  // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-                  this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-                  setTimeout(() => {
-                    this.paid.nativeElement.blur(); // keydown.enter 처리 안되도록
-                    this.renderer.setAttribute(this.paid.nativeElement, 'readonly', 'readonly');
-                  }, 5);
-                } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-                  this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-                  this.finishStatus = 'recart';
-                } else { // CART 삭제된 상태
-                  this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-                  this.finishStatus = 'recart';
-                }
-              } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-                // cart-list.component에 재생성 이벤트 보내서 처리
-                this.finishStatus = 'fail';
-                this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-              }
-            }, error => {
-              this.spinner.hide();
-              this.finishStatus = 'fail';
-              this.storage.removePaymentModeCode();
-              const errdata = Utils.getError(error);
-              if (errdata) {
-                this.apprmessage = errdata.message;
-              }
-            },
-            () => { this.spinner.hide(); });
-        } else {
-          this.finishStatus = 'fail';
-          this.alert.error({ message: `${res.resultMsg1} ${res.resultMsg2}` });
-          this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
-        }
-      }
-      this.storage.removePay();
-    });
-  }
-
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
     this.close();
     this.modal.openModalByComponent(CompletePaymentComponent, {
@@ -365,17 +294,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       modalId: 'CompletePaymentComponent',
       paymentType: 'c'
     });
-  }
-
-  /**
-   * 장바구니와 클라이언트에 정보 전달
-   *
-   * @param payment Payment Capture 정보
-   * @param order Order 정보
-   */
-  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
-    this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setLocalItem('payinfo', [payment, order]);
   }
 
   close() {
