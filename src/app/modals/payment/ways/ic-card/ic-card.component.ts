@@ -198,10 +198,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           this.spinner.hide();
           this.logger.set('ic.card.component', `${error}`).error();
         },
-        () => { this.spinner.hide(); /*this.close();*/ }
+        () => { this.spinner.hide(); }
       );
-    } else {
-      /*this.close();*/
     }
   }
 
