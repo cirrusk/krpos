@@ -6,7 +6,7 @@ import { StorageService, Config, ApiService } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
   ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering,
-  ResponseMessage, CartModifications, TerminalInfo, CopyGroupCartEntries
+  ResponseMessage, CartModifications, TerminalInfo, CopyGroupCartEntries, Block
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 
@@ -178,7 +178,7 @@ export class CartService {
       arrayCart.push(cartModification);
       const carts = new CartModifications(arrayCart);
       return this.getCartList(userId, cartId)
-      .map(cart => new ResCartInfo(cart, carts) as ResCartInfo);
+        .map(cart => new ResCartInfo(cart, carts) as ResCartInfo);
     });
   }
 
@@ -318,8 +318,13 @@ export class CartService {
    * @param {string} userId 회원 아이디
    */
   checkBlock(userId: string): Observable<ResponseMessage> {
-    const pathvariables = { userId: userId };
-    const data = new HttpData('checkBlock', pathvariables, null, null, 'json');
-    return this.api.put(data);
+    if (this.config.isMdmsSkip()) {
+      const resp = new ResponseMessage(Block.VALID);
+      return Observable.of(resp);
+    } else {
+      const pathvariables = { userId: userId };
+      const data = new HttpData('checkBlock', pathvariables, null, null, 'json');
+      return this.api.put(data);
+    }
   }
 }

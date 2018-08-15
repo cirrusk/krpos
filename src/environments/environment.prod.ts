@@ -81,6 +81,7 @@ export const environment = {
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9,
+  isMdmsSkip: false,
 
   // NICE 단말기 설정
   niceTermBase: 'ws://localhost',

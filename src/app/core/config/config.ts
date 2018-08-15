@@ -61,4 +61,11 @@ export class Config {
     return (defaultVal) ? (cnf === null || cnf === '') ? defaultVal : cnf : cnf;
   }
 
+  /**
+   * MDMS Skip 처리
+   */
+  public isMdmsSkip(): boolean {
+    return this.getConfig('isMdmsSkip', false);
+  }
+
 }
