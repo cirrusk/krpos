@@ -7,7 +7,6 @@ import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture } from '..
 import { PagerService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
-import { Utils } from '../../core/utils';
 
 @Component({
   selector: 'pos-client',
@@ -154,7 +153,6 @@ export class ClientComponent implements OnInit, OnDestroy {
       this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
       this.totalPV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.pointValue : 0;
       this.totalBV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.businessVolume : 0;
-      // this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
       if (paymentcapture.ccPaymentInfo) {
         this.totalPrice = paymentcapture.ccPaymentInfo.amount;
       } else {
