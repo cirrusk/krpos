@@ -34,8 +34,7 @@ export class OrderEntry {
     quantityShipped: number;
     quantityReturned: number;
     ecpConfirmQty: any; // Ecp 컨펌 (숫자, true='완료')
-    rfids: Array<string>;
-    serialNumbers: Array<string>;
+    serialNumbersCodes: Array<string>;
 
     constructor(_product?: ProductInfo) {
         this.product = _product;
@@ -46,11 +45,7 @@ export class OrderEntry {
         this.ecpConfirmQty = data;
     }
 
-    public set setRfids(rfids: Array<string>) {
-        this.rfids = rfids;
-    }
-
-    public set setSerialNumbers(serialNumbers: Array<string>) {
-        this.serialNumbers = serialNumbers;
+    public set setSerialNumbersCodes(serialNumbersCodes: Array<string>) {
+        this.serialNumbersCodes = serialNumbersCodes;
     }
 }

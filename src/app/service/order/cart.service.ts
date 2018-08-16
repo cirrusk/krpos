@@ -85,7 +85,7 @@ export class CartService {
     entry.quantity = 1;
     serialNumbers = serialNumbers.filter(arr => (arr !== null && arr !== '')) as string[];
     if (serialNumbers && serialNumbers.length > 0) { // null값이 들어갈 경우 체크
-      entry.serialNumbers = serialNumbers;
+      entry.serialNumbersCodes = serialNumbers;
     }
     orderEntries.push(entry);
     orderList.orderEntries = orderEntries;
