@@ -3,9 +3,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 // import 'rxjs/add/operator/zip';
+import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/zip';
 import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/observable/of';
 
 import { ReceiptDataProvider, EscPos, StorageService, PrinterService, Logger } from '../core';
 import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
