@@ -41,7 +41,8 @@ export class AccountService {
    *    Order Blocked Customer
    *
    * 중요) 소비자인 경우 Block 체크를 하지 않음.
-   * Block 체크 시 프로파일을 업데이트 함.
+   * Block 체크 시 MDMS 프로파일로 Hybris 업데이트 함.
+   * 소비자인 경우 Hybris에만 존재하므로 Block 체크 수행할 필요없음.
    *
    * @param {Accounts} account 회원 정보
    */
