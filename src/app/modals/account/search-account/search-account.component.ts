@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
-import { SearchService, PagerService, MessageService, CartService } from '../../../service';
+import { SearchService, PagerService, MessageService, AccountService } from '../../../service';
 import { AccountList, Accounts, Pagination, MemberType, ResponseMessage, Block } from '../../../data';
 import { Utils } from '../../../core/utils';
 
@@ -28,12 +28,12 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   @ViewChild('inputSearchText') private searchValue: ElementRef;
 
   constructor(modalService: ModalService,
-    private cartService: CartService,
     private message: MessageService,
     private logger: Logger,
     private alert: AlertService,
     private searchService: SearchService,
-    private pagerService: PagerService
+    private pagerService: PagerService,
+    private accountService: AccountService
   ) {
     super(modalService);
     this.init();
@@ -182,7 +182,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         }
       );
       const account: Accounts = this.accountList.accounts[existedIdx];
-      this.cartService.checkBlock(uid).subscribe(
+      this.accountService.checkBlock(account).subscribe(
         resp => {
           const code = this.checkUserBlock(resp, account);
           if (code === Block.VALID) {

@@ -8,7 +8,7 @@ import {
 } from '../../modals';
 import { Modal, StorageService, AlertService, Logger, Config, PrinterService } from '../../core';
 
-import { CartService, PagerService, SearchService, MessageService, PaymentService, OrderService } from '../../service';
+import { CartService, PagerService, SearchService, MessageService, PaymentService, OrderService, AccountService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
@@ -129,6 +129,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private paymentBroker: PaymentBroker,
     private config: Config,
     private printerService: PrinterService,
+    private accountService: AccountService,
     private logger: Logger) {
     this.cartListCount = this.config.getConfig('cartListCount');
     this.domain = this.config.getConfig('apiDomain');
@@ -781,7 +782,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.orderType = 'n';
           }
           const account: Accounts = result.accounts[0];
-          this.cartService.checkBlock(accountid).subscribe(
+          this.accountService.checkBlock(account).subscribe(
             resp => {
               const code = this.checkUserBlock(resp, account);
               if (code === Block.VALID) {
@@ -881,20 +882,15 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {string} productCode  상품 코드
    */
   createCartInfo(popupFlag: boolean, productCode?: string): void {
-    let accountId = '';
     if (this.accountInfo) {
       const terminalInfo: TerminalInfo = this.storage.getTerminalInfo();
-      if (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.CONSUMER || this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.MEMBER) {
-        accountId = this.accountInfo.parties[0].uid;
-      } else {
-        accountId = this.accountInfo.uid;
-      }
-      this.cartService.checkBlock(accountId).subscribe(
+      this.accountService.checkBlock(this.accountInfo).subscribe(
         resp => {
           if (this.checkOrderBlock(resp.code)) {
             this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
             setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
           } else {
+            const accountId = (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.ABO) ? this.accountInfo.uid : this.accountInfo.parties[0].uid;
             this.createCart(accountId, terminalInfo, popupFlag, productCode);
           }
         },
