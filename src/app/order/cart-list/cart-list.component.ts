@@ -1405,24 +1405,28 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.ccamount = cc.getAmount;
         this.installment = cc.getInstallmentPlan;
       }
-
+      let paid = 0;
       // 현금 내역
       if (paymentcapture.getCashPaymentInfo) {
         const cash = paymentcapture.getCashPaymentInfo;
         this.cashamount = cash.getAmount;
-        this.received = cash.getReceived ? Number(cash.getReceived) : 0;
+        // this.received = cash.getReceived ? Number(cash.getReceived) : 0;
+        paid += cash.getReceived ? Number(cash.getReceived) : 0;
         this.change = cash.getChange ? Number(cash.getChange) : 0;
       }
 
       // 포인트 내역
       if (paymentcapture.getPointPaymentInfo) {
         this.pointamount = paymentcapture.getPointPaymentInfo.getAmount;
+        paid += this.pointamount ? Number(this.pointamount) : 0;
       }
 
       // Recash 내역
       if (paymentcapture.getMonetaryPaymentInfo) {
         this.recashamount = paymentcapture.getMonetaryPaymentInfo.getAmount;
+        paid += this.recashamount ? Number(this.recashamount) : 0;
       }
+      this.received = paid;
 
       // 자동이체 내역
       if (paymentcapture.getDirectDebitPaymentInfo) {
@@ -1433,7 +1437,16 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
       this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
       this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
-      this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      let pay = 0;
+      if (paymentcapture.ccPaymentInfo) {
+        const p = paymentcapture.ccPaymentInfo.amount;
+        if (p) {
+          pay = Number(p);
+        }
+        this.totalPrice = pay;
+      } else {
+        this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      }
     }
   }
   /**

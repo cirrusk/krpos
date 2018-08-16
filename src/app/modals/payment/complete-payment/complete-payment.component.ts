@@ -64,7 +64,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paymentcapture = this.callerData.paymentInfo;
     this.paidamount = this.cartInfo.totalPrice.value; // 내신금액
     this.payamount = this.cartInfo.totalPrice.value;  // 결제금액
-    this.paidAmount();
+    this.calcPaidAmount();
   }
 
   ngOnDestroy() {
@@ -131,9 +131,23 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   /**
+   * 결제금액 설정
+   */
+  private calcPayAmount() {
+    let pay = 0;
+    if (this.paymentcapture.ccPaymentInfo) {
+      const p = this.paymentcapture.ccPaymentInfo.amount;
+      if (p) {
+        pay = Number(p);
+      }
+      this.payamount = pay;
+    }
+  }
+
+  /**
    * 내신금액 설정
    */
-  private paidAmount() {
+  private calcPaidAmount() {
     let paid = 0;
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
       const p = this.paymentcapture.cashPaymentInfo.received;
