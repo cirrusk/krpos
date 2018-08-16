@@ -1805,6 +1805,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (event.keyCode === KeyCode.INSERT) { // 임시 건수 수정 이벤트
           this.callUpdateItemQty();
         } else if (event.keyCode === KeyCode.DELETE) { // 임시 개별 삭제 이벤트
+          if (event.target.tagName === 'INPUT') { return; }
           if (this.selectedCartNum === -1) {
             this.alert.warn({ message: this.message.get('selectProductDelete') });
           } else {
