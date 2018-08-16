@@ -2,7 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/operator/zip';
+// import 'rxjs/add/operator/zip';
+import 'rxjs/add/observable/zip';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/of';
 
