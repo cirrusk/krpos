@@ -570,9 +570,16 @@ export class ReceiptService implements OnDestroy {
             const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
             payment.setICCard = iccard;
         }
+        // Cash 로 1000원 Recash로 1000원 구매한 경우 현금영수증에 합산된 2000원이 표기되어 출력.
+        // Recash에 대한 정의를 ABO는 인지하지 못하고 있기 때문에 영수증 하단에 이를 설명하는 문구 추가.
+        // 예) 현금과 Recash(현금크레딧) 사용 합산 금액이 현금영수증에 발행됩니다.
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
-            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
+            let amount = cainfo.amount;
+            if (paymentCapture.getMonetaryPaymentInfo) { // Re-Cash
+                amount += paymentCapture.getMonetaryPaymentInfo.amount;
+            }
+            const cash = new Cash(amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
             payment.setCash = cash;
         }
         // payments - END
@@ -601,8 +608,12 @@ export class ReceiptService implements OnDestroy {
         if (cartInfo.subTotal) { // 합계
             sumAmount = subTotalPrice;
         }
-        if (cartInfo.totalPrice) { // 결제금액
-            totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;
+        if (paymentCapture.getCcPaymentInfo) {
+            totalAmount = paymentCapture.getCcPaymentInfo.amount;
+        } else {
+            if (cartInfo.totalPrice) { // 결제금액
+                totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;
+            }
         }
         //                          상품수량   과세 물품          부가세     합계       결제금액       할인금액         할인금액정보
         //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
