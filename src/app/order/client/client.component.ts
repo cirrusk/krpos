@@ -125,28 +125,27 @@ export class ClientComponent implements OnInit, OnDestroy {
    */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
     if (paymentcapture) {
-      console.log(Utils.stringify(paymentcapture));
       if (paymentcapture.ccPaymentInfo) { // 신용카드
         const cc = paymentcapture.ccPaymentInfo;
         this.ccamount = cc.amount;
         this.installment = cc.installmentPlan;
       }
+      let paidamount = 0;
       if (paymentcapture.cashPaymentInfo) { // 현금
-        console.log(Utils.stringify(paymentcapture.cashPaymentInfo));
         const cash = paymentcapture.cashPaymentInfo;
         this.cashamount = cash.amount;
-        console.log(cash.amount);
-        this.received = cash.received ? Number(cash.received) : 0;
+        // this.received = cash.received ? Number(cash.received) : 0;
+        paidamount += cash.received ? Number(cash.received) : 0;
         this.change = cash.change ? Number(cash.change) : 0;
       }
       if (paymentcapture.pointPaymentInfo) { // 포인트
-        console.log(Utils.stringify(paymentcapture.pointPaymentInfo));
         this.pointamount = paymentcapture.pointPaymentInfo.amount;
-        console.log(paymentcapture.pointPaymentInfo.amount);
       }
       if (paymentcapture.monetaryPaymentInfo) { // Re-Cash
         this.recashamount = paymentcapture.monetaryPaymentInfo.amount;
+        paidamount += paymentcapture.monetaryPaymentInfo.amount;
       }
+      this.received = paidamount;
       if (paymentcapture.directDebitPaymentInfo) { // 자동이체
         this.ddamount = paymentcapture.directDebitPaymentInfo.amount;
       }
@@ -155,7 +154,12 @@ export class ClientComponent implements OnInit, OnDestroy {
       this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
       this.totalPV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.pointValue : 0;
       this.totalBV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.businessVolume : 0;
-      this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      // this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      if (paymentcapture.ccPaymentInfo) {
+        this.totalPrice = paymentcapture.ccPaymentInfo.amount;
+      } else {
+        this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      }
     }
   }
 
