@@ -164,7 +164,6 @@ export class ClientComponent implements OnInit, OnDestroy {
   }
 
   private init() {
-    console.log('--- init ---');
     // this.accountInfo = null;
     this.cartList = new Array<OrderEntry>();
     this.currentCartList = new Array<OrderEntry>();
