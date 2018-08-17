@@ -72,6 +72,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private domain: string;                                                   // api root 도메인
   private serialNumbers: Array<string>;                                     // Serial/RFID 정보 받기
   private serial: string;                                                   // Serial/RFID 값 입력 화면 첫번째에 뿌리도록.
+  private copyGroupList: Array<ResCartInfo>;
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -347,6 +348,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
     this.initSerials();
+    this.copyGroupList =  Array<ResCartInfo>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -527,7 +529,10 @@ export class CartListComponent implements OnInit, OnDestroy {
       if (this.orderType === OrderType.GROUP) {
         // 재결제시
         if (this.paymentChange) {
-          // this.copyGroupCartByEntries(this.orderList);
+          this.accountInfo = account;
+          this.sendRightMenu(ModelType.ACCOUNT, true, account);
+          // 결제수단변경 일 경우
+          this.copyGroupCartByEntries(this.accountInfo, this.orderList);
         } else {
           // ordering주문자 저장
           if (this.accountInfo === null) {
@@ -656,7 +661,9 @@ export class CartListComponent implements OnInit, OnDestroy {
    *  - Ordering ABO의 주문상세내역으로 그룹주문 조회
    * @param orderList Ordering ABO 주문정보
    */
-  private copyGroupCartByEntries(orderList: OrderList): void {
+  private copyGroupCartByEntries(account: Accounts, orderList: OrderList): void {
+    this.sendRightMenu(ModelType.ACCOUNT, true, account);
+    // Ordering ABO 정보로 그룹주문 조회
     this.paymentGroupListsubscription = this.orderService.groupOrder(orderList.orders[0].user.uid, orderList.orders[0].code).subscribe(
       groupOrderList => {
         this.copyGroupCart(groupOrderList);
@@ -677,9 +684,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private copyGroupCart(groupOrderList: AmwayExtendedOrdering) {
 
+    // 그룹 카트 생성
     this.paymentGroupEntriessubscription = this.cartService.copyGroupCart(groupOrderList).subscribe(
       groupInfo => {
         this.cartInfo = groupInfo.cartInfo;
+        this.sendRightMenu(ModelType.CART, true);
+        this.sendRightMenu('all', true);
         this.amwayExtendedOrdering = groupInfo.amwayExtendedOrdering;
 
         this.copyGroupCartEntries(groupOrderList, this.amwayExtendedOrdering);
@@ -701,6 +711,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private copyGroupCartEntries(groupOrderList: AmwayExtendedOrdering, newGroupOrderList: AmwayExtendedOrdering) {
     const addCart = [];
     const arrayAccount = new Array<Accounts>();
+    // Add to Cart 배열로 셋팅
     newGroupOrderList.orderList.forEach((order, index) => {
       arrayAccount.push(order.volumeABOAccount);
       const existedIdx: number = groupOrderList.orderList.findIndex(
@@ -714,14 +725,11 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.groupAccountInfo = arrayAccount;
     this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
 
-    // Observable.zip<Array<ResCartInfo>>(addCart).subscribe(result => {
-    //   this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
-    // });
-
-    Observable.zip<Array<ResCartInfo>>(addCart).subscribe(
-      function handleValue(values) {
-        console.log({}, values);
-        this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+    // Add to cart 배열을 동시에 실행
+    Observable.forkJoin<Array<ResCartInfo>>(addCart).subscribe(result => {
+      this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+      // 마지막 ABO로 페이지 이동
+      this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
     });
   }
   /**
@@ -1659,7 +1667,47 @@ export class CartListComponent implements OnInit, OnDestroy {
       if (existedIdx !== -1) {
         this.groupSelectedCart = this.amwayExtendedOrdering.orderList[existedIdx];
         this.getCartList();
-        // this.createGroupCart(this.cartInfo.user.uid, this.cartInfo.code, uid, false);
+
+        // 재 주문을 했을 경우
+        // 기획 필요
+        // if (this.copyGroupList.length > 0) {
+        //   // 선택한 사용자의 Cart 정보 검색
+        //   const copyGroupListIdx: number = this.copyGroupList.findIndex(
+        //     function (obj) {
+        //       return obj.cartList.volumeABOAccount.uid  = this.selectedUserId;
+        //     }
+        //   );
+
+        //   // Cart 정보가 있을경우
+        //   if (copyGroupListIdx > -1) {
+        //     // entry 별 조회하여 error 이 있는지 확인
+        //     this.addCartModel = this.copyGroupList[copyGroupListIdx].cartModifications.cartModifications;
+        //     this.addCartModel.forEach(model => {
+        //       if (model.statusCode === 'success') {
+        //         this.productInfo = model.entry;
+        //         this.addCartEntry(this.resCartInfo.cartList);
+        //       } else {
+        //         this.restrictionModel = this.makeRestrictionMessage(model);
+        //         this.restrictionMessageList.push(this.restrictionModel);
+        //       }
+        //     });
+
+        //     // groupList 에선 삭제
+        //     this.copyGroupList.splice(copyGroupListIdx, 1);
+
+        //     // error 가 있을 경우 전시
+        //     if (this.restrictionMessageList.length > 0) {
+        //       this.modal.openModalByComponent(RestrictComponent, {
+        //         callerData: { data: this.restrictionMessageList },
+        //         closeByEnter: true,
+        //         modalId: 'RestictComponent_User'
+        //       });
+        //     } else {
+        //       this.activeSearchMode(SearchMode.PRODUCT);
+        //       this.getSaveCarts();
+        //     }
+        //   }
+        // }
       } else {
         this.groupSelectedCart = new AbstractOrder();
         this.sendRightMenu(ModelType.PRODUCT, false);
