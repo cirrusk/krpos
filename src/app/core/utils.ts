@@ -297,7 +297,7 @@ export /* default */ class Utils {
   public static convertDateStringForHybris(text: string): string {
     if (this.isNotEmpty(text) && text.length === 12) {
       const y = Number(text.substring(0, 2));
-      const m = Number(text.substring(2, 4)) - 1;
+      const m = Number(text.substring(2, 4));
       const d = Number(text.substring(4, 6));
       const h = Number(text.substring(6, 8));
       const n = Number(text.substring(8, 10));
@@ -305,7 +305,7 @@ export /* default */ class Utils {
       return moment('20' + y + '-' + m + '-' + d + ' ' + h + ':' + n + ':' + s, 'YYYY-MM-DD HH:mm:ss').format();
     } else if (this.isNotEmpty(text) && text.length === 14) {
       const y = Number(text.substring(0, 4));
-      const m = Number(text.substring(4, 6)) - 1;
+      const m = Number(text.substring(4, 6));
       const d = Number(text.substring(6, 8));
       const h = Number(text.substring(8, 10));
       const n = Number(text.substring(10, 12));

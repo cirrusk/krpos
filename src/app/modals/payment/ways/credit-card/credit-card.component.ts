@@ -267,6 +267,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               this.finishStatus = 'fail';
               this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
             }
+            this.spinner.hide();
           }
         },
         error => {
@@ -349,6 +350,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           }
         }
       }
+    } else if (event.keyCode === KeyCode.ESCAPE) {
+      this.spinner.hide();
     }
   }
 }

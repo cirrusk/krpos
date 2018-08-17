@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
@@ -161,6 +161,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
             this.finishStatus = 'fail';
             this.apprmessage = res.resultMsg1 + ' ' + res.resultMsg2;
           }
+          this.spinner.hide();
         }
       },
       error => {
@@ -224,6 +225,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
           }
         }
       }
+    } else if (event.KeyCode === KeyCode.ESCAPE) {
+      this.spinner.hide();
     }
   }
 

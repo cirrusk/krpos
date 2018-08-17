@@ -13,7 +13,9 @@ import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
     Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry,
-    GroupResponseData, AmwayExtendedOrdering
+    GroupResponseData, AmwayExtendedOrdering, AmwayPaymentInfoData, PaymentModes,
+    CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
+    PointPaymentInfo, AmwayMonetaryPaymentInfo
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -146,13 +148,12 @@ export class ReceiptService implements OnDestroy {
             cartInfo = jsonCartData as Cart;
             order.paymentDetails.paymentInfos.forEach(paymentInfo => {
                 switch (paymentInfo.paymentMode.code) {
-                    case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
-                    case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
-                    case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
-                    case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
-                    case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
-                    case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
-                    case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
+                    case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                    case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                    case 'cash': { jsonPaymentData = { 'cashPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                    case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                    case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                    case 'point': { jsonPaymentData = { 'pointPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
                     default: { jsonPaymentData = {}; } break;
                 }
                 Object.assign(paymentCapture, jsonPaymentData);
@@ -747,5 +748,45 @@ export class ReceiptService implements OnDestroy {
         }
         // 영수증 출력 - END
         return rtn;
+    }
+
+    private paymentCaptureConverter(paymentinfo: AmwayPaymentInfoData): any {
+        if (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD) {
+            return new CreditCardPaymentInfo(
+                paymentinfo.amount,
+                paymentinfo.paymentMode.code,
+                '',
+                paymentinfo.paymentInfoLine3,
+                '',
+                paymentinfo.paymentInfoLine1,
+                '',
+                paymentinfo.paymentInfoLine4
+            );
+        }
+        if (paymentinfo.paymentMode.code === PaymentModes.ICCARD) {
+            return new ICCardPaymentInfo(
+                paymentinfo.amount
+            );
+        }
+        if (paymentinfo.paymentMode.code === PaymentModes.CASH) {
+            return new CashPaymentInfo(
+                paymentinfo.amount
+            );
+        }
+        if (paymentinfo.paymentMode.code === PaymentModes.DIRECTDEBIT) {
+            return new DirectDebitPaymentInfo(
+                paymentinfo.amount
+            );
+        }
+        if (paymentinfo.paymentMode.code === PaymentModes.POINT) {
+            return new PointPaymentInfo(
+                paymentinfo.amount, ''
+            );
+        }
+        if (paymentinfo.paymentMode.code === PaymentModes.ARCREDIT) {
+            return new AmwayMonetaryPaymentInfo(
+                paymentinfo.amount
+            );
+        }
     }
 }
