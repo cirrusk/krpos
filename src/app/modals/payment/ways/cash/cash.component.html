@@ -27,7 +27,7 @@
                         <tr>
                             <th scope="row">거스름돈</th>
                             <td>
-                                <span #change class="won" *ngIf="paid.value - payment.value > 0; else notChange">{{ paid.value - payment.value | number}} 원</span>
+                                <span #change class="won" *ngIf="paid.value - payamount > 0; else notChange">{{ paid.value - payamount | number}} 원</span>
                                 <ng-template #notChange>
                                     <span #change class="won">0 원</span>
                                 </ng-template>
