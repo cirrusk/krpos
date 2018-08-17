@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { ApiService, StorageService } from '../../core';
-import { AccountList, MemberType, HttpData, BerResult } from '../../data';
+import { AccountList, MemberType, HttpData, BerResult, ProductList } from '../../data';
 import { Products } from '../../data/models/cart/cart-data';
 
 /**
@@ -109,6 +109,17 @@ export class SearchService {
     const params = { access_token: accesstoken, searchText: berName, pageSize: pageSize, currentPage: currentPage };
     const pathvariables = { aboNum: aboNum };
     const data = new HttpData('berSearch', pathvariables, null, params);
+    return this.api.get(data);
+  }
+
+  /**
+   * AP 즐겨찾기 제품 목록
+   */
+  getFavoriteProducts(): Observable<ProductList> {
+    const pos = this.storage.getTerminalInfo();
+    const pathvariables = { pickupStore: pos.pointOfService.name };
+    const params = { fields: 'BASIC', currentPage: '0', pageSize: '9' };
+    const data = new HttpData('getFavoriteProducts', pathvariables, null, params);
     return this.api.get(data);
   }
 }

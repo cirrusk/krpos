@@ -12,3 +12,12 @@ export class Product {
         this.barcode = barcode;
     }
 }
+
+export class ProductList {
+    products: Array<Product>;
+    catalog: string;
+    version: string;
+    totalProductCount: number;
+    totalPageCount: number;
+    currentPage: number;
+}

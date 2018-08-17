@@ -277,6 +277,16 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
         this.printer.openCashDrawer();
+        this.payments.cashDrawerLogging().subscribe(
+          result => {
+            this.logger.set('complete.payment.component', `${result.returnMessage}`).debug();
+          },
+          error => {
+            const errdata = Utils.getError(error);
+            if (errdata) {
+              this.logger.set('complete.payment.component', `${errdata.message}`).error();
+            }
+          });
       }
       this.printAndCartInit(isCashReceipt);
       this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 삭제

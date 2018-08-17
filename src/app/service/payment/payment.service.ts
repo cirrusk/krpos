@@ -6,7 +6,7 @@ import 'rxjs/add/operator/timeout';
 import { ApiService, StorageService, Config } from '../../core';
 import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
-  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, TerminalInfo, BatchInfo
+  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, TerminalInfo, BatchInfo, ResponseMessage
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
@@ -195,19 +195,11 @@ export class PaymentService {
    * cashier AD 번호
    * open 시간
    */
-  cashDrawerLogging() {
+  cashDrawerLogging(): Observable<ResponseMessage> {
     const batch: BatchInfo = this.storage.getBatchInfo();
-    const pos: TerminalInfo = this.storage.getTerminalInfo();
-
-    const data = new HttpData('cashdrawerLog', null, null, null, 'json');
+    const pathvariables = { batchId: batch.batchNo };
+    const data = new HttpData('cashdrawerLog', pathvariables, null, null, 'json');
     return this.api.post(data);
   }
 
-
-  // 1.Cash
-  // 2.CreditCard
-  // 3.DirectDebit
-  // 4.IcCard
-  // 5.Point
-  // 6.ReCash
 }
