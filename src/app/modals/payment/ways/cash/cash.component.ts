@@ -13,6 +13,10 @@ import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { InfoBroker } from '../../../../broker';
 
+/**
+ * 현금 결제 컴포넌트
+ * 받은 금액 입력 후 엔터로 결제 처리 진행
+ */
 @Component({
   selector: 'pos-cash',
   templateUrl: './cash.component.html'
@@ -106,13 +110,14 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 받은금액에서 엔터키 입력 시 결제금액으로 이동
-   * 2018.08.17 결제금액은 입력불가항목으로 변경
+   * 입력창에서 엔터 입력시 바로 처리
+   *
+   * @param evt 이벤트
+   * @param paid 받은금액
    */
-  paidBlur() {
-    const paid = this.paid.nativeElement.value;
-    if (paid) {
-      setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
+  payEnter(evt: any, paid: number) {
+    if (paid && paid > 0) {
+      this.pay(evt, paid, this.payamount);
     }
   }
 
@@ -122,7 +127,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * Member	현금(수표)	M포인트
    * 소비자	현금(수표)
    *
-   * @param receivedAmount 내신금액
+   * @param receivedAmount 받은금액
    * @param payAmount 결제금액
    */
   pay(evt: KeyboardEvent, receivedAmount: number, payAmount: number): void {
@@ -131,7 +136,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       return;
     }
     this.paySubmitLock(true);
-    const nReceiveAmount = Number(receivedAmount); // 내신금액
+    const nReceiveAmount = Number(receivedAmount); // 받은금액
     let nPayAmount = Number(payAmount); // 결제금액
     if (nReceiveAmount < 1) {
       this.paySubmitLock(false); // 버튼 잠금 해제
@@ -250,7 +255,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         this.info.sendInfo('recart', this.orderInfo);
         this.info.sendInfo('orderClear', 'clear');
         this.close();
-      } else {
+      } else { // INPUT에 포커스가 없을 경우 결제 처리
         this.pay(event, this.paid.nativeElement.value, this.payamount);
       }
     }
