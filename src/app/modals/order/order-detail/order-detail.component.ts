@@ -188,7 +188,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         if (errdata) {
           this.logger.set('order-detail.component', `Get Order Detail error type : ${errdata.type}`).error();
           this.logger.set('order-detail.component', `Get Order Detail error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.messageService.get('server.error') });
+          this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
         }
       });
   }
@@ -209,7 +209,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         if (errdata) {
           this.logger.set('order-detail.component', `Get Balance error type : ${errdata.type}`).error();
           this.logger.set('order-detail.component', `Get Balance error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.messageService.get('server.error') });
+          this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
         }
       });
   }

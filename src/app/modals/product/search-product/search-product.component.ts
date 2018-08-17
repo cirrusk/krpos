@@ -138,7 +138,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         if (errdata) {
           this.logger.set('searchProduct.component', `Search product error type : ${errdata.type}`).error();
           this.logger.set('searchProduct.component', `Search product error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error') });
+          this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
   }

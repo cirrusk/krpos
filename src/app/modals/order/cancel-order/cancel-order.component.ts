@@ -49,6 +49,8 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
    * 주문 취소 요청
    */
   cancelOrder() {
+    // 신용카드 취소인 경우
+    // 현금IC카드 취소인 경우
     this.cancelOrderSubscription = this.orderService.orderCancel(this.orderInfo.amwayAccount.uid,
       this.orderInfo.user.uid,
       this.orderInfo.code).subscribe(
@@ -61,7 +63,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           const errdata = Utils.getError(error);
           if (errdata) {
             this.logger.set('cancel-order.component', `cancel order error message : ${errdata.message}`).error();
-            this.alert.error({ message: this.messageService.get('server.error') });
+            this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
           }
         });
   }
@@ -117,7 +119,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cancel-order.component', `Get Order Detail error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.messageService.get('server.error') });
+          this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
         }
       });
   }

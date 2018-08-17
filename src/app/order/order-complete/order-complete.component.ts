@@ -148,7 +148,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
           if (errdata) {
             this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
             this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
-            this.alert.error({ message: this.messageService.get('server.error') });
+            this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
           }
         });
   }

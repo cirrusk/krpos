@@ -39,7 +39,7 @@ export class CancelEcpPrintComponent extends ModalComponent implements OnInit {
         if (errdata) {
           this.logger.set('cancel-ecp-print.component', `Cancel Ecp Print error type : ${errdata.type}`).error();
           this.logger.set('cancel-ecp-print.component', `Cancel Ecp Print error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error') });
+          this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
   }

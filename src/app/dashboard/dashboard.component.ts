@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.logger.set('dashboard.component', `${errdt.message}`).error();
             }
             this.logger.set('dashboard.component', `${errdt.message}`).error();
-            this.alert.error({ message: this.message.get('server.error')  });
+            this.alert.error({ message: this.message.get('server.error', errdt.message)  });
           }
         });
     }

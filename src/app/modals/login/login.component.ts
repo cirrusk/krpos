@@ -121,7 +121,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error') });
+          this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
   }

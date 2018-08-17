@@ -68,7 +68,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
         this.berSeachMarker = -1;
         if (errdata) {
           this.logger.set('search.ber.component', `search ber error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error') });
+          this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
   }
