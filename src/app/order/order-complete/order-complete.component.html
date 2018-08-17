@@ -58,7 +58,7 @@
                           <tr [class.on]="selectedOrderNum == i" *ngFor="let order of orderHistoryList.orders; let i = index;" (click)="activeRowCart(i, order.code)">
                               <td><span>{{(orderHistoryList.pagination.pageSize * orderHistoryList.pagination.currentPage)+(i+1)}}</span></td>
                               <td><span>{{order.code}}</span></td>
-                              <td><span class="elips mx90 ac">{{order.user.name}}</span></td>
+                              <td><span *ngIf = "order.isGroupCombinationOrder; else elseTemplateName" class="elips mx90 ac">{{order.volumeAccount.name}}</span><ng-template #elseTemplateName><span  class="elips mx90 ac">{{order.user.name}}</span></ng-template></td>
                               <td class="ar"><span>{{order.total.value | number}}원</span></td>
                               <td><span>{{order.placed | date:'yy/MM/dd HH:mm:ss'}}</span></td>
                               <td><span *ngIf="order.deliveryMode.code === 'pickup' && order.channel.code === 'pos'; else elseTemplate1">{{order.deliveryMode.name }}</span><ng-template #elseTemplate1><span>픽업예약주문</span></ng-template></td>

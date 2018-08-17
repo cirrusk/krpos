@@ -3,7 +3,7 @@
     <pos-notice tagmsg="공지사항" [noticeList]="noticeList"></pos-notice>
     <!-- //공지사항 -->
     <!-- 고객리스트 : 그룹결제시 노출 -->
-    <div class="member_list" [hidden]="orderType !== 'g'">
+    <div class="member_list" [hidden]="orderType !== eOrderType.GROUP">
         <span *ngIf="groupAccountInfo.length > GROUP_ACCOUNT_PAGE_SIZE">
             <button type="button" [disabled]="userPager.currentPage === userPager.startPage" class="ico_comm prev02" (click)="setUserPage(userPager.currentPage - 1, true)">이전</button>
             <button type="button" [disabled]="userPager.currentPage === userPager.endPage" class="ico_comm next02" (click)="setUserPage(userPager.currentPage + 1, true)">다음</button>
@@ -95,7 +95,7 @@
         <!-- 회원정보 -->
         <div class="member_info">
             <div class="info_top">
-                <ng-container *ngIf="orderType == 'n' || orderType == ''">
+                <ng-container *ngIf="orderType == eOrderType.NORMAL || orderType == ''">
                     <!-- 비회원시 삭제1 -->
                     <em *ngIf="accountInfo;">
                         {{accountInfo.accountTypeCode.toUpperCase() === memberType.ABO ? accountInfo.name: accountInfo.parties[0].name}} 회원님
@@ -105,7 +105,7 @@
                     <span class="t02" *ngIf="accountInfo;">{{apprtype}}</span>
                     <!-- //비회원시 삭제1 -->
                 </ng-container>
-                <ng-container *ngIf="orderType == 'g'">
+                <ng-container *ngIf="orderType == eOrderType.GROUP">
                     <!-- 비회원시 삭제1 -->
                     <em *ngIf="groupAccountInfo.length > 0;">
                         {{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.ABO ? groupAccountInfo[selectedUserIndex].name

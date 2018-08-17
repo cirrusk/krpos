@@ -5,7 +5,7 @@ import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance, MemberType } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 
@@ -51,7 +51,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
     this.getBalance(this.orderInfo.user.uid);
     if (this.orderInfo.isGroupCombinationOrder) {
-      this.orderType = 'g';
+      this.orderType = OrderType.GROUP;
     }
     this.checkCancelStatus(this.orderInfo);
     this.clientId = this.storageService.getClientId();
@@ -67,7 +67,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.cancelFlag = false;
     this.activeFlag = false;
     this.groupMainFlag = true;
-    this.orderType = 'n';
+    this.orderType = OrderType.NORMAL;
     this.paymentCapture = new PaymentCapture();
   }
 
@@ -127,7 +127,8 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       result => {
         if (result.cancelFlag) {
           // 재결제 추가
-          this.info.sendInfo('paymentChange', result.data);
+          const data = { 'orderDetail': result.data, 'orderType': this.orderInfo.isGroupCombinationOrder };
+          this.info.sendInfo('paymentChange', data);
           this.goOrder();
           this.close();
         }
@@ -221,7 +222,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   reissueReceipts() {
     try {
       const cancelFlag = this.cancelSymbol === '-' ? true : false;
-      if (this.orderType === 'g') {
+      if (this.orderType === OrderType.GROUP) {
         this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true);
       } else {
         this.receiptService.reissueReceipts(this.orderDetail, cancelFlag);

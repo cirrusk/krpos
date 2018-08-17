@@ -34,6 +34,7 @@ export * from './models/order/search-param';
 export * from './models/order/stock';
 export * from './models/order/user';
 export * from './models/order/copy-group-cart-entries';
+export * from './models/order/order.enum';
 
 export * from './models/payment/payment-mode';
 export * from './models/payment/payment-capture';

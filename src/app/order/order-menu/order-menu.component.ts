@@ -7,7 +7,7 @@ import {
   CancelCartComponent,
   SearchBerComponent
 } from '../../modals';
-import { Accounts, OrderHistoryList, MemberType, AmwayExtendedOrdering } from '../../data';
+import { Accounts, OrderHistoryList, MemberType, AmwayExtendedOrdering, OrderType, ModelType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
@@ -90,7 +90,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   setFlag(data) {
     if (data) {
       this.logger.set('order.menu.component', `from cart list to cart menu flag receive, type : ${data.type}`).debug();
-      if (data.type === 'account') {
+      if (data.type === ModelType.ACCOUNT) {
         this.hasAccount = data.flag;
         if (data.data) {
           this.accountInfo = data.data;
@@ -99,24 +99,24 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           this.cartInfo = null;
           this.amwayExtendedOrdering = data.data;
         }
-      } else if (data.type === 'product') {
-        if (this.orderType !== 'g') {
+      } else if (data.type === ModelType.PRODUCT) {
+        if (this.orderType !== OrderType.GROUP) {
           this.hasProduct = data.flag;
         }
         if (data.data) {
           // this.account = data.data;
         }
-      } else if (data.type === 'cart') {
+      } else if (data.type === ModelType.CART) {
         this.hasCart = data.flag;
         if (data.data) {
           this.cartInfo = data.data;
         } else {
           this.cartInfo = null;
         }
-      } else if (data.type === 'group') {
+      } else if (data.type === ModelType.GROUP) {
         if (data.data) {
           if (this.orderType === '') {
-            this.orderType = 'g';
+            this.orderType = OrderType.GROUP;
           }
           this.amwayExtendedOrdering = data.data;
           this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order) {
@@ -145,7 +145,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.posMenu.emit({ type: '통합결제' });
     this.storage.setLocalItem('apprtype', 'c');
-    if (this.orderType === 'g') { this.transformCartInfo(this.amwayExtendedOrdering); }
+    if (this.orderType === OrderType.GROUP) { this.transformCartInfo(this.amwayExtendedOrdering); }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) {
       // 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
       this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
@@ -193,8 +193,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 그룹 결제 사용자 검색 팝업
    * parameter 로 orderType 을 넘겨서 그룹 결제일 경우 활용하도록 함.
-   * orderType = 'g' 그룹 결제
-   * orderType = 'n' 일반 결제
+   * orderType = 'G' 그룹 결제
+   * orderType = 'N' 일반 결제
    *
    * @param {any} evt 이벤트
    */
@@ -202,12 +202,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchAccountComponent, {
       closeByClickOutside: false,
-      orderType: 'g',
+      orderType: OrderType.GROUP,
       modalId: 'SearchAccountComponent'
     }).subscribe(result => {
       if (result) {
-        this.orderType = 'g';
-        this.searchAccountBroker.sendInfo('g', result);
+        this.orderType = OrderType.GROUP;
+        this.searchAccountBroker.sendInfo(OrderType.GROUP, result);
       }
     });
   }
