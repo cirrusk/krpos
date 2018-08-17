@@ -90,7 +90,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
    * 신규 소비자 생성
    */
   private createCustomerAccount() {
-    this.registerType = this.guser ? 'ECP' : 'CONSUMER';
+    this.registerType = this.guser ? 'EASY_PICKUP' : 'CONSUMER';
     this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
       userInfo => {
         if (userInfo) {
