@@ -74,12 +74,12 @@ export const environment = {
     orderCancel: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cancel-order/{orderCode}',
     serialAndRfid: '/{baseSiteId}/users/{userId}/update-serial/{orderCode}',
     receipt: '/{baseSiteId}/users/{userId}/receipt/{orderCode}',
-    cashdrawerLog: '',
+    cashdrawerLog: '/{baseSiteId}/point-of-service/cash-drawer-log/{batchId}',
     issueReceipt: '/{baseSiteId}/users/{userId}/issue-receipt/{orderCode}',
     cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}',
     confirmPickup: '/{baseSiteId}/confirm-pickup',
     checkBlock: '/{baseSiteId}/check-order-block/{userId}',
-    getFavoriteProducts: ''
+    getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}'
   },
   logLevel: 'info',
   terminalTimeout: 10,
