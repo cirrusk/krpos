@@ -276,7 +276,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private payFinishByEnter(isCashReceipt?: boolean) {
     if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
       if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
-        this.printer.openCashDrawer();
+        this.printer.openCashDrawer(); // cash drawer open
+        // cash drawer open logging
         this.payments.cashDrawerLogging().subscribe(
           result => {
             this.logger.set('complete.payment.component', `${result.returnMessage}`).debug();
