@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 
-import { ModalComponent, ModalService, AlertService, Logger } from '../../../core';
+import { ModalComponent, ModalService, AlertService, Logger, SpinnerService, CardCancelResult, NicePaymentService, ICCardCancelResult } from '../../../core';
 import { OrderHistory } from '../../../data';
 import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Subscription } from 'rxjs/Subscription';
@@ -26,6 +27,8 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     private orderService: OrderService,
     private receiptService: ReceiptService,
     private messageService: MessageService,
+    private nicepay: NicePaymentService,
+    private spinner: SpinnerService,
     private logger: Logger,
     private alert: AlertService) {
     super(modalService);
@@ -117,6 +120,61 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           this.alert.error({ message: this.messageService.get('server.error') });
         }
       });
+  }
+
+  /**
+   * 신용카드 결제 취소
+   *
+   * @param payprice 결제금액
+   * @param approvalNumber 승인번호
+   * @param approvalDateTime 승인일시
+   * @param installment 할부개월수
+   */
+  creditCardCancel(payprice: number, approvalNumber: string, approvalDateTime?: string, installment = 0) {
+    this.spinner.show();
+    const apprdate = approvalDateTime ? approvalDateTime.substring(0, 6) : '';
+    const resultNotifier: Subject<CardCancelResult> = this.nicepay.cardCancel(String(payprice), approvalNumber, apprdate, String(installment));
+    resultNotifier.subscribe(
+      (res: CardCancelResult) => {
+        if (res.approved) {
+          this.logger.set('cancel.order.component', 'credit card cancel success').debug();
+        } else {
+          this.logger.set('cancel.order.component', `credit card cancel error : ${res.resultMsg1}, ${res.resultMsg2}`).error();
+        }
+      },
+      error => {
+        this.spinner.hide();
+        this.logger.set('credit.card.component', `${error}`).error();
+      },
+      () => { this.spinner.hide(); }
+    );
+  }
+
+  /**
+   * 현금IC카드 결제 취소
+   *
+   * @param payprice 결제금액
+   * @param approvalNumber 승인번호
+   * @param approvalDateTime 승인일시
+   */
+  icCardCancel(payprice: number, approvalNumber: string, approvalDateTime?: string) {
+    this.spinner.show();
+    const apprdate = approvalDateTime ? approvalDateTime.substring(0, 6) : '';
+    const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(payprice), approvalNumber, apprdate);
+    resultNotifier.subscribe(
+      (res: ICCardCancelResult) => {
+        if (res.approved) {
+          this.logger.set('cancel.order.component', 'ic card cancel success').debug();
+        } else {
+          this.logger.set('cancel.order.component', `ic card cancel error : ${res.resultMsg1}, ${res.resultMsg2}`).error();
+        }
+      },
+      error => {
+        this.spinner.hide();
+        this.logger.set('ic.card.component', `${error}`).error();
+      },
+      () => { this.spinner.hide(); }
+    );
   }
 
   close() {
