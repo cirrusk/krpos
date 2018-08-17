@@ -127,7 +127,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       result => {
         if (result.cancelFlag) {
           // 재결제 추가
-          const data = { 'orderDetail': result.data, 'orderType': this.orderInfo.isGroupCombinationOrder };
+          const data = { 'orderDetail': result.data, 'orderType': this.orderInfo.isGroupCombinationOrder ? this.orderInfo.isGroupCombinationOrder : false };
           this.info.sendInfo('paymentChange', data);
           this.goOrder();
           this.close();

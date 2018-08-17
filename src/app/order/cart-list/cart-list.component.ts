@@ -713,7 +713,10 @@ export class CartListComponent implements OnInit, OnDestroy {
     const arrayAccount = new Array<Accounts>();
     // Add to Cart 배열로 셋팅
     newGroupOrderList.orderList.forEach((order, index) => {
-      arrayAccount.push(order.volumeABOAccount);
+      const account = order.volumeABOAccount;
+      const jsonData = { 'parties': [{'uid' : order.volumeABOAccount.uid, 'name' : order.volumeABOAccount.name}] };
+      Object.assign(account, jsonData);
+      arrayAccount.push(account);
       const existedIdx: number = groupOrderList.orderList.findIndex(
         function (obj) {
           return obj.volumeABOAccount.uid === order.volumeABOAccount.uid;
@@ -1391,7 +1394,10 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.amwayExtendedOrdering = result;
           this.sendRightMenu(ModelType.GROUP, true, this.amwayExtendedOrdering);
           this.amwayExtendedOrdering.orderList.forEach(order => {
-            this.groupAccountInfo.push(order.volumeABOAccount);
+            const account = order.volumeABOAccount;
+            const jsonData = { 'parties': [{'uid' : order.volumeABOAccount.uid, 'name' : order.volumeABOAccount.name}] };
+            Object.assign(account, jsonData);
+            this.groupAccountInfo.push(account);
           });
           this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
           this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
