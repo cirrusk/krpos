@@ -81,6 +81,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   pay(evt: KeyboardEvent): void {
     evt.preventDefault();
     if (this.finishStatus !== null) {
+      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+        this.payFinishByEnter();
+      }
       return;
     }
     const calpaid = this.calAmountByPayment();

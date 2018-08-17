@@ -110,7 +110,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param evt 이벤트
    */
   amwayPoint(evt: any) { // point
-    // this.setSelected(evt, 2, 'point');
+    this.setSelected(evt, 2, 'point');
     if (this.point <= 0) {
       this.alert.show({ message: this.message.get('no.point', this.custname) });
       return;
@@ -126,7 +126,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param evt 이벤트
    */
   memberPoint(evt: any) { // point
-    // this.setSelected(evt, 3, 'point');
+    this.setSelected(evt, 3, 'point');
     if (this.point <= 0) {
       this.alert.show({ message: this.message.get('no.point', this.custname) });
       return;
@@ -356,6 +356,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       );
 
       this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
+        console.log('################## ' + paymentType.code);
         this.enableMenu.push(paymentType.code);
       });
     }
