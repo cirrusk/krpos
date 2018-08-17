@@ -6,7 +6,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService, Logger,
-  StorageService, Modal, ICCardApprovalResult, NiceConstants, ICCardCancelResult, SpinnerService
+  StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService
 } from '../../../../core';
 import {
   KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
@@ -173,33 +173,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
 
   close() {
     this.closeModal();
-  }
-
-  /**
-   * ESC를 눌렀을 경우 카드 결제했으면 취소
-   * 안했으면 팝업 닫기
-   */
-  payCancel() {
-    if (this.cardresult && this.cardresult.approved) {
-      this.spinner.show();
-      const apprnum = this.cardresult.approvalNumber;
-      const apprdate = this.cardresult.approvalDateTime ? this.cardresult.approvalDateTime.substring(0, 6) : '';
-      const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(this.paidamount), apprnum, apprdate);
-      resultNotifier.subscribe(
-        (res: ICCardCancelResult) => {
-          if (res.approved) {
-            this.logger.set('ic.card.component', 'card cancel success').debug();
-          } else {
-            this.logger.set('ic.card.component', `card cancel error : ${res.resultMsg1}, ${res.resultMsg2}`).error();
-          }
-        },
-        error => {
-          this.spinner.hide();
-          this.logger.set('ic.card.component', `${error}`).error();
-        },
-        () => { this.spinner.hide(); }
-      );
-    }
   }
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {

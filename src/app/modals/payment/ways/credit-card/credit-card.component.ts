@@ -8,7 +8,7 @@ import { ReceiptService, PaymentService, MessageService } from '../../../../serv
 import {
   ModalComponent, ModalService, NicePaymentService,
   Logger, AlertService, AlertState, Modal, StorageService,
-  CardApprovalResult, CardCancelResult, NiceConstants, SpinnerService
+  CardApprovalResult, NiceConstants, SpinnerService
 } from '../../../../core';
 import {
   PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
@@ -297,30 +297,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   close() {
     this.closeModal();
-  }
-
-  payCancel() {
-    if (this.cardresult && this.cardresult.approved) {
-      this.spinner.show();
-      const payprice = this.paid.nativeElement.value;
-      const apprnum = this.cardresult.approvalNumber;
-      const apprdate = this.cardresult.approvalDateTime ? this.cardresult.approvalDateTime.substring(0, 6) : '';
-      const resultNotifier: Subject<CardCancelResult> = this.nicepay.cardCancel(String(payprice), apprnum, apprdate, String(this.installment));
-      resultNotifier.subscribe(
-        (res: CardCancelResult) => {
-          if (res.approved) {
-            this.logger.set('credit.card.component', 'card cancel success').debug();
-          } else {
-            this.logger.set('credit.card.component', `card cancel error : ${res.resultMsg1}, ${res.resultMsg2}`).error();
-          }
-        },
-        error => {
-          this.spinner.hide();
-          this.logger.set('credit.card.component', `${error}`).error();
-        },
-        () => { this.spinner.hide(); }
-      );
-    }
   }
 
   /**
