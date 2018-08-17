@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ReceiptService, PaymentService, MessageService } from '../../../../service';
+import { ReceiptService, MessageService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService, Logger,
   StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService
@@ -39,7 +39,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentsubscription: Subscription;
   private dupcheck = false;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService,
-    private message: MessageService, private payments: PaymentService, private nicepay: NicePaymentService,
+    private message: MessageService, private nicepay: NicePaymentService,
     private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;

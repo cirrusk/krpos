@@ -4,7 +4,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ReceiptService, PaymentService, MessageService } from '../../../../service';
+import { ReceiptService, MessageService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService,
   Logger, AlertService, AlertState, Modal, StorageService,
@@ -19,6 +19,10 @@ import { Cart } from '../../../../data/models/order/cart';
 import { InfoBroker } from '../../../../broker';
 import { Utils } from '../../../../core/utils';
 
+/**
+ * 신용카드 결제 컴포넌트
+ *
+ */
 @Component({
   selector: 'pos-credit-card',
   templateUrl: './credit-card.component.html'
@@ -44,16 +48,18 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   private dupcheck = false;
+  private checkinstallment: number;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService,
-    private payments: PaymentService, private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
+    private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private info: InfoBroker,
     private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = '00';
     this.finishStatus = null;
     this.checktype = 0;
+    this.checkinstallment = 0;
   }
 
   ngOnInit() {
@@ -93,28 +99,55 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   /**
-   * 결제금액 엔터입력시 blur 처리
-   * 결제창으로 이동 --> 엔터 입력에 대한 이벤트 처리
+   * 실결제금액에서 엔터키 입력시 결제 진행
+   *
+   * 조건
+   * 일시불인 경우 결제 바로 결제 진행
+   * 할부인 경우 할부가 입력되었을 경우 바로 결제 진행
+   *
+   * @param evt 키보드 이벤트
+   * @param paid 실결제금액
    */
-  paidBlur() {
-    const paid = this.paid.nativeElement.value;
-    if (Utils.isEmpty(paid)) {
-      setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
-    } else {
-      setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
+  paidEnter(paid: number) {
+    if (paid > 0) {
+      const checked = this.checkinstallment === 1 ? true : false;
+      if (checked) { // 할부
+        const val = this.installmentPeriod.nativeElement.value;
+        if (Utils.isEmpty(val)) {
+          setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
+        } else {
+          if (!this.dupcheck) {
+            setTimeout(() => { this.nicePay(); }, 300);
+            this.dupcheck = true;
+          }
+        }
+      } else { // 일시불
+        if (!this.dupcheck) {
+          setTimeout(() => { this.nicePay(); }, 300);
+          this.dupcheck = true;
+        }
+      }
     }
   }
 
   /**
-   * 할부개월 엔터 입력시 blur 처리
-   * 결제창으로 이동 --> 엔터 입력에 대한 이벤트 처리
+   * 할부일 경우 엔터 입력시 바로 결제
+   * 일시불일 경우는 처리안함.
    */
-  installmentBlur() {
-    const inst = this.installmentPeriod.nativeElement.value;
-    if (Utils.isEmpty(inst)) {
-      setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
-    } else {
-      setTimeout(() => { this.installmentPeriod.nativeElement.blur(); }, 50);
+  installmentEnter(paid: number) {
+    if (paid > 0) {
+      const checked = this.checkinstallment === 1 ? true : false;
+      if (checked) { // 할부
+        const val = this.installmentPeriod.nativeElement.value;
+        if (Utils.isEmpty(val)) {
+          setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
+        } else {
+          if (!this.dupcheck) {
+            setTimeout(() => { this.nicePay(); }, 300);
+            this.dupcheck = true;
+          }
+        }
+      }
     }
   }
 
@@ -125,6 +158,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   checkInstallment(type: number) {
     this.installmentPeriod.nativeElement.value = '';
+    this.checkinstallment = type;
     if (type === 0) { // 일시불
       this.installment = '00';
       setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);

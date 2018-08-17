@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, ReceiptService, MessageService } from '../../../../service';
-import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, AmwayMonetaryPaymentInfo,
   PaymentModes, PaymentModeData, StatusDisplay, CurrencyData, CapturePaymentInfo, AmwayExtendedOrdering
@@ -38,8 +38,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
-    private storage: StorageService, private message: MessageService, private info: InfoBroker,
-    private logger: Logger, private renderer: Renderer2) {
+    private storage: StorageService, private message: MessageService, private info: InfoBroker) {
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;
