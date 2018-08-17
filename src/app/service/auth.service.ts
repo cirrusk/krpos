@@ -2,6 +2,9 @@ import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/switchMap';
+// import 'rxjs/add/operator/zip';
+import 'rxjs/add/observable/zip';
+import 'rxjs/add/observable/forkJoin';
 
 import { StorageService, ApiService, CLIENT_SECRET } from '../core';
 import { TerminalInfo, AccessToken, HttpData, Error } from '../data';
@@ -19,7 +22,7 @@ export class AuthService {
     private api: ApiService,
     private storage: StorageService,
     @Inject(CLIENT_SECRET) private clientsecret: string) {
-      this.terminalInfo = this.storage.getTerminalInfo();
+    this.terminalInfo = this.storage.getTerminalInfo();
   }
 
   /**
@@ -33,10 +36,10 @@ export class AuthService {
   public authentication(userid: string, userpassword: string): Observable<any> {
     this.terminalInfo = this.storage.getTerminalInfo();
     if (this.terminalInfo === null) {
-      return Observable.throw({error: new Error('terminal_error', 'Termianl info is null.')});
+      return Observable.throw({ error: new Error('terminal_error', 'Termianl info is null.') });
     }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-    const param = {clientId: clientid, userId: userid, password: userpassword, mac_address: this.storage.getMacAddress()};
+    const param = { clientId: clientid, userId: userid, password: userpassword, mac_address: this.storage.getMacAddress() };
     const data = new HttpData('auth', null, null, param);
     return this.api.post(data);
   }
@@ -59,10 +62,10 @@ export class AuthService {
    */
   public accessToken(authCode: string): Observable<AccessToken> {
     if (this.terminalInfo === null) {
-      return Observable.throw({error: new Error('terminal_error', 'Termianl info is null.')});
+      return Observable.throw({ error: new Error('terminal_error', 'Termianl info is null.') });
     }
     const clientid = this.terminalInfo && this.terminalInfo.id;
-    const param = {code: authCode, client_id: clientid, client_secret: this.clientsecret, grant_type: 'authorization_code'};
+    const param = { code: authCode, client_id: clientid, client_secret: this.clientsecret, grant_type: 'authorization_code' };
     const data = new HttpData('token', null, null, param);
     return this.api.post(data);
   }
@@ -76,9 +79,9 @@ export class AuthService {
    */
   public authAndToken(userid: string, userpassword: string): Observable<any> {
     return this.authentication(userid, userpassword)
-    .flatMap((authinfo: any) => {
-      return this.accessToken(authinfo.code);
-    });
+      .flatMap((authinfo: any) => {
+        return this.accessToken(authinfo.code);
+      });
   }
 
 }
