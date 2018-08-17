@@ -750,6 +750,11 @@ export class ReceiptService implements OnDestroy {
         return rtn;
     }
 
+    /**
+     * 주문 정보의 payment 정보를 paymentcapute 정보로 전환(인쇄용)
+     *
+     * @param paymentinfo 주문정보에 포함되어 있는 payment 정보
+     */
     private paymentCaptureConverter(paymentinfo: AmwayPaymentInfoData): any {
         if (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD) {
             return new CreditCardPaymentInfo(
