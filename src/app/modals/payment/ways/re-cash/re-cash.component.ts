@@ -31,13 +31,13 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private accountInfo: Accounts;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
-  private paymentType: string;
   private paymentsubscription: Subscription;
   private balancesubscription: Subscription;
   private alertsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
-  constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService, private payments: PaymentService,
+  constructor(protected modalService: ModalService, private modal: Modal,
+    private receipt: ReceiptService, private payments: PaymentService,
     private storage: StorageService, private message: MessageService, private info: InfoBroker) {
     super(modalService);
     this.isAllPay = false;
@@ -103,10 +103,20 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  pointBlur() {
-    const point = this.usePoint.nativeElement.value;
-    if (Utils.isNotEmpty(point)) {
-      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+  /**
+   * 일부금액일 경우 엔터키 입력시 바로 결제
+   */
+  pointEnter(evt: any) {
+    if (!this.isAllPay) { // 일부금액
+      const point = this.usePoint.nativeElement.value;
+      if (Utils.isNotEmpty(point)) {
+        if (!this.dupcheck) {
+          setTimeout(() => { this.payRecash(evt); }, 200);
+          this.dupcheck = true;
+        }
+      } else {
+        setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+      }
     }
   }
 

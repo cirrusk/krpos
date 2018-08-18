@@ -34,6 +34,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentType: string;
   private balance: Balance;
+  private dupcheck = false;
   private balancesubscription: Subscription;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
@@ -94,11 +95,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   setChange(usepoint) {
     if (usepoint > 0) {
       this.change = this.point - usepoint;
-      if (this.paymentType === 'n') {
-        this.validationNormal();
-      } else {
-        this.validationComplex();
-      }
+      this.validationComplex();
     }
   }
 
@@ -117,10 +114,20 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
   }
 
-  pointBlur() {
-    const point = this.usePoint.nativeElement.value;
-    if (Utils.isNotEmpty(point)) {
-      setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+  /**
+   * 일부금액일 경우 엔터키 입력시 바로 결제
+   */
+  pointEnter() {
+    if (!this.isAllPay) { // 일부금액
+      const point = this.usePoint.nativeElement.value;
+      if (Utils.isNotEmpty(point)) {
+        if (!this.dupcheck) {
+          setTimeout(() => { this.payPoint(); }, 300);
+          this.dupcheck = true;
+        }
+      } else {
+        setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
+      }
     }
   }
 
@@ -134,38 +141,16 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.change < 0) {
       this.checktype = -4;
       this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
+      this.dupcheck = false;
       return;
     }
     const paid = this.paymentprice - usepoint;
     if (paid < 0) { // 포인트가 많음.
       this.checktype = -2;
       this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
+      this.dupcheck = false;
     } else {
       this.checktype = 0;
-    }
-  }
-
-  private validationNormal() {
-    let usepoint = 0;
-    if (this.isAllPay) {
-      usepoint = this.paymentprice;
-    } else {
-      usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
-    }
-    if (this.change < 0) {
-      this.checktype = -4;
-      this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
-      return;
-    }
-    const paid = this.paymentprice - usepoint;
-    if (paid === 0) {
-      this.checktype = 0;
-    } else if (paid > 0) { // 포인트가 부족
-      this.checktype = -1;
-      this.apprmessage = this.message.get('point.smallpaid'); // '사용 포인트가 결제금액보다 작습니다.';
-    } else { // 포인트가 많음.
-      this.checktype = -2;
-      this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
     }
   }
 
@@ -182,78 +167,32 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       if (typeof usepoint !== 'number') {
         this.checktype = -3;
         this.apprmessage = this.message.get('point.empty'); // '사용 포인트가 공란입니다.';
+        this.dupcheck = false;
       }
     }
     if (this.point < usepoint) {
       this.checktype = -4;
       this.apprmessage = this.message.get('point.use.over'); // 가용포인트 보다 사용포인트가 큽니다.
+      this.dupcheck = false;
       return;
     }
     const paid = this.paymentprice - usepoint;
-    if (this.paymentType === 'n') {
-      if (paid > 0) { // 포인트가 부족
-        // this.checktype = '1';
-        // return;
-      } else if (paid < 0) { // 포인트가 많음.
-        // this.checktype = '2';
-        // return;
-      } else {
-        this.checktype = 0;
-        this.paymentCaptureAndPlaceOrder();
-      }
+    this.checktype = 0;
+    this.paymentcapture = this.makePaymentCaptureData(usepoint).capturePaymentInfoData;
+    if (paid > 0) { // 결제할것이 남음.
+      this.result = this.paymentcapture;
+      this.finishStatus = StatusDisplay.PAID;
+      this.apprmessage = this.message.get('payment.success.next');
+      this.storage.setPay(this.paymentprice - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+      this.sendPaymentAndOrder(this.paymentcapture, null);
+    } else if (paid === 0) {
+      this.result = this.paymentcapture;
+      this.completePayPopup(usepoint, this.paymentprice, 0);
     } else {
-      this.checktype = 0;
-      this.paymentcapture = this.makePaymentCaptureData(usepoint).capturePaymentInfoData;
-      if (paid > 0) { // 결제할것이 남음.
-        this.result = this.paymentcapture;
-        this.finishStatus = StatusDisplay.PAID;
-        this.apprmessage = this.message.get('payment.success.next');
-        this.storage.setPay(this.paymentprice - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-        this.sendPaymentAndOrder(this.paymentcapture, null);
-      } else if (paid === 0) {
-        this.result = this.paymentcapture;
-        this.completePayPopup(usepoint, this.paymentprice, 0);
-      } else {
-        this.finishStatus = 'fail';
-        this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
-      }
+      this.finishStatus = 'fail';
+      this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
+      this.dupcheck = false;
     }
-
-  }
-
-  private paymentCaptureAndPlaceOrder() {
-    const capturepaymentinfo = this.makePaymentCaptureData(this.paymentprice);
-    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
-    this.logger.set('point.component', 'point payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
-      result => {
-        this.orderInfo = result;
-        this.logger.set('point.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-        this.finishStatus = result.statusDisplay;
-        if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-          if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-            this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-            this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-          } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) {  // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
-            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-            this.finishStatus = 'recart';
-          } else { // CART 삭제된 상태
-            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-            this.finishStatus = 'recart';
-          }
-        } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-          // cart-list.component에 재생성 이벤트 보내서 처리
-          this.finishStatus = 'fail';
-          this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-        }
-        this.storage.removePay();
-      }, error => {
-        this.finishStatus = 'fail';
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.apprmessage = errdata.message;
-        }
-      });
   }
 
   private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
@@ -331,7 +270,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
           this.info.sendInfo('orderClear', 'clear');
           this.close();
         } else {
-          this.payPoint();
+          if (!this.dupcheck) {
+            setTimeout(() => { this.payPoint(); }, 300);
+            this.dupcheck = true;
+          }
         }
       }
     }
