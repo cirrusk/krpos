@@ -117,7 +117,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      this.selectPopup('APointComponent_Cplx', PointComponent, 'a', null);
+      this.selectPopup('APointComponent_Cplx', PointComponent, 'a', 'point');
     }
   }
 
@@ -133,7 +133,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      this.selectPopup('MPointComponent_Cplx', PointComponent, 'm', null);
+      this.selectPopup('MPointComponent_Cplx', PointComponent, 'm', 'point');
     }
   }
 

@@ -121,6 +121,20 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  payButton(evt: any) {
+    console.log('finishstatus --- ' + this.finishStatus);
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else { // INPUT에 포커스가 없을 경우 결제 처리
+      this.pay(evt, this.paid.nativeElement.value, this.payamount);
+      this.paySubmitLock(false);
+    }
+  }
+
   /**
    * 현금 결제 처리
    * ABO	현금(수표)	A포인트	Recash			쿠폰
@@ -235,6 +249,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private payFinishByEnter() {
     const payment = this.payamount ? Number(this.payamount) : 0; // 결제금액
     const paychange = this.paidamount - payment;
+    console.log('paychange ----- ' + paychange);
     if (paychange >= 0) {
       this.close();
     }

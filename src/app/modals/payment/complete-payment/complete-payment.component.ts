@@ -73,6 +73,25 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
+  payButton(evt: any) {
+    this.dupcheck = false;
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'fail') {
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else {
+      if (!this.dupcheck) {
+        setTimeout(() => { this.pay(evt); }, 300);
+        this.dupcheck = true;
+      }
+    }
+  }
+
   /**
    * 결제 처리
    *
@@ -131,20 +150,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       if (p) { paid += Number(p); }
     }
     return paid;
-  }
-
-  /**
-   * 결제금액 설정
-   */
-  private calcPayAmount() {
-    let pay = 0;
-    if (this.paymentcapture.ccPaymentInfo) {
-      const p = this.paymentcapture.ccPaymentInfo.amount;
-      if (p) {
-        pay = Number(p);
-      }
-      this.payamount = pay;
-    }
   }
 
   /**
@@ -318,7 +323,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.close();
         } else {
           if (!this.dupcheck) {
-            setTimeout(() => { this.pay(event); }, 300);
+            setTimeout(() => { this.pay(event); }, 200);
             this.dupcheck = true;
           }
         }
