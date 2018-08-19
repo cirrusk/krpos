@@ -117,22 +117,13 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    */
   payEnter(evt: any, paid: number) {
     if (paid && paid > 0) {
-      this.pay(evt, paid, this.payamount);
+      this.payButton(evt);
     }
   }
 
   payButton(evt: any) {
-    console.log('finishstatus --- ' + this.finishStatus);
-    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-      this.payFinishByEnter();
-    } else if (this.finishStatus === 'recart') {
-      this.info.sendInfo('recart', this.orderInfo);
-      this.info.sendInfo('orderClear', 'clear');
-      this.close();
-    } else { // INPUT에 포커스가 없을 경우 결제 처리
-      this.pay(evt, this.paid.nativeElement.value, this.payamount);
-      this.paySubmitLock(false);
-    }
+    this.doPay(evt);
+    this.paySubmitLock(false);
   }
 
   /**
@@ -264,16 +255,19 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       if (lastmodal === 'CompletePaymentComponent') {
         return;
       }
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-        this.payFinishByEnter();
-      } else if (this.finishStatus === 'recart') {
-        this.info.sendInfo('recart', this.orderInfo);
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
-      } else { // INPUT에 포커스가 없을 경우 결제 처리
-        this.pay(event, this.paid.nativeElement.value, this.payamount);
-      }
+      this.doPay(event);
     }
   }
 
+  private doPay(event: any) {
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else { // INPUT에 포커스가 없을 경우 결제 처리
+      this.pay(event, this.paid.nativeElement.value, this.payamount);
+    }
+  }
 }

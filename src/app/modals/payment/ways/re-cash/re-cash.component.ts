@@ -110,10 +110,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (!this.isAllPay) { // 일부금액
       const point = this.usePoint.nativeElement.value;
       if (Utils.isNotEmpty(point)) {
-        if (!this.dupcheck) {
-          setTimeout(() => { this.payRecash(evt); }, 200);
-          this.dupcheck = true;
-        }
+        this.doPay(evt);
       } else {
         setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
       }
@@ -225,20 +222,23 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== 'CompletePaymentComponent') { // 결제 최종 팝업이 떠있으면 처리하지 않음.
-        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.payFinishByEnter();
-        } else if (this.finishStatus === 'recart') {
-          this.info.sendInfo('recart', this.orderInfo);
-          this.info.sendInfo('orderClear', 'clear');
-          this.close();
-        } else {
-          if (!this.dupcheck) {
-            setTimeout(() => { this.payRecash(event); }, 200);
-            this.dupcheck = true;
-          }
-        }
+        this.doPay(event);
       }
     }
   }
 
+  private doPay(event: any) {
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else {
+      if (!this.dupcheck) {
+        setTimeout(() => { this.payRecash(event); }, 200);
+        this.dupcheck = true;
+      }
+    }
+  }
 }

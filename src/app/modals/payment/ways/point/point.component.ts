@@ -121,10 +121,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (!this.isAllPay) { // 일부금액
       const point = this.usePoint.nativeElement.value;
       if (Utils.isNotEmpty(point)) {
-        if (!this.dupcheck) {
-          setTimeout(() => { this.payPoint(); }, 300);
-          this.dupcheck = true;
-        }
+        this.doPay();
       } else {
         setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
       }
@@ -263,20 +260,23 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== 'CompletePaymentComponent') { // 결제완료 창이 뜨지 않았을 경우만 처리
-        if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
-          this.payFinishByEnter();
-        } else if (this.finishStatus === 'fail') {
-          this.info.sendInfo('recart', this.orderInfo);
-          this.info.sendInfo('orderClear', 'clear');
-          this.close();
-        } else {
-          if (!this.dupcheck) {
-            setTimeout(() => { this.payPoint(); }, 300);
-            this.dupcheck = true;
-          }
-        }
+        this.doPay();
       }
     }
   }
 
+  private doPay() {
+    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'fail') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else {
+      if (!this.dupcheck) {
+        setTimeout(() => { this.payPoint(); }, 300);
+        this.dupcheck = true;
+      }
+    }
+  }
 }

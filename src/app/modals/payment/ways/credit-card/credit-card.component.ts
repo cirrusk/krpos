@@ -116,16 +116,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         if (Utils.isEmpty(val)) {
           setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
         } else {
-          if (!this.dupcheck) {
-            setTimeout(() => { this.nicePay(); }, 300);
-            this.dupcheck = true;
-          }
+          this.doPay();
         }
       } else { // 일시불
-        if (!this.dupcheck) {
-          setTimeout(() => { this.nicePay(); }, 300);
-          this.dupcheck = true;
-        }
+        this.doPay();
       }
     }
   }
@@ -142,10 +136,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         if (Utils.isEmpty(val)) {
           setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
         } else {
-          if (!this.dupcheck) {
-            setTimeout(() => { this.nicePay(); }, 300);
-            this.dupcheck = true;
-          }
+          this.doPay();
         }
       }
     }
@@ -366,26 +357,30 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== 'CompletePaymentComponent') {
-        if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
-          if (!this.dupcheck) {
-            setTimeout(() => { this.nicePay(); }, 300);
-            this.dupcheck = true;
-          }
-        } else {
-          if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
-            this.payFinishByEnter();
-          } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
-            this.close();
-          } else {
-            if (!this.dupcheck) {
-              setTimeout(() => { this.nicePay(); }, 300);
-              this.dupcheck = true;
-            }
-          }
-        }
+        this.doPay();
       }
     } else if (event.keyCode === KeyCode.ESCAPE) {
       this.spinner.hide();
+    }
+  }
+
+  private doPay() {
+    if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
+      if (!this.dupcheck) {
+        setTimeout(() => { this.nicePay(); }, 300);
+        this.dupcheck = true;
+      }
+    } else {
+      if (this.cardresult && this.cardresult.approved) { // 카드 승인 결과 있고 성공
+        this.payFinishByEnter();
+      } else if (this.cardresult && !this.cardresult.approved) { // 카드 승인 결과 있고 실패
+        this.close();
+      } else {
+        if (!this.dupcheck) {
+          setTimeout(() => { this.nicePay(); }, 300);
+          this.dupcheck = true;
+        }
+      }
     }
   }
 }

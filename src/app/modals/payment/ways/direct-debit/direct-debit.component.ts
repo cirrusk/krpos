@@ -87,13 +87,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     }
   }
 
-  /**
-   * 엔터입력시 blur 처리되도록
-   */
-  paidBlur() {
-    setTimeout(() => { this.paid.nativeElement.blur(); }, 50);
-  }
-
   nextStep() {
     const paid = this.paid.nativeElement.value;
     if (paid) {
