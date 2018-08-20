@@ -64,13 +64,12 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-
     if (this.storage.getPay() === 0) {
       this.paymentprice = this.cartInfo.totalPrice.value;
     } else {
       this.paymentprice = this.storage.getPay();
     }
-
+    this.usePoint.nativeElement.value = this.paymentprice;
     this.getBalance();
   }
 
@@ -100,17 +99,20 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   checkPay(type: number) {
-    this.usePoint.nativeElement.value = '';
     if (type === 0) { // 전체금액
+      this.usePoint.nativeElement.value = this.paymentprice;
       this.change = 0;
       setTimeout(() => {
         this.pointPanel.nativeElement.focus(); // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
         this.isAllPay = true;
-        this.validationComplex();
+        this.setChange(this.paymentprice);
       }, 50);
     } else {
+      this.usePoint.nativeElement.value = '';
       this.isAllPay = false;
       this.usePoint.nativeElement.focus();
+      this.change = this.point;
+      this.validationComplex();
     }
   }
 
