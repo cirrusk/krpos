@@ -257,6 +257,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 카드결제만 진행
+   * 결제금액과 할부개월 수와의 처리 로직이 있을 경우 추가
+   * ex) 1,000원 결제하는데 3개월 할부를 할 경우 Van 사에서 오류처리됨.
    */
   private cardPay() {
     if (this.change >= 0) {
