@@ -18,10 +18,15 @@ export class AccountService {
    * @param {string} registerType 등록 타입
    * @param {string} phoneContactInfoType 전화번호 타입
    * @param {string} phoneNumber 전화번호
+   * @param {string} sponsorNo 후원자 번호
    * @returns {AccountList} 등록된 회원 정보
    */
-  createNewAccount(registerType: string, phoneContactInfoType: string, phoneNumber: string): Observable<AccountList> {
-    const param = {registerType: registerType, phoneContactInfoType: phoneContactInfoType, phoneNumber: phoneNumber};
+  createNewAccount(registerType: string, phoneContactInfoType: string, phoneNumber: string, sponsorNo?: string ): Observable<AccountList> {
+    const param = {
+      registerType: registerType,
+      phoneContactInfoType: phoneContactInfoType,
+      phoneNumber: phoneNumber,
+      sponsorNo: sponsorNo  };
     const data = new HttpData('createNewAccount', null, param, null, 'json');
     return this.api.post(data);
   }
