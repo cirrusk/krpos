@@ -72,7 +72,6 @@ export const environment = {
     getGroupCart: '/{baseSiteId}/users/{userId}/carts/{cartId}/groupcart',
     getGroupOrder: '/{baseSiteId}/users/{userId}/orders/{orderId}/grouporder',
     orderCancel: '/{baseSiteId}/accounts/{accountId}/users/{userId}/cancel-order/{orderCode}',
-    serialAndRfid: '/{baseSiteId}/users/{userId}/update-serial/{orderCode}',
     receipt: '/{baseSiteId}/users/{userId}/receipt/{orderCode}',
     cashdrawerLog: '/{baseSiteId}/point-of-service/cash-drawer-log/{batchId}',
     issueReceipt: '/{baseSiteId}/users/{userId}/issue-receipt/{orderCode}',
