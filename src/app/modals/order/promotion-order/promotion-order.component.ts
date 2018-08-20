@@ -1,5 +1,10 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2 } from '@angular/core';
-import { ModalComponent, ModalService, Config } from '../../../core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+
+import { ModalComponent, ModalService, Logger } from '../../../core';
+import { SearchService } from '../../../service';
+import { Product } from '../../../data';
+import { Utils } from '../../../core/utils';
 
 /**
  * 프로모션 상품 컴포넌트
@@ -9,131 +14,75 @@ import { ModalComponent, ModalService, Config } from '../../../core';
   selector: 'pos-promotion-order',
   templateUrl: './promotion-order.component.html'
 })
-export class PromotionOrderComponent extends ModalComponent implements OnInit {
+export class PromotionOrderComponent extends ModalComponent implements OnInit, OnDestroy {
 
   @ViewChildren('promotions') promotions: QueryList<ElementRef>;
-  promotionProducts: Array<string>;
-  pageSize: number;
-  startIndex: number;
-  endIndex: number;
-  currentPage: number;
-  totalCount: number;
-  startPage: number;
-  endPage: number;
+  promotionProducts: Array<Product>;
+  private pageSize: number;
+  private startIndex: number;
+  private endIndex: number;
+  private currentPage: number;
+  private totalPages: number;
+  private totalCount: number;
+  private startPage: number;
+  private endPage: number;
+  private promotionsubscription: Subscription;
   constructor(protected modalService: ModalService,
-    private config: Config,
+    private search: SearchService,
+    private logger: Logger,
     private renderer: Renderer2) {
     super(modalService);
     this.currentPage = 1;
-    this.promotionProducts = new Array<string>();
+    this.promotionProducts = new Array<Product>();
+    this.pageSize = 9;
   }
 
   ngOnInit() {
-    this.getPromotionProducts();
+    this.getPromotionProducts(0);
 
+  }
+
+  ngOnDestroy() {
+    if (this.promotionsubscription) { this.promotionsubscription.unsubscribe(); }
   }
 
   /**
    * 프로모션 상품 목록 가져오기
    * 상품명 / 상품코드
    */
-  private getPromotionProducts() {
-    this.promotionProducts = [
-      '100099A',
-      '100106M',
-      '100099A',
-      '100106M',
-      // '100099A',
-      // '100106M',
-      // '100099A',
-      // '100106M',
-      // '100106M',
-      // '100106M',
-      // '100106M',
-      // '100099A',
-      // '100106M',
-      // '100106M',
-      // '100106M',
-      // '100106M', '100099A', '100106M', '100106M', '100106M',
-      // '100106M', '100099A', '100106M', '100106M', '100106M',
-      // '100106M', '100099A', '100106M', '100106M', '100106M'
-    ];
-
-    this.totalCount = this.promotionProducts.length + 2;
-    // 페이지 사이즈
-    this.pageSize = 9; // Math.floor(totalProduct / 9);
-    // 총 페이지 수
-    const totalPages = Math.ceil(this.totalCount / 9);
-    this.startIndex = (this.currentPage - 1);
-    this.endIndex = Math.min(totalPages, this.totalCount - 1);
-    this.startPage = 1;
-    this.endPage = totalPages;
+  private getPromotionProducts(pagenum: number) {
+    this.promotionsubscription = this.search.getFavoriteProducts().subscribe(
+      result => {
+        this.promotionProducts = result.products;
+        this.totalCount = result.totalProductCount;
+        this.totalPages = result.totalPageCount;
+        this.currentPage = result.currentPage;
+        this.paging(this.totalCount, pagenum, this.pageSize);
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('promotion.order.component', `${errdata.message}`).error();
+        }
+      });
   }
 
-  /**
-   * 이전 페이지 이동
-   */
-  prevPaging() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
-    this.startIndex = (this.currentPage - 1) * this.pageSize;
-    this.endIndex = Math.min(this.startIndex + this.pageSize - 1, this.totalCount - 1);
-  }
-
-  /**
-   * 다음 페이지 이동
-   */
-  nextPaging() {
-    if (this.currentPage < this.endPage) {
-      this.currentPage++;
-    }
-    this.startIndex = (this.currentPage - 1) * this.pageSize - 1;
-    this.endIndex = Math.min(this.startIndex + this.pageSize - 1, this.totalCount - 1) - 1;
-  }
-
-  /**
-   * 비닐 봉투 소/대 프로모션
-   */
-  promotionBasic(evt: any, type: string) {
-    this.setSelected(evt);
-    let bagProductCode = '';
-    if (type === 'b') { // 비니루봉투 대
-      bagProductCode = this.config.getConfig('bigBagCode');
-    } else if (type === 's') { // 비닐봉투 소
-      bagProductCode = this.config.getConfig('smallBagCode');
-    }
-    this.result = bagProductCode;
-    this.close();
+  setPage(pagenum: number) {
+    if (pagenum < 0 || pagenum > this.totalPages - 1) { return; }
+    this.paging(this.totalCount, pagenum, this.pageSize);
+    this.getPromotionProducts(pagenum);
   }
 
   /**
    * 일반 프로모션 상품
    * @param {any} evt 이벤트
-   * @param {string} productcode 상품코드
+   * @param {Product} product 상품정보
    */
-  promotion(evt: any, productcode: string) {
+  promotion(evt: any, product: Product) {
     this.setSelected(evt);
-    console.log(`product code : ${productcode}`);
-    this.result = productcode;
+    console.log(`product code : ${product.code}`);
+    this.result = product.code;
     this.close();
-  }
-
-  /**
-   * 페이징 시 페이징 목록으로 전달하지 않기 때문에
-   * show / hidden을 구해야함.
-   * @param {number} idx 해당 프로모션 상품의 인덱스 정보
-   */
-  checkPaging(idx: number) {
-    const sidx = (this.currentPage - 1) * 9;
-    const eidx = (this.currentPage * 9 - 1);
-    // if (this.currentPage === this.endPage) {
-    //   // eidx = eidx - 2;
-    // }
-    if (idx >= sidx && idx <= eidx) {
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -141,6 +90,22 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit {
    */
   close() {
     this.closeModal();
+  }
+
+  private paging(totalCount: number, currentPage: number = 1, pageSize: number = 9): void {
+    // 총 페이지 수
+    const totalPages = Math.ceil(totalCount / pageSize);
+    // 페이지 설정
+    this.startPage = 0;
+    this.pageSize = pageSize;
+    this.endPage = totalPages - 1;
+    this.totalPages = totalPages;
+    // 출력 index
+    this.startIndex = (currentPage - 1) * pageSize;
+    this.endIndex = Math.min(this.startIndex + pageSize - 1, totalCount - 1);
+    // Item 설정
+    this.totalCount = totalCount;
+    this.currentPage = currentPage;
   }
 
   /**

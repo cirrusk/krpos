@@ -9,19 +9,20 @@
           <div class="pn_wrap">
               <span class="paging">
                   <!-- 이전,다음 리스트가 있을시 on클래스 추가 -->
-                  <a href class="ico_comm prev03" [class.on]="currentPage > startPage" (click)="!!prevPaging()">이전</a>
-                  <a href class="ico_comm next03" [class.on]="currentPage < endPage" (click)="!!nextPaging()">다음</a>
+                  <a href class="ico_comm prev03" [class.on]="currentPage !== startPage && currentPage > startPage" (click)="!!setPage(currentPage - 1)">이전</a>
+                  <a href class="ico_comm next03" [class.on]="currentPage !== endPage && currentPage < endPage" (click)="!!setPage(currentPage + 1)">다음</a>
               </span>
               <!-- 프로모션 제품 리스트 : 페이지당 상품수 최대 9개 -->
-              <div class="chc_wrap">
+              <div class="chc_wrap" *ngIf="promotionProducts && promotionProducts.length > 0; else elseEmpty">
                   <!-- 결제수단 선택시 on클래스 추가 -->
                   <ng-container *ngFor="let product of promotionProducts; let i = index;">
-                  <a #promotions href *ngIf="checkPaging(i)" (click)="!!promotion($event, product)" class="chc_type02"><span>Test 프로모션 프로모션 프로모션{{i + 1}}</span><i class="ico_comm prom00"></i></a>
+                  <a #promotions href (click)="!!promotion($event, product)" class="chc_type02"><span>{{product?.name}}</span><i class="ico_comm prom00"></i></a>
                   </ng-container>
-                  <a #promotions href *ngIf="checkPaging(promotionProducts.length)" (click)="!!promotionBasic($event, 's')" class="chc_type04"><span>비닐봉투 소</span><i class="ico_comm prom01"></i></a>
-                  <a #promotions href *ngIf="checkPaging(promotionProducts.length + 1)" (click)="!!promotionBasic($event, 'b')" class="chc_type04"><span>비닐봉투 대</span><i class="ico_comm prom02"></i></a>
               </div>
-              <!-- //프로모션 제품 리스트 : 페이지당 상품수 초대 9개 -->
+              <!-- //프로모션 제품 리스트 : 페이지당 상품수 최대 9개 -->
+              <ng-template #elseEmpty>
+                <p *ngIf="promotionProducts.length === 0;" class="no_data">해당 하는 프로모션 상품이 존재하지 않습니다.</p>
+              </ng-template>
           </div>
       </div>
   </div>
