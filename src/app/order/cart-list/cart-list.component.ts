@@ -367,7 +367,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removeLocalItem('clearclient');
     this.selectedUserId = '';
     this.initSerials();
-    this.copyGroupList =  Array<ResCartInfo>();
+    this.copyGroupList = Array<ResCartInfo>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -398,7 +398,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     const searchKey = searchText.toUpperCase();
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
-    if (this.searchMode ===  SearchMode.ACCOUNT) { // 회원검색
+    if (this.searchMode === SearchMode.ACCOUNT) { // 회원검색
       this.selectAccountInfo(this.searchMode, searchText);
     } else { // 상품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
@@ -735,7 +735,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     // Add to Cart 배열로 셋팅
     newGroupOrderList.orderList.forEach((order, index) => {
       const account = order.volumeABOAccount;
-      const jsonData = { 'parties': [{'uid' : order.volumeABOAccount.uid, 'name' : order.volumeABOAccount.name}] };
+      const jsonData = { 'parties': [{ 'uid': order.volumeABOAccount.uid, 'name': order.volumeABOAccount.name }] };
       Object.assign(account, jsonData);
       arrayAccount.push(account);
       const existedIdx: number = groupOrderList.orderList.findIndex(
@@ -1216,6 +1216,9 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.logger.set('cart.list.component', `${errdata.message}`).error();
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
             }
+          },
+          () => {
+            setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
           });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
@@ -1416,7 +1419,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.sendRightMenu(ModelType.GROUP, true, this.amwayExtendedOrdering);
           this.amwayExtendedOrdering.orderList.forEach(order => {
             const account = order.volumeABOAccount;
-            const jsonData = { 'parties': [{'uid' : order.volumeABOAccount.uid, 'name' : order.volumeABOAccount.name}] };
+            const jsonData = { 'parties': [{ 'uid': order.volumeABOAccount.uid, 'name': order.volumeABOAccount.name }] };
             Object.assign(account, jsonData);
             this.groupAccountInfo.push(account);
           });
