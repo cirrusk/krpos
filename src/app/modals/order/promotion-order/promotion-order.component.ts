@@ -51,7 +51,7 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit, O
    * 상품명 / 상품코드
    */
   private getPromotionProducts(pagenum: number) {
-    this.promotionsubscription = this.search.getFavoriteProducts().subscribe(
+    this.promotionsubscription = this.search.getFavoriteProducts(pagenum).subscribe(
       result => {
         this.promotionProducts = result.products;
         this.totalCount = result.totalProductCount;

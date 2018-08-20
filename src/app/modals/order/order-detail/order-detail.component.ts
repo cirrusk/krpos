@@ -225,13 +225,15 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       if (this.orderType === OrderType.GROUP) {
         this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true);
       } else {
-        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag);
-        this.alert.info({
-          title: '영수증 재발행',
-          message: this.messageService.get('receiptComplete'),
-          timer: true,
-          interval: 1000
-        });
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag).subscribe(
+          () => {
+            this.alert.info({
+              title: '영수증 재발행',
+              message: this.messageService.get('receiptComplete'),
+              timer: true,
+              interval: 1500
+            });
+          });
       }
     } catch (e) {
       this.logger.set('order-detail.component', `Reissue Receipts error type : ${e}`).error();
