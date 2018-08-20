@@ -8,7 +8,7 @@
       <div class="pop_content">
         <div class="ac">
             <p class="txt04">변경할 수량을 입력하여 주세요</p>
-            <input #quantity autofocus type="number" class="mgt15 ac" title="변경할 수량" style="width:100px" maxlength=3 (keydown.enter)="updateItemQty(quantity.value)">
+            <input #quantity autofocus type="text" posOnlyNumber="true" class="mgt15 ac" title="변경할 수량" style="width:100px" maxlength=3 (keydown.enter)="updateItemQty(quantity.value)">
           </div>
       </div>
   </div>
