@@ -82,7 +82,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 다음페이지 이동
    */
   next() {
-    if (this.totalPages >= this.currentPage) {
+    if ((this.totalPages - 1) > this.currentPage) {
       this.currentPage++;
       this.searchProduct();
     }
@@ -98,6 +98,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    */
   searchProduct(searchText?: string, cartInfo?: CartInfo) {
+    if (searchText) {
+      this.currentPage = 0;
+    }
     const val: string = searchText ? searchText : this.searchValue.nativeElement.value;
     const sval = val.toUpperCase();
     if (Utils.isEmpty(sval)) {

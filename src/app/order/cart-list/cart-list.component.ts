@@ -1503,18 +1503,17 @@ export class CartListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // true 경우 페이지 이동이므로 선택 초기화
-    if (pagerFlag) {
-      this.selectedCartNum = -1;
-    }
-
     const currentCartData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
     // pagination 생성 데이터 조회
     this.pager = currentCartData.get('pager') as Pagination;
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 
-    this.selectedCartNum = this.currentCartList.length - 1;
+    if (pagerFlag) {
+      this.selectedCartNum = -1;
+    } else {
+      this.selectedCartNum = this.currentCartList.length - 1;
+    }
 
     this.totalPriceInfo();
   }
