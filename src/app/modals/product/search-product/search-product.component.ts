@@ -104,7 +104,8 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     const val: string = searchText ? searchText : this.searchValue.nativeElement.value;
     const sval = val.toUpperCase();
     if (Utils.isEmpty(sval)) {
-      this.alert.warn({ message: '검색어를 입력하십시오.' });
+      this.alert.warn({ message: '검색어를 입력하십시오.', timer: true, interval: 1500 });
+      setTimeout(() => { this.searchValue.nativeElement.focus(); this.searchValue.nativeElement.select(); }, 1550);
       return;
     }
     if (this.productItems) {
@@ -118,9 +119,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.products = data;
         this.productCount = data.pagination.totalResults;
         this.totalPages = data.pagination.totalPages;
-        if (this.searchType === 'sku') { // 바코드 찍어 검색할때 비워주어야 다시 찍을때 중복되지 않음.
-          this.searchValue.nativeElement.value = '';
-        }
+        setTimeout(() => { this.searchValue.nativeElement.focus(); this.searchValue.nativeElement.select(); }, 100);
         if (this.totalPages > 1) {
           if (this.currentPage === 0) { // 첫페이지
             this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
