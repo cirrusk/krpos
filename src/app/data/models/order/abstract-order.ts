@@ -54,6 +54,7 @@ export class AbstractOrder {
     value: AmwayValue;                                      // PV/BV AmwayValueWsDTO
     totalWeight: number;                                    // 무게
     paymentDetails: PaymentDetails;                         // 결제 상세 정보 AmwayPaymentDetailsWsDTO
+    isGroupCombinationOrder: boolean;                        // 그룹주문 여부
     constructor() { }
 }
 

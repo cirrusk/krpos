@@ -204,7 +204,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
           this.cartInfo.guid = result.guid;
           // 그룹 주문확인 로직 필요
-          // this.orderType = 'g';
+          if (result.isGroupCombinationOrder) {
+            this.orderType = OrderType.GROUP;
+          } else {
+            this.orderType = OrderType.NORMAL;
+          }
           this.restoreSavedCart();
         }
       }
@@ -527,6 +531,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       // 그룹 결제시
       if (this.orderType === OrderType.GROUP) {
+
         // 재결제시
         if (this.paymentChange) {
           this.accountInfo = account;
@@ -542,6 +547,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           // 그룹 주문 사용자 중복확인
           if (this.checkGroupUserId(account.uid) === -1) {
             this.groupAccountInfo.push(account);
+            this.storage.setCustomer(account);
             // 그룹주문 사용자 페이징처리
             this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
             // 그룹주문 장바구니 생성되어 있는경우 새로운 사용자로 장바구니 초기화
@@ -1645,12 +1651,11 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.recash = result[1].amount;
               const jsonData = { 'balance': result };
               Object.assign(this.accountInfo, jsonData);
-              this.storage.setCustomer(this.accountInfo);
+              this.storage.setCustomer(this.orderType === OrderType.GROUP ? this.groupAccountInfo[this.selectedUserIndex] : this.accountInfo);
             }
           }
         );
       }
-
     }
   }
 
@@ -1672,6 +1677,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
       if (existedIdx !== -1) {
         this.groupSelectedCart = this.amwayExtendedOrdering.orderList[existedIdx];
+        this.storage.setCustomer(this.currentGroupAccountInfo[index]);
         this.getCartList();
 
         // 재 주문을 했을 경우
@@ -1715,12 +1721,15 @@ export class CartListComponent implements OnInit, OnDestroy {
         //   }
         // }
       } else {
+        this.storage.setCustomer(this.currentGroupAccountInfo[index]);
         this.groupSelectedCart = new AbstractOrder();
         this.sendRightMenu(ModelType.PRODUCT, false);
         this.cartList.length = 0;
         this.storage.setOrderEntry(this.cartList);
         this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
       }
+    } else {
+      this.storage.setCustomer(this.currentGroupAccountInfo[index]);
     }
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
   }
@@ -1875,7 +1884,15 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
       if (event.keyCode === KeyCode.RIGHT_ARROW) { // 임시 저장 이벤트
-        this.saveCart();
+        if (this.orderType === OrderType.GROUP) {
+          if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length > 0) {
+            this.saveCart();
+          } else {
+            this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
+          }
+        } else {
+          this.saveCart();
+        }
       }
     }
   }

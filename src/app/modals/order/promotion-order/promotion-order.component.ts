@@ -18,14 +18,14 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit, O
 
   @ViewChildren('promotions') promotions: QueryList<ElementRef>;
   promotionProducts: Array<Product>;
-  private pageSize: number;
-  private startIndex: number;
-  private endIndex: number;
-  private currentPage: number;
-  private totalPages: number;
-  private totalCount: number;
-  private startPage: number;
-  private endPage: number;
+  pageSize: number;
+  startIndex: number;
+  endIndex: number;
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  startPage: number;
+  endPage: number;
   private promotionsubscription: Subscription;
   constructor(protected modalService: ModalService,
     private search: SearchService,
