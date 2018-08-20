@@ -1360,22 +1360,28 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 저장(보류)
    */
   saveCart() {
-    if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
-      this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
-        () => {
-          this.init();
-          this.info.sendInfo('hold', 'add');
-          this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
-        },
-        error => {
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('cart.list.component', `${errdata.message}`).error();
-            this.alert.error({ message: this.message.get('server.error', errdata.message) });
-          }
-        });
+    if (this.accountInfo === null) {
+      this.alert.error({ message: '보류내역이 없습니다.', timer: true, interval: 1500 });
+      setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
     } else {
-      this.alert.error({ message: this.message.get('noCartInfo') });
+      if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
+        this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
+          () => {
+            this.init();
+            this.info.sendInfo('hold', 'add');
+            this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
+          },
+          error => {
+            const errdata = Utils.getError(error);
+            if (errdata) {
+              this.logger.set('cart.list.component', `${errdata.message}`).error();
+              this.alert.error({ message: this.message.get('server.error', errdata.message) });
+            }
+          });
+      } else {
+        this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
+        setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+      }
     }
   }
 
