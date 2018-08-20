@@ -119,7 +119,7 @@ export class SearchService {
     const pos = this.storage.getTerminalInfo();
     const pathvariables = { pickupStore: pos.pointOfService.name };
     const params = { fields: 'BASIC', currentPage: '0', pageSize: '9' };
-    const data = new HttpData('getFavoriteProducts', pathvariables, null, params);
+    const data = new HttpData('getFavoriteProducts', pathvariables, null, params, 'json');
     return this.api.get(data);
   }
 }
