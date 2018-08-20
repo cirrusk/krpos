@@ -151,21 +151,6 @@ export class OrderService {
   }
 
   /**
-   * Serial, RFID 등록
-   *
-   * @param userid 회원아이디
-   * @param ordercode 주문번호
-   * @param entries Data Parameter
-   * @returns {ResponseMessage} 응답정보
-   */
-  serialAndRfid(userid: string, ordercode: string, entries: any): Observable<ResponseMessage> {
-    const pathvariables = { userId: userid, orderCode: ordercode };
-    const param = { fields: 'FULL' };
-    const data = new HttpData('serialAndRfid', pathvariables, entries, param, 'json');
-    return this.api.post(data);
-  }
-
-  /**
    * 영수증 신청
    *
    * @param {string} userid 회원아이디
