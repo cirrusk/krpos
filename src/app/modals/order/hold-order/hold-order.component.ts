@@ -58,6 +58,7 @@ export class HoldOrderComponent extends ModalComponent implements OnInit, OnDest
     this.activeNum = index;
     this.restoreCartBroker.sendInfo(this.currentCartList[index]);
     this.info.sendInfo('hold', 'add');
+    this.result = true;
     this.close();
   }
 

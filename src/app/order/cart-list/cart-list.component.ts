@@ -531,6 +531,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       callerData: { userId: this.accountInfo.uid },
       closeByClickOutside: false,
       modalId: 'HoldOrderComponent'
+    }).subscribe(() => {
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
     });
   }
 
@@ -1407,9 +1409,14 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.logger.set('cart.list.component', `${errdata.message}`).error();
             this.alert.error({ message: this.message.get('server.error', errdata.message) });
           }
+        },
+        () => {
+          this.activeSearchMode('P');
+          setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
         });
     } else {
-      this.alert.error({ message: this.message.get('noCartInfo') });
+      this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 1550);
     }
   }
 

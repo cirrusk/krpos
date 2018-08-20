@@ -63,7 +63,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   ngOnInit() {
-    setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
@@ -74,6 +73,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.paidamount = this.storage.getPay();
     }
     setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
+    this.checkInstallment(0); // 초기 일시불 설정
   }
 
   ngOnDestroy() {
@@ -152,12 +152,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.checkinstallment = type;
     if (type === 0) { // 일시불
       this.installment = '00';
-      setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'readonly', 'readonly'); }, 50);
+      setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'disabled', 'disabled'); }, 50);
     } else { // 할부
+      this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'disabled');
       setTimeout(() => {
-        this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'readonly');
         this.installmentPeriod.nativeElement.focus();
-      }, 50);
+      }, 150);
     }
   }
 
