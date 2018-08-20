@@ -115,6 +115,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.products = data;
         this.productCount = data.pagination.totalResults;
         this.totalPages = data.pagination.totalPages;
+        if (this.searchType === 'sku') { // 바코드 찍어 검색할때 비워주어야 다시 찍을때 중복되지 않음.
+          this.searchValue.nativeElement.value = '';
+        }
         if (this.totalPages > 1) {
           if (this.currentPage === 0) { // 첫페이지
             this.renderer.removeClass(this.searchPrev.nativeElement, 'on');
@@ -145,10 +148,13 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
 
   /**
    * 검색 Type 저장
+   * 바코드가 입력된 상태에서 바코드 스캔하면 기존 값과 중복됨.
    * @param evt
    */
   searchOption(evt: any) {
     this.searchType = evt.target.value;
+    this.searchValue.nativeElement.value = '';
+    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100);
   }
 
   /**
