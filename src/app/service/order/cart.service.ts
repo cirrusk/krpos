@@ -168,8 +168,8 @@ export class CartService {
    * @param {number} qty 수량
    * @returns {ResCartInfo} 카트 정보
    */
-  updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number): Observable<ResCartInfo> {
-    const o1: OrderEntries = new OrderEntries(new Product(code), qty.toString());
+  updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number, serialNumbersCodes?: Array<string>): Observable<ResCartInfo> {
+    const o1: OrderEntries = new OrderEntries(new Product(code), qty.toString(), serialNumbersCodes);
     const pathvariables = { userId: userId, cartId: cartId, entryNumber: entryNumber };
     const param = { fields: 'FULL' };
     const data = new HttpData('updateItemQtyCart', pathvariables, o1, param, 'json');

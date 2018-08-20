@@ -1101,7 +1101,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 담기
-   * 시리얼 넘버가 있을 경우 해당 Serial Number포함하여 전송
+   * 시리얼 넘버가 있을 경우 해당 Serial Number 포함하여 전송
    *
    * @param {string} code 상품코드
    */
@@ -1174,6 +1174,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 수량 업데이트
    *
+   * 수량 업데이트 시 시리얼/RFID가 있을 경우
+   * 전체를 넘겨야 함.
+   * 수량이 줄어들 수도 있기 때문에 전체 시리얼 넘버를 받아 업데이트 함
+   *
    * @param {string} cartCode 카트 코드
    * @param {string} code 상품코드
    * @param {number} qty 상품 변경 수량
@@ -1187,7 +1191,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         cartCode,
         this.cartList[index].entryNumber,
         code,
-        qty).subscribe(
+        qty,
+        this.serialNumbers).subscribe(
           result => {
             this.resCartInfo = result;
             // this.updateCartModel = this.resCartInfo.cartModifications[0];
