@@ -39,10 +39,10 @@
                       </thead>
                       <tbody>
                           <!-- 등록증 선택시 tr에 on클래스 추가 -->
-                          <tr [class.on]='activeNum == i' *ngFor="let ber of berList; let i = index" (click)='activeRow(i)'>
+                          <tr [class.on]='activeNum == i' *ngFor="let ber of berList; let i = index" (click)='activeRow(i, ber)'>
                               <td><span>{{i + 1}}</span></td>
                               <td class="tit"><span class="elips mx315">{{ber?.company}}</span></td>
-                              <td><span>{{ber?.number}}</span></td>
+                              <td><span>{{ber?.number | mask:'ber'}}</span></td>
                               <td class="name"><span class="elips mx110">{{ber?.name}}</span></td>
                               <td><span>{{ber?.creationtime | date:'yyyy-MM-dd'}}</span></td>
                           </tr>

@@ -12,7 +12,8 @@ import { CartService, PagerService, SearchService, MessageService, PaymentServic
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
-  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block, TerminalInfo, OrderType, SearchMode, CartType, ModelType
+  ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block,
+  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
@@ -110,6 +111,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   // 결제수단변경
   orderList: OrderList;
   paymentChange: boolean;
+  ber: BerData;   // 사업자 정보
 
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
@@ -306,6 +308,19 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (data && data.pytocafe) {
       this.init();
       this.searchPhytoCafeAccount();
+    }
+  }
+
+  /**
+   * 메뉴의 중개주문에서 사업자 선택 시 전달된 이벤트 받아
+   * 중개주문 설정
+   * @param {any} data 사업자 정보
+   */
+  setBer(data) {
+    console.log(data);
+    if (data && data.ber) {
+      this.ber = data.ber;
+      console.log('>>> 사업자 정보 ' + JSON.stringify(data.ber, null, 2));
     }
   }
 

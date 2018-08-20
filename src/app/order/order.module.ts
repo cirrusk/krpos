@@ -1,4 +1,5 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { throwIfAlreadyLoaded } from '../core/module-import-guard';
@@ -12,7 +13,6 @@ import { ClientComponent } from './client/client.component';
 import { PromotionComponent, PromotionItemElementDirective } from './promotion/promotion.component';
 import { PromotionItemDirective } from './promotion/promotion-item.directive';
 import { StripHtmlPipe } from '../core/pipe/strip-html.pipe';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [

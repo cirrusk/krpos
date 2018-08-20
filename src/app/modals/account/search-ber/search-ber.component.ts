@@ -36,8 +36,11 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
     if (this.bersubscription) { this.bersubscription.unsubscribe(); }
   }
 
-  activeRow(index: number): void {
+  activeRow(index: number, ber: BerData): void {
     this.activeNum = index;
+    if (ber) {
+      this.result = ber;
+    }
   }
 
   reset() {

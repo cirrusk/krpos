@@ -7,7 +7,7 @@ import {
   CancelCartComponent,
   SearchBerComponent
 } from '../../modals';
-import { Accounts, OrderHistoryList, MemberType, AmwayExtendedOrdering, OrderType, ModelType } from '../../data';
+import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
@@ -60,7 +60,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();      // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
   @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 프로모션 팝업에서 제품코드를 받아 카트 컴포넌트에 전달
-  @Output() public posPytoCafe: EventEmitter<any> = new EventEmitter<any>();      // 파이토 카페 선택 시 카트컴포넌트에 전달
+  @Output() public posPytoCafe: EventEmitter<any> = new EventEmitter<any>();  // 파이토 카페 선택 시 카트컴포넌트에 전달
+  @Output() public posBer: EventEmitter<any> = new EventEmitter<any>();       // 중개주문 팝업에서 사업자 선택시 카트 컴포넌트에 전달
   constructor(private modal: Modal,
     private storage: StorageService,
     private payment: PaymentService,
@@ -229,20 +230,24 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   /**
    * 중개 주문 팝업
+   * 중개 주문은 ABO만 할 수 있음.
+   *
    * @param {any} evt 이벤트
    */
   mediateOrder(evt: any) {
-    if (!this.hasAccount) { return; }
+    if (!this.hasAccount && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
     this.checkClass(evt);
-    this.modal.openModalByComponent(SearchBerComponent,
-      {
-        callerData: { aboNum: this.accountInfo.parties[0].uid },
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: false,
-        modalId: 'SearchBerComponent'
+    this.modal.openModalByComponent(SearchBerComponent, {
+      callerData: { aboNum: this.accountInfo.uid },
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: 'SearchBerComponent'
+    }).subscribe(result => {
+      if (result) {
+        this.posBer.emit({ ber: result });
       }
-    );
+    });
   }
 
   /**

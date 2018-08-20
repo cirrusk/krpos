@@ -17,8 +17,8 @@
         </span>
     </div>
     <!-- //고객리스트 : 그룹결제시 노출 -->
-    <div class="jg_number" [hidden]="true">
-        <span>BER NO. 2118724942</span>
+    <div class="jg_number" *ngIf="ber">
+        <span>BER NO. {{ber.number | stripHtml: 'ber'}}</span>
     </div>
 </div>
 
