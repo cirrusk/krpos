@@ -15,7 +15,6 @@ import { ChecksComponent } from './payment/ways/checks/checks.component';
 import { ClientAccountComponent } from './account/client-account/client-account.component';
 import { CompletePaymentComponent } from './payment/complete-payment/complete-payment.component';
 import { ComplexPaymentComponent } from './payment/complex-payment/complex-payment.component';
-import { CouponPaymentComponent } from './payment/coupon-payment/coupon-payment.component';
 import { CouponComponent } from './payment/ways/coupon/coupon.component';
 import { CreditCardComponent } from './payment/ways/credit-card/credit-card.component';
 import { DirectDebitComponent } from './payment/ways/direct-debit/direct-debit.component';
@@ -47,7 +46,6 @@ import { CancelEcpPrintComponent } from './order/ecp-print/cancel-ecp-print/canc
     BatchComponent,
     ChecksComponent,
     ComplexPaymentComponent,
-    CouponPaymentComponent,
     CouponComponent,
     CancelOrderComponent,
     CancelCartComponent,
@@ -97,7 +95,6 @@ import { CancelEcpPrintComponent } from './order/ecp-print/cancel-ecp-print/canc
     CompletePaymentComponent,
     ChecksComponent,
     ComplexPaymentComponent,
-    CouponPaymentComponent,
     CouponComponent,
     CreditCardComponent,
     DirectDebitComponent,

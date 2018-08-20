@@ -118,14 +118,6 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   paymentCoupon() {
     if (this.coupon && this.finishStatus === null) {
       this.applyCouponAndPaymentCapture();
-    } else {
-      // this.close();
-      // this.modal.openModalByComponent(CouponPaymentComponent, {
-      //   callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, coupon: this.coupon },
-      //   closeByClickOutside: false,
-      //   closeByEnter: false,
-      //   modalId: 'CouponPaymentComponent_Cpn'
-      // });
     }
   }
 
