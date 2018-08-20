@@ -530,13 +530,17 @@ export class ReceiptService implements OnDestroy {
         let sumBV = 0;
         let groupPV = 0;
         let groupBV = 0;
+        // 통합결제의 경우 Account 값으로 조회
+        // 그룹결제의 경우 volumeABOAccount 값으로 조회
+        // Sum PV BV = Account 의 totalPV totalBV + 장바구니 pointValue businessVolume
+        // Group PV BV = Magic bonus 조회하여 group PV/BV+ 장바구니 pointValue businessVolume
         const bonus = new BonusInfo();
         if (cartInfo.totalPrice && cartInfo.totalPrice.amwayValue) { // 장바구니 PV BV
             totalPV = cartInfo.totalPrice.amwayValue.pointValue ? cartInfo.totalPrice.amwayValue.pointValue : 0;
             totalBV = cartInfo.totalPrice.amwayValue.businessVolume ? cartInfo.totalPrice.amwayValue.businessVolume : 0;
             bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
         }
-        if (cartInfo.value) { // 합계 PV BV
+        if (cartInfo.value) { // 합계 PV BV = 나의 PV BV + 장바구니 PV BV
             sumPV = cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
             sumBV = cartInfo.value.businessVolume ? cartInfo.value.businessVolume : 0;
             bonus.setSum = new Bonus(String(sumPV), String(sumBV));

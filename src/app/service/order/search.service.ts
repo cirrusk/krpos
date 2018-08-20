@@ -115,10 +115,10 @@ export class SearchService {
   /**
    * AP 즐겨찾기 제품 목록
    */
-  getFavoriteProducts(): Observable<ProductList> {
+  getFavoriteProducts(pagenum: number): Observable<ProductList> {
     const pos = this.storage.getTerminalInfo();
     const pathvariables = { pickupStore: pos.pointOfService.name };
-    const params = { fields: 'BASIC', currentPage: '0', pageSize: '9' };
+    const params = { fields: 'BASIC', currentPage: pagenum, pageSize: '9' };
     const data = new HttpData('getFavoriteProducts', pathvariables, null, params, 'json');
     return this.api.get(data);
   }

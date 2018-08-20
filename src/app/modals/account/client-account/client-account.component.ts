@@ -19,6 +19,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   @Input() phonetype: string; // 휴대폰/전화번호 타입 선택
   @Input() agree: boolean;  // 개인정보수집 및 이용동의
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
+  @Input() sponsorNo: string; // 후원자 번호
   @ViewChild('phoneNumText') private phoneNumText: ElementRef;
   phoneNumInput: FormControl = new FormControl('');
   constructor(protected modalService: ModalService,
@@ -91,7 +92,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
    */
   private createCustomerAccount() {
     this.registerType = this.guser ? 'EASY_PICKUP' : 'CONSUMER';
-    this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone).subscribe(
+    this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone, this.sponsorNo).subscribe(
       userInfo => {
         if (userInfo) {
           this.account = userInfo;
