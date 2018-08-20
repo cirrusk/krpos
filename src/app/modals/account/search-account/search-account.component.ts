@@ -49,12 +49,15 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         this.getAccountList('A', searchParams.searchText.trim());
       }
     }
-
   }
 
   ngOnDestroy() {
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.searchListSubscription) { this.searchListSubscription.unsubscribe(); }
+  }
+
+  selectChangeHandler() {
+    setTimeout(() => { this.searchValue.nativeElement.focus(); this.searchValue.nativeElement.select(); }, 90);
   }
 
   init(cancel = false) {
