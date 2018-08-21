@@ -237,7 +237,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param {any} evt 이벤트
    */
   mediateOrder(evt: any) {
-    if ((this.orderType === OrderType.GROUP) || !this.hasAccount && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
+    if (!this.hasAccount || this.orderType === OrderType.GROUP) { return; }
+    if (this.accountInfo && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchBerComponent, {
       callerData: { aboNum: this.accountInfo.uid },
@@ -252,6 +253,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkMediateDisable(): boolean {
+    if (!this.hasAccount || this.orderType === OrderType.GROUP) { return true; }
+    if (this.accountInfo && this.accountInfo.accountTypeCode !== MemberType.ABO) { return true; }
+    return false;
+  }
   /**
    * 구매 취소
    *

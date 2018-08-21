@@ -3,7 +3,7 @@
     <button #menus type="button" (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">통합결제</button>
     <button #menus type="button" (click)="groupPayment($event)">그룹주문</button>
     <button #menus type="button" (click)="pickupOrder($event)">픽업주문</button>
-    <button #menus type="button" (click)="mediateOrder($event)" [class.disabled]="orderType === 'G' || (!hasAccount && accountInfo && accountInfo.accountTypeCode !== memberType.ABO)">중개주문</button>
+    <button #menus type="button" (click)="mediateOrder($event)" [class.disabled]="checkMediateDisable()">중개주문</button>
     <button #menus type="button" (click)="cancelOrder($event)" [class.disabled]="!hasAccount">주문취소</button>
     <button #menus type="button" (click)="promotionOrder($event)" [class.disabled]="!hasAccount" class="purple">프로모션 상품</button>
     <button #menus type="button" (click)="etcOrder($event)" [class.disabled]="hasProduct && hasCart">기타</button>
