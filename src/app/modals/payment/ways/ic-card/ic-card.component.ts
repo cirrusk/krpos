@@ -191,7 +191,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private payFinishByEnter() {
-    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
       this.completePayPopup(this.paidamount, this.paidamount, 0);
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);

@@ -268,7 +268,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   private doPay() {
-    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
       this.payFinishByEnter();
     } else if (this.finishStatus === 'fail') {
       this.info.sendInfo('recart', this.orderInfo);

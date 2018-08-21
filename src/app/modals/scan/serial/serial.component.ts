@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
 
 import { range } from 'lodash';
-import { ModalComponent, ModalService } from '../../../core';
+import { ModalComponent, ModalService, StorageService } from '../../../core';
 import { KeyCode, StatusDisplay } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { Product } from '../../../data/models/cart/cart-data';
@@ -56,8 +56,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   private serialNumbers = [];
   private scanInputSize: number;
   private scannedCount: number;
+  private cartqty: number;
+  private changeqty: number;
   @ViewChildren('codes') codes: QueryList<ElementRef>;
-  constructor(protected modalService: ModalService) {
+  constructor(protected modalService: ModalService, private storage: StorageService) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -68,12 +70,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
   ngOnInit() {
     this.productInfo = this.callerData.productInfo;
     this.serial = this.callerData.serial;
-    const osize: number = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
-    const psize: number = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
-    if (psize === 0) {
+    this.cartqty = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
+    this.changeqty = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
+    if (this.changeqty === 0) {
       this.productCount = range(0, 1);
     } else {
-      this.scanInputSize = psize - osize;
+      this.scanInputSize = this.changeqty - this.cartqty;
       this.productCount = range(0, this.scanInputSize);
     }
     if (this.productInfo) {
@@ -96,7 +98,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
    */
   check(codes: any, evt: any) {
     evt.preventDefault();
-    const code = codes.value;
+    // const code = codes.value;
     // if (evt.srcElement.nextElementSibling) { // 다음 요소가 있음.(INPUT 요소끼리 인접해있을 경우)
     // evt.srcElement.nextElementSibling.focus();
     if (evt.srcElement.parentElement.nextElementSibling) { // INPUT 요소를 한번 감싸고 있을 경우
@@ -109,11 +111,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
       this.scannedCount++;
     } else { // 마지막 요소임.
       this.scannedCount++;
-      evt.srcElement.blur();
-    }
-    let chkidx = 0;
-    if (Utils.isEmpty(code)) {
-      chkidx++;
+      // evt.srcElement.blur();
+      this.reg(); // 바로 등록 처리
     }
     if (this.scanInputSize === this.scannedCount) {
       this.finishStatus = StatusDisplay.PAID;
@@ -126,6 +125,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
    * Serial / RFID 가 배열로 입력되도록
    * API가 변경되었으므로 기존의 string 은
    * 빈값으로 처리하거나 제거하도록 함.
+   * 수량변경 시 변경 수량이 큰 경우는 기존 값을 더해주어야함.
+   * 수량변경 시 변경 수량이 작은 경우는 front에서 막음.
    */
   reg() {
     let stype: string;
@@ -149,6 +150,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     this.checktype = 0;
     this.apprmessage = '스캔이 완료되었습니다.';
     if (this.scanInputSize === scannedRegCount) {
+      if (this.changeqty > this.cartqty) {
+        const orgSerials: Array<string> = this.storage.getSerialCodes(this.productInfo.code);
+        if (orgSerials && Array.isArray(orgSerials)) {
+          this.serialNumbers.push(orgSerials); // this.serialNumbers.push.apply(this.serialNumbers, orgSerials);
+        }
+      }
       this.result = { serialNumbers: this.serialNumbers };
       this.close();
     }

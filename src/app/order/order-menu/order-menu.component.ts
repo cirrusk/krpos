@@ -50,12 +50,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   hasAccount = false;
   hasProduct = false;
   hasCart = false;
+  orderType: string;
+  accountInfo: Accounts;
+  memberType = MemberType;
   private orderInfoSubscribetion: Subscription;
   private couponsubscription: Subscription;
-  private accountInfo: Accounts;
   private cartInfo: Cart;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
-  private orderType: string;
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();      // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
@@ -232,10 +233,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * 중개 주문 팝업
    * 중개 주문은 ABO만 할 수 있음.
    *
+   *
    * @param {any} evt 이벤트
    */
   mediateOrder(evt: any) {
-    if (!this.hasAccount && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
+    if ((this.orderType === OrderType.GROUP) || !this.hasAccount && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
     this.checkClass(evt);
     this.modal.openModalByComponent(SearchBerComponent, {
       callerData: { aboNum: this.accountInfo.uid },

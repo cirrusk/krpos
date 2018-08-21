@@ -40,13 +40,13 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
   updateItemQty(quantity: number) {
     if (quantity < 1) {
       this.alert.warn({ message: '수량이 1보다 작습니다.', timer: true, interval: 1500 });
-      setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 1550);
+      setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 1520);
     } else {
       const hasSerialOrRfid = this.product.serialNumber || this.product.rfid;
       const baseqty = this.callerData.qty;
       if (hasSerialOrRfid && (baseqty > quantity)) {
         this.alert.warn({ message: this.message.get('update.qty.invalid'), timer: true, interval: 1500 });
-        setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 250);
+        setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 1520);
         return;
       }
       this.result = { code: this.code, qty: quantity };

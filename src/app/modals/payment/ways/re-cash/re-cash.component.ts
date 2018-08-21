@@ -228,7 +228,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private doPay(event: any) {
-    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
       this.payFinishByEnter();
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);

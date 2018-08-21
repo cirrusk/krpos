@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { TextEncoder, TextDecoder } from 'text-encoding';
 import { ErrorInfo } from '../data/error/error-info';
 import { Errors } from '../data/error/errors';
+import { StatusDisplay } from '../data';
 
 export class StringBuilder {
   private buffer: any[] = [];
@@ -358,6 +359,18 @@ export /* default */ class Utils {
    */
   public static padRight(text: string, padstring: string, padsize: number): string {
     return text.padEnd(padsize, padstring);
+  }
+
+  /**
+   * 결제 처리후 성공여부 체크하기
+   *
+   * @param finishStatus 결제 처리 상태
+   */
+  public static isPaymentSuccess(finishStatus: string) {
+    if (finishStatus === 'PAYMENT_CAPTURED' || finishStatus === StatusDisplay.CREATED || finishStatus === StatusDisplay.PAID) {
+      return true;
+    }
+    return false;
   }
 
 }

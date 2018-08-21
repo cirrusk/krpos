@@ -370,6 +370,34 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * Serial 배열 세션 저장하기
+   *
+   * @param key 조회할 Serial값 키(제품코드)
+   * @param data 저장할 Serial 배열
+   */
+  public setSerialCodes(key: string, data: Array<string>): void {
+    this.setSessionItem('SR_' + key, data);
+  }
+
+  /**
+   * 저장한 Serial 배열 조회하기
+   *
+   * @param key 조회할 Serial값 키(제품코드)
+   */
+  public getSerialCodes(key: string): Array<string> {
+    return this.getSessionItem('SR_' + key);
+  }
+
+  /**
+   * 저장한 Serial 배열 삭제하기
+   *
+   * @param key 삭제할 Serial값 키(제품코드)
+   */
+  public removeSerialCodes(key: string): void {
+    this.removeSessionItem('SR_' + key);
+  }
+
+  /**
    * local storage 에 저장하기
    * local storage event listener data 전달
    *

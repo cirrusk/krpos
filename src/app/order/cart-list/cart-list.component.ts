@@ -205,7 +205,6 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
           this.cartInfo.guid = result.guid;
-          this.sendRightMenu(ModelType.CART, true, this.cartInfo);
           // 그룹 주문확인 로직 필요
           if (result.isGroupCombinationOrder) {
             this.orderType = OrderType.GROUP;
@@ -491,16 +490,22 @@ export class CartListComponent implements OnInit, OnDestroy {
           const product: ProductInfo = selectedCart.product;
           // RFID, SERIAL 입력 받음.
           if (product && (product.rfid || product.serialNumber)) {
-            this.modal.openModalByComponent(SerialComponent, {
-              callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
-              closeByClickOutside: false,
-              modalId: 'SerialComponent'
-            }).subscribe(data => {
-              if (data) {
-                this.setSerials(data);
-                this.updateItemQtyCart(cartId, result.code, result.qty);
-              }
-            });
+            if (qty !== result.qty) { // 수량변경이 없으면 처리하지 않음.
+              this.modal.openModalByComponent(SerialComponent, {
+                callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
+                closeByClickOutside: false,
+                modalId: 'SerialComponent'
+              }).subscribe(data => {
+                if (data) {
+                  if (qty < result.qty) { // 변경 수량이 증가할 경우
+                    this.setSerials(data, result.code);
+                  } else { // 변경 수량이 줄어들 경우(제품 수량이 줄어들 경우 장바구니부터 다시 시작)
+                    this.setSerials(data);
+                  }
+                  this.updateItemQtyCart(cartId, result.code, result.qty);
+                }
+              });
+            }
           } else {
             this.updateItemQtyCart(cartId, result.code, result.qty);
           }
@@ -1405,7 +1410,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.restoreGroupCart(this.cartInfo);
           } else {
             this.setCartInfo(this.resCartInfo.cartList);
-            this.sendRightMenu(ModelType.PRODUCT, true);
+            this.sendRightMenu('all', true);
           }
           this.info.sendInfo('hold', 'add');
         },
@@ -1882,13 +1887,17 @@ export class CartListComponent implements OnInit, OnDestroy {
    * AS400도 동일하게 하나의 필드로 관리함.
    *
    * @param {any} data Serial/RFID 스캔 정보
+   * @param {string} productcode 제품코드(제품수량변경 시 Serial/RFID 세션에 저장)
    */
-  private setSerials(data: any) {
+  private setSerials(data: any, productcode?: string) {
     this.logger.set('cart.list.component', `serial/rfid : ${Utils.stringify(data)}`).debug();
     if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
       data.serialNumbers.forEach(serial => {
         this.serialNumbers.push(serial);
       });
+      if (productcode) {
+        this.storage.setSerialCodes(productcode, this.serialNumbers);
+      }
     }
     this.serial = (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null; // 초기값 출력 세팅
   }

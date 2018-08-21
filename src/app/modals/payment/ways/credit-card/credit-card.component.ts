@@ -333,7 +333,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 복합결제 : 카트 및 클라이언트 갱신
    */
   private payFinishByEnter() {
-    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
       const change = this.paidamount - this.paid.nativeElement.value;
       if (change === 0) {
         const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;

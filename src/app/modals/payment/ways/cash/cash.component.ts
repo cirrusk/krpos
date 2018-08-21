@@ -12,6 +12,7 @@ import {
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { InfoBroker } from '../../../../broker';
+import { Utils } from '../../../../core/utils';
 
 /**
  * 현금 결제 컴포넌트
@@ -240,7 +241,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private payFinishByEnter() {
     const payment = this.payamount ? Number(this.payamount) : 0; // 결제금액
     const paychange = this.paidamount - payment;
-    console.log('paychange ----- ' + paychange);
     if (paychange >= 0) {
       this.close();
     }
@@ -260,7 +260,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   private doPay(event: any) {
-    if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
       this.payFinishByEnter();
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);

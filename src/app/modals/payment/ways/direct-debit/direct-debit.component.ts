@@ -185,7 +185,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-          if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+          if (Utils.isPaymentSuccess(this.finishStatus)) {
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
             this.paidDate = result.created ? result.created : new Date();
             setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
@@ -259,7 +259,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
+      if (Utils.isPaymentSuccess(this.finishStatus)) {
         this.payFinishByEnter();
       } else if (this.finishStatus === 'recart') {
         this.info.sendInfo('recart', this.orderInfo);
