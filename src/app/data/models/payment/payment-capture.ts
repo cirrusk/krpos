@@ -479,9 +479,11 @@ export class VoucherPaymentInfo extends AmwayPaymentInfoData {
 
 export class ReceiptInfoData {
     receiptTypeCode: string;
+    receiptNumberType: string;
     businessEntityRegistrationInfoData: BusinessEntityRegistrationInfoData;
-    constructor(number: string, receiptTypeCode = 'TAX') {
+    constructor(number: string, receiptTypeCode = 'TAX', receiptNumberType = 'BRN') {
         this.receiptTypeCode = receiptTypeCode;
+        this.receiptNumberType = receiptNumberType;
         this.businessEntityRegistrationInfoData = new BusinessEntityRegistrationInfoData(number);
     }
 }

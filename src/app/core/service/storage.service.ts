@@ -409,8 +409,9 @@ export class StorageService implements OnDestroy {
     });
   }
 
-  public setBer(data: any) {
+  public setBer(data: string) {
     this.setSessionItem('Ber', data);
+    this.setLocalBerNumber(data);
   }
 
   public getBer(): string {
@@ -419,6 +420,19 @@ export class StorageService implements OnDestroy {
 
   public removeBer() {
     this.removeSessionItem('Ber');
+    this.removeLocalBerNumber();
+  }
+
+  public setLocalBerNumber(data: string) {
+    this.setLocalItem('Ber', data);
+  }
+
+  public getLocalBerNumber() {
+    return this.getLocalItem('Ber');
+  }
+
+  public removeLocalBerNumber() {
+    this.removeLocalItem('Ber');
   }
 
   /**

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { ClientAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture } from '../../data';
+import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, BerData } from '../../data';
 import { PagerService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
@@ -37,6 +37,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   change: number;
   accountType: string;                            // 회원 타입
   apprtype: string;
+  ber: string;
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
@@ -106,6 +107,8 @@ export class ClientComponent implements OnInit, OnDestroy {
           }
         } else if (result.key === 'apprtype') {
           this.apprtype = '통합결제';
+        } else if (result.key === 'Ber') {
+          this.ber = result.value;
         }
       }
     });
@@ -181,6 +184,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.apprtype = '';
     this.pager = new Pagination();
     this.installment = '';
+    this.ber = null;
   }
 
 
