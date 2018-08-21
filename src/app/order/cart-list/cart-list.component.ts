@@ -955,14 +955,15 @@ export class CartListComponent implements OnInit, OnDestroy {
               }
             } else {
               if (this.checkOrderBlock(error.error.code)) {
-                this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
-                setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+                this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
+                setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
               }
             }
           }
         });
     } else {
-      this.alert.error({ message: this.message.get('notSelectedUser') });
+      this.alert.error({ message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
     }
   }
 
