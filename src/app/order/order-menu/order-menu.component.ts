@@ -253,11 +253,15 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * 중개주문 메뉴 비활성화 처리
+   */
   checkMediateDisable(): boolean {
     if (!this.hasAccount || this.orderType === OrderType.GROUP) { return true; }
     if (this.accountInfo && this.accountInfo.accountTypeCode !== MemberType.ABO) { return true; }
     return false;
   }
+  
   /**
    * 구매 취소
    *
