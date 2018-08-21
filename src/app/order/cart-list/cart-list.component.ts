@@ -938,8 +938,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.accountService.checkBlock(this.accountInfo).subscribe(
         resp => {
           if (this.checkOrderBlock(resp.code)) {
-            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
-            setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
+            setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
           } else {
             const accountId = (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.ABO) ? this.accountInfo.uid : this.accountInfo.parties[0].uid;
             this.createCart(accountId, terminalInfo, popupFlag, productCode);
@@ -957,7 +957,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             } else {
               if (this.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
-                setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
+                setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
               }
             }
           }
