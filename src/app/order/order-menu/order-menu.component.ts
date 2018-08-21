@@ -290,6 +290,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   etcOrder(evt: any) {
     // if (!this.hasAccount) { return; }
+    if (this.hasProduct && this.hasCart) { return; }
     this.checkClass(evt);
     if (!this.hasAccount) { this.accountInfo = null; }
     this.modal.openModalByComponent(EtcOrderComponent, {
