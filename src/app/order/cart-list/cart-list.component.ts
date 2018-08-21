@@ -205,6 +205,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.cartInfo.user = result.user;
           this.cartInfo.volumeABOAccount = result.volumeABOAccount;
           this.cartInfo.guid = result.guid;
+          this.sendRightMenu(ModelType.CART, true, this.cartInfo);
           // 그룹 주문확인 로직 필요
           if (result.isGroupCombinationOrder) {
             this.orderType = OrderType.GROUP;
@@ -1404,7 +1405,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.restoreGroupCart(this.cartInfo);
           } else {
             this.setCartInfo(this.resCartInfo.cartList);
-            this.sendRightMenu('all', true);
+            this.sendRightMenu(ModelType.PRODUCT, true);
           }
           this.info.sendInfo('hold', 'add');
         },

@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pagination, OrderHistoryList, OrderHistory } from '../../data';
+import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType } from '../../data';
 import { MessageService, OrderService } from '../../service';
 import { Modal, Logger, AlertService } from '../../core';
 import { Utils } from '../../core/utils';
@@ -72,7 +72,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    * @param {string} memberType 사용자유형
    */
   changeMemberType(memberType: string) {
-    if (memberType === 'C') {
+    if (memberType === SearchMemberType.CONSUMER) {
       this.renderer.removeAttribute(this.searchTypeC.nativeElement, 'disabled');
       this.renderer.setAttribute(this.searchTypeABO.nativeElement, 'disabled', 'disabled');
       this.chkSearchTypeABO = false;
@@ -178,8 +178,8 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   initialize() {
     setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.inputSearchText.nativeElement.value = '';
-    this.searchMemberType.nativeElement.value = 'A';
-    this.changeMemberType('A');
+    this.searchMemberType.nativeElement.value = SearchMemberType.ABO;
+    this.changeMemberType(SearchMemberType.ABO);
     this.init();
   }
 }

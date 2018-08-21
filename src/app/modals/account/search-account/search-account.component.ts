@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
 
 import { SearchService, PagerService, MessageService, AccountService } from '../../../service';
-import { AccountList, Accounts, Pagination, MemberType, ResponseMessage, Block, OrderType } from '../../../data';
+import { AccountList, Accounts, Pagination, MemberType, ResponseMessage, Block, OrderType, SearchMemberType } from '../../../data';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -46,7 +46,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
       const searchParams = this.callerData.data;
       if (searchParams.searchText.trim() !== '') {
         this.searchValue.nativeElement.value = searchParams.searchText.trim();
-        this.getAccountList('A', searchParams.searchText.trim());
+        this.getAccountList(SearchMemberType.ABO, searchParams.searchText.trim());
       }
     }
   }

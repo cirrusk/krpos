@@ -35,3 +35,13 @@ export enum ModelType {
     CART = 'C',
     GROUP = 'G'
 }
+
+/**
+ * 검색시 사용자 유형
+ *  - ABO = 'A', MEMBER = 'M', CONSUMER = 'C'
+ */
+export enum SearchMemberType {
+    ABO = 'A',
+    MEMBER = 'M',
+    CONSUMER = 'C'
+}
