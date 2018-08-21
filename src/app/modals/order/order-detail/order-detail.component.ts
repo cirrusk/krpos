@@ -97,7 +97,6 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       callerData: { orderInfo: this.orderInfo },
       closeByClickOutside: false,
       closeByEnter: false,
-      closeByEscape: false,
       modalId: 'CancelOrderComponent'
     }
     ).subscribe(result => {

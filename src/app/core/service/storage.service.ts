@@ -376,6 +376,7 @@ export class StorageService implements OnDestroy {
    * @param data 저장할 Serial 배열
    */
   public setSerialCodes(key: string, data: Array<string>): void {
+    this.removeSerialCodes(key);
     this.setSessionItem('SR_' + key, data);
   }
 
@@ -395,6 +396,17 @@ export class StorageService implements OnDestroy {
    */
   public removeSerialCodes(key: string): void {
     this.removeSessionItem('SR_' + key);
+  }
+
+  /**
+   * 저당된 세션 중 Serial 관련 세션 삭제하기(초기화시 필요)
+   */
+  public cleanSerialCodes(): void {
+    Object.keys(this.sstorage).forEach(key => {
+      if (key.startsWith('SR_')) {
+        this.removeSessionItem(key);
+      }
+    });
   }
 
   /**

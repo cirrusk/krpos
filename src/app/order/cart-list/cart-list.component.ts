@@ -367,6 +367,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.selectedUserId = '';
     this.initSerials();
     this.copyGroupList = Array<ResCartInfo>();
+    this.storage.cleanSerialCodes();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -797,17 +798,17 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private checkUserBlock(resp: ResponseMessage, account: Accounts): string {
     if (resp.code === Block.INVALID) {
-      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 2000 });
+      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 1500 });
     } else if (resp.code === Block.NOT_RENEWAL) {
       const custname = account.accountTypeCode === MemberType.ABO ? account.name : account.parties[0].name;
-      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 2000 });
+      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 1500 });
     } else if (resp.code === Block.LOGIN_BLOCKED) {
-      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 2000 });
+      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 1500 });
     } else if (resp.code === Block.ORDER_BLOCK) {
-      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
+      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
     }
     if (resp.code !== Block.VALID) {
-      setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+      setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
     }
     return resp.code;
   }
@@ -843,10 +844,11 @@ export class CartListComponent implements OnInit, OnDestroy {
                 const errdata = Utils.getError(error);
                 if (errdata) {
                   if (errdata.type === 'InvalidTokenError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   } else if (errdata.type === 'InvalidDmsError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   }
+                  setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -1101,7 +1103,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         this.addCartEntries(code);
       }
-      this.initSerials();
+      this.initSerials(code);
     }
   }
 
@@ -1130,7 +1132,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.orderType === OrderType.GROUP) {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
-            this.initSerials();
+            this.initSerials(code);
           } else {
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -1212,7 +1214,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (this.orderType === OrderType.GROUP) {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
-              this.initSerials();
+              this.initSerials(code);
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -1895,9 +1897,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       data.serialNumbers.forEach(serial => {
         this.serialNumbers.push(serial);
       });
-      if (productcode) {
-        this.storage.setSerialCodes(productcode, this.serialNumbers);
-      }
+      // if (productcode) {
+      //   this.storage.setSerialCodes(productcode, this.serialNumbers);
+      // }
     }
     this.serial = (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null; // 초기값 출력 세팅
   }
@@ -1905,7 +1907,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * Serial/RFID 변수 초기화
    */
-  private initSerials() {
+  private initSerials(productcode?: string) {
+    if (productcode) {
+      this.storage.setSerialCodes(productcode, this.serialNumbers);
+    }
     this.serialNumbers = new Array<string>();
   }
 
