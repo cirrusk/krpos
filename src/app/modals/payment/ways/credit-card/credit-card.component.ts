@@ -38,6 +38,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   cardnumber: string; // 카드번호
   cardcompany: string; // 카드사명
   cardauthnumber: string; // 승인번호
+  installmentDisabled: boolean;
   private installment: string;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -51,6 +52,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private checkinstallment: number;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
+  @ViewChild('allCheck') private allCheck: ElementRef;
+  @ViewChild('partCheck') private partCheck: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService,
     private nicepay: NicePaymentService, private modal: Modal, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private info: InfoBroker,
@@ -60,6 +63,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.finishStatus = null;
     this.checktype = 0;
     this.checkinstallment = 0;
+    this.installmentDisabled = true;
   }
 
   ngOnInit() {
@@ -74,6 +78,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
     setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
     this.checkInstallment(0); // 초기 일시불 설정
+    this.renderer.setAttribute(this.allCheck.nativeElement, 'disabled', 'disabled');
+    this.renderer.setAttribute(this.partCheck.nativeElement, 'disabled', 'disabled');
   }
 
   ngOnDestroy() {
@@ -95,6 +101,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else {
       this.checktype = 0;
       this.apprmessage = '';
+    }
+    if (this.checktype === 0 && nPaid >= 50000) {
+      this.renderer.removeAttribute(this.allCheck.nativeElement, 'disabled');
+      this.renderer.removeAttribute(this.partCheck.nativeElement, 'disabled');
+    } else {
+      this.allCheck.nativeElement.checked = true;
+      this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'disabled', 'disabled');
+      this.renderer.setAttribute(this.allCheck.nativeElement, 'disabled', 'disabled');
+      this.renderer.setAttribute(this.partCheck.nativeElement, 'disabled', 'disabled');
     }
   }
 
@@ -152,7 +167,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.checkinstallment = type;
     if (type === 0) { // 일시불
       this.installment = '00';
-      setTimeout(() => { this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'disabled', 'disabled'); }, 50);
+      setTimeout(() => {
+        this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'disabled', 'disabled');
+      }, 50);
     } else { // 할부
       this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'disabled');
       setTimeout(() => {
