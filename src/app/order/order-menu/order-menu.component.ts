@@ -261,7 +261,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     if (this.accountInfo && this.accountInfo.accountTypeCode !== MemberType.ABO) { return true; }
     return false;
   }
-  
+
   /**
    * 구매 취소
    *
