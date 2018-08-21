@@ -317,7 +317,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {any} data 사업자 정보
    */
   setBer(data) {
-    console.log(data);
     if (data && data.ber) {
       this.ber = data.ber;
       console.log('>>> 사업자 정보 ' + JSON.stringify(data.ber, null, 2));
@@ -1666,7 +1665,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.searchSubscription = this.searchService.getAccountList('C', phytoUserId).subscribe(
         result => {
           const account = result.accounts[0];
-          this.searchAccountBroker.sendInfo('n', account);
+          this.searchAccountBroker.sendInfo(OrderType.NORMAL, account);
           const jsonData = { 'balance': [{ amount: 0 }, { amount: 0 }] };
           Object.assign(account, jsonData);
           this.storage.setCustomer(account);
