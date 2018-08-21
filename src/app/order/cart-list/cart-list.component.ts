@@ -953,10 +953,11 @@ export class CartListComponent implements OnInit, OnDestroy {
             const errdata = Utils.getError(error);
             if (errdata) {
               if (errdata.type === 'InvalidTokenError') {
-                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
               } else if (errdata.type === 'InvalidDmsError') {
-                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
               }
+              setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
             } else {
               if (this.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
