@@ -319,7 +319,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   setBer(data) {
     if (data && data.ber) {
       this.ber = data.ber;
-      console.log('>>> 사업자 정보 ' + JSON.stringify(data.ber, null, 2));
+      this.logger.set('', `>>> 사업자 정보 : ${Utils.stringify(data.ber)}`).debug();
+      this.storage.setBer(this.ber.number);
     }
   }
 

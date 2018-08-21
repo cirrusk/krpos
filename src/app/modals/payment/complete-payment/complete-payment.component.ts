@@ -8,7 +8,7 @@ import {
 } from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
-import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering } from '../../../data';
+import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering, ReceiptInfoData } from '../../../data';
 import { ReceiptService, PaymentService, MessageService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
@@ -191,6 +191,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     const capturepaymentinfo = new CapturePaymentInfo();
     capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
     capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
+    capturepaymentinfo.receiptInfoData = this.setBerInfo(); // 중개주문 설정하기
     this.logger.set('complete.payment.component', 'payment capture : ' + Utils.stringify(this.paymentcapture)).debug();
     this.paymentsubscription = this.payments.placeOrder(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
       result => {
@@ -242,6 +243,19 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, params);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       }
+    }
+  }
+
+  /**
+   * 중개주문일 경우 Payment 정보에 중개주문 정보를 설정함.
+   */
+  private setBerInfo(): ReceiptInfoData {
+    const bernumber: string = this.storage.getBer();
+    if (Utils.isEmpty(bernumber)) {
+      return null;
+    } else {
+      this.storage.removeBer(); // 처리 후에는 초기화함.
+      return new ReceiptInfoData(bernumber);
     }
   }
 

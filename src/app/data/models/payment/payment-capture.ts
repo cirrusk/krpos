@@ -3,6 +3,7 @@ import { CCMemberType, CCPaymentType } from './payment.enum';
 export class CapturePaymentInfo {
     paymentModeCode: string;
     capturePaymentInfoData: PaymentCapture;
+    receiptInfoData: ReceiptInfoData;
     public set setPaymentModeCode(paymentModeCode: string) {
         this.paymentModeCode = paymentModeCode;
     }
@@ -14,6 +15,9 @@ export class CapturePaymentInfo {
     }
     public get getCapturePaymentInfoData(): PaymentCapture {
         return this.capturePaymentInfoData;
+    }
+    public set setReceiptInfoData(receiptInfoData: ReceiptInfoData) {
+        this.receiptInfoData = receiptInfoData;
     }
 }
 
@@ -470,5 +474,21 @@ export class VoucherPaymentInfo extends AmwayPaymentInfoData {
     }
     constructor(amount: number) {
         super(amount, 'creditvoucher');
+    }
+}
+
+export class ReceiptInfoData {
+    receiptTypeCode: string;
+    businessEntityRegistrationInfoData: BusinessEntityRegistrationInfoData;
+    constructor(number: string, receiptTypeCode = 'TAX') {
+        this.receiptTypeCode = receiptTypeCode;
+        this.businessEntityRegistrationInfoData = new BusinessEntityRegistrationInfoData(number);
+    }
+}
+
+export class BusinessEntityRegistrationInfoData {
+    number: string;
+    constructor(number: string) {
+        this.number = number;
     }
 }

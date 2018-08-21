@@ -409,6 +409,18 @@ export class StorageService implements OnDestroy {
     });
   }
 
+  public setBer(data: any) {
+    this.setSessionItem('Ber', data);
+  }
+
+  public getBer(): string {
+    return this.getSessionItem('Ber');
+  }
+
+  public removeBer() {
+    this.removeSessionItem('Ber');
+  }
+
   /**
    * local storage 에 저장하기
    * local storage event listener data 전달
