@@ -125,6 +125,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   private getAccount(searchMemberType: string, searchText: string) {
     this.searchListSubscription = this.searchService.getAccountList(searchMemberType, searchText).subscribe(result => {
       if (result) {
+        setTimeout(() => { this.searchValue.nativeElement.focus(); this.searchValue.nativeElement.select(); }, 100);
         this.accountList = result;
         this.totalCnt = this.accountList.accounts.length;
         this.setPage(1);
@@ -168,6 +169,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   activeRow(index: number, code: string): void {
     this.activeNum = index;
     this.activeCode = code;
+    this.sendAccountInfo();
   }
 
   /**
