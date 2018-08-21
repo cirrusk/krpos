@@ -152,14 +152,11 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.scanInputSize === scannedRegCount) {
       if (this.changeqty > this.cartqty) {
         const orgSerials: Array<string> = this.storage.getSerialCodes(this.productInfo.code);
-        console.log('333 ' + orgSerials);
         if (orgSerials && Array.isArray(orgSerials)) {
-          console.log('444 ');
-          orgSerials.forEach(orgSerial => {
-            this.serialNumbers.push(orgSerial); // this.serialNumbers.push.apply(this.serialNumbers, orgSerials);
+          this.serialNumbers.forEach(serial => {
+            orgSerials.push(serial);
           });
-          this.serialNumbers = this.serialNumbers.reduce(function (a, b) { if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
-          console.log('555 ');
+          this.serialNumbers = orgSerials.reduce(function (a, b) { if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
         }
       }
       this.result = { serialNumbers: this.serialNumbers };

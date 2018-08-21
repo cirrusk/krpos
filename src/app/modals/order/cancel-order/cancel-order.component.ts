@@ -129,7 +129,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
       });
   }
 
-
   /**
    * 취소 영수증 출력
    *
