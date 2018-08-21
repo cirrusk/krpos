@@ -401,6 +401,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     const searchKey = searchText.toUpperCase();
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
+    if (this.orderType === '') {
+      this.orderType = OrderType.NORMAL;
+    }
     if (this.searchMode === SearchMode.ACCOUNT) { // 회원검색
       this.selectAccountInfo(this.searchMode, searchText);
     } else { // 상품 검색
