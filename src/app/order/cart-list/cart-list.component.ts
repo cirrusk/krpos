@@ -101,7 +101,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   received: number;                                                         // 낸 금액
   change: number;                                                           // 거스름돈
   selectedUserIndex = -1;                                                   // 그룹주문 선택한 유저 Table 상의 index
-  selectedUserId: string;
+  selectedUserId: string;                                                   // 그룹주문 선택한 유저의 ID
   apprtype: string;
   memberType = MemberType;                                                  // HTML 사용(enum)
   searchValid: FormControl = new FormControl('');
@@ -149,7 +149,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           const data = result.data;
           this.retreiveInfo(data[0], data[1]);
         } else if (result != null && type === 'recart') {
-          this.copyCartByEntries(this.accountInfo, this.cartList);
+          if (this.orderType === OrderType.GROUP) {
+            this.copyGroupCart(this.amwayExtendedOrdering);
+          } else {
+            this.copyCartByEntries(this.accountInfo, this.cartList);
+          }
         }
       }
     );
@@ -566,7 +570,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.accountInfo = account;
           this.sendRightMenu(ModelType.ACCOUNT, true, account);
           // 결제수단변경 일 경우
-          this.copyGroupCartByEntries(this.accountInfo, this.orderList);
+          this.copyGroupCartByEntries(this.orderList);
         } else {
           // ordering주문자 저장
           if (this.accountInfo === null) {
@@ -696,8 +700,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    *  - Ordering ABO의 주문상세내역으로 그룹주문 조회
    * @param orderList Ordering ABO 주문정보
    */
-  private copyGroupCartByEntries(account: Accounts, orderList: OrderList): void {
-    this.sendRightMenu(ModelType.ACCOUNT, true, account);
+  private copyGroupCartByEntries(orderList: OrderList): void {
     // Ordering ABO 정보로 그룹주문 조회
     this.paymentGroupListsubscription = this.orderService.groupOrder(orderList.orders[0].user.uid, orderList.orders[0].code).subscribe(
       groupOrderList => {
@@ -718,13 +721,20 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {AmwayExtendedOrdering} groupOrderList 그룹 주문 정보
    */
   private copyGroupCart(groupOrderList: AmwayExtendedOrdering) {
+    const account = this.accountInfo;
+    const orderType = OrderType.GROUP;
 
     // 그룹 카트 생성
     this.paymentGroupEntriessubscription = this.cartService.copyGroupCart(groupOrderList).subscribe(
       groupInfo => {
+        this.init();
+        this.accountInfo = account;
+        this.sendRightMenu(ModelType.ACCOUNT, true, account);
+        this.orderType = orderType;
+        // this.storage.setCustomer(this.accountInfo);
+        this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
         this.cartInfo = groupInfo.cartInfo;
         this.sendRightMenu(ModelType.CART, true);
-        this.sendRightMenu('all', true);
         this.amwayExtendedOrdering = groupInfo.amwayExtendedOrdering;
 
         this.copyGroupCartEntries(groupOrderList, this.amwayExtendedOrdering);
@@ -766,6 +776,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     // Add to cart 배열을 동시에 실행
     Observable.forkJoin<Array<ResCartInfo>>(addCart).subscribe(result => {
       this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+      this.sendRightMenu(ModelType.PRODUCT, true);
       // 마지막 ABO로 페이지 이동
       this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
     });
@@ -804,17 +815,17 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private checkUserBlock(resp: ResponseMessage, account: Accounts): string {
     if (resp.code === Block.INVALID) {
-      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 1500 });
+      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 2000 });
     } else if (resp.code === Block.NOT_RENEWAL) {
       const custname = account.accountTypeCode === MemberType.ABO ? account.name : account.parties[0].name;
-      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 1500 });
+      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 2000 });
     } else if (resp.code === Block.LOGIN_BLOCKED) {
-      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 1500 });
+      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 2000 });
     } else if (resp.code === Block.ORDER_BLOCK) {
-      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
+      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
     }
     if (resp.code !== Block.VALID) {
-      setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
     }
     return resp.code;
   }
@@ -850,11 +861,10 @@ export class CartListComponent implements OnInit, OnDestroy {
                 const errdata = Utils.getError(error);
                 if (errdata) {
                   if (errdata.type === 'InvalidTokenError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
                   } else if (errdata.type === 'InvalidDmsError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
                   }
-                  setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -944,8 +954,8 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.accountService.checkBlock(this.accountInfo).subscribe(
         resp => {
           if (this.checkOrderBlock(resp.code)) {
-            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
-            setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
+            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
+            setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
           } else {
             const accountId = (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.ABO) ? this.accountInfo.uid : this.accountInfo.parties[0].uid;
             this.createCart(accountId, terminalInfo, popupFlag, productCode);
@@ -964,7 +974,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             } else {
               if (this.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
-                setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
+                setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
               }
             }
           }
@@ -1110,7 +1120,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else {
         this.addCartEntries(code);
       }
-      this.initSerials(code);
+      this.initSerials();
     }
   }
 
@@ -1139,7 +1149,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.orderType === OrderType.GROUP) {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
-            this.initSerials(code);
+            this.initSerials();
           } else {
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -1221,7 +1231,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (this.orderType === OrderType.GROUP) {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
-              this.initSerials(code);
+              this.initSerials();
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -1904,9 +1914,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       data.serialNumbers.forEach(serial => {
         this.serialNumbers.push(serial);
       });
-      // if (productcode) {
-      //   this.storage.setSerialCodes(productcode, this.serialNumbers);
-      // }
+      if (productcode) {
+        this.storage.setSerialCodes(productcode, this.serialNumbers);
+      }
     }
     this.serial = (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null; // 초기값 출력 세팅
   }
@@ -1914,10 +1924,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * Serial/RFID 변수 초기화
    */
-  private initSerials(productcode?: string) {
-    if (productcode) {
-      this.storage.setSerialCodes(productcode, this.serialNumbers);
-    }
+  private initSerials() {
     this.serialNumbers = new Array<string>();
   }
 
