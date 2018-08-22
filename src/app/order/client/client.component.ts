@@ -99,6 +99,7 @@ export class ClientComponent implements OnInit, OnDestroy {
           this.init();
           this.storage.removeOrderEntry();
           this.storage.removeCustomer();
+          this.storage.removeCartPage();
           this.accountInfo = null;
         } else if (result.key === 'payinfo') {
           const data: any = result.value;
@@ -109,6 +110,8 @@ export class ClientComponent implements OnInit, OnDestroy {
           this.apprtype = '통합결제';
         } else if (result.key === 'Ber') {
           this.ber = result.value;
+        } else if (result.key === 'cartPage') {
+          this.setPage(this.storage.getCartPage());
         }
       }
     });
@@ -203,7 +206,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     }
 
     // 장바구니에 추가한 페이지로 이동
-    this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
+    this.setPage(this.storage.getCartPage() === null ? Math.ceil(this.cartList.length / this.cartListCount) : this.storage.getCartPage());
   }
 
   private setPage(page: number, pagerFlag: boolean = false) {
@@ -228,6 +231,12 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.totalPrice = this.resCart ? this.resCart.totalPrice.value : 0;
     this.totalPV = this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.pointValue : 0;
     this.totalBV = this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
+
+    this.totalItem = this.resCart ? this.resCart.totalUnitCount : 0;
+    this.totalPrice = this.resCart ? this.resCart.totalPrice.value : 0;
+    this.totalPV = this.resCart && this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.pointValue : 0;
+    this.totalBV = this.resCart && this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
+
   }
 
   activeRowCart(index: number): void {
