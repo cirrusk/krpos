@@ -222,6 +222,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     });
   }
 
+  /**
+   * 각각의 결제 Payment 를 모아서 하나의 Payment Capture 정보를 구성
+   *
+   * @param paymentcapture 각각의 결제창에서 전달된 Payment Capture 정보
+   */
   private remakePaymentCapture(paymentcapture: PaymentCapture) {
     if (paymentcapture) {
       this.logger.set('complex.payment.component params for remake', `${Utils.stringify(paymentcapture)}`).debug();
@@ -247,6 +252,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         // this.paymentcapture.voucherPaymentInfo = paymentcapture.voucherPaymentInfo;
         this.logger.set('complex.payment.component', 'no apply voucherPaymentInfo').info();
       }
+      // this.storage.setPaymentCapture(this.paymentcapture);
     }
     this.logger.set('complex.payment.component convert for remake', `${Utils.stringify(this.paymentcapture)}`).debug();
   }
