@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
-import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain } from '../../data';
+import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain, PaymentCapture } from '../../data';
 import { Utils } from '../utils';
 
 /**
@@ -423,6 +423,18 @@ export class StorageService implements OnDestroy {
     this.removeLocalBerNumber();
   }
 
+  public setPaymentCapture(data: PaymentCapture) {
+    this.setSessionItem('paymentcapture', data);
+  }
+
+  public getPaymentCapture(): PaymentCapture {
+    return this.getSessionItem('paymentcapture');
+  }
+
+  public removePaymentCapture() {
+    this.removeSessionItem('paymentcapture');
+  }
+
   public setLocalBerNumber(data: string) {
     this.setLocalItem('Ber', data);
   }
@@ -467,7 +479,6 @@ export class StorageService implements OnDestroy {
     this.lstorage.removeItem(key);
     this.storageSubject.next({ key: key, value: null });
   }
-
 
   /**
    * 고객화면 담당자(캐셔) 지정
