@@ -1,7 +1,7 @@
-<div class="pop_wrap pop_l">
+<div class="pop_wrap pop_l" tabindex="1" [posFocusBlur]="'focus'" #restictPanel>
     <div class="pop_header">
       <h1>구매 제한 안내</h1>
-      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()"></button>
+      <button tabindex="-1" type="button" class="ico_comm pop_close01" (click)="close()"></button>
     </div>
     <!-- pop_container -->
     <div class="pop_container">

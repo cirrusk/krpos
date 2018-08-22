@@ -670,6 +670,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (model.statusCode === 'success') {
           this.productInfo = model.entry;
           this.addCartEntry(this.resCartInfo.cartList);
+          setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
         } else {
           this.restrictionModel = this.makeRestrictionMessage(model);
           this.restrictionMessageList.push(this.restrictionModel);
@@ -1150,6 +1151,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
             }
             this.initSerials();
+            setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
           } else {
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -1167,9 +1169,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.logger.set('cart.list.component', `${errdata.message}`).error();
             this.alert.error({ message: this.message.get('server.error', errdata.message) });
           }
-        },
-        () => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); }
-      );
+        });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1232,6 +1232,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
               }
               this.initSerials();
+              setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
             } else {
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -1248,9 +1249,6 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.logger.set('cart.list.component', `${errdata.message}`).error();
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
             }
-          },
-          () => {
-            setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
           });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ModalComponent, ModalService, Modal } from '../../../core';
 import { RestrictionModel, Pagination } from '../../../data';
 import { PagerService } from '../../../service';
@@ -11,12 +11,13 @@ export class RestrictComponent extends ModalComponent implements OnInit {
   image: string;
   message: string;
   desc: string;
+  @ViewChild('restictPanel', { read: ElementRef }) restictPanel: ElementRef;
   private restrictionMessageList: Array<RestrictionModel>;
   private pager: Pagination;                        // pagination 정보
   restrictionModel: RestrictionModel;
 
   constructor(protected modalService: ModalService,
-              private pagerService: PagerService) {
+    private pagerService: PagerService) {
     super(modalService);
     this.pager = new Pagination();
   }
@@ -24,6 +25,7 @@ export class RestrictComponent extends ModalComponent implements OnInit {
   ngOnInit() {
     this.restrictionMessageList = this.callerData.data;
     this.setPage(1);
+    setTimeout(() => { this.restictPanel.nativeElement.focus(); });
   }
 
   /**
