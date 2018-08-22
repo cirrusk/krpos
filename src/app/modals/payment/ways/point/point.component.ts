@@ -216,6 +216,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
       capturepaymentinfo.capturePaymentInfoData = paymentcapture;
     }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
   }
 

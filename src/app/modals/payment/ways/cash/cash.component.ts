@@ -229,6 +229,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CASH;
       capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
     }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
   }
 
