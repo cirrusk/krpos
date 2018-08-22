@@ -552,6 +552,26 @@ export class StorageService implements OnDestroy {
     this.removeLocalItem('orderentry');
   }
 
+  public setPayment(data: any) {
+    // this.removePayment();
+    this.setLocalItem('payinfo', data);
+  }
+
+  public getPayment(): any {
+    return this.getLocalItem('payinfo');
+  }
+
+  public removePayment() {
+    this.removeLocalItem('payinfo');
+  }
+
+  public initLocals() {
+    this.setLocalItem('clearclient', {});
+    this.removeLocalItem('clearclient');
+    this.removePayment();
+    this.removeOrderEntry();
+  }
+
   /**
    * 클라이언트용 로컬스토리지 정보 삭제
    */

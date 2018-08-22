@@ -6,10 +6,11 @@ import 'rxjs/add/operator/timeout';
 import { ApiService, StorageService, Config } from '../../core';
 import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
-  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, TerminalInfo, BatchInfo, ResponseMessage
+  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, TerminalInfo, BatchInfo, ResponseMessage, PaymentCapture, PaymentView
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
+import { Utils } from '../../core/utils';
 
 /**
  * 지불 처리 서비스
@@ -200,6 +201,57 @@ export class PaymentService {
     const pathvariables = { batchId: batch.batchNo };
     const data = new HttpData('cashdrawerLog', pathvariables, null, null, 'json');
     return this.api.post(data);
+  }
+
+   /**
+   * 결제 내역 설정
+   * @param {PaymentCapture} paymentcapture Payment Capture 정보
+   * @param {Order} order 주문정보
+   */
+  viewPayment(paymentcapture: PaymentCapture, order: Order): PaymentView {
+    const pay = new PaymentView();
+    if (paymentcapture) {
+      if (paymentcapture.ccPaymentInfo) { // 신용카드
+        const cc = paymentcapture.ccPaymentInfo;
+        pay.setCardamount = cc.amount ? cc.amount : 0;
+        pay.setCardInstallment = cc.installmentPlan;
+      }
+      if (paymentcapture.icCardPaymentInfo) { // 현금IC카드
+        const ic = paymentcapture.icCardPaymentInfo;
+        pay.setCardamount = ic.amount ? ic.amount : 0;
+        pay.setCardInstallment = '0';
+      }
+      let paid = 0;
+      if (paymentcapture.cashPaymentInfo) { // 현금
+        const cash = paymentcapture.cashPaymentInfo;
+        pay.setCashamount =  cash.received ? Number(cash.received) : 0; // cash.getAmount;
+        paid += cash.received ? Number(cash.received) : 0;
+        pay.setCashchange = cash.change ? Number(cash.change) : 0;
+      }
+      if (paymentcapture.pointPaymentInfo) { // 포인트 내역
+        const pointamount = paymentcapture.pointPaymentInfo.amount;
+        pay.setPointamount = pointamount ? pointamount : 0;
+        paid += pointamount ? Number(pointamount) : 0;
+      }
+      if (paymentcapture.monetaryPaymentInfo) { // Recash 내역
+        const recashamount = paymentcapture.monetaryPaymentInfo.amount;
+        pay.setRecashamount = recashamount ? recashamount : 0;
+        paid += recashamount ? Number(recashamount) : 0;
+      }
+      if (paymentcapture.directDebitPaymentInfo) { // 자동이체 내역
+        const ddamount = paymentcapture.directDebitPaymentInfo.amount;
+        pay.setDirectdebitamount = ddamount ?  ddamount : 0;
+        paid += ddamount ? Number(ddamount) : 0;
+      }
+      pay.setReceivedamount = paid ? paid : 0;
+    }
+    if (order) {
+      pay.setDiscount = order.totalDiscounts ? order.totalDiscounts.value : 0;
+      pay.setPv = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
+      pay.setBv = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
+      pay.setTotalprice = order.totalPrice ? order.totalPrice.value : 0;
+    }
+    return pay;
   }
 
 }

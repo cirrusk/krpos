@@ -80,15 +80,9 @@ export class NicePaymentService {
 
         const notifier: Subject<CardCancelResult> = new Subject();
 
-        // if (approvalDate.length > 6) {
-        //     approvalDate = approvalDate.slice(0, 6);
-        // }
-
         const requestVO: CardCancelRequest = CardPopulator.fillCancelReqVO(amount, approvalNumber, approvalDate, installment);
 
         // 로깅 -> 추후 Persistence 고려
-        // console.log('Card Cancel Request');
-        // console.log(requestVO.stringify());
         this.logger.set('Card Cancel Request', requestVO.stringify()).info();
 
         const body: string = CardPopulator.generateCancelReq(requestVO);
@@ -102,8 +96,6 @@ export class NicePaymentService {
                 const resultVO: CardCancelResult = CardPopulator.parseCancelResult(raw);
 
                 // 로깅 -> 추후 Persistence 고려
-                // console.log('Card Cancel Result');
-                // console.log(resultVO.stringify());
                 this.logger.set('Card Cancel Result', resultVO.stringify()).info();
 
                 notifier.next(resultVO);

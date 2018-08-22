@@ -13,7 +13,7 @@ import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, 
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block,
-  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData
+  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
@@ -365,15 +365,15 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.groupAccountInfo = new Array<Accounts>();
     this.currentGroupAccountInfo = new Array<Accounts>();
     this.groupSelectedCart = new AbstractOrder();
+    this.selectedUserId = '';
+    this.copyGroupList = Array<ResCartInfo>();
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
-    this.storage.setLocalItem('clearclient', {});
-    this.storage.removeLocalItem('clearclient');
-    this.selectedUserId = '';
+    this.storage.initLocals();
     this.initSerials();
-    this.copyGroupList = Array<ResCartInfo>();
     this.storage.cleanSerialCodes();
     this.storage.removeBer();
+    this.storage.removePaymentCapture();
     this.ber = null;
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
@@ -564,7 +564,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       // 그룹 결제시
       if (this.orderType === OrderType.GROUP) {
-
         // 재결제시
         if (this.paymentChange) {
           this.accountInfo = account;
@@ -861,10 +860,11 @@ export class CartListComponent implements OnInit, OnDestroy {
                 const errdata = Utils.getError(error);
                 if (errdata) {
                   if (errdata.type === 'InvalidTokenError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   } else if (errdata.type === 'InvalidDmsError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   }
+                  setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -917,7 +917,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               } else if (product.sellableStatusForStock === 'ENDOFSALE') {
                 this.alert.show({ message: '단종된 상품입니다.', timer: true, interval: 1200 });
               }
-              setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+              setTimeout(() => { this.searchText.nativeElement.focus(); }, 1210);
             }
           } else {
             this.searchParams.data = this.cartInfo;
@@ -1485,57 +1485,24 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
     if (paymentcapture) {
-      this.getBalanceInfo();
-      // 카드 내역
-      if (paymentcapture.getCcPaymentInfo) {
-        const cc = paymentcapture.getCcPaymentInfo;
-        this.ccamount = cc.getAmount;
-        this.installment = cc.getInstallmentPlan;
-      }
-      let paid = 0;
-      // 현금 내역
-      if (paymentcapture.getCashPaymentInfo) {
-        const cash = paymentcapture.getCashPaymentInfo;
-        this.cashamount = cash.getAmount;
-        // this.received = cash.getReceived ? Number(cash.getReceived) : 0;
-        paid += cash.getReceived ? Number(cash.getReceived) : 0;
-        this.change = cash.getChange ? Number(cash.getChange) : 0;
-      }
-
-      // 포인트 내역
-      if (paymentcapture.getPointPaymentInfo) {
-        this.pointamount = paymentcapture.getPointPaymentInfo.getAmount;
-        paid += this.pointamount ? Number(this.pointamount) : 0;
-      }
-
-      // Recash 내역
-      if (paymentcapture.getMonetaryPaymentInfo) {
-        this.recashamount = paymentcapture.getMonetaryPaymentInfo.getAmount;
-        paid += this.recashamount ? Number(this.recashamount) : 0;
-      }
-      this.received = paid;
-
-      // 자동이체 내역
-      if (paymentcapture.getDirectDebitPaymentInfo) {
-        this.ddamount = paymentcapture.getDirectDebitPaymentInfo.getAmount;
-      }
-    }
-    if (order) {
-      this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
-      this.totalPV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
-      this.totalBV = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
-      let pay = 0;
-      if (paymentcapture.ccPaymentInfo) {
-        const p = paymentcapture.ccPaymentInfo.amount;
-        if (p) {
-          pay = Number(p);
-        }
-        this.totalPrice = pay;
-      } else {
-        this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      const pay: PaymentView = this.payment.viewPayment(paymentcapture, order);
+      this.ccamount = pay.cardamount ? pay.cardamount : 0;
+      this.installment = pay.cardinstallment;
+      this.cashamount = pay.cashamount ? pay.cashamount : 0;
+      this.change = pay.cashchange ? pay.cashchange : 0;
+      this.pointamount = pay.pointamount ? pay.pointamount : 0;
+      this.recashamount = pay.recashamount ? pay.recashamount : 0;
+      this.received = pay.receivedamount ? pay.receivedamount : 0;
+      this.ddamount = pay.directdebitamount ? pay.directdebitamount : 0;
+      if (order) {
+        this.discount = pay.discount;
+        this.totalPV = pay.pv;
+        this.totalBV = pay.bv;
+        this.totalPrice = pay.totalprice;
       }
     }
   }
+
   /**
    * 장바구니 복원 데이터 설정
    * @param {Cart} cartData 카트 데이터
