@@ -1396,7 +1396,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.alert.error({ message: '보류내역이 없습니다.', timer: true, interval: 1500 });
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
     } else {
-      if (this.storage.getPaymentCapture() !== null) { return; }
+      if (this.storage.getPaymentCapture() !== null) { return; } // 부분결제가 진행되었을 경우는 보류못하도록 함.
       if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
         this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
           () => {
