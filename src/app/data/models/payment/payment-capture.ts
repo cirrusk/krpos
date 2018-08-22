@@ -494,3 +494,70 @@ export class BusinessEntityRegistrationInfoData {
         this.number = number;
     }
 }
+
+export class PaymentView {
+    cardamount: number;
+    cardinstallment: string;
+    cashamount: number;
+    cashchange: number;
+    pointamount: number;
+    recashamount: number;
+    receivedamount: number;
+    directdebitamount: number;
+    discount: number;
+    pv: number;
+    bv: number;
+    pvsum: number;
+    bvsum: number;
+    pvgroup: number;
+    bvgroup: number;
+    totalprice: number;
+    public set setCardamount(cardamount: number) {
+        this.cardamount = cardamount;
+    }
+    public set setCardInstallment(cardinstallment: string) {
+        this.cardinstallment = cardinstallment;
+    }
+    public set setCashamount(cashamount: number) {
+        this.cashamount = cashamount;
+    }
+    public set setCashchange(cashchange: number) {
+        this.cashchange = cashchange;
+    }
+    public set setPointamount(pointamount: number) {
+        this.pointamount = pointamount;
+    }
+    public set setRecashamount(recashamount: number) {
+        this.recashamount = recashamount;
+    }
+    public set setReceivedamount(receivedamount: number) {
+        this.receivedamount = receivedamount;
+    }
+    public set setDirectdebitamount(directdebitamount: number) {
+        this.directdebitamount = directdebitamount;
+    }
+    public set setDiscount(discount: number) {
+        this.discount = discount;
+    }
+    public set setPv(pv: number) {
+        this.pv = pv;
+    }
+    public set setBv(bv: number) {
+        this.bv = bv;
+    }
+    public set setPvsum(pvsum: number) {
+        this.pvsum = pvsum;
+    }
+    public set setBvsum(bvsum: number) {
+        this.bvsum = bvsum;
+    }
+    public set setPvgroup(pvgroup: number) {
+        this.pvgroup = pvgroup;
+    }
+    public set setBvgroup(bvgroup: number) {
+        this.bvgroup = bvgroup;
+    }
+    public set setTotalprice(totalprice: number) {
+        this.totalprice = totalprice;
+    }
+}

@@ -142,8 +142,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.sendPaymentAndOrder(this.paymentcapture, null);
       this.finishStatus = StatusDisplay.PAID;
       this.apprmessage = this.message.get('payment.success.next');
+      this.close();
     } else if (check === 0) {
       this.finishStatus = StatusDisplay.PAID;
+      this.sendPaymentAndOrder(this.paymentcapture, null);
       this.apprmessage = this.message.get('payment.success');
       this.completePayPopup(this.paidamount, usepoint, check);
     }
@@ -180,7 +182,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
    */
   private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setLocalItem('payinfo', [payment, order]);
+    this.storage.setPayment([payment, order]);
   }
 
   /**

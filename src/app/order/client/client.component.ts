@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { ClientAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, BerData } from '../../data';
+import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, BerData, PaymentView } from '../../data';
 import { PagerService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
@@ -55,63 +55,64 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.init();
     this.loadNotice();
     this.accountInfo = null; // new Accounts();
-    this.stsubscription = this.storage.storageChanges.subscribe(result => {
-      if (result) {
-        this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
-        if (result.key === 'nc') {
-          if (result.value === 'Y') {
-            this.modal.openModalByComponent(ClientAccountComponent,
-              {
-                modalId: 'ClientAccountComponent_CLIENT'
-              }
-            ).subscribe(() => {
-              this.storage.removeLocalItem('nc');
-            });
-          }
-        } else if (result.key === 'customer') {
-          // if (this.accountInfo) { this.init(); }
-          if (result.value) {
-            this.accountInfo = result.value;
-          }
-          this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
-          if (this.accountInfo && typeof this.accountInfo.balance !== 'undefined') {
-            this.balance = this.accountInfo.balance[0].amount;
-            this.recash = this.accountInfo.balance[1].amount;
-          }
-        } else if (result.key === 'orderentry') {
-          if (result.value === null) {
-            this.init();
-          } else {
-            this.resCart = result.value;
-            if (this.resCart.entries instanceof Array) {
-              // if (result.value.length === 0) { // 단건 삭제 시 빈 배열이므로 여기서 초기화
-              //   this.init();
-              // }
-              this.init(); // 장바구니 담긴 정보 전체가 넘어오므로 무조건 전체삭제후 입력
-              this.resCart.entries.forEach(orderentry => {
-                this.addCartEntry(orderentry);
+    this.stsubscription = this.storage.storageChanges.subscribe(
+      result => {
+        if (result) {
+          this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
+          if (result.key === 'nc') {
+            if (result.value === 'Y') {
+              this.modal.openModalByComponent(ClientAccountComponent,
+                {
+                  modalId: 'ClientAccountComponent_CLIENT'
+                }
+              ).subscribe(() => {
+                this.storage.removeLocalItem('nc');
               });
-            } else {
-              this.addCartEntry(this.resCart.entries);
             }
+          } else if (result.key === 'customer') {
+            // if (this.accountInfo) { this.init(); }
+            if (result.value) {
+              this.accountInfo = result.value;
+            }
+            this.accountType = this.accountInfo ? this.accountInfo.accountTypeCode.toUpperCase() : '';
+            if (this.accountInfo && typeof this.accountInfo.balance !== 'undefined') {
+              this.balance = this.accountInfo.balance[0].amount;
+              this.recash = this.accountInfo.balance[1].amount;
+            }
+          } else if (result.key === 'orderentry') {
+            if (result.value === null) {
+              this.init();
+            } else {
+              this.resCart = result.value;
+              if (this.resCart.entries instanceof Array) {
+                // if (result.value.length === 0) { // 단건 삭제 시 빈 배열이므로 여기서 초기화
+                //   this.init();
+                // }
+                this.init(); // 장바구니 담긴 정보 전체가 넘어오므로 무조건 전체삭제후 입력
+                this.resCart.entries.forEach(orderentry => {
+                  this.addCartEntry(orderentry);
+                });
+              } else {
+                this.addCartEntry(this.resCart.entries);
+              }
+            }
+          } else if (result.key === 'clearclient') {
+            this.init();
+            this.storage.removeOrderEntry();
+            this.storage.removeCustomer();
+            this.accountInfo = null;
+          } else if (result.key === 'payinfo') {
+            const data: any = result.value;
+            if (data) {
+              this.retreiveInfo(data[0], data[1]);
+            }
+          } else if (result.key === 'apprtype') {
+            this.apprtype = '통합결제';
+          } else if (result.key === 'Ber') {
+            this.ber = result.value;
           }
-        } else if (result.key === 'clearclient') {
-          this.init();
-          this.storage.removeOrderEntry();
-          this.storage.removeCustomer();
-          this.accountInfo = null;
-        } else if (result.key === 'payinfo') {
-          const data: any = result.value;
-          if (data) {
-            this.retreiveInfo(data[0], data[1]);
-          }
-        } else if (result.key === 'apprtype') {
-          this.apprtype = '통합결제';
-        } else if (result.key === 'Ber') {
-          this.ber = result.value;
         }
-      }
-    });
+      });
   }
 
   ngOnDestroy() {
@@ -126,40 +127,23 @@ export class ClientComponent implements OnInit, OnDestroy {
    * @param order 주문 정보
    */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
+    console.log(JSON.stringify(paymentcapture, null, 2));
     if (paymentcapture) {
-      if (paymentcapture.ccPaymentInfo) { // 신용카드
-        const cc = paymentcapture.ccPaymentInfo;
-        this.ccamount = cc.amount;
-        this.installment = cc.installmentPlan;
-      }
-      let paidamount = 0;
-      if (paymentcapture.cashPaymentInfo) { // 현금
-        const cash = paymentcapture.cashPaymentInfo;
-        this.cashamount = cash.amount;
-        // this.received = cash.received ? Number(cash.received) : 0;
-        paidamount += cash.received ? Number(cash.received) : 0;
-        this.change = cash.change ? Number(cash.change) : 0;
-      }
-      if (paymentcapture.pointPaymentInfo) { // 포인트
-        this.pointamount = paymentcapture.pointPaymentInfo.amount;
-      }
-      if (paymentcapture.monetaryPaymentInfo) { // Re-Cash
-        this.recashamount = paymentcapture.monetaryPaymentInfo.amount;
-        paidamount += paymentcapture.monetaryPaymentInfo.amount;
-      }
-      this.received = paidamount;
-      if (paymentcapture.directDebitPaymentInfo) { // 자동이체
-        this.ddamount = paymentcapture.directDebitPaymentInfo.amount;
-      }
-    }
-    if (order) {
-      this.discount = order.totalDiscounts ? order.totalDiscounts.value : 0;
-      this.totalPV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.pointValue : 0;
-      this.totalBV = order.totalPrice.amwayValue ? order.totalPrice.amwayValue.businessVolume : 0;
-      if (paymentcapture.ccPaymentInfo) {
-        this.totalPrice = paymentcapture.ccPaymentInfo.amount;
-      } else {
-        this.totalPrice = order.totalPrice ? order.totalPrice.value : 0;
+      const pay: PaymentView = this.payment.viewPayment(paymentcapture, order);
+      console.log(JSON.stringify(pay, null, 2));
+      this.ccamount = pay.cardamount ? pay.cardamount : 0;
+      this.installment = pay.cardinstallment;
+      this.cashamount = pay.cashamount ? pay.cashamount : 0;
+      this.change = pay.cashchange ? pay.cashchange : 0;
+      this.pointamount = pay.pointamount ? pay.pointamount : 0;
+      this.recashamount = pay.recashamount ? pay.recashamount : 0;
+      this.received = pay.receivedamount ? pay.receivedamount : 0;
+      this.ddamount = pay.directdebitamount ? pay.directdebitamount : 0;
+      if (order) {
+        this.discount = pay.discount;
+        this.totalPV = pay.pv;
+        this.totalBV = pay.bv;
+        this.totalPrice = pay.totalprice;
       }
     }
   }

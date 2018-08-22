@@ -184,7 +184,9 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       this.apprmessage = this.message.get('payment.success.next');
       this.storage.setPay(this.paymentprice - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.close();
     } else if (paid === 0) {
+      this.sendPaymentAndOrder(this.paymentcapture, null);
       this.result = this.paymentcapture;
       this.completePayPopup(usepoint, this.paymentprice, 0);
     } else {
@@ -225,7 +227,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
    */
   private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
     this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setLocalItem('payinfo', [payment, order]);
+    this.storage.setPayment([payment, order]);
   }
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
