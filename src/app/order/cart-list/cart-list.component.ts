@@ -1286,7 +1286,10 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.logger.set('cart.list.component', `${errdata.message}`).error();
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
             }
-          });
+          },
+        () => {
+          setTimeout(() => { this.searchText.nativeElement.focus(); }, 90);
+        });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
