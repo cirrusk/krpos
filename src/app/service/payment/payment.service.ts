@@ -6,11 +6,11 @@ import 'rxjs/add/operator/timeout';
 import { ApiService, StorageService, Config } from '../../core';
 import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
-  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, TerminalInfo, BatchInfo, ResponseMessage, PaymentCapture, PaymentView
+  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, BatchInfo, ResponseMessage,
+  PaymentCapture, PaymentView
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
-import { Utils } from '../../core/utils';
 
 /**
  * 지불 처리 서비스
@@ -203,7 +203,7 @@ export class PaymentService {
     return this.api.post(data);
   }
 
-   /**
+  /**
    * 결제 내역 설정
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
    * @param {Order} order 주문정보
