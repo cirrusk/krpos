@@ -60,11 +60,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.accountInfo = this.callerData.account;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
-
     this.paymentcapture = this.callerData.paymentInfo;
     this.paidamount = this.cartInfo.totalPrice.value; // 내신금액
     this.payamount = this.cartInfo.totalPrice.value;  // 결제금액
-    this.calcPaidAmount();
+    this.paidamount = this.calAmountByPayment();
+    this.calChange(); // 거스름돈
+
   }
 
   ngOnDestroy() {
@@ -121,6 +122,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 전체 결재 금액 계산
    */
   private calAmountByPayment(): number {
+    console.log(Utils.stringify(this.paymentcapture));
     let paid = 0;
     if (this.paymentcapture.ccPaymentInfo) { // 신용카드
       const p = this.paymentcapture.ccPaymentInfo.amount;
@@ -129,6 +131,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
       const p = this.paymentcapture.cashPaymentInfo.amount;
       if (p) { paid += Number(p); }
+      paid += this.calChange();
     }
     if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
       const p = this.paymentcapture.directDebitPaymentInfo.amount;
@@ -153,31 +156,15 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   /**
-   * 내신금액 설정
+   * 거스름돈 설정
    */
-  private calcPaidAmount() {
-    let paid = 0;
+  private calChange(): number {
     if (this.paymentcapture.cashPaymentInfo) { // 현금결제
-      const p = this.paymentcapture.cashPaymentInfo.received;
-      if (p) {
-        paid += Number(p);
-      }
       const strchange = this.paymentcapture.cashPaymentInfo.change;
       this.change = strchange ? Number(strchange) : 0;
+      return this.change;
     }
-    if (this.paymentcapture.pointPaymentInfo) { // 포인트결제
-      const p = this.paymentcapture.pointPaymentInfo.amount;
-      if (p) {
-        paid += Number(p);
-      }
-    }
-    if (this.paymentcapture.monetaryPaymentInfo) { // Re-Cash결제
-      const p = this.paymentcapture.monetaryPaymentInfo.amount;
-      if (p) {
-        paid += Number(p);
-      }
-    }
-    this.paidamount = paid;
+    return 0;
   }
 
   /**
