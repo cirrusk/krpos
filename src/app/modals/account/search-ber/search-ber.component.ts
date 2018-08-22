@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, ModalService, Logger, AlertService } from '../../../core';
+import { ModalComponent, ModalService, Logger, AlertService, StorageService, Modal } from '../../../core';
 import { SearchService, MessageService } from '../../../service';
 import { BerData } from '../../../data/models/common/ber-result';
 import { Utils } from '../../../core/utils';
@@ -19,6 +19,8 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   @ViewChild('inputSearchBer') inputSearchBer: ElementRef;
   constructor(protected modalService: ModalService,
     private search: SearchService,
+    private modal: Modal,
+    private storage: StorageService,
     private message: MessageService,
     private alert: AlertService,
     private logger: Logger) {
@@ -74,6 +76,34 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
           this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
+  }
+
+  setBer() {
+    const ber: string = this.storage.getBer();
+    const selectedber = this.result.number;
+    console.log(ber + '/' + selectedber);
+    if (Utils.isNotEmpty(ber) && Utils.isNotEmpty(selectedber)) {
+      if (ber === selectedber) {
+        this.modal.openConfirm({
+          title: '중개 주문 진행 취소',
+          message: `중개 주문 진행을 취소하시겠습니까?<br>주문종류가 일반주문으로 변경됩니다.`,
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByClickOutside: false,
+          modalId: 'CancelBer'
+        }).subscribe(res => {
+          if (res) {
+            this.storage.removeBer();
+            this.result = new BerData();
+          }
+          this.close();
+        });
+      } else {
+        this.close();
+      }
+    } else {
+      this.close();
+    }
   }
 
   close() {

@@ -323,11 +323,30 @@ export class CartListComponent implements OnInit, OnDestroy {
   setBer(data) {
     if (data && data.ber) {
       this.ber = data.ber;
-      this.logger.set('', `>>> 사업자 정보 : ${Utils.stringify(data.ber)}`).debug();
-      this.storage.setBer(this.ber.number);
+      if (data.ber.number) {
+        this.logger.set('', `>>> 사업자 정보 : ${Utils.stringify(data.ber)}`).debug();
+        this.storage.setBer(this.ber.number);
+      } else {
+        this.ber = null;
+      }
     }
   }
 
+  removeBer() {
+    this.modal.openConfirm({
+      title: '중개 주문 진행 취소',
+      message: `중개 주문 진행을 취소하시겠습니까?<br>주문종류가 일반주문으로 변경됩니다.`,
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: 'CancelBerDirect'
+    }).subscribe(res => {
+      if (res) {
+        this.storage.removeBer();
+        this.ber = null;
+      }
+    });
+  }
   /**
    * 변수 초기화
    */
