@@ -373,6 +373,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.initSerials();
     this.storage.cleanSerialCodes();
     this.storage.removeBer();
+    this.storage.removePaymentCapture();
     this.ber = null;
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
@@ -859,10 +860,11 @@ export class CartListComponent implements OnInit, OnDestroy {
                 const errdata = Utils.getError(error);
                 if (errdata) {
                   if (errdata.type === 'InvalidTokenError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   } else if (errdata.type === 'InvalidDmsError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message) });
+                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   }
+                  setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                   this.checkUserBlock(resp, account);
@@ -915,7 +917,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               } else if (product.sellableStatusForStock === 'ENDOFSALE') {
                 this.alert.show({ message: '단종된 상품입니다.', timer: true, interval: 1200 });
               }
-              setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
+              setTimeout(() => { this.searchText.nativeElement.focus(); }, 1210);
             }
           } else {
             this.searchParams.data = this.cartInfo;
