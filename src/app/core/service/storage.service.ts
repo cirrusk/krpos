@@ -584,6 +584,28 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * cart 페이지 정보 저장
+   * @param page
+   */
+  public setCartPage(page: number): void {
+    this.setLocalItem('cartPage', page);
+  }
+
+  /**
+   * Cart 페이지 정보 조회
+   */
+  public getCartPage(): number {
+    return this.getLocalItem('cartPage');
+  }
+
+  /**
+   * Cart 페이지 정보 삭제
+   */
+  public removeCartPage(): void {
+    this.removeLocalItem('cartPage');
+  }
+
+  /**
    * 클라이언트용 로컬스토리지 정보 삭제
    */
   public clearClient(): void {
