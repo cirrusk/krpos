@@ -72,18 +72,28 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     }
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
     if (this.agree) {
-      this.modal.openConfirm({
-        title: '개인정보 수집 및 이용 동의 확인',
-        message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
-        modalAddClass: 'pop_s',
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
-        closeByClickOutside: false,
-        modalId: 'AGREE'
-      }).subscribe(
-        result => {
-          if (result) { this.createCustomerAccount(); }
-        });
+      setTimeout(() => {
+        const isAction = undefined;
+        this.modal.openConfirm({
+          title: '개인정보 수집 및 이용 동의 확인',
+          message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
+          modalAddClass: 'pop_s',
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByClickOutside: false,
+          closeByEnter: true,
+          modalId: 'AGREE',
+          beforeCloseCallback : function () {
+            if (this.isEnter) {
+              this.result = this.isEnter;
+            }
+          }
+        }).subscribe(
+          result => {
+            if (result) { this.createCustomerAccount(); }
+          }
+        );
+      }, 100);
     }
   }
 

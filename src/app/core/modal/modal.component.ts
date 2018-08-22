@@ -16,6 +16,7 @@ export class ModalComponent {
 
   modalMain: ModalMainComponent;
   modalCallback: any;
+  isEnter: boolean = undefined;
 
   callerData: any;
 
