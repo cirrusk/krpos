@@ -332,10 +332,14 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeBer() {
+  /**
+   * 카트에서 바로 중개주문 취소 처리
+   */
+  cancelBer() {
     this.modal.openConfirm({
       title: '중개 주문 진행 취소',
       message: `중개 주문 진행을 취소하시겠습니까?<br>주문종류가 일반주문으로 변경됩니다.`,
+      modalAddClass: 'pop_s',
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,

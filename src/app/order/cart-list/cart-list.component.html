@@ -18,9 +18,7 @@
     </div>
     <!-- //고객리스트 : 그룹결제시 노출 -->
     <div class="jg_number" *ngIf="ber">
-        <span (click)="removeBer()">
-            BER NO. {{ber.number | stripHtml: 'ber'}}
-        </span>
+        <span (click)="cancelBer()">BER NO. {{ber.number | stripHtml: 'ber'}}</span>
     </div>
 </div>
 
