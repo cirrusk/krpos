@@ -90,7 +90,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   balance: number;                                                          // 회원 포인트
   recash: number;                                                           // 회원 Re-Cash
   orderType: string;                                                        // 결제타입(일반 = n, 그룹 = g)
-  eOrderType = OrderType;                                                   // HTML 사용(enum)
+  eOrderType = OrderType;
   ccamount: number;                                                         // 신용카드 결제금액
   installment: string;                                                      // 카드 할부
   cashamount: number;                                                       // 현금 결제금액
@@ -106,11 +106,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   memberType = MemberType;                                                  // HTML 사용(enum)
   searchValid: FormControl = new FormControl('');
   // 그룹
-  amwayExtendedOrdering: AmwayExtendedOrdering;                             // 그룹카트 정보
-  groupSelectedCart: AbstractOrder;                                         // 선택된 그룹카트 정보
+  amwayExtendedOrdering: AmwayExtendedOrdering;
+  groupSelectedCart: AbstractOrder;
   // 결제수단변경
-  orderList: OrderList;                                                     // 주문상세내역
-  paymentChange: boolean;                                                   // 재결제 여부
+  orderList: OrderList;
+  paymentChange: boolean;
   ber: BerData;   // 사업자 정보
 
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
@@ -664,7 +664,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
       this.cartInfo = resultData.cartInfo;
       this.sendRightMenu(ModelType.ACCOUNT, true, account);
-      // this.sendRightMenu('all', true);
+      this.sendRightMenu('all', true);
       this.resCartInfo = resultData.resCartInfo;
       this.addCartModel = resultData.resCartInfo.cartModifications.cartModifications;
       this.addCartModel.forEach(model => {
@@ -1429,7 +1429,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.restoreGroupCart(this.cartInfo);
           } else {
             this.setCartInfo(this.resCartInfo.cartList);
-            // this.sendRightMenu('all', true);
+            this.sendRightMenu('all', true);
           }
           this.info.sendInfo('hold', 'add');
         },
@@ -1550,8 +1550,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartInfo.user = cartData.user;
     this.cartInfo.volumeABOAccount = cartData.volumeABOAccount;
     this.cartInfo.guid = cartData.guid;
-    this.sendRightMenu(ModelType.CART, true, this.cartInfo);
-    this.sendRightMenu(ModelType.PRODUCT, true);
     this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
   }
 
@@ -1578,7 +1576,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.selectedCartNum = this.currentCartList.length - 1;
     }
 
-    this.storage.setCartPage(page);
     this.totalPriceInfo();
   }
 
