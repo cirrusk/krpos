@@ -51,9 +51,9 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
    * 변경(2018.08.23)
    * 주문 취소 시 카드의 경우 무카드 취소 이므로 Hybris 내부적으로
    * 거래 일련번호로 취소됨.
+   * 현금 IC 카드의 경우는 반드시 카드를 단말에 꼽은 후 처리해야함.
    */
   cancelOrder() {
-    // 신용카드 취소인 경우
     // 현금IC카드 취소인 경우
     const userId = this.orderInfo.user.uid;
     const orderCodes = new Array<string>();
@@ -62,32 +62,27 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
       orderDetail => {
         if (orderDetail) {
           this.orderList = orderDetail;
-          // const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
-          // let amount;
-          // let installment: string;
-          // let approvalNumber: string;
-          // let approvalDate: string;
-          // let paymentType: string;
-          // const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
-          //   paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD || paymentinfo.paymentMode.code === PaymentModes.ICCARD)
-          // );
-          // paymentinfos.forEach(paymentinfo => {
-          //   if (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD
-          //     || paymentinfo.paymentMode.code === PaymentModes.ICCARD) {
-          //     amount = paymentinfo.amount;
-          //     installment = paymentinfo.paymentInfoLine3; // 할부
-          //     approvalNumber = paymentinfo.paymentInfoLine4; // 승인번호
-          //     approvalDate = Utils.convertDateToString(new Date(), 'YYYYMMDDHHmmss');
-          //     paymentType = paymentinfo.paymentMode.code;
-          //   }
-          // });
-          // if (paymentType === PaymentModes.CREDITCARD) {
-          //   this.doCreditCardCancel(amount, approvalNumber, approvalDate, installment);
-          // } else if (paymentType === PaymentModes.ICCARD) {
-          //   this.doIcCardCancel(amount, approvalNumber, approvalDate);
-          // } else {
+          const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
+          let amount;
+          let approvalNumber: string;
+          let approvalDate: string;
+          let paymentType: string;
+          const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
+            paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.ICCARD)
+          );
+          paymentinfos.forEach(paymentinfo => {
+            if (paymentinfo.paymentMode.code === PaymentModes.ICCARD) {
+              amount = paymentinfo.amount;
+              approvalNumber = paymentinfo.paymentInfoLine4; // 승인번호
+              approvalDate = Utils.convertDateToString(new Date(), 'YYYYMMDDHHmmss');
+              paymentType = paymentinfo.paymentMode.code;
+            }
+          });
+          if (paymentType === PaymentModes.ICCARD) {
+            this.doIcCardCancel(amount, approvalNumber, approvalDate);
+          } else {
             this.doOrderCancel();
-          // }
+          }
         }
       },
       error => {
@@ -97,7 +92,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
         }
       });
-
   }
 
   private doOrderCancel() {
@@ -154,37 +148,8 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   /**
-   * 신용카드 결제 취소
-   *
-   * @param payprice 결제금액
-   * @param approvalNumber 승인번호
-   * @param approvalDateTime 승인일시
-   * @param installment 할부개월수
-   */
-  private doCreditCardCancel(payprice: number, approvalNumber: string, approvalDateTime?: string, installment = '0') {
-    this.spinner.show();
-    const apprdate = approvalDateTime ? approvalDateTime.substring(2, 8) : '';
-    const resultNotifier: Subject<CardCancelResult> = this.nicepay.cardCancel(String(payprice), approvalNumber, apprdate, installment);
-    resultNotifier.subscribe(
-      (res: CardCancelResult) => {
-        if (res.approved) {
-          this.logger.set('cancel.order.component', 'credit card cancel success').debug();
-          this.doOrderCancel();
-        } else {
-          this.logger.set('cancel.order.component', `credit card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
-          this.spinner.hide();
-        }
-      },
-      error => {
-        this.spinner.hide();
-        this.logger.set('credit.card.component', `${error}`).error();
-      },
-      () => { this.spinner.hide(); }
-    );
-  }
-
-  /**
    * 현금IC카드 결제 취소
+   * 당일건에 한해서만 취소가 가능함.
    *
    * @param payprice 결제금액
    * @param approvalNumber 승인번호
@@ -199,6 +164,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
         if (res.approved) {
           this.logger.set('cancel.order.component', 'ic card cancel success').debug();
           this.doOrderCancel();
+          this.spinner.hide();
         } else {
           this.logger.set('cancel.order.component', `ic card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
           this.spinner.hide();
