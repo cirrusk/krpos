@@ -153,7 +153,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
     let paychange = this.paidamount - nPayAmount; // 장바구니 결제금액 - 실결제금액
     const change = nReceiveAmount - nPayAmount; // 거스름돈 = 내신금액 - 결제금액
-
     if (change < 0) { // 내신금액이 결제금액보다 작으면 결제금액을 내신금액으로 대체
       nPayAmount = nReceiveAmount;
       paychange = this.paidamount - nPayAmount;
@@ -173,7 +172,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.completePayPopup(nReceiveAmount, nPayAmount, change);
     }
-
   }
 
   private paySubmitLock(lock: boolean) {
