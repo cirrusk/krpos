@@ -65,7 +65,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.payamount = this.cartInfo.totalPrice.value;  // 결제금액
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
-    this.pay(); // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
+    setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
   }
 
   ngOnDestroy() {

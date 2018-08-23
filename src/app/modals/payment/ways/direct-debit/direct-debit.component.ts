@@ -97,8 +97,11 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
   nextStep() {
     const paid = this.paid.nativeElement.value;
-    if (paid) {
+    const change = this.paidamount - paid;
+    if (paid && change >= 0) {
       setTimeout(() => { this.ddpassword.nativeElement.focus(); }, 50);
+    } else {
+      setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);
     }
   }
 
