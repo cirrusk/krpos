@@ -50,6 +50,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   hasAccount = false;
   hasProduct = false;
   hasCart = false;
+  isABO = false;
   orderType: string;
   accountInfo: Accounts;
   memberType = MemberType;
@@ -97,9 +98,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.hasAccount = data.flag;
         if (data.data) {
           this.accountInfo = data.data;
+          if (this.accountInfo.accountTypeCode === MemberType.ABO) { this.isABO = true; }
         } else {
           this.orderType = '';
           this.cartInfo = null;
+          this.isABO = false;
           this.amwayExtendedOrdering = data.data;
         }
       } else if (data.type === ModelType.PRODUCT) {
@@ -277,6 +280,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       closeButtonLabel: '취소',
       closeByClickOutside: true,
       modalId: 'CancelCartComponent'
+    }).subscribe(result => {
+      if (result) {
+        this.isABO = false;
+      }
     });
   }
 
