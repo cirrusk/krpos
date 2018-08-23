@@ -447,6 +447,14 @@ export class StorageService implements OnDestroy {
     this.removeLocalItem('Ber');
   }
 
+  public setPayInfoReset() {
+    this.setLocalItem('payinforeset', true);
+  }
+
+  public removePayInfoReset() {
+    this.removeLocalItem('payinforeset');
+  }
+
   /**
    * local storage 에 저장하기
    * local storage event listener data 전달

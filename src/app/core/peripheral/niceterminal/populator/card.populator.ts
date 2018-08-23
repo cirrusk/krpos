@@ -122,7 +122,7 @@ export class CardPopulator {
             result.merchantNumber = tokens[12];
             result.maskedCardNumber = tokens[13];
             result.installmentMonth = tokens[14];
-            result.processingNumber = tokens[15];
+            result.processingNumber = tokens[15]; // 단말기 처리 일련번호
             result.catId = tokens[16];
             result.signData = tokens[17];
         }

@@ -112,6 +112,8 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.ber = result.value;
           } else if (result.key === 'cartPage') {
             this.setPage(this.storage.getCartPage());
+          } else if (result.key === 'payinforeset' && result.value === true) {
+            this.payInfoReset();
           }
         }
       });
@@ -148,6 +150,17 @@ export class ClientComponent implements OnInit, OnDestroy {
         this.totalPrice = pay.totalprice;
       }
     }
+  }
+
+  private payInfoReset() {
+    this.ccamount = 0;
+    this.installment = '';
+    this.cashamount = 0;
+    this.change = 0;
+    this.pointamount = 0;
+    this.recashamount = 0;
+    this.received = 0;
+    this.ddamount = 0;
   }
 
   private init() {

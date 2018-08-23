@@ -333,6 +333,17 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 메뉴의 통합결제 창이 닫혔을 경우 카트 정보의 값을 초기화
+   *
+   * @param {any}} data 초기화 플래그
+   */
+  setPayReset(data) {
+    if (data && data.reset) {
+      this.payInfoReset();
+    }
+  }
+
+  /**
    * 카트에서 바로 중개주문 취소 처리
    */
   cancelBer() {
@@ -1308,9 +1319,9 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
             }
           },
-        () => {
-          setTimeout(() => { this.searchText.nativeElement.focus(); }, 90);
-        });
+          () => {
+            setTimeout(() => { this.searchText.nativeElement.focus(); }, 90);
+          });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1526,6 +1537,22 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.totalPrice = pay.totalprice;
       }
     }
+  }
+
+  /**
+   * 통합결제 창이 닫혔을 경우
+   * 결제 금액 정보 초기화하기
+   */
+  private payInfoReset() {
+    this.ccamount = 0;
+    this.installment = '';
+    this.cashamount = 0;
+    this.change = 0;
+    this.pointamount = 0;
+    this.recashamount = 0;
+    this.received = 0;
+    this.ddamount = 0;
+    this.storage.setPayInfoReset();
   }
 
   /**

@@ -254,6 +254,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     cardCompanyCode: string;
     cardPassword: string;
     installmentPlan: string; // 할부기간 InstallmentPlanModel 0 - 일시불
+    transactionId: string;
     cardTransactionId: string;
     cardAcquirerCode: string;
     cardApprovalNumber: string;
@@ -277,8 +278,8 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     public set setNumber(number: string) {
         this.number = number;
     }
-    public set setTransactionId(transactionid: string) {
-        this.transactionid = transactionid;
+    public set setTransactionId(transactionId: string) {
+        this.transactionId = transactionId;
     }
     public set setCardType(cardtype: string) {
         this.cardtype = cardtype;
@@ -333,6 +334,9 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     public get getCardRequestDate(): string {
         return this.cardRequestDate;
+    }
+    public set setCardTransactionId(cardTransactionId: string) {
+        this.cardTransactionId = cardTransactionId;
     }
     public set setPaymentSignature(paymentSignature: string) {
         this.paymentSignature = paymentSignature;

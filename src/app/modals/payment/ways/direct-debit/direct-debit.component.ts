@@ -162,6 +162,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.finishStatus = StatusDisplay.PAID;
         this.sendPaymentAndOrder(this.paymentcapture, null);
         this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
+        this.close();
       } else {
         // this.approvalAndPayment();
         this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
