@@ -177,51 +177,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.sendPaymentAndOrder(this.paymentcapture, null);
         this.completePayPopup(nPaidAmount, paid, 0);
       }
-
     } else {
       this.checktype = -2;
       this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
-
-  }
-
-  private approvalAndPayment() {
-    const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
-    this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
-    this.logger.set('direct.debit.component', 'direct.debit payment : ' + Utils.stringify(this.paymentcapture)).debug();
-    this.paymentsubscription = this.payments.placeOrderWithTimeout(this.accountInfo.parties[0].uid, this.cartInfo.code, capturepaymentinfo).subscribe(
-      result => {
-        setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 50);
-        this.orderInfo = result;
-        this.logger.set('direct.debit.component', `payment capture and place order status : ${result.status}, status display : ${result.statusDisplay}`).debug();
-        this.finishStatus = result.statusDisplay;
-        if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
-          if (Utils.isPaymentSuccess(this.finishStatus)) {
-            this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-            this.paidDate = result.created ? result.created : new Date();
-            setTimeout(() => { this.renderer.setAttribute(this.ddpassword.nativeElement, 'readonly', 'readonly'); }, 5);
-            // this.info.sendInfo('payinfo', [this.paymentcapture, this.orderInfo]);
-            this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
-          } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-            this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다.`;
-            this.finishStatus = 'recart';
-          } else { // CART 삭제된 상태
-            this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다.`;
-            this.finishStatus = 'recart';
-          }
-        } else { // 결제정보 없는 경우,  CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-          this.finishStatus = 'fail';
-          this.apprmessage = this.message.get('notuse.directdeit'); // `즉시 출금이 불가합니다. 다른 결제 수단을 이용해주세요.`;
-          // cart-list.component에 재생성 이벤트 보내서 처리
-        }
-        this.storage.removePay();
-      }, error => {
-        this.finishStatus = 'fail';
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.apprmessage = errdata.message;
-        }
-      });
   }
 
   /**
