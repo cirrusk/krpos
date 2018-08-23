@@ -244,8 +244,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     ccard.setMemberType = CCMemberType.PERSONAL;
     ccard.setPaymentType = CCPaymentType.GENERAL;
     ccard.setCardType = PaymentModes.CREDITCARD;
-    ccard.setTransactionId = this.cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
-    ccard.setCardTransactionId = this.cardresult.processingNumber;
+    // ccard.setTransactionId = this.cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    // ccard.setCardTransactionId = this.cardresult.processingNumber;
+    ccard.setTransactionId = this.cardresult.resultMsg1; // 정상 승인시 무카드(고유번호), 거래 고유번호(18)
+    ccard.setCardTransactionId = this.cardresult.resultMsg1; // 정상 승인시 무카드(고유번호), 거래 고유번호(18)
     const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
     if (Utils.isNotEmpty(signdata)) {
       ccard.setPaymentSignature = signdata;

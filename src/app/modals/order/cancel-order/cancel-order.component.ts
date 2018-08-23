@@ -48,6 +48,9 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
    * 주문 취소 요청
    * 신용카드, 현금IC카드가 포함되어 있을 경우
    * 해당 카드 결제 취소를 먼저 수행해야함.
+   * 변경(2018.08.23)
+   * 주문 취소 시 카드의 경우 무카드 취소 이므로 Hybris 내부적으로
+   * 거래 일련번호로 취소됨.
    */
   cancelOrder() {
     // 신용카드 취소인 경우
@@ -59,41 +62,32 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
       orderDetail => {
         if (orderDetail) {
           this.orderList = orderDetail;
-          const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
-          // 신용카드
-          // 현금IC카드
-          let amount;
-          let installment: string;
-          let approvalNumber: string;
-          let approvalDate: string;
-          let paymentType: string;
-          const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
-            paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD || paymentinfo.paymentMode.code === PaymentModes.ICCARD)
-          );
-          paymentinfos.forEach(paymentinfo => {
-            console.log('======== ' + paymentinfo.paymentMode.code);
-            console.log('credit card : ' + PaymentModes.CREDITCARD);
-            console.log('ic card : ' + PaymentModes.ICCARD);
-            if (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD
-              || paymentinfo.paymentMode.code === PaymentModes.ICCARD) {
-              amount = paymentinfo.amount;
-              installment = paymentinfo.paymentInfoLine3; // 할부
-              approvalNumber = paymentinfo.paymentInfoLine4; // 승인번호
-              approvalDate = Utils.convertDateToString(new Date(), 'YYYYMMDDHHmmss');
-              paymentType = paymentinfo.paymentMode.code;
-              console.log('amount : ' + amount);
-              console.log('installment : ' + installment);
-              console.log('approvalnumber : ' + approvalNumber);
-              console.log('paymentType : ' + paymentType);
-            }
-          });
-          if (paymentType === PaymentModes.CREDITCARD) {
-            this.doCreditCardCancel(amount, approvalNumber, approvalDate, installment);
-          } else if (paymentType === PaymentModes.ICCARD) {
-            this.doIcCardCancel(amount, approvalNumber, approvalDate);
-          } else {
+          // const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
+          // let amount;
+          // let installment: string;
+          // let approvalNumber: string;
+          // let approvalDate: string;
+          // let paymentType: string;
+          // const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
+          //   paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD || paymentinfo.paymentMode.code === PaymentModes.ICCARD)
+          // );
+          // paymentinfos.forEach(paymentinfo => {
+          //   if (paymentinfo.paymentMode.code === PaymentModes.CREDITCARD
+          //     || paymentinfo.paymentMode.code === PaymentModes.ICCARD) {
+          //     amount = paymentinfo.amount;
+          //     installment = paymentinfo.paymentInfoLine3; // 할부
+          //     approvalNumber = paymentinfo.paymentInfoLine4; // 승인번호
+          //     approvalDate = Utils.convertDateToString(new Date(), 'YYYYMMDDHHmmss');
+          //     paymentType = paymentinfo.paymentMode.code;
+          //   }
+          // });
+          // if (paymentType === PaymentModes.CREDITCARD) {
+          //   this.doCreditCardCancel(amount, approvalNumber, approvalDate, installment);
+          // } else if (paymentType === PaymentModes.ICCARD) {
+          //   this.doIcCardCancel(amount, approvalNumber, approvalDate);
+          // } else {
             this.doOrderCancel();
-          }
+          // }
         }
       },
       error => {

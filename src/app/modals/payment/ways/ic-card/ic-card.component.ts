@@ -110,7 +110,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     iccard.setMemberType = CCMemberType.PERSONAL;
     iccard.setPaymentType = CCPaymentType.GENERAL;
     iccard.setCardType = PaymentModes.ICCARD;
-    iccard.setTransactionId = this.cardresult.trxNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    iccard.setTransactionId = this.cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    iccard.setCardTransactionId = this.cardresult.processingNumber;
     // ccard.setValidToMonth = '';
     // ccard.setValidToYear = '';
     const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
