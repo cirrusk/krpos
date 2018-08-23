@@ -84,6 +84,13 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   paidCal(paid: number) {
     if (typeof paid === 'number' || paid !== '') {
       this.change = this.paidamount - paid;
+      if (this.change < 0) {
+        this.change = 0;
+        this.checktype = -3;
+        this.apprmessage = this.message.get('payment.valid.overpaid');
+      } else {
+        this.checktype = 0;
+      }
     }
   }
 
@@ -153,7 +160,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
       if (nPaidAmount < paid) {
         this.checktype = -3;
-        this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 큽니다.';
+        this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 큽니다.';
       } else if (nPaidAmount > paid) { // 다음결제수단
         this.checktype = 0;
         this.storage.setPay(nPaidAmount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장

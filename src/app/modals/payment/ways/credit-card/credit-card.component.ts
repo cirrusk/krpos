@@ -97,7 +97,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.change = this.paidamount - nPaid;
     if (this.change < 0) {
       this.checktype = -2;
-      this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
+      this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
     } else {
       this.checktype = 0;
       this.apprmessage = '';
@@ -327,7 +327,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         () => { this.spinner.hide(); });
     } else {
       this.checktype = -2;
-      this.apprmessage = this.message.get('credit.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
+      this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
     }
   }
 
