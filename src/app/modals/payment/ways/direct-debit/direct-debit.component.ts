@@ -199,7 +199,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   private payFinishByEnter() {
-
     if (this.change === 0) {
       const paid = this.paid.nativeElement.value; // 결제금액
       if (Number(this.paidamount) === Number(paid)) { // 결제완료
@@ -207,7 +206,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       }
     }
     this.close();
-
   }
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {
