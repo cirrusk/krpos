@@ -1,18 +1,19 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
+import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
 import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
+import { ReceiptService, MessageService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { BankAccount } from '../../../../data/models/order/bank-account';
 import { Utils } from '../../../../core/utils';
-import { ReceiptService, PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
-import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
+
 @Component({
   selector: 'pos-direct-debit',
   templateUrl: './direct-debit.component.html'
@@ -34,14 +35,13 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private accountInfo: Accounts;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
-  private paymentType: string;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
-    private storage: StorageService, private payments: PaymentService, private message: MessageService,
-    private logger: Logger, private info: InfoBroker, private renderer: Renderer2) {
+    private storage: StorageService, private message: MessageService,
+    private info: InfoBroker, private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -55,10 +55,11 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.setDirectDebitInfo();
     if (!this.accountnumber) {
-      this.checktype = -1;
+      // this.checktype = -1;
+      this.finishStatus = 'not_processing';
       this.apprmessage = this.message.get('no.accountnumber'); // '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.';
       setTimeout(() => {
-        this.paid.nativeElement.blur();
+        // this.paid.nativeElement.blur();
         this.renderer.setAttribute(this.paid.nativeElement, 'disabled', 'disabled');
         this.renderer.setAttribute(this.ddpassword.nativeElement, 'disabled', 'disabled');
       }, 50);
@@ -157,7 +158,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       setTimeout(() => { this.ddpassword.nativeElement.blur(); }, 50);
       const nPaidAmount = Number(this.paidamount);
       const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0; // 결제금액
-
       if (nPaidAmount < paid) {
         this.checktype = -3;
         this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 큽니다.';
@@ -171,7 +171,6 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
         this.close();
       } else {
-        // this.approvalAndPayment();
         this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
         this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
         this.sendPaymentAndOrder(this.paymentcapture, null);
