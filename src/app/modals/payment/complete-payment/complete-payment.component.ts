@@ -65,7 +65,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.payamount = this.cartInfo.totalPrice.value;  // 결제금액
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
-
+    this.pay(); // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
   }
 
   ngOnDestroy() {
@@ -85,11 +85,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');
       this.close();
-    } else {
-      if (!this.dupcheck) {
-        setTimeout(() => { this.pay(evt); }, 300);
-        this.dupcheck = true;
-      }
     }
   }
 
@@ -98,8 +93,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    *
    * @param evt 이벤트
    */
-  pay(evt: KeyboardEvent): void {
-    evt.preventDefault();
+  private pay(): void {
     if (this.finishStatus !== null) {
       if (Utils.isPaymentSuccess(this.finishStatus)) {
         this.payFinishByEnter();
@@ -322,11 +316,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.info.sendInfo('recart', this.orderInfo);
           this.info.sendInfo('orderClear', 'clear');
           this.close();
-        } else {
-          if (!this.dupcheck) {
-            setTimeout(() => { this.pay(event); }, 200);
-            this.dupcheck = true;
-          }
         }
       }
     }
