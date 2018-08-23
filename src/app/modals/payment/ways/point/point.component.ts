@@ -5,8 +5,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { PaymentService, MessageService, ReceiptService } from '../../../../service';
 import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
 import {
-  KeyCode, Accounts, Balance, PaymentCapture, PointPaymentInfo, PointType,
-  PaymentModes, PaymentModeData, CurrencyData, StatusDisplay, CapturePaymentInfo, AmwayExtendedOrdering
+  KeyCode, Accounts, Balance, PaymentCapture, StatusDisplay, AmwayExtendedOrdering
 } from '../../../../data';
 import { Cart } from './../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';

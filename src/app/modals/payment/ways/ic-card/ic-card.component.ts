@@ -9,8 +9,7 @@ import {
   StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService
 } from '../../../../core';
 import {
-  KeyCode, ICCardPaymentInfo, PaymentCapture, PaymentModeData, CurrencyData, PaymentModes, Accounts,
-  StatusDisplay, CapturePaymentInfo, CCMemberType, CCPaymentType, AmwayExtendedOrdering, VanTypes
+  KeyCode, PaymentCapture, Accounts, StatusDisplay, AmwayExtendedOrdering
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';

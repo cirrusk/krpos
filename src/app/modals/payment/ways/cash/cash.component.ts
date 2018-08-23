@@ -6,8 +6,7 @@ import { ChecksComponent } from '../checks/checks.component';
 import { MessageService, ReceiptService, PaymentService } from '../../../../service';
 import { ModalComponent, ModalService, Modal, StorageService } from '../../../../core';
 import {
-  Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
-  CurrencyData, KeyCode, StatusDisplay, CapturePaymentInfo, AmwayExtendedOrdering
+  Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';

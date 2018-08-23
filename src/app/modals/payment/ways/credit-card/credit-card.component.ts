@@ -11,8 +11,7 @@ import {
   CardApprovalResult, NiceConstants, SpinnerService
 } from '../../../../core';
 import {
-  PaymentCapture, CreditCardPaymentInfo, PaymentModes, PaymentModeData, CurrencyData,
-  Accounts, KeyCode, StatusDisplay, CCMemberType, CCPaymentType, CapturePaymentInfo, AmwayExtendedOrdering, VanTypes
+  PaymentCapture, Accounts, KeyCode, StatusDisplay, AmwayExtendedOrdering
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';

@@ -8,7 +8,8 @@ import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
   ResponseData, BankInfoList, CapturePaymentInfo, Coupon, BatchInfo, ResponseMessage,
   PaymentCapture, PaymentView, CashPaymentInfo, CashType, PaymentModeData, PaymentModes,
-  CurrencyData, CreditCardPaymentInfo, VanTypes, CCMemberType, CCPaymentType, DirectDebitPaymentInfo, ICCardPaymentInfo, PointType, PointPaymentInfo, AmwayMonetaryPaymentInfo
+  CurrencyData, CreditCardPaymentInfo, VanTypes, CCMemberType, CCPaymentType, DirectDebitPaymentInfo,
+  ICCardPaymentInfo, PointType, PointPaymentInfo, AmwayMonetaryPaymentInfo
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';

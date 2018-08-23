@@ -4,8 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
 import {
-  PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
-  CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering
+  PaymentCapture, Accounts, BankTypes, StatusDisplay, KeyCode, AmwayExtendedOrdering
 } from '../../../../data';
 import { ReceiptService, MessageService, PaymentService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
