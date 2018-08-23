@@ -214,7 +214,9 @@ export class OrderService {
         params += '&codes=' + orderCode.trim();
       }
     });
-    const apiURL = this.config.getApiUrl('confirmPickup') + params;
+    const pos = this.storage.getTerminalInfo();
+    const pathvariables = { pickupStore: pos.pointOfService.name };
+    const apiURL = this.config.getApiUrl('confirmPickup', pathvariables) + params;
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
     return this.httpClient.put<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response'} )
       .map(data => data as HttpResponseBase);
