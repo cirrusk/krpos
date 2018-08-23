@@ -266,10 +266,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   holdOrder() {
     if (this.screenLockType === LockType.LOCK) { return; }
     this.router.navigate(['/order']); // 대시보드에서 보류건을 클릭했을 경우 장바구니로 이동
-    this.modal.openModalByComponent(HoldOrderComponent, {
-      closeByClickOutside: false,
-      modalId: 'HoldOrderComponent'
-    });
+    this.info.sendInfo('saveHold', 'check');
   }
 
   /**

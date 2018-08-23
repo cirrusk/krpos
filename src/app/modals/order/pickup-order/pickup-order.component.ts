@@ -70,7 +70,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
     // 간편선물 설정
     if (this.orderType === 'e') {
-      this.orderTypeName = '간편선물';
+      this.orderTypeName =  this.messageService.get('easyPickup.order.type');
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes = 'pickup';
@@ -78,7 +78,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.isEasyPickupOrder = true;
       // 설치주문 설정
     } else if (this.orderType === 'i') {
-      this.orderTypeName = '설치주문';
+      this.orderTypeName =  this.messageService.get('install.order.type');
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes = 'install';
@@ -86,7 +86,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.isEasyPickupOrder = false;
       // 픽업예약주문 설정
     } else {
-      this.orderTypeName = '픽업예약주문';
+      this.orderTypeName = this.messageService.get('pickupConfirm.order.type');
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes = 'pickup';

@@ -154,6 +154,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           } else {
             this.copyCartByEntries(this.accountInfo, this.cartList);
           }
+        } else if (result != null && type === 'saveHold') {
+          this.saveCart();
         }
       }
     );
@@ -419,8 +421,10 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {string} mode 검색 모드
    */
   activeSearchMode(mode: string): void {
+    if (mode === SearchMode.ACCOUNT || (mode === SearchMode.PRODUCT && this.accountInfo)) {
+      this.searchMode = mode;
+    }
     setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
-    this.searchMode = mode;
   }
 
   /**
@@ -577,8 +581,9 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 보류 건수가 존재 하지 않을 경우 띄우지 않음.
    */
   holdOrder() {
+    const userId = this.accountInfo !== null ? this.accountInfo.uid : '';
     this.modal.openModalByComponent(HoldOrderComponent, {
-      callerData: { userId: this.accountInfo.uid },
+      callerData: { userId: userId },
       closeByClickOutside: false,
       modalId: 'HoldOrderComponent'
     }).subscribe(() => {
@@ -638,7 +643,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (this.paymentChange) {
           this.copyCartByEntries(this.accountInfo, this.orderList.orders[0].entries);
         } else {
-          this.getSaveCarts();
+          this.getSaveCarts(this.accountInfo.parties[0].uid);
         }
       }
       // this.storage.setCustomer(this.accountInfo); // getBalanceInfo로 이동
@@ -673,7 +678,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             // this.storage.setCustomer(this.accountInfo);
             this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
             this.activeSearchMode(SearchMode.PRODUCT);
-            this.getSaveCarts();
+            this.getSaveCarts(this.accountInfo.parties[0].uid);
           }
         }
       }
@@ -718,7 +723,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         });
       } else {
         this.activeSearchMode(SearchMode.PRODUCT);
-        this.getSaveCarts();
+        this.getSaveCarts(this.accountInfo.parties[0].uid);
       }
     }, error => {
       const errdata = Utils.getError(error);
@@ -1406,12 +1411,15 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 보류된 장바구니 리스트 가져오기
+   * @param {string} userId uid
    */
-  getSaveCarts() {
-    this.cartService.getSaveCarts(this.accountInfo.parties[0].uid).subscribe(
+  getSaveCarts(userId?: string) {
+    this.cartService.getSaveCarts(userId).subscribe(
       result => {
         if (result.carts.length > 0) {
           this.holdOrder();
+        } else if (!userId) {
+          this.alert.error({ message: '장바구니 정보가 없습니다.', timer: true, interval: 1500 });
         }
       },
       error => {
@@ -1427,12 +1435,35 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 저장(보류)
    */
   saveCart() {
+    // 회원 정보 없음
     if (this.accountInfo === null) {
-      this.alert.error({ message: '보류내역이 없습니다.', timer: true, interval: 1500 });
+      this.getSaveCarts();
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+      // 장바구니 정보 없음
+    } else if (this.cartInfo.code === undefined) {
+      if (this.orderType === OrderType.GROUP) {
+        this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
+      } else {
+        this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
+      }
+      setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+
     } else {
-      if (this.storage.getPaymentCapture() !== null) { return; } // 부분결제가 진행되었을 경우는 보류못하도록 함.
-      if (this.cartInfo.code !== undefined && this.cartList.length > 0) {
+      // 그룹 - 장바구니 정보 유, 엔트리 정보 무
+      if (this.orderType === OrderType.GROUP && this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length < 1) {
+        this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
+        this.setUserPage(1);
+        this.choiceGroupUser(0, this.groupAccountInfo[0].uid);
+        setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+        // 일반 - 장바구니 정보 유, 엔트리 정보 무
+      } else if (this.orderType === OrderType.NORMAL && this.cartList.length < 1) {
+        this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
+        setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+        // 결제 진행중
+      } else if (this.storage.getPaymentCapture() !== null) {
+        this.alert.error({ message: this.message.get('noHoldDuringPayment')});
+      } else {
+        // 보류 가능
         this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
           () => {
             this.init();
@@ -1444,11 +1475,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (errdata) {
               this.logger.set('cart.list.component', `${errdata.message}`).error();
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
-            }
-          });
-      } else {
-        this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
-        setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+          }
+        });
       }
     }
   }
@@ -1502,7 +1530,9 @@ export class CartListComponent implements OnInit, OnDestroy {
             Object.assign(account, jsonData);
             this.groupAccountInfo.push(account);
           });
-          this.setUserPage(Math.ceil(this.groupAccountInfo.length / this.GROUP_ACCOUNT_PAGE_SIZE));
+          this.setUserPage(1);
+          this.selectedUserIndex = 0;
+          this.selectedUserId = this.groupAccountInfo[0].uid;
           this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
         }
       },
@@ -1797,7 +1827,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         //       });
         //     } else {
         //       this.activeSearchMode(SearchMode.PRODUCT);
-        //       this.getSaveCarts();
+        //       this.getSaveCarts(this.accountInfo.parties[0].uid);
         //     }
         //   }
         // }
@@ -1969,15 +1999,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
       if (event.keyCode === KeyCode.RIGHT_ARROW) { // 임시 저장 이벤트
-        if (this.orderType === OrderType.GROUP) {
-          if (this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length > 0) {
-            this.saveCart();
-          } else {
-            this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
-          }
-        } else {
-          this.saveCart();
-        }
+        this.saveCart();
       }
     }
   }

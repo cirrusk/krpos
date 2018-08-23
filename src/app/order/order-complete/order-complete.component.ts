@@ -78,12 +78,16 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
       this.chkSearchTypeABO = false;
       this.chkSearchTypeC = true;
       this.searchType = 'phone';
+      this.inputSearchText.nativeElement.focus();
+      this.inputSearchText.nativeElement.select();
     } else {
       this.renderer.removeAttribute(this.searchTypeABO.nativeElement, 'disabled');
       this.renderer.setAttribute(this.searchTypeC.nativeElement, 'disabled', 'disabled');
       this.chkSearchTypeABO = true;
       this.chkSearchTypeC = false;
       this.searchType = 'abo';
+      this.inputSearchText.nativeElement.focus();
+      this.inputSearchText.nativeElement.select();
     }
   }
 

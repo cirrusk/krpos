@@ -218,8 +218,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.receipt.groupPrint(this.orderInfo, this.paymentcapture, false, isCashReceipt);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
       } else {
+        // businessEntityRegistration 유: 중개판매, 무: 현장구매
+        const type = this.orderInfo.receiptInfo.businessEntityRegistration ? this.message.get('mediateOrder.order.type') : this.message.get('default.order.type');
         const params = {
-          isCashReceipt: isCashReceipt
+          isCashReceipt: isCashReceipt,
+          type: type
         };
         this.receipt.print(this.accountInfo, this.cartInfo, this.orderInfo, this.paymentcapture, params);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);

@@ -397,6 +397,8 @@ export class ReceiptService implements OnDestroy {
             { cancelFlag?: string, groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean, isCashReceipt?: boolean }
     ): boolean {
         let rtn = true;
+        type = type && type.length > 0 ? type : null;
+
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
