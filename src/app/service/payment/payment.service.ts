@@ -220,7 +220,6 @@ export class PaymentService {
     this.storage.setPayment([payment, order]);
   }
 
-
   /**
    * 결제 내역 설정
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
@@ -273,9 +272,12 @@ export class PaymentService {
   }
 
   /**
-   * Payment Capture 데이터 생성
+   * 현금 결제 지불 정보 데이터 생성
    *
+   * @param paymentcapture 지불 정보 객체
    * @param paidamount 지불 금액
+   * @param received 받은 금액
+   * @param change 거스름돈
    */
   makeCashPaymentCaptureData(paymentcapture: PaymentCapture, paidamount: number, received: number, change: number): CapturePaymentInfo {
     let paidamountbypayment = paidamount;
@@ -305,9 +307,11 @@ export class PaymentService {
   }
 
   /**
-   * Credit Card Payment Capture 데이터 생성
+   * 신용카드 결제 지불 정보 데이터 생성
    *
-   * @param paidamount 결제금액
+   * @param paymentcapture 지불 정보 객체
+   * @param cardresult 카드 승인 응답 객체
+   * @param paidamount 지불 금액
    */
   makeCCPaymentCaptureData(paymentcapture: PaymentCapture, cardresult: CardApprovalResult, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -329,8 +333,10 @@ export class PaymentService {
   }
 
   /**
-   * Credit Card Payment Info 생성
-   * @param paidamount 결제금액
+   * 신용카드 지불 정보 설정
+   *
+   * @param cardresult 신용카드 승인 응답 결과값
+   * @param paidamount 지불 금액
    */
   private makeCCPaymentInfo(cardresult: CardApprovalResult, paidamount: number): CreditCardPaymentInfo {
     const ccard = new CreditCardPaymentInfo(paidamount);
@@ -359,10 +365,11 @@ export class PaymentService {
   }
 
   /**
-   * 자동이체
-   * @param paymentcapture
-   * @param bank
-   * @param paidamount
+   * 자동이체 결제 지불 정보 데이터 생성
+   *
+   * @param paymentcapture 지불 정보 객체
+   * @param bank 자동이체 계좌 정보
+   * @param paidamount 지불 금액
    */
   makeDirectDebitPaymentCaptureData(paymentcapture: PaymentCapture, bank: BankAccount, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -390,9 +397,11 @@ export class PaymentService {
   }
 
   /**
-   * IC Card Payment Capture 데이터 생성
+   * 현금 IC카드 결제 지불 정보 데이터 생성
    *
-   * @param paidamount 결제금액
+   * @param paymentcapture 지불 정보 객체
+   * @param cardresult 현금 IC카드 승인 응답 정보
+   * @param paidamount 지불 금액
    */
   makeICPaymentCaptureData(paymentcapture: PaymentCapture, cardresult: ICCardApprovalResult, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -415,8 +424,10 @@ export class PaymentService {
   }
 
   /**
-   * IC Card Payment Info 생성
-   * @param paidamount 결제금액
+   * 현금 IC카드 지불 정보 설정
+   *
+   * @param cardresult 현금 IC카드 승인 응답 결과값
+   * @param paidamount 지불 금액
    */
   private makeICPaymentInfo(cardresult: ICCardApprovalResult, paidamount: number): ICCardPaymentInfo {
     const iccard = new ICCardPaymentInfo(paidamount);
@@ -444,6 +455,13 @@ export class PaymentService {
     return iccard;
   }
 
+  /**
+   * 포인트 결제 지불 정보 데이터 생성
+   *
+   * @param paymentcapture 지불 정보 객체
+   * @param pointType 포인트 유형
+   * @param paidamount 지불 금액
+   */
   makePointPaymentCaptureData(paymentcapture: PaymentCapture, pointType: string, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
     const pointtype = (pointType === 'a') ? PointType.BR030 : PointType.BR033; // 전환포인트 : 멤버포인트
@@ -467,6 +485,12 @@ export class PaymentService {
     return capturepaymentinfo;
   }
 
+  /**
+   * Re-Cash 결제 지불 정보 데이터 생성
+   *
+   * @param paymentcapture 지불 정보 객체
+   * @param paidamount 지불 금액
+   */
   makeRecashPaymentCaptureData(paymentcapture: PaymentCapture, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
     const recash = new AmwayMonetaryPaymentInfo(paidamount);
