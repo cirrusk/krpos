@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ChecksComponent } from '../checks/checks.component';
-import { MessageService, ReceiptService } from '../../../../service';
+import { MessageService, ReceiptService, PaymentService } from '../../../../service';
 import { ModalComponent, ModalService, Modal, StorageService } from '../../../../core';
 import {
   Accounts, PaymentCapture, PaymentModes, CashType, CashPaymentInfo, PaymentModeData,
@@ -41,6 +41,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
+    private payment: PaymentService,
     private receipt: ReceiptService,
     private storage: StorageService,
     private info: InfoBroker) {
@@ -163,14 +164,14 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
       this.result = this.paymentcapture;
       this.finishStatus = StatusDisplay.PAID;
-      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
       this.close();
     } else if (paychange === 0) { // 결제 완료
       this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
       this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
       // this.finishStatus = StatusDisplay.PAID;
-      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.completePayPopup(nReceiveAmount, nPayAmount, change);
     }
 
@@ -231,17 +232,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
     this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
-  }
-
-  /**
-   * 장바구니와 클라이언트에 정보 전달
-   *
-   * @param payment Payment Capture 정보
-   * @param order Order 정보
-   */
-  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
-    this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setPayment([payment, order]);
   }
 
   close() {

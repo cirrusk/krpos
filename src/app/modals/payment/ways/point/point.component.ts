@@ -183,10 +183,10 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       this.finishStatus = StatusDisplay.PAID;
       this.apprmessage = this.message.get('payment.success.next');
       this.storage.setPay(this.paymentprice - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.payments.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.close();
     } else if (paid === 0) {
-      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.payments.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.result = this.paymentcapture;
       this.completePayPopup(usepoint, this.paymentprice, 0);
     } else {
@@ -218,17 +218,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
-  }
-
-  /**
-   * 장바구니와 클라이언트에 정보 전달
-   *
-   * @param payment Payment Capture 정보
-   * @param order Order 정보
-   */
-  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
-    this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setPayment([payment, order]);
   }
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {

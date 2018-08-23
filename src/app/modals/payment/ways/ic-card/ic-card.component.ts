@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ReceiptService, MessageService } from '../../../../service';
+import { ReceiptService, MessageService, PaymentService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService, Logger,
   StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService
@@ -39,7 +39,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentsubscription: Subscription;
   private dupcheck = false;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService,
-    private message: MessageService, private nicepay: NicePaymentService,
+    private message: MessageService, private nicepay: NicePaymentService, private payment: PaymentService,
     private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
@@ -157,7 +157,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
             this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
             this.result = this.paymentcapture;
             this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
-            this.sendPaymentAndOrder(this.paymentcapture, null);
+            this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
             this.logger.set('ic.card.component', 'ic card payment : ' + Utils.stringify(this.paymentcapture)).debug();
           } else {
             this.finishStatus = 'fail';
@@ -172,17 +172,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
         this.storage.removePaymentModeCode();
       },
       () => { this.spinner.hide(); });
-  }
-
-  /**
-   * 장바구니와 클라이언트에 정보 전달
-   *
-   * @param payment Payment Capture 정보
-   * @param order Order 정보
-   */
-  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
-    this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setPayment([payment, order]);
   }
 
   close() {

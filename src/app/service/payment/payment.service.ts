@@ -11,6 +11,7 @@ import {
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
+import { InfoBroker } from '../../broker';
 
 /**
  * 지불 처리 서비스
@@ -21,6 +22,7 @@ export class PaymentService {
   private directdebitTimeout: number;
   constructor(private api: ApiService,
     private storage: StorageService,
+    private info: InfoBroker,
     private config: Config) {
     this.directdebitTimeout = this.config.getConfig('directdebitTimeout');
   }
@@ -202,6 +204,18 @@ export class PaymentService {
     const data = new HttpData('cashdrawerLog', pathvariables, null, null, 'json');
     return this.api.post(data);
   }
+
+  /**
+   * 장바구니와 클라이언트에 정보 전달
+   *
+   * @param payment Payment Capture 정보
+   * @param order Order 정보
+   */
+  sendPaymentAndOrderInfo(payment: PaymentCapture, order: Order) {
+    this.info.sendInfo('payinfo', [payment, order]);
+    this.storage.setPayment([payment, order]);
+  }
+
 
   /**
    * 결제 내역 설정

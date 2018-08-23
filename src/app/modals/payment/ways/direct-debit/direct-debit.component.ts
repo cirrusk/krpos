@@ -7,7 +7,7 @@ import {
   PaymentCapture, DirectDebitPaymentInfo, PaymentModes, PaymentModeData,
   CurrencyData, Accounts, BankTypes, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering
 } from '../../../../data';
-import { ReceiptService, MessageService } from '../../../../service';
+import { ReceiptService, MessageService, PaymentService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { BankAccount } from '../../../../data/models/order/bank-account';
@@ -40,7 +40,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
-    private storage: StorageService, private message: MessageService,
+    private storage: StorageService, private message: MessageService, private payment: PaymentService,
     private info: InfoBroker, private renderer: Renderer2) {
     super(modalService);
     this.finishStatus = null;
@@ -102,6 +102,9 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     }
   }
 
+  /**
+   * 자동이체 정보 설정
+   */
   private setDirectDebitInfo() {
     const banks: Array<BankAccount> = this.accountInfo.parties[0].bankAccounts;
     if (banks) {
@@ -167,30 +170,19 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.makePaymentCaptureData(paid);
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
-        this.sendPaymentAndOrder(this.paymentcapture, null);
+        this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
         this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
         this.close();
       } else {
         this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
+        this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
         this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-        this.sendPaymentAndOrder(this.paymentcapture, null);
         this.completePayPopup(nPaidAmount, paid, 0);
       }
     } else {
       this.checktype = -2;
       this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
-  }
-
-  /**
-   * 장바구니와 클라이언트에 정보 전달
-   *
-   * @param payment Payment Capture 정보
-   * @param order Order 정보
-   */
-  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
-    this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setPayment([payment, order]);
   }
 
   close() {

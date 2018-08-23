@@ -139,13 +139,13 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.result = this.paymentcapture;
     if (check > 0) { // 결제할것이 남음.
       this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.payments.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.finishStatus = StatusDisplay.PAID;
       this.apprmessage = this.message.get('payment.success.next');
       this.close();
     } else if (check === 0) {
       this.finishStatus = StatusDisplay.PAID;
-      this.sendPaymentAndOrder(this.paymentcapture, null);
+      this.payments.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.apprmessage = this.message.get('payment.success');
       this.completePayPopup(this.paidamount, usepoint, check);
     }
@@ -158,12 +158,10 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
     recash.setCurrencyData = new CurrencyData();
     if (this.paymentcapture) {
-
       this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
       this.paymentcapture.setMonetaryPaymentInfo = recash;
       capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
       capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-
     } else {
       const paymentcapture = new PaymentCapture();
       paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
@@ -173,17 +171,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     }
     this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
-  }
-
-  /**
-   * 장바구니와 클라이언트에 정보 전달
-   *
-   * @param payment Payment Capture 정보
-   * @param order Order 정보
-   */
-  private sendPaymentAndOrder(payment: PaymentCapture, order: Order) {
-    this.info.sendInfo('payinfo', [payment, order]);
-    this.storage.setPayment([payment, order]);
   }
 
   /**
