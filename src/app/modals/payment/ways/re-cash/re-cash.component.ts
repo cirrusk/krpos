@@ -97,6 +97,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.isAllPay = true;
     } else {
       this.isAllPay = false;
+      this.usePoint.nativeElement.value = '';
       setTimeout(() => { this.usePoint.nativeElement.focus(); this.usePoint.nativeElement.select(); }, 50);
     }
   }
