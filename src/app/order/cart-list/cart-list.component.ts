@@ -1433,21 +1433,27 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 저장(보류)
-   */
+   * 
+   * 보류 저장 가능 상태
+   * 1. 로그인 상태
+   * 2. 배치가 실행 상태
+   * 3. 카트가 생성 상태
+   * 보류 조회 가능 상태
+   * 1. 로그인 상태
+   * 2. 배치가 실행 상태
+   * 3. 사용자 조회가 안된 상태
+   */  
   saveCart() {
-    // 회원 정보 없음
-    if (this.accountInfo === null) {
+    if (this.accountInfo === null) { // 회원이 조회되지 않은 상태 - 보류 조회
       this.getSaveCarts();
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
-      // 장바구니 정보 없음
-    } else if (this.cartInfo.code === undefined) {
+    } else if (this.cartInfo.code === undefined) { // 장바구니 정보 없음
       if (this.orderType === OrderType.GROUP) {
         this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
       } else {
         this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
       }
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
-
     } else {
       // 그룹 - 장바구니 정보 유, 엔트리 정보 무
       if (this.orderType === OrderType.GROUP && this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length < 1) {
