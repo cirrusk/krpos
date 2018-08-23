@@ -110,6 +110,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       this.usePoint.nativeElement.value = '';
       this.isAllPay = false;
       this.usePoint.nativeElement.focus();
+      this.usePoint.nativeElement.select();
       this.change = this.point;
       this.validationComplex();
     }

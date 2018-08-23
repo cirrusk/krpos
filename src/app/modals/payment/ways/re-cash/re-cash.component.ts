@@ -92,13 +92,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       } else {
         this.checktype = 0;
       }
-      setTimeout(() => {
-        this.recashPanel.nativeElement.focus(); // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
-      }, 50);
+      // 전체금액일 경우 팝업에 포커스를 주어야 ENTER키 이벤트 동작
+      setTimeout(() => { this.recashPanel.nativeElement.focus(); }, 50);
       this.isAllPay = true;
     } else {
       this.isAllPay = false;
-      setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
+      setTimeout(() => { this.usePoint.nativeElement.focus(); this.usePoint.nativeElement.select(); }, 50);
     }
   }
 
