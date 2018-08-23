@@ -54,7 +54,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
    * 현금 IC 카드의 경우는 반드시 카드를 단말에 꼽은 후 처리해야함.
    */
   cancelOrder() {
-    // 현금IC카드 취소인 경우
     const userId = this.orderInfo.user.uid;
     const orderCodes = new Array<string>();
     orderCodes.push(this.orderInfo.code);
