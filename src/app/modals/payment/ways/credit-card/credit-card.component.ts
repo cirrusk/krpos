@@ -8,7 +8,7 @@ import { ReceiptService, MessageService, PaymentService } from '../../../../serv
 import {
   ModalComponent, ModalService, NicePaymentService,
   Logger, AlertService, AlertState, Modal, StorageService,
-  CardApprovalResult, NiceConstants, SpinnerService
+  CardApprovalResult, NiceConstants, SpinnerService, Config
 } from '../../../../core';
 import {
   PaymentCapture, Accounts, KeyCode, StatusDisplay, AmwayExtendedOrdering
@@ -49,13 +49,14 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private alertsubscription: Subscription;
   private dupcheck = false;
   private checkinstallment: number;
+  private installcheckPrice: number;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('allCheck') private allCheck: ElementRef;
   @ViewChild('partCheck') private partCheck: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService,
     private nicepay: NicePaymentService, private payment: PaymentService, private modal: Modal, private storage: StorageService,
-    private message: MessageService, private alert: AlertService, private info: InfoBroker,
+    private message: MessageService, private alert: AlertService, private info: InfoBroker, private config: Config,
     private logger: Logger, private renderer: Renderer2) {
     super(modalService);
     this.installment = '00';
@@ -66,6 +67,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   ngOnInit() {
+    this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
@@ -89,6 +91,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   /**
    * 실결제 금액 입력 시 잔액 계산
+   * 결제 금액이 5만원 이상인 경우만 할부를 할 수 있음.
+   *
    * @param paid 실결제 금액
    */
   paidCal(paid: number) {
@@ -101,7 +105,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       this.checktype = 0;
       this.apprmessage = '';
     }
-    if (this.checktype === 0 && nPaid >= 50000) {
+    if (this.checktype === 0 && nPaid >= this.installcheckPrice) {
       this.renderer.removeAttribute(this.allCheck.nativeElement, 'disabled');
       this.renderer.removeAttribute(this.partCheck.nativeElement, 'disabled');
     } else {

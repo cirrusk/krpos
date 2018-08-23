@@ -81,6 +81,7 @@ export const environment = {
   noticeInterval: 7,
   promotionInterval: 9,
   isMdmsSkip: false,
+  installcheckPrice: 50000,
 
   // NICE 단말기 설정
   niceTermBase: 'ws://localhost',

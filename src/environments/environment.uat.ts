@@ -80,17 +80,19 @@ export const environment = {
     checkBlock: '/{baseSiteId}/check-order-block/{userId}',
     getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}'
   },
-  logLevel: 'debug',
-  terminalTimeout: 10,
-  directdebitTimeout: 60,
-  qzCheck: false,
-  healthCheckUse: false,
+  logLevel: 'debug', // 로그레벨 설정
+  terminalTimeout: 10, // 터미널 인증 타임아웃(sec)
+  directdebitTimeout: 60, // 자동이체 타임아웃(sec)
+  healthCheckUse: false, // Health Check Use
+  qzCheck: false, // QZ Tray Health Check
+
   healthCheckInterval: 9000,
   hybrisCheckUrl: 'https://api.uat.amway.co.kr/api/v2/swagger-ui.html',
   cartListCount: 8,
   noticeInterval: 7,
   promotionInterval: 9,
   isMdmsSkip: false,
+  installcheckPrice: 50000,
 
   // NICE 단말기 설정
   niceTermBase: 'ws://localhost',
