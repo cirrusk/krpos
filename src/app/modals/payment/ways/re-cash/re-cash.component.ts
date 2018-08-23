@@ -135,7 +135,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (!this.isAllPay) {
       paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
     }
-    this.paymentcapture = this.makePaymentCaptureData(paid).capturePaymentInfoData;
+    this.paymentcapture = this.payments.makeRecashPaymentCaptureData(this.paymentcapture, paid).capturePaymentInfoData;
     this.result = this.paymentcapture;
     if (check > 0) { // 결제할것이 남음.
       this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
@@ -149,28 +149,6 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       this.apprmessage = this.message.get('payment.success');
       this.completePayPopup(this.paidamount, usepoint, check);
     }
-
-  }
-
-  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
-    const capturepaymentinfo = new CapturePaymentInfo();
-    const recash = new AmwayMonetaryPaymentInfo(paidamount);
-    recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
-    recash.setCurrencyData = new CurrencyData();
-    if (this.paymentcapture) {
-      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      this.paymentcapture.setMonetaryPaymentInfo = recash;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-    } else {
-      const paymentcapture = new PaymentCapture();
-      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      paymentcapture.setMonetaryPaymentInfo = recash;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.ARCREDIT;
-      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-    }
-    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
-    return capturepaymentinfo;
   }
 
   /**

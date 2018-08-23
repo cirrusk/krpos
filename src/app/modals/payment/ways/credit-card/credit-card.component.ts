@@ -202,62 +202,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   /**
-   * Credit Card Payment Capture 데이터 생성
-   *
-   * @param paidamount 결제금액
-   */
-  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
-    const capturepaymentinfo = new CapturePaymentInfo();
-    const ccard = this.makePaymentInfo(paidamount);
-    if (this.paymentcapture) {
-      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      this.paymentcapture.setCcPaymentInfo = ccard;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
-      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-    } else {
-      const paymentcapture = new PaymentCapture();
-      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      paymentcapture.setCcPaymentInfo = ccard;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
-      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-    }
-    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
-    return capturepaymentinfo;
-  }
-
-  /**
-   * Credit Card Payment Info 생성
-   * @param paidamount 결제금액
-   */
-  private makePaymentInfo(paidamount: number): CreditCardPaymentInfo {
-    const ccard = new CreditCardPaymentInfo(paidamount);
-    ccard.setCardNumber = this.cardresult.maskedCardNumber;
-    ccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
-    ccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
-    ccard.setCardCompanyCode = this.cardresult.issuerCode; // NICE 단말 reading 된 거래 카드사 코드 전송
-    ccard.setVanType = VanTypes.NICE; // NICE 단말 사용
-    ccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
-    ccard.setInstallmentPlan = Number(this.cardresult.installmentMonth) + '';
-    ccard.setCardApprovalNumber = this.cardresult.approvalNumber;
-    ccard.setCardRequestDate = Utils.convertDateStringForHybris(this.cardresult.approvalDateTime); // Utils.convertDate(this.cardresult.approvalDateTime);
-    ccard.setNumber = this.cardresult.maskedCardNumber;
-    ccard.setMemberType = CCMemberType.PERSONAL;
-    ccard.setPaymentType = CCPaymentType.GENERAL;
-    ccard.setCardType = PaymentModes.CREDITCARD;
-    // ccard.setTransactionId = this.cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
-    // ccard.setCardTransactionId = this.cardresult.processingNumber;
-    ccard.setTransactionId = this.cardresult.resultMsg1; // 정상 승인시 무카드(고유번호), 거래 고유번호(18)
-    ccard.setCardTransactionId = this.cardresult.resultMsg1; // 정상 승인시 무카드(고유번호), 거래 고유번호(18)
-    const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
-    if (Utils.isNotEmpty(signdata)) {
-      ccard.setPaymentSignature = signdata;
-    }
-    ccard.setPaymentModeData = new PaymentModeData(PaymentModes.CREDITCARD);
-    ccard.setCurrencyData = new CurrencyData();
-    return ccard;
-  }
-
-  /**
    * 신용카드 정보 입력 및 결제 단말기 인식 후,
    * 실물 키보드에서 Enter 키 터치 시 결제 정보가 PG사로 넘어감
    */
@@ -303,7 +247,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
               this.cardcompany = res.issuerName;
               this.cardauthnumber = res.approvalNumber;
               this.paidDate = Utils.convertDate(res.approvalDateTime);
-              this.paymentcapture = this.makePaymentCaptureData(paidprice).capturePaymentInfoData;
+              this.paymentcapture = this.payment.makeCCPaymentCaptureData(this.paymentcapture, this.cardresult, paidprice).capturePaymentInfoData;
               this.result = this.paymentcapture;
               this.logger.set('credit.card.component', 'credit card payment : ' + Utils.stringify(this.paymentcapture)).debug();
               if (this.change === 0) { // 더이상 결제할 금액이 없으므로 완료처리함.

@@ -33,6 +33,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
+  private bankInfo: BankAccount;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentcapture: PaymentCapture;
   private paymentsubscription: Subscription;
@@ -114,34 +115,10 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
           this.bank = bankaccount.bankInfo ? bankaccount.bankInfo.name : '';
           this.bankid = bankaccount.bankInfo ? bankaccount.bankInfo.code : '';
           this.depositor = bankaccount.depositor ? bankaccount.depositor : '';
+          this.bankInfo = bankaccount;
         }
       });
     }
-  }
-
-  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
-    const capturepaymentinfo = new CapturePaymentInfo();
-    const directdebit = new DirectDebitPaymentInfo(paidamount);
-    directdebit.accountNumber = this.accountnumber;
-    directdebit.bank = this.bank;
-    directdebit.bankIDNumber = this.bankid;
-    directdebit.baOwner = this.depositor;
-    directdebit.paymentMode = new PaymentModeData(PaymentModes.DIRECTDEBIT);
-    directdebit.currency = new CurrencyData();
-    if (this.paymentcapture) {
-      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      this.paymentcapture.directDebitPaymentInfo = directdebit;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-    } else {
-      const paymentcapture = new PaymentCapture();
-      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      paymentcapture.directDebitPaymentInfo = directdebit;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.DIRECTDEBIT;
-      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-    }
-    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
-    return capturepaymentinfo;
   }
 
   checkpwd(pwd: string) {
@@ -167,14 +144,14 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       } else if (nPaidAmount > paid) { // 다음결제수단
         this.checktype = 0;
         this.storage.setPay(nPaidAmount - paid); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-        this.makePaymentCaptureData(paid);
+        this.paymentcapture = this.payment.makeDirectDebitPaymentCaptureData(this.paymentcapture, this.bankInfo, paid).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.finishStatus = StatusDisplay.PAID;
         this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
         this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
         this.close();
       } else {
-        this.paymentcapture = this.makePaymentCaptureData(this.paidamount).capturePaymentInfoData;
+        this.paymentcapture = this.payment.makeDirectDebitPaymentCaptureData(this.paymentcapture, this.bankInfo, paid).capturePaymentInfoData;
         this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
         this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
         this.completePayPopup(nPaidAmount, paid, 0);

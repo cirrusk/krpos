@@ -3,15 +3,18 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/timeout';
 
-import { ApiService, StorageService, Config } from '../../core';
+import { ApiService, StorageService, Config, CardApprovalResult, ICCardApprovalResult } from '../../core';
 import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
   ResponseData, BankInfoList, CapturePaymentInfo, Coupon, BatchInfo, ResponseMessage,
-  PaymentCapture, PaymentView
+  PaymentCapture, PaymentView, CashPaymentInfo, CashType, PaymentModeData, PaymentModes,
+  CurrencyData, CreditCardPaymentInfo, VanTypes, CCMemberType, CCPaymentType, DirectDebitPaymentInfo, ICCardPaymentInfo, PointType, PointPaymentInfo, AmwayMonetaryPaymentInfo
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
 import { InfoBroker } from '../../broker';
+import { Utils } from '../../core/utils';
+import { BankAccount } from '../../data/models/order/bank-account';
 
 /**
  * 지불 처리 서비스
@@ -266,6 +269,222 @@ export class PaymentService {
       pay.setTotalprice = order.totalPrice ? order.totalPrice.value : 0;
     }
     return pay;
+  }
+
+  /**
+   * Payment Capture 데이터 생성
+   *
+   * @param paidamount 지불 금액
+   */
+  makeCashPaymentCaptureData(paymentcapture: PaymentCapture, paidamount: number, received: number, change: number): CapturePaymentInfo {
+    let paidamountbypayment = paidamount;
+    if (Number(paidamount) > Number(received)) {
+      paidamountbypayment = received;
+    }
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const cash = new CashPaymentInfo(paidamountbypayment, CashType.CASH);
+    cash.setReceived = received;
+    cash.setChange = change < 0 ? 0 : change;
+    cash.setPaymentModeData = new PaymentModeData(PaymentModes.CASH);
+    cash.setCurrencyData = new CurrencyData();
+    if (paymentcapture) {
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcapture.setCashPaymentInfo = cash;
+      capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
+    } else {
+      const paymentcap = new PaymentCapture();
+      paymentcap.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcap.setCashPaymentInfo = cash;
+      capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CASH;
+      capturepaymentinfo.setCapturePaymentInfoData = paymentcap;
+    }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
+    return capturepaymentinfo;
+  }
+
+  /**
+   * Credit Card Payment Capture 데이터 생성
+   *
+   * @param paidamount 결제금액
+   */
+  makeCCPaymentCaptureData(paymentcapture: PaymentCapture, cardresult: CardApprovalResult, paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const ccard = this.makeCCPaymentInfo(cardresult, paidamount);
+    if (paymentcapture) {
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcapture.setCcPaymentInfo = ccard;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
+    } else {
+      const paymentcap = new PaymentCapture();
+      paymentcap.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcap.setCcPaymentInfo = ccard;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CREDITCARD;
+      capturepaymentinfo.capturePaymentInfoData = paymentcap;
+    }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
+    return capturepaymentinfo;
+  }
+
+  /**
+   * Credit Card Payment Info 생성
+   * @param paidamount 결제금액
+   */
+  private makeCCPaymentInfo(cardresult: CardApprovalResult, paidamount: number): CreditCardPaymentInfo {
+    const ccard = new CreditCardPaymentInfo(paidamount);
+    ccard.setCardNumber = cardresult.maskedCardNumber;
+    ccard.setCardAuthNumber = cardresult.approvalNumber; // 승인번호
+    ccard.setCardMerchantNumber = cardresult.merchantNumber; // 가맹점 번호
+    ccard.setCardCompanyCode = cardresult.issuerCode; // NICE 단말 reading 된 거래 카드사 코드 전송
+    ccard.setVanType = VanTypes.NICE; // NICE 단말 사용
+    ccard.setCardAcquirerCode = cardresult.acquireCode; // 매입사 코드
+    ccard.setInstallmentPlan = Number(cardresult.installmentMonth) + '';
+    ccard.setCardApprovalNumber = cardresult.approvalNumber;
+    ccard.setCardRequestDate = Utils.convertDateStringForHybris(cardresult.approvalDateTime);
+    ccard.setNumber = cardresult.maskedCardNumber;
+    ccard.setMemberType = CCMemberType.PERSONAL;
+    ccard.setPaymentType = CCPaymentType.GENERAL;
+    ccard.setCardType = PaymentModes.CREDITCARD;
+    ccard.setTransactionId = cardresult.resultMsg1; // 정상 승인시 무카드(고유번호), 거래 고유번호(18)
+    ccard.setCardTransactionId = cardresult.resultMsg1; // 정상 승인시 무카드(고유번호), 거래 고유번호(18)
+    const signdata = cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
+    if (Utils.isNotEmpty(signdata)) {
+      ccard.setPaymentSignature = signdata;
+    }
+    ccard.setPaymentModeData = new PaymentModeData(PaymentModes.CREDITCARD);
+    ccard.setCurrencyData = new CurrencyData();
+    return ccard;
+  }
+
+  /**
+   * 자동이체
+   * @param paymentcapture
+   * @param bank
+   * @param paidamount
+   */
+  makeDirectDebitPaymentCaptureData(paymentcapture: PaymentCapture, bank: BankAccount, paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const directdebit = new DirectDebitPaymentInfo(paidamount);
+    directdebit.accountNumber = bank.accountNumber;
+    directdebit.bank = bank.bankInfo ? bank.bankInfo.name : '';
+    directdebit.bankIDNumber = bank.bankInfo ? bank.bankInfo.code : '';
+    directdebit.baOwner = bank.depositor;
+    directdebit.paymentMode = new PaymentModeData(PaymentModes.DIRECTDEBIT);
+    directdebit.currency = new CurrencyData();
+    if (paymentcapture) {
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcapture.directDebitPaymentInfo = directdebit;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
+    } else {
+      const paymentcap = new PaymentCapture();
+      paymentcap.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcap.directDebitPaymentInfo = directdebit;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.DIRECTDEBIT;
+      capturepaymentinfo.capturePaymentInfoData = paymentcap;
+    }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
+    return capturepaymentinfo;
+  }
+
+  /**
+   * IC Card Payment Capture 데이터 생성
+   *
+   * @param paidamount 결제금액
+   */
+  makeICPaymentCaptureData(paymentcapture: PaymentCapture, cardresult: ICCardApprovalResult, paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const iccard = this.makeICPaymentInfo(cardresult, paidamount);
+    if (paymentcapture) {
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcapture.setIcCardPaymentInfo = iccard;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
+
+    } else {
+      const paymentcap = new PaymentCapture();
+      paymentcap.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcap.setIcCardPaymentInfo = iccard;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.ICCARD;
+      capturepaymentinfo.capturePaymentInfoData = paymentcap;
+    }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
+    return capturepaymentinfo;
+  }
+
+  /**
+   * IC Card Payment Info 생성
+   * @param paidamount 결제금액
+   */
+  private makeICPaymentInfo(cardresult: ICCardApprovalResult, paidamount: number): ICCardPaymentInfo {
+    const iccard = new ICCardPaymentInfo(paidamount);
+    iccard.setCardNumber = cardresult.iccardSerialNumber;
+    iccard.setCardAuthNumber = cardresult.approvalNumber; // 승인번호
+    iccard.setCardMerchantNumber = cardresult.merchantNumber; // 가맹점 번호
+    iccard.setCardCompanyCode = cardresult.issuerCode; // NICE 단말 reading 된 거래 카드사 코드 전송
+    iccard.setVanType = VanTypes.NICE; // NICE 단말 사용
+    iccard.setCardAcquirerCode = cardresult.acquireCode; // 매입사 코드
+    iccard.setInstallmentPlan = '00';
+    iccard.setCardApprovalNumber = cardresult.approvalNumber;
+    iccard.setCardRequestDate = Utils.convertDateStringForHybris(cardresult.approvalDateTime);
+    iccard.setNumber = cardresult.iccardSerialNumber;
+    iccard.setMemberType = CCMemberType.PERSONAL;
+    iccard.setPaymentType = CCPaymentType.GENERAL;
+    iccard.setCardType = PaymentModes.ICCARD;
+    iccard.setTransactionId = cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
+    iccard.setCardTransactionId = cardresult.processingNumber;
+    const signdata = cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
+    if (Utils.isNotEmpty(signdata)) {
+      iccard.setPaymentSignature = signdata;
+    }
+    iccard.setPaymentModeData = new PaymentModeData(PaymentModes.ICCARD);
+    iccard.setCurrencyData = new CurrencyData();
+    return iccard;
+  }
+
+  makePointPaymentCaptureData(paymentcapture: PaymentCapture, pointType: string, paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const pointtype = (pointType === 'a') ? PointType.BR030 : PointType.BR033; // 전환포인트 : 멤버포인트
+    const point = new PointPaymentInfo(paidamount, pointtype);
+    point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
+    point.setCurrencyData = new CurrencyData();
+    if (paymentcapture) {
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcapture.setPointPaymentInfo = point;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
+
+    } else {
+      const paymentcap = new PaymentCapture();
+      paymentcap.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcap.setPointPaymentInfo = point;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcap;
+    }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
+    return capturepaymentinfo;
+  }
+
+  makeRecashPaymentCaptureData(paymentcapture: PaymentCapture, paidamount: number): CapturePaymentInfo {
+    const capturepaymentinfo = new CapturePaymentInfo();
+    const recash = new AmwayMonetaryPaymentInfo(paidamount);
+    recash.setPaymentModeData = new PaymentModeData(PaymentModes.ARCREDIT);
+    recash.setCurrencyData = new CurrencyData();
+    if (paymentcapture) {
+      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcapture.setMonetaryPaymentInfo = recash;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
+    } else {
+      const paymentcap = new PaymentCapture();
+      paymentcap.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
+      paymentcap.setMonetaryPaymentInfo = recash;
+      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.ARCREDIT;
+      capturepaymentinfo.capturePaymentInfoData = paymentcap;
+    }
+    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
+    return capturepaymentinfo;
   }
 
 }

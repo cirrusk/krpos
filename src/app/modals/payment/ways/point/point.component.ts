@@ -177,7 +177,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
     const paid = this.paymentprice - usepoint;
     this.checktype = 0;
-    this.paymentcapture = this.makePaymentCaptureData(usepoint).capturePaymentInfoData;
+    this.paymentcapture = this.payments.makePointPaymentCaptureData(this.paymentcapture, this.pointType, usepoint).capturePaymentInfoData;
     if (paid > 0) { // 결제할것이 남음.
       this.result = this.paymentcapture;
       this.finishStatus = StatusDisplay.PAID;
@@ -194,30 +194,6 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
       this.dupcheck = false;
     }
-  }
-
-  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
-    const capturepaymentinfo = new CapturePaymentInfo();
-    const pointtype = (this.pointType === 'a') ? PointType.BR030 : PointType.BR033; // 전환포인트 : 멤버포인트
-    const point = new PointPaymentInfo(paidamount, pointtype);
-    point.setPaymentModeData = new PaymentModeData(PaymentModes.POINT);
-    point.setCurrencyData = new CurrencyData();
-    if (this.paymentcapture) {
-
-      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      this.paymentcapture.setPointPaymentInfo = point;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-
-    } else {
-      const paymentcapture = new PaymentCapture();
-      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      paymentcapture.setPointPaymentInfo = point;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-    }
-    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
-    return capturepaymentinfo;
   }
 
   private completePayPopup(paidAmount: number, payAmount: number, change: number) {

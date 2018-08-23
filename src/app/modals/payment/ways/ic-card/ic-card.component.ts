@@ -66,64 +66,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   /**
-   * IC Card Payment Capture 데이터 생성
-   *
-   * @param paidamount 결제금액
-   */
-  private makePaymentCaptureData(paidamount: number): CapturePaymentInfo {
-    const capturepaymentinfo = new CapturePaymentInfo();
-    const iccard = this.makePaymentInfo(paidamount);
-    if (this.paymentcapture) {
-
-      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      this.paymentcapture.setIcCardPaymentInfo = iccard;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
-      capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
-
-    } else {
-      const paymentcapture = new PaymentCapture();
-      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      paymentcapture.setIcCardPaymentInfo = iccard;
-      capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.ICCARD;
-      capturepaymentinfo.capturePaymentInfoData = paymentcapture;
-    }
-    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
-    return capturepaymentinfo;
-  }
-
-  /**
-   * IC Card Payment Info 생성
-   * @param paidamount 결제금액
-   */
-  private makePaymentInfo(paidamount: number): ICCardPaymentInfo {
-    const iccard = new ICCardPaymentInfo(paidamount);
-    iccard.setCardNumber = this.cardresult.iccardSerialNumber;
-    iccard.setCardAuthNumber = this.cardresult.approvalNumber; // 승인번호
-    iccard.setCardMerchantNumber = this.cardresult.merchantNumber; // 가맹점 번호
-    iccard.setCardCompanyCode = this.cardresult.issuerCode; // NICE 단말 reading 된 거래 카드사 코드 전송
-    iccard.setVanType = VanTypes.NICE; // NICE 단말 사용
-    iccard.setCardAcquirerCode = this.cardresult.acquireCode; // 매입사 코드
-    iccard.setInstallmentPlan = '00';
-    iccard.setCardApprovalNumber = this.cardresult.approvalNumber;
-    iccard.setCardRequestDate = Utils.convertDateStringForHybris(this.cardresult.approvalDateTime); // Utils.convertDate(this.cardresult.approvalDateTime);
-    iccard.setNumber = this.cardresult.iccardSerialNumber;
-    iccard.setMemberType = CCMemberType.PERSONAL;
-    iccard.setPaymentType = CCPaymentType.GENERAL;
-    iccard.setCardType = PaymentModes.ICCARD;
-    iccard.setTransactionId = this.cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
-    iccard.setCardTransactionId = this.cardresult.processingNumber;
-    // ccard.setValidToMonth = '';
-    // ccard.setValidToYear = '';
-    const signdata = this.cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
-    if (Utils.isNotEmpty(signdata)) {
-      iccard.setPaymentSignature = signdata;
-    }
-    iccard.setPaymentModeData = new PaymentModeData(PaymentModes.ICCARD);
-    iccard.setCurrencyData = new CurrencyData();
-    return iccard;
-  }
-
-  /**
    * 현금 IC카드는 단독결제임.
    */
   private nicePay() {
@@ -153,8 +95,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
             this.cardcompany = res.issuerName;
             this.cardauthnumber = res.approvalNumber;
             this.paidDate = Utils.convertDate(res.approvalDateTime);
-            const capturepaymentinfo = this.makePaymentCaptureData(this.paidamount);
-            this.paymentcapture = capturepaymentinfo.capturePaymentInfoData;
+            this.paymentcapture = this.payment.makeICPaymentCaptureData(this.paymentcapture, this.cardresult, this.paidamount).capturePaymentInfoData;
             this.result = this.paymentcapture;
             this.apprmessage = this.message.get('card.payment.success'); // '카드결제 승인이 완료되었습니다.';
             this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);

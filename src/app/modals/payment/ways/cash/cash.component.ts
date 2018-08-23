@@ -161,14 +161,14 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
     if (paychange > 0) { // 결제할 금액이 더있음.
       this.storage.setPay(this.paidamount - nPayAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
-      this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
+      this.paymentcapture = this.payment.makeCashPaymentCaptureData(this.paymentcapture, nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
       this.result = this.paymentcapture;
       this.finishStatus = StatusDisplay.PAID;
       this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
       this.close();
     } else if (paychange === 0) { // 결제 완료
-      this.paymentcapture = this.makePaymentCaptureData(nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
+      this.paymentcapture = this.payment.makeCashPaymentCaptureData(this.paymentcapture, nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
       this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
       // this.finishStatus = StatusDisplay.PAID;
       this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
@@ -200,38 +200,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       modalId: 'CompletePaymentComponent',
       paymentType: 'c'
     });
-  }
-
-  /**
-   * Payment Capture 데이터 생성
-   *
-   * @param paidamount 지불 금액
-   */
-  private makePaymentCaptureData(paidamount: number, received: number, change: number): CapturePaymentInfo {
-    let paidamountbypayment = paidamount;
-    if (Number(paidamount) > Number(received)) {
-      paidamountbypayment = received;
-    }
-    const capturepaymentinfo = new CapturePaymentInfo();
-    const cash = new CashPaymentInfo(paidamountbypayment, CashType.CASH);
-    cash.setReceived = received;
-    cash.setChange = change < 0 ? 0 : change;
-    cash.setPaymentModeData = new PaymentModeData(PaymentModes.CASH);
-    cash.setCurrencyData = new CurrencyData();
-    if (this.paymentcapture) {
-      this.paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      this.paymentcapture.setCashPaymentInfo = cash;
-      capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode();
-      capturepaymentinfo.setCapturePaymentInfoData = this.paymentcapture;
-    } else {
-      const paymentcapture = new PaymentCapture();
-      paymentcapture.setVoucherPaymentInfo = null; // 쿠폰은 INTERNAL_PROCESS에서 처리하므로 Payment에 세팅안되도록 주의!
-      paymentcapture.setCashPaymentInfo = cash;
-      capturepaymentinfo.setPaymentModeCode = this.storage.getPaymentModeCode() ? this.storage.getPaymentModeCode() : PaymentModes.CASH;
-      capturepaymentinfo.setCapturePaymentInfoData = paymentcapture;
-    }
-    this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
-    return capturepaymentinfo;
   }
 
   close() {
