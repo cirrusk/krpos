@@ -42,14 +42,14 @@ export class CheckComponent implements OnInit, OnDestroy {
     if (this.checkUse) {
       const checkUrl = this.config.getConfig('hybrisCheckUrl');
       this.httpSubscription = this.http.get(checkUrl, { responseType: 'text' })
-      // .repeatWhen(() => Observable.timer(1000, this.checkInterval))
-      .repeatWhen(() => TimerObservable.create(0, this.checkInterval))
+      // .repeatWhen(() => Observable.timer(1000, this.checkInterval * 1000))
+      .repeatWhen(() => TimerObservable.create(0, this.checkInterval * 1000))
       .retryWhen(err => {
         return err.do(res => {
-          this.logger.set('check.component', `${Utils.stringify(res)}, check interval : ${this.checkInterval / 1000} sec.`).error();
+          this.logger.set('check.component', `${Utils.stringify(res)}, check interval : ${this.checkInterval} sec.`).error();
           if (res.status !== 200) { this.failure++; }
           if (this.failure > 0) { this.success = 0; } // 화면 초기화 위해서 실패가 있으면 성공플래그 초기화
-        }).delay(this.checkInterval);
+        }).delay(this.checkInterval * 1000);
       })
       .subscribe(res => {
         if (this.failure > 0) { this.failure--; }

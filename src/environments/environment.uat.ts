@@ -83,16 +83,15 @@ export const environment = {
   logLevel: 'debug', // 로그레벨 설정
   terminalTimeout: 10, // 터미널 인증 타임아웃(sec)
   directdebitTimeout: 60, // 자동이체 타임아웃(sec)
-  healthCheckUse: false, // Health Check Use
+  healthCheckUse: false, // Health Check 사용여부
   qzCheck: false, // QZ Tray Health Check
-
-  healthCheckInterval: 9000,
-  hybrisCheckUrl: 'https://api.uat.amway.co.kr/api/v2/swagger-ui.html',
-  cartListCount: 8,
-  noticeInterval: 7,
-  promotionInterval: 9,
-  isMdmsSkip: false,
-  installcheckPrice: 50000,
+  healthCheckInterval: 15, // Hybris Health Check 타임아웃(sec)
+  hybrisCheckUrl: 'https://api.uat.amway.co.kr/api/v2/swagger-ui.html', // Hybris Health Check URL
+  cartListCount: 8, // 카트 목록 건수
+  noticeInterval: 7, // 일반 공지사항 롤링 주기(sec)
+  promotionInterval: 9, // 프로모션 공지사항 롤링 주기(sec)
+  isMdmsSkip: false, // MDMS 체크 제외 여부
+  installcheckPrice: 50000, // 할부 제한 금액
 
   // NICE 단말기 설정
   niceTermBase: 'ws://localhost',
