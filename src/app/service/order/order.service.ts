@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService, Config, StorageService } from '../../core';
 import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo } from '../../data';
-import { OrderList } from '../../data/models/order/order';
+import { OrderList, Order } from '../../data/models/order/order';
 import { HttpParams, HttpClient, HttpHeaders, HttpResponseBase } from '../../../../node_modules/@angular/common/http';
 
 /**
@@ -206,19 +206,19 @@ export class OrderService {
    * @param {string} orderCode 주문번호
    */
   confirmPickup(orderCodes: string): Observable<HttpResponseBase> {
-    let params = '?';
+    const orderList =  new OrderList();
+    const orders = new Array<Order>();
     orderCodes.split(',').forEach((orderCode, index) => {
-      if (index === 0) {
-        params += 'codes=' + orderCode.trim();
-      } else {
-        params += '&codes=' + orderCode.trim();
-      }
+      const order = new Order();
+      order.code = orderCode;
+      orders.push(order);
     });
+    orderList.orders = orders;
     const pos = this.storage.getTerminalInfo();
     const pathvariables = { pickupStore: pos.pointOfService.name };
-    const apiURL = this.config.getApiUrl('confirmPickup', pathvariables) + params;
+    const apiURL = this.config.getApiUrl('confirmPickup', pathvariables);
     const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.put<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response'} )
+    return this.httpClient.put<HttpResponseBase>(apiURL, orderList, { headers: httpHeaders, observe: 'response'} )
       .map(data => data as HttpResponseBase);
   }
 }
