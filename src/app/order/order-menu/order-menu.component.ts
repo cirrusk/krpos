@@ -187,12 +187,14 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(ComplexPaymentComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
+      closeByEscape: false,
       modalId: 'ComplexPaymentComponent_Od'
     }).subscribe(result => {
       this.posPayReset.emit({ reset: true });
       if (!result) {
         this.storage.removePaymentModeCode();
         this.storage.removePay();
+        this.storage.removePaymentCapture();
       }
     });
   }
