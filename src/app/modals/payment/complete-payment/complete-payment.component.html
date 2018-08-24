@@ -34,7 +34,7 @@
                   </tbody>
               </table>
           </div>
-          <em *ngIf="finishStatus === null" class="finish ok">결제 처리 진행 중입니다. 잠시만 기다려주세요.</em>
+          <em *ngIf="finishStatus === null" class="finish ok progressing">결제 처리 진행 중입니다. 잠시만 기다려주세요 <span>.</span><span>.</span><span>.</span></em>
           <em *ngIf="finishStatus === 'PAYMENT_CAPTURED' || finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
           <ng-template #payFail>
               <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
