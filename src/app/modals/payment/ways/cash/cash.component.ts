@@ -54,21 +54,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    setTimeout(() => {
-      this.paid.nativeElement.value = 0;
-      this.paid.nativeElement.select();
-      this.paid.nativeElement.focus();
-    }, 50);
-    this.paidamount = this.cartInfo.totalPrice.value; // 원 결제 금액
-    if (this.storage.getPay() === 0) {
-      // this.payment.nativeElement.value = this.cartInfo.totalPrice.value;
-      this.payamount = this.cartInfo.totalPrice.value;
-      this.paidamount = this.cartInfo.totalPrice.value;
-    } else {
-      // this.payment.nativeElement.value = this.storage.getPay();
-      this.payamount = this.storage.getPay();
-      this.paidamount = this.storage.getPay();
-    }
+    console.log(this.paymentcapture);
+    this.loadPayment();
   }
 
   ngOnDestroy() {
@@ -88,6 +75,23 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
         setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
       }
     });
+  }
+
+  private loadPayment() {
+    this.paidamount = this.cartInfo.totalPrice.value; // 원 결제 금액
+    this.payamount = this.cartInfo.totalPrice.value; // 원 결제 금액
+    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    if (p && p.cashPaymentInfo) {
+      this.paid.nativeElement.value = p.cashPaymentInfo.received;
+    } else {
+      this.paid.nativeElement.value = 0;
+      if (this.storage.getPay() > 0) {
+        this.payamount = this.storage.getPay();
+        this.paidamount = this.storage.getPay();
+      }
+    }
+    this.cashCal();
+    setTimeout(() => { this.paid.nativeElement.select(); this.paid.nativeElement.focus(); }, 50);
   }
 
   cashCal() {

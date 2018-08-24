@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
-import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain, PaymentCapture } from '../../data';
+import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain, PaymentCapture, PointReCash } from '../../data';
 import { Utils } from '../utils';
 
 /**
@@ -442,6 +442,18 @@ export class StorageService implements OnDestroy {
 
   public removePaymentProcessing() {
     return this.removeSessionItem('paymentprocess');
+  }
+
+  public setPointReCash(data: PointReCash) {
+    this.setSessionItem('pointrecash', data);
+  }
+
+  public getPointReCash(): PointReCash {
+    return this.getSessionItem('pointrecash');
+  }
+
+  public removePointReCash() {
+    this.removeSessionItem('pointrecash');
   }
 
   public setLocalBerNumber(data: string) {

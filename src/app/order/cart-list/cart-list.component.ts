@@ -13,7 +13,7 @@ import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, 
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block,
-  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView
+  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView, PointReCash
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
@@ -410,6 +410,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.cleanSerialCodes();
     this.storage.removeBer();
     this.storage.removePaymentCapture();
+    this.storage.removePaymentProcessing();
+    this.storage.removePointReCash();
     this.ber = null;
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
@@ -1433,7 +1435,7 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 장바구니 저장(보류)
-   * 
+   *
    * 보류 저장 가능 상태
    *   1. 로그인 상태
    *   2. 배치가 실행 상태
@@ -1442,7 +1444,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    *   1. 로그인 상태
    *   2. 배치가 실행 상태
    *   3. 사용자 조회가 안된 상태
-   */  
+   */
   saveCart() {
     if (this.accountInfo === null) { // 회원이 조회되지 않은 상태 - 보류 조회
       this.getSaveCarts();
@@ -1466,7 +1468,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
         setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
         // 결제 진행중
-      } else if (this.storage.getPaymentCapture() !== null) {
+      } else if (this.storage.isPaymentProcessing() === true) {
         this.alert.error({ message: this.message.get('noHoldDuringPayment')});
       } else {
         // 보류 가능
@@ -1766,6 +1768,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (result && this.accountInfo) {
               this.balance = result[0].amount;
               this.recash = result[1].amount;
+              this.storage.setPointReCash(new PointReCash(result[0], result[1]));
               const jsonData = { 'balance': result };
               Object.assign(this.accountInfo, jsonData);
               this.storage.setCustomer(this.orderType === OrderType.GROUP ? this.groupAccountInfo[this.selectedUserIndex] : this.accountInfo);

@@ -6,3 +6,12 @@ export class Balance {
     customer: any;
     historyEntries: any;
 }
+
+export class PointReCash {
+    point: Balance;
+    recash: Balance;
+    constructor(point: Balance, recash: Balance) {
+        this.point = point;
+        this.recash = recash;
+    }
+}

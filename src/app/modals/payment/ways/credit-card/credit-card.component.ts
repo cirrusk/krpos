@@ -72,21 +72,41 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    if (this.storage.getPay() === 0) {
-      this.paidamount = this.cartInfo.totalPrice.value;
-    } else {
-      this.paidamount = this.storage.getPay();
-    }
-    setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
-    this.checkInstallment(0); // 초기 일시불 설정
-    this.renderer.setAttribute(this.allCheck.nativeElement, 'disabled', 'disabled');
-    this.renderer.setAttribute(this.partCheck.nativeElement, 'disabled', 'disabled');
+    this.loadPayment();
   }
 
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     this.receipt.dispose();
+  }
+
+  private loadPayment() {
+    this.paidamount = this.cartInfo.totalPrice.value; // 원 결제 금액
+    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    if (p && p.ccPaymentInfo) {
+      this.paid.nativeElement.value = p.ccPaymentInfo.amount;
+      const i = p.ccPaymentInfo.installmentPlan;
+      if (i === '0' || i === '00') {
+        this.checkInstallment(0);
+      } else {
+        this.checkInstallment(1);
+        this.installmentPeriod.nativeElement.value = p.ccPaymentInfo.installmentPlan;
+        this.cardnumber = p.ccPaymentInfo.cardNumber;
+        this.cardcompany = p.ccPaymentInfo.paymentInfoLine1 ? p.ccPaymentInfo.paymentInfoLine1 : '';
+        this.cardauthnumber = p.ccPaymentInfo.cardAuthNumber;
+        this.paidDate = Utils.convertDate(p.ccPaymentInfo.cardRequestDate);
+      }
+    } else {
+      if (this.storage.getPay() > 0) {
+        this.paidamount = this.storage.getPay();
+      }
+      this.checkInstallment(0); // 초기 일시불 설정
+      this.renderer.setAttribute(this.allCheck.nativeElement, 'disabled', 'disabled');
+      this.renderer.setAttribute(this.partCheck.nativeElement, 'disabled', 'disabled');
+    }
+    this.paidCal(this.paid.nativeElement.value);
+    setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);
   }
 
   /**
@@ -176,7 +196,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else { // 할부
       this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'disabled');
       setTimeout(() => {
-        this.installmentPeriod.nativeElement.focus();
+        this.installmentPeriod.nativeElement.focus(); this.installmentPeriod.nativeElement.select();
       }, 150);
     }
   }

@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService } from '../../../core';
-import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering } from '../../../data';
+import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -318,6 +318,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   close() {
+    const paymentcapture: PaymentCapture = this.storage.getPaymentCapture();
+    if (paymentcapture && (paymentcapture.ccPaymentInfo || paymentcapture.icCardPaymentInfo)) {
+      if (paymentcapture.ccPaymentInfo) {
+        this.alert.warn({ message: '신용카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+      } else if (paymentcapture.icCardPaymentInfo) {
+        this.alert.warn({ message: '현금IC카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+      }
+      return;
+    }
     this.closeModal();
   }
 
@@ -366,4 +375,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       });
     }
   }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyBoardDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ESCAPE) {
+      this.close();
+    }
+  }
+
 }

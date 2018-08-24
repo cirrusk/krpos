@@ -344,6 +344,7 @@ export class PaymentService {
     ccard.setCardAuthNumber = cardresult.approvalNumber; // 승인번호
     ccard.setCardMerchantNumber = cardresult.merchantNumber; // 가맹점 번호
     ccard.setCardCompanyCode = cardresult.issuerCode; // NICE 단말 reading 된 거래 카드사 코드 전송
+    ccard.setPaymentInfoLine1 = cardresult.issuerName;
     ccard.setVanType = VanTypes.NICE; // NICE 단말 사용
     ccard.setCardAcquirerCode = cardresult.acquireCode; // 매입사 코드
     ccard.setInstallmentPlan = Number(cardresult.installmentMonth) + '';
@@ -435,6 +436,7 @@ export class PaymentService {
     iccard.setCardAuthNumber = cardresult.approvalNumber; // 승인번호
     iccard.setCardMerchantNumber = cardresult.merchantNumber; // 가맹점 번호
     iccard.setCardCompanyCode = cardresult.issuerCode; // NICE 단말 reading 된 거래 카드사 코드 전송
+    iccard.setPaymentInfoLine1 = cardresult.issuerName;
     iccard.setVanType = VanTypes.NICE; // NICE 단말 사용
     iccard.setCardAcquirerCode = cardresult.acquireCode; // 매입사 코드
     iccard.setInstallmentPlan = '00';

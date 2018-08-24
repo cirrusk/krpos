@@ -30,7 +30,7 @@
                         <tr>
                             <th scope="row">사용할 금액</th>
                             <td colspan="3">
-                                <input type="number" class="w110 ar" title="사용할 금액" #usePoint [readonly]="isAllPay" (keyup)="useRecash()" (keydown.enter)="pointEnter($event)"> 원
+                                <input type="text" posOnlyNumber="true" class="w110 ar" title="사용할 금액" #usePoint [readonly]="isAllPay" (keyup)="useRecash()" (keydown.enter)="pointEnter($event)"> 원
                                 <label class="inp_rd mgl10" for="fg1">일부금액
                                     <input #partPay type="radio" name="fg" id="fg1" checked (click)="checkPay(1)">
                                     <span class="checkmark"></span>

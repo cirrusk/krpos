@@ -5,7 +5,7 @@ import { OrderService, ReceiptService, MessageService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 
@@ -198,20 +198,25 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * @param {string} userId 유저아이디
    */
   getBalance(userId: string): void {
-    this.paymentService.getBalance(userId).subscribe(
-      balance => {
-        if (balance) {
-          this.balance = balance;
-        }
-      },
-      error => {
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('order-detail.component', `Get Balance error type : ${errdata.type}`).error();
-          this.logger.set('order-detail.component', `Get Balance error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
-        }
-      });
+    const pointrecash: PointReCash = this.storageService.getPointReCash();
+    if (pointrecash && pointrecash.point) {
+      this.balance = pointrecash.point;
+    } else {
+      this.paymentService.getBalance(userId).subscribe(
+        balance => {
+          if (balance) {
+            this.balance = balance;
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('order-detail.component', `Get Balance error type : ${errdata.type}`).error();
+            this.logger.set('order-detail.component', `Get Balance error message : ${errdata.message}`).error();
+            this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
+          }
+        });
+    }
   }
 
 

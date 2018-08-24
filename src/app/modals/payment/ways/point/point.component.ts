@@ -5,7 +5,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { PaymentService, MessageService, ReceiptService } from '../../../../service';
 import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
 import {
-  KeyCode, Accounts, Balance, PaymentCapture, StatusDisplay, AmwayExtendedOrdering
+  KeyCode, Accounts, Balance, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash
 } from '../../../../data';
 import { Cart } from './../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -63,24 +63,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    if (this.storage.getPay() === 0) {
-      this.paymentprice = this.cartInfo.totalPrice.value;
-    } else {
-      this.paymentprice = this.storage.getPay();
-    }
-    this.usePoint.nativeElement.value = this.paymentprice;
+    this.loadPayment();
     this.getBalance();
-  }
-
-  private getBalance() {
-    this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(
-      result => {
-        this.balance = result;
-        this.point = this.balance.amount;
-        const changeprice = this.point - this.paymentprice;
-        this.change = (changeprice < 0) ? 0 : changeprice;
-      },
-      error => { this.logger.set('point.component', `${error}`).error(); });
   }
 
   ngOnDestroy() {
@@ -88,6 +72,43 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     this.receipt.dispose();
+  }
+
+  private loadPayment() {
+    this.paymentprice = this.cartInfo.totalPrice.value;
+    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    if (p && p.pointPaymentInfo) {
+      if (this.paymentprice === p.pointPaymentInfo.amount) { //  전체금액
+        this.checkPay(0);
+      } else {
+        this.checkPay(1);
+      }
+      this.usePoint.nativeElement.value = p.pointPaymentInfo.amount;
+    } else {
+      if (this.storage.getPay() > 0) {
+        this.paymentprice = this.storage.getPay();
+      }
+      this.usePoint.nativeElement.value = this.paymentprice;
+    }
+  }
+
+  private getBalance() {
+    const pointrecash: PointReCash = this.storage.getPointReCash();
+    if (pointrecash && pointrecash.point) {
+      this.balance = pointrecash.point;
+      this.point = this.balance.amount;
+      const changeprice = this.point - this.paymentprice;
+      this.change = (changeprice < 0) ? 0 : changeprice;
+    } else {
+      this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(
+        result => {
+          this.balance = result;
+          this.point = this.balance.amount;
+          const changeprice = this.point - this.paymentprice;
+          this.change = (changeprice < 0) ? 0 : changeprice;
+        },
+        error => { this.logger.set('point.component', `${error}`).error(); });
+    }
   }
 
   setChange(usepoint) {

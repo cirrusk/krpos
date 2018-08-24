@@ -50,18 +50,27 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
-
-    if (this.storage.getPay() === 0) {
-      this.paidamount = this.cartInfo.totalPrice.value;
-    } else {
-      this.paidamount = this.storage.getPay();
-    }
-
+    this.loadPayment();
   }
 
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     this.receipt.dispose();
+  }
+
+  private loadPayment() {
+    this.paidamount = this.cartInfo.totalPrice.value;
+    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    if (p && p.icCardPaymentInfo) {
+      this.cardnumber = p.icCardPaymentInfo.cardNumber;
+      this.cardcompany = p.icCardPaymentInfo.paymentInfoLine1 ? p.icCardPaymentInfo.paymentInfoLine1 : '';
+      this.cardauthnumber = p.icCardPaymentInfo.cardAuthNumber;
+      this.paidDate = Utils.convertDate(p.icCardPaymentInfo.cardRequestDate);
+    } else {
+      if (this.storage.getPay() > 0) {
+        this.paidamount = this.storage.getPay();
+      }
+    }
   }
 
   /**

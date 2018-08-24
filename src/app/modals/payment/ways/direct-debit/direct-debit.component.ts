@@ -64,11 +64,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.renderer.setAttribute(this.ddpassword.nativeElement, 'disabled', 'disabled');
       }, 50);
     } else {
-      this.paidamount = this.cartInfo.totalPrice.value;
-      if (this.storage.getPay() > 0) {
-        this.paidamount = this.storage.getPay();
-      }
-      setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
+      this.loadPayment();
     }
   }
 
@@ -76,6 +72,20 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     this.receipt.dispose();
+  }
+
+  private loadPayment() {
+    this.paidamount = this.cartInfo.totalPrice.value;
+    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    if (p && p.directDebitPaymentInfo) {
+      this.paid.nativeElement.value = p.directDebitPaymentInfo.amount;
+      this.paidCal(this.paid.nativeElement.value);
+    } else {
+      if (this.storage.getPay() > 0) {
+        this.paidamount = this.storage.getPay();
+      }
+    }
+    setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);
   }
 
   /**

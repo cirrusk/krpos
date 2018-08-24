@@ -126,11 +126,13 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.modal.openModalByComponent(ComplexPaymentComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
+      closeByEscape: false,
       modalId: 'ComplexPaymentComponent_Cpn'
     }).subscribe(result => {
       if (!result) {
         this.storage.removePaymentModeCode();
         this.storage.removePay();
+        this.storage.removePaymentCapture();
       }
     });
   }

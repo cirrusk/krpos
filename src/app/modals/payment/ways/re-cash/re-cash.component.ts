@@ -5,7 +5,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { PaymentService, ReceiptService, MessageService } from '../../../../service';
 import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
 import {
-  KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering
+  KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -51,15 +51,18 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
 
-    if (this.storage.getPay() === 0) {
-      this.paidamount = this.cartInfo.totalPrice.value;
+    this.loadPayment();
+    const pointrecash: PointReCash = this.storage.getPointReCash();
+    if (pointrecash && pointrecash.recash) {
+      this.recash = pointrecash.recash;
+      this.useRecash();
     } else {
-      this.paidamount = this.storage.getPay();
+      this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(
+        result => {
+        this.recash = result;
+        this.useRecash();
+      });
     }
-
-    this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(result => {
-      this.recash = result;
-    });
   }
 
   ngOnDestroy() {
@@ -67,6 +70,24 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     this.receipt.dispose();
+  }
+
+  private loadPayment() {
+    this.paidamount = this.cartInfo.totalPrice.value;
+    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    if (p && p.monetaryPaymentInfo) {
+      if (this.paidamount === p.monetaryPaymentInfo.amount) {
+        this.checkPay(0);
+      } else {
+        this.checkPay(1);
+      }
+      this.usePoint.nativeElement.value = p.monetaryPaymentInfo.amount;
+    } else {
+      if (this.storage.getPay() > 0) {
+        this.paidamount = this.storage.getPay();
+      }
+    }
+    this.useRecash();
   }
 
   useRecash() {
@@ -83,7 +104,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkPay(type: number) {
-    if (type === 0) {
+    if (type === 0) { // 전체금액
       this.usePoint.nativeElement.value = this.paidamount;
       this.change = this.recash.amount - this.paidamount;
       if (this.change < 0) {

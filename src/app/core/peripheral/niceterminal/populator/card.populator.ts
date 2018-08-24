@@ -109,19 +109,19 @@ export class CardPopulator {
             // slice() --> 1번째 바이트 제거
             result.serviceCode = tokens[0].slice(1);
             result.approved = tokens[1] === 'A' ? true : false;
-            result.resultMsg1 = tokens[2].trim();
-            result.resultMsg2 = tokens[3].trim();
-            result.approvalDateTime = tokens[4];
-            result.totalAmount = tokens[5];
-            result.vat = tokens[6];
-            result.approvalNumber = tokens[7];
-            result.issuerCode = tokens[8];
-            result.acquireCode = tokens[9];
-            result.issuerName = tokens[10];
-            result.acquireName = tokens[11];
-            result.merchantNumber = tokens[12];
-            result.maskedCardNumber = tokens[13];
-            result.installmentMonth = tokens[14];
+            result.resultMsg1 = tokens[2].trim(); // 거절시 메시지 I, 정상 승인시 무카드(고유번호)
+            result.resultMsg2 = tokens[3].trim(); // 거절시 메시지 II
+            result.approvalDateTime = tokens[4]; // 승인일시
+            result.totalAmount = tokens[5]; // 총판매금액
+            result.vat = tokens[6]; // 부가세
+            result.approvalNumber = tokens[7]; // 승인번호
+            result.issuerCode = tokens[8]; // 발급사코드
+            result.acquireCode = tokens[9]; // 매입사코드
+            result.issuerName = tokens[10]; // 발급사명
+            result.acquireName = tokens[11]; // 매입사명
+            result.merchantNumber = tokens[12]; // 가맹점번호
+            result.maskedCardNumber = tokens[13]; // 신용카드(OTC) 마스킹된 카드번호
+            result.installmentMonth = tokens[14]; // 할부
             result.processingNumber = tokens[15]; // 단말기 처리 일련번호
             result.catId = tokens[16];
             result.signData = tokens[17];
