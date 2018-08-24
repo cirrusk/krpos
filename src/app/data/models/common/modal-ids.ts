@@ -45,7 +45,7 @@ export enum ModalIds {
     RECASH = 'Recash',
     REORDER = 'ReOrder',
     RESTRICT = 'Restict',
-    SERIAL = 'SerialComponent',
+    SERIAL = 'Serial',
     STOPSHIFT = 'Shift',
     STOPSHIFTEND = 'ShiftEnd'
 }
