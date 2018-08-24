@@ -412,6 +412,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removePaymentCapture();
     this.storage.removePaymentProcessing();
     this.storage.removePointReCash();
+    this.storage.removePaymentModeCode();
     this.ber = null;
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
