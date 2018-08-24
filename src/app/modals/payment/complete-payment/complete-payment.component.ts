@@ -188,6 +188,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
+          } else if (this.finishStatus === StatusDisplay.PAYMENTNOTCAPTURED) {
+            this.finishStatus = 'fail';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           } else { // CART 삭제된 상태
             this.finishStatus = 'recart';
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';

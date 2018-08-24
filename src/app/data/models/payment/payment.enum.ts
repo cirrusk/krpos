@@ -11,7 +11,9 @@ export enum StatusDisplay {
     CANCELLED = 'cancelled',           // 주문 취소 완료
     CANCELLING = 'cancelling',         // 주문 취소 진행
     PAYMENTFAILED = 'paymentfailed',   // 결제 처리 오류 – 주문 생성시 결제 캡처 오류, Cart는 삭제 되지 않은 상태
-    ORDERFAILED = 'orderfailed'        // 주문 생성 오류 – 주문 생성시 오류, Cart는 삭제 되지 않은 상태
+    ORDERFAILED = 'orderfailed',       // 주문 생성 오류 – 주문 생성시 오류, Cart는 삭제 되지 않은 상태,
+    PAYMENTNOTCAPTURED = 'PAYMENT_NOT_CAPTURED',
+    PAYMENTCAPTURED = 'PAYMENT_CAPTURED'
 }
 
 /**

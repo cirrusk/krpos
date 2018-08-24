@@ -253,15 +253,26 @@ export class ReceiptService implements OnDestroy {
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = ordering.account.parties ? ordering.account.parties[0].uid : ordering.account.uid;
         this.logger.set('receipt.service', `ordering abo : ${uid}`).info();
-
+        // 잔여 포인트 표시
         const pointrecash: PointReCash = this.storage.getPointReCash();
         if (pointrecash && pointrecash.point) { // 포인트가 세션에 있으면 그 정보로 인쇄
-            const result = pointrecash.point;
-            this.doPrintByGroup(ordering, orderList, printInfo, result.amount, reIssue);
+            let changepoint: number = pointrecash.point ? pointrecash.point.amount : 0;
+            if (changepoint > 0) {
+                if (paymentCapture && paymentCapture.pointPaymentInfo) {
+                    changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
+                }
+            }
+            this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
         } else { // 포인트가 세션에 없으면 포인트 조회 후 인쇄
             this.paymentsubscription = this.payment.getBalance(uid).subscribe(
                 result => {
-                    this.doPrintByGroup(ordering, orderList, printInfo, result.amount, reIssue);
+                    let changepoint: number = result ? result.amount : 0;
+                    if (changepoint > 0) {
+                        if (paymentCapture && paymentCapture.pointPaymentInfo) {
+                            changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
+                        }
+                    }
+                    this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
                 },
                 error => {
                     this.logger.set('receipt.service', `${error}`).error();
@@ -382,16 +393,28 @@ export class ReceiptService implements OnDestroy {
             rtn = this.makeTextAndPrint(printInfo);
             if (rtn && reIssue) { this.issueReceipt(account, order); }
         } else {
+            // 잔여 포인트 표시
             const pointrecash: PointReCash = this.storage.getPointReCash();
             if (pointrecash && pointrecash.point) { // 포인트가 세션에 있으면 그 정보로 인쇄
-                const result = pointrecash.point;
-                Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                let changepoint: number = pointrecash.point ? pointrecash.point.amount : 0;
+                if (changepoint > 0) {
+                    if (paymentCapture && paymentCapture.pointPaymentInfo) {
+                        changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
+                    }
+                }
+                Object.assign(printInfo, { point: changepoint });
                 rtn = this.makeTextAndPrint(printInfo);
                 if (rtn && reIssue) { this.issueReceipt(account, order); }
             } else {
                 this.paymentsubscription = this.payment.getBalance(uid).subscribe(
                     result => {
-                        Object.assign(printInfo, { point: result.amount ? result.amount : 0 });
+                        let changepoint: number = result ? result.amount : 0;
+                        if (changepoint > 0) {
+                            if (paymentCapture && paymentCapture.pointPaymentInfo) {
+                                changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
+                            }
+                        }
+                        Object.assign(printInfo, { point: changepoint });
                         rtn = this.makeTextAndPrint(printInfo);
                         if (rtn && reIssue) { this.issueReceipt(account, order); }
                     },
