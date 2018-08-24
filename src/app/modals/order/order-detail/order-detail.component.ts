@@ -84,7 +84,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.cancelFlag = false;
     }
 
-    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
+    // if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
+    // hybris 수정 전 임시
+    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.amwayAccount.uid !== this.orderInfo.volumeAccount.uid) {
       this.groupMainFlag = false;
     }
   }
