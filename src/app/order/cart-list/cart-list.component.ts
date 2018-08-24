@@ -629,6 +629,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.cartList.length = 0;
               this.storage.setOrderEntry(this.cartList);
               this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
+              this.groupSelectedCart = new AbstractOrder();
             }
           } else {
             this.alert.info({
@@ -1451,7 +1452,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
     } else if (this.cartInfo.code === undefined) { // 장바구니 정보 없음
       if (this.orderType === OrderType.GROUP) {
-        this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
+        this.setUserPage(1);
+        this.selectedUserIndex = 0;
+        this.selectedUserId = this.groupAccountInfo[0].uid;
+        this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
+        this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name), timer: true, interval: 1500 });
       } else {
         this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
       }
@@ -1459,9 +1464,11 @@ export class CartListComponent implements OnInit, OnDestroy {
     } else {
       // 그룹 - 장바구니 정보 유, 엔트리 정보 무
       if (this.orderType === OrderType.GROUP && this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length < 1) {
-        this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name) });
+        this.alert.warn({ message: this.message.get('noMainCartInfo', this.groupAccountInfo[0].name), timer: true, interval: 1500 });
         this.setUserPage(1);
-        this.choiceGroupUser(0, this.groupAccountInfo[0].uid);
+        this.selectedUserIndex = 0;
+        this.selectedUserId = this.groupAccountInfo[0].uid;
+        this.choiceGroupUser(this.selectedUserIndex, this.selectedUserId);
         setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
         // 일반 - 장바구니 정보 유, 엔트리 정보 무
       } else if (this.orderType === OrderType.NORMAL && this.cartList.length < 1) {
