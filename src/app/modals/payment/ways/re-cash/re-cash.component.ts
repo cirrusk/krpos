@@ -209,7 +209,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== 'CompletePaymentComponent') { // 결제 최종 팝업이 떠있으면 처리하지 않음.
+      if (modalid !== ModalIds.COMPLETE) { // 결제 최종 팝업이 떠있으면 처리하지 않음.
         this.doPay(event);
       }
     }

@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -104,7 +103,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   selectedUserId: string;                                                   // 그룹주문 선택한 유저의 ID
   apprtype: string;
   memberType = MemberType;                                                  // HTML 사용(enum)
-  searchValid: FormControl = new FormControl('');
   // 그룹
   amwayExtendedOrdering: AmwayExtendedOrdering;                             // 그룹카트 정보
   groupSelectedCart: AbstractOrder;                                         // 선택된 그룹카트 정보
@@ -257,7 +255,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.checkChar();
     this.printerService.init();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
   }
@@ -282,26 +279,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.paymentChangesubscription) { this.paymentChangesubscription.unsubscribe(); }
     if (this.paymentGroupEntriessubscription) { this.paymentGroupEntriessubscription.unsubscribe(); }
     if (this.paymentGroupListsubscription) { this.paymentGroupListsubscription.unsubscribe(); }
-  }
-
-  /**
-   * 한글이나 특수문자 제거
-   *
-   */
-  private checkChar() {
-    // const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
-    // const engExp: RegExp = new RegExp(/[a-z]/gi);
-    // const numExp: RegExp = new RegExp(/[0-9]/g);
-    // const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
-    // this.searchValid.valueChanges
-    //   .debounceTime(50)
-    //   .subscribe(v => {
-    //     if (v) {
-    //       if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
-    //         this.searchText.nativeElement.value = v.replace(numEngDelExp, '');
-    //       }
-    //     }
-    //   });
   }
 
   /**
@@ -432,6 +409,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removePaymentCapture();
     this.storage.removePaymentProcessing();
     this.storage.removePointReCash();
+    this.storage.removePaymentModeCode();
     this.ber = null;
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }

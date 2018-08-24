@@ -226,7 +226,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const lastmodal = this.storage.getLatestModalId();
-      if (lastmodal === 'CompletePaymentComponent') {
+      if (lastmodal === ModalIds.COMPLETE) {
         return;
       }
       this.doPay(event);

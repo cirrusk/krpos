@@ -250,7 +250,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== 'CompletePaymentComponent') { // 결제완료 창이 뜨지 않았을 경우만 처리
+      if (modalid !== ModalIds.COMPLETE) { // 결제완료 창이 뜨지 않았을 경우만 처리
         this.doPay();
       }
     }

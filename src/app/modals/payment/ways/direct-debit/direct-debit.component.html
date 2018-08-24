@@ -74,9 +74,7 @@
     <!-- //pop_container -->
     <div class="pop_footer clearfix">
         <span class="fl mgt15">취소 ESC</span>
-        <em *ngIf="checktype === -1" class="finish fail">{{apprmessage}}</em>
-        <em *ngIf="checktype === -2" class="finish fail">{{apprmessage}}</em>
-        <em *ngIf="checktype === -3" class="finish fail">{{apprmessage}}</em>
+        <em *ngIf="checktype < 0" class="finish fail">{{apprmessage}}</em>
         <em *ngIf="finishStatus === 'PAYMENT_CAPTURED' || finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
         <ng-template #payFail>
             <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail" [innerHTML]="apprmessage"></em>

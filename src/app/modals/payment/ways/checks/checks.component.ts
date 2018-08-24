@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { ModalComponent, ModalService, Logger, StorageService } from '../../../../core';
 import { PaymentService, MessageService } from '../../../../service';
 import { Utils, StringBuilder } from '../../../../core/utils';
-import { StatusDisplay, KeyCode } from '../../../../data';
+import { StatusDisplay, KeyCode, ModalIds } from '../../../../data';
 
 @Component({
   selector: 'pos-checks',
@@ -373,7 +373,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const lastmodal = this.storage.getLatestModalId();
-      if (lastmodal === 'ChecksComponent') {
+      if (lastmodal === ModalIds.CHECKS) {
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
           this.payFinishByEnter();
         } else {

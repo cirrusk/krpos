@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostLis
 import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, StorageService, Modal, Config } from '../../../../core';
 import {
   PaymentCapture, Accounts, BankTypes, StatusDisplay, KeyCode, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
@@ -37,11 +37,12 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private paymentcapture: PaymentCapture;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  private directdebitminPrice: number;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
     private storage: StorageService, private message: MessageService, private payment: PaymentService,
-    private info: InfoBroker, private renderer: Renderer2) {
+    private info: InfoBroker, private renderer: Renderer2, private config: Config) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -49,6 +50,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   ngOnInit() {
+    this.directdebitminPrice = this.config.getConfig('directdebitMinPrice' , 1);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
@@ -94,6 +96,11 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   */
   paidCal(paid: number) {
     if (typeof paid === 'number' || paid !== '') {
+      if (paid < this.directdebitminPrice) {
+        this.checktype = -4;
+        this.apprmessage = this.message.get('debit.min.price');
+        return;
+      }
       this.change = this.paidamount - paid;
       if (this.change < 0) {
         this.change = 0;

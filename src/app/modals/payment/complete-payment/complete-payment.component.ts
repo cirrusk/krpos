@@ -312,7 +312,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== 'SerialComponent' && modalid !== 'CashReceiptComponent') {
+      if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT) {
         if (Utils.isPaymentSuccess(this.finishStatus)) {
           this.payFinishByEnter();
         } else if (this.finishStatus === 'fail') {
