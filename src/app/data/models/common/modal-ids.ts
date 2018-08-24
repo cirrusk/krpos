@@ -41,6 +41,13 @@ export enum ModalIds {
     COUPON = 'Coupon',
     CANCELCART = 'CancelCart',
     PROMOTION = 'PromotionOrder',
-    ETC = 'EtcOrdert'
+    ETC = 'EtcOrdert',
+    POINT = 'Point',
+    CREDIT = 'CreditCard',
+    IC = 'IcCard',
+    CASH = 'Cash',
+    CHEQUE = 'Cheque',
+    DEBIT = 'DirectDebit',
+    RECASH = 'Recash'
 
 }

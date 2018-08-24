@@ -157,7 +157,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== 'CompletePaymentComponent') {
+      if (modalid !== ModalIds.COMPLETE) {
         this.doPay();
       }
     } else if (event.KeyCode === KeyCode.ESCAPE) {

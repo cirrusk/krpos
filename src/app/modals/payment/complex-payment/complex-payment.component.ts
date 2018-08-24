@@ -94,14 +94,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   creditCard(evt: any) { // creditcard
     this.setSelected(evt, 0, 'creditcard');
     if (this.enableMenu.indexOf('creditcard') > -1) {
-      this.selectPopup('CreditCardComponent', CreditCardComponent, null, 'creditcard');
+      this.selectPopup(ModalIds.CREDIT, CreditCardComponent, null, 'creditcard');
     }
   }
 
   icCard(evt: any) { // cashiccard
     this.setSelected(evt, 1, 'cashiccard');
     if (this.enableMenu.indexOf('cashiccard') > -1) {
-      this.selectPopup('IcCardComponent', IcCardComponent, null, 'cashiccard');
+      this.selectPopup(ModalIds.IC, IcCardComponent, null, 'cashiccard');
     }
   }
 
@@ -117,7 +117,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      this.selectPopup('APointComponent_Cplx', PointComponent, 'a', 'point');
+      this.selectPopup(ModalIds.POINT, PointComponent, 'a', 'point');
     }
   }
 
@@ -133,14 +133,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
     if (this.enableMenu.indexOf('point') > -1) {
       // sprint 6차로 주석처리
-      this.selectPopup('MPointComponent_Cplx', PointComponent, 'm', 'point');
+      this.selectPopup(ModalIds.POINT, PointComponent, 'm', 'point');
     }
   }
 
   cashPayment(evt: any) { // cash
     this.setSelected(evt, 4, 'cash');
     if (this.enableMenu.indexOf('cash') > -1) {
-      this.selectPopup('CashComponent_Cplx', CashComponent, null, 'cash');
+      this.selectPopup(ModalIds.CASH, CashComponent, null, 'cash');
     }
   }
 
@@ -151,14 +151,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   checkPayment(evt: any) { // cheque
     this.setSelected(evt, 5, 'cheque');
     if (this.enableMenu.indexOf('cheque') > -1) {
-      this.selectPopup('ChequeComponent_Cplx', CashComponent, null, 'cheque');
+      this.selectPopup(ModalIds.CHEQUE, CashComponent, null, 'cheque');
     }
   }
 
   directDebitPayment(evt: any) { // directdebit
     this.setSelected(evt, 6, 'directdebit');
     if (this.enableMenu.indexOf('directdebit') > -1) {
-      this.selectPopup('DirectDebitComponent_Cplx', DirectDebitComponent, null, 'directdebit');
+      this.selectPopup(ModalIds.DEBIT, DirectDebitComponent, null, 'directdebit');
     }
   }
 
@@ -169,7 +169,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
     this.setSelected(evt, 7, 'arCredit');
     if (this.enableMenu.indexOf('arCredit') > -1) {
-      this.selectPopup('ReCashComponent_Cplx', ReCashComponent, null, 'arCredit');
+      this.selectPopup(ModalIds.RECASH, ReCashComponent, null, 'arCredit');
     }
   }
 
@@ -384,7 +384,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     const latestmodalid = this.storage.getLatestModalId();
-    if (latestmodalid === 'CpCxComponent') {
+    if (latestmodalid === ModalIds.COMPLEX) {
       if (event.keyCode === KeyCode.ESCAPE) {
         this.close();
       }

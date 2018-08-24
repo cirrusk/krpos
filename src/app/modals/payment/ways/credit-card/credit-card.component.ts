@@ -347,7 +347,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== 'CompletePaymentComponent') {
+      if (modalid !== ModalIds.COMPLETE) {
         this.doPay();
       }
     } else if (event.keyCode === KeyCode.ESCAPE) {
