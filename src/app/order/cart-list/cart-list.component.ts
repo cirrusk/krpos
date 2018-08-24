@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import {
@@ -13,13 +14,12 @@ import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, 
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block,
-  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView, PointReCash
+  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView, PointReCash, ModalIds
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
-import { Observable } from '../../../../node_modules/rxjs/Observable';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
@@ -356,7 +356,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'CancelBerDirect'
+      modalId: ModalIds.CANCELBER
     }).subscribe(res => {
       if (res) {
         this.storage.removeBer();
@@ -484,7 +484,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       actionButtonLabel: '선택',
       closeButtonLabel: '취소',
       orderType: this.orderType !== '' ? this.orderType : OrderType.NORMAL,
-      modalId: 'SearchAccountComponent'
+      modalId: ModalIds.ACCOUNT
     }).subscribe(result => {
       if (result) {
         if (this.orderType === '') {
@@ -507,7 +507,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       callerData: { data: params },
       actionButtonLabel: '선택',
       closeButtonLabel: '취소',
-      modalId: 'SearchProductComponent'
+      modalId: ModalIds.PRODUCT
     }).subscribe(data => {
       if (data) {
         this.setSerials(data);
@@ -534,7 +534,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         callerData: { code: code, qty: qty, product: selectedCart.product },
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        modalId: 'UpdateItemQtyComponent'
+        modalId: ModalIds.QTY
       }).subscribe(result => {
         if (result) {
           const product: ProductInfo = selectedCart.product;
@@ -544,7 +544,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.modal.openModalByComponent(SerialComponent, {
                 callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
                 closeByClickOutside: false,
-                modalId: 'SerialComponent'
+                modalId: ModalIds.SERIAL
               }).subscribe(data => {
                 if (data) {
                   if (qty < result.qty) { // 변경 수량이 증가할 경우
@@ -570,7 +570,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   popupNewAccount() {
     this.storage.setLocalItem('nc', 'Y'); // 클라이언트 화면에 팝업 띄우기 위해 이벤트 전달
     this.modal.openModalByComponent(ClientAccountComponent, {
-      modalId: 'ClientAccountComponent'
+      modalId: ModalIds.CLIENT
     }).subscribe(result => {
       if (result) {
         this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
@@ -587,7 +587,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(HoldOrderComponent, {
       callerData: { userId: userId },
       closeByClickOutside: false,
-      modalId: 'HoldOrderComponent'
+      modalId: ModalIds.HOLDORDER
     }).subscribe(() => {
       setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
     });
@@ -670,7 +670,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'CHANGEUSER'
+      modalId: ModalIds.CHANGEUSER
     }).subscribe(
       result => {
         if (result) {
@@ -722,7 +722,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.modal.openModalByComponent(RestrictComponent, {
           callerData: { data: this.restrictionMessageList },
           closeByEnter: true,
-          modalId: 'RestictComponent_User'
+          modalId: ModalIds.RESTRICT
         });
       } else {
         this.activeSearchMode(SearchMode.PRODUCT);
@@ -944,7 +944,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.modal.openModalByComponent(SerialComponent, {
                   callerData: { productInfo: product },
                   closeByClickOutside: false,
-                  modalId: 'SerialComponent'
+                  modalId: ModalIds.SERIAL
                 }).subscribe(data => {
                   if (data) {
                     this.setSerials(data);
@@ -1201,7 +1201,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.modal.openModalByComponent(RestrictComponent, {
               callerData: { data: this.restrictionMessageList },
               closeByEnter: true,
-              modalId: 'RestictComponent_Cart'
+              modalId: ModalIds.RESTRICT
             });
           }
         },
@@ -1281,7 +1281,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.modal.openModalByComponent(RestrictComponent, {
                 callerData: { data: this.restrictionMessageList },
                 closeByEnter: true,
-                modalId: 'RestictComponent_Qty'
+                modalId: ModalIds.RESTRICT
               });
             }
           },
