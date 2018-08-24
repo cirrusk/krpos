@@ -285,13 +285,13 @@ export class ReceiptService implements OnDestroy {
     /**
      * 그룹 주문 인쇄 인쇄 처리부
      *
-     * @param ordering 그룹 주문 인쇄 정보 재구성
-     * @param orderList 주문 정보 배열
-     * @param printInfo 인쇄 정보
-     * @param point 포인트 정보
-     * @param reIssue 재발행 여부
+     * @param {GroupResponseData} ordering 그룹 주문 인쇄 정보 재구성
+     * @param {Array<Order>} orderList 주문 정보 배열
+     * @param {any} printInfo 인쇄 정보
+     * @param {number} point 잔여 포인트 값
+     * @param {boolean} reIssue 재발행 여부
      */
-    private doPrintByGroup(ordering: GroupResponseData, orderList: Array<Order>, printInfo: any, point: number, reIssue: boolean) {
+    private doPrintByGroup(ordering: GroupResponseData, orderList: Array<Order>, printInfo: any, point: number, reIssue = false) {
         const prints = [];
         prints.push(this.printMainOrder(ordering, printInfo, point, reIssue));
         const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
@@ -303,12 +303,21 @@ export class ReceiptService implements OnDestroy {
         });
     }
 
-    private printMainOrder(ordering: GroupResponseData, printInfo: any, balance: number, reIssue = false): Observable<boolean> {
-        Object.assign(printInfo, { point: balance ? balance : 0 });
+    /**
+     * 그룹 주문 메인 Order 인쇄
+     *
+     * @param {GroupResponseData} ordering 그룹 주문 인쇄 정보 재구성
+     * @param {any} printInfo 인쇄 정보
+     * @param {number} point 잔여 포인트 값
+     * @param {boolean} reIssue 재발행 여부
+     */
+    private printMainOrder(ordering: GroupResponseData, printInfo: any, point: number, reIssue = false): Observable<boolean> {
+        Object.assign(printInfo, { point: point ? point : 0 });
         const rtn = this.makeTextAndPrint(printInfo);
         if (rtn && reIssue) { this.issueReceipt(ordering.account, ordering.order); }
         return Observable.of(rtn);
     }
+
     /**
      * 그룹 주문 서브 주문 인쇄
      *
