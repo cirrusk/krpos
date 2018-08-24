@@ -82,6 +82,8 @@ export const environment = {
   promotionInterval: 9, // 프로모션 공지사항 롤링 주기(sec)
   isMdmsSkip: false, // MDMS 체크 제외 여부
   installcheckPrice: 50000, // 할부 제한 금액
+  creditcardMinPrice: 200, // 복합결제 시 주결제 방법 최소 금액 신용카드
+  directdebitMinPrice: 1, // 복합결제 시 주결제 방법 최소 금액 자동이체
 
   // NICE 단말기 설정
   niceTermBase: 'ws://localhost',
