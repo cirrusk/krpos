@@ -124,7 +124,8 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    */
   searchOrder(_memberType: string, _searchText: string) {
     if (_searchText === '' || _searchText === undefined || _searchText === null) {
-      this.alert.info({ message: this.messageService.get('noSearchText') });
+      this.alert.info({ message: this.messageService.get('noSearchText'), timer: true, interval: 1500 });
+      setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 1520);
     } else {
       this.memberType = _memberType;
       this.searchText = _searchText;
@@ -145,6 +146,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         resultData => {
           if (resultData) {
             this.orderHistoryList = resultData;
+            setTimeout(() => { this.inputSearchText.nativeElement.focus(); this.inputSearchText.nativeElement.select(); }, 50);
           }
         },
         error => {
