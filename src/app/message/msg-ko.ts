@@ -33,6 +33,8 @@ export const LANG_KO_MSGS = {
     'payment.fail': '결제에 실패했습니다.',
     'card.payment.success': '카드결제 승인이 완료되었습니다.',
     'card.payment.success.next': '카드결제 승인이 완료되었습니다. 다음 결제 수단을 선택해주세요.',
+    'card.min.price': '신용카드 결제 금액은 최소 200원 이상입니다.',
+    'debit.min.price': '자동이체 결제 금액은 최소 1원 이상입니다.',
     'payment.valid.overpaid': '실결제금액이 총 매출보다 큽니다.',
     'payment.valid.smallpaid': '실결제금액이 총 매출보다 작습니다.',
     'no.accountnumber': '회원의 계좌번호를 확인하시기 바랍니다.',

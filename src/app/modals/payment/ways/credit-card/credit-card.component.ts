@@ -50,6 +50,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private dupcheck = false;
   private checkinstallment: number;
   private installcheckPrice: number;
+  private creditcardMinPrice: number;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('allCheck') private allCheck: ElementRef;
@@ -68,6 +69,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   ngOnInit() {
     this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
+    this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
@@ -112,11 +114,17 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   /**
    * 실결제 금액 입력 시 잔액 계산
    * 결제 금액이 5만원 이상인 경우만 할부를 할 수 있음.
+   * 결제 금액은 최소 금액 200원 이상 결제해야함.
    *
    * @param paid 실결제 금액
    */
   paidCal(paid: number) {
     const nPaid = paid ? Number(paid) : 0;
+    if (nPaid < this.creditcardMinPrice) {
+      this.checktype = -4;
+      this.apprmessage = this.message.get('card.min.price');
+      return;
+    }
     this.change = this.paidamount - nPaid;
     if (this.change < 0) {
       this.checktype = -2;
