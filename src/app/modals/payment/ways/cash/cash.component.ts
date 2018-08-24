@@ -6,7 +6,7 @@ import { ChecksComponent } from '../checks/checks.component';
 import { MessageService, ReceiptService, PaymentService } from '../../../../service';
 import { ModalComponent, ModalService, Modal, StorageService } from '../../../../core';
 import {
-  Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering
+  Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -67,7 +67,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(ChecksComponent, {
       closeByClickOutside: false,
       closeByEscape: true,
-      modalId: 'ChecksComponent'
+      modalId: ModalIds.CHECKS
     }).subscribe(result => {
       if (result) {
         this.paid.nativeElement.value = result;
@@ -198,7 +198,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'CompletePaymentComponent',
+      modalId: ModalIds.COMPLETELAST,
       paymentType: 'c'
     });
   }

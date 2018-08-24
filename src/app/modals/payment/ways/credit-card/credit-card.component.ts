@@ -11,7 +11,7 @@ import {
   CardApprovalResult, NiceConstants, SpinnerService, Config
 } from '../../../../core';
 import {
-  PaymentCapture, Accounts, KeyCode, StatusDisplay, AmwayExtendedOrdering
+  PaymentCapture, Accounts, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -210,7 +210,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       closeByClickOutside: false,
       closeByEnter: false,
       closeByEscape: true,
-      modalId: 'InstallmentPlanComponent'
+      modalId: ModalIds.INSTALLMENT
     });
   }
 
@@ -307,7 +307,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'CompletePaymentComponent',
+      modalId: ModalIds.COMPLETE,
       paymentType: 'c'
     });
   }

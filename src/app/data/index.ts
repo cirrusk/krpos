@@ -77,6 +77,7 @@ export * from './models/common/response-data';
 export * from './models/common/sort';
 export * from './models/common/terminal-info';
 export * from './models/common/ber-result';
+export * from './models/common/modal-ids';
 
 export * from './error/error';
 export * from './error/error-info';

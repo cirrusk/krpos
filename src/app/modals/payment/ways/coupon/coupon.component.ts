@@ -7,7 +7,7 @@ import { PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
 import {
   Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination,
-  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay, AmwayExtendedOrdering
+  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -127,7 +127,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'ComplexPaymentComponent_Cpn'
+      modalId: ModalIds.COMPLEX
     }).subscribe(result => {
       if (!result) {
         this.storage.removePaymentModeCode();

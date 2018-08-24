@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, AlertService, Modal, Logger, SpinnerService } from '../../../core';
 import { PagerService, OrderService, MessageService, SearchService, ReceiptService } from '../../../service';
-import { Pagination, OrderEntry, OrderHistoryList } from '../../../data';
+import { Pagination, OrderEntry, OrderHistoryList, ModalIds } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 
@@ -314,7 +314,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'ECPCONFIRM'
+      modalId: ModalIds.ECPCONFIRMEX
     });
   }
 
@@ -333,7 +333,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'ECPCONFIRM'
+      modalId: ModalIds.ECPCONFIRMOV
     });
   }
 
@@ -349,7 +349,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'ECPCONFIRM'
+      modalId: ModalIds.ECPCONFIRMNO
     });
   }
 

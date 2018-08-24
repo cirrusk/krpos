@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDe
 import { Router } from '@angular/router';
 import { SearchBerComponent } from '../../account/search-ber/search-ber.component';
 import { ModalComponent, ModalService, Modal } from '../../../core';
-import { Accounts } from '../../../data';
+import { Accounts, ModalIds } from '../../../data';
 import { PickupOrderComponent } from '../pickup-order/pickup-order.component';
 
 @Component({
@@ -45,7 +45,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
-        modalId: 'SearchBerComponent'
+        modalId: ModalIds.BERSEARCH
       }
     );
   }
@@ -114,7 +114,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
-        modalId: 'PickupOrderComponent'
+        modalId: ModalIds.PICKUP
       }
     );
   }
@@ -133,7 +133,7 @@ export class EtcOrderComponent extends ModalComponent implements OnInit, OnDestr
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',
         closeByClickOutside: false,
-        modalId: 'PickupOrderComponent'
+        modalId: ModalIds.INSTALL
       }
     );
   }

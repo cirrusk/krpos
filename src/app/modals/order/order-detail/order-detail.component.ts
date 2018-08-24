@@ -1,11 +1,10 @@
-import { PaymentService } from './../../../service/payment/payment.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../core';
-import { OrderService, ReceiptService, MessageService } from '../../../service';
+import { OrderService, ReceiptService, MessageService, PaymentService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 
@@ -99,7 +98,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       callerData: { orderInfo: this.orderInfo },
       closeByClickOutside: false,
       closeByEnter: false,
-      modalId: 'CancelOrderComponent'
+      modalId: ModalIds.CANCEL
     }
     ).subscribe(result => {
       if (result.cancelFlag) {
@@ -122,7 +121,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       closeByClickOutside: false,
       closeByEnter: false,
       closeByEscape: false,
-      modalId: 'CancelOrderComponent'
+      modalId: ModalIds.REORDER
     }
     ).subscribe(
       result => {
@@ -145,7 +144,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       closeByClickOutside: false,
       closeByEnter: false,
       closeByEscape: false,
-      modalId: 'CancelEcpPrintComponent'
+      modalId: ModalIds.CANCELECP
     }
     ).subscribe(
       result => {

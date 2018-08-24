@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, Modal, StorageService } from '../../core';
 import { BatchService } from '../../service';
+import { ModalIds } from '../../data';
 
 /**
  * 로그아웃 팝업 화면
@@ -71,7 +72,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
           message: posmsg,
           actionButtonLabel: '계속',
           closeButtonLabel: '취소',
-          modalId: 'ENDWORK'
+          modalId: ModalIds.ENDWORK
         }
       ).subscribe(
         result => {
@@ -88,7 +89,7 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
                   actionButtonLabel: '확인',
                   closeButtonLabel: '취소',
                   closeByClickOutside: false,
-                  modalId: 'ENDWORK_LAST'
+                  modalId: ModalIds.ENDWORKLAST
                 });
               });
           } else {

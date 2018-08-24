@@ -8,7 +8,7 @@ import {
 } from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
-import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering, ReceiptInfoData } from '../../../data';
+import { Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering, ReceiptInfoData, ModalIds } from '../../../data';
 import { ReceiptService, PaymentService, MessageService } from '../../../service';
 import { InfoBroker } from '../../../broker';
 import { Utils } from '../../../core/utils';
@@ -268,7 +268,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.modal.openModalByComponent(CashReceiptComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
       closeByClickOutside: false,
-      modalId: 'CashReceiptComponent',
+      modalId: ModalIds.CASHRECEIPT,
       paymentType: 'c'
     }).subscribe(result => {
       if (result && result === '200') {

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService } from '../../../core';
-import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode } from '../../../data';
+import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -178,7 +178,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
-      modalId: 'CompletePaymentComponent',
+      modalId: ModalIds.COMPLETE,
       paymentType: 'c'
     });
   }
@@ -376,12 +376,18 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }
   }
 
+  // 이벤트 리스닝이므로 모달 이벤트와 쫑난다.
+  // 반드시 컴포넌트의 모달 아이디 체크를 해야함.
+  // 가급적 모달 컴포넌트의 모달 아이디는 변경하지 않아야함.
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ESCAPE) {
-      this.close();
+    const latestmodalid = this.storage.getLatestModalId();
+    if (latestmodalid === 'CpCxComponent') {
+      if (event.keyCode === KeyCode.ESCAPE) {
+        this.close();
+      }
     }
   }
 

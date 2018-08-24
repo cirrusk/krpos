@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, AlertService, ModalService, Logger, Modal } from '../../../core';
 import { Utils } from '../../../core/utils';
-import { AccountList } from '../../../data';
+import { AccountList, ModalIds } from '../../../data';
 import { AccountService, MessageService } from '../../../service';
 
 @Component({
@@ -82,7 +82,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
           closeButtonLabel: '취소',
           closeByClickOutside: false,
           closeByEnter: true,
-          modalId: 'AGREE',
+          modalId: ModalIds.AGREE,
           beforeCloseCallback : function () {
             if (this.isEnter) {
               this.result = this.isEnter;

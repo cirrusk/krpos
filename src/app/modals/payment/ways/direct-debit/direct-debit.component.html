@@ -19,7 +19,7 @@
                         <tr>
                             <th scope="row">결제금액</th>
                             <td>
-                                <input #paid type="number" class="w110 ar" title="결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="nextStep()"> 원
+                                <input #paid type="text" class="w110 ar" posOnlyNumber="true" title="결제금액" (keyup)="paidCal(paid.value)" (keydown.enter)="nextStep()"> 원
                             </td>
                         </tr>
                         <tr>

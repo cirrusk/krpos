@@ -1,12 +1,11 @@
-import { PagerService } from './../../../service/common/pager.service';
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
 import { ModalComponent, ModalService, Modal, Logger, AlertService } from '../../../core';
-import { OrderService, MessageService, ReceiptService } from '../../../service';
-import { OrderHistoryList, OrderHistory, OrderEntry, Pagination } from '../../../data';
-import { Order, OrderList } from '../../../data/models/order/order';
+import { OrderService, MessageService, ReceiptService, PagerService } from '../../../service';
+import { OrderHistoryList, OrderHistory, OrderEntry, Pagination, ModalIds } from '../../../data';
+import { OrderList } from '../../../data/models/order/order';
 import { Utils } from '../../../core/utils';
 
 @Component({
@@ -284,7 +283,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           callerData: { orderList: this.targetList , orderTypeName: this.orderTypeName },
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
-          modalId: 'EcpConfirmComponent'
+          modalId: ModalIds.ECPCONFIRM
         }
       );
     } else {

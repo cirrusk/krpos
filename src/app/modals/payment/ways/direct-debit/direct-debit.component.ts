@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
 import {
-  PaymentCapture, Accounts, BankTypes, StatusDisplay, KeyCode, AmwayExtendedOrdering
+  PaymentCapture, Accounts, BankTypes, StatusDisplay, KeyCode, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
 import { ReceiptService, MessageService, PaymentService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
@@ -197,7 +197,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'CompletePaymentComponent',
+      modalId: ModalIds.COMPLETE,
       paymentType: 'c'
     });
   }

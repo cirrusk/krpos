@@ -9,7 +9,7 @@ import {
   StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService
 } from '../../../../core';
 import {
-  KeyCode, PaymentCapture, Accounts, StatusDisplay, AmwayExtendedOrdering
+  KeyCode, PaymentCapture, Accounts, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -136,7 +136,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
       },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'CompletePaymentComponent',
+      modalId: ModalIds.COMPLETE,
       paymentType: 'c'
     });
   }

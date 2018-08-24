@@ -11,6 +11,7 @@ import { BatchService, CartService, MessageService, TerminalService } from '../.
 import { BatchInfo, LockType, TerminalInfo } from '../../data';
 
 import { Utils } from '../../core/utils';
+import { ModalIds } from '../../data/models/common/modal-ids';
 
 /**
  * 공통 헤더 영역
@@ -147,7 +148,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             message: `QZ Tray가 (<em class="fc_red">비정상</em>)입니다.<br>QZ Tray를 확인하고 실행해주시기 바랍니다.`,
             closeButtonLabel: '닫기',
             closeByEnter: true,
-            modalId: 'QZSTATUS'
+            modalId: ModalIds.QZ
           });
           if (this.timer_id !== undefined) {
             clearTimeout(this.timer_id);
@@ -297,7 +298,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.modal.openModalByComponent(LoginComponent, {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
-      modalId: 'LoginComponent'
+      modalId: ModalIds.LOGIN
     }).subscribe(result => {
       if (result) {
         this.info.sendInfo('swk', { message: result });
@@ -320,7 +321,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.modal.openModalByComponent(LogoutComponent, {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
-      modalId: 'LogoutComponent'
+      modalId: ModalIds.LOGOUT
     }).subscribe(result => {
       if (!result) {
         this.storage.setScreenLockType(LockType.INIT);
@@ -361,7 +362,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'PasswordComponent'
+      modalId: ModalIds.PWD
     }).subscribe((result) => {
       if (result) {
         this.storage.removeScreenLock();
@@ -403,7 +404,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
               closeByEnter: false,
               closeByEscape: false,
               closeByClickOutside: false,
-              modalId: 'BATCH_CHECK'
+              modalId: ModalIds.BATCH
             }).subscribe(() => { // 무조건 로직을 태워서 배치를 삭제해야 하므로 조건 체크 불필요.
               this.logger.set('header.component', `end existing batch, batch no : ${result.batchNo}`).debug();
               this.batchsubscription = this.batch.endBatch(result.batchNo).subscribe(data => {

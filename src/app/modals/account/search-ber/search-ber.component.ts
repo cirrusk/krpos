@@ -4,6 +4,7 @@ import { ModalComponent, ModalService, Logger, AlertService, StorageService, Mod
 import { SearchService, MessageService } from '../../../service';
 import { BerData } from '../../../data/models/common/ber-result';
 import { Utils } from '../../../core/utils';
+import { ModalIds } from '../../../data';
 
 @Component({
   selector: 'pos-search-ber',
@@ -14,7 +15,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   berSeachMarker: number;
   berList: BerData[];
   private aboNum: string;
-  private activeNum: number;                 // 선택 로우 번호
+  activeNum: number;                 // 선택 로우 번호
   private bersubscription: Subscription;
   @ViewChild('inputSearchBer') inputSearchBer: ElementRef;
   constructor(protected modalService: ModalService,
@@ -91,7 +92,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
           closeByClickOutside: false,
-          modalId: 'CancelBer'
+          modalId: ModalIds.CANCELBER
         }).subscribe(res => {
           if (res) {
             this.storage.removeBer();

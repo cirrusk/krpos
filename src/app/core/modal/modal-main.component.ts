@@ -95,9 +95,9 @@ export class ModalMainComponent {
     const latestmodalid = this.storage.getLatestModalId();
     if ((this.content.closeByEnter && event.keyCode === KeyCode.ENTER) ||
       (this.content.closeByEscape && event.keyCode === KeyCode.ESCAPE)) {
-        if (event.keyCode === KeyCode.ENTER) {
-          this.content.isEnter = true;
-        }
+      if (event.keyCode === KeyCode.ENTER) {
+        this.content.isEnter = true;
+      }
       if (modalid && latestmodalid) { // 모달 찾는 값들이 있어야만 처리
         if (modalid === latestmodalid) { // session 의 마지막 모달 아이디와 전송한 모달 아이디가 같을 경우
           // this.storage.removeLatestModalId();

@@ -5,7 +5,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { PaymentService, ReceiptService, MessageService } from '../../../../service';
 import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
 import {
-  KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash
+  KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
 } from '../../../../data';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
@@ -187,7 +187,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'CompletePaymentComponent',
+      modalId: ModalIds.COMPLETE,
       paymentType: 'c'
     });
   }

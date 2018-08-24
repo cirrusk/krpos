@@ -10,6 +10,7 @@ import { Utils } from '../../../core/utils';
 import { CartInfo } from './../../../data/models/order/cart-info';
 import { SerialComponent } from '../../scan/serial/serial.component';
 import { MessageService } from '../../../service';
+import { ModalIds } from '../../../data';
 
 @Component({
   selector: 'pos-search-product',
@@ -193,7 +194,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
         this.modal.openModalByComponent(SerialComponent, {
           callerData: { productInfo: product },
           closeByClickOutside: false,
-          modalId: 'SerialComponent_SR'
+          modalId: ModalIds.SERIAL
         }).subscribe(data => {
           // 검색팝업이 닫힐때 SERIAL 받기(cart-list.component)
           if (data) {

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
 import { BatchService, MessageService } from '../service';
 import { InfoBroker } from '../broker';
-import { AccessToken, LockType } from '../data';
+import { AccessToken, LockType, ModalIds } from '../data';
 import { Utils } from '../core/utils';
 
 @Component({
@@ -135,7 +135,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           actionButtonLabel: btn,
           closeButtonLabel: '취소',
           closeByClickOutside: false,
-          modalId: 'STOPSHIFT'
+          modalId: ModalIds.STOPSHIFT
         }
       ).subscribe(result => {
         if (result) {
@@ -150,7 +150,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 actionButtonLabel: '확인',
                 closeButtonLabel: '취소',
                 closeByClickOutside: false,
-                modalId: 'STOPSHIFT_LAST'
+                modalId: ModalIds.STOPSHIFTEND
               });
             });
         }
@@ -190,7 +190,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         actionButtonLabel: btn,
         closeButtonLabel: '취소',
         closeByClickOutside: false,
-        modalId: 'POSEND'
+        modalId: ModalIds.POSEND
       }
     ).subscribe(
       result => {
@@ -207,7 +207,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                   actionButtonLabel: '확인',
                   closeButtonLabel: '취소',
                   closeByClickOutside: false,
-                  modalId: 'POSEND_LAST'
+                  modalId: ModalIds.POSENDLAST
                 }).subscribe(ret => {
                   if (ret) {
                     this.storage.logout();

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { ClientAccountComponent } from '../../modals';
-import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, BerData, PaymentView } from '../../data';
+import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, PaymentView, ModalIds } from '../../data';
 import { PagerService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
@@ -63,7 +63,7 @@ export class ClientComponent implements OnInit, OnDestroy {
             if (result.value === 'Y') {
               this.modal.openModalByComponent(ClientAccountComponent,
                 {
-                  modalId: 'ClientAccountComponent_CLIENT'
+                  modalId: ModalIds.CLIENT
                 }
               ).subscribe(() => {
                 this.storage.removeLocalItem('nc');

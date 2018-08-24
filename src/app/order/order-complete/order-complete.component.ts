@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType } from '../../data';
+import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType, ModalIds } from '../../data';
 import { MessageService, OrderService } from '../../service';
 import { Modal, Logger, AlertService } from '../../core';
 import { Utils } from '../../core/utils';
@@ -107,7 +107,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         callerData: { orderInfo: this.orderHistoryList.orders[existedIdx] },
         actionButtonLabel: '선택',
         closeButtonLabel: '취소',
-        modalId: 'OrderDetailComponent'
+        modalId: ModalIds.ORDERDETAIL
       }
       ).subscribe(result => {
         if (result) {

@@ -7,7 +7,7 @@ import {
   CancelCartComponent,
   SearchBerComponent
 } from '../../modals';
-import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType } from '../../data';
+import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, ModalIds } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
@@ -176,7 +176,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(CouponComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
-      modalId: 'CouponComponent'
+      modalId: ModalIds.COUPON
     });
   }
 
@@ -188,7 +188,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
       closeByEscape: false,
-      modalId: 'ComplexPaymentComponent_Od'
+      modalId: ModalIds.COMPLEX
     }).subscribe(result => {
       this.posPayReset.emit({ reset: true });
       if (!result) {
@@ -212,7 +212,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(SearchAccountComponent, {
       closeByClickOutside: false,
       orderType: OrderType.GROUP,
-      modalId: 'SearchAccountComponent'
+      modalId: ModalIds.ACCOUNT
     }).subscribe(result => {
       if (result) {
         this.orderType = OrderType.GROUP;
@@ -232,7 +232,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       title: 'ECP픽업 주문리스트',
       callerData: { searchType: 'p' },
       closeByClickOutside: true,
-      modalId: 'PickupOrderComponent'
+      modalId: ModalIds.PICKUP
     });
   }
 
@@ -252,7 +252,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: false,
-      modalId: 'SearchBerComponent'
+      modalId: ModalIds.BERSEARCH
     }).subscribe(result => {
       if (result) {
         this.posBer.emit({ ber: result });
@@ -281,7 +281,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
       closeByClickOutside: true,
-      modalId: 'CancelCartComponent'
+      modalId: ModalIds.CANCELCART
     }).subscribe(result => {
       if (result) {
         this.isABO = false;
@@ -298,7 +298,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     if (!this.hasAccount) { return; }
     this.modal.openModalByComponent(PromotionOrderComponent, {
       closeByClickOutside: false,
-      modalId: 'PromotionOrderComponent'
+      modalId: ModalIds.PROMOTION
     }).subscribe(result => {
       if (result) {
         this.posPromotion.emit({ product: result });
@@ -319,7 +319,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(EtcOrderComponent, {
       callerData: { accountInfo: this.accountInfo },
       closeByClickOutside: false,
-      modalId: 'EtcOrderComponent'
+      modalId: ModalIds.ETC
     }).subscribe(result => {
       if (result && result === 'pyt') {
         this.posPytoCafe.emit({ pytocafe: true });
