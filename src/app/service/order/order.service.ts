@@ -192,11 +192,12 @@ export class OrderService {
    * @param {string} userid 회원 아이디
    * @param {string} ordercode 주문번호
    */
-  cancelReceipt(userid: string, ordercode: string) {
+  cancelReceipt(userid: string, ordercode: string): Observable<HttpResponseBase> {
     const pathvariables = { userId: userid, orderCode: ordercode };
-    const param = { fields: 'DEFAULT' };
-    const data = new HttpData('cancelReceipt', pathvariables, null, param, 'json');
-    return this.api.post(data);
+    const apiURL = this.config.getApiUrl('cancelReceipt', pathvariables);
+    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
+    return this.httpClient.post<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response'} )
+      .map(data => data as HttpResponseBase);
   }
 
   /**

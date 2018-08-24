@@ -229,7 +229,27 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (this.orderType === OrderType.NORMAL) {
             this.removeCart();
           } else {
-            this.removeGroupCart();
+            // this.modal.openConfirm({
+            //   title: '확인',
+            //   message: `Sub ABO를 모두 삭제할 경우 일반주문으로 변경됩니다. 계속 진행하시겠습니까?`,
+            //   modalAddClass: 'pop_s',
+            //   actionButtonLabel: '확인',
+            //   closeButtonLabel: '취소',
+            //   closeByClickOutside: false,
+            //   closeByEnter: true,
+            //   modalId: 'delCartConfirm',
+            //   beforeCloseCallback : function () {
+            //     if (this.isEnter) {
+            //       this.result = this.isEnter;
+            //     }
+            //   }
+            // }).subscribe(
+            //   isEnter => {
+            //     if (isEnter) {
+                  this.removeGroupCart();
+            //     }
+            //   }
+            // );
           }
         }
       }
@@ -776,7 +796,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         // this.storage.setCustomer(this.accountInfo);
         this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
         this.cartInfo = groupInfo.cartInfo;
-        this.sendRightMenu(ModelType.CART, true);
+        this.sendRightMenu(ModelType.CART, true, this.cartInfo);
         this.amwayExtendedOrdering = groupInfo.amwayExtendedOrdering;
 
         this.copyGroupCartEntries(groupOrderList, this.amwayExtendedOrdering);
@@ -1061,7 +1081,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.cartInfoSubscription = this.cartService.createCartInfo(uid, accountId, tnm, cartType).subscribe(
       cartResult => {
         this.cartInfo = cartResult;
-        this.sendRightMenu(ModelType.CART, true);
+        this.sendRightMenu(ModelType.CART, true, this.cartInfo);
         // 그룹 결제일 경우 그룹생성
         if (this.orderType === OrderType.GROUP) {
           let strUserId = '';

@@ -29,10 +29,8 @@ export class CancelEcpPrintComponent extends ModalComponent implements OnInit {
    */
   cancelEcpPrint() {
     this.orderService.cancelReceipt(this.orderInfo.user.uid, this.orderInfo.code).subscribe(
-      result => {
-        if (result) {
-          this.close();
-        }
+      () => {
+        this.close();
       },
       error => {
         const errdata = Utils.getError(error);
