@@ -425,6 +425,7 @@ export class StorageService implements OnDestroy {
 
   public setPaymentCapture(data: PaymentCapture) {
     this.setSessionItem('paymentcapture', data);
+    this.setSessionItem('paymentprocess', true);
   }
 
   public getPaymentCapture(): PaymentCapture {
@@ -433,6 +434,14 @@ export class StorageService implements OnDestroy {
 
   public removePaymentCapture() {
     this.removeSessionItem('paymentcapture');
+  }
+
+  public isPaymentProcessing(): boolean {
+    return this.getSessionItem('paymentprocess');
+  }
+
+  public removePaymentProcessing() {
+    return this.removeSessionItem('paymentprocess');
   }
 
   public setLocalBerNumber(data: string) {
