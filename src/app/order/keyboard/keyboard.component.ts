@@ -85,10 +85,6 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.keyMenuAction.emit({ action: 'cash'});
   }
 
-  protected doCheque(evt: any) {
-    this.keyMenuAction.emit({ action: 'cheque'});
-  }
-
   protected doMediator(evt: any) {
     this.keyMenuAction.emit({ action: 'mediator'});
   }

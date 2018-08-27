@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ChecksComponent } from '../checks/checks.component';
 import { MessageService, ReceiptService, PaymentService } from '../../../../service';
-import { ModalComponent, ModalService, Modal, StorageService, Logger } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService, Logger, KeyboardService, KeyCommand } from '../../../../core';
 import {
   Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
@@ -37,6 +37,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private paymentcapture: PaymentCapture;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private paymentsubscription: Subscription;
+  private keyboardsubscription: Subscription;
   @ViewChild('paid') private paid: ElementRef;         // 받은금액
   constructor(protected modalService: ModalService,
     private message: MessageService,
@@ -44,6 +45,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private payment: PaymentService,
     private receipt: ReceiptService,
     private storage: StorageService,
+    private keyboard: KeyboardService,
+    private logger: Logger,
     private info: InfoBroker) {
     super(modalService);
     this.finishStatus = null;
@@ -55,11 +58,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     this.loadPayment();
   }
 
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     this.receipt.dispose();
   }
 
@@ -256,4 +263,16 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected doCheque(evt: any) {
+    this.searchCheque();
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] function!`).debug();
+      this[command.name](command.ev);
+    } catch (e) {
+      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+    }
+  }
 }
