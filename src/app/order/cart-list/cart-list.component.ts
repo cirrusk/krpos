@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -132,7 +133,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     private config: Config,
     private printerService: PrinterService,
     private accountService: AccountService,
-    private logger: Logger) {
+    private logger: Logger,
+    private router: Router) {
     this.cartListCount = this.config.getConfig('cartListCount');
     this.domain = this.config.getConfig('apiDomain');
     this.init();
@@ -521,6 +523,16 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 사유 : 이미 Add to Cart 한 상품에 대해서 수량 증/감에 따른 Serial 처리 불가
    */
   callUpdateItemQty() {
+    if (this.accountInfo === null) {
+      this.alert.warn({ message: this.message.get('searchAccount'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
+      return;
+    }
+    if (this.cartInfo.code === undefined) {
+      this.alert.warn({ message: this.message.get('searchProduct'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
+      return;
+    }
     if (this.selectedCartNum === -1) {
       this.alert.warn({ message: this.message.get('selectProductUpdate') });
     } else {
@@ -901,6 +913,9 @@ export class CartListComponent implements OnInit, OnDestroy {
                 if (errdata) {
                   if (errdata.type === 'InvalidTokenError') {
                     this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+                    this.storage.removeTokenInfo();
+                    this.storage.removeBatchInfo();
+                    this.router.navigate(['/']);
                   } else if (errdata.type === 'InvalidDmsError') {
                     this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   }
@@ -917,6 +932,17 @@ export class CartListComponent implements OnInit, OnDestroy {
       },
       error => {
         this.logger.set('cart.list.component', `${error}`).error();
+        if (error) {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            if (errdata.type === 'InvalidTokenError') { // Token 이 없을 경우 세션 초기화 하고 초기 화면으로 이동
+              this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+              this.storage.removeTokenInfo();
+              this.storage.removeBatchInfo();
+              this.router.navigate(['/']);
+            }
+          }
+        }
       });
   }
 
