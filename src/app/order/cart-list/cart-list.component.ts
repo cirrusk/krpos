@@ -1331,7 +1331,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       const index = this.cartList.findIndex(function (obj) {
         return obj.product.code === code;
       });
-
       this.removeEntrySubscription = this.cartService.deleteCartEntries(this.cartInfo.user.uid,
         cartId,
         this.cartList[index].entryNumber).subscribe(
@@ -2103,7 +2102,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   private deleteByEntry(event: any) {
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
-      if (event.target.tagName === 'INPUT') { return; }
       if (this.selectedCartNum === -1) {
         this.alert.warn({ message: this.message.get('selectProductDelete') });
       } else {
