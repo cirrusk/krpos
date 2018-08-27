@@ -25,6 +25,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   checktype: number;
   finishStatus: string;
   apprmessage: string;
+  private addPopupType: string;
   private orderInfo: Order;
   private cartInfo: Cart;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
@@ -49,6 +50,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
+    this.addPopupType = this.callerData.addPopupType;
     this.searchCoupons(0);
     // 이미 장바구니에 적용된 경우 CART를 새로 구성해야 쿠폰 재설정 가능
     this.alertsubscription = this.alert.alertState.subscribe(state => {
@@ -124,15 +126,19 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   openComplexPayment() {
     this.close();
     this.modal.openModalByComponent(ComplexPaymentComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering },
+      callerData: {
+        accountInfo: this.accountInfo, cartInfo: this.cartInfo,
+        paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering,
+        addPopupType: this.addPopupType
+      },
       closeByClickOutside: false,
       closeByEscape: false,
       modalId: ModalIds.COMPLEX
     }).subscribe(result => {
       if (!result) {
         this.storage.removePaymentModeCode();
-        this.storage.removePay();
         this.storage.removePaymentCapture();
+        this.storage.removePay();
       }
     });
   }

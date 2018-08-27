@@ -125,6 +125,26 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * 이미 해당 모달이 떠있는지 체크
+   */
+  public alreadyOpenModal(modalid: string) {
+    let rtn = false;
+    const modals = this.getSessionItem('latestModalId');
+    if (modals) {
+      modals.forEach(modal => {
+        if (modal === modalid) {
+          rtn = true;
+        }
+      });
+    }
+    return rtn;
+  }
+
+  public getAllModalIds(): Array<string> {
+    return this.getSessionItem('latestModalId');
+  }
+
+  /**
    * 모달 팝업을 띄울때
    * modal-main.component.ts 에서 마지막 모달 띄운 id 를 가져와서
    * 키 이벤트(HostListner) 에서 해당 모달만 이벤트 처리되도록 함.

@@ -37,6 +37,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private paymentcapture: PaymentCapture;
   private paymentModes: Map<string, string>;
   private custname: string;
+  private addPopupType: string;
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService,
     private paymentService: PaymentService,
@@ -58,6 +59,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (this.callerData.paymentCapture) {
       this.paymentcapture = this.callerData.paymentCapture;
     }
+    this.addPopupType = this.callerData.addPopupType;
     if (this.accountInfo && this.accountInfo.balance) {
       this.point = this.accountInfo.balance[0].amount;
       this.recash = this.accountInfo.balance[1].amount;
@@ -65,15 +67,20 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.logger.set('complex.payment.component', Utils.stringify(this.paymentcapture)).debug();
     this.cmplsubscription = this.info.getInfo().subscribe(
       result => {
-        if (result !== null && result.type === 'orderClear' && result.data === 'clear') { // 복합결제 완료되면 복합결제 팝업 닫기
-          this.close();
+        if (result != null) {
+          if (result.type === 'orderClear' && result.data === 'clear') { // 복합결제 완료되면 복합결제 팝업 닫기
+            this.close();
+          } else if (result.type === 'popup') {
+            const ptype = result.data;
+            this.popupPayment(ptype);
+          }
         }
       }
     );
 
-    this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
     this.popupList.push(0);
     this.custname = this.accountInfo.accountTypeCode.toUpperCase() === MemberType.ABO ? this.accountInfo.name : this.accountInfo.parties[0].name;
+    this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
   }
 
   init() {
@@ -92,14 +99,22 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   creditCard(evt: any) { // creditcard
-    this.setSelected(evt, 0, 'creditcard');
+    if (this.addPopupType === 'card') {
+      this.setSelectedById(this.addPopupType, 0, 'creditcard');
+    } else {
+      this.setSelected(evt, 0, 'creditcard');
+    }
     if (this.enableMenu.indexOf('creditcard') > -1) {
       this.selectPopup(ModalIds.CREDIT, CreditCardComponent, null, 'creditcard');
     }
   }
 
   icCard(evt: any) { // cashiccard
-    this.setSelected(evt, 1, 'cashiccard');
+    if (this.addPopupType === 'ic') {
+      this.setSelectedById(this.addPopupType, 1, 'cashiccard');
+    } else {
+      this.setSelected(evt, 1, 'cashiccard');
+    }
     if (this.enableMenu.indexOf('cashiccard') > -1) {
       this.selectPopup(ModalIds.IC, IcCardComponent, null, 'cashiccard');
     }
@@ -110,14 +125,20 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param evt 이벤트
    */
   amwayPoint(evt: any) { // point
-    this.setSelected(evt, 2, 'point');
-    if (this.point <= 0) {
-      this.alert.show({ message: this.message.get('no.point', this.custname) });
-      return;
-    }
-    if (this.enableMenu.indexOf('point') > -1) {
-      // sprint 6차로 주석처리
-      this.selectPopup(ModalIds.POINT, PointComponent, 'a', 'point');
+    if (this.accountInfo.accountTypeCode === MemberType.ABO) {
+      if (this.addPopupType === 'apoint') {
+        this.setSelectedById(this.addPopupType, 2, 'point');
+      } else {
+        this.setSelected(evt, 2, 'point');
+      }
+      if (this.point <= 0) {
+        this.alert.show({ message: this.message.get('no.point', this.custname) });
+        return;
+      }
+      if (this.enableMenu.indexOf('point') > -1) {
+        // sprint 6차로 주석처리
+        this.selectPopup(ModalIds.POINT, PointComponent, 'a', 'point');
+      }
     }
   }
 
@@ -126,19 +147,36 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param evt 이벤트
    */
   memberPoint(evt: any) { // point
-    this.setSelected(evt, 3, 'point');
-    if (this.point <= 0) {
-      this.alert.show({ message: this.message.get('no.point', this.custname) });
-      return;
-    }
-    if (this.enableMenu.indexOf('point') > -1) {
-      // sprint 6차로 주석처리
-      this.selectPopup(ModalIds.POINT, PointComponent, 'm', 'point');
+    if (this.accountInfo.accountTypeCode === MemberType.MEMBER) {
+      if (this.addPopupType === 'mpoint') {
+        this.setSelectedById(this.addPopupType, 3, 'point');
+      } else {
+        this.setSelected(evt, 3, 'point');
+      }
+      if (this.point <= 0) {
+        this.alert.show({ message: this.message.get('no.point', this.custname) });
+        return;
+      }
+      if (this.enableMenu.indexOf('point') > -1) {
+        // sprint 6차로 주석처리
+        this.selectPopup(ModalIds.POINT, PointComponent, 'm', 'point');
+      }
     }
   }
 
+  /**
+   * 현금 결제
+   *
+   * 키이벤트로 접근시 addPopupType이 넘어옴.
+   *
+   * @param evt 이벤트
+   */
   cashPayment(evt: any) { // cash
-    this.setSelected(evt, 4, 'cash');
+    if (this.addPopupType === 'cash') {
+      this.setSelectedById(this.addPopupType, 4, 'cash');
+    } else {
+      this.setSelected(evt, 4, 'cash');
+    }
     if (this.enableMenu.indexOf('cash') > -1) {
       this.selectPopup(ModalIds.CASH, CashComponent, null, 'cash');
     }
@@ -149,14 +187,25 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param evt 이벤트
    */
   checkPayment(evt: any) { // cheque
-    this.setSelected(evt, 5, 'cheque');
-    if (this.enableMenu.indexOf('cheque') > -1) {
-      this.selectPopup(ModalIds.CHEQUE, CashComponent, null, 'cheque');
+    const cashmodal = this.storage.getLatestModalId();
+    if (cashmodal && cashmodal === ModalIds.CASH) {
+      if (this.addPopupType === 'cheque') {
+        this.setSelectedById(this.addPopupType, 5, 'cheque');
+      } else {
+        this.setSelected(evt, 5, 'cheque');
+      }
+      if (this.enableMenu.indexOf('cheque') > -1) {
+        this.selectPopup(ModalIds.CHEQUE, CashComponent, null, 'cheque');
+      }
     }
   }
 
   directDebitPayment(evt: any) { // directdebit
-    this.setSelected(evt, 6, 'directdebit');
+    if (this.addPopupType === 'debit') {
+      this.setSelectedById(this.addPopupType, 6, 'directdebit');
+    } else {
+      this.setSelected(evt, 6, 'directdebit');
+    }
     if (this.enableMenu.indexOf('directdebit') > -1) {
       this.selectPopup(ModalIds.DEBIT, DirectDebitComponent, null, 'directdebit');
     }
@@ -167,7 +216,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.alert.show({ message: this.message.get('no.recash', this.custname) });
       return;
     }
-    this.setSelected(evt, 7, 'arCredit');
+    if (this.addPopupType === 'recash') {
+      this.setSelectedById(this.addPopupType, 7, 'arCredit');
+    } else {
+      this.setSelected(evt, 7, 'arCredit');
+    }
+
     if (this.enableMenu.indexOf('arCredit') > -1) {
       this.selectPopup(ModalIds.RECASH, ReCashComponent, null, 'arCredit');
     }
@@ -303,6 +357,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             // this.paymentModes.forEach((data, key) => {
             //   this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
             // });
+
+            // 추가 팝업이 있을경우 처리
+            this.popupPayment(this.addPopupType);
+
           } else {
             this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
           }
@@ -315,6 +373,38 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
           this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
+  }
+
+  private popupPayment(popupType: string) {
+    // 실결제 팝업까지 떠있을 경우는 진행하지 못하도록 함.
+    const modalids = this.storage.getAllModalIds();
+    if (modalids && modalids.length === 2) {
+      return;
+    }
+    if (popupType) {
+      if (popupType === 'card') {
+        this.creditCard(event);
+      } else if (popupType === 'ic') {
+        this.icCard(event);
+      } else if (popupType === 'debit') {
+        this.directDebitPayment(event);
+      } else if (popupType === 'recash') {
+        this.reCashPayment(event);
+      } else if (popupType === 'cash') {
+        this.cashPayment(event);
+      } else if (popupType === 'cheque') {
+        this.checkPayment(event);
+      } else {
+        if (popupType.endsWith('point')) {
+          if (this.accountInfo.accountTypeCode === MemberType.ABO) {
+            this.amwayPoint(event);
+          }
+          if (this.accountInfo.accountTypeCode === MemberType.MEMBER) {
+            this.memberPoint(event);
+          }
+        }
+      }
+    }
   }
 
   close() {
@@ -355,6 +445,33 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
           this.renderer.addClass(parent, 'on');
           this.renderer.addClass(evt.target, 'on');
+        }
+      }
+    } else {
+      this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+    }
+  }
+
+  private setSelectedById(id: string, num: number, type: string) {
+    const $this = this.paytypes.find(menu => menu.nativeElement.getAttribute('id') === id).nativeElement;
+    if (this.paymentModeListByMain.paymentModes && this.paymentModeListByMain.paymentModes.length > 0) {
+      if (this.enableMenu.length === 0) {
+        const chk = $this.classList.contains('on');
+        const parent = this.renderer.parentNode($this);
+        if (chk) {
+          const index = this.popupList.indexOf(num);
+          this.popupList.splice(index, 1);
+          this.renderer.removeClass(parent, 'on');
+          this.renderer.removeClass($this, 'on');
+        } else {
+          this.popupList.push(num);
+
+          if (this.enableMenu.length < 1) {
+            this.setEnableMenu(type);
+          }
+
+          this.renderer.addClass(parent, 'on');
+          this.renderer.addClass($this, 'on');
         }
       }
     } else {

@@ -1,99 +1,22 @@
 {
   "hotkeys": {
-    "escape": [
-      "escapetest"
-    ],
-    "alt+right": [
-      "alt-right"
-    ],
-    "alt+left": [
-      "alt-left"
-    ],
-    "ctrl+right": [
-      "ctrl-right"
-    ],
-    "ctrl+left": [
-      "ctrl-left"
-    ],
-    "shift+left": [
-      "shift-left"
-    ],
-    "right": [
-      "right"
-    ],
-    "left": [
-      "left"
-    ],
-    "up": [
-      "up"
-    ],
-    "down": [
-      "down"
-    ],
-    "ctrl+shift+d": [
-      "doOpenDrawer"
-    ],
-    "ctrl+shift+x": [
-      "doOrderCancel"
-    ],
-    "ctrl+alt+p": [
-      "doPickUp"
-    ],
-    "shift+pageup": [
-      "searchAccount"
-    ],
-    "shift+pagedown": [
-      "searchProduct"
-    ],
-    "ctrl+shift+u": [
-      "doGroupOrder"
-    ],
-    "shift+right": [
-      "doHold"
-    ],
-    "shift+ins": [
-      "updateQty"
-    ],
-    "shift+del": [
-      "entryDelete"
-    ],
-    "ctrl+up": [
-      "ctrl+up"
-    ],
-    "ctrl+down": [
-      "ctrl+down"
-    ],
-    "pageup": [
-      "pageup"
-    ],
-    "pagedown": [
-      "pagedown"
-    ],
-    "del": [
-      "del"
-    ],
-    "plus": [
-      "plus"
-    ],
-    "/": [
-      "slash"
-    ],
-    "backspace": [
-      "backspace"
-    ],
-    "end": [
-      "end"
-    ],
-    "home": [
-      "home"
-    ],
-    "1": [
-      "number1"
-    ],
-    "ctrl+0": [
-      "number-double-zero"
-    ],
-    "ctrl+r": ["popupCashReceipt"],
-    "tab": ["tab"]
+    "ctrl+alt+r":[ "doCard" ],
+    "ctrl+alt+i": [ "doIc" ],
+    "ctrl+alt+t":[ "doPoint" ],
+    "ctrl+alt+c": [ "doCash" ],
+    "ctrl+alt+d":[ "doDebit" ],
+    "ctrl+alt+e":[ "doRecash" ],
+    "ctrl+alt+p": [ "doPickUp" ],
+    "ctrl+alt+u": [ "doCheque" ],
+    "ctrl+m": [ "doMediator" ],
+    "ctrl+r": [ "popupCashReceipt" ],
+    "ctrl+shift+d": [ "doOpenDrawer" ],
+    "ctrl+shift+x": [ "doOrderCancel" ],
+    "ctrl+shift+u": [ "doGroupOrder" ],
+    "shift+pageup": [ "searchAccount" ],
+    "shift+pagedown": [ "searchProduct" ],
+    "shift+right": [ "doHold" ],
+    "shift+ins": [ "updateQty" ],
+    "shift+del": [ "entryDelete" ]
   }
 }

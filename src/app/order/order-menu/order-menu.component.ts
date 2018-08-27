@@ -11,7 +11,7 @@ import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, Moda
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
-import { SearchAccountBroker } from '../../broker';
+import { SearchAccountBroker, InfoBroker } from '../../broker';
 import { PaymentService } from '../../service';
 
 /**
@@ -70,6 +70,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     private payment: PaymentService,
     private logger: Logger,
     private searchAccountBroker: SearchAccountBroker,
+    private infobroker: InfoBroker,
     private renderer: Renderer2
   ) {
     this.init();
@@ -157,7 +158,44 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       } else if (action === 'grouporder') {
         this.groupPayment(event);
         this.checkClassById('groupPayment');
+      } else if (action === 'mediator') {
+        this.mediateOrder(event);
+        this.checkClassById('mediateOrder');
+      } else {
+        this.checkPopupPayment(action);
       }
+
+    }
+  }
+
+  private checkPopupPayment(action: string) {
+    if (action === 'card') {
+      this.complexAndPayPopup('card');
+    } else if (action === 'ic') {
+      this.complexAndPayPopup('ic');
+    } else if (action === 'point') {
+      this.complexAndPayPopup('point');
+    } else if (action === 'debit') {
+      this.complexAndPayPopup('debit');
+    } else if (action === 'recash') {
+      this.complexAndPayPopup('recash');
+    } else if (action === 'cash') {
+      this.complexAndPayPopup('cash');
+    } else if (action === 'cheque') {
+      this.complexAndPayPopup('cheque');
+    }
+  }
+
+  private complexAndPayPopup(addPopupType: string) {
+    if (this.storage.alreadyOpenModal(ModalIds.COMPLEX)) { // 해당 팝업만 띄움
+      this.infobroker.sendInfo('popup', addPopupType);
+    } else {
+      if (addPopupType === 'point') {
+        if (this.accountInfo.accountTypeCode === MemberType.ABO) { addPopupType = 'apoint'; }
+        if (this.accountInfo.accountTypeCode === MemberType.MEMBER) { addPopupType = 'mpoint'; }
+      }
+      this.complexPayment(event, addPopupType);
+      this.checkClassById('complexPayment');
     }
   }
 
@@ -166,7 +204,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
    * @param {any} evt 이벤트
    */
-  complexPayment(evt: any) {
+  complexPayment(evt: any, addPopupType?: string) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     this.checkClass(evt);
     this.posMenu.emit({ type: '통합결제' });
@@ -178,23 +216,23 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         result => {
           const couponlist = result.coupons;
           if (couponlist.length > 0) {
-            this.popupCoupon();
+            this.popupCoupon(addPopupType);
           } else {
-            this.popupPayment();
+            this.popupPayment(addPopupType);
           }
         },
         error => { this.popupPayment(); this.logger.set('order.menu.component', `${error}`).error(); });
     } else {
-      this.popupPayment();
+      this.popupPayment(addPopupType);
     }
   }
 
   /**
    * 쿠폰 팝업
    */
-  private popupCoupon() {
+  private popupCoupon(addPopupType?: string) {
     this.modal.openModalByComponent(CouponComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
       closeByClickOutside: false,
       modalId: ModalIds.COUPON
     });
@@ -203,9 +241,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   /**
    * 결제 팝업
    */
-  private popupPayment() {
+  private popupPayment(addPopupType?: string) {
     this.modal.openModalByComponent(ComplexPaymentComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
+      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
       closeByClickOutside: false,
       closeByEscape: false,
       modalId: ModalIds.COMPLEX
@@ -213,8 +251,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       this.posPayReset.emit({ reset: true });
       if (!result) {
         this.storage.removePaymentModeCode();
-        this.storage.removePay();
         this.storage.removePaymentCapture();
+        this.storage.removePay();
       }
     });
   }
@@ -314,7 +352,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       closeButtonLabel: '취소',
       closeByEnter: true,
       closeByClickOutside: true,
-      beforeCloseCallback : function () {
+      beforeCloseCallback: function () {
         if (this.isEnter) {
           this.result = this.isEnter;
         }
