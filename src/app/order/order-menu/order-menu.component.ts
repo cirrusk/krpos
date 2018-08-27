@@ -146,7 +146,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       const action = data.action;
       if (action === 'pickup') {
         this.pickupOrder(event);
-        this.checkClassByIndex('pickupOrder');
+        this.checkClassById('pickupOrder');
       }
     }
   }
@@ -349,7 +349,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.renderer.addClass(evt.target, 'on');
   }
 
-  private checkClassByIndex(id: string) {
+  private checkClassById(id: string) {
     this.menus.forEach(menu => {
       console.log(menu.nativeElement.getAttribute('id'));
       this.renderer.removeClass(menu.nativeElement, 'on');
