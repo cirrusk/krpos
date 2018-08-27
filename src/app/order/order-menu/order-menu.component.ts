@@ -151,16 +151,15 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     if (data) {
       const action = data.action;
       if (action === 'pickup') {
-        this.pickupOrder(event);
-        this.checkClassById('pickupOrder');
+        this.pickupOrder(event, action);
       } else if (action === 'ordercancel') {
-        this.cancelOrder(event);
+        this.cancelOrder(event, action);
       } else if (action === 'grouporder') {
-        this.groupPayment(event);
-        this.checkClassById('groupPayment');
+        this.groupPayment(event, action);
       } else if (action === 'mediator') {
-        this.mediateOrder(event);
-        this.checkClassById('mediateOrder');
+        this.mediateOrder(event, action);
+      } else if (action === 'etc') {
+        this.etcOrder(event, action);
       } else {
         this.checkPopupPayment(action);
       }
@@ -265,8 +264,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    *
    * @param {any} evt 이벤트
    */
-  groupPayment(evt: any) {
-    this.checkClass(evt);
+  groupPayment(evt: any, action?: string) {
+    if (action) {
+      const modals = this.storage.getAllModalIds();
+      if (modals && modals.indexOf(ModalIds.ACCOUNT) !== -1) {
+        return;
+      }
+      this.checkClassById('groupPayment');
+    } else {
+      this.checkClass(evt);
+    }
     const modalData = this.storage.getLatestModalId();
     if (modalData != null) {
       this.modal.getModalArray().forEach(m => {
@@ -290,8 +297,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    *
    * @param {any} evt 이벤트
    */
-  pickupOrder(evt: any) {
-    this.checkClass(evt);
+  pickupOrder(evt: any, action?: string) {
+    if (action) {
+      const modals = this.storage.getAllModalIds();
+      if (modals && modals.indexOf(ModalIds.PICKUP) !== -1) {
+        return;
+      }
+      this.checkClassById('pickupOrder');
+    } else {
+      this.checkClass(evt);
+    }
     const modalData = this.storage.getLatestModalId();
     if (modalData != null) {
       this.modal.getModalArray().forEach(m => {
@@ -313,10 +328,18 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    *
    * @param {any} evt 이벤트
    */
-  mediateOrder(evt: any) {
+  mediateOrder(evt: any, action?: string) {
     if (!this.hasAccount || this.orderType === OrderType.GROUP) { return; }
     if (this.accountInfo && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
-    this.checkClass(evt);
+    if (action) {
+      const modals = this.storage.getAllModalIds();
+      if (modals && modals.indexOf(ModalIds.BERSEARCH) !== -1) {
+        return;
+      }
+      this.checkClassById('mediateOrder');
+    } else {
+      this.checkClass(evt);
+    }
     this.modal.openModalByComponent(SearchBerComponent, {
       callerData: { aboNum: this.accountInfo.uid },
       actionButtonLabel: '확인',
@@ -344,9 +367,17 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    *
    * @param {any} evt 이벤트
    */
-  cancelOrder(evt: any) {
+  cancelOrder(evt: any, action?: string) {
     if (!this.hasAccount) { return; }
-    // this.checkClassById('cancelOrder');
+    if (action) {
+      const modals = this.storage.getAllModalIds();
+      if (modals && modals.indexOf(ModalIds.CANCELCART) !== -1) {
+        return;
+      }
+      this.checkClassById('cancelOrder');
+    } else {
+      this.checkClass(evt);
+    }
     this.modal.openModalByComponent(CancelCartComponent, {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
@@ -387,10 +418,18 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    *
    * @param {any} evt 이벤트
    */
-  etcOrder(evt: any) {
+  etcOrder(evt: any, action?: string) {
     // if (!this.hasAccount) { return; }
     if (this.hasProduct && this.hasCart) { return; }
-    this.checkClass(evt);
+    if (action) {
+      const modals = this.storage.getAllModalIds();
+      if (modals && modals.indexOf(ModalIds.ETC) !== -1) {
+        return;
+      }
+      this.checkClassById('etcOrder');
+    } else {
+      this.checkClass(evt);
+    }
     if (!this.hasAccount) { this.accountInfo = null; }
     this.modal.openModalByComponent(EtcOrderComponent, {
       callerData: { accountInfo: this.accountInfo },

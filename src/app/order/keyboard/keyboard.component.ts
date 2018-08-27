@@ -25,72 +25,82 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
-  protected doPickUp() {
+  protected doPickUp(evt: any) {
     this.keyMenuAction.emit({ action: 'pickup' });
   }
 
-  protected entryDelete() {
+  protected entryDelete(evt: any) {
     this.keyCartAction.emit({ action: 'entrydel'});
   }
 
-  protected updateQty() {
+  protected updateQty(evt: any) {
     this.keyCartAction.emit({ action: 'updateqty'});
   }
 
-  protected doHold() {
+  protected doHold(evt: any) {
     this.keyCartAction.emit({ action: 'dohold'});
   }
 
-  protected searchAccount() {
+  protected searchAccount(evt: any) {
     this.keyCartAction.emit({ action: 'searchaccount'});
   }
 
-  protected searchProduct() {
+  protected searchProduct(evt: any) {
     this.keyCartAction.emit({ action: 'searchproduct'});
   }
 
-  protected doOrderCancel() {
+  protected doOrderCancel(evt: any) {
     this.keyMenuAction.emit({ action: 'ordercancel'});
   }
 
-  protected doOpenDrawer() {
+  protected doOpenDrawer(evt: any) {
     this.keyCartAction.emit({ action: 'opendrawer'});
   }
 
-  protected doGroupOrder() {
+  protected doGroupOrder(evt: any) {
     this.keyMenuAction.emit({ action: 'grouporder'});
   }
 
-  protected doCard() {
+  protected doCard(evt: any) {
     this.keyMenuAction.emit({ action: 'card'});
   }
 
-  protected doIc() {
+  protected doIc(evt: any) {
     this.keyMenuAction.emit({ action: 'ic'});
   }
 
-  protected doPoint() {
+  protected doPoint(evt: any) {
     this.keyMenuAction.emit({ action: 'point'});
   }
 
-  protected doDebit() {
+  protected doDebit(evt: any) {
     this.keyMenuAction.emit({ action: 'debit'});
   }
 
-  protected doRecash() {
+  protected doRecash(evt: any) {
     this.keyMenuAction.emit({ action: 'recash'});
   }
 
-  protected doCash() {
+  protected doCash(evt: any) {
     this.keyMenuAction.emit({ action: 'cash'});
   }
 
-  protected doCheque() {
+  protected doCheque(evt: any) {
     this.keyMenuAction.emit({ action: 'cheque'});
   }
 
-  protected doMediator() {
+  protected doMediator(evt: any) {
     this.keyMenuAction.emit({ action: 'mediator'});
+  }
+
+  protected doClearInput(evt: any) {
+    if (evt.target.tagName === 'INPUT') {
+      this.keyCartAction.emit({ action: 'clear'});
+    }
+  }
+
+  protected doEtc(evt: any) {
+    this.keyMenuAction.emit({ action: 'etc'});
   }
 
   /**
@@ -125,7 +135,7 @@ export class KeyboardComponent implements OnInit, OnDestroy {
   private handleKeyboardCommand(command: KeyCommand) {
     try {
       this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] function!`).debug();
-      this[command.name]();
+      this[command.name](command.ev);
       // switch (command.combo) {
       //   case 'ctrl+r': { this[command.name](); } break;
       // }

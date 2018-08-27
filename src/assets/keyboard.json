@@ -1,5 +1,7 @@
 {
   "hotkeys": {
+    "ctrl+del": [ "doClearInput" ],
+    "ctrl+alt+z": ["doEtc" ],
     "ctrl+alt+r":[ "doCard" ],
     "ctrl+alt+i": [ "doIc" ],
     "ctrl+alt+t":[ "doPoint" ],
