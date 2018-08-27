@@ -141,6 +141,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 키보드 이벤트 컴포넌트의 이벤트를 받아 처리
+   *
+   * @param data 키보드 이벤트
+   */
   doAction(data: any) {
     if (data) {
       const action = data.action;
@@ -238,6 +243,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   pickupOrder(evt: any) {
     this.checkClass(evt);
+    const modalData = this.storage.getLatestModalId();
+    if (modalData != null && modalData.length > 0) {
+      this.modal.getModalArray().forEach(m => {
+        this.modal.clearAllModals(m);
+      });
+    }
     this.modal.openModalByComponent(PickupOrderComponent, {
       title: 'ECP픽업 주문리스트',
       callerData: { searchType: 'p' },
@@ -351,7 +362,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   private checkClassById(id: string) {
     this.menus.forEach(menu => {
-      console.log(menu.nativeElement.getAttribute('id'));
       this.renderer.removeClass(menu.nativeElement, 'on');
     });
     const $this = this.menus.find(menu => menu.nativeElement.getAttribute('id') === id).nativeElement;
