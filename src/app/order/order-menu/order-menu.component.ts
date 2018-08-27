@@ -141,6 +141,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     }
   }
 
+  doAction(data: any) {
+    if (data) {
+      const action = data.action;
+      if (action === 'pickup') {
+        this.pickupOrder(event);
+        this.checkClassByIndex('pickupOrder');
+      }
+    }
+  }
+
   /**
    * 통합 결제 팝업
    * 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
@@ -337,6 +347,15 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       this.renderer.removeClass(menu.nativeElement, 'on');
     });
     this.renderer.addClass(evt.target, 'on');
+  }
+
+  private checkClassByIndex(id: string) {
+    this.menus.forEach(menu => {
+      console.log(menu.nativeElement.getAttribute('id'));
+      this.renderer.removeClass(menu.nativeElement, 'on');
+    });
+    const $this = this.menus.find(menu => menu.nativeElement.getAttribute('id') === id).nativeElement;
+    this.renderer.addClass($this, 'on');
   }
 
   /**

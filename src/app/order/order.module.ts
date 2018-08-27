@@ -10,6 +10,7 @@ import { OrderCompleteComponent } from './order-complete/order-complete.componen
 import { AddCartBroker, SearchBroker } from '../broker';
 import { NoticeComponent } from './notice/notice.component';
 import { ClientComponent } from './client/client.component';
+import { KeyboardComponent } from './keyboard/keyboard.component';
 import { PromotionComponent, PromotionItemElementDirective } from './promotion/promotion.component';
 import { PromotionItemDirective } from './promotion/promotion-item.directive';
 import { StripHtmlPipe } from '../core/pipe/strip-html.pipe';
@@ -30,7 +31,8 @@ import { StripHtmlPipe } from '../core/pipe/strip-html.pipe';
     PromotionComponent,
     PromotionItemDirective,
     PromotionItemElementDirective,
-    StripHtmlPipe
+    StripHtmlPipe,
+    KeyboardComponent
   ],
   providers: [AddCartBroker, SearchBroker]
 })

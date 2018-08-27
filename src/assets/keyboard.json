@@ -33,6 +33,9 @@
     "down": [
       "down"
     ],
+    "ctrl+alt+p": [
+      "doPickUp"
+    ],
     "ctrl+up": [
       "ctrl+up"
     ],

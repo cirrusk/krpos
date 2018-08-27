@@ -1,12 +1,12 @@
 <div class="nav">
     <!-- 선택시 class="on" -->
-    <button #menus type="button" (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">통합결제</button>
-    <button #menus type="button" (click)="groupPayment($event)">그룹주문</button>
-    <button #menus type="button" (click)="pickupOrder($event)" [class.disabled]="hasAccount">픽업주문</button>
-    <button #menus type="button" (click)="mediateOrder($event)" [class.disabled]="checkMediateDisable()">중개주문</button>
-    <button #menus type="button" (click)="cancelOrder($event)" [class.disabled]="!hasAccount">주문취소</button>
-    <button #menus type="button" (click)="promotionOrder($event)" [class.disabled]="!hasAccount" class="purple">프로모션 상품</button>
-    <button #menus type="button" (click)="etcOrder($event)" [class.disabled]="hasProduct && hasCart">기타</button>
+    <button #menus type="button" id='complexPayment' (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">통합결제</button>
+    <button #menus type="button" id='groupPayment' (click)="groupPayment($event)">그룹주문</button>
+    <button #menus type="button" id='pickupOrder' (click)="pickupOrder($event)" [class.disabled]="hasAccount">픽업주문</button>
+    <button #menus type="button" id='mediateOrder' (click)="mediateOrder($event)" [class.disabled]="checkMediateDisable()">중개주문</button>
+    <button #menus type="button" id='cancelOrder' (click)="cancelOrder($event)" [class.disabled]="!hasAccount">주문취소</button>
+    <button #menus type="button" id='promotionOrder' (click)="promotionOrder($event)" [class.disabled]="!hasAccount" class="purple">프로모션 상품</button>
+    <button #menus type="button" id='etcOrder' (click)="etcOrder($event)" [class.disabled]="hasProduct && hasCart">기타</button>
 </div>
 <pos-promotion *ngIf="promotionList && promotionList.results.length > 0">
     <ng-container *ngFor="let promotion of promotionList.results;">

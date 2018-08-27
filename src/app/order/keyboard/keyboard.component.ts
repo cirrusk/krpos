@@ -1,0 +1,71 @@
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+
+import { KeyboardService, Logger, KeyCommand } from '../../core';
+
+@Component({
+  selector: 'pos-keyboard',
+  templateUrl: './keyboard.component.html'
+})
+export class KeyboardComponent implements OnInit, OnDestroy {
+
+  private keyboardsubscription: Subscription;
+  @Output() public keyAction: EventEmitter<any> = new EventEmitter<any>();
+  constructor(private keyboard: KeyboardService,
+    private logger: Logger) { }
+
+  ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
+  }
+
+  private doPickUp() {
+    this.keyAction.emit({ action: 'pickup' });
+  }
+
+  /**
+   * 비닐봉투(대)
+   * 비닐봉투(소)
+   * 그룹주문
+   * 보류/보류해제
+   * 픽업주문  ctrl+alt+p
+   * 단품취소
+   * 회원조회
+   * 환전
+   * 상품조회
+   * 주문취소
+   * CLEAR
+   * 수량변경
+   * Enter
+   * 현금
+   * Re-Cash
+   * 신용카드
+   * A포인트
+   * 현금IC
+   * M포인트
+   * 자동이체
+   * 수표조회
+   * ←
+   * ESC
+   * Page Up
+   * Page Down
+   *
+   * @param command 키보드 이벤트 커멘드
+   */
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] function!`).debug();
+      this[command.name]();
+      // switch (command.combo) {
+      //   case 'ctrl+r': { this[command.name](); } break;
+      // }
+    } catch (e) {
+      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+    }
+  }
+}
