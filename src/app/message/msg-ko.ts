@@ -19,6 +19,7 @@ export const LANG_KO_MSGS = {
     'wrongProductCode' : '잘못된 코드 입니다.',
     'receiptComplete' : '영수증 발행이 완료되었습니다.',
     'ecpReceiptComplete' : '픽업 주문 영수증 출력이 완료되었습니다.',
+    'ecpComplete' : '픽업 주문 영수증 출력이 완료되었습니다.',
     'receiptFail' : '영수증 발행이 실패되었습니다.',
     'coupon.already.redeemed': '쿠폰 코드가 이미 사용되었습니다.',
     'coupon.invalid.code.provided': '쿠폰 코드가 유효하지 않습니다',

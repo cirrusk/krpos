@@ -703,7 +703,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
       this.cartInfo = resultData.cartInfo;
       this.sendRightMenu(ModelType.ACCOUNT, true, account);
-      // this.sendRightMenu('all', true);
       this.resCartInfo = resultData.resCartInfo;
       this.addCartModel = resultData.resCartInfo.cartModifications.cartModifications;
       this.addCartModel.forEach(model => {

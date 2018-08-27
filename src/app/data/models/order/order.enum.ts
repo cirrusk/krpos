@@ -45,3 +45,12 @@ export enum SearchMemberType {
     MEMBER = 'M',
     CONSUMER = 'C'
 }
+
+/**
+ * 비회원 등록 타입
+ *  - EASY_PICKUP : 간편선물
+ */
+export enum ConsumerRegister {
+    CONSUMER = 'CONSUMER',
+    EASY_PICKUP = 'EASY_PICKUP'
+}

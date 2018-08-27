@@ -23,6 +23,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   private orderDetailList: OrderList;
   private orderCodes: string;
   private orderTypeName: string;
+  private orderType: string;
 
   entryList: Array<OrderEntry>;
   pager: Pagination;                                     // pagination 정보
@@ -47,6 +48,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     setTimeout(() => { this.barcode.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     if (this.callerData.orderList) {
       this.orderList = this.callerData.orderList;
+      this.orderType = this.callerData.orderType;
       this.orderTypeName = this.callerData.orderTypeName;
       this.getOrderDetail(this.orderList);
     }
@@ -244,12 +246,17 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     } else {
       this.confirmSubscription = this.orderService.confirmPickup(this.orderCodes.slice(1)).subscribe(
         result => {
-          // this.spinner.hide();
-          // 영수증 출력시
-          this.receiptPrint();
+          let message = '';
+          if (this.orderType === 'p') {
+            message = this.messageService.get('ecpComplete');
+          } else {
+            // 영수증 출력시
+            this.receiptPrint();
+            message = this.messageService.get('ecpReceiptComplete');
+          }
           this.alert.info({
-            title: '',
-            message: this.messageService.get('ecpReceiptComplete'),
+            title: 'ECP 컨펌',
+            message: message,
             timer: true,
             interval: 1500
           });
@@ -289,7 +296,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
       setTimeout(() => {
         try {
           this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
-          this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+          // this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
         } catch (e) {
           this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${e}`).error();
           this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });

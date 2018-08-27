@@ -3,8 +3,9 @@ import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, AlertService, ModalService, Logger, Modal } from '../../../core';
 import { Utils } from '../../../core/utils';
-import { AccountList, ModalIds } from '../../../data';
+import { AccountList, ModalIds, ConsumerRegister } from '../../../data';
 import { AccountService, MessageService } from '../../../service';
+import { SignupAccountComponent } from './signup-account/signup-account.component';
 
 @Component({
   selector: 'pos-client-account',
@@ -73,7 +74,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
     if (this.agree) {
       setTimeout(() => {
-        const isAction = undefined;
         this.modal.openConfirm({
           title: '개인정보 수집 및 이용 동의 확인',
           message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
@@ -90,7 +90,27 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
           }
         }).subscribe(
           result => {
-            if (result) { this.createCustomerAccount(); }
+            if (result) {
+              if (this.guser) {
+                this.modal.openModalByComponent(SignupAccountComponent, {
+                  callerData: { },
+                  closeByClickOutside: false,
+                  modalId: ModalIds.SIGNUPACCOUNT
+                }).subscribe(
+                  sponsorNumber => {
+                    console.log(sponsorNumber);
+                    if (sponsorNumber !== '') {
+                      this.sponsorNo = sponsorNumber;
+                      this.createCustomerAccount();
+                    } else {
+                      this.close();
+                    }
+                  }
+                );
+              } else {
+                this.createCustomerAccount();
+              }
+            }
           }
         );
       }, 100);
@@ -101,7 +121,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
    * 신규 소비자 생성
    */
   private createCustomerAccount() {
-    this.registerType = this.guser ? 'EASY_PICKUP' : 'CONSUMER';
+    this.registerType = this.guser ? ConsumerRegister.EASY_PICKUP : ConsumerRegister.CONSUMER;
     this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone, this.sponsorNo).subscribe(
       userInfo => {
         if (userInfo) {

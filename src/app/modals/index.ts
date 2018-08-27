@@ -1,4 +1,5 @@
 export * from './account/client-account/client-account.component';
+export * from './account/client-account/signup-account/signup-account.component';
 export * from './account/search-account/search-account.component';
 export * from './account/search-ber/search-ber.component';
 export * from './login/login.component';

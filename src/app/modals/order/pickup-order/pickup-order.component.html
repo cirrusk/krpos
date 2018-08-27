@@ -22,13 +22,15 @@
             <!-- 검색결과 영역 : 검색 후-->
             <div class="mbinfo_list type04 clearfix">
                 <!-- 왼쪽테이블 -->
-                <div class="tbl_col fl bg_bar">
-                    <!-- 5줄이 넘을 시 노출  -->
-                    <div class="paging" *ngIf="sourceList.pagination && sourceList.pagination.totalResults > 5">
-                        <button type="button" class="ico_comm prev01" [disabled]="sourceList.pagination.currentPage === 0" (click)="setPage(sourceList.pagination.currentPage - 1)">이전</button>
-                        <button type="button" class="ico_comm next01" [disabled]="sourceList.pagination.currentPage === sourceList.pagination.totalPages - 1" (click)="setPage(sourceList.pagination.currentPage + 1)">다음</button>
-                    </div>
-                    <!-- //5줄이 넘을 시 노출  -->
+                <div class="tbl_col fl bg_bar">                    
+                    <!-- 20180827 수정 -->
+                    <span class="btn_wrap" *ngIf="sourceList.pagination && sourceList.pagination.totalResults > PAGE_SIZE">
+                        <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
+                        <a href="javascript:void(0)" class="ico_comm prev03" [class.on]= "sourceList.pagination.currentPage > 0" (click)="setPage(sourceList.pagination.currentPage - 1)">이전</a>
+                        <a href="javascript:void(0)" class="ico_comm next03" [class.on]= "sourceList.pagination.currentPage < sourceList.pagination.totalPages - 1" (click)="setPage(sourceList.pagination.currentPage + 1)">다음</a>
+                        <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
+                    </span>
+                    <!-- //20180827 수정 -->
                     <table>
                         <caption>ABO 주문정보</caption>
                         <colgroup>
@@ -64,12 +66,14 @@
                 <!-- 오른쪽테이블 -->
                 <div class="tbl_col fr bg_bar">
                     <p class="txt" ><strong><span class="fc_red">{{targetUserList.size}}</span>명</strong> ABO의 <strong><span class="fc_red">{{targetList.orders.length}}</span>건</strong>의 주문정보가 선택되었습니다.</p>
-                    <!-- 5줄이 넘을 시 노출 -->
-                    <div class="paging" *ngIf="targetList.orders.length > PAGE_SIZE">
-                        <button type="button" [disabled]="targetListPager.currentPage === targetListPager.startPage" class="ico_comm prev01" (click)="setTargetPage(targetListPager.currentPage - 1, true)">이전</button>
-                        <button type="button" [disabled]="targetListPager.currentPage === targetListPager.endPage" class="ico_comm next01" (click)="setTargetPage(targetListPager.currentPage + 1, true)">다음</button>
-                    </div>
-                     <!-- 5줄이 넘을 시 노출  -->
+                    <!-- 20180827 수정 -->
+                     <span class="btn_wrap" *ngIf="targetList.orders.length > PAGE_SIZE">
+                        <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
+                        <a href="javascript:void(0)" class="ico_comm prev03" [class.on]= "targetListPager.currentPage > 1" (click)="setTargetPage(targetListPager.currentPage - 1, true)">이전</a>
+                        <a href="javascript:void(0)" class="ico_comm next03" [class.on]= "targetListPager.currentPage < targetListPager.endPage" (click)="setTargetPage(targetListPager.currentPage + 1, true)">다음</a>
+                        <!-- //이전,다음 리스트가 있을때 on클래스 추가 -->
+                    </span>
+                    <!-- //20180827 수정 -->
                     <table>
                         <caption>선택된 ABO 주문정보</caption>
                         <colgroup>
@@ -114,7 +118,7 @@
         <span class="fl">취소 ESC</span>
         <span class="fr">
             <a href="javascript:void(0)" *ngIf="orderType === 'p'" class="btn01_blue" (click)="printECP()">출력</a>
-            <a href="javascript:void(0)" class="btn01_blue" (click)="confirmECP()">컨펌</a>
+            <a href="javascript:void(0)" *ngIf="orderType !== 'p'" class="btn01_blue" (click)="confirmECP()">컨펌</a>
             <a href="javascript:void(0)" class="btn01_white" (click)="initialize()">취소</a>
         </span>
     </div>

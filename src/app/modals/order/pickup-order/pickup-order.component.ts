@@ -197,6 +197,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param {number} page 페이지번호
    */
   setPage(page: number) {
+    if (page < 0 || page > this.sourceList.pagination.totalPages - 1) {
+      return;
+    }
     this.getOrderList(this.searchType, this.channels, this.deliveryModes, this.orderStatus, 'A', this.searchText, page, false);
 
     const chk = this.selectAll.nativeElement.classList.contains('on');
@@ -280,7 +283,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     if (this.targetList.orders.length > 0) {
       this.modal.openModalByComponent(EcpConfirmComponent,
         {
-          callerData: { orderList: this.targetList , orderTypeName: this.orderTypeName },
+          callerData: { orderList: this.targetList , orderTypeName: this.orderTypeName, orderType: this.orderType },
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
           modalId: ModalIds.ECPCONFIRM
@@ -377,7 +380,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     setTimeout(() => {
       try {
         this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
-        this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+        // this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
+        this.confirmECP();
       } catch (e) {
         this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
         this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });

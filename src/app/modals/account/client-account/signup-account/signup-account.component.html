@@ -1,0 +1,51 @@
+<div class="pop_wrap pop_m">
+  <div class="pop_header">
+      <h1>암웨이 회원가입하기 (Member)</h1>
+      <button type="button" class="ico_comm pop_close01" (click)="close()">닫기</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content">
+          <!-- 결제내역 -->
+          <div class="tbl_row">
+              <table>
+                  <caption>암웨이 회원가입하기 (Member)</caption>
+                  <colgroup>
+                      <col style="width:110px">
+                      <col>
+                  </colgroup>
+                  <tbody>
+                      <tr>
+                          <th scope="row">후원자ABO번호</th>
+                          <td><input #inputSponsorABO type="text" title="후원자ABO번호" (keydown.enter)="checkSponsorABO(inputSponsorABO.value)"></td>
+                      </tr>
+                      <tr>
+                          <th scope="row">가입신청자 한글성명</th>
+                          <td><input #inputUserName type="text" title="가입신청자 한글성명" (keydown.enter)="checkUserName(inputUserName.value)"></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <dl class="caution">
+              <dt><span class="tag01">주의</span></dt>
+              <dd>후원자ABO번호를 입력을 위해 제품 추가 주문 바코드를 스캔해 주시거나, ABO번호를 직접 입력해주세요.</dd>
+          </dl>
+          <!-- 후원자ABO 번호 미 입력 시  --><em class="finish fail" *ngIf="errorMessage !==''">{{errorMessage}}</em>
+          <!-- 가입신청자 한글성명 미 입력 시 <em class="finish fail">가입신청자 한글성명을 입력해 주세요.</em> -->
+          <!-- 후원자ABO번호가 오류인 경우 <em class="finish fail">등록된 후원자와 일치하는 번호가 없습니다. 확인 후 다시 입력해주세요.</em>  -->
+          <!-- 회원 DB에 동일 휴대폰 번호가 있을 경우  <em class="finish fail">이미 가입된 정보가 있습니다.</em> -->
+          <!-- 윤리강령 가입금지 데이터베이스 대상 <em class="finish fail">고객님께서는 회원가입을 진행하실 수 없습니다.</em> -->
+          <!-- //결제내역 -->
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <!-- 20180619 수정 -->
+  <div class="pop_footer line02 clearfix">
+      <span class="fl">취소 ESC</span>
+      <span class="fr">
+          <a href="javascript:void(0)" class="btn01_blue" (click)="register()">확인</a>
+          <a href="javascript:void(0)" class="btn01_white" (click)="close()">취소</a>
+      </span>
+  </div>
+  <!-- //20180619 수정 -->
+</div>

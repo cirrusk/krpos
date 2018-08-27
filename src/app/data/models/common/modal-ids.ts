@@ -46,6 +46,7 @@ export enum ModalIds {
     REORDER = 'ReOrder',
     RESTRICT = 'Restict',
     SERIAL = 'Serial',
+    SIGNUPACCOUNT = 'SignupAccount',
     STOPSHIFT = 'Shift',
     STOPSHIFTEND = 'ShiftEnd'
 }
