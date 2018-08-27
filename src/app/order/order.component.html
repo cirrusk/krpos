@@ -25,6 +25,7 @@
 </div>
 <!-- 키보드 이벤트 -->
 <pos-keyboard
-  (keyAction)="posMenu.doAction($event)"
+  (keyMenuAction)="posMenu.doAction($event)"
+  (keyCartAction)="posCart.doAction($event)"
 ></pos-keyboard>
 <!--// 키보드 이벤트 -->

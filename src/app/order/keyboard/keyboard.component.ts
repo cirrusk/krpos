@@ -10,7 +10,8 @@ import { KeyboardService, Logger, KeyCommand } from '../../core';
 export class KeyboardComponent implements OnInit, OnDestroy {
 
   private keyboardsubscription: Subscription;
-  @Output() public keyAction: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public keyMenuAction: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public keyCartAction: EventEmitter<any> = new EventEmitter<any>();
   constructor(private keyboard: KeyboardService,
     private logger: Logger) { }
 
@@ -24,8 +25,20 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
-  private doPickUp() {
-    this.keyAction.emit({ action: 'pickup' });
+  protected doPickUp() {
+    this.keyMenuAction.emit({ action: 'pickup' });
+  }
+
+  protected entryDelete() {
+    this.keyCartAction.emit({ action: 'entrydel'});
+  }
+
+  protected updateQty() {
+    this.keyCartAction.emit({ action: 'updateqty'});
+  }
+
+  protected doHold() {
+    this.keyCartAction.emit({ action: 'dohold'});
   }
 
   /**
@@ -34,7 +47,7 @@ export class KeyboardComponent implements OnInit, OnDestroy {
    * 그룹주문
    * 보류/보류해제
    * 픽업주문  ctrl+alt+p
-   * 단품취소
+   * 단품취소  shift+del
    * 회원조회
    * 환전
    * 상품조회

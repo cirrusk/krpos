@@ -15,9 +15,6 @@
     "ctrl+left": [
       "ctrl-left"
     ],
-    "shift+right": [
-      "shift-right"
-    ],
     "shift+left": [
       "shift-left"
     ],
@@ -36,14 +33,20 @@
     "ctrl+alt+p": [
       "doPickUp"
     ],
+    "shift+right": [
+      "doHold"
+    ],
+    "shift+ins": [
+      "updateQty"
+    ],
+    "shift+del": [
+      "entryDelete"
+    ],
     "ctrl+up": [
       "ctrl+up"
     ],
     "ctrl+down": [
       "ctrl+down"
-    ],
-    "ins": [
-      "insert"
     ],
     "pageup": [
       "pageup"

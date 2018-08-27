@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -11,7 +11,7 @@ import { Modal, StorageService, AlertService, Logger, Config, PrinterService } f
 import { CartService, PagerService, SearchService, MessageService, PaymentService, OrderService, AccountService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
 import {
-  Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel, KeyCode,
+  Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel,
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block,
   TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView, PointReCash, ModalIds
 } from '../../data';
@@ -244,7 +244,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             // }).subscribe(
             //   isEnter => {
             //     if (isEnter) {
-                  this.removeGroupCart();
+            this.removeGroupCart();
             //     }
             //   }
             // );
@@ -1474,7 +1474,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
         // 결제 진행중
       } else if (this.storage.isPaymentProcessing() === true) {
-        this.alert.error({ message: this.message.get('noHoldDuringPayment')});
+        this.alert.error({ message: this.message.get('noHoldDuringPayment') });
       } else {
         // 보류 가능
         this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
@@ -1488,8 +1488,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (errdata) {
               this.logger.set('cart.list.component', `${errdata.message}`).error();
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
-          }
-        });
+            }
+          });
       }
     }
   }
@@ -1993,28 +1993,64 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.serialNumbers = new Array<string>();
   }
 
-  @HostListener('document: keydown', ['$event', '$event.target'])
-  keyboardInput(event: any, targetElm: HTMLElement) {
-    event.stopPropagation();
-    // modal 이 없을때만 동작
-    const modalData = this.storage.getSessionItem('latestModalId');
-    if (modalData === null) {
-      if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
-        if (event.keyCode === KeyCode.INSERT) { // 임시 건수 수정 이벤트
-          this.callUpdateItemQty();
-        } else if (event.keyCode === KeyCode.DELETE) { // 임시 개별 삭제 이벤트
-          if (event.target.tagName === 'INPUT') { return; }
-          if (this.selectedCartNum === -1) {
-            this.alert.warn({ message: this.message.get('selectProductDelete') });
-          } else {
-            const cartId = this.orderType === OrderType.GROUP ? this.groupSelectedCart.code : this.cartInfo.code;
-            this.removeItemCart(cartId, this.currentCartList[this.selectedCartNum].product.code);
-          }
-        }
-      }
-      if (event.keyCode === KeyCode.RIGHT_ARROW) { // 임시 저장 이벤트
-        this.saveCart();
+  /**
+   * 키보드 이벤트 컴포넌트에서 발생한 이벤트를 받음.
+   *
+   * @param data 이벤트 데이터
+   */
+  doAction(data: any) {
+    if (data) {
+      if (data.action === 'entrydel') {
+        this.deleteByEntry(event);
+      } else if (data.action === 'updateqty') {
+        this.updateQty();
+      } else if (data.action === 'dohold') {
+        this.doHold();
       }
     }
   }
+
+  /**
+   * 보류처리(shift + right))
+   * @see keyboard.json
+   */
+  private doHold() {
+    const modalData = this.storage.getSessionItem('latestModalId');
+    if (modalData === null) {
+      this.saveCart();
+    }
+  }
+
+  /**
+   * 수량 변경(shift + insert)
+   * @see keyboard.json
+   */
+  private updateQty() {
+    const modalData = this.storage.getSessionItem('latestModalId');
+    if (modalData === null) {
+      if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
+        this.callUpdateItemQty();
+      }
+    }
+  }
+
+  /**
+   * 장바구니 개별 삭제(shift + delete)
+   * @see keyboard.json
+   *
+   * @param event 이벤트 처리
+   */
+  private deleteByEntry(event: any) {
+    const modalData = this.storage.getSessionItem('latestModalId');
+    if (modalData === null) {
+      if (event.target.tagName === 'INPUT') { return; }
+      if (this.selectedCartNum === -1) {
+        this.alert.warn({ message: this.message.get('selectProductDelete') });
+      } else {
+        const cartId = this.orderType === OrderType.GROUP ? this.groupSelectedCart.code : this.cartInfo.code;
+        this.removeItemCart(cartId, this.currentCartList[this.selectedCartNum].product.code);
+      }
+    }
+  }
+
 }
