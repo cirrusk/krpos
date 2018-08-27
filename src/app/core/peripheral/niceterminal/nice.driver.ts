@@ -41,11 +41,14 @@ export class NiceDriver extends AbstractDriver {
     }
 
     public send(data: string): Subject<any> {
-
+        if (this.ws.readyState === WebSocket.OPEN) {
+            this.logger.set('nice.driver', `Socket Open Status : ${this.ws.readyState}`).debug();
+        } else {
+            this.logger.set('nice.driver', `Socket Open Status : ${this.ws.readyState}`).error();
+        }
         if (this.isNotReady()) {
-            console.log('Trying to reconnect.');
             this.logger.set('nice.driver', 'NICE WebSocket Trying to reconnect...').debug();
-            this.reconnect();
+            setTimeout(() => { this.reconnect(); }, 10 * 1000);
 
             const errResponse: string = NiceUtils.genErrMessage(NiceConstants.ERROR_CODE.WEBSOCKET_ERROR);
 

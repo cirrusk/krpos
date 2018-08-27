@@ -221,6 +221,28 @@ export class PaymentService {
   }
 
   /**
+   * 일반결제/복합결제인지 체크
+   * 지불금액과 결제금액이 같을 경우 최종 결제 진행
+   * 위의 조건이 만족할 경우
+   * 1이면 일반결제, 1보다 크면 복합결제
+   *
+   * @param paymentcapture Payment 정보
+   */
+  getPaymentCheck(paymentcapture: PaymentCapture): number {
+    let check = 0;
+    if (paymentcapture) {
+      if (paymentcapture.ccPaymentInfo) { check++; }
+      if (paymentcapture.icCardPaymentInfo) { check++; }
+      if (paymentcapture.cashPaymentInfo) { check++; }
+      if (paymentcapture.directDebitPaymentInfo) { check++; }
+      if (paymentcapture.monetaryPaymentInfo) { check++; }
+      if (paymentcapture.pointPaymentInfo) { check++; }
+      if (paymentcapture.voucherPaymentInfo) { check++; }
+      return check;
+    }
+  }
+
+  /**
    * 결제 내역 설정
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
    * @param {Order} order 주문정보
@@ -241,7 +263,7 @@ export class PaymentService {
       let paid = 0;
       if (paymentcapture.cashPaymentInfo) { // 현금
         const cash = paymentcapture.cashPaymentInfo;
-        pay.setCashamount =  cash.received ? Number(cash.received) : 0; // cash.getAmount;
+        pay.setCashamount = cash.received ? Number(cash.received) : 0; // cash.getAmount;
         paid += cash.received ? Number(cash.received) : 0;
         pay.setCashchange = cash.change ? Number(cash.change) : 0;
       }
@@ -257,7 +279,7 @@ export class PaymentService {
       }
       if (paymentcapture.directDebitPaymentInfo) { // 자동이체 내역
         const ddamount = paymentcapture.directDebitPaymentInfo.amount;
-        pay.setDirectdebitamount = ddamount ?  ddamount : 0;
+        pay.setDirectdebitamount = ddamount ? ddamount : 0;
         paid += ddamount ? Number(ddamount) : 0;
       }
       pay.setReceivedamount = paid ? paid : 0;

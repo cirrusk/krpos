@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ChecksComponent } from '../checks/checks.component';
 import { MessageService, ReceiptService, PaymentService } from '../../../../service';
-import { ModalComponent, ModalService, Modal, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService, Logger } from '../../../../core';
 import {
   Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
@@ -29,6 +29,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   checktype: number;
   apprmessage: string;
   payamount: number;
+  orderType: string;
   private paidamount: number;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -54,7 +55,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
-    console.log(this.paymentcapture);
     this.loadPayment();
   }
 
@@ -172,9 +172,15 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     } else if (paychange === 0) { // 결제 완료
       this.paymentcapture = this.payment.makeCashPaymentCaptureData(this.paymentcapture, nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
       this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-      // this.finishStatus = StatusDisplay.PAID;
       this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
-      this.completePayPopup(nReceiveAmount, nPayAmount, change);
+      const ordercheck = this.payment.getPaymentCheck(this.paymentcapture);
+      if (ordercheck === 1) { // 일반결제
+        console.log('########## 일반결제');
+        this.completePayPopup(nReceiveAmount, nPayAmount, change);
+      } else if (ordercheck > 1) { // 복합결제
+        console.log('########## 복합결제');
+        this.completePayPopup(nReceiveAmount, nPayAmount, change);
+      }
     }
   }
 
@@ -220,6 +226,23 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 결제 처리
+   *
+   * @param {any} event 이벤트
+   */
+  private doPay(event: any) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else {
+      this.pay(event, this.paid.nativeElement.value, this.payamount);
+    }
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeyBoardDown(event: any) {
     event.stopPropagation();
@@ -233,15 +256,4 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  private doPay(event: any) {
-    if (Utils.isPaymentSuccess(this.finishStatus)) {
-      this.payFinishByEnter();
-    } else if (this.finishStatus === 'recart') {
-      this.info.sendInfo('recart', this.orderInfo);
-      this.info.sendInfo('orderClear', 'clear');
-      this.close();
-    } else { // INPUT에 포커스가 없을 경우 결제 처리
-      this.pay(event, this.paid.nativeElement.value, this.payamount);
-    }
-  }
 }

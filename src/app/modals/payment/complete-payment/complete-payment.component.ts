@@ -31,7 +31,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   change: number;
   checktype: number;
   orderType: string;
-  private dupcheck = false;
   private orderInfo: Order;
   private cartInfo: Cart;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
@@ -75,7 +74,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   payButton(evt: any) {
-    this.dupcheck = false;
     if (Utils.isPaymentSuccess(this.finishStatus)) {
       this.payFinishByEnter();
     } else if (this.finishStatus === 'fail') {
@@ -164,9 +162,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   /**
    * 주결제 수단 설정 및 결제 정보 캡쳐
    *
-   * @param payAmount 내신금액
-   * @param paidAmount 결제금액
-   * @param change 거스름돈
    */
   private paymentCaptureAndPlaceOrder() {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -184,12 +179,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.orderType = result.orderType.code;
             this.paidDate = result.created ? result.created : new Date();
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-            this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+            // this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
+            this.payments.sendPaymentAndOrderInfo(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';
-            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
-          } else if (this.finishStatus === StatusDisplay.PAYMENTNOTCAPTURED) {
-            this.finishStatus = 'fail';
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           } else { // CART 삭제된 상태
             this.finishStatus = 'recart';
@@ -265,16 +258,20 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
-    this.modal.openModalByComponent(CashReceiptComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
-      closeByClickOutside: false,
-      modalId: ModalIds.CASHRECEIPT,
-      paymentType: 'c'
-    }).subscribe(result => {
-      if (result && result === '200') {
-        this.payFinishByEnter(true); // 현금영수증 출력.
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
+      if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
+        this.modal.openModalByComponent(CashReceiptComponent, {
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
+          closeByClickOutside: false,
+          modalId: ModalIds.CASHRECEIPT,
+          paymentType: 'c'
+        }).subscribe(result => {
+          if (result && result === '200') {
+            this.payFinishByEnter(true); // 현금영수증 출력.
+          }
+        });
       }
-    });
+    }
   }
 
   /**
@@ -336,13 +333,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private handleKeyboardCommand(command: KeyCommand) {
     try {
       switch (command.combo) {
-        case 'ctrl+r': {
-          if (Utils.isPaymentSuccess(this.finishStatus)) {
-            if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
-              this[command.name]();
-            }
-          }
-        } break;
+        case 'ctrl+r': { this[command.name](); } break;
       }
     } catch (e) {
       this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
