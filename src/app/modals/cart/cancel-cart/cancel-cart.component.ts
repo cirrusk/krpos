@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ModalComponent } from '../../../core/modal/modal.component';
 import { ModalService } from '../../../core';
 import { CancleOrderBroker } from '../../../broker';
+import { KeyCode } from '../../../data';
 
 @Component({
   selector: 'pos-cancel-cart',
@@ -24,5 +25,14 @@ export class CancelCartComponent extends ModalComponent implements OnInit {
 
   close() {
     this.closeModal();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyBoardDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ENTER) {
+      this.cancleOrder();
+    }
   }
 }

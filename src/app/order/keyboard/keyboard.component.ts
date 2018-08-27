@@ -41,6 +41,26 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.keyCartAction.emit({ action: 'dohold'});
   }
 
+  protected searchAccount() {
+    this.keyCartAction.emit({ action: 'searchaccount'});
+  }
+
+  protected searchProduct() {
+    this.keyCartAction.emit({ action: 'searchproduct'});
+  }
+
+  protected doOrderCancel() {
+    this.keyMenuAction.emit({ action: 'ordercancel'});
+  }
+
+  protected doOpenDrawer() {
+    this.keyCartAction.emit({ action: 'opendrawer'});
+  }
+
+  protected doGroupOrder() {
+    this.keyMenuAction.emit({ action: 'grouporder'});
+  }
+
   /**
    * 비닐봉투(대)
    * 비닐봉투(소)

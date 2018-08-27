@@ -30,8 +30,23 @@
     "down": [
       "down"
     ],
+    "ctrl+shift+d": [
+      "doOpenDrawer"
+    ],
+    "ctrl+shift+x": [
+      "doOrderCancel"
+    ],
     "ctrl+alt+p": [
       "doPickUp"
+    ],
+    "shift+pageup": [
+      "searchAccount"
+    ],
+    "shift+pagedown": [
+      "searchProduct"
+    ],
+    "ctrl+shift+u": [
+      "doGroupOrder"
     ],
     "shift+right": [
       "doHold"

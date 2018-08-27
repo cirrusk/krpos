@@ -2000,18 +2000,53 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   doAction(data: any) {
     if (data) {
-      if (data.action === 'entrydel') {
+      const action = data.action;
+      if (action === 'entrydel') {
         this.deleteByEntry(event);
-      } else if (data.action === 'updateqty') {
+      } else if (action === 'updateqty') {
         this.updateQty();
-      } else if (data.action === 'dohold') {
+      } else if (action === 'dohold') {
         this.doHold();
+      } else if (action === 'searchaccount') {
+        this.doSearch('A');
+      } else if (action === 'searchproduct') {
+        this.doSearch('P');
+      } else if (action === 'opendrawer') {
+        this.doOpenDrawer();
       }
     }
   }
 
   /**
-   * 보류처리(shift + right))
+   * 환전 돈통 열기(ctrl + shift + d)
+   */
+  private doOpenDrawer() {
+    this.printerService.openCashDrawer(); // cash drawer open
+    // cash drawer open logging
+    this.payment.cashDrawerLogging().subscribe(
+      result => {
+        this.logger.set('cart.list.component', `${result.returnMessage}`).debug();
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('cart.list.component', `${errdata.message}`).error();
+        }
+      });
+  }
+
+  /**
+   * 회원검색(shift + pageup)
+   * 상품검색(shift + pagedown)
+   */
+  private doSearch(searchmode: string) {
+    this.searchMode = searchmode;
+    const searchText = this.searchText.nativeElement.value;
+    this.popupSearch(searchText);
+  }
+
+  /**
+   * 보류처리(shift + home))
    * @see keyboard.json
    */
   private doHold() {

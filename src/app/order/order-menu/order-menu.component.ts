@@ -152,6 +152,11 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       if (action === 'pickup') {
         this.pickupOrder(event);
         this.checkClassById('pickupOrder');
+      } else if (action === 'ordercancel') {
+        this.cancelOrder(event);
+      } else if (action === 'grouporder') {
+        this.groupPayment(event);
+        this.checkClassById('groupPayment');
       }
     }
   }
@@ -224,6 +229,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   groupPayment(evt: any) {
     this.checkClass(evt);
+    const modalData = this.storage.getLatestModalId();
+    if (modalData != null) {
+      this.modal.getModalArray().forEach(m => {
+        this.modal.clearAllModals(m);
+      });
+    }
     this.modal.openModalByComponent(SearchAccountComponent, {
       closeByClickOutside: false,
       orderType: OrderType.GROUP,
@@ -244,7 +255,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   pickupOrder(evt: any) {
     this.checkClass(evt);
     const modalData = this.storage.getLatestModalId();
-    if (modalData != null && modalData.length > 0) {
+    if (modalData != null) {
       this.modal.getModalArray().forEach(m => {
         this.modal.clearAllModals(m);
       });
@@ -297,11 +308,17 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   cancelOrder(evt: any) {
     if (!this.hasAccount) { return; }
-    // this.checkClass(evt);
+    // this.checkClassById('cancelOrder');
     this.modal.openModalByComponent(CancelCartComponent, {
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
+      closeByEnter: true,
       closeByClickOutside: true,
+      beforeCloseCallback : function () {
+        if (this.isEnter) {
+          this.result = this.isEnter;
+        }
+      },
       modalId: ModalIds.CANCELCART
     }).subscribe(result => {
       if (result) {
