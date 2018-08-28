@@ -637,6 +637,20 @@ export class ReceiptService implements OnDestroy {
         //                          상품수량   과세 물품          부가세     합계       결제금액       할인금액         할인금액정보
         //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
         const price = new PriceInfo(totalQty, amountWithoutVAT, amountVAT, sumAmount, totalAmount);
+        if (paymentCapture.getPointPaymentInfo) { // 2. 포인트
+            const pointinfo = paymentCapture.getPointPaymentInfo;
+            let pointname = this.message.get('receipt.apoint.label'); // '포인트차감(A포인트)';
+            if (account.accountTypeCode === MemberType.MEMBER) {
+                pointname = this.message.get('receipt.mpoint.label'); // '포인트차감(멤버포인트)';
+            }
+            // discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
+            price.setPointInfo = new PointInfo(pointname, pointinfo.amount);
+        }
+        if (paymentCapture.getMonetaryPaymentInfo) { // 3. Re-Cash
+            const recash = paymentCapture.getMonetaryPaymentInfo;
+            // discount.setRecash = new DiscountInfo('Recash', recash.amount);
+            price.setRecash = recash.amount;
+        }
         if (cartInfo.totalDiscounts) { // 할인금액
             totalDiscount = cartInfo.totalDiscounts.value ? cartInfo.totalDiscounts.value : 0;
         }
@@ -652,20 +666,6 @@ export class ReceiptService implements OnDestroy {
                         }
                     }
                 });
-            }
-            if (paymentCapture.getPointPaymentInfo) { // 2. 포인트
-                const pointinfo = paymentCapture.getPointPaymentInfo;
-                let pointname = this.message.get('receipt.apoint.label'); // '포인트차감(A포인트)';
-                if (account.accountTypeCode === MemberType.MEMBER) {
-                    pointname = this.message.get('receipt.mpoint.label'); // '포인트차감(멤버포인트)';
-                }
-                // discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
-                price.setPointInfo = new PointInfo(pointname, pointinfo.amount);
-            }
-            if (paymentCapture.getMonetaryPaymentInfo) { // 3. Re-Cash
-                const recash = paymentCapture.getMonetaryPaymentInfo;
-                // discount.setRecash = new DiscountInfo('Recash', recash.amount);
-                price.setRecash = recash.amount;
             }
             price.setDiscount = discount;
             // 할인금액정보 - END
