@@ -50,7 +50,11 @@ export class Cash extends PaymnetDefault {
     constructor(amount: number, received: string, changes: string, cashreceipt?: boolean) {
         super(amount);
         this.received = received;
-        this.changes = changes;
+        if (changes === null || changes === '0') {
+            this.changes = null;
+        } else {
+            this.changes = changes;
+        }
         this.cashreceipt = cashreceipt || false;
     }
 }
