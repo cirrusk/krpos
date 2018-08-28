@@ -64,10 +64,10 @@
                             <li><span>부&nbsp; 가&nbsp; 세</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalTax.value | number }}</em></li>
                             <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].subTotal.value | number }}</em></li>
                             <li class="txt_b" *ngIf="orderDetail.orders[0].totalDiscounts.value > 0"><span>할인금액</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>
-                            <li class="txt_b" *ngIf="paymentCapture.getPointPaymentInfo">
+                            <li class="txt_b" *ngIf="groupMainFlag && paymentCapture.getPointPaymentInfo">
                                 <span>{{pointType}}-{{paymentCapture.getPointPaymentInfo.paymentMode.name}}</span><em>{{cancelSymbol}}{{ paymentCapture.getPointPaymentInfo.amount | number }}</em>
                             </li>
-                            <li class="txt_b" *ngIf="paymentCapture.getMonetaryPaymentInfo">
+                            <li class="txt_b" *ngIf="groupMainFlag && paymentCapture.getMonetaryPaymentInfo">
                                 <span>Re-Cash</span><em>{{cancelSymbol}}{{ paymentCapture.getMonetaryPaymentInfo.amount | number }}</em>
                             </li>
                             <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalPrice.value | number }}</em></li>
