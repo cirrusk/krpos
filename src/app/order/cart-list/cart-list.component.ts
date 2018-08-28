@@ -2087,6 +2087,10 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateQty() {
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
+      const p: PaymentCapture = this.storage.getPaymentCapture();
+      if (p) { // 결제 진행중인 경우는 수량변경 불가함.
+        return;
+      }
       if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
         this.callUpdateItemQty();
       }
