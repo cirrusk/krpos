@@ -15,26 +15,32 @@
         <text-line>
             {{priceFormatHelper '합 계' price.sumAmount orderInfo.cancelFlag}}
         </text-line>
+    </bold>    
         {{#if price.totalDiscount}}
+        <bold>
         <text-line>
             {{priceFormatHelper '할인금액' price.totalDiscount orderInfo.cancelFlag}}
         </text-line>
+        </bold>
         {{/if}}
-        {{#if price.discount}}
-            </bold>
-            {{#if price.discount.coupon}}
-                <text-line>
-                    {{priceFormatHelper price.discount.coupon.name price.discount.coupon.amount orderInfo.cancelFlag}}
-                </text-line>
-            {{/if}} 
-            {{#if price.discount.recash}}
-                <text-line>
-                    {{priceFormatHelper 'Recash' price.discount.recash.amount orderInfo.cancelFlag}}
-                </text-line>
-            {{/if}}
+        {{#if price.discount.discountList}}
+            {{discountListHelper price.discount.discountList}}
         {{/if}}
+        {{#if price.point}}
+        <bold>
+            <text-line>
+                {{priceFormatHelper price.point.name price.point.amount orderInfo.cancelFlag}}
+            </text-line>
+        </bold>    
+        {{/if}}
+        {{#if price.recash}}
+        <bold>
+            <text-line>
+                {{priceFormatHelper 'Re-Cash' price.recash orderInfo.cancelFlag}}
+            </text-line>
+        </bold>    
+        {{/if}}        
         <text-line>
             {{priceFormatHelper '결제금액' price.totalAmount orderInfo.cancelFlag}}
         </text-line>
-    </bold>
 </document>

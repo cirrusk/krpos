@@ -1,7 +1,7 @@
 import { Command } from './../command';
 
 import { ProductFieldMaxLen } from './maxlen.interface';
-import { ReceiptProductFieldInterface } from './../../../../../../data/receipt/interfaces/productfield.interface';
+import { ReceiptProductFieldInterface, DiscountFieldInterface } from './../../../../../../data/receipt/interfaces/productfield.interface';
 import { PosPrinterConstants } from '../posprinter.constants';
 
 export class ReceiptUtils {
@@ -52,6 +52,13 @@ export class ReceiptUtils {
             }
         );
         return productList;
+    }
+
+    public static convertDiscountListPrices(discountList): any {
+        discountList.forEach(item => {
+            item.price = ReceiptUtils.convertToLocalePrice(item.price);
+        });
+        return discountList;
     }
 
     // 구매 상품 리스트의 각 필드의 최대 길이 값
@@ -203,6 +210,26 @@ export class ReceiptUtils {
 
         // 가격
         formatted.push(this.rightAlignedText(product.totalPrice, maxLengths.totalPrice));
+
+        // 태그 끝
+        formatted.push(this.END_TEXTLINE);
+
+        return formatted.join('');
+    }
+
+    public static getFormattedDiscountField(discount: DiscountFieldInterface): string {
+        const formatted: Array<string> = [];
+
+        // 태그 시작
+        formatted.push(this.START_TEXTLINE);
+
+        const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(discount.name);
+        const localePrice: string = ReceiptUtils.convertToLocalePrice(discount.price);
+        const localPriceLen = localePrice.length;
+        const blankLenth: number = 42 - utf8ItemLen - localPriceLen;
+        formatted.push(discount.name);
+        formatted.push(ReceiptUtils.spaces(blankLenth));
+        formatted.push(localePrice);
 
         // 태그 끝
         formatted.push(this.END_TEXTLINE);

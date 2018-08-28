@@ -2,10 +2,19 @@ export class PriceInfo {
     protected totalQty: string;          // 상품수량
     protected amountWithoutVAT: string;  // 과세 물품
     protected amountVAT: string;         // 부가세
-    protected sumAmount: string;       // 합계
+    protected sumAmount: string;         // 합계
     protected totalDiscount: string;     // 할인금액
     protected discount: Discount;        // 할인금액정보
     protected totalAmount: string;       // 결제금액
+    protected point: PointInfo;          // 포인트
+    protected recash: string;            // Re-Cash
+
+    public set setPointInfo(point: PointInfo) {
+        this.point = point;
+    }
+    public set setRecash(recash: number) {
+        this.recash = String(recash);
+    }
     public set setDiscount(discount: Discount) {
         this.discount = discount;
     }
@@ -28,9 +37,15 @@ export class PriceInfo {
 }
 
 export class Discount {
+    protected amount: string;               // 할인금액(전체 할인 금액계산하고 - 붙힘)
+    protected discountList: Array<DiscountInfo>;  // 할인항목
     protected coupon: DiscountInfo;
     protected point: DiscountInfo;
     protected recash: DiscountInfo;
+
+    public set setDiscountList(discountList: Array<DiscountInfo>) {
+        this.discountList = discountList;
+    }
 
     public set setCoupon(coupon: DiscountInfo) {
         this.coupon = coupon;
@@ -46,6 +61,15 @@ export class Discount {
 }
 
 export class DiscountInfo {
+    name: string;
+    price: string;
+    constructor(name: string, price: number) {
+        this.name = name;
+        this.price = String(price);
+    }
+}
+
+export class PointInfo {
     name: string;
     amount: string;
     constructor(name: string, amount: number) {

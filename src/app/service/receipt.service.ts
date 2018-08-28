@@ -15,7 +15,7 @@ import {
     Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry,
     GroupResponseData, AmwayExtendedOrdering, AmwayPaymentInfoData, PaymentModes,
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
-    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash
+    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -659,11 +659,13 @@ export class ReceiptService implements OnDestroy {
                 if (account.accountTypeCode === MemberType.MEMBER) {
                     pointname = this.message.get('receipt.mpoint.label'); // '포인트차감(멤버포인트)';
                 }
-                discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
+                // discount.setPoint = new DiscountInfo(pointname, pointinfo.getAmount);
+                price.setPointInfo = new PointInfo(pointname, pointinfo.amount);
             }
             if (paymentCapture.getMonetaryPaymentInfo) { // 3. Re-Cash
                 const recash = paymentCapture.getMonetaryPaymentInfo;
-                discount.setRecash = new DiscountInfo('Recash', recash.amount);
+                // discount.setRecash = new DiscountInfo('Recash', recash.amount);
+                price.setRecash = recash.amount;
             }
             price.setDiscount = discount;
             // 할인금액정보 - END

@@ -8,7 +8,7 @@ import { BufferBuilder } from './buffer-builder';
 // import { TextEncoder, TextDecoder } from 'text-encoding';
 
 import { ReceiptUtils } from './helpers/receipt.utils';
-import { ReceiptProductFieldInterface } from '../../../../../data/receipt/interfaces/productfield.interface';
+import { ReceiptProductFieldInterface, DiscountFieldInterface } from '../../../../../data/receipt/interfaces/productfield.interface';
 // import { BonusDataInterface } from './helpers/bonusdata.interface';
 
 export class TemplateParser {
@@ -32,10 +32,8 @@ export class TemplateParser {
     this.registerProductListHelper();
     this.registerBonusDataHelper();
     this.registerPriceLocaleHelper();
+    this.registerDiscountListHelper();
 
-    // this.handlebars.registerHelper('null', function() {
-    //   return null
-    // })
   }
 
   private registerMoment() {
@@ -109,6 +107,18 @@ export class TemplateParser {
       productList.forEach(
         (product) => {
           formatted.push(ReceiptUtils.getFormattedProductField(product, maxLengths));
+        }
+      );
+      return new handlebars.SafeString(formatted.join(''));
+    });
+  }
+
+  private registerDiscountListHelper() {
+    this.handlebars.registerHelper('discountListHelper', (discountList: Array<DiscountFieldInterface>) => {
+      const formatted: Array<string> = [];
+      discountList.forEach(
+        (discount) => {
+          formatted.push(ReceiptUtils.getFormattedDiscountField(discount));
         }
       );
       return new handlebars.SafeString(formatted.join(''));
