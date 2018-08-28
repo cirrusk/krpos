@@ -408,14 +408,23 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   close() {
-    const paymentcapture: PaymentCapture = this.storage.getPaymentCapture();
-    if (paymentcapture && (paymentcapture.ccPaymentInfo || paymentcapture.icCardPaymentInfo)) {
-      if (paymentcapture.ccPaymentInfo) {
-        this.alert.warn({ message: '신용카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
-      } else if (paymentcapture.icCardPaymentInfo) {
-        this.alert.warn({ message: '현금IC카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+    const p: PaymentCapture = this.storage.getPaymentCapture();
+    if (p) {
+      if (p.ccPaymentInfo || p.icCardPaymentInfo) {
+        if (p.ccPaymentInfo) {
+          this.alert.warn({ message: '신용카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+        } else if (p.icCardPaymentInfo) {
+          this.alert.warn({ message: '현금IC카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+        }
+        return;
+      } else if (p.cashPaymentInfo
+        || p.directDebitPaymentInfo
+        || p.monetaryPaymentInfo
+        || p.pointPaymentInfo) {
+          this.alert.warn({ message: '결제 등록 내역이 초기화됩니다.', timer: true, interval: 1600 });
+          setTimeout(() => { this.closeModal(); }, 1610);
+          return;
       }
-      return;
     }
     this.closeModal();
   }
