@@ -442,6 +442,10 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {string} searchText 검색어
    */
   popupSearch(searchText: string): void {
+    const p: PaymentCapture = this.storage.getPaymentCapture();
+    if (p) { // 결제 진행중인 경우는 검색 불가함.
+      return;
+    }
     const searchKey = searchText.toUpperCase();
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
@@ -523,6 +527,10 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 사유 : 이미 Add to Cart 한 상품에 대해서 수량 증/감에 따른 Serial 처리 불가
    */
   callUpdateItemQty() {
+    const p: PaymentCapture = this.storage.getPaymentCapture();
+    if (p) { // 결제 진행중인 경우는 수량변경 불가함.
+      return;
+    }
     if (this.accountInfo === null) {
       this.alert.warn({ message: this.message.get('searchAccount'), timer: true, interval: 1500 });
       setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
@@ -2087,10 +2095,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateQty() {
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
-      const p: PaymentCapture = this.storage.getPaymentCapture();
-      if (p) { // 결제 진행중인 경우는 수량변경 불가함.
-        return;
-      }
       if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
         this.callUpdateItemQty();
       }
