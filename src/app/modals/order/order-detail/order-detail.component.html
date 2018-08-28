@@ -75,12 +75,12 @@
                         <ul class="list" *ngIf="groupMainFlag">
                             <div>
                                 <ng-container *ngIf="paymentCapture.getCcPaymentInfo">
-                                    <li>[{{ paymentCapture.getCcPaymentInfo.paymentMode.name }}]</li>
+                                    <li><span>[{{ paymentCapture.getCcPaymentInfo.paymentMode.name }}]</span><em>{{cancelSymbol}}{{paymentCapture.getCcPaymentInfo.amount | number}}</em></li>
                                     <li>카드번호 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine1 }}</li>
                                     <li>할부 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getCcPaymentInfo.paymentInfoLine3 }} (승인번호 : {{paymentCapture.getCcPaymentInfo.paymentInfoLine4 }})</li>
                                 </ng-container>
                                 <ng-container *ngIf="paymentCapture.getIcCardPaymentInfo">
-                                    <li>[{{ paymentCapture.getIcCardPaymentInfo.paymentMode.name }}]</li>
+                                    <li><span>[{{ paymentCapture.getIcCardPaymentInfo.paymentMode.name }}]</span><em>{{cancelSymbol}}{{ paymentCapture.getIcCardPaymentInfo.amount | number }}</em></li>
                                     <li>카드번호 : {{ paymentCapture.getIcCardPaymentInfo.paymentInfoLine1 }}</li>
                                     <li>할부 : {{ paymentCapture.getIcCardPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getIcCardPaymentInfo.paymentInfoLine3 }} (승인번호 : {{paymentCapture.getIcCardPaymentInfo.paymentInfoLine4 }})</li>
                                 </ng-container>
@@ -93,12 +93,12 @@
                             </div>
                         </ul>
                         <ul class="list">
-                            <li class="fx" *ngIf="ABOFlag"><span>PV</span><em *ngIf="orderDetail.orders[0].totalPrice.amwayValue">{{cancelSymbol}}{{orderDetail.orders[0].totalPrice.amwayValue.pointValue | number}}</em></li>
-                            <li class="fx" *ngIf="ABOFlag"><span>BV</span><em *ngIf="orderDetail.orders[0].totalPrice.amwayValue">{{cancelSymbol}}{{orderDetail.orders[0].totalPrice.amwayValue.businessVolume | number}}</em></li>
-                            <li class="fx" *ngIf="ABOFlag"><span>PV SUM</span><em *ngIf="orderDetail.orders[0].value">{{orderDetail.orders[0].value.pointValue | number}}</em></li>
-                            <li class="fx" *ngIf="ABOFlag"><span>BV SUM</span><em *ngIf="orderDetail.orders[0].value">{{orderDetail.orders[0].value.businessVolume | number}}</em></li>
-                            <li class="fx" *ngIf="ABOFlag"><span>GROUP PV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount">{{orderDetail.orders[0].volumeABOAccount.totalPV | number}}</em></li>
-                            <li class="fx" *ngIf="ABOFlag"><span>GROUP BV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount">{{orderDetail.orders[0].volumeABOAccount.totalBV | number}}</em></li>
+                            <li class="fx" *ngIf="ABOFlag"><span>PV</span><em *ngIf="orderDetail.orders[0].totalPrice.amwayValue; else elsePV">{{cancelSymbol}}{{orderDetail.orders[0].totalPrice.amwayValue.pointValue | number}}</em><ng-template #elsePV><em>0</em></ng-template></li>
+                            <li class="fx" *ngIf="ABOFlag"><span>BV</span><em *ngIf="orderDetail.orders[0].totalPrice.amwayValue; else elseBV">{{cancelSymbol}}{{orderDetail.orders[0].totalPrice.amwayValue.businessVolume | number}}</em><ng-template #elseBV><em>0</em></ng-template></li>
+                            <li class="fx" *ngIf="ABOFlag"><span>PV SUM</span><em *ngIf="orderDetail.orders[0].value; else elsePVSUM">{{orderDetail.orders[0].value.pointValue | number}}</em><ng-template #elsePVSUM><em>0</em></ng-template></li>
+                            <li class="fx" *ngIf="ABOFlag"><span>BV SUM</span><em *ngIf="orderDetail.orders[0].value; else elseBVSUM">{{orderDetail.orders[0].value.businessVolume | number}}</em><ng-template #elseBVSUM><em>0</em></ng-template></li>
+                            <li class="fx" *ngIf="ABOFlag"><span>GROUP PV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount.totalPV; else elseGROUPPV">{{orderDetail.orders[0].volumeABOAccount.totalPV | number}}</em><ng-template #elseGROUPPV><em>0</em></ng-template></li>
+                            <li class="fx" *ngIf="ABOFlag"><span>GROUP BV</span><em *ngIf="orderDetail.orders[0].volumeABOAccount.totalBV; else elseGROUPBV">{{orderDetail.orders[0].volumeABOAccount.totalBV | number}}</em><ng-template #elseGROUPBV><em>0</em></ng-template></li>
                             <li *ngIf="ABOFlag"><span>잔여 A 포인트</span><em *ngIf="balance">{{balance.amount | number}}</em></li>
                             <li><span>공제번호</span><em *ngIf="orderDetail.orders[0].deductionNumber; else elseTemplate">{{orderDetail.orders[0].deductionNumber}}</em><ng-template #elseTemplate><em>공제조합홈페이지 확인</em></ng-template>
                             </li>
