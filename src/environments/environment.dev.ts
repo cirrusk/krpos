@@ -28,7 +28,6 @@ export const environment = {
   baseSiteId: 'amwaykorea',
   apiDomain: 'https://oms-dev.abnkorea.co.kr',
   apiRootUrl: 'https://oms-dev.abnkorea.co.kr/api/v2',
-  apiRootUrlIntra: 'https://oms-dev.abnkorea.co.kr/api/v2',
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',

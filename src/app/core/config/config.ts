@@ -24,7 +24,6 @@ export class Config {
    */
   public getApiUrl(key: string, params?: any) {
     const apiRootUrl = environment.apiRootUrl;
-    const apiRootUrlIntra = environment.apiRootUrlIntra;
     const baseSiteId = environment.baseSiteId;
     const cnf = environment.apiUrl;
     let apiUrl = String(cnf[key]);
