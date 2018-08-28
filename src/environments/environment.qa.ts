@@ -28,6 +28,7 @@ export const environment = {
   baseSiteId: 'amwaykorea',
   apiDomain: 'https://api.qa.amway.co.kr',
   apiRootUrl: 'https://api.qa.amway.co.kr/api/v2',
+  apiRootUrlIntra: 'https://hybris-kor-qa-occ.intranet.local/api/v2',
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',

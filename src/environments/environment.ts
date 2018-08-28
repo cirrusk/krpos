@@ -28,6 +28,7 @@ export const environment = {
   baseSiteId: 'amwaykorea',
   apiDomain: 'https://127.0.0.1:9002',
   apiRootUrl: 'https://127.0.0.1:9002/api/v2',
+  apiRootUrlIntra: 'https://127.0.0.1:9002/api/v2',
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',

@@ -45,7 +45,11 @@ export class NetworkStatusService {
       this.qzStatus = Observable.interval(1000 * interval)
         .map(
           () => {
-            return qz.websocket.isActive();
+            try {
+              return qz.websocket.isActive();
+            } catch (e) {
+              return false;
+            }
           }
         );
     }

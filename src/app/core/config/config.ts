@@ -17,12 +17,14 @@ export class Config {
    *
    * baseSiteId는 기본적으로 변환.
    * URL에 Root URL 이 없으면 자동으로 붙힘.
+   * 2018.08.28 암웨이 내부 시스템들에서 OCC를 호출 할 때는 내부 도메인을 사용해야 함.
    *
    * @param key API URL key
    * @param params replace 할 path variable json
    */
   public getApiUrl(key: string, params?: any) {
     const apiRootUrl = environment.apiRootUrl;
+    const apiRootUrlIntra = environment.apiRootUrlIntra;
     const baseSiteId = environment.baseSiteId;
     const cnf = environment.apiUrl;
     let apiUrl = String(cnf[key]);
