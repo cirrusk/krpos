@@ -48,7 +48,7 @@ export class NiceDriver extends AbstractDriver {
         }
         if (this.isNotReady()) {
             this.logger.set('nice.driver', 'NICE WebSocket Trying to reconnect...').debug();
-            setTimeout(() => { this.reconnect(); }, 10 * 1000);
+            setTimeout(() => { this.reconnect(); }, 15 * 1000);
 
             const errResponse: string = NiceUtils.genErrMessage(NiceConstants.ERROR_CODE.WEBSOCKET_ERROR);
 
