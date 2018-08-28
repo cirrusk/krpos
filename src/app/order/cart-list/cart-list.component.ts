@@ -354,7 +354,13 @@ export class CartListComponent implements OnInit, OnDestroy {
       modalAddClass: 'pop_s',
       actionButtonLabel: '확인',
       closeButtonLabel: '취소',
+      closeByEnter: true,
       closeByClickOutside: false,
+      beforeCloseCallback: function () {
+        if (this.isEnter) {
+          this.result = this.isEnter;
+        }
+      },
       modalId: ModalIds.CANCELBER
     }).subscribe(res => {
       if (res) {
