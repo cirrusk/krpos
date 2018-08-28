@@ -562,10 +562,18 @@ export class ReceiptService implements OnDestroy {
             sumPV = cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
             sumBV = cartInfo.value.businessVolume ? cartInfo.value.businessVolume : 0;
             bonus.setSum = new Bonus(String(sumPV), String(sumBV));
+        } else {
+            sumPV = 0;
+            sumBV = 0;
+            bonus.setSum = new Bonus(String(sumPV), String(sumBV));
         }
         if (cartInfo.volumeABOAccount) { // 그룹 PV BV
             groupPV = cartInfo.volumeABOAccount.totalPV ? cartInfo.volumeABOAccount.totalPV : 0;
             groupBV = cartInfo.volumeABOAccount.totalBV ? cartInfo.volumeABOAccount.totalBV : 0;
+            bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
+        } else {
+            groupPV = 0;
+            groupBV = 0;
             bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
         }
         const point = pointValue ? pointValue : 0; // 포인트
