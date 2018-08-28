@@ -2,6 +2,7 @@ export class PaymentInfo {
     protected cash: Cash;
     protected creditcard: CreditCard;
     protected iccard: ICCard;
+    protected directdebit: DirectDebit;
     public set setCash(cash: Cash) {
         this.cash = cash;
     }
@@ -10,6 +11,9 @@ export class PaymentInfo {
     }
     public set setICCard(iccard: ICCard) {
         this.iccard = iccard;
+    }
+    public set setDirectDebit(directdebit: DirectDebit) {
+        this.directdebit = directdebit;
     }
 }
 
@@ -58,4 +62,9 @@ export class ICCard extends CreditCard {
 }
 
 // 자동이체
+export class DirectDebit extends PaymnetDefault {
+    constructor(amount) {
+        super(amount);
+    }
+}
 // 미수금 결제

@@ -1,3 +1,4 @@
+import { DirectDebit } from './../data/models/receipt/payment-info';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
@@ -589,17 +590,16 @@ export class ReceiptService implements OnDestroy {
             const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
             payment.setICCard = iccard;
         }
-        // Cash 로 1000원 Recash로 1000원 구매한 경우 현금영수증에 합산된 2000원이 표기되어 출력.
-        // Recash에 대한 정의를 ABO는 인지하지 못하고 있기 때문에 영수증 하단에 이를 설명하는 문구 추가.
-        // 예) 현금과 Recash(현금크레딧) 사용 합산 금액이 현금영수증에 발행됩니다.
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
-            let amount = cainfo.amount;
-            if (paymentCapture.getMonetaryPaymentInfo) { // Re-Cash
-                amount += paymentCapture.getMonetaryPaymentInfo.amount;
-            }
+            const amount = cainfo.amount;
             const cash = new Cash(amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
             payment.setCash = cash;
+        }
+        if (paymentCapture.getDirectDebitPaymentInfo) { // 자동이체
+            const debitinfo = paymentCapture.getDirectDebitPaymentInfo;
+            const directdebit = new DirectDebit(debitinfo.amount);
+            payment.setDirectDebit = directdebit;
         }
         // payments - END
 

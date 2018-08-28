@@ -42,4 +42,9 @@
             {{priceFormatHelper '[I/C 카드결제]' payments.iccard.amount orderInfo.cancelFlag}}
         </text-line>    
     {{/if}}
+    {{#if payments.directdebit}}
+        <text-line>
+            {{priceFormatHelper '[자동이체]' payments.directdebit.amount orderInfo.cancelFlag}}
+        </text-line>
+    {{/if}}
 </document>
