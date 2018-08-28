@@ -553,6 +553,10 @@ export class ReceiptService implements OnDestroy {
             totalPV = cartInfo.totalPrice.amwayValue.pointValue ? cartInfo.totalPrice.amwayValue.pointValue : cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
             totalBV = cartInfo.totalPrice.amwayValue.businessVolume ? cartInfo.totalPrice.amwayValue.businessVolume : cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
             bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
+        } else {
+            totalPV = 0;
+            totalBV = 0;
+            bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
         }
         if (cartInfo.value) { // 합계 PV BV = 나의 PV BV + 장바구니 PV BV
             sumPV = cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
