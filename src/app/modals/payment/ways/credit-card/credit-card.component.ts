@@ -171,6 +171,25 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   /**
+   * 할부개월 validation 체크
+   */
+  installmentCheck() {
+    const val = this.installmentPeriod.nativeElement.value;
+    if (Utils.isEmpty(val) || val === '1') {
+      this.checktype = -5;
+      this.apprmessage = '할부개월을 입력해주세요.';
+    } else {
+      const valnum: number = Number(val);
+      if (valnum > 24) {
+        this.checktype = -5;
+        this.apprmessage = '할부개월은 24개월을 넘을 수 없습니다.';
+      } else {
+        this.checktype = 0;
+      }
+    }
+  }
+
+  /**
    * 할부일 경우 엔터 입력시 바로 결제
    * 일시불일 경우는 처리안함.
    */
@@ -179,10 +198,19 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
       const checked = this.checkinstallment === 1 ? true : false;
       if (checked) { // 할부
         const val = this.installmentPeriod.nativeElement.value;
-        if (Utils.isEmpty(val)) {
+        if (Utils.isEmpty(val) || val === '1') {
+          this.checktype = -5;
+          this.apprmessage = '할부개월을 입력해주세요.';
           setTimeout(() => { this.installmentPeriod.nativeElement.focus(); }, 50);
         } else {
+          const valnum: number = Number(val);
+          if (valnum > 24) {
+            this.checktype = -5;
+            this.apprmessage = '할부개월은 24개월을 넘을 수 없습니다.';
+          } else {
+            this.checktype = 0;
           this.doPay();
+          }
         }
       }
     }

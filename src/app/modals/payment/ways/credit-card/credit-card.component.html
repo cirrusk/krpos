@@ -37,7 +37,7 @@
                         <tr>
                             <th scope="row">할부개월</th>
                             <td>
-                                <input #installmentPeriod type="text" posOnlyNumber="true" class="w110 ar" maxlength=2 title="할부개월" (keydown.enter)="installmentEnter(paid.value)">
+                                <input #installmentPeriod type="text" posOnlyNumber="true" class="w110 ar" maxlength=2 title="할부개월" (keyup)="installmentCheck()" (keydown.enter)="installmentEnter(paid.value)">
                                 <label class="inp_rd mgl10" for="ck1">일시불
                                     <input #allCheck type="radio" name="ck" id="ck1" checked (click)="checkInstallment(0)">
                                     <span class="checkmark"></span>
