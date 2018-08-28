@@ -34,7 +34,7 @@ export class CreditCard extends PaymnetDefault {
         super(amount);
         this.cardnumber = cardnumber;
         this.installment = installment;
-        if (installment === '0' || installment === '1') {
+        if (installment === '00' || installment === '0' || installment === '1') {
             this.installmentDesc = '일시불';
         } else {
             this.installmentDesc = installment + '개월';
