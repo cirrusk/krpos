@@ -654,11 +654,11 @@ export class ReceiptService implements OnDestroy {
         if (cartInfo.totalDiscounts) { // 할인금액
             totalDiscount = cartInfo.totalDiscounts.value ? cartInfo.totalDiscounts.value : 0;
         }
-        if (totalDiscount > 0) { // 할인금액 있을 경우만 출력
+        if (totalDiscount > 0) { // 할인금액 있을 경우만 출력 -> 프로모션 정보를 이용함.
             price.setTotalDiscount = totalDiscount; // 할인금액
             // 할인금액정보 - START
             const discount = new Discount();
-            if (order.appliedVouchers) { // 1. 쿠폰
+            if (order.appliedVouchers) {
                 order.appliedVouchers.forEach(voucher => {
                     if (voucher.appliedValue) {
                         if (voucher.appliedValue.value > 0) {
