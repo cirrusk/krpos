@@ -260,7 +260,8 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
             timer: true,
             interval: 1500
           });
-          this.close();
+          this.result = true;
+          this.closeModal();
         },
         error => {
           const errdata = Utils.getError(error);
@@ -361,6 +362,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   }
 
   close() {
+    this.result = false;
     this.closeModal();
   }
 

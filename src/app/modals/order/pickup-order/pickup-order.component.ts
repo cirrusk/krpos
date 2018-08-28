@@ -288,6 +288,13 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           closeButtonLabel: '취소',
           modalId: ModalIds.ECPCONFIRM
         }
+      ).subscribe(
+        result => {
+          if (result) {
+            this.init();
+            this.searchValue.nativeElement.select();
+          }
+        }
       );
     } else {
       this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder') });
