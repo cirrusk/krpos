@@ -29,6 +29,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   orderType: string;
   paymentCapture: PaymentCapture;
   ABOFlag: boolean;
+  pointType: string;
 
   constructor(protected modalService: ModalService,
     private router: Router,
@@ -52,6 +53,13 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     if (this.orderInfo.isGroupCombinationOrder) {
       this.orderType = OrderType.GROUP;
     }
+
+    if (this.orderInfo.amwayAccount.accountTypeCode === MemberType.ABO) {
+      this.pointType = 'A';
+    } else if (this.orderInfo.amwayAccount.accountTypeCode === MemberType.MEMBER) {
+      this.pointType = 'M';
+    }
+
     this.checkCancelStatus(this.orderInfo);
     this.clientId = this.storageService.getClientId();
     this.emloyeeName = this.storageService.getEmloyeeName();
@@ -63,6 +71,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
 
   init() {
     this.cancelSymbol = '';
+    this.pointType = '';
     this.cancelFlag = false;
     this.activeFlag = false;
     this.groupMainFlag = true;
