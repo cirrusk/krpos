@@ -175,11 +175,16 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.logger.set('complete.payment.component', `payment capture and place order(${result.code}) : ${result.status}, status display : ${result.statusDisplay}`).debug();
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있고 성공적인 경우
-          if (Utils.isPaymentSuccess(this.finishStatus)) {
+          if (result.code.startsWith('PE')) { // Payment error
+            this.finishStatus = 'fail';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
+          } else if (result.code.startsWith('PR')) { // payment reject
+            this.finishStatus = 'fail';
+            this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
+          } else if (Utils.isPaymentSuccess(this.finishStatus)) {
             this.orderType = result.orderType.code;
             this.paidDate = result.created ? result.created : new Date();
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
-            // this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
             this.payments.sendPaymentAndOrderInfo(this.paymentcapture, this.orderInfo);
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';

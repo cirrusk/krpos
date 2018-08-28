@@ -160,6 +160,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.mediateOrder(event, action);
       } else if (action === 'etc') {
         this.etcOrder(event, action);
+      } else if (action === 'coupon') {
+        this.popupCoupon(action);
       } else {
         this.checkPopupPayment(action);
       }
@@ -228,8 +230,19 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   /**
    * 쿠폰 팝업
+   * 1.	키보드에 쿠폰 키 생성
+   * 2.	메인(계산원/고객)에 보유 쿠폰 수량 정보
+   * 3.	쿠폰 적용
+   *    A.	쿠폰 키 클릭 (통합 결제 버튼 누를경우 쿠폰 화면 미노출)
+   *    B.	쿠폰 선택 or 수기입력 (보유 쿠폰 전체조회)
+   *    C.	쿠폰 적용 후 통합 결제창 이동
+   *
+   * 확인 필요
+   *    통합결제 취소 시 쿠폰 적용이 유지되는지? 아닌지?
+   *
    */
   private popupCoupon(addPopupType?: string) {
+    if (!this.hasAccount || !this.hasProduct) { return; }
     this.modal.openModalByComponent(CouponComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
       closeByClickOutside: false,

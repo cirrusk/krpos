@@ -99,6 +99,10 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.keyMenuAction.emit({ action: 'etc'});
   }
 
+  protected doCoupon(evt: any) {
+    this.keyMenuAction.emit({ action: 'coupon'});
+  }
+
   /**
    * 비닐봉투(대)
    * 비닐봉투(소)

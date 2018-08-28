@@ -576,30 +576,34 @@ export class ReceiptService implements OnDestroy {
         }
         // bonus - END
 
+        let apprprice = 0;
         // payments - START
         let isOnlyCash = true;
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
-            const ccard = new CreditCard(ccpinfo.getAmount, ccpinfo.getCardNumber, ccpinfo.getInstallmentPlan, ccpinfo.getCardAuthNumber);
+            const ccard = new CreditCard(ccpinfo.amount, ccpinfo.cardNumber, ccpinfo.installmentPlan, ccpinfo.cardAuthNumber);
             payment.setCreditCard = ccard;
             isOnlyCash = false; // 카드와 현금 복합결제 시 출력부에 내신금액 거스름돈 제외
+            apprprice += ccpinfo.amount;
         }
         if (paymentCapture.getIcCardPaymentInfo) { // IC Card
             const icinfo = paymentCapture.getIcCardPaymentInfo;
             const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
             payment.setICCard = iccard;
+            apprprice += icinfo.amount;
         }
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
-            const amount = cainfo.amount;
-            const cash = new Cash(amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
+            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
             payment.setCash = cash;
+            apprprice += cainfo.amount;
         }
         if (paymentCapture.getDirectDebitPaymentInfo) { // 자동이체
             const debitinfo = paymentCapture.getDirectDebitPaymentInfo;
             const directdebit = new DirectDebit(debitinfo.amount);
             payment.setDirectDebit = directdebit;
+            apprprice += debitinfo.amount;
         }
         // payments - END
 
@@ -627,8 +631,8 @@ export class ReceiptService implements OnDestroy {
         if (cartInfo.subTotal) { // 합계
             sumAmount = subTotalPrice;
         }
-        if (paymentCapture.getCcPaymentInfo) {
-            totalAmount = paymentCapture.getCcPaymentInfo.amount;
+        if (apprprice > 0 ) {
+            totalAmount = apprprice;
         } else {
             if (cartInfo.totalPrice) { // 결제금액
                 totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;

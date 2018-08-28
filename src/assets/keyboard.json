@@ -10,6 +10,7 @@
     "ctrl+alt+e":[ "doRecash" ],
     "ctrl+alt+p": [ "doPickUp" ],
     "ctrl+alt+u": [ "doCheque" ],
+    "ctrl+alt+q": [ "doCoupon" ],
     "ctrl+m": [ "doMediator" ],
     "ctrl+r": [ "popupCashReceipt" ],
     "ctrl+shift+d": [ "doOpenDrawer" ],

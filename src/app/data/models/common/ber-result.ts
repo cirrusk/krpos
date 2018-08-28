@@ -22,4 +22,7 @@ export class BerData {
     sellerAgreeSms: boolean;
     sellerEmail: string;
     sellerMobile: string;
+    constructor(number?: string) {
+        this.number = number;
+    }
 }

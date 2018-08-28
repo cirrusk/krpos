@@ -723,7 +723,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       return;
     }
     this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
+      const bernumber = this.storage.getBer();
       this.init();
+      if (bernumber) {
+        this.ber = new BerData(bernumber);
+        this.storage.setBer(bernumber);
+      }
       this.accountInfo = account;
       // this.storage.setCustomer(this.accountInfo);
       this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
