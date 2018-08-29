@@ -313,6 +313,13 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * ex) 1,000원 결제하는데 3개월 할부를 할 경우 Van 사에서 오류처리됨.
    */
   private cardPay() {
+    const paid = this.paid.nativeElement.value;
+    if (paid < this.creditcardMinPrice) {
+      this.checktype = -4;
+      this.apprmessage = this.message.get('card.min.price');
+      return;
+    }
+    this.change = this.paidamount - paid;
     if (this.change >= 0) {
       this.spinner.show();
       const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
@@ -359,6 +366,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else {
       this.checktype = -2;
       this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 총 매출보다 큽니다.';
+      setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);
     }
   }
 
@@ -419,7 +427,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
-  private doPay() {
+  doPay() {
     if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
       if (!this.dupcheck) {
         setTimeout(() => { this.nicePay(); }, 300);

@@ -165,7 +165,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  private doPay() {
+  doPay() {
     if (this.cardresult && this.cardresult.code !== NiceConstants.ERROR_CODE.NORMAL) { // 카드 결제 시 오류로 재결제 필요
       if (!this.dupcheck) {
         setTimeout(() => { this.nicePay(); }, 300);
