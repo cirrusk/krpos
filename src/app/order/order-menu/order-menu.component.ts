@@ -163,13 +163,17 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       } else if (action === 'coupon') {
         this.popupCoupon(action);
       } else {
-        this.checkPopupPayment(action);
+        this.checkPaymentPopup(action);
       }
-
     }
   }
 
-  private checkPopupPayment(action: string) {
+  /**
+   * 결제 팝업 처리
+   *
+   * @param action 결제 동작 처리 값
+   */
+  private checkPaymentPopup(action: string) {
     if (action === 'card') {
       this.complexAndPayPopup('card');
     } else if (action === 'ic') {
@@ -187,45 +191,40 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * 통합 결제 팝업 및 결제 팝업 처리
+   *
+   * @param addPopupType 결제 동작 팝업 처리 값
+   */
   private complexAndPayPopup(addPopupType: string) {
     if (this.storage.alreadyOpenModal(ModalIds.COMPLEX)) { // 해당 팝업만 띄움
       this.infobroker.sendInfo('popup', addPopupType);
     } else {
-      if (addPopupType === 'point') {
+      if (addPopupType === 'point') { // 포인트는 사용자 유형에 따라 분기함.
         if (this.accountInfo.accountTypeCode === MemberType.ABO) { addPopupType = 'apoint'; }
         if (this.accountInfo.accountTypeCode === MemberType.MEMBER) { addPopupType = 'mpoint'; }
       }
       this.complexPayment(event, addPopupType);
-      this.checkClassById('complexPayment');
     }
   }
 
   /**
    * 통합 결제 팝업
    * 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
+   * 변경(2018.08.29) : 쿠폰은 별도로 띄우도록 처리함.
    * @param {any} evt 이벤트
    */
   complexPayment(evt: any, addPopupType?: string) {
     if (!this.hasAccount || !this.hasProduct) { return; }
-    this.checkClass(evt);
+    if (addPopupType) {
+      this.checkClassById('complexPayment');
+    } else {
+      this.checkClass(evt);
+    }
     this.posMenu.emit({ type: '통합결제' });
     this.storage.setLocalItem('apprtype', 'c');
     if (this.orderType === OrderType.GROUP) { this.transformCartInfo(this.amwayExtendedOrdering); }
-    if (this.accountInfo.accountTypeCode === MemberType.ABO) {
-      // 쿠폰이 없으면 바로 결제화면, 에러날 경우라도 결제화면은 띄워주어야함.
-      this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
-        result => {
-          const couponlist = result.coupons;
-          if (couponlist.length > 0) {
-            this.popupCoupon(addPopupType);
-          } else {
-            this.popupPayment(addPopupType);
-          }
-        },
-        error => { this.popupPayment(); this.logger.set('order.menu.component', `${error}`).error(); });
-    } else {
-      this.popupPayment(addPopupType);
-    }
+    this.popupPayment(addPopupType);
   }
 
   /**
@@ -243,11 +242,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   private popupCoupon(addPopupType?: string) {
     if (!this.hasAccount || !this.hasProduct) { return; }
-    this.modal.openModalByComponent(CouponComponent, {
-      callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
-      closeByClickOutside: false,
-      modalId: ModalIds.COUPON
-    });
+    if (this.accountInfo.accountTypeCode === MemberType.ABO) { // ABO 만 쿠폰 적용
+      this.modal.openModalByComponent(CouponComponent, {
+        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
+        closeByClickOutside: false,
+        modalId: ModalIds.COUPON
+      });
+    }
   }
 
   /**
