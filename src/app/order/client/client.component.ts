@@ -38,6 +38,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   accountType: string;                            // 회원 타입
   apprtype: string;
   ber: string;
+  promotion: string;
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
@@ -114,6 +115,8 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.setPage(this.storage.getCartPage());
           } else if (result.key === 'payinforeset' && result.value === true) {
             this.payInfoReset();
+          } else if (result.key === 'promo') {
+            this.promotion = result.value;
           }
         }
       });
@@ -184,6 +187,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.pager = new Pagination();
     this.installment = '';
     this.ber = null;
+    this.promotion = null;
   }
 
 
