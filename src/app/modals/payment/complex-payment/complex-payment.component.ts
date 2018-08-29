@@ -98,6 +98,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (this.paymentModesSubscription) { this.paymentModesSubscription.unsubscribe(); }
   }
 
+  reset() {
+    this.storage.removePaymentModeCode();
+    this.resetSelected();
+  }
+
   creditCard(evt: any) { // creditcard
     if (this.addPopupType === 'card') {
       this.setSelectedById(this.addPopupType, 0, 'creditcard');
@@ -486,6 +491,16 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     } else {
       this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
     }
+  }
+
+  private resetSelected() {
+    this.paytypes.forEach(paytype => {
+      parent = this.renderer.parentNode(paytype.nativeElement);
+      this.renderer.removeClass(parent, 'on');
+      this.renderer.removeClass(paytype.nativeElement, 'on');
+    });
+    this.popupList = [];
+    this.enableMenu = [];
   }
 
   setEnableMenu(type: string) {
