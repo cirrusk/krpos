@@ -22,7 +22,8 @@ export const environment = {
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',
-    token: 'https://api.amway.co.kr/authorizationserver/oauth/token',
+    // token: 'https://api.amway.co.kr/authorizationserver/oauth/token',
+    token: 'https://hybris-kor-prod-occ.intranet.local/authorizationserver/oauth/token',
     userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
     customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
     batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
