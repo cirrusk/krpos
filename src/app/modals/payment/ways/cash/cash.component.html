@@ -17,7 +17,7 @@
                     <tbody>
                         <tr>
                             <th scope="row">받은금액</th>
-                            <td><input #paid type="text" class="w110 ar mousetrap" posOnlyNumber="true" title="받은금액" (keyup)="cashCal()" (keydown.enter)="payEnter($event, paid.value)"> 원</td>
+                            <td><input #paid type="text" class="w110 ar mousetrap" posOnlyNumber="true" title="받은금액" (focusout)="focusOutNumCheck($event)" (keydown)="keyDownNumCheck($event);" (keyup)="keyUpNumCheck($event);cashCal()" (keydown.enter)="payEnter($event, paid.value)"> 원</td>
                         </tr>
                         <tr>
                             <th scope="row">결제금액</th>

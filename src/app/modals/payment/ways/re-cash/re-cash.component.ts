@@ -72,6 +72,18 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.receipt.dispose();
   }
 
+  keyDownNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  keyUpNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  focusOutNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
   private loadPayment() {
     this.paidamount = this.cartInfo.totalPrice.value;
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();

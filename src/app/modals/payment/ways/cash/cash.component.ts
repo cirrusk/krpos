@@ -70,6 +70,18 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     this.receipt.dispose();
   }
 
+  keyDownNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  keyUpNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  focusOutNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
   searchCheque() {
     this.modal.openModalByComponent(ChecksComponent, {
       closeByClickOutside: false,

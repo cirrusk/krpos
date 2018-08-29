@@ -42,6 +42,18 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.checksubscription) { this.checksubscription.unsubscribe(); }
   }
 
+  keyDownNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  keyUpNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  focusOutNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
   checks() {
     if (!this.validValue()) {
       this.check = -10;
