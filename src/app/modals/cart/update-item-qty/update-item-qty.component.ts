@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ModalService, ModalComponent, AlertService } from '../../../core';
 import { ProductInfo } from '../../../data';
 import { MessageService } from '../../../service';
+import { Utils } from '../../../core/utils';
 
 /**
  * 장바구니 추가 제품의 수량변경
@@ -27,6 +28,18 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
     this.product = this.callerData.product;
     this.quantity.nativeElement.value = this.callerData.qty;
     setTimeout(() => { this.quantity.nativeElement.focus(); this.quantity.nativeElement.select(); }, 100); // 숫자를 지우고 입력해야해서 불편, 바로 수정가능하도록 수정
+  }
+
+  keyDownNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  keyUpNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  focusOutNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
   }
 
   /**

@@ -68,6 +68,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   ngOnInit() {
+    this.installmentCheck();
     this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
     this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
     this.accountInfo = this.callerData.accountInfo;
@@ -170,6 +171,18 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
+  keyDownNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  keyUpNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  focusOutNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
   /**
    * 할부개월 validation 체크
    */
@@ -184,6 +197,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.checktype = -5;
         this.apprmessage = '할부개월은 24개월을 넘을 수 없습니다.';
       } else {
+        this.installmentPeriod.nativeElement = val.replace(/[^0-9]/g, '');
         this.checktype = 0;
       }
     }
@@ -209,7 +223,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
             this.apprmessage = '할부개월은 24개월을 넘을 수 없습니다.';
           } else {
             this.checktype = 0;
-          this.doPay();
+            this.doPay();
           }
         }
       }
