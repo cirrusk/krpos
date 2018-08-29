@@ -20,6 +20,7 @@ import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
+import { PromotionList, Promotion } from '../../data/models/order/promotion';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
@@ -111,6 +112,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   orderList: OrderList;                                                     // 주문상세내역
   paymentChange: boolean;                                                   // 재결제 여부
   ber: BerData;   // 사업자 정보
+  promotion: Promotion;
 
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
@@ -408,6 +410,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.groupSelectedCart = new AbstractOrder();
     this.selectedUserId = '';
     this.copyGroupList = Array<ResCartInfo>();
+    this.promotion = null;
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.initLocals();
@@ -1271,6 +1274,13 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.sendRightMenu(ModelType.PRODUCT, true);
     } else {
       this.sendRightMenu(ModelType.PRODUCT, false);
+    }
+
+    // 주문레벨 프로모션이 있을 경우 화면 출력
+    const orderpromotions: PromotionList[] = cartList.appliedOrderPromotions;
+    if (orderpromotions && orderpromotions.length > 0) {
+      this.promotion = orderpromotions[0].promotion;
+      this.storage.setPromotion(this.promotion.name);
     }
 
     this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송

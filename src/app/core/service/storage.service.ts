@@ -4,6 +4,7 @@ import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
 import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain, PaymentCapture, PointReCash } from '../../data';
 import { Utils } from '../utils';
+import { Promotion } from '../../data/models/order/promotion';
 
 /**
  * 세션 및 로컬 스토리지 저장/삭제 서비스
@@ -593,6 +594,18 @@ export class StorageService implements OnDestroy {
    */
   public removeCustomer(): void {
     this.removeLocalItem('customer');
+  }
+
+  public setPromotion(data: string) {
+    this.setLocalItem('promo', data);
+  }
+
+  public getPromotion(): string {
+    return this.getLocalItem('promo');
+  }
+
+  public removePromotion() {
+    this.removeLocalItem('promo');
   }
 
   /**
