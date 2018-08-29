@@ -132,6 +132,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             return order.entries.length === 0;
           });
         } else {
+          this.orderType = '';
           this.amwayExtendedOrdering = data.data;
         }
       }
@@ -284,7 +285,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param {any} evt 이벤트
    */
   groupPayment(evt: any, action?: string) {
-    if (!this.isABO) { return; }
+    if (this.hasAccount && this.orderType === '') { return; }
     if (action) {
       const modals = this.storage.getAllModalIds();
       if (modals && modals.indexOf(ModalIds.ACCOUNT) !== -1) {

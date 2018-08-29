@@ -229,29 +229,16 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         if (result === 'delCart') {
           if (this.orderType === OrderType.NORMAL) {
-            this.removeCart();
+            if (this.cartInfo.code !== undefined) {
+              const userId = this.cartInfo.user.uid;
+              const cartId = this.cartInfo.code;
+              this.removeCart(userId, cartId);
+            } else {
+              this.init();
+              this.storage.clearClient();
+            }
           } else {
-            // this.modal.openConfirm({
-            //   title: '확인',
-            //   message: `Sub ABO를 모두 삭제할 경우 일반주문으로 변경됩니다. 계속 진행하시겠습니까?`,
-            //   modalAddClass: 'pop_s',
-            //   actionButtonLabel: '확인',
-            //   closeButtonLabel: '취소',
-            //   closeByClickOutside: false,
-            //   closeByEnter: true,
-            //   modalId: 'delCartConfirm',
-            //   beforeCloseCallback : function () {
-            //     if (this.isEnter) {
-            //       this.result = this.isEnter;
-            //     }
-            //   }
-            // }).subscribe(
-            //   isEnter => {
-            //     if (isEnter) {
             this.removeGroupCart();
-            //     }
-            //   }
-            // );
           }
         }
       }
@@ -1389,10 +1376,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 장바구니 삭제
    */
-  removeCart(): void {
+  removeCart(userId: string, cartId: string): void {
     if (this.cartInfo.code !== undefined) {
-      const userId = this.cartInfo.user.uid;
-      const cartId = this.cartInfo.code;
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
         () => {
           this.init();
@@ -1437,8 +1422,15 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.setUserPage(page);
             // 사용자 선택하여 CartList 호출
             this.choiceGroupUser(selectIndex, this.groupAccountInfo[groupAccountIndex - 1].uid);
-            // 그룹 카트 조회
-            this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+            if (this.groupAccountInfo.length > 1) {
+              // 그룹 카트 조회
+              this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+            } else {
+              // 그룹 주문의 경우 Ordering ABO 만 남았을 경우 일반 결제로 변경
+              this.orderType = OrderType.NORMAL;
+              this.sendRightMenu(ModelType.GROUP, false);
+              this.getCartList();
+            }
           }
         },
         error => {

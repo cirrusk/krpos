@@ -200,16 +200,21 @@ export class ReceiptUtils {
         // const paddedLen: number = maxLengths.productName - croppedLen;
         // formatted.push(this.spaces(paddedLen + 1));
 
+        let blankLenth: number = (42 - idxLen - 1 ) - maxLengths.skuCode -  (maxLengths.price + maxLengths.qty + maxLengths.totalPrice + 2);
+        blankLenth += (maxLengths.price - product.price.length);
+        formatted.push(this.spaces(blankLenth));
         // 상품 단가
-        formatted.push(this.rightAlignedText(product.price, maxLengths.price));
-        formatted.push(this.spaces(1));
+        formatted.push(product.price);
+        const blankQtyLength: number = 1 + (maxLengths.qty - product.qty.length);
+        formatted.push(this.spaces(blankQtyLength));
 
         // 수량
-        formatted.push(this.rightAlignedText(product.qty, maxLengths.qty));
-        formatted.push(this.spaces(1));
+        formatted.push(product.qty);
+        const blankTotalLength: number = 1 + (maxLengths.totalPrice - product.totalPrice.length);
+        formatted.push(this.spaces(blankTotalLength));
 
         // 가격
-        formatted.push(this.rightAlignedText(product.totalPrice, maxLengths.totalPrice));
+        formatted.push(product.totalPrice);
 
         // 태그 끝
         formatted.push(this.END_TEXTLINE);

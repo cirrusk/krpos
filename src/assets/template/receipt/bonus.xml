@@ -11,12 +11,12 @@
 {{/if}}    
        {{#if bonus.aPoint}}
         <text-line>
-        {{priceFormatHelper '잔여 A 포인트 : ' bonus.aPoint}}P
+        {{priceFormatHelper '잔여 A 포인트 :' bonus.aPoint}}
         </text-line>
        {{/if}}
        {{#if bonus.memberPoint}}
         <text-line>
-        {{priceFormatHelper '잔여 Member 포인트 : ' bonus.memberPoint}}P
+        {{priceFormatHelper '잔여 Member 포인트 :' bonus.memberPoint}}
         </text-line>
        {{/if}}       
 </document>
