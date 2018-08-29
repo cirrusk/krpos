@@ -284,7 +284,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * @param {any} evt 이벤트
    */
   groupPayment(evt: any, action?: string) {
-    if (this.isConsumer) { return; }
+    if (!this.isABO) { return; }
     if (action) {
       const modals = this.storage.getAllModalIds();
       if (modals && modals.indexOf(ModalIds.ACCOUNT) !== -1) {
@@ -314,10 +314,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   /**
    * 픽업 오더 팝업
+   * 회원으로 등록 시 픽업주문 버튼은 비활성화되어야 함
    *
    * @param {any} evt 이벤트
    */
   pickupOrder(evt: any, action?: string) {
+    if (this.hasAccount) { return; }
     if (action) {
       const modals = this.storage.getAllModalIds();
       if (modals && modals.indexOf(ModalIds.PICKUP) !== -1) {
