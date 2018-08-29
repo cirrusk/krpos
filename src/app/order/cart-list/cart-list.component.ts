@@ -1463,7 +1463,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (result.carts.length > 0) {
           this.holdOrder();
         } else if (!userId) {
-          this.alert.error({ message: '장바구니 정보가 없습니다.', timer: true, interval: 1500 });
+          this.alert.error({ message: '보류 내역이 없습니다.', timer: true, interval: 1500 });
         }
       },
       error => {
