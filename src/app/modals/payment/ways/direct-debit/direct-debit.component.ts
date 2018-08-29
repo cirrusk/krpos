@@ -77,11 +77,24 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   keyDownNumCheck(evt: any) {
+    const key = evt.keyCode;
+    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
+      evt.stopPropagation();
+      return;
+    }
+    if (key < 48 || (key > 57 && key < 96) || key > 105) {
+      evt.preventDefault();
+    }
     evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
   }
 
   keyUpNumCheck(evt: any) {
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+    const key = evt.keyCode;
+    if (key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.LEFT_ARROW || key === KeyCode.RIGHT_ARROW) {
+      return;
+    } else {
+      evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+    }
   }
 
   focusOutNumCheck(evt: any) {
