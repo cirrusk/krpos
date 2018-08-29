@@ -82,7 +82,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       evt.stopPropagation();
       return;
     }
-    if (key < 48 || (key > 57 && key < 96) || key > 105) {
+    if (key < KeyCode.KEY_0 || (key > KeyCode.KEY_9 && key < KeyCode.NUMPAD_0) || key > KeyCode.NUMPAD_9) {
       evt.preventDefault();
     }
     evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
