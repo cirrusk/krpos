@@ -1,7 +1,7 @@
 <div class="nav">
     <!-- 선택시 class="on" -->
     <button #menus type="button" id='complexPayment' (click)="complexPayment($event)" [class.disabled]="!(hasAccount && hasProduct)" class="blue">통합결제</button>
-    <button #menus type="button" id='groupPayment' (click)="groupPayment($event)" [class.disabled]="!isABO">그룹주문</button>
+    <button #menus type="button" id='groupPayment' (click)="groupPayment($event)" [class.disabled]="!isABO">그룹주문</button><!-- 일반주문 플래그인 경우 막기 -->
     <button #menus type="button" id='pickupOrder' (click)="pickupOrder($event)" [class.disabled]="hasAccount">픽업주문</button>
     <button #menus type="button" id='mediateOrder' (click)="mediateOrder($event)" [class.disabled]="checkMediateDisable()">중개주문</button>
     <button #menus type="button" id='cancelOrder' (click)="cancelOrder($event)" [class.disabled]="!hasAccount">주문취소</button>
