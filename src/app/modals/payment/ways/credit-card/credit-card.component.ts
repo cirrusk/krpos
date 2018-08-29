@@ -173,6 +173,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
 
   keyDownNumCheck(evt: any) {
     const key = evt.keyCode;
+    if (evt.key === 'Process') { evt.preventDefault(); return; }
     if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
       evt.stopPropagation();
       return;
