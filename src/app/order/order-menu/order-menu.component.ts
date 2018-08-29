@@ -51,6 +51,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   hasProduct = false;
   hasCart = false;
   isABO = false;
+  isConsumer = false;
   orderType: string;
   accountInfo: Accounts;
   memberType = MemberType;
@@ -100,6 +101,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         if (data.data) {
           this.accountInfo = data.data;
           if (this.accountInfo.accountTypeCode === MemberType.ABO) { this.isABO = true; }
+          if (this.accountInfo.accountTypeCode === MemberType.CONSUMER) { this.isConsumer = true; }
         } else {
           this.orderType = '';
           this.cartInfo = null;
@@ -277,9 +279,12 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * orderType = 'G' 그룹 결제
    * orderType = 'N' 일반 결제
    *
+   * 비회원인 경우 그룹주문 안되도록 처리
+   *
    * @param {any} evt 이벤트
    */
   groupPayment(evt: any, action?: string) {
+    if (this.isConsumer) { return; }
     if (action) {
       const modals = this.storage.getAllModalIds();
       if (modals && modals.indexOf(ModalIds.ACCOUNT) !== -1) {

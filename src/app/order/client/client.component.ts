@@ -61,13 +61,13 @@ export class ClientComponent implements OnInit, OnDestroy {
           this.logger.set('client.component', `storage subscribe ... ${result.key}`).debug();
           if (result.key === 'nc') {
             if (result.value === 'Y') {
-              this.modal.openModalByComponent(ClientAccountComponent,
-                {
-                  modalId: ModalIds.CLIENT
-                }
-              ).subscribe(() => {
-                this.storage.removeLocalItem('nc');
-              });
+              // this.modal.openModalByComponent(ClientAccountComponent,
+              //   {
+              //     modalId: ModalIds.CLIENT
+              //   }
+              // ).subscribe(() => {
+              //   this.storage.removeLocalItem('nc');
+              // });
             }
           } else if (result.key === 'customer') {
             // if (this.accountInfo) { this.init(); }
