@@ -238,6 +238,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    *
    * 확인 필요
    *    통합결제 취소 시 쿠폰 적용이 유지되는지? 아닌지?
+   *    => 카트에 담기 때문에 통합결제를 취소하면 적용안됨.
    *
    */
   private popupCoupon(addPopupType?: string) {
