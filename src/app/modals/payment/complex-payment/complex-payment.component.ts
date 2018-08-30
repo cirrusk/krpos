@@ -24,6 +24,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   accountInfo: Accounts;
   enableMenu: Array<string>;
   memberType = MemberType;
+  private isAppr: boolean;
   private point: number;
   private recash: number;
   private paymentModesSubscription: Subscription;
@@ -99,7 +100,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   }
 
   reset() {
-    this.paymentcapture = null;
+    this.paymentcapture = new PaymentCapture();
     this.storage.removePaymentModeCode();
     this.storage.removePaymentCapture();
     this.storage.removePay();
@@ -278,8 +279,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     }).subscribe(payments => {
       if (payments) {
         this.remakePaymentCapture(payments);
+        this.isAppr = true;
       } else {
-        this.enableMenu.push(payment); // 그냥 취소했을 경우는 다시 메뉴선택가능하도록 원복
+        if (!this.isAppr) { // 초기화
+          this.reset();
+        }
+        // 무조건 하나라도 결제가 이루어지면 초기화 안됨.
+        console.log('여기로 옵니까?');
+        // this.enableMenu.push(payment); // 그냥 취소했을 경우는 다시 메뉴선택가능하도록 원복
       }
     });
   }
