@@ -1,8 +1,8 @@
-import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType, ModalIds } from '../../data';
+import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType, ModalIds, KeyCode } from '../../data';
 import { MessageService, OrderService } from '../../service';
-import { Modal, Logger, AlertService } from '../../core';
+import { Modal, Logger, AlertService, KeyboardService, KeyCommand } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
@@ -15,6 +15,7 @@ import { OrderDetailComponent } from '../../modals/order/order-detail/order-deta
 export class OrderCompleteComponent implements OnInit, OnDestroy {
   private PAGE_SIZE = 7;
   private orderListSubscription: Subscription;
+  private keyboardsubscription: Subscription;
 
   @Input() chkSearchTypeABO = true;
   @Input() chkSearchTypeC = false;
@@ -34,6 +35,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private alert: AlertService,
     private messageService: MessageService,
+    private keyboard: KeyboardService,
     private renderer: Renderer2,
     private logger: Logger) {
     this.init();
@@ -41,11 +43,15 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
   }
 
   ngOnDestroy() {
     if (this.orderListSubscription) { this.orderListSubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   init() {
@@ -188,4 +194,65 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.changeMemberType(SearchMemberType.ABO);
     this.init();
   }
+
+  protected doArrowUp(evt: any) {
+    if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
+    this.inputSearchText.nativeElement.blur();
+    if (this.selectedOrderNum === -1) { this.selectedOrderNum = 0; }
+    if (this.selectedOrderNum > 0) {
+      this.selectedOrderNum--;
+    }
+  }
+
+  protected doArrowDown(evt: any) {
+    if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
+    this.inputSearchText.nativeElement.blur();
+    if (this.selectedOrderNum === this.PAGE_SIZE - 1) {
+    } else {
+      this.selectedOrderNum++;
+    }
+  }
+
+  protected doArrowRight(evt: any) {
+    if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
+    this.inputSearchText.nativeElement.blur();
+    this.selectedOrderNum = -1;
+    if (this.orderHistoryList.pagination.currentPage === this.orderHistoryList.pagination.totalPages - 1) {
+    } else {
+      this.setPage(this.orderHistoryList.pagination.currentPage + 1);
+    }
+  }
+
+  protected doArrowLeft(evt: any) {
+    if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
+    this.inputSearchText.nativeElement.blur();
+    this.selectedOrderNum = -1;
+    if (this.orderHistoryList.pagination.currentPage === 0) {
+    } else {
+      this.setPage(this.orderHistoryList.pagination.currentPage - 1);
+    }
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this[command.name](command.ev);
+    } catch (e) {
+      this.logger.set('order.complete.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyBoardDown(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT') { return; }
+    if (event.keyCode === KeyCode.ENTER) {
+      const order: any = this.orderHistoryList.orders.find((obj, i) => {
+        return i === this.selectedOrderNum;
+      });
+      if (order) {
+        this.activeRowCart(this.selectedOrderNum, order.code);
+      }
+    }
+  }
+
 }

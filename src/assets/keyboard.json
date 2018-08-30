@@ -20,6 +20,10 @@
     "shift+pagedown": [ "searchProduct" ],
     "shift+right": [ "doHold" ],
     "shift+ins": [ "updateQty" ],
-    "shift+del": [ "entryDelete" ]
+    "shift+del": [ "entryDelete" ],
+    "up": [ "doArrowUp"],
+    "down": [ "doArrowDown"],
+    "right": [ "doArrowRight" ],
+    "left": [ "doArrowLeft" ]
   }
 }
