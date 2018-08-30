@@ -215,7 +215,6 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   protected doArrowRight(evt: any) {
     if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
-    this.inputSearchText.nativeElement.blur();
     this.selectedOrderNum = -1;
     if (this.orderHistoryList.pagination.currentPage === this.orderHistoryList.pagination.totalPages - 1) {
     } else {
@@ -225,7 +224,6 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   protected doArrowLeft(evt: any) {
     if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
-    this.inputSearchText.nativeElement.blur();
     this.selectedOrderNum = -1;
     if (this.orderHistoryList.pagination.currentPage === 0) {
     } else {
