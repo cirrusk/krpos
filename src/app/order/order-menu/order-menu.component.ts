@@ -185,7 +185,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       } else if (action === 'sbag') {
         result = this.config.getConfig('smallBagCode');
       }
-      this.posPromotion.emit({ product: result });
+      if (result) { this.posPromotion.emit({ product: result }); }
     }
   }
 
