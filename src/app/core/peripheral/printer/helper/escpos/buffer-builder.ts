@@ -5,8 +5,8 @@ import { PosPrinterConstants } from './posprinter.constants';
 export class BufferBuilder {
 
   private buffer: MutableBuffer;
-  private dash: string = '------------------------------------------';
-  
+  private dash = '------------------------------------------';
+
   constructor(private defaultSettings: boolean = true) {
     this.buffer = new MutableBuffer();
   }

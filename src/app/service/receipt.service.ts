@@ -1,4 +1,3 @@
-import { DirectDebit } from './../data/models/receipt/payment-info';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
@@ -16,7 +15,7 @@ import {
     Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry,
     GroupResponseData, AmwayExtendedOrdering, AmwayPaymentInfoData, PaymentModes,
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
-    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo
+    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -45,7 +44,6 @@ export class ReceiptService implements OnDestroy {
         private logger: Logger) { }
 
     ngOnDestroy() {
-        // if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
         this.dispose();
     }
 

@@ -1,7 +1,7 @@
 import { Command } from './../command';
 
 import { ProductFieldMaxLen } from './maxlen.interface';
-import { ReceiptProductFieldInterface, DiscountFieldInterface } from './../../../../../../data/receipt/interfaces/productfield.interface';
+import { ReceiptProductFieldInterface, DiscountFieldInterface } from '../../../../../../data/receipt/interfaces/productfield.interface';
 import { PosPrinterConstants } from '../posprinter.constants';
 
 export class ReceiptUtils {

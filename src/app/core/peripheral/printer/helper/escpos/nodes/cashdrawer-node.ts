@@ -1,5 +1,5 @@
-import { XMLNode } from "../xml-node";
-import { BufferBuilder } from "..";
+import { XMLNode } from '../xml-node';
+import { BufferBuilder } from '..';
 
 export default class CashDrawerNode extends XMLNode {
 

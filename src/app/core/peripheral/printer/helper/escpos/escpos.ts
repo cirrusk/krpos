@@ -1,5 +1,4 @@
 import { Command } from './command';
-import { Injectable } from '@angular/core';
 
 import { TemplateParser } from './template-parser';
 import { XMLParser } from './xml-parser';
@@ -66,7 +65,7 @@ export class EscPos {
   }
 
   public static unescapeLeadingSpace(text: string): string | null {
-    return EscPos.replaceByteArray(text, EscPos.LEADING_SPACE_REPLACE, " ");
+    return EscPos.replaceByteArray(text, EscPos.LEADING_SPACE_REPLACE, ' ');
   }
 
   public static fillData(text: string, data: any): string {

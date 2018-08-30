@@ -1,21 +1,18 @@
 import { Injectable } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-import { Http, ResponseContentType } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class FormatReader {
 
-  constructor(private http: Http) { }
+  constructor(private http: HttpClient) { }
 
-  public readFormat(url: string): Observable<any> {
-    // return this.http.get(url, { responseType: 'text'});
-    return this.http.get(url, { responseType: ResponseContentType.Text });
+  public readFormatXml(url: string): Observable<any> {
+    return this.http.get(url, { responseType: 'text' });
   }
 
   public get(url: string): Observable<any> {
-    // return this.http.get(url, { responseType: 'text'});
-    return this.http.get(url, { responseType: ResponseContentType.Text });
+    return this.http.get(url, { responseType: 'json' });
   }
 
 }

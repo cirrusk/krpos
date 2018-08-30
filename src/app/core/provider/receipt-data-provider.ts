@@ -24,14 +24,14 @@ export class ReceiptDataProvider {
     this.formatReader.get(policyUri)
         .subscribe(
             (res) => {
-                waitDownload.next(JSON.parse(res._body) as ReceiptPolicy);
+                // waitDownload.next(JSON.parse(res._body) as ReceiptPolicy);
+                waitDownload.next(res as ReceiptPolicy);
             }
         );
 
         waitDownload.subscribe(
           (msg: ReceiptPolicy) => {
               this.policy = new ReceiptPolicyData(msg);
-
               this.preparedData = new Map();
               this.precompile();
           }
@@ -45,10 +45,11 @@ export class ReceiptDataProvider {
     this.getTemplateList().forEach((templateName: string) => {
         const url = this.getDownloadUriPrefix() + downloadUriMap.get(templateName);
 
-        this.formatReader.get(url)
+        this.formatReader.readFormatXml(url)
         .subscribe(
             (res) => {
-                const unparsed = res._body;
+                // const unparsed = res._body;
+                const unparsed = res;
                 const canPrecompile = precompileMap.get(templateName);
 
                 if (canPrecompile) {
@@ -63,6 +64,9 @@ export class ReceiptDataProvider {
                 } else {
                     this.preparedData.set(templateName, unparsed);
                 }
+            },
+            error => {
+              console.log({}, error);
             }
         );
     });
