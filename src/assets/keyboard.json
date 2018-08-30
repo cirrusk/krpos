@@ -24,6 +24,7 @@
     "up": [ "doArrowUp"],
     "down": [ "doArrowDown"],
     "right": [ "doArrowRight" ],
-    "left": [ "doArrowLeft" ]
+    "left": [ "doArrowLeft" ],
+    "enter": [ "doEnter" ]
   }
 }

@@ -28,11 +28,11 @@ export class Logger {
         if (this.name) { nm = '[' + this.name + '] '; } else { nm = ''; }
         msg = this.message ? this.message : '';
         switch (level) {
-          case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', 'DEBUG', 'color:teal', nm, msg); }
+          case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', level, 'color:teal', nm, msg); }
           case 'INFO':
-          case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:black', 'LOG', 'color:black', nm, msg); }
+          case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:black', level, 'color:black', nm, msg); }
           case 'WARN':
-          case 'ERROR': { return console.error.bind(console, `%c[%s] %c%s%s`, 'color:red', 'ERROR', 'color:red;', nm, msg); }
+          case 'ERROR': { return console.error.bind(console, `%c[%s] %c%s%s`, 'color:red', level, 'color:red;', nm, msg); }
           case 'OFF':
           default: return console.log.bind(console); // noop(undefined)로 넘겼을 경우 is not a function error
         }

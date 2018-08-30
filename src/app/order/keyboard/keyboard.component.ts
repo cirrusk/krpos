@@ -134,13 +134,9 @@ export class KeyboardComponent implements OnInit, OnDestroy {
    */
   private handleKeyboardCommand(command: KeyCommand) {
     try {
-      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] function!`).debug();
       this[command.name](command.ev);
-      // switch (command.combo) {
-      //   case 'ctrl+r': { this[command.name](); } break;
-      // }
     } catch (e) {
-      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
   }
 }

@@ -6,11 +6,7 @@
       <span>{{ posTimer }}</span>
   </div>
   <div class="right" *ngIf="!isClient">
-      <!-- <button type="button" class="type01 dp01"><i class="ico_comm keyboard"></i>키보드</button> -->
       <button type="button" class="type01 dp02" [class.link-disabled]="screenLockType === 1" (click)="holdOrder()" *ngIf="(isLogin && batchNo)"><span class="count">{{holdTotalCount}}</span>보류</button>
-      <!-- <ng-template #holdPopup>
-        <button type="button" class="type01 dp02" [class.link-disabled]="screenLockType === 1 || holdTotalCount === 0"><span class="count">0</span>보류</button>
-      </ng-template> -->
       <button type="button" class="type02" [class.link-disabled]="screenLockType === 1" (click)="endWork()" *ngIf="isLogin === true; else workStart">근무 종료</button>
       <ng-template #workStart>
         <button type="button" class="type02" (click)="startWork()" *ngIf="hasTerminal === true; else notWorkStart">근무 시작</button>

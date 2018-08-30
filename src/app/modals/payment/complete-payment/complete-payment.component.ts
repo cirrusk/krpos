@@ -341,7 +341,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         case 'ctrl+r': { this[command.name](); } break;
       }
     } catch (e) {
-      this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+      this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
   }
 

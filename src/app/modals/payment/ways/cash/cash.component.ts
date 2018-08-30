@@ -295,10 +295,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
 
   private handleKeyboardCommand(command: KeyCommand) {
     try {
-      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] function!`).debug();
       this[command.name](command.ev);
     } catch (e) {
-      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+      this.logger.set('cash.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
   }
 }

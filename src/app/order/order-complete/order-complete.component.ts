@@ -259,7 +259,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         this[command.name](command.ev);
       }
     } catch (e) {
-      this.logger.set('order.complete.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
+      this.logger.set('order.complete.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
   }
 
