@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker, PaymentBroker } from '../../broker';
-import { AlertService, Config, Logger, Modal, NetworkService, NetworkStatusService, StorageService, PrinterService, KeyboardService, KeyCommand } from '../../core';
+import { AlertService, Config, Logger, Modal, NetworkService, NetworkStatusService, StorageService, PrinterService } from '../../core';
 import { BatchComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
 import { BatchService, CartService, MessageService, TerminalService } from '../../service';
 import { BatchInfo, LockType, TerminalInfo } from '../../data';
@@ -44,7 +44,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
   private networksubscription: Subscription;
-  private keyboardsubscription: Subscription;
   isClientScreen: boolean;
   posName: string;
   posTimer: string;
@@ -72,7 +71,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private paymentBroker: PaymentBroker,
     private datePipe: DatePipe,
     private networkstatus: NetworkStatusService,
-    private keyboard: KeyboardService,
     private logger: Logger,
     private config: Config) {
     this.posTimer = this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
@@ -130,9 +128,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isQzCheck();
     // this.networkCheck();
-    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
-      this.handleKeyboardCommand(c);
-    });
   }
 
   ngOnDestroy() {
@@ -147,7 +142,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.networksubscription) { this.networksubscription.unsubscribe(); }
-    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   ngAfterViewInit() {
@@ -430,32 +424,6 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           this.info.sendInfo('bat', { batchNo: null });
         }
       });
-  }
-
-  protected doEnter(evt: KeyboardEvent) {
-    if (this.screenLockType !== LockType.LOCK) {
-      const auth: boolean = this.storage.hasTerminalAuth();
-      if (auth) {
-        if (this.storage.isLogin()) {
-          // this.endWork();
-        } else {
-          // this.startWork();
-        }
-      }
-    }
-  }
-
-  private handleKeyboardCommand(command: KeyCommand) {
-    try {
-      if (!this.isClient) {
-        const modal = this.storage.getLatestModalId();
-        if (modal === null || modal === undefined) {
-          this[command.name](command.ev);
-        }
-      }
-    } catch (e) {
-      this.logger.set('header.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
-    }
   }
 
 }

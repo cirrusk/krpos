@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Modal, Logger, StorageService, AlertService, AlertState, KeyboardService, KeyCommand } from '../core';
+import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
 import { BatchService, MessageService } from '../service';
 import { InfoBroker } from '../broker';
 import { AccessToken, LockType, ModalIds, KeyCode, BatchInfo } from '../data';
@@ -21,7 +21,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private statssubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
-  private keyboardsubscription: Subscription;
   private orderCount: number;
   constructor(
     private modal: Modal,
@@ -30,7 +29,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private alert: AlertService,
     private message: MessageService,
-    private keyboard: KeyboardService,
     private logger: Logger,
     private router: Router) {
     this.orderCount = 0;
@@ -67,9 +65,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.logger.set('dashboard.component', `current order count : ${this.orderCount}`).debug();
       }
     });
-    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
-      this.handleKeyboardCommand(c);
-    });
   }
 
   ngOnDestroy() {
@@ -77,7 +72,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
-    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   /**
@@ -229,28 +223,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     );
-  }
-
-  protected doEnter(evt: KeyboardEvent) {
-    if (this.screenLockType !== LockType.LOCK) {
-      if (this.storage.isLogin()) {
-        const batch: BatchInfo = this.storage.getBatchInfo();
-        if (batch === null || batch === undefined) {
-          // console.log('################## key enter for start shift');
-        }
-      }
-    }
-  }
-
-  private handleKeyboardCommand(command: KeyCommand) {
-    try {
-      const modal = this.storage.getLatestModalId();
-      if (modal === null || modal === undefined) {
-        this[command.name](command.ev);
-      }
-    } catch (e) {
-      this.logger.set('dashboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
-    }
   }
 
 }
