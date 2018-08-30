@@ -12,7 +12,7 @@
                     <option value="M">일반회원</option>
                     <option value="C">소비자</option>
                   </select>
-                  <input #inputSearchText type="text" class="mousetrap" style="width:480px" (keydown.enter)="searchOrder(searchMemberType.value,inputSearchText.value)">
+                  <input #inputSearchText type="text" style="width:480px" (keydown.enter)="searchOrder(searchMemberType.value,inputSearchText.value)">
                   <button type="button" class="btn01_blue" (click)="searchOrder(searchMemberType.value,inputSearchText.value)">확인</button>
               </div>
           </div>
