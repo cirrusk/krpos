@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input, 
 import { Router } from '@angular/router';
 import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType, ModalIds, KeyCode } from '../../data';
 import { MessageService, OrderService } from '../../service';
-import { Modal, Logger, AlertService, KeyboardService, KeyCommand } from '../../core';
+import { Modal, Logger, AlertService, KeyboardService, KeyCommand, StorageService } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
@@ -36,6 +36,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     private alert: AlertService,
     private messageService: MessageService,
     private keyboard: KeyboardService,
+    private storage: StorageService,
     private renderer: Renderer2,
     private logger: Logger) {
     this.init();
@@ -253,7 +254,10 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
 
   private handleKeyboardCommand(command: KeyCommand) {
     try {
-      this[command.name](command.ev);
+      const modal = this.storage.getLatestModalId();
+      if (modal !== ModalIds.ORDERDETAIL) {
+        this[command.name](command.ev);
+      }
     } catch (e) {
       this.logger.set('order.complete.component', `[${command.combo}] key event, [${command.name}] undefined function!`).error();
     }
@@ -264,11 +268,14 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      const order: any = this.orderHistoryList.orders.find((obj, i) => {
-        return i === this.selectedOrderNum;
-      });
-      if (order) {
-        this.activeRowCart(this.selectedOrderNum, order.code);
+      const modal = this.storage.getLatestModalId();
+      if (modal !== ModalIds.ORDERDETAIL) {
+        const order: any = this.orderHistoryList.orders.find((obj, i) => {
+          return i === this.selectedOrderNum;
+        });
+        if (order) {
+          this.activeRowCart(this.selectedOrderNum, order.code);
+        }
       }
     }
   }
