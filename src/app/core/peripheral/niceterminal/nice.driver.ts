@@ -12,6 +12,7 @@ import { Logger } from '../../logger/logger';
 import { NiceUtils } from './utils/nice.utils';
 import { NiceConstants } from './nice.constants';
 import { Utils } from '../../utils';
+import { SpinnerService } from '../../spinner/spinner.service';
 
 @Injectable()
 export class NiceDriver extends AbstractDriver {
@@ -24,7 +25,7 @@ export class NiceDriver extends AbstractDriver {
     // private wsObserver: Observable<any>;
     private driverMsgHandler: Subject<any>;
 
-    constructor(private config: Config, private logger: Logger) {
+    constructor(private config: Config, private logger: Logger, private spinner: SpinnerService) {
         super('NICE Driver');
 
         /*
@@ -48,8 +49,8 @@ export class NiceDriver extends AbstractDriver {
         }
         if (this.isNotReady()) {
             this.logger.set('nice.driver', 'NICE WebSocket Trying to reconnect...').debug();
-            setTimeout(() => { this.reconnect(); }, 15 * 1000);
-
+            // setTimeout(() => { this.reconnect(); }, 15 * 1000);
+            this.reconnect();
             const errResponse: string = NiceUtils.genErrMessage(NiceConstants.ERROR_CODE.WEBSOCKET_ERROR);
 
             const errRes: BehaviorSubject<string> = new BehaviorSubject(errResponse);
@@ -73,6 +74,7 @@ export class NiceDriver extends AbstractDriver {
                 resNoti.next(res);
             },
             (err) => {
+                this.spinner.hide();
                 console.log('NICE error : ' + err);
                 this.logger.set('nice.driver', `NICE approval catch error : ${Utils.stringify(err)}`).error();
             },
@@ -112,6 +114,7 @@ export class NiceDriver extends AbstractDriver {
             this.driverMsgHandler.next(event.data);
         };
         _ws.onerror = (event) => {
+            this.spinner.hide();
             this.logger.set('nice.driver', `NICE webSocket.onError : ${event}`).error();
         };
         _ws.onclose = (event) => {
