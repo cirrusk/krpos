@@ -103,6 +103,14 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.keyMenuAction.emit({ action: 'coupon'});
   }
 
+  protected doBigBag(evt: any) {
+    this.keyMenuAction.emit({ action: 'bbag'});
+  }
+
+  protected doSmallBag(evt: any) {
+    this.keyMenuAction.emit({ action: 'sbag'});
+  }
+
   protected doEnter(evt: any) { }
   protected doArrowUp(evt: any) { }
   protected doArrowDown(evt: any) { }

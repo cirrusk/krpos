@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { Modal, Logger, StorageService } from '../../core';
+import { Modal, Logger, StorageService, Config } from '../../core';
 import {
   PromotionOrderComponent, EtcOrderComponent,
   SearchAccountComponent, PickupOrderComponent,
@@ -12,7 +12,6 @@ import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
 import { SearchAccountBroker, InfoBroker } from '../../broker';
-import { PaymentService } from '../../service';
 
 /**
  * 주문 메뉴 구성
@@ -68,8 +67,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @Output() public posPayReset: EventEmitter<any> = new EventEmitter<any>();  // 통합결제 창이 닫힐 경우 결과 금액 초기화하기
   constructor(private modal: Modal,
     private storage: StorageService,
-    private payment: PaymentService,
     private logger: Logger,
+    private config: Config,
     private searchAccountBroker: SearchAccountBroker,
     private infobroker: InfoBroker,
     private renderer: Renderer2
@@ -165,9 +164,28 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         this.etcOrder(event, action);
       } else if (action === 'coupon') {
         this.popupCoupon(action);
+      } else if (action === 'bbag' || action === 'sbag') {
+        this.doPromotionForBag(action);
       } else {
         this.checkPaymentPopup(action);
       }
+    }
+  }
+
+  /**
+   * 프로모션 상품 중 비니루 봉투 장바구니에 담기
+   *
+   * @param action 키보드 이벤트로 넘어온 정보
+   */
+  private doPromotionForBag(action: any) {
+    if (this.hasAccount) {
+      let result;
+      if (action === 'bbag') {
+        result = this.config.getConfig('bigBagCode');
+      } else if (action === 'sbag') {
+        result = this.config.getConfig('smallBagCode');
+      }
+      this.posPromotion.emit({ product: result });
     }
   }
 

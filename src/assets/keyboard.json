@@ -11,6 +11,8 @@
     "ctrl+alt+p": [ "doPickUp" ],
     "ctrl+alt+u": [ "doCheque" ],
     "ctrl+alt+q": [ "doCoupon" ],
+    "ctrl+alt+b": [ "doBigBag" ],
+    "ctrl+alt+s": [ "doSmallBag" ],
     "ctrl+m": [ "doMediator" ],
     "ctrl+r": [ "popupCashReceipt" ],
     "ctrl+shift+d": [ "doOpenDrawer" ],
