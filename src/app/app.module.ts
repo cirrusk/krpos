@@ -9,7 +9,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CheckComponent } from './common/check/check.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
-import { TestModule } from './common/test/test.module';
 import { OrderModule } from './order/order.module';
 import { Config, CLIENT_SECRET } from './core/config/config';
 
@@ -24,7 +23,6 @@ import { MESSAGE_PROVIDER } from './message/message';
     HttpClientModule,
     AppRoutingModule,
     CoreModule,
-    TestModule,
     OrderModule
   ],
   declarations: [
