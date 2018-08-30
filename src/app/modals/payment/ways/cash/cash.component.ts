@@ -73,7 +73,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   keyDownNumCheck(evt: any) {
     const key = evt.keyCode;
     if (evt.key === 'Process') { evt.preventDefault(); return; }
-    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
+    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB || key === KeyCode.LEFT_ARROW || key === KeyCode.RIGHT_ARROW) {
       evt.stopPropagation();
       return;
     }
@@ -124,7 +124,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       }
     }
     this.cashCal();
-    setTimeout(() => { this.paid.nativeElement.select(); this.paid.nativeElement.focus(); }, 50);
+    setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);
   }
 
   cashCal() {

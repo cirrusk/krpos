@@ -9,7 +9,7 @@ export class OnlyNumberDirective {
   private regexOnlyNum: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g); // 숫자만
   // Allow key codes for special events. Reflect :
   // Backspace, tab, end, home
-  private specialKeys: Array<string> = [ 'Backspace', 'Tab', 'End', 'Home' ];
+  private specialKeys: Array<string> = [ 'Backspace', 'Tab', 'End', 'Home', 'Delete', 'ArrowLeft', 'ArrowRight'];
   constructor(private element: ElementRef) { }
 
   @HostListener('keydown', ['$event'])

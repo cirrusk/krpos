@@ -19,7 +19,7 @@
                         <tr>
                             <th scope="row">실결제금액</th>
                             <td>
-                                <input #paid type="text" class="w110 ar" posOnlyNumber="true" maxlength=9 title="실결제금액" (focusout)="focusOutNumCheck($event)" (keydown)="keyDownNumCheck($event)" (keyup)="keyUpNumCheck($event);paidCal(paid.value);" (keydown.enter)="paidEnter(paid.value)"> 원
+                                <input #paid type="text" class="w110 ar" autofocus required posOnlyNumber="true" maxlength=9 title="실결제금액" (focusout)="focusOutNumCheck($event)" (keydown)="keyDownNumCheck($event)" (keyup)="keyUpNumCheck($event);paidCal(paid.value);" (keydown.enter)="paidEnter(paid.value)"> 원
                             </td>
                         </tr>
                         <tr>
