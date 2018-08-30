@@ -196,6 +196,7 @@ export class ReceiptService implements OnDestroy {
                     this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
                     const entryList = new Array<OrderEntry>();
 
+                    // summary 에 사용될 데이터 생성
                     groupOrder.orderList.forEach((tempOrder, index) => {
                         tempOrder.entries.forEach(entry => {
                             const existedIdx = entryList.findIndex(
@@ -214,6 +215,7 @@ export class ReceiptService implements OnDestroy {
                         });
                     });
 
+                    // Summary 출력
                     this.makeTextAndGroupSummaryPrint(entryList, '그룹주문');
 
                     setTimeout(() => {

@@ -26,6 +26,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   cancelFlag: boolean;
   groupMainFlag: boolean;
   activeFlag: boolean;
+  isCancelButton: boolean;
   orderType: string;
   paymentCapture: PaymentCapture;
   ABOFlag: boolean;
@@ -74,6 +75,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.pointType = '';
     this.cancelFlag = false;
     this.activeFlag = false;
+    this.isCancelButton = false;
     this.groupMainFlag = true;
     this.orderType = OrderType.NORMAL;
     this.paymentCapture = new PaymentCapture();
@@ -92,9 +94,11 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.cancelFlag = false;
     }
 
-    // if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
-    // hybris 수정 전 임시
-    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.amwayAccount.uid !== this.orderInfo.volumeAccount.uid) {
+    if (orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED') {
+      this.isCancelButton = true;
+    }
+
+    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
       this.groupMainFlag = false;
     }
   }
@@ -103,45 +107,50 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * 주문 취소 팝업
    */
   popupCancel() {
-    this.modal.openModalByComponent(CancelOrderComponent, {
-      callerData: { orderInfo: this.orderInfo },
-      closeByClickOutside: false,
-      closeByEnter: false,
-      modalId: ModalIds.CANCEL
-    }
-    ).subscribe(result => {
-      if (result.cancelFlag) {
-        this.cancelSymbol = '-';
-        this.cancelFlag = true;
-        this.activeFlag = true;
-        this.result = this.activeFlag;
-        this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
-        this.getBalance(this.orderInfo.user.uid);
+    if (this.isCancelButton) {
+      this.modal.openModalByComponent(CancelOrderComponent, {
+        callerData: { orderInfo: this.orderInfo },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        modalId: ModalIds.CANCEL
       }
-    });
+      ).subscribe(result => {
+        if (result.cancelFlag) {
+          this.cancelSymbol = '-';
+          this.cancelFlag = true;
+          this.activeFlag = true;
+          this.result = this.activeFlag;
+          this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+          this.getBalance(this.orderInfo.user.uid);
+        }
+      });
+    }
   }
 
   /**
    * 결제수단변경/재결제
    */
   paymentChange() {
-    this.modal.openModalByComponent(CancelOrderComponent, {
-      callerData: { orderInfo: this.orderInfo },
-      closeByClickOutside: false,
-      closeByEnter: false,
-      closeByEscape: false,
-      modalId: ModalIds.REORDER
-    }
-    ).subscribe(
-      result => {
-        if (result.cancelFlag) {
-          // 재결제 추가
-          const data = { 'orderDetail': result.data, 'orderType': this.orderInfo.isGroupCombinationOrder ? this.orderInfo.isGroupCombinationOrder : false };
-          this.info.sendInfo('paymentChange', data);
-          this.goOrder();
-          this.close();
+    if (this.isCancelButton) {
+      this.modal.openModalByComponent(CancelOrderComponent, {
+        callerData: { orderInfo: this.orderInfo },
+        closeByClickOutside: false,
+        closeByEnter: false,
+        closeByEscape: false,
+        modalId: ModalIds.REORDER
+      }
+      ).subscribe(
+        result => {
+          if (result.cancelFlag) {
+            // 재결제 추가
+            const data = { 'orderDetail': result.data, 'orderType': this.orderInfo.isGroupCombinationOrder ? this.orderInfo.isGroupCombinationOrder : false };
+            this.info.sendInfo('paymentChange', data);
+            this.goOrder();
+            this.close();
+          }
         }
-      });
+      );
+    }
   }
 
   /**
