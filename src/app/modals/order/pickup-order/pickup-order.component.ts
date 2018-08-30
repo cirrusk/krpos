@@ -360,29 +360,30 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param {OrderList} orderList 주문리스트
    */
   makeReceiptPrintData(orderList: OrderList): void {
-    this.entryList = orderList.orders[0].entries;
-
     // 복수 선택의 경우 Summary 영수증 출력
     if (orderList.orders.length > 1) {
+      this.entryList = new Array<OrderEntry>();
       orderList.orders.forEach((order, index) => {
-        if (index > 0) {
-          order.entries.forEach(entry => {
-            const existedIdx = this.entryList.findIndex(
-              function (obj) {
-                return obj.product.code === entry.product.code;
-              }
-            );
-            if (existedIdx === -1) {
-              this.entryList.push(entry);
-            } else {
-              this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + entry.quantity);
+        order.entries.forEach(entry => {
+          const existedIdx = this.entryList.findIndex(
+            function (obj) {
+              return obj.product.code === entry.product.code;
             }
-          });
-        }
+          );
+          const tempEntry = new OrderEntry();
+          Object.assign(tempEntry, entry);
+
+          if (existedIdx === -1) {
+            this.entryList.push(tempEntry);
+          } else {
+            this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + tempEntry.quantity);
+          }
+        });
       });
       this.receiptService.makeTextAndGroupSummaryPrint(this.entryList, this.orderTypeName);
 
     }
+
     // 사용자별 영수증 출력
     setTimeout(() => {
       try {
