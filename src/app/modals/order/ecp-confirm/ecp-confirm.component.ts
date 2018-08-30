@@ -129,6 +129,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    */
   productConfirm(productCode: string, page?: number): void {
     if (productCode.length > 0) {
+      this.barcode.nativeElement.value = '';
       const existedIdx = this.entryList.findIndex(
         function (obj) {
           return obj.product.code === productCode;
@@ -172,6 +173,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
             }
           });
       }
+      setTimeout(() => { this.barcode.nativeElement.focus(); }, 100);
     } else {
       this.alert.warn({message: this.messageService.get('noProductSearchText'),
                        timer: true,
