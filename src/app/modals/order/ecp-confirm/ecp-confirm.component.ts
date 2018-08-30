@@ -100,24 +100,23 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
    * @param {OrderList} orderList 주문 리스트
    */
   setEntryList(orderList: OrderList): void {
-    this.entryList = orderList.orders[0].entries;
-
     orderList.orders.forEach((order, index) => {
       this.orderCodes += ',' + order.code;
-      if (index > 0) {
-        order.entries.forEach(entry => {
-          const existedIdx = this.entryList.findIndex(
-            function (obj) {
-              return obj.product.code === entry.product.code;
-            }
-          );
-          if (existedIdx === -1) {
-            this.entryList.push(entry);
-          } else {
-            this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + entry.quantity);
+      order.entries.forEach(entry => {
+        const existedIdx = this.entryList.findIndex(
+          function (obj) {
+            return obj.product.code === entry.product.code;
           }
-        });
-      }
+        );
+        const tempEntry = new OrderEntry();
+        Object.assign(tempEntry, entry);
+
+        if (existedIdx === -1) {
+          this.entryList.push(tempEntry);
+        } else {
+          this.entryList[existedIdx].quantity = (this.entryList[existedIdx].quantity + tempEntry.quantity);
+        }
+      });
     });
 
     this.setPage(Math.ceil(this.entryList.length / this.PAGE_SIZE));

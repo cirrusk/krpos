@@ -949,6 +949,8 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.storage.removeTokenInfo();
               this.storage.removeBatchInfo();
               this.router.navigate(['/']);
+            } else {
+              this.alert.error({ message: this.message.get('search.account.error', errdata.message), timer: true, interval: 1500 });
             }
           }
         }

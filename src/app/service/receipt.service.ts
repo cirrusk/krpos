@@ -196,8 +196,31 @@ export class ReceiptService implements OnDestroy {
                 if (result) {
                     const groupOrder: AmwayExtendedOrdering = result;
                     this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
+                    const entryList = new Array<OrderEntry>();
 
-                    this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt);
+                    groupOrder.orderList.forEach((tempOrder, index) => {
+                        tempOrder.entries.forEach(entry => {
+                            const existedIdx = entryList.findIndex(
+                                    function (obj) {
+                                        return obj.product.code === entry.product.code;
+                                    }
+                            );
+                            const tempEntry = new OrderEntry();
+                            Object.assign(tempEntry, entry);
+
+                            if (existedIdx === -1) {
+                                entryList.push(tempEntry);
+                            } else {
+                                entryList[existedIdx].quantity = (entryList[existedIdx].quantity + tempEntry.quantity);
+                            }
+                        });
+                    });
+
+                    this.makeTextAndGroupSummaryPrint(entryList, '그룹주문');
+
+                    setTimeout(() => {
+                        this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt);
+                    }, 500);
 
                     // groupOrder.orderList.forEach((gOrder, index) => {
                     //     let gPaymentCapture = new PaymentCapture();
@@ -293,15 +316,29 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 재발행 여부
      */
     private doPrintByGroup(ordering: GroupResponseData, orderList: Array<Order>, printInfo: any, point: number, reIssue = false) {
-        const prints = [];
-        prints.push(this.printMainOrder(ordering, printInfo, point, reIssue));
-        const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
-        subOrderList.forEach((order, index) => {
-            prints.push(this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, printInfo.cashReceipt));
-        });
-        Observable.zip(prints).subscribe(resp => {
-            this.logger.set('receipt.service', `${resp}`).debug();
-        });
+        // 임시 주석
+        // const prints = [];
+        // prints.push(this.printMainOrder(ordering, printInfo, point, reIssue));
+        // const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
+
+        // subOrderList.forEach((order, index) => {
+        //     prints.push(this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, printInfo.cashReceipt));
+        // });
+        // Observable.zip(prints).subscribe(resp => {
+        //     this.logger.set('receipt.service', `${resp}`).debug();
+        // });
+        this.printMainOrder(ordering, printInfo, point, reIssue).subscribe(
+            () => {
+                setTimeout(() => {
+                    const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
+                    subOrderList.forEach((order, index) => {
+                        setTimeout(() => {
+                            this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, printInfo.cashReceipt);
+                        }, 500);
+                    });
+                }, 1000);
+            }
+        );
     }
 
     /**
@@ -707,6 +744,7 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
+            console.log({}, text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();
@@ -776,6 +814,7 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
+            console.log({}, text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();
