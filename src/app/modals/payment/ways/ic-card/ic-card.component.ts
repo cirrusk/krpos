@@ -84,7 +84,6 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
    * 카드결제만 진행
    */
   private cardPay() {
-    this.spinner.show();
     const resultNotifier: Subject<ICCardApprovalResult> = this.nicepay.icCardApproval(String(this.paidamount));
     this.logger.set('ic.card.component', 'listening on reading ic card...').debug();
     resultNotifier.subscribe(
@@ -124,6 +123,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   close() {
+    this.spinner.hide();
     this.closeModal();
   }
 

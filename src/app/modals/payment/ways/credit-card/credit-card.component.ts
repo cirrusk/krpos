@@ -321,7 +321,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
     this.change = this.paidamount - paid;
     if (this.change >= 0) {
-      this.spinner.show();
       const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
       this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
@@ -385,6 +384,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   close() {
+    this.spinner.hide();
     this.closeModal();
   }
 
