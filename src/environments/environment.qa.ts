@@ -78,7 +78,7 @@ export const environment = {
     cashdrawerLog: '/{baseSiteId}/point-of-service/cash-drawer-log/{batchId}',
     issueReceipt: '/{baseSiteId}/users/{userId}/issue-receipt/{orderCode}',
     cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}',
-    confirmPickup: '/{baseSiteId}/confirm-pickup',
+    confirmPickup: '/{baseSiteId}/confirm-pickup/{pickupStore}',
     checkBlock: '/{baseSiteId}/check-order-block/{userId}',
     getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}'
   },
