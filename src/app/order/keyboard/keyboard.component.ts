@@ -103,6 +103,12 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.keyMenuAction.emit({ action: 'coupon'});
   }
 
+  protected doEnter(evt: any) { }
+  protected doArrowUp(evt: any) { }
+  protected doArrowDown(evt: any) { }
+  protected doArrowRight(evt: any) { }
+  protected doArrowLeft(evt: any) { }
+
   /**
    * 비닐봉투(대)
    * 비닐봉투(소)
