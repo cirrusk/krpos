@@ -27,6 +27,8 @@
     "down": [ "doArrowDown"],
     "right": [ "doArrowRight" ],
     "left": [ "doArrowLeft" ],
+    "pageup": [ "doPageUp" ],
+    "pagedown": [ "doPageDown" ],
     "enter": [ "doEnter" ]
   }
 }

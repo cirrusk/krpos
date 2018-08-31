@@ -196,40 +196,17 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  /**
-   * 목록 row 위로 이동하기
-   *
-   * @param evt 키 이벤트
-   */
-  protected doArrowUp(evt: KeyboardEvent) {
-    if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
-    this.inputSearchText.nativeElement.blur();
-    if (this.selectedOrderNum === -1) { this.selectedOrderNum = 0; }
-    if (this.selectedOrderNum > 0) {
-      this.selectedOrderNum--;
-    }
-  }
-
-  /**
-   * 목록 row 아래로 이동하기
-   *
-   * @param evt 키 이벤트
-   */
-  protected doArrowDown(evt: KeyboardEvent) {
-    if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
-    this.inputSearchText.nativeElement.blur();
-    if (this.selectedOrderNum === this.PAGE_SIZE - 1) {
-    } else {
-      this.selectedOrderNum++;
-    }
-  }
+  protected doArrowUp(evt: KeyboardEvent) {}
+  protected doArrowDown(evt: KeyboardEvent) {}
+  protected doArrowLeft(evt: KeyboardEvent) {}
+  protected doArrowRight(evt: KeyboardEvent) {}
 
   /**
    * 이전 페이지 이동하기
    *
    * @param evt 키 이벤트
    */
-  protected doArrowLeft(evt: KeyboardEvent) {
+  protected doPageDown(evt: KeyboardEvent) {
     if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
     this.selectedOrderNum = -1;
     if (this.orderHistoryList.pagination.currentPage === 0) {
@@ -243,7 +220,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    *
    * @param evt 키 이벤트
    */
-  protected doArrowRight(evt: KeyboardEvent) {
+  protected doPageUp(evt: KeyboardEvent) {
     if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
     this.selectedOrderNum = -1;
     if (this.orderHistoryList.pagination.currentPage === this.orderHistoryList.pagination.totalPages - 1) {
