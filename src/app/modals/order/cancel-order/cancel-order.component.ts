@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
-import { ModalComponent, ModalService, AlertService, Logger, SpinnerService, CardCancelResult, NicePaymentService, ICCardCancelResult } from '../../../core';
+import { ModalComponent, ModalService, AlertService, Logger, SpinnerService, CardCancelResult, NicePaymentService, ICCardCancelResult, PrinterService } from '../../../core';
 import { OrderHistory, PaymentDetails, AmwayPaymentInfoData, PaymentModes } from '../../../data';
-import { OrderService, ReceiptService, MessageService } from '../../../service';
+import { OrderService, ReceiptService, MessageService, PaymentService } from '../../../service';
 import { Subscription } from 'rxjs/Subscription';
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
@@ -26,7 +26,9 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     private orderService: OrderService,
     private receiptService: ReceiptService,
     private messageService: MessageService,
+    private payment: PaymentService,
     private nicepay: NicePaymentService,
+    private printer: PrinterService,
     private spinner: SpinnerService,
     private logger: Logger,
     private alert: AlertService) {
@@ -100,6 +102,32 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     this.cancelOrderSubscription = this.orderService.orderCancel(accountuid, useruid, ordercode).subscribe(
       cancelData => {
         if (cancelData) {
+          // 현금이 있을 경우 돈통 열림
+          const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
+          const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
+            paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CASH)
+          );
+          paymentinfos.forEach(paymentinfo => {
+            console.log(paymentinfo.paymentMode.code + '/' + PaymentModes.CASH);
+            if (paymentinfo.paymentMode.code === PaymentModes.CASH) {
+              const amount = paymentinfo.amount;
+              console.log('amount ===== > ' + amount);
+              if (amount > 0) {
+                this.printer.openCashDrawer(); // cash drawer open
+                // cash drawer open logging
+                this.payment.cashDrawerLogging().subscribe(
+                  result => {
+                    this.logger.set('cancel.order.component', `${result.returnMessage}`).debug();
+                  },
+                  error => {
+                    const errdata = Utils.getError(error);
+                    if (errdata) {
+                      this.logger.set('cancel.order.component', `${errdata.message}`).error();
+                    }
+                  });
+              }
+            }
+          });
           this.cancelReceipts();
         }
       },

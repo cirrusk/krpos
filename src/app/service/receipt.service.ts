@@ -172,7 +172,6 @@ export class ReceiptService implements OnDestroy {
                     isCashReceipt: false
                 };
                 rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
-
             }
         });
         return Observable.of(rtn);
