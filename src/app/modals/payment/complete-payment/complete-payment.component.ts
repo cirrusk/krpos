@@ -101,9 +101,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     const calpaid = this.calAmountByPayment();
     if (calpaid >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
       if (Utils.isEmpty(this.storage.getPaymentModeCode())) {
+        console.log('1');
         this.checktype = -1;
         this.apprmessage = this.message.get('not.choose.payment'); // '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.';
       } else {
+        console.log('2');
         this.checktype = 0;
         this.paymentCaptureAndPlaceOrder();
       }

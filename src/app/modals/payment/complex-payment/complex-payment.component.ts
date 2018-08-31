@@ -101,9 +101,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   reset() {
     this.paymentcapture = new PaymentCapture();
-    this.storage.removePaymentModeCode();
-    this.storage.removePaymentCapture();
-    this.storage.removePay();
+    // this.storage.removePaymentModeCode();
+    // this.storage.removePaymentCapture();
+    // this.storage.removePay();
     this.resetSelected();
   }
 
