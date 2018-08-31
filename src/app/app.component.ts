@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private handleKeyboardCommand(command: KeyCommand) {
     try {
       this[command.name](command.ev);
-    } catch (e) { console.log('1111111111111111111'); }
+    } catch (e) { }
   }
 
 }
