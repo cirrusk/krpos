@@ -10,7 +10,7 @@
           <label class="inp_rd type01" for="bn1">법인명<input type="radio" name="bn1" id="bn1" checked><span class="checkmark"></span></label>
           <!-- 검색영역 -->
           <div class="mbinfo_search">
-              <input #inputSearchBer autofocus type="text" style="width:480px" (keydown.enter)="getBerList()">
+              <input #inputSearchBer autofocus type="text" class="mousetrap" style="width:480px" (keydown.enter)="getBerList()">
               <button type="button" class="btn01_blue" (click)="getBerList()">확인</button>
           </div>
           <!-- //검색영역 -->

@@ -14,12 +14,12 @@
                     <ol>
                         <li *ngIf="serial"><input type="text" value="{{serial}}" readonly></li>
                         <li *ngFor="let p of productCount">
-                            <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" (keydown.enter)="check(codes, $event)">
+                            <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15 mousetrap" title="{{regLabel}}" (keydown.enter)="check(codes, $event)">
                         </li>
                     </ol>
                 </div>
                 <ng-template #singleInput>
-                    <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
+                    <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15 mousetrap" title="{{regLabel}}" style="width:370px" (keydown.enter)="check(codes, $event)">
                 </ng-template>
             </div>
         </div>

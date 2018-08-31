@@ -89,11 +89,7 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.keyMenuAction.emit({ action: 'mediator'});
   }
 
-  protected doClearInput(evt: any) {
-    if (evt.target.tagName === 'INPUT' && (evt.target.type === 'text' || evt.target.type === 'number')) {
-      evt.target.value = ''; // this.keyCartAction.emit({ action: 'clear'});
-    }
-  }
+  protected doClearInput(evt: any) { }
 
   protected doEtc(evt: any) {
     this.keyMenuAction.emit({ action: 'etc'});

@@ -47,7 +47,7 @@
              <!-- 바코드스캔 수정 20180524 -->
              <div class="scan">
                 <label for="bcs">바코드 스캔</label>
-                <input #barcode type="text" id="bcs" (keydown.enter)="productConfirm(barcode.value, pager.currentPage)">
+                <input #barcode type="text" class="mousetrap" id="bcs" (keydown.enter)="productConfirm(barcode.value, pager.currentPage)">
             </div>
             <!-- //바코드스캔 수정 20180524 -->
       </div>

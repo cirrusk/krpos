@@ -14,7 +14,7 @@
                     <option value="abo">ABO회원</option>
                     <option value="orderCode">주문번호</option>
                 </select>
-                <input #inputSearchText type="text" style="width:480px" (keydown.enter)="searchOrder(searchType.value, inputSearchText.value)">
+                <input #inputSearchText type="text" class="mousetrap" style="width:480px" (keydown.enter)="searchOrder(searchType.value, inputSearchText.value)">
                 <button type="button" class="btn01_blue" (click)="searchOrder(searchType.value, inputSearchText.value)">확인</button>
             </div>
             <!-- //회원검색영역 -->
@@ -108,7 +108,7 @@
             <!-- //검색결과 영역 : 검색 후 -->
             <div class="scan">
                 <label for="bcs">바코드 스캔</label>
-                <input #barcodeScan type="text" id="bcs" (keydown.enter)="searchOrder('orderCode', barcodeScan.value, true)">
+                <input #barcodeScan type="text" class="mousetrap" id="bcs" (keydown.enter)="searchOrder('orderCode', barcodeScan.value, true)">
             </div>
             <!-- //20180713 추가 -->
         </div>

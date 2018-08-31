@@ -14,7 +14,7 @@
                 <label class="inp_rd type01" for="prd">상품명<input (change)="searchOption($event)" value="prd" type="radio" name="product" id="prd"><span class="checkmark"></span></label>
             </div>
             <div class="mbinfo_search">
-                <input type="text" (keyup)="resetCurrentPage($event)" (keydown.enter)="searchProduct(searchValue.value)" style="text-transform:uppercase;width:480px" #searchValue>
+                <input type="text" class="mousetrap" (keyup)="resetCurrentPage($event)" (keydown.enter)="searchProduct(searchValue.value)" style="text-transform:uppercase;width:480px" #searchValue>
                 <button type="button" class="btn01_blue" (click)="searchProduct(searchValue.value)">확인</button>
             </div>
             <!-- //직접 입력 -->

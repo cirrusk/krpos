@@ -15,7 +15,7 @@
                     <option *ngIf="orderType !== eOrderType.GROUP" value="M">일반회원</option>
                     <option *ngIf="orderType !== eOrderType.GROUP" value="C">소비자</option>
                 </select>
-                <input #inputSearchText type="text" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)">
+                <input #inputSearchText type="text" class="mousetrap" style="width:480px" (keydown.enter)="getAccountList(searchMemberType.value,inputSearchText.value)">
                 <button type="button" class="btn01_blue" (click)="getAccountList(searchMemberType.value,inputSearchText.value)">확인</button>
             </div>
             <!-- //회원검색영역 -->

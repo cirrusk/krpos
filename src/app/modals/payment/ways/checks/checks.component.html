@@ -9,19 +9,19 @@
             <p class="check_txt">수표 정보를 입력해주세요</p>
             <div class="check_form">
                 <div class="check_date">
-                    <input type="text" title="년" maxlength=4 autofocus required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkYrNext();" (keydown)="keyDownNumCheck($event);checkYr($event);" #checkyr>
+                    <input type="text" class="mousetrap" title="년" maxlength=4 autofocus required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkYrNext();" (keydown)="keyDownNumCheck($event);checkYr($event);" #checkyr>
                     <span class="txt">년</span>
-                    <input type="text" title="월" maxlength=2 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkMmNext();" (keydown)="keyDownNumCheck($event);checkMm($event);" #checkmm>
+                    <input type="text" class="mousetrap" title="월" maxlength=2 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkMmNext();" (keydown)="keyDownNumCheck($event);checkMm($event);" #checkmm>
                     <span class="txt">월</span>
-                    <input type="text" title="일" maxlength=2 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkDdNext();" (keydown)="keyDownNumCheck($event);checkDd($event);" #checkdd>
+                    <input type="text" class="mousetrap" title="일" maxlength=2 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkDdNext();" (keydown)="keyDownNumCheck($event);checkDd($event);" #checkdd>
                     <span class="txt">일</span>
                 </div>
                 <div class="check_etc">
-                    <input type="text" placeholder="수표번호" title="수표번호" maxlength=8 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkNoNext();" (keydown)="keyDownNumCheck($event);checkNo($event);" #checkno>
-                    <input type="text" placeholder="지로코드" title="발행점,발행지점 지로코드" maxlength=6 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkPointNext();" (keydown)="keyDownNumCheck($event);checkPoint($event);" #checkpoint>
-                    <input type="text" placeholder="검증코드" title="검증코드" maxlength=6 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkValCodeNext();" (keydown)="keyDownNumCheck($event);checkValCode($event);" #checkvalcode>
-                    <input type="text" placeholder="종류" title="수표종류" maxlength=2 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkTypeNext();" (keydown)="keyDownNumCheck($event);checkType($event);" #checktype>
-                    <input type="text" placeholder="수표금액" title="수표금액" required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkPriceNext()" (keydown)="keyDownNumCheck($event);checkPrice($event);" (keydown.enter)="checkPriceFinal()" #checkprice>
+                    <input type="text" class="mousetrap" placeholder="수표번호" title="수표번호" maxlength=8 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkNoNext();" (keydown)="keyDownNumCheck($event);checkNo($event);" #checkno>
+                    <input type="text" class="mousetrap" placeholder="지로코드" title="발행점,발행지점 지로코드" maxlength=6 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkPointNext();" (keydown)="keyDownNumCheck($event);checkPoint($event);" #checkpoint>
+                    <input type="text" class="mousetrap" placeholder="검증코드" title="검증코드" maxlength=6 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkValCodeNext();" (keydown)="keyDownNumCheck($event);checkValCode($event);" #checkvalcode>
+                    <input type="text" class="mousetrap" placeholder="종류" title="수표종류" maxlength=2 required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkTypeNext();" (keydown)="keyDownNumCheck($event);checkType($event);" #checktype>
+                    <input type="text" class="mousetrap" placeholder="수표금액" title="수표금액" required (focusout)="focusOutNumCheck($event)" (keyup)="keyUpNumCheck($event);checkPriceNext()" (keydown)="keyDownNumCheck($event);checkPrice($event);" (keydown.enter)="checkPriceFinal()" #checkprice>
                 </div>
             </div>
             <em *ngIf="finishStatus === null && check < 0" class="finish fail">{{apprmessage}}</em>
