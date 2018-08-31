@@ -587,8 +587,8 @@ export class ReceiptService implements OnDestroy {
         // Group PV BV = Magic bonus 조회하여 group PV/BV+ 장바구니 pointValue businessVolume
         const bonus = new BonusInfo();
         if (cartInfo.totalPrice && cartInfo.totalPrice.amwayValue) { // 장바구니 PV BV
-            totalPV = cartInfo.totalPrice.amwayValue.pointValue ? cartInfo.totalPrice.amwayValue.pointValue : cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
-            totalBV = cartInfo.totalPrice.amwayValue.businessVolume ? cartInfo.totalPrice.amwayValue.businessVolume : cartInfo.value.pointValue ? cartInfo.value.pointValue : 0;
+            totalPV = cartInfo.totalPrice.amwayValue.pointValue ? cartInfo.totalPrice.amwayValue.pointValue : 0;
+            totalBV = cartInfo.totalPrice.amwayValue.businessVolume ? cartInfo.totalPrice.amwayValue.businessVolume : 0;
             bonus.setOrdering = new Bonus(String(totalPV), String(totalBV));
         } else {
             totalPV = 0;

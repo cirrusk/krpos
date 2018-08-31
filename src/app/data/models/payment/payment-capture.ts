@@ -280,6 +280,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     public set setTransactionId(transactionId: string) {
         this.transactionId = transactionId;
+        this.transactionid = transactionId;
     }
     public set setCardType(cardtype: string) {
         this.cardtype = cardtype;
