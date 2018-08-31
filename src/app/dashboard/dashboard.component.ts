@@ -43,14 +43,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.batchNo = null;
         } else {
           if (type === 'bat') {
-            this.logger.set('dashboard.component', 'batch info subscribe ...').debug();
+            this.logger.set('dashboard.component', 'batch info receive ...').debug();
             this.batchNo = (data.batchNo === undefined || data.batchNo === null) ? null : data.batchNo;
           } else if (type === 'lck') {
-            this.logger.set('dashboard.component', 'screen locktype subscribe ...').debug();
+            this.logger.set('dashboard.component', 'screen locktype receive ...').debug();
             this.screenLockType = data.lockType === undefined ? LockType.INIT : data.lockType;
           } else if (type === 'ewk') {
+            this.logger.set('dashboard.component', 'end work event receive ...').debug();
             this.tokeninfo = null;
           } else if (type === 'swk') {
+            this.logger.set('dashboard.component', 'start work event receive ...').debug();
             this.tokeninfo = this.storage.getTokenInfo();
           }
         }

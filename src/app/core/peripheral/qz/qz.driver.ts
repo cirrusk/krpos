@@ -30,7 +30,7 @@ export class QZDriver extends AbstractDriver {
     private openConn: Observable<any>;
     private closeConn: Observable<any>;
     // private connInfo: Observable<any>;
-    // private qzTrayVersion: Observable<any>;
+    private qzTrayVersion: Observable<any>;
 
     // Driver Conneciton status
     private status: Status = Status.Disconnected;
@@ -53,7 +53,7 @@ export class QZDriver extends AbstractDriver {
         this.openConn = fromPromise(qz.websocket.connect(conf));
         this.closeConn = fromPromise(qz.websocket.disconnect());
         // this.connInfo = fromPromise(qz.websocket.getConnectionInfo());
-        // this.qzTrayVersion = fromPromise(qz.api.getVersion());
+        this.qzTrayVersion = fromPromise(qz.api.getVersion());
 
         if (prod) {
             this.turnOffDebug();
@@ -98,7 +98,7 @@ export class QZDriver extends AbstractDriver {
                 this.socket = result.socket;
                 this.host = result.host;
                 this.port = result.port;
-                this.logger.set('qz.driver', 'socket : ${this.socket}, host: ${this.host}, port : ${this.port}.').debug();
+                this.logger.set('qz.driver', `socket : ${this.socket}, host: ${this.host}, port : ${this.port}.`).debug();
                 waitingForGetDetails.next();
             },
             (err) => {
