@@ -265,10 +265,18 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       }
     }
 
-    // 선택한 메뉴에 대해서는 다시 선택 못하도록 disable 처리
-    // if (payment) {
-    //   this.enableMenu = this.enableMenu.filter(item => item !== payment);
-    // }
+    if (payment && (payment === 'creditcard' || payment === 'cashiccard')) { // 신용카드 및 IC카드인 경우 한번 하면 더 못하도록 막기
+      if (this.paymentcapture.ccPaymentInfo) {
+        this.alert.warn({ message: '신용카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
+        this.enableMenu = this.enableMenu.filter(item => item !== payment);
+        return;
+      }
+      if (this.paymentcapture.icCardPaymentInfo) {
+        this.alert.warn({ message: '현금IC카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
+        this.enableMenu = this.enableMenu.filter(item => item !== payment);
+        return;
+      }
+    }
 
     this.modal.openModalByComponent(this.paymentComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering },
@@ -281,11 +289,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         this.remakePaymentCapture(payments);
         this.isAppr = true;
       } else {
-        if (!this.isAppr) { // 초기화
+        if (!this.isAppr) { // 초기화, 무조건 하나라도 결제가 이루어지면 초기화 안됨.
           this.reset();
         }
-        // 무조건 하나라도 결제가 이루어지면 초기화 안됨.
-        console.log('여기로 옵니까?');
         // this.enableMenu.push(payment); // 그냥 취소했을 경우는 다시 메뉴선택가능하도록 원복
       }
     });
@@ -436,9 +442,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         || p.directDebitPaymentInfo
         || p.monetaryPaymentInfo
         || p.pointPaymentInfo) {
-          this.alert.warn({ message: '결제 등록 내역이 초기화됩니다.', timer: true, interval: 1600 });
-          setTimeout(() => { this.closeModal(); }, 1610);
-          return;
+        this.alert.warn({ message: '결제 등록 내역이 초기화됩니다.', timer: true, interval: 1600 });
+        setTimeout(() => { this.closeModal(); }, 1610);
+        return;
       }
     }
     this.closeModal();
