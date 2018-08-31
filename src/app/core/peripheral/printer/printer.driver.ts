@@ -5,10 +5,10 @@ import { fromPromise } from 'rxjs/observable/fromPromise';
 import { Subject } from 'rxjs/Subject';
 
 import { AbstractDriver } from '../abstract.driver';
-import { QZDriver } from './../qz/qz.driver';
-import { DriverReadyBroker } from './../../broker/driverstatus.broker';
-import { DocumentFormat } from './../common/document-format.enum';
-import { DocumentType } from './../common/document-type.enum';
+import { QZDriver } from '../qz/qz.driver';
+import { DriverReadyBroker } from '../../broker/driverstatus.broker';
+import { DocumentFormat } from '../common/document-format.enum';
+import { DocumentType } from '../common/document-type.enum';
 import { PrinterConfigs } from './helper/printer-configs';
 import { Logger } from '../../logger/logger';
 
