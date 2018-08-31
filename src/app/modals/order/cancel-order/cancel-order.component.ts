@@ -108,10 +108,8 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
             paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CASH)
           );
           paymentinfos.forEach(paymentinfo => {
-            console.log(paymentinfo.paymentMode.code + '/' + PaymentModes.CASH);
             if (paymentinfo.paymentMode.code === PaymentModes.CASH) {
               const amount = paymentinfo.amount;
-              console.log('amount ===== > ' + amount);
               if (amount > 0) {
                 this.printer.openCashDrawer(); // cash drawer open
                 // cash drawer open logging
@@ -154,7 +152,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     this.receiptService.reissueReceipts(this.orderList, true).subscribe(
       () => {
         this.cancelFlag = true;
-        setTimeout(() => { this.close(); }, 1000);
         this.alert.info({
           title: '취소 영수증 발행',
           message: this.messageService.get('cancelReceiptComplete'),
@@ -171,7 +168,10 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           timer: true,
           interval: 1000
         });
-      });
+      },
+    () => {
+      setTimeout(() => { this.close(); }, 1500);
+    });
   }
 
   /**
