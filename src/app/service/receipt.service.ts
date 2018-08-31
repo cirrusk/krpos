@@ -626,13 +626,11 @@ export class ReceiptService implements OnDestroy {
 
         let apprprice = 0;
         // payments - START
-        let isOnlyCash = true;
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
             const ccard = new CreditCard(ccpinfo.amount, ccpinfo.cardNumber, ccpinfo.installmentPlan, ccpinfo.cardAuthNumber);
             payment.setCreditCard = ccard;
-            isOnlyCash = false; // 카드와 현금 복합결제 시 출력부에 내신금액 거스름돈 제외
             apprprice += ccpinfo.amount;
         }
         if (paymentCapture.getIcCardPaymentInfo) { // IC Card
@@ -643,7 +641,7 @@ export class ReceiptService implements OnDestroy {
         }
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
-            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, isOnlyCash);
+            const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, true); // 거스름돈은 보여주도록 수정
             payment.setCash = cash;
             apprprice += cainfo.amount;
         }
