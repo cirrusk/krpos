@@ -28,7 +28,7 @@
                       </tr>
                       <tr>
                         <th scope="row">고객번호</th>
-                        <td><input type="number" #clientnum class="w200" title="고객번호" (keydown.enter)="requestReceipt(clientnum.value)"></td><!-- //20180620 수정 -->
+                        <td><input type="text" #clientnum class="w200" posOnlyNumber="true" title="고객번호" (focusout)="focusOutNumCheck($event)" (keydown)="keyDownNumCheck($event);" (keyup)="keyUpNumCheck($event);" (keydown.enter)="requestReceipt(clientnum.value)"></td><!-- //20180620 수정 -->
                       </tr>
                       <tr>
                           <th scope="row">영수증발행일자</th>
