@@ -90,8 +90,8 @@ export class KeyboardComponent implements OnInit, OnDestroy {
   }
 
   protected doClearInput(evt: any) {
-    if (evt.target.tagName === 'INPUT') {
-      this.keyCartAction.emit({ action: 'clear'});
+    if (evt.target.tagName === 'INPUT' && (evt.target.type === 'text' || evt.target.type === 'number')) {
+      evt.target.value = ''; // this.keyCartAction.emit({ action: 'clear'});
     }
   }
 
