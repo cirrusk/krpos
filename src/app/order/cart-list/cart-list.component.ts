@@ -1498,6 +1498,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.getSaveCarts();
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
     } else if (this.cartInfo.code === undefined) { // 장바구니 정보 없음
+      this.activeSearchMode(SearchMode.PRODUCT);
       if (this.orderType === OrderType.GROUP) {
         this.setUserPage(1);
         this.selectedUserIndex = 0;
@@ -1508,6 +1509,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
       }
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
+
     } else {
       // 그룹 - 장바구니 정보 유, 엔트리 정보 무
       if (this.orderType === OrderType.GROUP && this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length < 1) {
