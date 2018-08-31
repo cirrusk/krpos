@@ -1,7 +1,7 @@
 export const LANG_KO_NAME = 'ko';
 export const LANG_KO_MSGS = {
     'server.error': '오류가 발생하였습니다.<br>관리자에게 문의하시기 바랍니다.<br>{0}',
-    'notSelectedUser' : '구매자를 선택해주세요.',
+    'notSelectedUser' : '회원/비회원 정보를 입력해주세요.',
     'addedABO' : '추가된 ABO번호 입니다.',
     'noCartInfo' : '장바구니 정보가 없습니다. 제품을 추가해 주세요.',
     'noMainCartInfo' : '{0} 회원님의 장바구니 정보가 없습니다.<br> 제품을 추가해 주세요.',

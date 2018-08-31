@@ -421,6 +421,8 @@ export class CartListComponent implements OnInit, OnDestroy {
   activeSearchMode(mode: string): void {
     if (mode === SearchMode.ACCOUNT || (mode === SearchMode.PRODUCT && this.accountInfo)) {
       this.searchMode = mode;
+    } else {
+      this.alert.error({ message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
     }
     setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
   }
@@ -445,16 +447,14 @@ export class CartListComponent implements OnInit, OnDestroy {
     const searchKey = searchText.toUpperCase();
     this.searchParams.searchMode = this.searchMode;
     this.searchParams.searchText = searchKey;
-    if (this.orderType === '') {
-      this.orderType = OrderType.NORMAL;
-    }
+
     if (this.searchMode === SearchMode.ACCOUNT) { // 회원검색
       this.selectAccountInfo(this.searchMode, searchText);
     } else { // 상품 검색
       if (this.cartInfo.code === undefined) { // 카트가 생성되지 않았을 경우
         this.createCartInfo(true, searchKey);
       } else {
-        if (this.orderType === OrderType.NORMAL) {
+        if (this.orderType === OrderType.NORMAL || this.orderType === '') {
           this.selectProductInfo(searchKey);
         } else {
           const uid = this.selectedUserId;
@@ -1058,6 +1058,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         });
     } else {
       this.alert.error({ message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      this.activeSearchMode(SearchMode.ACCOUNT);
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
     }
   }
@@ -1191,6 +1192,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   addToCart(code?: string): void {
     if (!this.accountInfo) {
       this.alert.error({ message: this.message.get('notSelectedUser') });
+      this.activeSearchMode(SearchMode.ACCOUNT);
     } else {
       if (this.cartInfo.code === undefined) {
         this.createCartInfo(false, code);
