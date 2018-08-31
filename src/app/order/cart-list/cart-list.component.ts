@@ -1495,11 +1495,14 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   saveCart() {
     if (this.accountInfo === null) { // 회원이 조회되지 않은 상태 - 보류 조회
+      // 보류 내역 조회
       this.getSaveCarts();
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
-    } else if (this.cartInfo.code === undefined) { // 장바구니 정보 없음
+    } else if (this.cartInfo.code === undefined) {
+      // 장바구니 정보 없음
       this.activeSearchMode(SearchMode.PRODUCT);
       if (this.orderType === OrderType.GROUP) {
+        // Ordering ABO 선택 처리
         this.setUserPage(1);
         this.selectedUserIndex = 0;
         this.selectedUserId = this.groupAccountInfo[0].uid;
@@ -1530,9 +1533,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         // 보류 가능
         this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
           () => {
+            // 모두 초기화
             this.init();
             this.info.sendInfo('hold', 'add');
-            this.storage.removeOrderEntry(); // 보류로 저장되면 클라이언트는 비워줌.
           },
           error => {
             const errdata = Utils.getError(error);
