@@ -21,7 +21,7 @@
     "shift+pageup": [ "searchAccount" ],
     "shift+pagedown": [ "searchProduct" ],
     "shift+right": [ "doHold" ],
-    "shift+ins": [ "updateQty" ],
+    "shift+home": [ "updateQty" ],
     "shift+del": [ "entryDelete" ],
     "up": [ "doArrowUp"],
     "down": [ "doArrowDown"],
