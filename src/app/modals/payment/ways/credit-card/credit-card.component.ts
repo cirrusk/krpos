@@ -171,32 +171,6 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
-  keyDownNumCheck(evt: any) {
-    const key = evt.keyCode;
-    if (evt.key === 'Process') { evt.preventDefault(); return; }
-    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
-      evt.stopPropagation();
-      return;
-    }
-    if (key < KeyCode.KEY_0 || (key > KeyCode.KEY_9 && key < KeyCode.NUMPAD_0) || key > KeyCode.NUMPAD_9) {
-      evt.preventDefault();
-    }
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-  }
-
-  keyUpNumCheck(evt: any) {
-    const key = evt.keyCode;
-    if (key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.LEFT_ARROW || key === KeyCode.RIGHT_ARROW) {
-      return;
-    } else {
-      evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-    }
-  }
-
-  focusOutNumCheck(evt: any) {
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-  }
-
   /**
    * 할부개월 validation 체크
    */
