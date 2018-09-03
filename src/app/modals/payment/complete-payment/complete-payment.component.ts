@@ -245,7 +245,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private doCreditCardCancel(cc: CreditCardPaymentInfo) {
     if (cc) {
       const amount: number = cc.amount;
-      const apprdate: string = cc.cardRequestDate ? cc.cardRequestDate.substring(2, 8) : '';
+      const apprdate: string = cc.cardRequestDate ? cc.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       const apprnumber: string = cc.cardApprovalNumber;
       const installment: string = cc.installmentPlan;
       this.logger.set('complete.payment.component', `credit card amount : ${amount}`).debug();
@@ -258,6 +258,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.spinner.hide();
           if (res.approved) {
             this.logger.set('complete.payment.component', 'credit card cancel success').debug();
+            this.info.sendInfo('orderClear', 'clear');
             setTimeout(() => { this.close(); }, 350);
           } else {
             this.finishStatus = 'cardfail';
@@ -282,7 +283,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private doICCardCancel(ic: ICCardPaymentInfo) {
     if (ic) {
       const amount: number = ic.amount;
-      const apprdate: string = ic.cardRequestDate ? ic.cardRequestDate.substring(2, 8) : '';
+      const apprdate: string = ic.cardRequestDate ? ic.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       this.logger.set('complete.payment.component', `ic card amount : ${amount}`).debug();
       this.logger.set('complete.payment.component', `ic card apprdate : ${apprdate}`).debug();
       const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(amount), apprdate, apprdate);
@@ -291,6 +292,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.spinner.hide();
           if (res.approved) {
             this.logger.set('complete.payment.component', 'ic card cancel success').debug();
+            this.info.sendInfo('orderClear', 'clear');
             setTimeout(() => { this.close(); }, 350);
           } else {
             this.finishStatus = 'cardfail';
