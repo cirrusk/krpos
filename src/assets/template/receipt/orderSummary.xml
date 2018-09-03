@@ -11,12 +11,12 @@
     {{/if}}    
     {{#if orderInfo.account.abo}}
         <text-line>
-            ABO정보: {{orderInfo.account.abo.id}} {{orderInfo.account.abo.name}}
+            ABO정보: {{orderInfo.account.abo.id}} {{{orderInfo.account.abo.name}}}
         </text-line>
     {{else}}
         {{#if orderInfo.account.member}}
             <text-line>
-                구매자정보: {{orderInfo.account.member.id}} {{orderInfo.account.member.name}}
+                구매자정보: {{orderInfo.account.member.id}} {{{orderInfo.account.member.name}}}
             </text-line>
         {{/if}}
     {{/if}}
