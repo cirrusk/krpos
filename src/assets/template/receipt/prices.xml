@@ -4,7 +4,7 @@
         {{priceFormatHelper '상품수량' price.totalQty orderInfo.cancelFlag}}
     </text-line>
     <text-line>
-        {{priceFormatHelper '과세 물품' price.amountWithoutVAT orderInfo.cancelFlag}}
+        {{priceFormatHelper '과세물품' price.amountWithoutVAT orderInfo.cancelFlag}}
     </text-line>
     {{#if price.amountVAT}}
     <text-line>
