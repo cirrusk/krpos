@@ -258,20 +258,20 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.spinner.hide();
           if (res.approved) {
             this.logger.set('complete.payment.component', 'credit card cancel success').debug();
-            this.info.sendInfo('orderClear', 'clear');
-            setTimeout(() => { this.close(); }, 350);
+            // this.info.sendInfo('orderClear', 'clear');
+            // setTimeout(() => { this.close(); }, 350);
           } else {
             this.finishStatus = 'cardfail';
             this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `credit card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
           }
-
+          this.sendCartClearOrRecart();
         },
         error => {
           this.spinner.hide();
           this.logger.set('complete.payment.component', `${error}`).error();
         },
-        () => { this.spinner.hide(); this.sendCartClearOrRecart(); }
+        () => { this.spinner.hide(); }
       );
     }
   }
@@ -292,13 +292,14 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.spinner.hide();
           if (res.approved) {
             this.logger.set('complete.payment.component', 'ic card cancel success').debug();
-            this.info.sendInfo('orderClear', 'clear');
-            setTimeout(() => { this.close(); }, 350);
+            // this.info.sendInfo('orderClear', 'clear');
+            // setTimeout(() => { this.close(); }, 350);
           } else {
             this.finishStatus = 'cardfail';
             this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `ic card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
           }
+          this.sendCartClearOrRecart();
         },
         error => {
           this.spinner.hide();
