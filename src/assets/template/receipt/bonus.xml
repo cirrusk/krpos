@@ -16,7 +16,7 @@
        {{/if}}
        {{#if bonus.memberPoint}}
         <text-line>
-        {{priceFormatHelper '잔여 Member 포인트 :' bonus.memberPoint}}
+        {{priceFormatHelper '잔여 M 포인트 :' bonus.memberPoint}}
         </text-line>
        {{/if}}       
 </document>

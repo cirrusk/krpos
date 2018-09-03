@@ -74,11 +74,12 @@ export class NiceDriver extends AbstractDriver {
                 resNoti.next(res);
             },
             (err) => {
-                this.spinner.hide();
+                // this.spinner.hide();
                 console.log('NICE error : ' + err);
                 this.logger.set('nice.driver', `NICE approval catch error : ${Utils.stringify(err)}`).error();
             },
             () => {
+                this.spinner.hide();
                 console.log('NICE completed');
                 this.logger.set('nice.driver', 'NICE approval completed').debug();
             }
@@ -114,7 +115,7 @@ export class NiceDriver extends AbstractDriver {
             this.driverMsgHandler.next(event.data);
         };
         _ws.onerror = (event) => {
-            this.spinner.hide();
+            // this.spinner.hide();
             this.logger.set('nice.driver', `NICE webSocket.onError : ${event}`).error();
         };
         _ws.onclose = (event) => {

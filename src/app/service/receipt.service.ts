@@ -604,7 +604,7 @@ export class ReceiptService implements OnDestroy {
             if (point > 0) {
                 bonus.setAPoint = String(point);
             }
-        } else if (account.accountTypeCode === MemberType.MEMBER) {
+        } else if (account.accountTypeCode === MemberType.MEMBER) { // 멤버인 경우 보너스를 보여주지 않으므로 무의미함.
             if (point > 0) {
                 bonus.setMemberPoint = String(point);
             }
