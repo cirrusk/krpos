@@ -1,8 +1,9 @@
+import { TotalPrice } from './../../../data/models/cart/cart-data';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../core';
 import { OrderService, ReceiptService, MessageService, PaymentService } from '../../../service';
 import { Utils } from '../../../core/utils';
-import { OrderList } from '../../../data/models/order/order';
+import { OrderList, Order } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
 import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds } from '../../../data';
 import { InfoBroker } from '../../../broker';
@@ -28,9 +29,14 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   activeFlag: boolean;
   isCancelButton: boolean;
   orderType: string;
+  orderTypeName: string;
   paymentCapture: PaymentCapture;
   ABOFlag: boolean;
   pointType: string;
+  personalBusinessVolume = 0;
+  personalPointValue = 0;
+  groupBusinessVolume = 0;
+  groupPointValue = 0;
 
   constructor(protected modalService: ModalService,
     private router: Router,
@@ -53,6 +59,13 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.getBalance(this.orderInfo.user.uid);
     if (this.orderInfo.isGroupCombinationOrder) {
       this.orderType = OrderType.GROUP;
+      this.orderTypeName = this.messageService.get('group.order.type');
+    } else if (this.orderInfo.isArrangementSalesOrder) {
+      this.orderTypeName = this.messageService.get('mediateOrder.order.type');
+    }
+
+    if (this.orderInfo.channel.code === 'Web') {
+      this.orderTypeName = this.orderTypeName + ' (' + this.messageService.get('pickupConfirm.order.type') + ')';
     }
 
     if (this.orderInfo.amwayAccount.accountTypeCode === MemberType.ABO) {
@@ -78,6 +91,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.isCancelButton = false;
     this.groupMainFlag = true;
     this.orderType = OrderType.NORMAL;
+    this.orderTypeName = this.messageService.get('default.order.type');
     this.paymentCapture = new PaymentCapture();
   }
 
@@ -199,6 +213,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
             Object.assign(this.paymentCapture, jsonPaymentData);
             jsonPaymentData = {};
           });
+          if (this.ABOFlag && orderDetail.orders[0].value) {
+            this.setBonusValue(orderDetail.orders[0]);
+          }
           this.orderDetail = orderDetail;
         }
       },
@@ -238,6 +255,25 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     }
   }
 
+  /**
+   * PV, BV 값 SUM
+   *  - 개인, 그룹 PV, BV 값 SUM
+   * @param {Order} order 주문 상세 정보
+   */
+  setBonusValue(order: Order) {
+    if (this.orderInfo.orderStatus.code === 'CANCELLED') {
+      this.groupBusinessVolume = order.value.groupBusinessVolume;
+      this.groupPointValue = order.value.groupPointValue;
+      this.personalBusinessVolume = order.value.personalBusinessVolume;
+      this.personalPointValue = order.value.personalPointValue;
+    } else {
+      this.groupBusinessVolume = order.value.groupBusinessVolume + order.totalPrice.amwayValue.businessVolume;
+      this.groupPointValue = order.value.groupPointValue + order.totalPrice.amwayValue.pointValue;
+      this.personalBusinessVolume = order.value.personalBusinessVolume + order.totalPrice.amwayValue.businessVolume;
+      this.personalPointValue = order.value.personalPointValue + order.totalPrice.amwayValue.pointValue;
+    }
+  }
+
 
   /**
    * 영수증 재발행
@@ -246,9 +282,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     try {
       const cancelFlag = this.cancelSymbol === '-' ? true : false;
       if (this.orderType === OrderType.GROUP) {
-        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true);
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true, this.orderTypeName);
       } else {
-        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag).subscribe(
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, false, this.orderTypeName).subscribe(
           () => {
             this.alert.info({
               title: '영수증 재발행',
