@@ -199,9 +199,9 @@ export class ReceiptService implements OnDestroy {
                     groupOrder.orderList.forEach((tempOrder, index) => {
                         tempOrder.entries.forEach(entry => {
                             const existedIdx = entryList.findIndex(
-                                    function (obj) {
-                                        return obj.product.code === entry.product.code;
-                                    }
+                                function (obj) {
+                                    return obj.product.code === entry.product.code;
+                                }
                             );
                             const tempEntry = new OrderEntry();
                             Object.assign(tempEntry, entry);
@@ -589,11 +589,18 @@ export class ReceiptService implements OnDestroy {
             bonus.setOrdering = new Bonus('0', '0');
         }
         if (order.value) { // 합계 PV BV,  // 그룹 PV BV
-            sumPV = order.value.personalPointValue ? order.value.personalPointValue : 0 + totalPV;
-            sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0 + totalBV;
+            if (cancelFlag === 'Y') {
+                sumPV = order.value.personalPointValue ? order.value.personalPointValue : 0;
+                sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0;
+                groupPV = order.value.groupPointValue ? order.value.groupPointValue : 0;
+                groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0;
+            } else {
+                sumPV = order.value.personalPointValue ? order.value.personalPointValue : 0 + totalPV;
+                sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0 + totalBV;
+                groupPV = order.value.groupPointValue ? order.value.groupPointValue : 0 + totalPV;
+                groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0 + totalBV;
+            }
             bonus.setSum = new Bonus(String(sumPV), String(sumBV));
-            groupPV = order.value.groupPointValue ? order.value.groupPointValue : 0 + totalPV;
-            groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0 + totalBV;
             bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
         } else {
             bonus.setSum = new Bonus('0', '0');
@@ -664,7 +671,7 @@ export class ReceiptService implements OnDestroy {
         if (cartInfo.subTotal) { // 합계
             sumAmount = subTotalPrice;
         }
-        if (apprprice > 0 ) {
+        if (apprprice > 0) {
             totalAmount = apprprice;
         } else {
             if (cartInfo.totalPrice) { // 결제금액
@@ -693,15 +700,15 @@ export class ReceiptService implements OnDestroy {
             price.setTotalDiscount = totalDiscount; // 할인금액
             // 할인금액정보 - START
             const discount = new Discount();
-            if (order.appliedVouchers) {
-                order.appliedVouchers.forEach(voucher => {
-                    if (voucher.appliedValue) {
-                        if (voucher.appliedValue.value > 0) {
-                            discount.setCoupon = new DiscountInfo(voucher.name, voucher.appliedValue.value);
-                        }
-                    }
-                });
-            }
+            // if (order.appliedVouchers) {
+            //     order.appliedVouchers.forEach(voucher => {
+            //         if (voucher.appliedValue) {
+            //             if (voucher.appliedValue.value > 0) {
+            //                 discount.setCoupon = new DiscountInfo(voucher.name, voucher.appliedValue.value);
+            //             }
+            //         }
+            //     });
+            // }
             price.setDiscount = discount;
             // 할인금액정보 - END
         }
