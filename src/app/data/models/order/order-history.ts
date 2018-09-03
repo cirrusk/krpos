@@ -22,6 +22,7 @@ export class OrderHistory {
     cancellable: boolean;
     parentOrder: string;
     isGroupCombinationOrder: boolean;
+    isArrangementSalesOrder: boolean;
 
     constructor() {}
 }
