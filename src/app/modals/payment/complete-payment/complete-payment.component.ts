@@ -244,6 +244,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private doCreditCardCancel(cc: CreditCardPaymentInfo) {
     if (cc) {
+      this.apprmessage = '신용카드 취소를 진행해주세요.';
       const amount: number = cc.amount;
       const apprdate: string = cc.cardRequestDate ? cc.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       const apprnumber: string = cc.cardApprovalNumber;
@@ -265,7 +266,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `credit card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
           }
-          this.sendCartClearOrRecart();
+          setTimeout(() => { this.sendCartClearOrRecart(); }, 350);
         },
         error => {
           this.spinner.hide();
@@ -282,6 +283,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private doICCardCancel(ic: ICCardPaymentInfo) {
     if (ic) {
+      this.apprmessage = '현금IC카드 취소를 진행해주세요.';
       const amount: number = ic.amount;
       const apprdate: string = ic.cardRequestDate ? ic.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       this.logger.set('complete.payment.component', `ic card amount : ${amount}`).debug();
@@ -299,13 +301,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `ic card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
           }
-          this.sendCartClearOrRecart();
+          setTimeout(() => { this.sendCartClearOrRecart(); }, 350);
         },
         error => {
           this.spinner.hide();
           this.logger.set('complete.payment.component', `${error}`).error();
         },
-        () => { this.spinner.hide(); this.sendCartClearOrRecart(); }
+        () => { this.spinner.hide(); }
       );
     }
   }
