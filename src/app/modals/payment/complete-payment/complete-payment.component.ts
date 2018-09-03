@@ -80,13 +80,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   payButton(evt: any) {
     if (Utils.isPaymentSuccess(this.finishStatus)) {
       this.payFinishByEnter();
-    } else if (this.finishStatus === 'fail') {
-      this.info.sendInfo('orderClear', 'clear');
-      this.close();
-    } else if (this.finishStatus === 'recart') {
-      this.info.sendInfo('recart', this.orderInfo);
-      this.info.sendInfo('orderClear', 'clear');
-      this.close();
+    } else {
+      if (this.finishStatus === 'fail' || this.finishStatus === 'recart') {
+        this.cardCancelAndSendInfoForError();
+      } else if (this.finishStatus === 'cardfail') {
+        this.sendCartClearOrRecart();
+      }
     }
   }
 
@@ -229,7 +228,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   private sendCartClearOrRecart() {
-    if (this.finishStatus === 'fail') {
+    if (this.finishStatus === 'fail' || this.finishStatus === 'cardfail') {
       this.info.sendInfo('orderClear', 'clear');
       this.close();
     } else if (this.finishStatus === 'recart') {
@@ -249,15 +248,23 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       const apprdate: string = cc.cardRequestDate ? cc.cardRequestDate.substring(2, 8) : '';
       const apprnumber: string = cc.cardApprovalNumber;
       const installment: string = cc.installmentPlan;
+      this.logger.set('complete.payment.component', `credit card amount : ${amount}`).debug();
+      this.logger.set('complete.payment.component', `credit card apprdate : ${apprdate}`).debug();
+      this.logger.set('complete.payment.component', `credit card apprnumber : ${apprnumber}`).debug();
+      this.logger.set('complete.payment.component', `credit card installment : ${installment}`).debug();
       const resultNotifier: Subject<CardCancelResult> = this.nicepay.cardCancel(String(amount), apprnumber, apprdate, installment);
       resultNotifier.subscribe(
         (res: CardCancelResult) => {
+          this.spinner.hide();
           if (res.approved) {
             this.logger.set('complete.payment.component', 'credit card cancel success').debug();
+            setTimeout(() => { this.close(); }, 350);
           } else {
+            this.finishStatus = 'cardfail';
+            this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `credit card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
-            this.spinner.hide();
           }
+
         },
         error => {
           this.spinner.hide();
@@ -276,14 +283,19 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (ic) {
       const amount: number = ic.amount;
       const apprdate: string = ic.cardRequestDate ? ic.cardRequestDate.substring(2, 8) : '';
+      this.logger.set('complete.payment.component', `ic card amount : ${amount}`).debug();
+      this.logger.set('complete.payment.component', `ic card apprdate : ${apprdate}`).debug();
       const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(amount), apprdate, apprdate);
       resultNotifier.subscribe(
         (res: ICCardCancelResult) => {
+          this.spinner.hide();
           if (res.approved) {
             this.logger.set('complete.payment.component', 'ic card cancel success').debug();
+            setTimeout(() => { this.close(); }, 350);
           } else {
+            this.finishStatus = 'cardfail';
+            this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `ic card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
-            this.spinner.hide();
           }
         },
         error => {
@@ -408,14 +420,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         } else if (this.finishStatus === 'fail' || this.finishStatus === 'recart') {
           // 카드 결제 취소하기 및 후속 처리하기
           this.cardCancelAndSendInfoForError();
-          // if (this.finishStatus === 'fail') {
-          //   this.info.sendInfo('orderClear', 'clear');
-          //   this.close();
-          // } else if (this.finishStatus === 'recart') {
-          //   this.info.sendInfo('recart', this.orderInfo);
-          //   this.info.sendInfo('orderClear', 'clear');
-          //   this.close();
-          // }
+        } else if (this.finishStatus === 'cardfail') {
+          this.sendCartClearOrRecart();
         }
       }
     }
