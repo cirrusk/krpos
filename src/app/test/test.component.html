@@ -1,0 +1,48 @@
+<!-- wrap -->
+<div id="wrap">
+    <!-- 본문 -->
+    <div id="container" class="customer">
+        <div class="m_cont type02">
+            <div class="srch_wrap">
+                <h1 class="tit_h1">테스트</h1>
+            </div>
+            <div class="mbinfo_list" style="margin-left:65px;margin-right:65px;">
+                    <div style='margin-bottom:5px;'>
+                        <span><a href class="btn02_blue" (click)="!!testReceiptPrint()">인쇄 테스트</a></span>
+                    </div>
+                    <div style='margin-bottom:55px;'>
+                        <span><a href class="btn02_blue" (click)="!!testOpenDrawer()">돈통 테스트</a></span>
+                    </div>
+                    <div style='margin-bottom:5px;'>
+                        <table>
+                            <tr>
+                                <td style='text-align:left;width:110px;'>금액</td>
+                                <td style='text-align:left;'><input type="text" posOnlyNumber="true" class="ar" maxlength=9 [(ngModel)]="amount" /></td>
+                            </tr>
+                            <tr>
+                                <td colspan=2 style='height:3px'></td>
+                            </tr>
+                            <tr>
+                                <td style='text-align:left;width:110px;'>할부기간</td>
+                                <td style='text-align:left;'><input type="text" posOnlyNumber="true" class="ar" maxlength=2 [(ngModel)]="installment" /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style='margin-bottom:5px;'>
+                        <span><a href class="btn02_blue" (click)="!!niceApproval()">카드결제 테스트</a></span>
+                        <div *ngIf="approvalResult">{{approvalResult}}</div>
+                    </div>
+                    <div style='margin-bottom:5px;' *ngIf='approvalNumber'>
+                        <span><a href class="btn02_blue" (click)="!!niceCancel()">카드취소 테스트</a></span>
+                        <div *ngIf="cancelResult">{{cancelResult}}</div>
+                    </div>
+                </div>
+                <div class="btn_bottom">
+                    <span class="fr">
+                        <a href class="btn01_blue" (click)="!!goDashboard()">대시보드 이동</a>
+                    </span>
+                </div>
+
+        </div>
+    </div>
+</div>

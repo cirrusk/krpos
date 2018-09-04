@@ -21,7 +21,7 @@ export class OnlyNumberDirective {
       if (this.specialKeys.indexOf(evt.key) !== -1) {
         return;
       }
-
+      console.log(evt.target.value);
       evt.target.value = evt.target.value.replace(this.regex, '');
 
       // Do not use event.keycode this is deprecated.

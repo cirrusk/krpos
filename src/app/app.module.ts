@@ -15,6 +15,7 @@ import { Config, CLIENT_SECRET } from './core/config/config';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { SpinnerInterceptor } from './core/interceptor/spinner.interceptor';
 import { MESSAGE_PROVIDER } from './message/message';
+import { TestComponent } from './test/test.component';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { MESSAGE_PROVIDER } from './message/message';
     AppComponent,
     CheckComponent,
     HeaderComponent,
-    DashboardComponent
+    DashboardComponent,
+    TestComponent
   ],
   providers: [
     Config,

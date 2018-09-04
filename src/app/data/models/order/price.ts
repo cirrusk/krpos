@@ -2,7 +2,7 @@ import { AmwayValue } from '../..';
 
 export class Price {
     amwayValue: AmwayValue;
-    currencyIso: number;
+    currencyIso: string;
     formattedValue: string;
     maxQuantity: number;
     minQuantity: number;
