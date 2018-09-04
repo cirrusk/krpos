@@ -619,7 +619,7 @@ export class ReceiptService implements OnDestroy {
         // bonus - END
 
         // payments - START
-        let apprprice = 0;
+        let apprprice = 0; // 결제금액 (포인트, Re-Cash 제외 금액)
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
