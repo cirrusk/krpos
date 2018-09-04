@@ -357,6 +357,10 @@ export class PaymentService {
   /**
    * 신용카드 지불 정보 설정
    *
+   * 카드 취소 시에 18자리라면 Hybris에서 cardTransactionId에 NC를 붙여서 처리
+   * 매입 관련 처리 시에는 POS에서 들어온 건에 대해서는 18자리로 처리 해야하기 때문에
+   * POS에서 NC를 붙혀 처리하지 않음.
+   *
    * @param cardresult 신용카드 승인 응답 결과값
    * @param paidamount 지불 금액
    */
@@ -468,8 +472,8 @@ export class PaymentService {
     iccard.setMemberType = CCMemberType.PERSONAL;
     iccard.setPaymentType = CCPaymentType.GENERAL;
     iccard.setCardType = PaymentModes.ICCARD;
-    iccard.setTransactionId = cardresult.processingNumber; // 트랜잭션 ID 아직 NICE IC 단말에서 정보 안나옴. 일단 빈 칸으로 저장 (7월에 나옴)
-    iccard.setCardTransactionId = cardresult.processingNumber;
+    iccard.setTransactionId = cardresult.processingNumber; // 현금IC카드는 무카드 없음.
+    iccard.setCardTransactionId = cardresult.processingNumber; // 현금IC카드는 무카드 없음.
     const signdata = cardresult.signData; // 5만원 이상 결제할 경우 sign data 전송
     if (Utils.isNotEmpty(signdata)) {
       iccard.setPaymentSignature = signdata;
@@ -535,5 +539,4 @@ export class PaymentService {
     this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
   }
-
 }
