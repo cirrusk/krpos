@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 
-import { PrinterService, StorageService, CardApprovalResult, NicePaymentService, CardCancelResult, SpinnerService, AlertService } from '../core';
+import { PrinterService, StorageService, CardApprovalResult, NicePaymentService, CardCancelResult, SpinnerService, AlertService, Config } from '../core';
 import { ReceiptService, MessageService } from '../service';
 import {
     OrderInfo, TerminalInfo, Cashier, AccessToken, Account, AccountInfo, Accounts, MemberType, ProductsEntryInfo,
@@ -25,6 +25,8 @@ export class TestComponent implements OnInit {
     approvalNumber: string;
     approvalDateTime: string;
     cancelResult: string;
+    private installcheckPrice: number;
+    private creditcardMinPrice: number;
     private regexOnlyNum: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g); // 숫자만
     private regex: RegExp = /[^0-9]+/g;
     private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'Delete', 'ArrowLeft', 'ArrowRight'];
@@ -35,10 +37,13 @@ export class TestComponent implements OnInit {
         private payment: NicePaymentService,
         private spinner: SpinnerService,
         private alert: AlertService,
+        private config: Config,
         private router: Router,
         private element: ElementRef) { }
 
     ngOnInit() {
+        this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
+    this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
     }
 
     /**
@@ -427,11 +432,21 @@ export class TestComponent implements OnInit {
         console.log('*** nice approval amount : ' + this.amount);
         console.log('*** nice approval installment plan : ' + this.installment);
         if (Utils.isEmpty(this.amount) || this.amount === '0') {
-            this.alert.warn({message: '카드 결제 금액을 입력해주세요.'});
+            this.alert.warn({ message: '카드 결제 금액을 입력해주세요.' });
             return;
         }
         if (Utils.isEmpty(this.installment)) {
-            this.alert.warn({message: '카드 할부기간을 입력해주세요.'});
+            this.alert.warn({ message: '카드 할부기간을 입력해주세요.' });
+            return;
+        }
+        const nPaid = Number(this.amount);
+        if (nPaid < this.creditcardMinPrice) {
+            this.alert.warn({ message: `카드 결제 최소 금액은 ${this.creditcardMinPrice} 원 입니다.` });
+            return;
+        }
+        const nInstallment = Number(this.installment);
+        if (nInstallment > 0 && nPaid < this.installcheckPrice) {
+            this.alert.warn({ message: '카드 할부기간을 지정할 수 없는 결제 금액입니다.' });
             return;
         }
         const resultNotifier: Subject<CardApprovalResult> = this.payment.cardApproval(this.amount, this.installment);
@@ -441,6 +456,7 @@ export class TestComponent implements OnInit {
                 console.log('*** nice approval result : ' + this.approvalResult);
                 this.approvalNumber = res.approvalNumber;
                 this.approvalDateTime = res.approvalDateTime;
+                this.spinner.hide();
             },
             error => {
                 this.spinner.hide();
@@ -467,6 +483,7 @@ export class TestComponent implements OnInit {
             (res: CardCancelResult) => {
                 this.cancelResult = res.stringify();
                 console.log('*** nice cancel result : ' + this.cancelResult);
+                this.spinner.hide();
             },
             error => {
                 this.spinner.hide();
@@ -480,6 +497,18 @@ export class TestComponent implements OnInit {
     }
 
     /**
+     * 테스트 초기화
+     */
+    reset() {
+        this.amount = '';
+        this.installment = '';
+        this.approvalResult = null;
+        this.approvalNumber = null;
+        this.approvalDateTime = null;
+        this.cancelResult = null;
+    }
+
+    /**
      * INPUT에 숫자만 입력되도록 처리
      *
      * @param evt 키보드 이벤트
@@ -490,7 +519,8 @@ export class TestComponent implements OnInit {
             return;
         }
         evt.target.value = evt.target.value.replace(this.regex, '');
-        const current: string = this.element.nativeElement.value;
+        let current: string = this.element.nativeElement.value;
+        current = current ? current : '';
         const next: string = current.concat(evt.key);
         if (next && !String(next).match(this.regexOnlyNum)) {
             evt.preventDefault();

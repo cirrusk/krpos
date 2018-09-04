@@ -26,7 +26,8 @@ export class OnlyNumberDirective {
 
       // Do not use event.keycode this is deprecated.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
-      const current: string = this.element.nativeElement.value;
+      let current: string = this.element.nativeElement.value;
+      current = current ? current : '';
       // We need this because the current value on the DOM element
       // is not yet updated with the value from this event
       const next: string = current.concat(evt.key);
