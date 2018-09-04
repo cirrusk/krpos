@@ -1,8 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ModalService, ModalComponent, AlertService } from '../../../core';
-import { ProductInfo, KeyCode } from '../../../data';
+import { ProductInfo } from '../../../data';
 import { MessageService } from '../../../service';
-import { Utils } from '../../../core/utils';
 
 /**
  * 장바구니 추가 제품의 수량변경
