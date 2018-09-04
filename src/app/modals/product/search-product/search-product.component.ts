@@ -1,6 +1,6 @@
 import {
   Component, ViewChild, ViewChildren, OnInit, AfterViewInit, Renderer2,
-  ElementRef, QueryList, OnDestroy
+  ElementRef, QueryList, OnDestroy, Input
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ModalComponent, ModalService, AlertService, Logger, Modal } from '../../../core';
@@ -25,7 +25,9 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   @ViewChild('searchValue') private searchValue: ElementRef;
   @ViewChild('searchPrev', { read: ElementRef }) private searchPrev: ElementRef;
   @ViewChild('searchNext', { read: ElementRef }) private searchNext: ElementRef;
+  @ViewChild('inputRadioSKU') radioSKU: ElementRef;
   @ViewChildren('productRows') private productRows: QueryList<ElementRef>;
+  @Input() chkSearchTypeSKU = true;
   searchType: string;
   productCount: number;
   products: Products;
@@ -61,6 +63,16 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   ngOnDestroy() {
     if (this.searchSubscription) { this.searchSubscription.unsubscribe(); }
     if (this.spsubscription) { this.spsubscription.unsubscribe(); }
+  }
+
+  init() {
+    this.searchValue.nativeElement.value = '';
+    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
+    this.searchType = 'sku';
+    this.radioSKU.nativeElement.checked = 'checked';
+    this.productCount = -1;
+    this.products = null;
+    this.currentPage = 0;
   }
 
   ngAfterViewInit() {
