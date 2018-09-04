@@ -278,11 +278,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     }
   }
 
-  protected doPageUp(evt: any) {
+  protected doArrowLeft(evt: any) {
     this.checkPay(0);
   }
 
-  protected doPageDown(evt: any) {
+  protected doArrowRight(evt: any) {
     this.checkPay(1);
   }
 
