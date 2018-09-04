@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, MessageService, ReceiptService } from '../../../../service';
-import { ModalComponent, ModalService, Logger, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService, Modal, KeyboardService, KeyCommand } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
 } from '../../../../data';
@@ -38,6 +38,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private balancesubscription: Subscription;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  private keyboardsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('pointPanel') pointPanel: ElementRef;
   constructor(protected modalService: ModalService,
@@ -46,6 +47,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     private receipt: ReceiptService,
     private message: MessageService,
     private storage: StorageService,
+    private keyboard: KeyboardService,
     private info: InfoBroker,
     private logger: Logger) {
     super(modalService);
@@ -55,6 +57,9 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     if (this.pointType === 'a') {
       this.pointTypeText = this.message.get('abo.point.label'); // 'A포인트';
     } else {
@@ -72,6 +77,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.balancesubscription) { this.balancesubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     this.receipt.dispose();
   }
 
@@ -271,4 +277,21 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       }
     }
   }
+
+  protected doPageUp(evt: any) {
+    this.checkPay(0);
+  }
+
+  protected doPageDown(evt: any) {
+    this.checkPay(1);
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this[command.name](command.ev);
+    } catch (e) {
+      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
+    }
+  }
+
 }

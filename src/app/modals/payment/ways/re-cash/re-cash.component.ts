@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, ReceiptService, MessageService } from '../../../../service';
-import { ModalComponent, ModalService, StorageService, Modal } from '../../../../core';
+import { ModalComponent, ModalService, StorageService, Modal, KeyboardService, KeyCommand, Logger } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
 } from '../../../../data';
@@ -34,11 +34,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentsubscription: Subscription;
   private balancesubscription: Subscription;
   private alertsubscription: Subscription;
+  private keyboardsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal,
-    private receipt: ReceiptService, private payments: PaymentService,
-    private storage: StorageService, private message: MessageService, private info: InfoBroker) {
+    private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService,
+    private storage: StorageService, private message: MessageService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;
@@ -46,6 +47,9 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     setTimeout(() => { this.usePoint.nativeElement.focus(); }, 50);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
@@ -60,9 +64,9 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     } else {
       this.balancesubscription = this.payments.getRecash(this.accountInfo.parties[0].uid).subscribe(
         result => {
-        this.recash = result;
-        this.useRecash();
-      });
+          this.recash = result;
+          this.useRecash();
+        });
     }
   }
 
@@ -70,6 +74,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.balancesubscription) { this.balancesubscription.unsubscribe(); }
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     this.receipt.dispose();
   }
 
@@ -230,4 +235,21 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       }
     }
   }
+
+  protected doPageUp(evt: any) {
+    this.checkPay(1);
+  }
+
+  protected doPageDown(evt: any) {
+    this.checkPay(0);
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this[command.name](command.ev);
+    } catch (e) {
+      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
+    }
+  }
+
 }
