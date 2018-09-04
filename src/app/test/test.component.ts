@@ -19,6 +19,8 @@ import { Cart } from '../data/models/order/cart';
 })
 export class TestComponent implements OnInit {
 
+    terminalInfo: string;
+    tokenInfo: string;
     amount: string;
     installment: string;
     approvalResult: string;
@@ -44,6 +46,14 @@ export class TestComponent implements OnInit {
     ngOnInit() {
         this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
         this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
+        const terminal: TerminalInfo = this.storage.getTerminalInfo();
+        if (terminal) {
+            this.terminalInfo = Utils.stringify(terminal);
+        }
+        const token: AccessToken = this.storage.getTokenInfo();
+        if (token) {
+            this.tokenInfo = Utils.stringify(token);
+        }
     }
 
     /**
