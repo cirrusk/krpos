@@ -26,6 +26,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
   orderType: string;
   memberType = MemberType;                                                  // HTML 사용(enum)
   @ViewChild('inputSearchText') private searchValue: ElementRef;
+  @ViewChild('searchMemberType') private searchMemberType: ElementRef;
   eOrderType = OrderType;
 
   constructor(modalService: ModalService,
@@ -85,6 +86,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     this.pager = new Pagination();
     if (cancel) {
       this.searchValue.nativeElement.value = '';
+      this.searchMemberType.nativeElement.value = SearchMemberType.ABO;
     }
   }
 

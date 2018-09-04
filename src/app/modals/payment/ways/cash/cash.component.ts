@@ -180,6 +180,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.close();
     } else if (paychange === 0) { // 결제 완료
       this.paymentcapture = this.payment.makeCashPaymentCaptureData(this.paymentcapture, nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
+      this.result = this.paymentcapture;
       this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
       this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
       const ordercheck = this.payment.getPaymentCheck(this.paymentcapture);
