@@ -37,6 +37,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   personalPointValue = 0;
   groupBusinessVolume = 0;
   groupPointValue = 0;
+  apprPrice = 0;
 
   constructor(protected modalService: ModalService,
     private router: Router,
@@ -213,10 +214,25 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
             Object.assign(this.paymentCapture, jsonPaymentData);
             jsonPaymentData = {};
           });
+
+          let sumPrice = orderDetail.orders[0].totalPrice.value;
+
+          // ABO인 경우 PV, BV 계산
           if (this.ABOFlag && orderDetail.orders[0].value) {
             this.setBonusValue(orderDetail.orders[0]);
           }
+
+          if (this.paymentCapture.pointPaymentInfo) {
+            sumPrice -= Number(this.paymentCapture.pointPaymentInfo.amount);
+          }
+
+          if (this.paymentCapture.monetaryPaymentInfo) {
+            sumPrice -= Number(this.paymentCapture.monetaryPaymentInfo.amount);
+          }
+
           this.orderDetail = orderDetail;
+          // 결제 금액(Point + re-cash 를 뺀 금액)
+          this.apprPrice = sumPrice;
         }
       },
       error => {
