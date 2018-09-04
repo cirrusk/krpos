@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
 import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService } from '../../../core';
-import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds } from '../../../data';
+import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds, PaymentView } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CreditCardComponent } from '../ways/credit-card/credit-card.component';
@@ -24,6 +24,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   accountInfo: Accounts;
   enableMenu: Array<string>;
   memberType = MemberType;
+  totalPrice: number;                                                       // 총 금액
+  received: number;                                                         // 낸 금액
+  change: number;                                                           // 거스름돈
+  installment: string;                                                      // 카드 할부
+  ccamount: number;                                                         // 신용카드 결제금액
+  cashamount: number;                                                       // 현금 결제금액
+  pointamount: number;                                                      // 포인트 사용금액
+  recashamount: number;                                                     // Recash 사용금액
+  ddamount: number;                                                         // 자동이체 사용금액
   private isAppr: boolean;
   private point: number;
   private recash: number;
@@ -91,6 +100,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
   }
 
+  ngOnDestroy() {
+    if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
+    if (this.cmplsubscription) { this.cmplsubscription.unsubscribe(); }
+    if (this.paymentModesSubscription) { this.paymentModesSubscription.unsubscribe(); }
+  }
+
   init() {
     this.storage.removePaymentModeCode(); // 주결제 수단 세션 정보 초기화
     this.storage.removePay(); // 복합결제 남은 금액 정보 초기화
@@ -98,12 +113,34 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.enableMenu = new Array<string>();
     this.paymentcapture = new PaymentCapture();
     this.paymentModes = new Map<string, string>();
+    this.totalPrice = 0;                                                       // 총 금액
+    this.received = 0;                                                         // 낸 금액
+    this.change = 0;                                                           // 거스름돈
+    this.installment = null;                                                   // 카드 할부
+    this.ccamount = 0;                                                         // 신용카드 결제금액
+    this.cashamount = 0;                                                       // 현금 결제금액
+    this.pointamount = 0;                                                      // 포인트 사용금액
+    this.recashamount = 0;                                                     // Recash 사용금액
+    this.ddamount = 0;                                                         // 자동이체 사용금액
   }
 
-  ngOnDestroy() {
-    if (this.paymentSubscription) { this.paymentSubscription.unsubscribe(); }
-    if (this.cmplsubscription) { this.cmplsubscription.unsubscribe(); }
-    if (this.paymentModesSubscription) { this.paymentModesSubscription.unsubscribe(); }
+  /**
+   * 결제 내역 설정
+   * @param {PaymentCapture} paymentcapture Payment Capture 정보
+   * @param {Order} order 주문정보
+   */
+  private retreiveInfo(paymentcapture: PaymentCapture) {
+    if (paymentcapture) {
+      const pay: PaymentView = this.paymentService.viewPayment(paymentcapture, null);
+      this.ccamount = pay.cardamount ? pay.cardamount : 0;
+      this.installment = pay.cardinstallment;
+      this.cashamount = pay.cashamount ? pay.cashamount : 0;
+      this.change = pay.cashchange ? pay.cashchange : 0;
+      this.pointamount = pay.pointamount ? pay.pointamount : 0;
+      this.recashamount = pay.recashamount ? pay.recashamount : 0;
+      this.received = pay.receivedamount ? pay.receivedamount : 0;
+      this.ddamount = pay.directdebitamount ? pay.directdebitamount : 0;
+    }
   }
 
   reset() {
@@ -335,6 +372,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         this.logger.set('complex.payment.component', 'no apply voucherPaymentInfo').info();
       }
       // this.storage.setPaymentCapture(this.paymentcapture);
+      this.retreiveInfo(this.paymentcapture); // 결제금액 정보를 세팅함.
     }
     this.logger.set('complex.payment.component convert for remake', `${Utils.stringify(this.paymentcapture)}`).debug();
   }

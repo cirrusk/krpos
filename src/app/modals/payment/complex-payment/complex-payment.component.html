@@ -10,37 +10,37 @@
                 <ul class="pl01 fl">
                     <li>
                         <span>결제금액</span>
-                        <em>3,579,800</em>
+                        <em>{{ totalPrice | number }}</em>
                     </li>
                     <li>
                         <span>받은금액</span>
-                        <em>3,579,800</em>
+                        <em>{{ received | number }}</em>
                     </li>
                     <li>
                         <span>거스름돈</span>
-                        <em>2,000</em>
+                        <em>{{ change | number }}</em>
                     </li>
                 </ul>
                 <ul class="pl02 fr">
                     <li>
                         <span>신용카드</span>
-                        <em><span>(할부 12개월)</span> 3,000,000</em>
+                        <em><span *ngIf="installment">(할부 {{installment}}개월)</span> {{ccamount | number}}</em>
                     </li>
                     <li>
                         <span>현금</span>
-                        <em>234,000</em>
+                        <em>{{cashamount | number}}</em>
                     </li>
                     <li>
                         <span>포인트</span>
-                        <em>34,000</em>
+                        <em>{{pointamount | number}}</em>
                     </li>
                     <li>
                         <span>Re-Cash</span>
-                        <em>0</em>
+                        <em>{{recashamount | number}}</em>
                     </li>
                     <li>
                         <span>자동이체</span>
-                        <em>34,000</em>
+                        <em>{{ddamount | number}}</em>
                     </li>
                 </ul>
             </div>
