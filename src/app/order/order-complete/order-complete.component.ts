@@ -263,7 +263,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * INPUT에 숫자만 입력되도록 처리
+   * 소비자인 경우 INPUT에 휴대폰번호(숫자)만 입력되도록 처리
    *
    * @param evt 키보드 이벤트
    */
