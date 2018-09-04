@@ -43,6 +43,48 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (this.checksubscription) { this.checksubscription.unsubscribe(); }
   }
 
+  init() {
+    this.finishStatus = null;
+    this.check = 0;
+    this.apprmessage = '';
+    this.dupcheck = false;
+    this.checkyr.nativeElement.value = '';
+    this.checkmm.nativeElement.value = '';
+    this.checkdd.nativeElement.value = '';
+    this.checkno.nativeElement.value = '';
+    this.checkpoint.nativeElement.value = '';
+    this.checkvalcode.nativeElement.value = '';
+    this.checktype.nativeElement.value = '';
+    this.checkprice.nativeElement.value = '';
+    setTimeout(() => { this.checkyr.nativeElement.focus(); }, 50);
+  }
+
+  keyDownNumCheck(evt: any) {
+    const key = evt.keyCode;
+    if (evt.key === 'Process') { evt.preventDefault(); return; }
+    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
+      evt.stopPropagation();
+      return;
+    }
+    if (key < KeyCode.KEY_0 || (key > KeyCode.KEY_9 && key < KeyCode.NUMPAD_0) || key > KeyCode.NUMPAD_9) {
+      evt.preventDefault();
+    }
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
+  keyUpNumCheck(evt: any) {
+    const key = evt.keyCode;
+    if (key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.LEFT_ARROW || key === KeyCode.RIGHT_ARROW) {
+      return;
+    } else {
+      evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+    }
+  }
+
+  focusOutNumCheck(evt: any) {
+    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
+  }
+
   checks() {
     if (!this.validValue()) {
       this.check = -10;

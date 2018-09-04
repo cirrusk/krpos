@@ -422,7 +422,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (mode === SearchMode.ACCOUNT || (mode === SearchMode.PRODUCT && this.accountInfo)) {
       this.searchMode = mode;
     } else {
-      this.alert.error({ message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      this.alert.warn({ title: '경고', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
     }
     setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
   }
@@ -482,7 +482,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(SearchAccountComponent, {
       callerData: { data: params },
       actionButtonLabel: '선택',
-      closeButtonLabel: '취소',
+      closeButtonLabel: '초기화',
       orderType: this.orderType !== '' ? this.orderType : OrderType.NORMAL,
       modalId: ModalIds.ACCOUNT
     }).subscribe(result => {
@@ -506,7 +506,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(SearchProductComponent, {
       callerData: { data: params },
       actionButtonLabel: '선택',
-      closeButtonLabel: '취소',
+      closeButtonLabel: '초기화',
       modalId: ModalIds.PRODUCT
     }).subscribe(data => {
       if (data) {
@@ -1057,7 +1057,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      this.alert.error({ message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      this.alert.warn({ title: '경고', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
       this.activeSearchMode(SearchMode.ACCOUNT);
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
     }
@@ -1191,7 +1191,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   addToCart(code?: string): void {
     if (!this.accountInfo) {
-      this.alert.error({ message: this.message.get('notSelectedUser') });
+      this.alert.warn({ title: '경고', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
       this.activeSearchMode(SearchMode.ACCOUNT);
     } else {
       if (this.cartInfo.code === undefined) {
