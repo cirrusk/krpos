@@ -1,5 +1,6 @@
 export enum ModalIds {
     ACCOUNT = 'SearchAccount',
+    APPRCANCEL = 'ApprCancel',
     AGREE = 'Agree',
     BATCH = 'Batch',
     BERSEARCH = 'SearchBer',

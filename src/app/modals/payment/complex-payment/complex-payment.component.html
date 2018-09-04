@@ -6,14 +6,62 @@
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content">
+            <div class="payment_list clearfix">
+                <ul class="pl01 fl">
+                    <li>
+                        <span>결제금액</span>
+                        <em>3,579,800</em>
+                    </li>
+                    <li>
+                        <span>받은금액</span>
+                        <em>3,579,800</em>
+                    </li>
+                    <li>
+                        <span>거스름돈</span>
+                        <em>2,000</em>
+                    </li>
+                </ul>
+                <ul class="pl02 fr">
+                    <li>
+                        <span>신용카드</span>
+                        <em><span>(할부 12개월)</span> 3,000,000</em>
+                    </li>
+                    <li>
+                        <span>현금</span>
+                        <em>234,000</em>
+                    </li>
+                    <li>
+                        <span>포인트</span>
+                        <em>34,000</em>
+                    </li>
+                    <li>
+                        <span>Re-Cash</span>
+                        <em>0</em>
+                    </li>
+                    <li>
+                        <span>자동이체</span>
+                        <em>34,000</em>
+                    </li>
+                </ul>
+            </div>
             <div class="chc_wrap" (ngModel)="enableMenu">
-                <a #paytypes id='card' href (click)="!!creditCard($event)" [class.on]="enableMenu.indexOf('creditcard') > -1" class="chc_type01"><span>신용카드</span><i class="ico_comm pay01"></i></a>
-                <a #paytypes id='ic' href (click)="!!icCard($event)" [class.on]="enableMenu.indexOf('cashiccard') > -1" class="chc_type01"><span>현금IC카드</span><i class="ico_comm pay02"></i></a>
-                <a #paytypes id='apoint' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.ABO" (click)="!!amwayPoint($event)"  [class.on]="enableMenu.indexOf('point') > -1" class="chc_type02"><span>A포인트</span><i class="ico_comm pay03"></i></a>
-                <a #paytypes id='mpoint' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.MEMBER" (click)="!!memberPoint($event)" [class.on]="enableMenu.indexOf('point') > -1" class="chc_type02"><span>Member<br>포인트</span><i class="ico_comm pay04"></i></a>
-                <a #paytypes id='cash' href (click)="!!cashPayment($event)" [class.on]="enableMenu.indexOf('cash') > -1" class="chc_type03"><span>현금/수표</span><i class="ico_comm pay05"></i></a>
-                <a #paytypes id='debit' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.ABO" (click)="!!directDebitPayment($event)" [class.on]="enableMenu.indexOf('directdebit') > -1" class="chc_type04"><span>자동이체</span><i class="ico_comm pay07"></i></a>
-                <a #paytypes id='recash' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.ABO" (click)="!!reCashPayment($event)" [class.on]="enableMenu.indexOf('arCredit') > -1" class="chc_type04"><span>Re-Cash(A/P)</span><i class="ico_comm pay08"></i></a>
+                <a #paytypes id='card' href (click)="!!creditCard($event)" [class.on]="enableMenu.indexOf('creditcard') > -1" class="chc_type01"><span>신용카드</span><i
+                        class="ico_comm pay01"></i></a>
+                <a #paytypes id='ic' href (click)="!!icCard($event)" [class.on]="enableMenu.indexOf('cashiccard') > -1" class="chc_type01"><span>현금IC카드</span><i
+                        class="ico_comm pay02"></i></a>
+                <a #paytypes id='apoint' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.ABO" (click)="!!amwayPoint($event)"
+                    [class.on]="enableMenu.indexOf('point') > -1" class="chc_type02"><span>A포인트</span><i class="ico_comm pay03"></i></a>
+                <a #paytypes id='mpoint' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.MEMBER" (click)="!!memberPoint($event)"
+                    [class.on]="enableMenu.indexOf('point') > -1" class="chc_type02"><span>Member<br>포인트</span><i
+                        class="ico_comm pay04"></i></a>
+                <a #paytypes id='cash' href (click)="!!cashPayment($event)" [class.on]="enableMenu.indexOf('cash') > -1" class="chc_type03"><span>현금/수표</span><i
+                        class="ico_comm pay05"></i></a>
+                <a #paytypes id='debit' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.ABO" (click)="!!directDebitPayment($event)"
+                    [class.on]="enableMenu.indexOf('directdebit') > -1" class="chc_type04"><span>자동이체</span><i
+                        class="ico_comm pay07"></i></a>
+                <a #paytypes id='recash' href *ngIf="accountInfo.accountTypeCode.toUpperCase() === memberType.ABO" (click)="!!reCashPayment($event)"
+                    [class.on]="enableMenu.indexOf('arCredit') > -1" class="chc_type04"><span>Re-Cash(A/P)</span><i
+                        class="ico_comm pay08"></i></a>
             </div>
             <dl class="caution">
                 <dt><span class="tag01">주의</span></dt>

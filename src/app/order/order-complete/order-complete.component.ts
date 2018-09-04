@@ -16,7 +16,10 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   private PAGE_SIZE = 7;
   private orderListSubscription: Subscription;
   private keyboardsubscription: Subscription;
-
+  private regexOnlyNum: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g); // 숫자만
+  private regex: RegExp = /[^0-9]+/g;
+  private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'Delete', 'ArrowLeft', 'ArrowRight'];
+  private searchMemType: string;
   @Input() chkSearchTypeABO = true;
   @Input() chkSearchTypeC = false;
   @ViewChild('inputSearchText') private inputSearchText: ElementRef;
@@ -38,7 +41,8 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     private keyboard: KeyboardService,
     private storage: StorageService,
     private renderer: Renderer2,
-    private logger: Logger) {
+    private logger: Logger,
+    private element: ElementRef) {
     this.init();
 
   }
@@ -79,6 +83,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    * @param {string} memberType 사용자유형
    */
   changeMemberType(memberType: string) {
+    this.searchMemType = memberType;
     if (memberType === SearchMemberType.CONSUMER) {
       this.renderer.removeAttribute(this.searchTypeC.nativeElement, 'disabled');
       this.renderer.setAttribute(this.searchTypeABO.nativeElement, 'disabled', 'disabled');
@@ -196,10 +201,10 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  protected doArrowUp(evt: KeyboardEvent) {}
-  protected doArrowDown(evt: KeyboardEvent) {}
-  protected doArrowLeft(evt: KeyboardEvent) {}
-  protected doArrowRight(evt: KeyboardEvent) {}
+  protected doArrowUp(evt: KeyboardEvent) { }
+  protected doArrowDown(evt: KeyboardEvent) { }
+  protected doArrowLeft(evt: KeyboardEvent) { }
+  protected doArrowRight(evt: KeyboardEvent) { }
 
   /**
    * 이전 페이지 이동하기
@@ -257,4 +262,24 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * INPUT에 숫자만 입력되도록 처리
+   *
+   * @param evt 키보드 이벤트
+   */
+  @HostListener('input', ['$event'])
+  onInputKeyDown(evt: any) {
+    if (this.searchMemType === SearchMemberType.CONSUMER) {
+      if (this.specialKeys.indexOf(evt.key) !== -1) {
+        return;
+      }
+      evt.target.value = evt.target.value.replace(this.regex, '');
+      let current: string = this.element.nativeElement.value;
+      current = current ? current : '';
+      const next: string = current.concat(evt.key);
+      if (next && !String(next).match(this.regexOnlyNum)) {
+        evt.preventDefault();
+      }
+    }
+  }
 }

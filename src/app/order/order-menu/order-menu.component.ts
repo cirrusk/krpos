@@ -384,7 +384,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.modal.openModalByComponent(SearchBerComponent, {
       callerData: { aboNum: this.accountInfo.uid },
       actionButtonLabel: '확인',
-      closeButtonLabel: '취소',
+      closeButtonLabel: '초기화',
       closeByClickOutside: false,
       modalId: ModalIds.BERSEARCH
     }).subscribe(result => {

@@ -38,6 +38,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private paymentcapture: PaymentCapture;
   private paymentModes: Map<string, string>;
   private custname: string;
+  private custid: string;
   private addPopupType: string;
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService,
@@ -80,7 +81,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     );
 
     this.popupList.push(0);
-    this.custname = this.accountInfo.accountTypeCode.toUpperCase() === MemberType.ABO ? this.accountInfo.name : this.accountInfo.parties[0].name;
+    if (this.accountInfo.accountTypeCode === MemberType.ABO) {
+      this.custid = this.accountInfo.uid;
+      this.custname = this.accountInfo.name;
+    } else {
+      this.custid = this.accountInfo.parties[0].uid;
+      this.custname = this.accountInfo.parties[0].name;
+    }
     this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
   }
 
@@ -141,7 +148,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         this.setSelected(evt, 2, 'point');
       }
       if (this.point <= 0) {
-        this.alert.show({ message: this.message.get('no.point', this.custname) });
+        this.alert.show({ message: this.message.get('no.point', this.custname, this.custid) });
         return;
       }
       if (this.enableMenu.indexOf('point') > -1) {
@@ -163,7 +170,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         this.setSelected(evt, 3, 'point');
       }
       if (this.point <= 0) {
-        this.alert.show({ message: this.message.get('no.point', this.custname) });
+        this.alert.show({ message: this.message.get('no.point', this.custname, this.custid) });
         return;
       }
       if (this.enableMenu.indexOf('point') > -1) {
@@ -222,7 +229,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   reCashPayment(evt: any) { // arCredit
     if (this.recash <= 0) {
-      this.alert.show({ message: this.message.get('no.recash', this.custname) });
+      this.alert.show({ message: this.message.get('no.recash', this.custname, this.custid) });
       return;
     }
     if (this.addPopupType === 'recash') {
@@ -433,21 +440,40 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (p) {
       if (p.ccPaymentInfo || p.icCardPaymentInfo) {
         if (p.ccPaymentInfo) {
-          this.alert.warn({ message: '신용카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+          this.alert.warn({ message: '신용카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
         } else if (p.icCardPaymentInfo) {
-          this.alert.warn({ message: '현금IC카드 결제가 완료되었습니다.<br>잔여 금액을 결제해주세요.', timer: true, interval: 1800 });
+          this.alert.warn({ message: '현금IC카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
         }
         return;
       } else if (p.cashPaymentInfo
         || p.directDebitPaymentInfo
         || p.monetaryPaymentInfo
         || p.pointPaymentInfo) {
-        this.alert.warn({ message: '결제 등록 내역이 초기화됩니다.', timer: true, interval: 1600 });
-        setTimeout(() => { this.closeModal(); }, 1610);
-        return;
+        this.modal.openConfirm({
+          title: '결제 취소',
+          message: `현재 결제된 내역이 초기화 됩니다.<br>결제를 초기화 하시겠습니까?`,
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByClickOutside: false,
+          closeByEnter: true,
+          modalId: ModalIds.APPRCANCEL,
+          beforeCloseCallback: function () {
+            if (this.isEnter) {
+              this.result = this.isEnter;
+            }
+          }
+        }).subscribe(
+          result => {
+            if (result) {
+              this.closeModal();
+            }
+          });
+      } else {
+        this.closeModal();
       }
+    } else {
+      this.closeModal();
     }
-    this.closeModal();
   }
 
   /**
