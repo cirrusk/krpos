@@ -19,6 +19,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   finishStatus: string;
   receiptdate: Date;
   paymentamount: number;
+  private regex: RegExp = /[^0-9]+/g;
   private divcheck: string;
   private accountInfo: Accounts;
   private cartInfo: Cart;
@@ -59,7 +60,8 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
    * @param issuancenumber 고객번호(휴대폰 번호, 현금영수증 카드번호, 사업자 등록번호)
    */
   requestReceipt(issuancenumber: string) {
-    if (Utils.isEmpty(issuancenumber)) {
+    const isnumber = issuancenumber.replace(this.regex, '');
+    if (Utils.isEmpty(isnumber)) {
       if (this.divcheck === 'i') {
         this.checktype = -1;
         this.apprmessage = this.message.get('receipt.reg.number.emp'); // 휴대폰 번호, 현금영수증 카드번호
@@ -72,7 +74,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
       const receipttype = 'CASH'; // CASH(현금영수증), TAX(세금계산서)
       if (this.divcheck === 'i') {
         issuancetype = 'INCOME_DEDUCTION'; // 소득공제
-        if (issuancenumber.length > 12) {
+        if (isnumber.length > 12) {
           numbertype = 'CDN'; // 현금영수증카드번호
         } else {
           numbertype = 'CPN'; // 휴대폰
@@ -81,7 +83,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
         issuancetype = 'EXPENDITURE_PROOF'; // 지출증빙
         numbertype = 'BRN'; // 사업자등록번호
       }
-      const params = { receiptType: receipttype, issuanceType: issuancetype, numberType: numbertype, issuanceNumber: issuancenumber };
+      const params = { receiptType: receipttype, issuanceType: issuancetype, numberType: numbertype, issuanceNumber: isnumber };
       const userid = this.accountInfo.parties[0].uid;
       const ordercode = this.orderInfo.code;
       this.receiptsubscription = this.order.receipt(userid, ordercode, params).subscribe(

@@ -30,6 +30,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   apprmessage: string;
   payamount: number;
   orderType: string;
+  private regex: RegExp = /[^0-9]+/g;
   private paidamount: number;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -102,7 +103,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   cashCal() {
-    const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
+    const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0;
     // const payment = this.payment.nativeElement.value ? Number(this.payment.nativeElement.value) : 0;
     const payment = this.payamount ? Number(this.payamount) : 0;
     const paychange = this.paidamount - payment; // 장바구니 결제금액 - 실결제금액
@@ -127,8 +128,9 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * @param evt 이벤트
    * @param paid 받은금액
    */
-  payEnter(evt: any, paid: number) {
-    if (paid && paid > 0) {
+  payEnter(evt: any, paid: string) {
+    const nPaid = Number(paid.replace(this.regex, ''));
+    if (paid && nPaid > 0) {
       this.payButton(evt);
     }
   }
@@ -144,16 +146,16 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * Member	현금(수표)	M포인트
    * 소비자	현금(수표)
    *
-   * @param receivedAmount 받은금액
-   * @param payAmount 결제금액
+   * @param {string} receivedAmount 받은금액
+   * @param {number} payAmount 결제금액
    */
-  pay(evt: KeyboardEvent, receivedAmount: number, payAmount: number): void {
+  pay(evt: KeyboardEvent, receivedAmount: string, payAmount: number): void {
     evt.preventDefault();
     if (this.finishStatus !== null) { // 결제가 한번 처리되면 다시 처리되지 않도록
       return;
     }
     this.paySubmitLock(true);
-    const nReceiveAmount = Number(receivedAmount); // 받은금액
+    const nReceiveAmount = Number(receivedAmount.replace(this.regex, '')); // 받은금액
     let nPayAmount = Number(payAmount); // 결제금액
     if (nReceiveAmount < 1) {
       this.paySubmitLock(false); // 버튼 잠금 해제

@@ -24,6 +24,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   recash: Balance;
   checktype: number;
   apprmessage: string;
+  private regex: RegExp = /[^0-9]+/g;
   private dupcheck = false;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -92,7 +93,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   useRecash() {
     if (this.recash) {
-      const usecash = this.usePoint.nativeElement.value;
+      const usecash = Number(this.usePoint.nativeElement.value.replace(this.regex, ''));
       this.change = this.recash.amount - usecash;
       if (this.change < 0) {
         this.checktype = -3;
@@ -139,7 +140,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
 
   payRecash(evt: KeyboardEvent) {
     evt.preventDefault();
-    const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
+    const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
     const check = this.paidamount - usepoint;
     if (this.change < 0) {
       this.checktype = -3;
@@ -153,7 +154,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
     let paid: number = this.paidamount;
     if (!this.isAllPay) {
-      paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
+      paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
     }
     this.paymentcapture = this.payments.makeRecashPaymentCaptureData(this.paymentcapture, paid).capturePaymentInfoData;
     this.result = this.paymentcapture;

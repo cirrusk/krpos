@@ -43,7 +43,7 @@ export class TestComponent implements OnInit {
 
     ngOnInit() {
         this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
-    this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
+        this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
     }
 
     /**
@@ -428,9 +428,9 @@ export class TestComponent implements OnInit {
      * 나이스 신용카드 결제 테스트
      */
     niceApproval() {
-        console.log('****************************************************************');
-        console.log('*** nice approval amount : ' + this.amount);
-        console.log('*** nice approval installment plan : ' + this.installment);
+        console.log('▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ Nice Approval Start ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼');
+        console.log('▷ nice approval amount : ' + this.amount);
+        console.log('▷ nice approval installment plan : ' + this.installment);
         if (Utils.isEmpty(this.amount) || this.amount === '0') {
             this.alert.warn({ message: '카드 결제 금액을 입력해주세요.' });
             return;
@@ -439,6 +439,7 @@ export class TestComponent implements OnInit {
             this.alert.warn({ message: '카드 할부기간을 입력해주세요.' });
             return;
         }
+        this.amount = this.amount.replace(this.regex, '');
         const nPaid = Number(this.amount);
         if (nPaid < this.creditcardMinPrice) {
             this.alert.warn({ message: `카드 결제 최소 금액은 ${this.creditcardMinPrice} 원 입니다.` });
@@ -453,19 +454,17 @@ export class TestComponent implements OnInit {
         resultNotifier.subscribe(
             (res: CardApprovalResult) => {
                 this.approvalResult = res.stringify();
-                console.log('*** nice approval result : ' + this.approvalResult);
+                console.log('▷ nice approval result : ' + this.approvalResult);
                 this.approvalNumber = res.approvalNumber;
                 this.approvalDateTime = res.approvalDateTime;
                 this.spinner.hide();
+                console.log('▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ Nice Approval End ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲');
             },
             error => {
                 this.spinner.hide();
                 console.log({}, `${error}`);
             },
-            () => {
-                this.spinner.hide();
-                console.log('****************************************************************');
-            }
+            () => { this.spinner.hide(); }
         );
     }
 
@@ -473,26 +472,24 @@ export class TestComponent implements OnInit {
      * 나이스 신용카드 결제 취소 테스트
      */
     niceCancel() {
-        console.log('****************************************************************');
-        console.log('*** nice cancel amount : ' + this.amount);
-        console.log('*** nice cancel approval number : ' + this.approvalNumber);
-        console.log('*** nice cancel approval date : ' + this.approvalDateTime);
-        console.log('*** nice cancel installment plan : ' + this.installment);
+        console.log('▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ Nice Cancel Start ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼');
+        console.log('▷ nice cancel amount : ' + this.amount);
+        console.log('▷ nice cancel approval number : ' + this.approvalNumber);
+        console.log('▷ nice cancel approval date : ' + this.approvalDateTime);
+        console.log('▷ nice cancel installment plan : ' + this.installment);
         const resultNotifier: Subject<CardCancelResult> = this.payment.cardCancel(this.amount, this.approvalNumber, this.approvalDateTime, this.installment);
         resultNotifier.subscribe(
             (res: CardCancelResult) => {
                 this.cancelResult = res.stringify();
-                console.log('*** nice cancel result : ' + this.cancelResult);
+                console.log('▷ nice cancel result : ' + this.cancelResult);
                 this.spinner.hide();
+                console.log('▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ Nice Cancel End ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲');
             },
             error => {
                 this.spinner.hide();
                 console.log({}, `${error}`);
             },
-            () => {
-                this.spinner.hide();
-                console.log('****************************************************************');
-            }
+            () => { this.spinner.hide(); }
         );
     }
 

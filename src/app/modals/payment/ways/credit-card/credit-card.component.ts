@@ -38,6 +38,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   cardcompany: string; // 카드사명
   cardauthnumber: string; // 승인번호
   installmentDisabled: boolean;
+  private regex: RegExp = /[^0-9]+/g;
   private installment: string;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -119,8 +120,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    *
    * @param paid 실결제 금액
    */
-  paidCal(paid: number) {
-    const nPaid = paid ? Number(paid) : 0;
+  paidCal(paid: string) {
+    const nPaid = paid ? Number(paid.replace(this.regex, '')) : 0;
     if (nPaid < this.creditcardMinPrice) {
       this.checktype = -4;
       this.apprmessage = this.message.get('card.min.price');
@@ -155,8 +156,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * @param evt 키보드 이벤트
    * @param paid 실결제금액
    */
-  paidEnter(paid: number) {
-    if (paid > 0) {
+  paidEnter(paid: string) {
+    const nPaid = Number(paid.replace(this.regex, ''));
+    if (nPaid > 0) {
       const checked = this.checkinstallment === 1 ? true : false;
       if (checked) { // 할부
         const val = this.installmentPeriod.nativeElement.value;
@@ -175,7 +177,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 할부개월 validation 체크
    */
   installmentCheck() {
-    const val = this.installmentPeriod.nativeElement.value;
+    const val = this.installmentPeriod.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(val) || val === '1') {
       this.checktype = -5;
       this.apprmessage = '할부개월을 입력해주세요.';
@@ -195,11 +197,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 할부일 경우 엔터 입력시 바로 결제
    * 일시불일 경우는 처리안함.
    */
-  installmentEnter(paid: number) {
-    if (paid > 0) {
+  installmentEnter(paid: string) {
+    const nPaid = Number(paid.replace(this.regex, ''));
+    if (nPaid > 0) {
       const checked = this.checkinstallment === 1 ? true : false;
       if (checked) { // 할부
-        const val = this.installmentPeriod.nativeElement.value;
+        const val = this.installmentPeriod.nativeElement.value.replace(this.regex, '');
         if (Utils.isEmpty(val) || val === '1') {
           this.checktype = -5;
           this.apprmessage = '할부개월을 입력해주세요.';
@@ -256,8 +259,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 할부 개월 수 패딩처리
    */
   private getInstallment(): string {
-    const insmnt: number = this.installmentPeriod.nativeElement.value;
-    const strinst = Utils.padLeft(String(insmnt), '0', 2);
+    const insmnt: string = this.installmentPeriod.nativeElement.value.replace(this.regex, '');
+    const strinst = Utils.padLeft(insmnt, '0', 2);
     this.installment = strinst;
     return strinst;
   }
@@ -287,7 +290,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * ex) 1,000원 결제하는데 3개월 할부를 할 경우 Van 사에서 오류처리됨.
    */
   private cardPay() {
-    const paid = this.paid.nativeElement.value;
+    const paid = Number(this.paid.nativeElement.value.replace(this.regex, ''));
     if (paid < this.creditcardMinPrice) {
       this.checktype = -4;
       this.apprmessage = this.message.get('card.min.price');
@@ -295,7 +298,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
     this.change = this.paidamount - paid;
     if (this.change >= 0) {
-      const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
+      const paidprice = this.paid.nativeElement.value ? paid : 0;
       this.storage.setPay(this.paidamount - paidprice); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       const resultNotifier: Subject<CardApprovalResult> = this.nicepay.cardApproval(String(paidprice), this.getInstallment());
       this.logger.set('credit.card.component', 'listening on reading credit card...').debug();
@@ -369,10 +372,10 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    */
   private payFinishByEnter() {
     if (Utils.isPaymentSuccess(this.finishStatus)) {
-      const change = this.paidamount - this.paid.nativeElement.value;
+      const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0;
+      const change = this.paidamount - paid;
       if (change === 0) {
-        const paidprice = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0;
-        this.completePayPopup(paidprice, this.paidamount, this.change);
+        this.completePayPopup(paid, this.paidamount, this.change);
       } else {
         this.result = this.paymentcapture;
         this.close();

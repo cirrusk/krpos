@@ -26,6 +26,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   change: number;
   checktype: number;
   apprmessage: string;
+  private regex: RegExp = /[^0-9]+/g;
   private orderInfo: Order;
   private paymentcapture: PaymentCapture;
   private cartInfo: Cart;
@@ -156,7 +157,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.isAllPay) {
       usepoint = this.paymentprice;
     } else {
-      usepoint = this.usePoint.nativeElement.value ? this.usePoint.nativeElement.value : 0;
+      usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
     }
     if (this.change < 0) {
       this.checktype = -4;
@@ -183,7 +184,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     if (this.isAllPay) {
       usepoint = this.paymentprice;
     } else {
-      usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value) : 0;
+      usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
       if (typeof usepoint !== 'number') {
         this.checktype = -3;
         this.apprmessage = this.message.get('point.empty'); // '사용 포인트가 공란입니다.';

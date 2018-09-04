@@ -29,6 +29,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   paidDate: Date;
   checktype: number;
   apprmessage: string;
+  private regex: RegExp = /[^0-9]+/g;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -94,14 +95,15 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   * 실결제 금액 입력 시 잔액 계산
   * @param paid 실결제 금액
   */
-  paidCal(paid: number) {
-    if (typeof paid === 'number' || paid !== '') {
-      if (paid < this.directdebitminPrice) {
+  paidCal(paid: string) {
+    const nPaid = Number(paid.replace(this.regex, ''));
+    if (typeof nPaid === 'number' || nPaid !== '') {
+      if (nPaid < this.directdebitminPrice) {
         this.checktype = -4;
         this.apprmessage = this.message.get('debit.min.price');
         return;
       }
-      this.change = this.paidamount - paid;
+      this.change = this.paidamount - nPaid;
       if (this.change < 0) {
         this.change = 0;
         this.checktype = -3;
@@ -113,7 +115,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   nextStep() {
-    const paid = this.paid.nativeElement.value;
+    const paid = Number(this.paid.nativeElement.value.replace(this.regex, ''));
     const change = this.paidamount - paid;
     if (paid && change >= 0) {
       setTimeout(() => { this.ddpassword.nativeElement.focus(); }, 50);
@@ -156,7 +158,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       this.checktype = 0;
       setTimeout(() => { this.ddpassword.nativeElement.blur(); }, 50);
       const nPaidAmount = Number(this.paidamount);
-      const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value) : 0; // 결제금액
+      const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0; // 결제금액
       if (nPaidAmount < paid) {
         this.checktype = -3;
         this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 큽니다.';
@@ -187,7 +189,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
 
   private payFinishByEnter() {
     if (this.change === 0) {
-      const paid = this.paid.nativeElement.value; // 결제금액
+      const paid = Number(this.paid.nativeElement.value.replace(this.regex, '')); // 결제금액
       if (Number(this.paidamount) === Number(paid)) { // 결제완료
         this.completePayPopup(paid, this.paidamount, this.change);
       }

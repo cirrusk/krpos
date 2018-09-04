@@ -15,6 +15,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   check: number;
   apprmessage: string;
   finishStatus: string;                             // 결제완료 상태
+  private regex: RegExp = /[^0-9]+/g;
   private allowedChars = new Set('0123456789'.split('').map(c => c.charCodeAt(0)));
   private checksubscription: Subscription;
   private dupcheck = false;
@@ -40,32 +41,6 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
 
   ngOnDestroy() {
     if (this.checksubscription) { this.checksubscription.unsubscribe(); }
-  }
-
-  keyDownNumCheck(evt: any) {
-    const key = evt.keyCode;
-    if (evt.key === 'Process') { evt.preventDefault(); return; }
-    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
-      evt.stopPropagation();
-      return;
-    }
-    if (key < KeyCode.KEY_0 || (key > KeyCode.KEY_9 && key < KeyCode.NUMPAD_0) || key > KeyCode.NUMPAD_9) {
-      evt.preventDefault();
-    }
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-  }
-
-  keyUpNumCheck(evt: any) {
-    const key = evt.keyCode;
-    if (key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.LEFT_ARROW || key === KeyCode.RIGHT_ARROW) {
-      return;
-    } else {
-      evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-    }
-  }
-
-  focusOutNumCheck(evt: any) {
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
   }
 
   checks() {
@@ -104,14 +79,14 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private makeCheckNumber(): string {
-    const yr = this.checkyr.nativeElement.value;
-    const mm = this.checkmm.nativeElement.value;
-    const dd = this.checkdd.nativeElement.value;
-    const no = this.checkno.nativeElement.value;
-    const cd = this.checkpoint.nativeElement.value;
-    const vl = this.checkvalcode.nativeElement.value;
-    const tp = this.checktype.nativeElement.value;
-    const pr = this.checkprice.nativeElement.value;
+    const yr = this.checkyr.nativeElement.value.replace(this.regex, '');
+    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');
+    const dd = this.checkdd.nativeElement.value.replace(this.regex, '');
+    const no = this.checkno.nativeElement.value.replace(this.regex, '');
+    const cd = this.checkpoint.nativeElement.value.replace(this.regex, '');
+    const vl = this.checkvalcode.nativeElement.value.replace(this.regex, '');
+    const tp = this.checktype.nativeElement.value.replace(this.regex, '');
+    const pr = this.checkprice.nativeElement.value.replace(this.regex, '');
 
     const buff = new StringBuilder();
     buff.append(yr).append(mm).append(dd);
@@ -122,42 +97,42 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private validValue(): boolean {
-    const yr = this.checkyr.nativeElement.value;
+    const yr = this.checkyr.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(yr) || yr.length !== 4) {
       setTimeout(() => { this.checkyr.nativeElement.select(); this.checkyr.nativeElement.focus(); }, 100);
       return false;
     }
-    const mm = this.checkmm.nativeElement.value;
+    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(mm) || mm.length !== 2) {
       setTimeout(() => { this.checkmm.nativeElement.select(); this.checkmm.nativeElement.focus(); }, 100);
       return false;
     }
-    const dd = this.checkdd.nativeElement.value;
+    const dd = this.checkdd.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(dd) || dd.length !== 2) {
       setTimeout(() => { this.checkdd.nativeElement.select(); this.checkdd.nativeElement.focus(); }, 100);
       return false;
     }
-    const no = this.checkno.nativeElement.value;
+    const no = this.checkno.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(no) || no.length !== 8) {
       setTimeout(() => { this.checkno.nativeElement.select(); this.checkno.nativeElement.focus(); }, 100);
       return false;
     }
-    const cd = this.checkpoint.nativeElement.value;
+    const cd = this.checkpoint.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(cd) || cd.length !== 6) {
       setTimeout(() => { this.checkpoint.nativeElement.select(); this.checkpoint.nativeElement.focus(); }, 100);
       return false;
     }
-    const vl = this.checkvalcode.nativeElement.value;
+    const vl = this.checkvalcode.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(vl) || vl.length !== 6) {
       setTimeout(() => { this.checkvalcode.nativeElement.select(); this.checkvalcode.nativeElement.focus(); }, 100);
       return false;
     }
-    const tp = this.checktype.nativeElement.value;
+    const tp = this.checktype.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(tp) || tp.length !== 2) {
       setTimeout(() => { this.checktype.nativeElement.select(); this.checktype.nativeElement.focus(); }, 100);
       return false;
     }
-    const pr = this.checkprice.nativeElement.value;
+    const pr = this.checkprice.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(pr)) {
       setTimeout(() => { this.checkprice.nativeElement.select(); this.checkprice.nativeElement.focus(); }, 100);
       return false;
@@ -166,9 +141,9 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private validDate(): boolean {
-    const yr = this.checkyr.nativeElement.value;
-    const mm = this.checkmm.nativeElement.value;
-    const dd = this.checkdd.nativeElement.value;
+    const yr = this.checkyr.nativeElement.value.replace(this.regex, '');
+    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');
+    const dd = this.checkdd.nativeElement.value.replace(this.regex, '');
     let rtn = moment(yr + mm + dd, 'YYYYMMDD').isValid();
     if (!rtn) {
       rtn = moment(yr, 'YYYY').isValid();
@@ -196,7 +171,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const yr = this.checkyr.nativeElement.value;
+    const yr = this.checkyr.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(yr) || yr.length !== 4) {
       this.check = -1;
       this.apprmessage = this.message.get('check.invalid.yr'); // '발행 년도를 정확히 입력하세요.';
@@ -207,7 +182,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkYrNext() {
-    const yr = this.checkyr.nativeElement.value;
+    const yr = this.checkyr.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(yr) && yr.length === 4) {
       this.check = 0;
       setTimeout(() => { this.checkmm.nativeElement.focus(); }, 50);
@@ -218,7 +193,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const mm = this.checkmm.nativeElement.value;
+    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(mm) || mm.length !== 2) {
       this.check = -2;
       this.apprmessage = this.message.get('check.invalid.mm'); // '발행 월을 정확히 입력하세요.';
@@ -229,7 +204,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkMmNext() {
-    const mm = this.checkmm.nativeElement.value;
+    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(mm) && mm.length === 2) {
       this.check = 0;
       setTimeout(() => { this.checkdd.nativeElement.focus(); }, 50);
@@ -251,7 +226,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkDdNext() {
-    const dd = this.checkdd.nativeElement.value;
+    const dd = this.checkdd.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(dd) && dd.length === 2) {
       this.check = 0;
       setTimeout(() => { this.checkno.nativeElement.focus(); }, 50);
@@ -262,7 +237,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const no = this.checkno.nativeElement.value;
+    const no = this.checkno.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(no) || no.length !== 8) {
       this.check = -4;
       this.apprmessage = this.message.get('check.invalid.no'); // '수표번호를 정확히 입력해주세요.';
@@ -273,7 +248,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkNoNext() {
-    const no = this.checkno.nativeElement.value;
+    const no = this.checkno.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(no) && no.length === 8) {
       this.check = 0;
       setTimeout(() => { this.checkpoint.nativeElement.focus(); }, 50);
@@ -284,7 +259,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const point = this.checkpoint.nativeElement.value;
+    const point = this.checkpoint.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(point) || point.length !== 6) {
       this.check = -5;
       this.apprmessage = this.message.get('check.invalid.point'); // '발행점,발행지점 지로코드를 정확히 입력해주세요.';
@@ -295,7 +270,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkPointNext() {
-    const point = this.checkpoint.nativeElement.value;
+    const point = this.checkpoint.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(point) && point.length === 6) {
       this.check = 0;
       setTimeout(() => { this.checkvalcode.nativeElement.focus(); }, 50);
@@ -306,7 +281,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const valcode = this.checkvalcode.nativeElement.value;
+    const valcode = this.checkvalcode.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(valcode) || valcode.length !== 6) {
       this.check = -6;
       this.apprmessage = this.message.get('check.invalid.code'); // '검증코드를 정확히 입력해주세요.';
@@ -317,7 +292,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkValCodeNext() {
-    const valcode = this.checkvalcode.nativeElement.value;
+    const valcode = this.checkvalcode.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(valcode) && valcode.length === 6) {
       this.check = 0;
       setTimeout(() => { this.checktype.nativeElement.focus(); }, 50);
@@ -328,7 +303,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const type = this.checktype.nativeElement.value;
+    const type = this.checktype.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(type) || type.length !== 2) {
       this.check = -7;
       this.apprmessage = this.message.get('check.invalid.type'); // '수표종류를 정확히 입력해주세요.';
@@ -339,7 +314,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkTypeNext() {
-    const type = this.checktype.nativeElement.value;
+    const type = this.checktype.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(type) && type.length === 2) {
       this.check = 0;
       setTimeout(() => { this.checkprice.nativeElement.focus(); }, 50);
@@ -350,7 +325,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (evt.keyCode > 31 && !this.allowedChars.has(evt.keyCode)) {
       evt.preventDefault();
     }
-    const price = this.checkprice.nativeElement.value;
+    const price = this.checkprice.nativeElement.value.replace(this.regex, '');
     if (Utils.isEmpty(price)) {
       this.dupcheck = false;
       this.check = -8;
@@ -362,7 +337,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkPriceNext() {
-    const price = this.checkprice.nativeElement.value;
+    const price = this.checkprice.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(price)) {
       this.check = 0;
       // setTimeout(() => { this.checkprice.nativeElement.blur(); }, 50);
@@ -370,7 +345,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   checkPriceFinal() {
-    const price = this.checkprice.nativeElement.value;
+    const price = this.checkprice.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(price)) {
       this.check = 0;
       // setTimeout(() => { this.checkprice.nativeElement.blur(); }, 50);
@@ -389,7 +364,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private payFinishByEnter() {
-    this.result = this.checkprice.nativeElement.value;
+    this.result = this.checkprice.nativeElement.value.replace(this.regex, '');
     this.close();
   }
 
