@@ -126,8 +126,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   /**
    * 결제 내역 설정
+   * 결제금액 : 전체금액 - 프로모션 금액
+   * 받은금액 : 모든 결제 수단 금액 합
+   * 거스름돈 : 거스름돈
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
-   * @param {Order} order 주문정보
    */
   private retreiveInfo(paymentcapture: PaymentCapture) {
     if (paymentcapture) {
@@ -140,13 +142,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.recashamount = pay.recashamount ? pay.recashamount : 0;
       this.received = pay.receivedamount ? pay.receivedamount : 0;
       this.ddamount = pay.directdebitamount ? pay.directdebitamount : 0;
-      // 결제금액 (포인트, Re-Cash 제외 금액)
+      // 결제금액 (프로모션 가격 제외해야함.)
       if (this.cartInfo) {
-        let apprprice = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
-        if (apprprice > 0) {
-          apprprice = apprprice - this.pointamount - this.recashamount;
-        }
-        this.totalPrice = apprprice;
+        this.totalPrice = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
       }
     }
   }

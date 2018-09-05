@@ -244,45 +244,51 @@ export class PaymentService {
 
   /**
    * 결제 내역 설정
+   * 결제금액 : 전체 금액 - 프로모션 금액
+   * 받은금액 : 결제수단 총합 금액
+   * 거스름돈 : 거스름돈
+   *
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
    * @param {Order} order 주문정보
    */
   viewPayment(paymentcapture: PaymentCapture, order: Order): PaymentView {
     const pay = new PaymentView();
+    let receivedprice = 0;
     if (paymentcapture) {
       if (paymentcapture.ccPaymentInfo) { // 신용카드
         const cc = paymentcapture.ccPaymentInfo;
+        receivedprice += cc.amount ? cc.amount : 0;
         pay.setCardamount = cc.amount ? cc.amount : 0;
         pay.setCardInstallment = cc.installmentPlan;
       }
       if (paymentcapture.icCardPaymentInfo) { // 현금IC카드
         const ic = paymentcapture.icCardPaymentInfo;
+        receivedprice += ic.amount ? ic.amount : 0;
         pay.setCardamount = ic.amount ? ic.amount : 0;
         pay.setCardInstallment = '0';
       }
-      let paid = 0;
       if (paymentcapture.cashPaymentInfo) { // 현금
         const cash = paymentcapture.cashPaymentInfo;
-        pay.setCashamount = cash.amount ? Number(cash.amount) : 0; // cash.getAmount;
-        paid += cash.received ? Number(cash.received) : 0;
+        receivedprice += cash.amount ? cash.amount : 0;
+        pay.setCashamount = cash.amount ? cash.amount : 0;
         pay.setCashchange = cash.change ? Number(cash.change) : 0;
       }
       if (paymentcapture.pointPaymentInfo) { // 포인트 내역
         const pointamount = paymentcapture.pointPaymentInfo.amount;
+        receivedprice += pointamount ? pointamount : 0;
         pay.setPointamount = pointamount ? pointamount : 0;
-        paid += pointamount ? Number(pointamount) : 0;
       }
       if (paymentcapture.monetaryPaymentInfo) { // Recash 내역
         const recashamount = paymentcapture.monetaryPaymentInfo.amount;
+        receivedprice += recashamount ? recashamount : 0;
         pay.setRecashamount = recashamount ? recashamount : 0;
-        paid += recashamount ? Number(recashamount) : 0;
       }
       if (paymentcapture.directDebitPaymentInfo) { // 자동이체 내역
         const ddamount = paymentcapture.directDebitPaymentInfo.amount;
+        receivedprice += ddamount ? ddamount : 0;
         pay.setDirectdebitamount = ddamount ? ddamount : 0;
-        paid += ddamount ? Number(ddamount) : 0;
       }
-      pay.setReceivedamount = paid ? paid : 0;
+      pay.setReceivedamount = receivedprice ? receivedprice : 0; // 받은금액 : 모든 결제 수단 합계
     }
     if (order) {
       pay.setDiscount = order.totalDiscounts ? order.totalDiscounts.value : 0;
