@@ -259,13 +259,13 @@ export class PaymentService {
         const cc = paymentcapture.ccPaymentInfo;
         receivedprice += cc.amount ? cc.amount : 0;
         pay.setCardamount = cc.amount ? cc.amount : 0;
-        pay.setCardInstallment = cc.installmentPlan;
+        pay.setCardinstallment = cc.installmentPlan ? cc.installmentPlan : '0';
       }
       if (paymentcapture.icCardPaymentInfo) { // 현금IC카드
         const ic = paymentcapture.icCardPaymentInfo;
         receivedprice += ic.amount ? ic.amount : 0;
         pay.setCardamount = ic.amount ? ic.amount : 0;
-        pay.setCardInstallment = '0';
+        pay.setCardinstallment = '0';
       }
       if (paymentcapture.cashPaymentInfo) { // 현금
         const cash = paymentcapture.cashPaymentInfo;

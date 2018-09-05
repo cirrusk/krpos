@@ -520,7 +520,7 @@ export class PaymentView {
     public set setCardamount(cardamount: number) {
         this.cardamount = cardamount;
     }
-    public set setCardInstallment(cardinstallment: string) {
+    public set setCardinstallment(cardinstallment: string) {
         this.cardinstallment = cardinstallment;
     }
     public set setCashamount(cashamount: number) {
