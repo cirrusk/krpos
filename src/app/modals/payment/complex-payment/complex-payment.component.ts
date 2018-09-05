@@ -66,6 +66,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
+    this.totalPrice = this.getTotalPrice();
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) {
       this.paymentcapture = this.callerData.paymentCapture;
@@ -113,15 +114,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.enableMenu = new Array<string>();
     this.paymentcapture = new PaymentCapture();
     this.paymentModes = new Map<string, string>();
-    this.totalPrice = 0;                                                       // 총 금액
-    this.received = 0;                                                         // 낸 금액
-    this.change = 0;                                                           // 거스름돈
-    this.installment = null;                                                   // 카드 할부
-    this.ccamount = 0;                                                         // 신용카드 결제금액
-    this.cashamount = 0;                                                       // 현금 결제금액
-    this.pointamount = 0;                                                      // 포인트 사용금액
-    this.recashamount = 0;                                                     // Recash 사용금액
-    this.ddamount = 0;                                                         // 자동이체 사용금액
+    this.totalPrice = 0;         // 총 금액
+    this.received = 0;           // 낸 금액
+    this.change = 0;             // 거스름돈
+    this.installment = null;     // 카드 할부
+    this.ccamount = 0;           // 신용카드 결제금액
+    this.cashamount = 0;         // 현금 결제금액
+    this.pointamount = 0;        // 포인트 사용금액
+    this.recashamount = 0;       // Recash 사용금액
+    this.ddamount = 0;           // 자동이체 사용금액
   }
 
   /**
@@ -129,6 +130,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * 결제금액 : 전체금액 - 프로모션 금액
    * 받은금액 : 모든 결제 수단 금액 합
    * 거스름돈 : 거스름돈
+   *
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
    */
   private retreiveInfo(paymentcapture: PaymentCapture) {
@@ -142,11 +144,18 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.recashamount = pay.recashamount ? pay.recashamount : 0;
       this.received = pay.receivedamount ? pay.receivedamount : 0;
       this.ddamount = pay.directdebitamount ? pay.directdebitamount : 0;
-      // 결제금액 (프로모션 가격 제외해야함.)
-      if (this.cartInfo) {
-        this.totalPrice = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
-      }
+      this.totalPrice = this.getTotalPrice();
     }
+  }
+
+  /**
+   * 결제금액 계산 : 총 금액 - 프로모션 금액
+   */
+  private getTotalPrice(): number {
+    if (this.cartInfo) { // 프로모션 금액이 있을 경우 프로모션 금액을 차감해야함.
+      return this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
+    }
+    return 0;
   }
 
   reset() {

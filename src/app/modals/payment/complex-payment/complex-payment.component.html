@@ -24,13 +24,16 @@
                 <ul class="pl02 fr">
                     <li>
                         <span>신용카드</span>
-                        <em>
+                        <em *ngIf="installment !== null; else installmentEmpty">
                             <span *ngIf="installment === '' || installment === '0' || installment === '1'; else installmentDisplay">(일시불)</span>
                             <ng-template #installmentDisplay>
                                 <span>(할부 {{installment}} 개월)</span>
                             </ng-template>
                             {{ccamount | number}}
                         </em>
+                        <ng-template #installmentEmpty>
+                           <em>{{ccamount | number}}</em>
+                        </ng-template>
                     </li>
                     <li>
                         <span>현금</span>
