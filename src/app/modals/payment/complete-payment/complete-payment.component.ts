@@ -80,16 +80,14 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   payButton(evt: any) {
-    if (Utils.isPaymentSuccess(this.finishStatus)) {
+    if (this.finishStatus === ErrorType.RECART) {
+      this.cardCancelAndSendInfoForError();
+    } else if (this.finishStatus === ErrorType.FAIL) {
+      this.cardCancelAndSendInfoForError(ErrorType.API);
+    } else if (this.finishStatus === ErrorType.CARDFAIL) {
+      this.sendCartClearOrRecart();
+    } else if (this.finishStatus !== StatusDisplay.ERROR) {
       this.payFinishByEnter();
-    } else {
-      if (this.finishStatus === ErrorType.RECART) {
-        this.cardCancelAndSendInfoForError();
-      } else if (this.finishStatus === ErrorType.FAIL) {
-        this.cardCancelAndSendInfoForError(ErrorType.API);
-      } else if (this.finishStatus === ErrorType.CARDFAIL) {
-        this.sendCartClearOrRecart();
-      }
     }
   }
 
@@ -332,7 +330,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * @param isCashReceipt 현금영수증 증빙 여부
    */
   private printAndCartInit(isCashReceipt?: boolean) {
-    if (Utils.isPaymentSuccess(this.finishStatus)) {
+    if (this.finishStatus !== StatusDisplay.ERROR) {
       if (this.amwayExtendedOrdering !== undefined) {
         this.receipt.groupPrint(this.orderInfo, this.paymentcapture, false, isCashReceipt);
         this.sendPaymentAndOrder(this.paymentcapture, this.orderInfo);
@@ -403,7 +401,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
-    if (Utils.isPaymentSuccess(this.finishStatus)) {
+    if (this.finishStatus !== StatusDisplay.ERROR) {
       if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
         this.modal.openModalByComponent(CashReceiptComponent, {
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentCapture: this.paymentcapture },
@@ -425,7 +423,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * @param isCashReceipt 현금영수증 증빙 여부
    */
   private payFinishByEnter(isCashReceipt?: boolean) {
-    if (Utils.isPaymentSuccess(this.finishStatus)) {
+    if (this.finishStatus !== StatusDisplay.ERROR) {
       if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
         this.printer.openCashDrawer(); // cash drawer open
         // cash drawer open logging
@@ -461,9 +459,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.keyCode === KeyCode.ENTER) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT) {
-        if (Utils.isPaymentSuccess(this.finishStatus)) {
-          this.payFinishByEnter();
-        } else if (this.finishStatus === ErrorType.RECART) { // 카트 재생성
+        if (this.finishStatus === ErrorType.RECART) { // 카트 재생성
           // 카드 결제 취소하기 및 후속 처리하기
           this.cardCancelAndSendInfoForError();
         } else if (this.finishStatus === ErrorType.FAIL) { // API 오류
@@ -471,6 +467,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.cardCancelAndSendInfoForError(ErrorType.API);
         } else if (this.finishStatus === ErrorType.NOORDER) {
           this.close();
+        } else if (this.finishStatus !== StatusDisplay.ERROR) {
+          this.payFinishByEnter();
         }
       }
     } else if (event.keyCode === KeyCode.ESCAPE) {

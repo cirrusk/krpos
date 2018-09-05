@@ -8,7 +8,7 @@ import { ReceiptService, MessageService, PaymentService } from '../../../../serv
 import {
   ModalComponent, ModalService, NicePaymentService,
   Logger, AlertService, AlertState, Modal, StorageService,
-  CardApprovalResult, NiceConstants, SpinnerService, Config
+  CardApprovalResult, NiceConstants, SpinnerService, Config, KeyCommand, KeyboardService
 } from '../../../../core';
 import {
   PaymentCapture, Accounts, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
@@ -38,6 +38,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   cardcompany: string; // 카드사명
   cardauthnumber: string; // 승인번호
   installmentDisabled: boolean;
+  isAllPay = false;
   private regex: RegExp = /[^0-9]+/g;
   private installment: string;
   private orderInfo: Order;
@@ -48,6 +49,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   private cardresult: CardApprovalResult;
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
+  private keyboardsubscription: Subscription;
   private dupcheck = false;
   private checkinstallment: number;
   private installcheckPrice: number;
@@ -56,7 +58,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('allCheck') private allCheck: ElementRef;
   @ViewChild('partCheck') private partCheck: ElementRef;
-  constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService,
+  constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService, private keyboard: KeyboardService,
     private nicepay: NicePaymentService, private payment: PaymentService, private modal: Modal, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private info: InfoBroker, private config: Config,
     private logger: Logger, private renderer: Renderer2) {
@@ -69,6 +71,9 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     this.installmentCheck();
     this.installcheckPrice = this.config.getConfig('installcheckPrice', 50000);
     this.creditcardMinPrice = this.config.getConfig('creditcardMinPrice', 200);
@@ -82,6 +87,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   ngOnDestroy() {
     if (this.paymentsubscription) { this.paymentsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
     this.receipt.dispose();
   }
 
@@ -176,8 +182,13 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   /**
    * 할부개월 validation 체크
    */
-  installmentCheck() {
-    const val = this.installmentPeriod.nativeElement.value.replace(this.regex, '');
+  installmentCheck(installment?: string) {
+    let val;
+    if (installment) {
+      val = installment.replace(this.regex, '');
+    } else {
+      val = this.installmentPeriod.nativeElement.value;
+    }
     if (Utils.isEmpty(val) || val === '1') {
       this.checktype = -5;
       this.apprmessage = '할부개월을 입력해주세요.';
@@ -187,7 +198,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
         this.checktype = -5;
         this.apprmessage = '할부개월은 24개월을 넘을 수 없습니다.';
       } else {
-        this.installmentPeriod.nativeElement = val.replace(/[^0-9]/g, '');
+        this.installmentPeriod.nativeElement.value = val.replace(this.regex, '');
         this.checktype = 0;
       }
     }
@@ -197,12 +208,15 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 할부일 경우 엔터 입력시 바로 결제
    * 일시불일 경우는 처리안함.
    */
-  installmentEnter(paid: string) {
-    const nPaid = Number(paid.replace(this.regex, ''));
+  installmentEnter(paid: string, installment: string) {
+    const nPaid = paid ? Number(paid.replace(this.regex, '')) : 0;
     if (nPaid > 0) {
       const checked = this.checkinstallment === 1 ? true : false;
       if (checked) { // 할부
-        const val = this.installmentPeriod.nativeElement.value.replace(this.regex, '');
+        let val = installment;
+        if (val) {
+          val = val.replace(this.regex, '');
+        }
         if (Utils.isEmpty(val) || val === '1') {
           this.checktype = -5;
           this.apprmessage = '할부개월을 입력해주세요.';
@@ -231,10 +245,12 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.checkinstallment = type;
     if (type === 0) { // 일시불
       this.installment = '00';
+      this.isAllPay = true;
       setTimeout(() => {
         this.renderer.setAttribute(this.installmentPeriod.nativeElement, 'disabled', 'disabled');
       }, 50);
     } else { // 할부
+      this.isAllPay = false;
       this.renderer.removeAttribute(this.installmentPeriod.nativeElement, 'disabled');
       setTimeout(() => {
         this.installmentPeriod.nativeElement.focus(); this.installmentPeriod.nativeElement.select();
@@ -259,7 +275,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
    * 할부 개월 수 패딩처리
    */
   private getInstallment(): string {
-    const insmnt: string = this.installmentPeriod.nativeElement.value.replace(this.regex, '');
+    const insmnt: string = this.installmentPeriod.nativeElement.value;
     const strinst = Utils.padLeft(insmnt, '0', 2);
     this.installment = strinst;
     return strinst;
@@ -421,6 +437,22 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
           this.dupcheck = true;
         }
       }
+    }
+  }
+
+  protected doPageUp(evt: any) {
+    this.checkInstallment(0);
+  }
+
+  protected doPageDown(evt: any) {
+    this.checkInstallment(1);
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this[command.name](command.ev);
+    } catch (e) {
+      this.logger.set('keyboard.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
   }
 }
