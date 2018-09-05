@@ -27,13 +27,13 @@ export const environment = {
   // pos configurations
   baseSiteId: 'amwaykorea',
   apiDomain: 'https://api.uat.amway.co.kr',
-  // apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
-  apiRootUrl: 'https://hybris-kor-uat-occ.intranet.local/api/v2', // 암웨이 내부 시스템 OCC 호출
+  apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
+  // apiRootUrl: 'https://hybris-kor-uat-occ.intranet.local/api/v2', // 암웨이 내부 시스템 OCC 호출
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',
-    // token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
-    token: 'https://hybris-kor-uat-occ.intranet.local/authorizationserver/oauth/token',
+    token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
+    // token: 'https://hybris-kor-uat-occ.intranet.local/authorizationserver/oauth/token',
     userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
     customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
     batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
@@ -92,7 +92,7 @@ export const environment = {
   cartListCount: 8, // 카트 목록 건수
   noticeInterval: 7, // 일반 공지사항 롤링 주기(sec)
   promotionInterval: 9, // 프로모션 공지사항 롤링 주기(sec)
-  isMdmsSkip: false, // MDMS 블록 체크 제외 여부
+  isMdmsSkip: true, // MDMS 블록 체크 제외 여부
   installcheckPrice: 50000, // 할부 제한 금액
   creditcardMinPrice: 200, // 복합결제 시 주결제 방법 최소 금액 신용카드
   directdebitMinPrice: 1, // 복합결제 시 주결제 방법 최소 금액 자동이체
