@@ -16,6 +16,14 @@ export enum StatusDisplay {
     PAYMENTCAPTURED = 'PAYMENT_CAPTURED'
 }
 
+export enum ErrorType {
+    RECART = 'recart',
+    FAIL = 'fail',
+    CARDFAIL = 'cardfail',
+    NOORDER = 'noorder',
+    API = 'api'
+}
+
 /**
  * 현금 타입
  */

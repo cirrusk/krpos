@@ -508,10 +508,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             }
           });
       } else {
-        // this.closeModal();
+        this.closeModal();
       }
     } else {
-      // this.closeModal();
+      this.closeModal();
     }
   }
 

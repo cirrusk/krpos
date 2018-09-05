@@ -367,7 +367,7 @@ export /* default */ class Utils {
    * @param finishStatus 결제 처리 상태
    */
   public static isPaymentSuccess(finishStatus: string) {
-    if (finishStatus === 'PAYMENT_CAPTURED' || finishStatus === StatusDisplay.CREATED || finishStatus === StatusDisplay.PAID) {
+    if (finishStatus === StatusDisplay.PAYMENTCAPTURED || finishStatus === StatusDisplay.CREATED || finishStatus === StatusDisplay.PAID) {
       return true;
     }
     return false;
