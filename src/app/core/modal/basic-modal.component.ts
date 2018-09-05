@@ -64,12 +64,12 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
 
   }
 
-  protected action() {
+  action() {
     this.result = true;
     this.modalResult();
   }
 
-  protected close() {
+  close() {
     this.result = false;
     this.modalResult();
   }
