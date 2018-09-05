@@ -141,6 +141,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.received = pay.receivedamount ? pay.receivedamount : 0;
       this.ddamount = pay.directdebitamount ? pay.directdebitamount : 0;
     }
+    if (this.cartInfo) {
+      this.totalPrice = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
+    }
   }
 
   reset() {
