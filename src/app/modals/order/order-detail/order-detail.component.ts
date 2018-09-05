@@ -1,14 +1,15 @@
-import { TotalPrice } from './../../../data/models/cart/cart-data';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../core';
 import { OrderService, ReceiptService, MessageService, PaymentService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList, Order } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds, Accounts, Price } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
-
+import { CashReceiptComponent } from '../../payment/ways/cash-receipt/cash-receipt.component';
+import { Cart } from '../../../data/models/order/cart';
+// import { TotalPrice } from './../../../data/models/cart/cart-data';
 /**
  * 주문 상세 페이지
  */
@@ -38,7 +39,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   groupBusinessVolume = 0;
   groupPointValue = 0;
   apprPrice = 0;
-
+  isReceiptPrint = false;
   constructor(protected modalService: ModalService,
     private router: Router,
     private orderService: OrderService,
@@ -116,6 +117,59 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
       this.groupMainFlag = false;
     }
+  }
+
+  /**
+   * 현금영수증 신청하기
+   */
+  printReceipt() {
+    if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
+      const accountInfo: Accounts = this.orderInfo.amwayAccount;
+      this.modal.openModalByComponent(CashReceiptComponent, {
+        callerData: { accountInfo: accountInfo, orderInfo: this.orderInfo, paymentCapture: this.paymentCapture },
+        closeByClickOutside: false,
+        modalId: ModalIds.CASHRECEIPT,
+        paymentType: 'c'
+      }).subscribe(result => {
+        if (result && result === '200') {
+          this.isReceiptPrint = false;
+          this.reissueReceipts(true);
+        }
+      });
+    }
+  }
+
+  /**
+   * 현금 결제가 포함되면 현금 영수증 신청이 가능
+   * directDebitPaymentInfo // 자동이체
+   * monetaryPaymentInfo // Re-Cash
+   * cashPaymentInfo // 현금
+   */
+  private isReceiptEnable() {
+    if (
+      this.paymentCapture.cashPaymentInfo // 현금
+      || this.paymentCapture.monetaryPaymentInfo // AP
+      || this.paymentCapture.directDebitPaymentInfo // 자동이체
+    ) {
+      if (this.isReceiptPrintAlready()) { this.isReceiptPrint = false; return false; } // 현금 영수증을 이미 출력했으면 출력안함.
+      this.isReceiptPrint = true;
+      return true;
+    }
+    this.isReceiptPrint = false;
+    return false;
+  }
+
+  /**
+   * 현금 영수증 신청을 이미 했는지 여부 체크
+   */
+  private isReceiptPrintAlready() {
+    const o: Order = this.orderDetail.orders[0];
+    if (o && o.receiptInfo) {
+      if (o.receiptInfo.receiptType === 'CASH') {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -233,6 +287,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
           this.orderDetail = orderDetail;
           // 결제 금액(Point + re-cash 를 뺀 금액)
           this.apprPrice = sumPrice;
+          this.isReceiptEnable(); // 현금영수증 출력 가능할 경우 버튼 보이기
         }
       },
       error => {
@@ -294,13 +349,13 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   /**
    * 영수증 재발행
    */
-  reissueReceipts() {
+  reissueReceipts(isCashReceipt = false) {
     try {
       const cancelFlag = this.cancelSymbol === '-' ? true : false;
       if (this.orderType === OrderType.GROUP) {
-        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true, this.orderTypeName);
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, true, this.orderTypeName, isCashReceipt);
       } else {
-        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, false, this.orderTypeName).subscribe(
+        this.receiptService.reissueReceipts(this.orderDetail, cancelFlag, false, this.orderTypeName, isCashReceipt).subscribe(
           () => {
             this.alert.info({
               title: '영수증 재발행',

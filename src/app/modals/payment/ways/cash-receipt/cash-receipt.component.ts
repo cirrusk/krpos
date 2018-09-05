@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { OrderService, MessageService } from '../../../../service';
 import { ModalComponent, ModalService } from '../../../../core';
-import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering } from '../../../../data';
+import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering, PaymentCapture } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { Utils } from '../../../../core/utils';
@@ -19,6 +19,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   finishStatus: string;
   receiptdate: Date;
   paymentamount: number;
+  paymentcapture: PaymentCapture;
   private regex: RegExp = /[^0-9]+/g;
   private divcheck: string;
   private accountInfo: Accounts;
@@ -42,12 +43,29 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     this.cartInfo = this.callerData.cartInfo;
     this.orderInfo = this.callerData.orderInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
-    this.paymentamount = this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
+    this.paymentcapture = this.callerData.paymentCapture;
+    // 발행금액
+    this.paymentamount = this.getPayAmount(); // this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
     setTimeout(() => { this.clientnum.nativeElement.focus(); }, 50);
   }
 
   ngOnDestroy() {
     if (this.receiptsubscription) { this.receiptsubscription.unsubscribe(); }
+  }
+
+  /**
+   * 발행금액은 현금성만 대상
+   */
+  private getPayAmount() {
+    let amount = 0;
+    if (this.paymentcapture.cashPaymentInfo) { // 현금
+      amount += this.paymentcapture.cashPaymentInfo.amount;
+    } else if (this.paymentcapture.monetaryPaymentInfo) { // AP
+      amount += this.paymentcapture.monetaryPaymentInfo.amount;
+    } else if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
+      amount += this.paymentcapture.directDebitPaymentInfo.amount;
+    }
+    return amount;
   }
 
   /**
@@ -84,7 +102,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
         numbertype = 'BRN'; // 사업자등록번호
       }
       const params = { receiptType: receipttype, issuanceType: issuancetype, numberType: numbertype, issuanceNumber: isnumber };
-      const userid = this.accountInfo.parties[0].uid;
+      const userid = this.accountInfo.parties ? this.accountInfo.parties[0].uid : this.accountInfo.uid;
       const ordercode = this.orderInfo.code;
       this.receiptsubscription = this.order.receipt(userid, ordercode, params).subscribe(
         result => {

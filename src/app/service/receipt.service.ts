@@ -128,7 +128,7 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} cancelFlag 취소여부
      * @param {boolean} groupOrderFlag 그룹주문 여부
      */
-    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false, type?: string): Observable<boolean> {
+    public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false, type?: string, isCashReceipt = false): Observable<boolean> {
         let rtn = true;
         let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
@@ -169,7 +169,7 @@ export class ReceiptService implements OnDestroy {
                     type: type,
                     reIssue: true,
                     isGroupOrder: false,
-                    isCashReceipt: false
+                    isCashReceipt: isCashReceipt
                 };
                 rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
             }

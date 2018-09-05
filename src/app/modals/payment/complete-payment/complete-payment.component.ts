@@ -371,7 +371,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (Utils.isPaymentSuccess(this.finishStatus)) {
       if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
         this.modal.openModalByComponent(CashReceiptComponent, {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentcapture: this.paymentcapture },
+          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentCapture: this.paymentcapture },
           closeByClickOutside: false,
           modalId: ModalIds.CASHRECEIPT,
           paymentType: 'c'
