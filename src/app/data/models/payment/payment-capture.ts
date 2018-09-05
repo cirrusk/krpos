@@ -502,7 +502,7 @@ export class BusinessEntityRegistrationInfoData {
 
 export class PaymentView {
     cardamount: number;
-    cardinstallment: string;
+    cardinstallment: number;
     cashamount: number;
     cashchange: number;
     pointamount: number;
@@ -521,7 +521,8 @@ export class PaymentView {
         this.cardamount = cardamount;
     }
     public set setCardinstallment(cardinstallment: string) {
-        this.cardinstallment = cardinstallment;
+        cardinstallment = cardinstallment === '' ? '0' : cardinstallment;
+        this.cardinstallment = Number(cardinstallment);
     }
     public set setCashamount(cashamount: number) {
         this.cashamount = cashamount;

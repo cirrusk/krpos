@@ -259,7 +259,7 @@ export class PaymentService {
         const cc = paymentcapture.ccPaymentInfo;
         receivedprice += cc.amount ? cc.amount : 0;
         pay.setCardamount = cc.amount ? cc.amount : 0;
-        pay.setCardinstallment = cc.installmentPlan ? cc.installmentPlan : '0';
+        pay.setCardinstallment = cc.installmentPlan ? cc.installmentPlan : '-1';
       }
       if (paymentcapture.icCardPaymentInfo) { // 현금IC카드
         const ic = paymentcapture.icCardPaymentInfo;

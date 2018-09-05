@@ -27,7 +27,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   totalPrice: number;                                                       // 총 금액
   received: number;                                                         // 낸 금액
   change: number;                                                           // 거스름돈
-  installment: string;                                                      // 카드 할부
+  installment: number;                                                      // 카드 할부
   ccamount: number;                                                         // 신용카드 결제금액
   cashamount: number;                                                       // 현금 결제금액
   pointamount: number;                                                      // 포인트 사용금액
@@ -117,7 +117,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.totalPrice = 0;         // 총 금액
     this.received = 0;           // 낸 금액
     this.change = 0;             // 거스름돈
-    this.installment = null;     // 카드 할부
+    this.installment = -1;     // 카드 할부
     this.ccamount = 0;           // 신용카드 결제금액
     this.cashamount = 0;         // 현금 결제금액
     this.pointamount = 0;        // 포인트 사용금액
@@ -137,7 +137,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (paymentcapture) {
       const pay: PaymentView = this.paymentService.viewPayment(paymentcapture, null);
       this.ccamount = pay.cardamount ? pay.cardamount : 0;
-      this.installment = pay.cardinstallment;
+      this.installment = pay.cardinstallment ? pay.cardinstallment : -1;
       this.cashamount = pay.cashamount ? pay.cashamount : 0;
       this.change = pay.cashchange ? pay.cashchange : 0;
       this.pointamount = pay.pointamount ? pay.pointamount : 0;

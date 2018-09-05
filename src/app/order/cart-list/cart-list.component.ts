@@ -93,7 +93,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   orderType: string;                                                        // 결제타입(일반 = n, 그룹 = g)
   eOrderType = OrderType;
   ccamount: number;                                                         // 신용카드 결제금액
-  installment: string;                                                      // 카드 할부
+  installment: number;                                                      // 카드 할부
   cashamount: number;                                                       // 현금 결제금액
   pointamount: number;                                                      // 포인트 사용금액
   recashamount: number;                                                     // Recash 사용금액
@@ -389,7 +389,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.discount = 0;
     this.received = 0;
     this.change = 0;
-    this.installment = '';
+    this.installment = -1;
     this.selectedUserIndex = -1;
     this.apprtype = '';
     this.paymentChange = false;
@@ -1626,7 +1626,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (paymentcapture) {
       const pay: PaymentView = this.payment.viewPayment(paymentcapture, order);
       this.ccamount = pay.cardamount ? pay.cardamount : 0;
-      this.installment = pay.cardinstallment;
+      this.installment = pay.cardinstallment ? pay.cardinstallment : -1;
       this.cashamount = pay.cashamount ? pay.cashamount : 0;
       this.change = pay.cashchange ? pay.cashchange : 0;
       this.pointamount = pay.pointamount ? pay.pointamount : 0;
@@ -1648,7 +1648,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private payInfoReset() {
     this.ccamount = 0;
-    this.installment = '';
+    this.installment = -1;
     this.cashamount = 0;
     this.change = 0;
     this.pointamount = 0;

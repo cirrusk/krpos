@@ -27,7 +27,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   balance: number;                                // 회원 포인트
   recash: number;                                 // 회원 Re-Cash
   ccamount: number;
-  installment: string;
+  installment: number;
   cashamount: number;
   pointamount: number;
   recashamount: number;
@@ -155,7 +155,7 @@ export class ClientComponent implements OnInit, OnDestroy {
 
   private payInfoReset() {
     this.ccamount = 0;
-    this.installment = '';
+    this.installment = 0;
     this.cashamount = 0;
     this.change = 0;
     this.pointamount = 0;
@@ -183,7 +183,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.selectedCartNum = -1;
     this.apprtype = '';
     this.pager = new Pagination();
-    this.installment = '';
+    this.installment = -1;
     this.ber = null;
     this.promotion = null;
   }

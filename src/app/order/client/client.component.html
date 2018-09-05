@@ -118,9 +118,16 @@
                             <ul *ngIf="accountInfo">
                                 <li class="credit">
                                     <span>신용카드</span>
-                                    <em>{{ccamount | number}}
-                                        <span>{{installment}}</span>
+                                    <em *ngIf="installment >= 0; else installmentEmpty">
+                                        {{ccamount | number}}
+                                        <span *ngIf="installment === '0' || installment === '1'; else installmentDisplay">(일시불)</span>
+                                        <ng-template #installmentDisplay>
+                                            <span>(할부 {{installment}} 개월)</span>
+                                        </ng-template>
                                     </em>
+                                    <ng-template #installmentEmpty>
+                                       <em>{{ccamount | number}}</em>
+                                    </ng-template>
                                 </li>
                                 <li>
                                     <span>현금</span>
