@@ -135,8 +135,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       closeByEscape: false,
       modalId: ModalIds.COMPLEX
     }).subscribe(result => {
-      // this.posPayReset.emit({ reset: true });
-      this.info.sendInfo('payreset', true);
+      this.info.sendInfo('payreset', true); // this.posPayReset.emit({ reset: true });
       if (!result) {
         this.storage.removePaymentModeCode();
         this.storage.removePaymentCapture();
