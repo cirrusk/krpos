@@ -71,7 +71,6 @@ export class BasicModalComponent extends ModalComponent implements AfterViewInit
 
   protected close() {
     this.result = false;
-    // this.storage.removeLatestModalId();
     this.modalResult();
   }
 
