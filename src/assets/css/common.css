@@ -108,6 +108,7 @@ input:disabled + .checkmark:after {display:block; background-color:#999}
 .w110 {width:110px}
 .w200 {width:200px}
 .w370 {width:370px}
+.w740 {width:740px}
 
 /* font */
 .fc_red {color:#f34242}
@@ -198,6 +199,7 @@ select + input, input + input, input + [class*='btn01'], [class*='btn01'] + [cla
 .txt_info02.type02 {font-family:'NSM';}
 .txt01 {font-size:13px; font-family:'NSR'; margin-bottom:1px}
 .txt02 {font-size:14px; font-family:'NSR';}
+.txt02.w740 {margin:0 auto}
 .txt03 {text-align:center; padding-bottom:25px; font-family:'NSR';}
 .txt04 {font-size:15px; font-family:'NSR';}
 
@@ -417,6 +419,7 @@ table input[type='text'] {font-family:'NSM';}
 .caution dt .tag01:after {border-top-width:22px}
 
 /* 주문내역 */
+.pop_xl .bill_wrap {margin:20px auto 30px; width:740px}
 .bill_wrap {margin:20px 0 30px; font-size:11px}
 .bill_wrap .bill {width:360px; height:510px; padding:20px 0 20px 30px; box-sizing:border-box; overflow-y:auto; background-color:#fff}
 .bill_wrap .bill .inner {width:300px}
