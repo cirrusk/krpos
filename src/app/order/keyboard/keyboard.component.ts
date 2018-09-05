@@ -112,6 +112,8 @@ export class KeyboardComponent implements OnInit, OnDestroy {
   protected doArrowDown(evt: any) { }
   protected doArrowRight(evt: any) { }
   protected doArrowLeft(evt: any) { }
+  protected doPageUp(evt: any) { }
+  protected doPageDown(evt: any) { }
 
   /**
    * 비닐봉투(대)

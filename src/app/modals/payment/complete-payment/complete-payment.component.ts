@@ -183,7 +183,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           if (result.statusDisplay === StatusDisplay.ERROR) {
             this.finishStatus = ErrorType.RECART; // 결제 정보가 있을 경우 에러발생하면 CART 가 삭제되었으므로 장바구니 재생성
-            this.apprmessage = this.message.get('payment.fail');
+            if (result.code.startsWith('PR')) {
+              this.apprmessage = this.message.get('payment.fail.reject');
+            } else if (result.code.startsWith('PE')) {
+              this.apprmessage = this.message.get('payment.fail.error');
+            } else {
+              this.apprmessage = this.message.get('payment.fail');
+            }
           } else {
             this.orderType = result.orderType.code;
             this.paidDate = result.created ? result.created : new Date();

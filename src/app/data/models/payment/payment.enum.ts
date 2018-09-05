@@ -6,7 +6,7 @@ export enum StatusDisplay {
     CREATED = 'created',               // 주문 생성
     PROCESSING = 'processing',         // 주문 프로세스 진행 중
     COMPLETED = 'completed',           // 주문 완료
-    ERROR = 'error',                   // 주문 오류
+    ERROR = 'ERROR',                   // 주문 오류
     PAID = 'paid',                     // 결제 완료
     CANCELLED = 'cancelled',           // 주문 취소 완료
     CANCELLING = 'cancelling',         // 주문 취소 진행

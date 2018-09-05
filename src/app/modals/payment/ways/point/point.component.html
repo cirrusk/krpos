@@ -32,11 +32,11 @@
                             <td>
                                 <input type="text" class="w110 ar mousetrap" posOnlyNumber="true" title="사용 포인트" [readonly]="isAllPay" #usePoint (keyup)="setChange(usePoint.value)" (keydown.enter)="pointEnter()"> 원
                                 <label class="inp_rd mgl10" for="se1">전체금액
-                                    <input #allCheck type="radio" name="se" id="se1" checked (click)="checkPay(0)">
+                                    <input #allCheck type="radio" name="se" id="se1" [checked]="isAllPay === true" (click)="checkPay(0)">
                                     <span class="checkmark"></span>
                                 </label>
                                 <label class="inp_rd" for="se2">일부금액
-                                    <input #partCheck type="radio" name="se" id="se2" (click)="checkPay(1)">
+                                    <input #partCheck type="radio" name="se" id="se2" [checked]="isAllPay === false" (click)="checkPay(1)">
                                     <span class="checkmark"></span>
                                 </label>
                             </td>

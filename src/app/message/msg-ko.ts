@@ -34,6 +34,8 @@ export const LANG_KO_MSGS = {
     'payment.success': '결제가 완료되었습니다.',
     'payment.success.next': '결제가 완료되었습니다. 다음 결제 수단을 선택해주세요.',
     'payment.fail': '결제에 실패했습니다.',
+    'payment.fail.reject': '결제가 취소되었습니다.',
+    'payment.fail.error': '결제 처리 오류로 실패했습니다.',
     'payment.fail.other': '결제에 실패했습니다. 다른 결제 수단을 선택해주세요.',
     'card.payment.success': '카드결제 승인이 완료되었습니다.',
     'card.payment.success.next': '카드결제 승인이 완료되었습니다. 다음 결제 수단을 선택해주세요.',

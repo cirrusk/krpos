@@ -41,6 +41,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   private keyboardsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('pointPanel') pointPanel: ElementRef;
+  @ViewChild('allCheck') allCheck: ElementRef;
+  @ViewChild('partCheck') partCheck: ElementRef;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private payments: PaymentService,
