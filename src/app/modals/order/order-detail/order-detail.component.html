@@ -6,7 +6,7 @@
     <!-- pop_container -->
     <div class="pop_container">
         <div class="pop_content type02" style="height: 748px;">
-            <p class="txt02">선택된 주문 상세 정보는 아래와 같습니다.</p>
+            <p class="txt02 w740">선택된 주문 상세 정보는 아래와 같습니다.</p>
             <div class="bill_wrap clearfix" *ngIf="orderDetail">
                 <!-- 왼쪽 -->
                 <div class="bill fl">
@@ -117,7 +117,8 @@
         <a href="javascript:void(0)" class="fl mgl20" (click)= "close()">이전<i class="ico_comm prev"></i></a>
         <span class="fr" *ngIf="!cancelFlag">            
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && groupMainFlag && orderInfo.channel.code !== 'Web'" [class.disabled]="!isCancelButton" class="btn01_blue" (click)="popupCancel()">주문취소</a>
-            <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && isCancelButton" class="btn01_blue" (click)="reissueReceipts()">영수증재발행</a>            
+            <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && isCancelButton" class="btn01_blue" (click)="reissueReceipts()">영수증재발행</a>      
+            <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && isCancelButton" class="btn01_blue" (click)="printReceipt()">현금영수증</a>      
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && groupMainFlag && orderInfo.channel.code !== 'Web'" [class.disabled]="!isCancelButton" class="btn01_blue" (click)="paymentChange()">결제수단변경/재결제</a>
             <a href="javascript:void(0)" *ngIf="orderInfo.orderType.code === 'NORMAL_ORDER' && orderInfo.channel.code === 'Web'" class="btn01_blue" (click)="cancelECPPrint()">ECP 출력 취소</a>
         </span>
