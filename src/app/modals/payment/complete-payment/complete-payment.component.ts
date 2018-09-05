@@ -104,11 +104,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     const calpaid = this.calAmountByPayment();
     if (calpaid >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
       if (Utils.isEmpty(this.storage.getPaymentModeCode())) {
-        console.log('1');
         this.checktype = -1;
         this.apprmessage = this.message.get('not.choose.payment'); // '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.';
       } else {
-        console.log('2');
         this.checktype = 0;
         this.paymentCaptureAndPlaceOrder();
       }
@@ -119,7 +117,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 전체 결재 금액 계산
    */
   private calAmountByPayment(): number {
-    console.log(Utils.stringify(this.paymentcapture));
     let paid = 0;
     if (this.paymentcapture.ccPaymentInfo) { // 신용카드
       const p = this.paymentcapture.ccPaymentInfo.amount;
@@ -186,10 +183,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
             this.payments.sendPaymentAndOrderInfo(this.paymentcapture, this.orderInfo);
           } else if (result.code.startsWith('PE')) { // Payment error
-            this.finishStatus = 'fail';
+            this.finishStatus = 'recart';
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           } else if (result.code.startsWith('PR')) { // payment reject
-            this.finishStatus = 'fail';
+            this.finishStatus = 'recart';
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           } else if (this.finishStatus === StatusDisplay.PAYMENTFAILED) { // CART 삭제 --> 장바구니의 entry 정보로 CART 재생성
             this.finishStatus = 'recart';
@@ -199,7 +196,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
           }
         } else { // 결제정보 없는 경우, CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
-          this.finishStatus = 'fail';
+          this.finishStatus = 'fail_close';
           this.apprmessage = this.message.get('payment.fail'); // '결제에 실패했습니다.';
         }
         this.storage.removePay();
@@ -234,6 +231,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     } else if (this.finishStatus === 'recart') {
       this.info.sendInfo('recart', this.orderInfo);
       this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else if (this.finishStatus === 'error') {
+
+    } else if (this.finishStatus === 'fail_close') {
       this.close();
     }
   }
@@ -413,6 +414,21 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
+  escapeAndClose() {
+    if (this.finishStatus) {
+      if (this.finishStatus === 'fail' || this.finishStatus === 'recart') {
+        // 카드 결제 취소하기 및 후속 처리하기
+        this.cardCancelAndSendInfoForError();
+      } else if (this.finishStatus === 'cardfail') {
+        this.sendCartClearOrRecart();
+      } else if (this.finishStatus === 'fail_close') {
+        this.close();
+      }
+    } else {
+      this.close();
+    }
+  }
+
   @HostListener('document:keydown', ['$event'])
   onPaymentdDown(event: any) {
     event.stopPropagation();
@@ -427,8 +443,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.cardCancelAndSendInfoForError();
         } else if (this.finishStatus === 'cardfail') {
           this.sendCartClearOrRecart();
+        } else if (this.finishStatus === 'fail_close') {
+          this.close();
         }
       }
+    } else if (event.keyCode === KeyCode.ESCAPE) {
+      this.escapeAndClose();
     }
   }
 

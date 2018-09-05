@@ -163,7 +163,7 @@ export class TestComponent implements OnInit {
         // macAndCoNum - END
 
         // productList - START
-        console.log('1.cartInfo : ' + Utils.stringify(cartInfo));
+        console.log('▷ 1.cartInfo : ' + Utils.stringify(cartInfo));
         const productList = Array<any>();
         cartInfo.entries.forEach(entry => {
             productList.push({
@@ -195,7 +195,7 @@ export class TestComponent implements OnInit {
         } else {
             bonus.setOrdering = new Bonus('0', '0');
         }
-        console.log('2.order : ' + Utils.stringify(order));
+        console.log('▷ 2.order : ' + Utils.stringify(order));
         if (order.value) { // 합계 PV BV,  // 그룹 PV BV
             sumPV = order.value.personalPointValue ? order.value.personalPointValue : 0 + totalPV;
             sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0 + totalBV;
@@ -220,7 +220,7 @@ export class TestComponent implements OnInit {
         // bonus - END
 
         // payments - START
-        console.log('3.paymentCapture : ' + Utils.stringify(paymentCapture));
+        console.log('▷ 3.paymentCapture : ' + Utils.stringify(paymentCapture));
         let apprprice = 0;
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
@@ -250,7 +250,7 @@ export class TestComponent implements OnInit {
         // payments - END
 
         // prices - START
-        console.log('4.cartInfo : ' + Utils.stringify(cartInfo));
+        console.log('▷ 4.cartInfo : ' + Utils.stringify(cartInfo));
         let sumAmount = 0; // 합계
         let totalAmount = 0; // 결제금액
         let amountVAT = 0; // 부가세

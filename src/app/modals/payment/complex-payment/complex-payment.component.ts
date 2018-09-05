@@ -285,6 +285,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.modal.openModalByComponent(CompletePaymentComponent, {
       callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering },
       closeByClickOutside: false,
+      closeByEscape: false,
       modalId: ModalIds.COMPLETE,
       paymentType: 'c'
     });
@@ -502,15 +503,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
           }
         }).subscribe(
           result => {
-            if (result) {
+            if (typeof result !== undefined && result === true) {
               this.closeModal();
             }
           });
       } else {
-        this.closeModal();
+        // this.closeModal();
       }
     } else {
-      this.closeModal();
+      // this.closeModal();
     }
   }
 
@@ -604,10 +605,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   onKeyBoardDown(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    const latestmodalid = this.storage.getLatestModalId();
-    if (latestmodalid === ModalIds.COMPLEX) {
-      if (event.keyCode === KeyCode.ESCAPE) {
-        this.close();
+    const modals: string[] = this.storage.getAllModalIds();
+    if (modals && modals.length === 1) {
+      const latestmodalid = this.storage.getLatestModalId();
+      if (latestmodalid === ModalIds.COMPLEX) {
+        if (event.keyCode === KeyCode.ESCAPE) {
+          this.close();
+        }
       }
     }
   }

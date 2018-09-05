@@ -197,7 +197,7 @@ export class StorageService implements OnDestroy {
       this.getSessionItem('latestModalId').forEach(item => {
         data.push(item);
       });
-      const newdata = data.slice(0, -1);
+      const newdata: string[] = data.slice(0, -1);
       if (newdata) {
         this.removeSessionItem('latestModalId');
         newdata.forEach(item => {

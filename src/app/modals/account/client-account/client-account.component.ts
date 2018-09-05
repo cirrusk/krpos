@@ -71,7 +71,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
       this.alert.warn({ message: '입력 형식이 맞지 않습니다.' });
       return;
     }
-    console.log(`[1]phone type : ${this.phonetype}, user phone number : ${this.userPhone}, 개인정보 동의 : ${this.agree}, 간편선물 : ${this.guser}`);
     if (this.agree) {
       setTimeout(() => {
         this.modal.openConfirm({
@@ -98,7 +97,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
                   modalId: ModalIds.SIGNUPACCOUNT
                 }).subscribe(
                   sponsorNumber => {
-                    console.log(sponsorNumber);
                     if (sponsorNumber !== '') {
                       this.sponsorNo = sponsorNumber;
                       this.createCustomerAccount();

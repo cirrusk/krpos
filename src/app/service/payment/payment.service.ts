@@ -263,7 +263,6 @@ export class PaymentService {
       let paid = 0;
       if (paymentcapture.cashPaymentInfo) { // 현금
         const cash = paymentcapture.cashPaymentInfo;
-        console.log({}, cash);
         pay.setCashamount = cash.amount ? Number(cash.amount) : 0; // cash.getAmount;
         paid += cash.received ? Number(cash.received) : 0;
         pay.setCashchange = cash.change ? Number(cash.change) : 0;

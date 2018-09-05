@@ -82,7 +82,6 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
   setBer() {
     const ber: string = this.storage.getBer();
     const selectedber = this.result.number;
-    console.log(ber + '/' + selectedber);
     if (Utils.isNotEmpty(ber) && Utils.isNotEmpty(selectedber)) {
       if (ber === selectedber) {
         this.modal.openConfirm({

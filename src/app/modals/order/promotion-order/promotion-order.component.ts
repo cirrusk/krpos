@@ -80,7 +80,6 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit, O
    */
   promotion(evt: any, product: Product) {
     this.setSelected(evt);
-    console.log(`product code : ${product.code}`);
     this.result = product.code;
     this.close();
   }

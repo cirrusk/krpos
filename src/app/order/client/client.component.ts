@@ -134,10 +134,8 @@ export class ClientComponent implements OnInit, OnDestroy {
    * @param order 주문 정보
    */
   private retreiveInfo(paymentcapture: PaymentCapture, order: Order) {
-    console.log(JSON.stringify(paymentcapture, null, 2));
     if (paymentcapture) {
       const pay: PaymentView = this.payment.viewPayment(paymentcapture, order);
-      console.log(JSON.stringify(pay, null, 2));
       this.ccamount = pay.cardamount ? pay.cardamount : 0;
       this.installment = pay.cardinstallment;
       this.cashamount = pay.cashamount ? pay.cashamount : 0;
