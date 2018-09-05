@@ -145,19 +145,25 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.infoSubscription = this.info.getInfo().subscribe(
       result => {
         const type = result && result.type;
-        if (result !== null && type === 'orderClear') {
-          this.init();
-        } else if (result != null && type === 'payinfo') {
-          const data = result.data;
-          this.retreiveInfo(data[0], data[1]);
-        } else if (result != null && type === 'recart') {
-          if (this.orderType === OrderType.GROUP) {
-            this.copyGroupCart(this.amwayExtendedOrdering);
-          } else {
-            this.copyCartByEntries(this.accountInfo, this.cartList);
+        if (result != null) {
+          if (type === 'orderClear') {
+            this.init();
+          } else if (type === 'payinfo') {
+            const data = result.data;
+            this.retreiveInfo(data[0], data[1]);
+          } else if (type === 'recart') {
+            if (this.orderType === OrderType.GROUP) {
+              this.copyGroupCart(this.amwayExtendedOrdering);
+            } else {
+              this.copyCartByEntries(this.accountInfo, this.cartList);
+            }
+          } else if (type === 'saveHold') {
+            this.saveCart();
+          } else if (type === 'payreset') {
+            if (result.data) {
+              this.payInfoReset();
+            }
           }
-        } else if (result != null && type === 'saveHold') {
-          this.saveCart();
         }
       }
     );

@@ -265,6 +265,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private popupCoupon(addPopupType?: string) {
     if (!this.hasAccount || !this.hasProduct) { return; }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) { // ABO 만 쿠폰 적용
+      const modalid = this.storage.getLatestModalId();
+      if (modalid && (modalid === ModalIds.COMPLEX || modalid === ModalIds.COUPON)) { return; }
       this.modal.openModalByComponent(CouponComponent, {
         callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
         closeByClickOutside: false,
@@ -517,12 +519,4 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     Object.assign(this.cartInfo, jsonData);
   }
 
-  // private checkPromotionClass(evt: any) {
-  //   evt.stopPropagation();
-  //   this.menus.forEach(menu => {
-  //     // this.renderer.removeClass(menu.nativeElement, 'blue');
-  //     this.renderer.removeClass(menu.nativeElement, 'on');
-  //   });
-  //   this.renderer.addClass(evt.target, 'on');
-  // }
 }
