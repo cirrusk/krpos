@@ -9,6 +9,7 @@ import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 import { CashReceiptComponent } from '../../payment/ways/cash-receipt/cash-receipt.component';
 import { Cart } from '../../../data/models/order/cart';
+import { DatePipe } from '@angular/common';
 // import { TotalPrice } from './../../../data/models/cart/cart-data';
 /**
  * 주문 상세 페이지
@@ -40,6 +41,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   groupPointValue = 0;
   apprPrice = 0;
   isReceiptPrint = false;
+  currentDate: string;
   constructor(protected modalService: ModalService,
     private router: Router,
     private orderService: OrderService,
@@ -49,6 +51,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     private modal: Modal,
     private storageService: StorageService,
     private logger: Logger,
+    private datePipe: DatePipe,
     private alert: AlertService,
     private info: InfoBroker) {
     super(modalService);
@@ -59,6 +62,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.orderInfo = this.callerData.orderInfo;
     this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
     this.getBalance(this.orderInfo.user.uid);
+    this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     if (this.orderInfo.isGroupCombinationOrder) {
       this.orderType = OrderType.GROUP;
       this.orderTypeName = this.messageService.get('group.order.type');
@@ -110,12 +114,13 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.cancelFlag = false;
     }
 
-    if (orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED') {
+    if (orderInfo.cancellable && (orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED')) {
       this.isCancelButton = true;
     }
 
     if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
       this.groupMainFlag = false;
+      this.isCancelButton = this.currentDate === this.datePipe.transform(orderInfo.placed, 'yyyy-MM-dd') ? true : false;
     }
   }
 

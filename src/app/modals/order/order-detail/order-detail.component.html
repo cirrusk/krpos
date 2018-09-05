@@ -117,7 +117,7 @@
         <a href="javascript:void(0)" class="fl mgl20" (click)= "close()">이전<i class="ico_comm prev"></i></a>
         <span class="fr" *ngIf="!cancelFlag">            
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && groupMainFlag && orderInfo.channel.code !== 'Web'" [class.disabled]="!isCancelButton" class="btn01_blue" (click)="popupCancel()">주문취소</a>
-            <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && isCancelButton" class="btn01_blue" (click)="reissueReceipts()">영수증재발행</a>      
+            <a href="javascript:void(0)" *ngIf="isCancelButton" class="btn01_blue" (click)="reissueReceipts()">영수증재발행</a>      
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && isCancelButton && isReceiptPrint" class="btn01_blue" (click)="printReceipt()">현금영수증</a>      
             <a href="javascript:void(0)" *ngIf="orderInfo.cancellable && groupMainFlag && orderInfo.channel.code !== 'Web'" [class.disabled]="!isCancelButton" class="btn01_blue" (click)="paymentChange()">결제수단변경/재결제</a>
             <a href="javascript:void(0)" *ngIf="orderInfo.orderType.code === 'NORMAL_ORDER' && orderInfo.channel.code === 'Web'" class="btn01_blue" (click)="cancelECPPrint()">ECP 출력 취소</a>

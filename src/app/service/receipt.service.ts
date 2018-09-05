@@ -160,7 +160,7 @@ export class ReceiptService implements OnDestroy {
             });
 
             if (groupOrderFlag) {
-                this.groupPrint(order, paymentCapture, cancelFlag);
+                this.groupPrint(order, paymentCapture, cancelFlag, true, isCashReceipt);
                 return Observable.of(true);
             } else {
                 const params = {
@@ -193,66 +193,47 @@ export class ReceiptService implements OnDestroy {
                 if (result) {
                     const groupOrder: AmwayExtendedOrdering = result;
                     this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
-                    const entryList = new Array<OrderEntry>();
+                    if (order.account.uid === order.volumeABOAccount.uid) {
+                        const entryList = new Array<OrderEntry>();
 
-                    // summary 에 사용될 데이터 생성
-                    groupOrder.orderList.forEach((tempOrder, index) => {
-                        tempOrder.entries.forEach(entry => {
-                            const existedIdx = entryList.findIndex(
-                                function (obj) {
-                                    return obj.product.code === entry.product.code;
+                        // summary 에 사용될 데이터 생성
+                        groupOrder.orderList.forEach((tempOrder, index) => {
+                            tempOrder.entries.forEach(entry => {
+                                const existedIdx = entryList.findIndex(
+                                    function (obj) {
+                                        return obj.product.code === entry.product.code;
+                                    }
+                                );
+                                const tempEntry = new OrderEntry();
+                                Object.assign(tempEntry, entry);
+
+                                if (existedIdx === -1) {
+                                    entryList.push(tempEntry);
+                                } else {
+                                    entryList[existedIdx].quantity = (entryList[existedIdx].quantity + tempEntry.quantity);
                                 }
-                            );
-                            const tempEntry = new OrderEntry();
-                            Object.assign(tempEntry, entry);
-
-                            if (existedIdx === -1) {
-                                entryList.push(tempEntry);
-                            } else {
-                                entryList[existedIdx].quantity = (entryList[existedIdx].quantity + tempEntry.quantity);
-                            }
+                            });
                         });
-                    });
 
-                    // Summary 출력
-                    this.makeTextAndGroupSummaryPrint(entryList, '그룹주문');
+                        // Summary 출력
+                        this.makeTextAndGroupSummaryPrint(entryList, '그룹주문');
 
-                    setTimeout(() => {
-                        this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt);
-                    }, 500);
+                        setTimeout(() => {
+                            this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt);
+                        }, 500);
+                    } else {
+                        // volumeABO 가 영수증을 재출력 했을 경우
+                        const volumeABOIndex = groupOrder.orderList.findIndex(
+                            function (obj) {
+                                return obj.volumeABOAccount.uid === order.volumeABOAccount.uid;
+                            }
+                        );
 
-                    // groupOrder.orderList.forEach((gOrder, index) => {
-                    //     let gPaymentCapture = new PaymentCapture();
-                    //     const gJsonCartData = {
-                    //         'user': { 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name },
-                    //         'entries': gOrder.entries,
-                    //         'totalPrice': gOrder.totalPrice,
-                    //         'subTotal': gOrder.subTotal,
-                    //         'totalUnitCount': gOrder.totalUnitCount,
-                    //         'totalPriceWithTax': gOrder.totalPriceWithTax,
-                    //         'totalTax': gOrder.totalTax,
-                    //         'totalDiscounts': gOrder.totalDiscounts
-                    //     };
-
-                    //     const gCartInfo = gJsonCartData as Cart;
-                    //     const gOrderDetail = gOrder as Order;
-
-                    //     if (index === 0) {
-                    //         gPaymentCapture = paymentCapture;
-                    //     }
-
-                    //     const gAccount = gOrder.volumeABOAccount;
-                    //     const jsonData = { 'parties': [{ 'uid': gOrder.volumeABOAccount.uid, 'name': gOrder.volumeABOAccount.name }] };
-
-                    //     Object.assign(gAccount, jsonData);
-                    //     const groupInfo = (index + 1).toString() + '/' + this.groupOrderTotalCount;
-
-                    //     if (cancelFlag) {
-                    //         this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'Y', groupInfo, null, null, false, true, false);
-                    //     } else {
-                    //         this.print(gAccount, gCartInfo, gOrderDetail, gPaymentCapture, 'N', groupInfo, null, null, false, true, isCashReceipt);
-                    //     }
-                    // });
+                        if (volumeABOIndex > -1) {
+                            // Ordering ABO를 제외한 index 로 -1 처리
+                            this.printSubOrder(groupOrder.orderList[volumeABOIndex], (volumeABOIndex - 1), cancelFlag, reIssue, false);
+                        }
+                    }
                 }
             });
     }
@@ -315,24 +296,13 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 재발행 여부
      */
     private doPrintByGroup(ordering: GroupResponseData, orderList: Array<Order>, printInfo: any, point: number, reIssue = false) {
-        // 임시 주석
-        // const prints = [];
-        // prints.push(this.printMainOrder(ordering, printInfo, point, reIssue));
-        // const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
-
-        // subOrderList.forEach((order, index) => {
-        //     prints.push(this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, printInfo.cashReceipt));
-        // });
-        // Observable.zip(prints).subscribe(resp => {
-        //     this.logger.set('receipt.service', `${resp}`).debug();
-        // });
         this.printMainOrder(ordering, printInfo, point, reIssue).subscribe(
             () => {
                 setTimeout(() => {
                     const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
                     subOrderList.forEach((order, index) => {
                         setTimeout(() => {
-                            this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, printInfo.cashReceipt);
+                            this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, false);
                         }, 500);
                     });
                 }, 1000);
@@ -371,7 +341,8 @@ export class ReceiptService implements OnDestroy {
             groupInfo: sub.info,
             reIssue: reIssue,
             isGroupOrder: true, // balance 조회 없이 print
-            isCashReceipt: isCashReceipt
+            isCashReceipt: isCashReceipt,
+            type: this.message.get('group.order.type')
         };
         const rtn = this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
         return Observable.of(rtn);
