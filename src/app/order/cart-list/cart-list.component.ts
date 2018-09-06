@@ -75,6 +75,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private serialNumbers: Array<string>;                                     // Serial/RFID 정보 받기
   private serial: string;                                                   // Serial/RFID 값 입력 화면 첫번째에 뿌리도록.
   private copyGroupList: Array<ResCartInfo>;
+  private holdBer: Array<string>;
 
   accountInfo: Accounts;                                                    // 사용자 정보
   groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
@@ -415,6 +416,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removePointReCash();
     this.storage.removePaymentModeCode();
     this.ber = null;
+    this.holdBer =  Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -1536,6 +1538,16 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else if (this.storage.isPaymentProcessing() === true) {
         this.alert.error({ message: this.message.get('noHoldDuringPayment') });
       } else {
+        if (this.ber !== null) {
+          const holdBerList: Array<string> = this.storage.getHoldBer() ? this.storage.getHoldBer() : new Array<string>();
+          const bedData = this.cartInfo.code + '|' + this.ber.number;
+          if (holdBerList.length > 0) {
+            Object.assign(this.holdBer, holdBerList);
+          }
+          this.holdBer.push(bedData);
+
+          this.storage.setHoldBer(this.holdBer);
+        }
         // 보류 가능
         this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
           () => {
@@ -1665,6 +1677,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   setCartInfo(cartData: Cart): void {
     this.cartList.length = 0;
 
+    // 일반주문의 경우 중개주문 여부 확인
+    if (this.orderType === OrderType.NORMAL) {
+      this.checkStorageHoldBer();
+    }
+
     // 카트 리스트
     this.cartList = cartData.entries;
     this.storage.setOrderEntry(cartData);
@@ -1675,6 +1692,33 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.sendRightMenu(ModelType.CART, true, this.cartInfo);
     this.sendRightMenu(ModelType.PRODUCT, true);
     this.setPage(Math.ceil(this.cartList.length / this.cartListCount));
+  }
+
+  /**
+   * 중개주문 확인 및 셋팅
+   */
+  checkStorageHoldBer(): void {
+    this.holdBer = this.storage.getHoldBer() ? this.storage.getHoldBer() : new Array<string>();
+    if (this.holdBer.length > 0) {
+      let cartCode = '';
+      let berNumber = '';
+      const currentCartCode = this.cartInfo.code;
+
+      const berListIndex: number = this.holdBer.findIndex(
+        function(obj) {
+          cartCode = obj.split('|')[0];
+          berNumber = obj.split('|')[1];
+          return cartCode === currentCartCode;
+        }
+      );
+
+      if (berListIndex > -1) {
+        this.holdBer.splice(berListIndex, 1);
+        this.ber = new BerData(berNumber);
+        this.storage.setBer(berNumber);
+        this.storage.setHoldBer(this.holdBer);
+      }
+    }
   }
 
   /**

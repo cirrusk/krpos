@@ -444,6 +444,20 @@ export class StorageService implements OnDestroy {
     this.removeLocalBerNumber();
   }
 
+  public setHoldBer(data: Array<string>) {
+    this.setSessionItem('HoldBer', data);
+    this.setLocalHoldBerNumber(data);
+  }
+
+  public getHoldBer(): Array<string> {
+    return this.getSessionItem('HoldBer');
+  }
+
+  public removeHoldBer() {
+    this.removeSessionItem('HoldBer');
+    this.removeLocalHoldBerNumber();
+  }
+
   public setPaymentCapture(data: PaymentCapture) {
     this.setSessionItem('paymentcapture', data);
     this.setSessionItem('paymentprocess', true);
@@ -487,6 +501,18 @@ export class StorageService implements OnDestroy {
 
   public removeLocalBerNumber() {
     this.removeLocalItem('Ber');
+  }
+
+  public setLocalHoldBerNumber(data: Array<string>) {
+    this.setLocalItem('HoldBer', data);
+  }
+
+  public getLocalHoldBerNumber() {
+    return this.getLocalItem('HoldBer');
+  }
+
+  public removeLocalHoldBerNumber() {
+    this.removeLocalItem('HoldBer');
   }
 
   public setPayInfoReset() {
