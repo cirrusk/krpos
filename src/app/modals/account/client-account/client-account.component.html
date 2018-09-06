@@ -11,7 +11,7 @@
               <label class="inp_rd" for="tel">전화번호<input type="radio" name="phonetype" id="tel" (click)="phonetype = 'HOME'" [(ngModel)]="phonetype" value="HOME"><span class="checkmark"></span></label>
           </div>
           <div class="in_form">
-              <input type="text" class="w370 mousetrap" #phoneNumText [formControl]="phoneNumInput" posOnlyNumber="true" (keydown.enter)="saveNewCustomer(phoneNumText)" minlength=9 maxlength=11 [(ngModel)]="userPhone" placeholder="휴대폰/전화번호 입력 시 – 없이 입력해주세요.">
+              <input type="text" class="w370 mousetrap" #phoneNumText posOnlyNumber="true" (keydown.enter)="saveNewCustomer(phoneNumText)" minlength=9 maxlength=11 [(ngModel)]="userPhone" placeholder="휴대폰/전화번호 입력 시 – 없이 입력해주세요.">
           </div>
           <div class="in_form">
               <label class="inp_ck" for="agree">개인정보수집 및 이용 동의<input type="checkbox" id="agree" [checked]="agree" (change)="agree = !agree"><span class="checkmark"></span></label>

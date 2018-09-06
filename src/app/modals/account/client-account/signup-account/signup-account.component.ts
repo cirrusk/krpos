@@ -6,10 +6,9 @@ import { MessageService } from '../../../../service';
   selector: 'pos-signup-account',
   templateUrl: './signup-account.component.html'
 })
-export class SignupAccountComponent extends ModalComponent implements OnInit, OnDestroy {
+export class SignupAccountComponent extends ModalComponent implements OnInit {
 
   @ViewChild('inputSponsorABO') sponsorABONumber: ElementRef;
-  // @ViewChild('inputUserName') userName: ElementRef;
   sponsorNumber: string;
   errorMessage: string;
 
@@ -25,12 +24,7 @@ export class SignupAccountComponent extends ModalComponent implements OnInit, On
     }
 
     ngOnInit() {
-      setTimeout(() => {
-        this.sponsorABONumber.nativeElement.focus();
-      }, 100);
-    }
-
-    ngOnDestroy() {
+      setTimeout(() => { this.sponsorABONumber.nativeElement.focus(); }, 100);
     }
 
     /**
@@ -39,8 +33,6 @@ export class SignupAccountComponent extends ModalComponent implements OnInit, On
      */
     checkSponsorABO(sponsorABO: string) {
       if (sponsorABO.length > 0) {
-        // this.userName.nativeElement.focus();
-        // this.userName.nativeElement.select();
         this.sponsorNumber = sponsorABO.trim();
         this.result = this.sponsorNumber;
         this.closeModal();
@@ -51,25 +43,10 @@ export class SignupAccountComponent extends ModalComponent implements OnInit, On
     }
 
     /**
-     * 사용자이름 validate
-     * @param {string} userName 사용자 이름
-     */
-    // checkUserName(userName: string) {
-    //   this.checkSponsorABO(this.sponsorABONumber.nativeElement.value);
-    //   if (userName.length > 0 && this.sponsorNumber !== '') {
-    //     this.closeModal();
-    //   } else {
-    //     this.errorMessage = '가입신청자 한글성명을 입력해 주세요.';
-    //     // this.userName.nativeElement.focus();
-    //   }
-    // }
-
-    /**
      * 간편가입 진행
      */
     register() {
       this.checkSponsorABO(this.sponsorABONumber.nativeElement.value);
-      // this.checkUserName(this.userName.nativeElement.value);
     }
 
     close() {

@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, AlertService, ModalService, Logger, Modal } from '../../../core';
+import { ModalComponent, AlertService, ModalService, Logger, Modal, StorageService } from '../../../core';
 import { Utils } from '../../../core/utils';
-import { AccountList, ModalIds, ConsumerRegister } from '../../../data';
+import { AccountList, ModalIds, ConsumerRegister, KeyCode } from '../../../data';
 import { AccountService, MessageService } from '../../../service';
 import { SignupAccountComponent } from './signup-account/signup-account.component';
 
@@ -22,11 +21,11 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
   @Input() sponsorNo: string; // 후원자 번호
   @ViewChild('phoneNumText') private phoneNumText: ElementRef;
-  phoneNumInput: FormControl = new FormControl('');
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private message: MessageService,
     private alert: AlertService,
+    private storageService: StorageService,
     private accountService: AccountService,
     private logger: Logger) {
     super(modalService);
@@ -37,19 +36,6 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
 
   ngOnInit() {
     setTimeout(() => { this.phoneNumText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
-    const spcExp: RegExp = new RegExp(/[`~!@#$%^&*\\\'\";:\/()_+|<>?{}\[\]]]/g);
-    const engExp: RegExp = new RegExp(/[a-z]/gi);
-    const numExp: RegExp = new RegExp(/[0-9]/g);
-    const numEngDelExp: RegExp = new RegExp(/[^0-9a-zA-Z]/g);
-    this.phoneNumInput.valueChanges
-      .debounceTime(300)
-      .subscribe(v => {
-        if (v) {
-          if (!spcExp.test(v) || !engExp.test(v) || !numExp.test(v)) {
-            this.phoneNumText.nativeElement.value = v.replace(numEngDelExp, '');
-          }
-        }
-      });
   }
 
   ngOnDestroy() {
@@ -66,9 +52,10 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
    * @param el 휴대폰/전화번호 INPUT element
    */
   saveNewCustomer(el) {
-    if (Utils.isEmpty(this.userPhone) || (this.userPhone.length < 9 && this.userPhone.length < 11)) {
+    if (Utils.isEmpty(this.userPhone) || (this.userPhone.length < 9 || this.userPhone.length > 11)) {
       el.blur(); // 주의) 이렇게 처리해야만 alert 에서 이벤트 동작!
-      this.alert.warn({ message: '입력 형식이 맞지 않습니다.' });
+      this.alert.warn({ message: '입력 형식이 맞지 않습니다.', timer: true, interval: 1500 });
+      setTimeout(() => { this.phoneNumText.nativeElement.focus(); }, 1520);
       return;
     }
     if (this.agree) {
@@ -81,6 +68,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
           closeButtonLabel: '취소',
           closeByClickOutside: false,
           closeByEnter: true,
+          closeByEscape: true,
           modalId: ModalIds.AGREE,
           beforeCloseCallback : function () {
             if (this.isEnter) {
@@ -91,20 +79,22 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
           result => {
             if (result) {
               if (this.guser) {
-                this.modal.openModalByComponent(SignupAccountComponent, {
-                  callerData: { },
-                  closeByClickOutside: false,
-                  modalId: ModalIds.SIGNUPACCOUNT
-                }).subscribe(
-                  sponsorNumber => {
-                    if (sponsorNumber !== '') {
-                      this.sponsorNo = sponsorNumber;
-                      this.createCustomerAccount();
-                    } else {
-                      this.close();
+                setTimeout(() => {
+                  this.modal.openModalByComponent(SignupAccountComponent, {
+                    callerData: { },
+                    closeByClickOutside: false,
+                    closeByEnter: false,
+                    closeByEscape: true,
+                    modalId: ModalIds.SIGNUPACCOUNT
+                  }).subscribe(
+                    sponsorNumber => {
+                      if (sponsorNumber !== '' && sponsorNumber !== undefined) {
+                        this.sponsorNo = sponsorNumber;
+                        this.createCustomerAccount();
+                      }
                     }
-                  }
-                );
+                  );
+                }, 100);
               } else {
                 this.createCustomerAccount();
               }
@@ -135,6 +125,18 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
           this.alert.error({ message: this.message.get('server.error', errdata.message) });
         }
       });
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onCreateAccount(event: any) {
+    event.stopPropagation();
+    if (event.target.tagName === 'INPUT' && event.target.type.toUpperCase() === 'TEXT') { return; }
+    const modals: string[] = this.storageService.getAllModalIds();
+    if (modals && modals.length === 1) {
+      if (event.keyCode === KeyCode.ENTER) {
+        this.saveNewCustomer(this.phoneNumText.nativeElement);
+      }
+    }
   }
 
   close() {
