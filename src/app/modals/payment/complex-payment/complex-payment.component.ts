@@ -204,7 +204,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         return;
       }
       if (this.enableMenu.indexOf('point') > -1) {
-        // sprint 6차로 주석처리
         this.selectPopup(ModalIds.POINT, PointComponent, 'a', 'point');
       }
     }
@@ -226,7 +225,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         return;
       }
       if (this.enableMenu.indexOf('point') > -1) {
-        // sprint 6차로 주석처리
         this.selectPopup(ModalIds.POINT, PointComponent, 'm', 'point');
       }
     }
@@ -435,13 +433,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
               this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
             });
+
             // this.logger.set('complex.payment.component', `cash : ${this.paymentModes.get('cash')}`).debug();
             // this.paymentModes.forEach((data, key) => {
             //   this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
             // });
 
-            // 추가 팝업이 있을경우 처리
-            this.popupPayment(this.addPopupType);
+            this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
 
           } else {
             this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
@@ -606,7 +604,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
           return obj.code.substring(obj.code.lastIndexOf('-') + 1) === type;
         }
       );
-
+      if (existedIdx === -1) { return; }
       this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
         this.enableMenu.push(paymentType.code);
       });
