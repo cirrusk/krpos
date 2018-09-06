@@ -749,7 +749,11 @@ export class CartListComponent implements OnInit, OnDestroy {
           callerData: { data: this.restrictionMessageList },
           closeByEnter: true,
           modalId: ModalIds.RESTRICT
-        });
+        }).subscribe(
+          () => {
+            setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
+          }
+        );
       } else {
         this.activeSearchMode(SearchMode.PRODUCT);
         this.getSaveCarts(this.accountInfo.parties[0].uid);
@@ -1048,7 +1052,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     }).subscribe(
       () => {
         setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
-      });
+      }
+    );
   }
 
   /**
@@ -1275,7 +1280,11 @@ export class CartListComponent implements OnInit, OnDestroy {
               callerData: { data: this.restrictionMessageList },
               closeByEnter: true,
               modalId: ModalIds.RESTRICT
-            });
+            }).subscribe(
+              () => {
+                setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
+              }
+            );
           }
         },
         error => {
@@ -1362,7 +1371,11 @@ export class CartListComponent implements OnInit, OnDestroy {
                 callerData: { data: this.restrictionMessageList },
                 closeByEnter: true,
                 modalId: ModalIds.RESTRICT
-              });
+              }).subscribe(
+                () => {
+                  setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
+                }
+              );
             }
           },
           error => {
@@ -1971,7 +1984,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         //         callerData: { data: this.restrictionMessageList },
         //         closeByEnter: true,
         //         modalId: 'RestictComponent_User'
-        //       });
+        //       }).subscribe(
+        //          () => {
+        //            setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
+        //          }
+        //        );
         //     } else {
         //       this.activeSearchMode(SearchMode.PRODUCT);
         //       this.getSaveCarts(this.accountInfo.parties[0].uid);
