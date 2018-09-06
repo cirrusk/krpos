@@ -183,7 +183,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    */
   searchOrder(searchType: string, searchText: string, barcodeFlag = false) {
     if (searchText === '' || searchText === undefined || searchText === null) {
-      this.alert.info({ message: this.messageService.get('noSearchText') });
+      this.alert.info({ message: this.messageService.get('noSearchText'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
     } else {
       // source list 페이지 이동을 위해 search 정보 저장
       this.searchType = searchType;
@@ -297,7 +298,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         }
       );
     } else {
-      this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder') });
+      // this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
+      this.searchValue.nativeElement.focus();
     }
   }
 
@@ -334,24 +336,28 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param evt
    */
   printECP() {
-    const orderCodes = new Array<string>();
-    this.targetList.orders.forEach(order => {
-      orderCodes.push(order.code);
-    });
-    this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
-      orderDetail => {
-        if (orderDetail) {
-          this.makeReceiptPrintData(orderDetail);
-        }
-      },
-      error => {
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('pickup-order.component', `printECP error type : ${errdata.type}`).error();
-          this.logger.set('pickup-order.component', `printECP error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
-        }
+    if (this.targetList.orders.length > 0) {
+      const orderCodes = new Array<string>();
+      this.targetList.orders.forEach(order => {
+        orderCodes.push(order.code);
       });
+      this.orderService.orderDetailsByOrderCodes(orderCodes).subscribe(
+        orderDetail => {
+          if (orderDetail) {
+            this.makeReceiptPrintData(orderDetail);
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('pickup-order.component', `printECP error type : ${errdata.type}`).error();
+            this.logger.set('pickup-order.component', `printECP error message : ${errdata.message}`).error();
+            this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
+          }
+      });
+    } else {
+      this.searchValue.nativeElement.focus();
+    }
   }
 
   /**
