@@ -416,7 +416,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removePointReCash();
     this.storage.removePaymentModeCode();
     this.ber = null;
-    this.holdBer =  Array<string>();
+    this.holdBer = Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
   }
 
@@ -998,11 +998,10 @@ export class CartListComponent implements OnInit, OnDestroy {
               }
             } else {
               if (product.sellableStatusForStock === 'OUTOFSTOCK') {
-                this.alert.show({ message: '재고가 부족합니다.', timer: true, interval: 1200 });
+                this.stockMessage(product, '재고가 부족합니다.');
               } else if (product.sellableStatusForStock === 'ENDOFSALE') {
-                this.alert.show({ message: '단종된 상품입니다.', timer: true, interval: 1200 });
+                this.stockMessage(product, '단종된 상품입니다.');
               }
-              setTimeout(() => { this.searchText.nativeElement.focus(); }, 1210);
             }
           } else {
             this.searchParams.data = this.cartInfo;
@@ -1020,6 +1019,36 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.searchParams.data = this.cartInfo;
       this.callSearchProduct(this.searchParams);
     }
+  }
+
+  /**
+   * 재고관련 메시지를 기존 restrict 메시지와 맞춤
+   */
+  private stockMessage(product: Product, message: string) {
+    let imgUrl;
+    try {
+      if (product.images === null) {
+        imgUrl = '/assets/images/temp/198x198.jpg';
+      } else {
+        imgUrl = this.domain + (product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+      }
+    } catch (e) {
+      imgUrl = '/assets/images/temp/198x198.jpg';
+    }
+    if (this.restrictionMessageList) {
+      this.restrictionMessageList.length = 0;
+    } else {
+      this.restrictionMessageList = new Array<RestrictionModel>();
+    }
+    this.restrictionMessageList.push(new RestrictionModel(imgUrl, message, ''));
+    this.modal.openModalByComponent(RestrictComponent, {
+      callerData: { data: this.restrictionMessageList },
+      closeByEnter: true,
+      modalId: ModalIds.RESTRICT
+    }).subscribe(
+      () => {
+        setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
+      });
   }
 
   /**
@@ -1705,7 +1734,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const currentCartCode = this.cartInfo.code;
 
       const berListIndex: number = this.holdBer.findIndex(
-        function(obj) {
+        function (obj) {
           cartCode = obj.split('|')[0];
           berNumber = obj.split('|')[1];
           return cartCode === currentCartCode;
