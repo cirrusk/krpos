@@ -84,13 +84,13 @@ export class SearchService {
     const terminalName = (terminal) ? terminal.pointOfService.name : '';
 
     if (noticeType === 'ca') {
-      const newsParam = { noticeTypes: 'NEWS', posNames: terminalName, pageSize: 20 };
-      const promotionParam = { noticeTypes: 'PROMOTION', posNames: terminalName, pageSize: 10 };
+      const newsParam = { noticeTypes: 'NEWS', posName: terminalName, pageSize: 20 };
+      const promotionParam = { noticeTypes: 'PROMOTION', posName: terminalName, pageSize: 10 };
       const newsData = new HttpData('noticeList', null, null, newsParam);
       const promotionData = new HttpData('noticeList', null, null, promotionParam);
       return Observable.forkJoin(this.api.get(newsData), this.api.get(promotionData));
     } else {
-      const clientParam = { noticeTypes: 'BUSINESS', posNames: terminalName, pageSize: 20 };
+      const clientParam = { noticeTypes: 'BUSINESS', posName: terminalName, pageSize: 20 };
       const clientData = new HttpData('noticeList', null, null, clientParam);
       return this.api.get(clientData);
     }

@@ -32,7 +32,7 @@ export class SignupAccountComponent extends ModalComponent implements OnInit {
      * @param {string} sponsorABO 후원자 번호
      */
     checkSponsorABO(sponsorABO: string) {
-      if (sponsorABO.length > 0) {
+      if (sponsorABO.trim().length > 0) {
         this.sponsorNumber = sponsorABO.trim();
         this.result = this.sponsorNumber;
         this.closeModal();
