@@ -387,7 +387,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.cardCancelAndSendInfoForError(ErrorType.API);
       } else if (this.finishStatus === ErrorType.CARDFAIL) {
         this.sendCartClearOrRecart();
-      } else if (this.finishStatus === ErrorType.NOORDER) {
+      } else if (this.finishStatus === ErrorType.NOORDER) { // 주문정보 없음 다른 결제 수단
         this.close();
       } else {
         this.close();
@@ -465,7 +465,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         } else if (this.finishStatus === ErrorType.FAIL) { // API 오류
           // 카드 결제 취소하기 및 카트 조회 후 후속 처리하기
           this.cardCancelAndSendInfoForError(ErrorType.API);
-        } else if (this.finishStatus === ErrorType.NOORDER) {
+        } else if (this.finishStatus === ErrorType.NOORDER) { // 주문정보 없음 다른 결제 수단
           this.close();
         } else if (this.finishStatus !== StatusDisplay.ERROR) {
           this.payFinishByEnter();
