@@ -388,29 +388,27 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         });
       });
       this.receiptService.makeTextAndGroupSummaryPrint(this.entryList, this.orderTypeName);
-
     }
 
     // 사용자별 영수증 출력
     setTimeout(() => {
       try {
         this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
-        // this.modal.openConfirm({
-        //   title: 'ECP 컨펌',
-        //   message: '컨펌 진행 하시겠습니까?',
-        //   actionButtonLabel: '확인',
-        //   closeButtonLabel: '취소',
-        //   closeByClickOutside: false,
-        //   closeByEnter: true,
-        //   modalId: ModalIds.ECPCONFIRMEX
-        // }).subscribe(
-        //   result => {
-        //     console.log(result);
-        //     if (result) {
+        this.modal.openConfirm({
+          title: 'ECP 컨펌',
+          message: this.messageService.get('ECPConfirmProgress'),
+          actionButtonLabel: '확인',
+          closeButtonLabel: '취소',
+          closeByClickOutside: false,
+          closeByEnter: true,
+          modalId: ModalIds.ECPCONFIRMEX
+        }).subscribe(
+          result => {
+            if (result) {
               this.confirmECP();
-        //     }
-        //   }
-        // );
+            }
+          }
+        );
       } catch (e) {
         this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
         this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });

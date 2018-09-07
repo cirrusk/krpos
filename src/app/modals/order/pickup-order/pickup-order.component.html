@@ -118,7 +118,7 @@
         <span class="fl">취소 ESC</span>
         <span class="fr">
             <a href="javascript:void(0)" *ngIf="orderType === 'p'" [class.disabled]="targetList.orders.length == 0" class="btn01_blue" (click)="printECP()">출력</a>
-            <a href="javascript:void(0)" *ngIf="orderType !== 'p'" [class.disabled]="targetList.orders.length == 0" class="btn01_blue" (click)="confirmECP()">컨펌</a>
+            <a href="javascript:void(0)" [class.disabled]="targetList.orders.length == 0" class="btn01_blue" (click)="confirmECP()">컨펌</a>
             <a href="javascript:void(0)" class="btn01_white" (click)="initialize()">초기화</a>
         </span>
     </div>

@@ -9,7 +9,7 @@ export const LANG_KO_MSGS = {
     'posNotSet': '미등록 POS 기기입니다.<br>IT 관리자에게 문의하여 주시기 바랍니다.<br>IT서비스 데스크 (<em class="fc_red">02-3468-6119</em>)',
     'changeUserAlert' : '현재 장바구니의 사용자를 변경하시겠습니까?',
     'noECPOrder' : '주문정보를 선택해 주세요.',
-    'limitECPOrder' : '회원이 2건 이상의 ECP 주문이 있습니다.<br>주문완료 내역에서 검색해주세요.',
+    'ECPConfirmProgress' : '컨펌 진행 하시겠습니까?',
     'selectProductDelete' : '삭제할 제품을 선택 해 주세요.',
     'selectProductUpdate' : '수량변경할 제품을 선택 해 주세요.',
     'searchAccount': '회원을 추가해주세요.',
