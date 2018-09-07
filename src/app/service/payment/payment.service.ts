@@ -545,4 +545,5 @@ export class PaymentService {
     this.storage.setPaymentCapture(capturepaymentinfo.capturePaymentInfoData);
     return capturepaymentinfo;
   }
+
 }

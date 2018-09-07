@@ -189,6 +189,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
               this.apprmessage = this.message.get('payment.fail');
             }
           } else {
+            this.popupCashReceipt(); // 현금성 거래 (리캐시, 자동이체, 현금) 일 때는 무조건 현금 영수증 창이 뜸
             this.orderType = result.orderType.code;
             this.paidDate = result.created ? result.created : new Date();
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
@@ -401,8 +402,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
+    const modalid = this.storage.getLatestModalId();
+    if (modalid && modalid === ModalIds.CASHRECEIPT) { return; }
     if (this.finishStatus !== StatusDisplay.ERROR) {
-      if (this.isReceiptEnable()) { // 현금, Recash 인 경우 출력
+      if (this.isReceiptEnable()) { // 현금, Recash, 자동이체 인 경우 출력
         this.modal.openModalByComponent(CashReceiptComponent, {
           callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentCapture: this.paymentcapture },
           closeByClickOutside: false,
@@ -415,6 +418,16 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         });
       }
     }
+  }
+
+  private isReceiptEnable(): boolean {
+    if (this.paymentcapture.cashPaymentInfo // 현금
+      || this.paymentcapture.monetaryPaymentInfo // AP
+      || this.paymentcapture.directDebitPaymentInfo // 자동이체
+    ) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -472,7 +485,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         }
       }
     } else if (event.keyCode === KeyCode.ESCAPE) {
-      this.escapeAndClose();
+      // this.escapeAndClose();
     }
   }
 
@@ -484,27 +497,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private handleKeyboardCommand(command: KeyCommand) {
     try {
-      switch (command.combo) {
-        case 'ctrl+r': { this[command.name](); } break;
-      }
+        this[command.name]();
     } catch (e) {
       this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
   }
 
-  /**
-   * 현금 결제가 포함되면 현금 영수증 신청이 가능
-   * directDebitPaymentInfo // 자동이체
-   * monetaryPaymentInfo // Re-Cash
-   * cashPaymentInfo // 현금
-   */
-  isReceiptEnable() {
-    if (this.paymentcapture.cashPaymentInfo // 현금
-      || this.paymentcapture.monetaryPaymentInfo // AP
-      || this.paymentcapture.directDebitPaymentInfo // 자동이체
-    ) {
-      return true;
-    }
-    return false;
-  }
 }

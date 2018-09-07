@@ -1,7 +1,7 @@
 <div class="pop_wrap pop_m" tabindex="1" [posFocusBlur]="'focus'">
   <div class="pop_header">
       <h1>결제완료</h1>
-      <button type="button" class="ico_comm pop_close01" (click)="escapeAndClose()">닫기</button>
+      <!-- <button type="button" class="ico_comm pop_close01" (click)="escapeAndClose()">닫기</button> -->
   </div>
   <!-- pop_container -->
   <div class="pop_container">
@@ -45,7 +45,7 @@
   </div>
   <!-- //pop_container -->
   <div class="pop_footer line02 clearfix">
-      <span class="fl">취소 ESC</span>
+      <!-- <span class="fl">취소 ESC</span> -->
       <span class="fr">
           <a href class="btn01_blue" (click)="!!payButton($event)">확인</a>
           <!-- 20180904 추가 --><a href="javascript:void(0)" *ngIf="isReceiptEnable()" class="btn01_blue" (click)="!!popupCashReceipt()">현금영수증</a><!-- //20180904 추가 -->
