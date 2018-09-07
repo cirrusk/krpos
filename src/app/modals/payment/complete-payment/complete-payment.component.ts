@@ -423,7 +423,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
-  private isReceiptEnable(): boolean {
+  isReceiptEnable(): boolean {
     if (this.paymentcapture.cashPaymentInfo // 현금
       || this.paymentcapture.monetaryPaymentInfo // AP
       || this.paymentcapture.directDebitPaymentInfo // 자동이체
