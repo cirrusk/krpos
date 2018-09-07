@@ -224,6 +224,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         }
     }
 
+    protected doPageUp(evt: any) {
+        setTimeout(() => { this.codes.first.nativeElement.focus(); }, 100);
+    }
+
     protected doPageDown(evt: any) {
         setTimeout(() => { this.codes.last.nativeElement.focus(); }, 100);
     }
