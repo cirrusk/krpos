@@ -2082,7 +2082,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {string} productcode 제품코드(제품수량변경 시 Serial/RFID 세션에 저장)
    */
   private setSerials(data: any, productcode?: string) {
-    this.logger.set('cart.list.component', `serial/rfid : ${Utils.stringify(data)}`).debug();
+    this.logger.set('cart.list.component', `productcode : ${productcode}, serial/rfid : ${Utils.stringify(data)}`).debug();
     if (data.serialNumbers && Array.isArray(data.serialNumbers)) {
       data.serialNumbers.forEach(serial => {
         this.serialNumbers.push(serial);

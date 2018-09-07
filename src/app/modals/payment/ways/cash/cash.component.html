@@ -39,9 +39,7 @@
                     </tbody>
                 </table>
             </div>
-            <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
-            <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
-            <em *ngIf="finishStatus === null && checktype === -3" class="finish fail">{{apprmessage}}</em>
+            <em *ngIf="finishStatus === null && checktype < 0" class="finish fail">{{apprmessage}}</em>
             <em *ngIf="finishStatus === 'PAYMENT_CAPTURED' || finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
             <ng-template #payFail>
                 <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
