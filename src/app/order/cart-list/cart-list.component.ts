@@ -1648,7 +1648,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.totalBV = pay.bv;
         this.totalPrice = pay.totalprice;
       }
-      if (paymentcapture.voucherPaymentInfo) {
+      if (paymentcapture.voucherPaymentInfo) { // 쿠폰 적용할 경우 카트 재조회
         this.getCartList(0);
       }
     }
