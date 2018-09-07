@@ -76,6 +76,7 @@ export const LANG_KO_MSGS = {
     'check.invalid.date': '발행일 정보가 부정확합니다.',
     'check.success': '수표가 정상 인증되었습니다.',
     'check.fail': '수표 조회에 실패 하였습니다.',
+    'check.fail.valid': '수표 번호가 맞지 않습니다. 입력값을 확인해주시기 바랍니다.',
     'check.invalid.yr': '발행 년도를 정확히 입력하세요.',
     'check.invalid.mm': '발행 월을 정확히 입력하세요.',
     'check.invalid.dd': '발행 일을 정확히 입력해주세요.',
