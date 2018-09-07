@@ -53,10 +53,10 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   ngOnInit() {
     setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     const result = this.callerData.data;
-    this.searchValue.nativeElement.value = result.searchText;
+    this.searchValue.nativeElement.value = result.searchText.trim();
     this.cartInfo = result.data;
     if (result.searchText) {
-      this.searchProduct(result.searchText); // 전달 받은 데이터로 검색
+      this.searchProduct(result.searchText.trim()); // 전달 받은 데이터로 검색
     }
   }
 
@@ -111,10 +111,11 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    */
   searchProduct(searchText?: string, cartInfo?: CartInfo) {
-    if (searchText) {
+    if (searchText.trim()) {
+      this.searchValue.nativeElement.value = searchText.trim();
       this.currentPage = 0;
     }
-    const val: string = searchText ? searchText : this.searchValue.nativeElement.value;
+    const val: string = searchText ? searchText.trim() : (this.searchValue.nativeElement.value).trim();
     const sval = val.toUpperCase();
     if (Utils.isEmpty(sval)) {
       this.alert.warn({ message: '검색어를 입력하십시오.', timer: true, interval: 1500 });

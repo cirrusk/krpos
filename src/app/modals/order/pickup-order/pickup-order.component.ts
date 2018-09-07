@@ -298,8 +298,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         }
       );
     } else {
-      // this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
-      this.searchValue.nativeElement.focus();
+      this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
     }
   }
 
@@ -356,7 +356,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           }
       });
     } else {
-      this.searchValue.nativeElement.focus();
+      this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
     }
   }
 
@@ -394,8 +395,22 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     setTimeout(() => {
       try {
         this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
-        // this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
-        this.confirmECP();
+        // this.modal.openConfirm({
+        //   title: 'ECP 컨펌',
+        //   message: '컨펌 진행 하시겠습니까?',
+        //   actionButtonLabel: '확인',
+        //   closeButtonLabel: '취소',
+        //   closeByClickOutside: false,
+        //   closeByEnter: true,
+        //   modalId: ModalIds.ECPCONFIRMEX
+        // }).subscribe(
+        //   result => {
+        //     console.log(result);
+        //     if (result) {
+              this.confirmECP();
+        //     }
+        //   }
+        // );
       } catch (e) {
         this.logger.set('pickup-order.component', `Reissue Receipts error type : ${e}`).error();
         this.alert.error({ title: '영수증 재발행', message: this.messageService.get('receiptFail') });
