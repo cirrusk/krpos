@@ -4,11 +4,10 @@ import { OrderService, ReceiptService, MessageService, PaymentService } from '..
 import { Utils } from '../../../core/utils';
 import { OrderList, Order } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds, Accounts, Price } from '../../../data';
+import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds, Accounts } from '../../../data';
 import { InfoBroker } from '../../../broker';
 import { Router } from '@angular/router';
 import { CashReceiptComponent } from '../../payment/ways/cash-receipt/cash-receipt.component';
-import { Cart } from '../../../data/models/order/cart';
 import { DatePipe } from '@angular/common';
 // import { TotalPrice } from './../../../data/models/cart/cart-data';
 /**
@@ -151,6 +150,10 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * cashPaymentInfo // 현금
    */
   private isReceiptEnable() {
+    if (this.orderInfo.isArrangementSalesOrder) { // 중개주문인 경우는 영수증 출력하지 않음.
+      this.isReceiptPrint = false;
+      return false;
+    }
     if (
       this.paymentCapture.cashPaymentInfo // 현금
       || this.paymentCapture.monetaryPaymentInfo // AP

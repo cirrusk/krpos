@@ -402,20 +402,23 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
-    const modalid = this.storage.getLatestModalId();
-    if (modalid && modalid === ModalIds.CASHRECEIPT) { return; }
-    if (this.finishStatus !== StatusDisplay.ERROR) {
-      if (this.isReceiptEnable()) { // 현금, Recash, 자동이체 인 경우 출력
-        this.modal.openModalByComponent(CashReceiptComponent, {
-          callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentCapture: this.paymentcapture },
-          closeByClickOutside: false,
-          modalId: ModalIds.CASHRECEIPT,
-          paymentType: 'c'
-        }).subscribe(result => {
-          if (result && result === '200') {
-            this.payFinishByEnter(true); // 현금영수증 출력.
-          }
-        });
+    const ber = this.storage.getBer();
+    if (Utils.isEmpty(ber)) { // 중개주문인 경우는 영수증 출력하지 않음.
+      const modalid = this.storage.getLatestModalId();
+      if (modalid && modalid === ModalIds.CASHRECEIPT) { return; }
+      if (this.finishStatus !== StatusDisplay.ERROR) {
+        if (this.isReceiptEnable()) { // 현금, Recash, 자동이체 인 경우 출력
+          this.modal.openModalByComponent(CashReceiptComponent, {
+            callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, orderInfo: this.orderInfo, paymentCapture: this.paymentcapture },
+            closeByClickOutside: false,
+            modalId: ModalIds.CASHRECEIPT,
+            paymentType: 'c'
+          }).subscribe(result => {
+            if (result && result === '200') {
+              this.payFinishByEnter(true); // 현금영수증 출력.
+            }
+          });
+        }
       }
     }
   }
@@ -497,7 +500,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private handleKeyboardCommand(command: KeyCommand) {
     try {
-        this[command.name]();
+      this[command.name]();
     } catch (e) {
       this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
