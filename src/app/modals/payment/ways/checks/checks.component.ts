@@ -59,33 +59,8 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     setTimeout(() => { this.checkyr.nativeElement.focus(); }, 50);
   }
 
-  keyDownNumCheck(evt: any) {
-    const key = evt.keyCode;
-    if (evt.key === 'Process') { evt.preventDefault(); return; }
-    if (key === 0 || key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.TAB) {
-      evt.stopPropagation();
-      return;
-    }
-    if (key < KeyCode.KEY_0 || (key > KeyCode.KEY_9 && key < KeyCode.NUMPAD_0) || key > KeyCode.NUMPAD_9) {
-      evt.preventDefault();
-    }
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-  }
-
-  keyUpNumCheck(evt: any) {
-    const key = evt.keyCode;
-    if (key === KeyCode.BACKSPACE || key === KeyCode.DELETE || key === KeyCode.LEFT_ARROW || key === KeyCode.RIGHT_ARROW) {
-      return;
-    } else {
-      evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-    }
-  }
-
-  focusOutNumCheck(evt: any) {
-    evt.target.value = evt.target.value.replace(/[^0-9]/g, '');
-  }
-
   checks() {
+    const VALID_LEN = 41; // 길이 포함 (3 + 38)
     if (!this.validValue()) {
       this.check = -10;
       this.apprmessage = this.message.get('check.invalid.value'); // '수표 입력 정보가 부정확합니다.';
@@ -100,42 +75,62 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     }
     this.check = 0;
     const checknum = this.makeCheckNumber();
-    this.checksubscription = this.payments.searchCheque(checknum).subscribe(
-      result => {
-        if (result && result.result === 'true') {
-          this.finishStatus = StatusDisplay.PAID;
-          this.apprmessage = this.message.get('check.success'); // '수표가 정상 인증되었습니다.';
-        } else {
+    this.logger.set('checks.component', `수표 번호 : ${checknum}`).debug();
+    if (checknum.length === VALID_LEN) {
+      this.checksubscription = this.payments.searchCheque(checknum).subscribe(
+        result => {
+          if (result && result.result === 'true') {
+            this.finishStatus = StatusDisplay.PAID;
+            this.apprmessage = this.message.get('check.success');
+          } else {
+            this.finishStatus = 'fail';
+            this.apprmessage = this.message.get('check.fail');
+            this.dupcheck = false;
+          }
+        },
+        error => {
+          this.logger.set('checks.component', `${error}`).error();
           this.finishStatus = 'fail';
-          this.apprmessage = this.message.get('check.fail'); // '수표 조회에 실패 하였습니다.';
+          this.apprmessage = this.message.get('check.fail');
           this.dupcheck = false;
-        }
-      },
-      error => {
-        this.logger.set('checks.component', `${error}`).error();
-        this.finishStatus = 'fail';
-        this.apprmessage = this.message.get('check.fail'); // '수표 조회에 실패 하였습니다.';
-        this.dupcheck = false;
-      });
-
+        });
+    } else {
+      this.logger.set('checks.component', `잘못된 수표 번호 : ${checknum}, 길이 : ${checknum.length - 3}`).error();
+      this.finishStatus = 'fail';
+      this.apprmessage = this.message.get('check.fail.valid');
+      this.dupcheck = false;
+    }
   }
 
+  /**
+   * 수표 번호 조합
+   *
+   * 038(길이) + 지로코드 (6자리) + 년(2자리) + 월(2자리) + 일(2자리) + 수표번호(8자리) + 수표종류(2자리) + 수표금액 (10자리, 10자리 미만시 오른쪽에 0 추가) + 검증코드(6자리)
+   */
   private makeCheckNumber(): string {
-    const yr = this.checkyr.nativeElement.value.replace(this.regex, '');
-    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');
-    const dd = this.checkdd.nativeElement.value.replace(this.regex, '');
-    const no = this.checkno.nativeElement.value.replace(this.regex, '');
-    const cd = this.checkpoint.nativeElement.value.replace(this.regex, '');
-    const vl = this.checkvalcode.nativeElement.value.replace(this.regex, '');
-    const tp = this.checktype.nativeElement.value.replace(this.regex, '');
-    const pr = this.checkprice.nativeElement.value.replace(this.regex, '');
+    let yr = this.checkyr.nativeElement.value.replace(this.regex, '');        // 년(2자리)
+    const mm = this.checkmm.nativeElement.value.replace(this.regex, '');      // 월(2자리)
+    const dd = this.checkdd.nativeElement.value.replace(this.regex, '');      // 일(2자리)
+    const no = this.checkno.nativeElement.value.replace(this.regex, '');      // 수표번호(8자리)
+    const cd = this.checkpoint.nativeElement.value.replace(this.regex, '');   // 지로코드 (6자리)
+    const vl = this.checkvalcode.nativeElement.value.replace(this.regex, ''); // 검증코드(6자리)
+    const tp = this.checktype.nativeElement.value.replace(this.regex, '');    // 수표종류(2자리)
+    let pr = this.checkprice.nativeElement.value.replace(this.regex, '');   // 수표금액 (10자리, 10자리 미만시 왼쪽에 0 추가)
+    yr = yr.substring(2, 4);
+    pr = Utils.padLeft(pr, '0', 10);
 
-    const buff = new StringBuilder();
-    buff.append(yr).append(mm).append(dd);
-    buff.append(no).append(cd).append(vl);
-    buff.append(tp).append(pr);
+    let ch = '';
+    ch = ch.concat(cd); // 지로코드 (6자리)
+    ch = ch.concat(yr); // 년(2자리)
+    ch = ch.concat(mm); // 월(2자리)
+    ch = ch.concat(dd); // 일(2자리)
+    ch = ch.concat(no); // 수표번호(8자리)
+    ch = ch.concat(tp); // 수표종류(2자리)
+    ch = ch.concat(pr); // 수표금액 (10자리, 10자리 미만시 오른쪽에 0 추가)
+    ch = ch.concat(vl); // 검증코드(6자리)
 
-    return buff.toString();
+    const chheader = Utils.padLeft(String(ch.length), '0', 3); // 038(길이)
+    return chheader.concat(ch);
   }
 
   private validValue(): boolean {
@@ -371,7 +366,7 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     if (Utils.isEmpty(price)) {
       this.dupcheck = false;
       this.check = -8;
-      this.apprmessage = this.message.get('check.invalid.price'); // '금액정보를 입력해주세요.';
+      this.apprmessage = this.message.get('check.invalid.price');
       this.dupcheck = false;
     } else {
       this.check = 0;
@@ -382,7 +377,6 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const price = this.checkprice.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(price)) {
       this.check = 0;
-      // setTimeout(() => { this.checkprice.nativeElement.blur(); }, 50);
     }
   }
 
@@ -390,7 +384,6 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     const price = this.checkprice.nativeElement.value.replace(this.regex, '');
     if (Utils.isNotEmpty(price)) {
       this.check = 0;
-      // setTimeout(() => { this.checkprice.nativeElement.blur(); }, 50);
       if (!this.dupcheck) {
         setTimeout(() => { this.checks(); }, 300);
         this.dupcheck = true;
