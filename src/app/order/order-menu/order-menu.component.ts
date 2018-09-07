@@ -323,6 +323,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     }
     this.modal.openModalByComponent(SearchAccountComponent, {
       closeByClickOutside: false,
+      actionButtonLabel: '선택',
+      closeButtonLabel: '초기화',
       orderType: OrderType.GROUP,
       modalId: ModalIds.ACCOUNT
     }).subscribe(result => {
