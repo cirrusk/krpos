@@ -158,6 +158,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
       result => {
         if (result) {
           this.finishStatus = StatusDisplay.PAID;
+          this.cartInfo = result; // apply 된 CART 정보 세팅
           const paidamount = result.totalDiscounts.value;
           const coupon = new VoucherPaymentInfo(paidamount);
           coupon.setName = (this.coupon) ? this.coupon.name : '';

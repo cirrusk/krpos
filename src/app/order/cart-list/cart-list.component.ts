@@ -1648,6 +1648,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.totalBV = pay.bv;
         this.totalPrice = pay.totalprice;
       }
+      if (paymentcapture.voucherPaymentInfo) {
+        this.getCartList(0);
+      }
     }
   }
 
