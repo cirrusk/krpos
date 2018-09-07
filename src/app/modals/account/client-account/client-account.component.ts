@@ -127,12 +127,12 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
       });
   }
 
-  @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keydown.enter', ['$event'])
   onCreateAccount(event: any) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT' && event.target.type.toUpperCase() === 'TEXT') { return; }
     const modals: string[] = this.storageService.getAllModalIds();
-    if (modals && modals.length === 1) {
+    if (modals && modals.length === 1 && event.target.id !== 'pos_layer_alert') {
       if (event.keyCode === KeyCode.ENTER) {
         this.saveNewCustomer(this.phoneNumText.nativeElement);
       }
