@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ElementRef } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { StorageService, Config, ApiService } from '../../core';
+import { StorageService, Config, ApiService, AlertService } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
   ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering,
-  CartModifications, TerminalInfo, CopyGroupCartEntries
+  CartModifications, TerminalInfo, CopyGroupCartEntries, ResponseMessage, Block
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
+import { MessageService } from '../../message';
 
 /**
  * 장바구니 처리 서비스
@@ -18,7 +19,9 @@ export class CartService {
   constructor(private httpClient: HttpClient,
     private config: Config,
     private storage: StorageService,
-    private api: ApiService
+    private api: ApiService,
+    private alert: AlertService,
+    private message: MessageService
   ) { }
 
   /**
@@ -299,6 +302,50 @@ export class CartService {
     const pathvariables = { userId: userId, cartId: cartId };
     const data = new HttpData('getGroupCart', pathvariables, null, param, 'json');
     return this.api.get(data);
+  }
+
+  /**
+   * 회원 블록 체크
+   *
+   * @param {ResponseMessage} resp 응답값
+   * @param {Accounts} account 회원 정보
+   * @param {ElementRef} el 엘리먼트 요소 정보
+   */
+  checkUserBlock(resp: ResponseMessage, account: Accounts, el?: ElementRef): string {
+    if (resp.code === Block.INVALID) {
+      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 2000 });
+    } else if (resp.code === Block.NOT_RENEWAL) {
+      const custname = account.accountTypeCode === MemberType.ABO ? account.name : account.parties[0].name;
+      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 2000 });
+    } else if (resp.code === Block.LOGIN_BLOCKED) {
+      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 2000 });
+    } else if (resp.code === Block.ORDER_BLOCK) {
+      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
+    }
+    if (resp.code !== Block.VALID) {
+      if (el) {
+        setTimeout(() => { el.nativeElement.focus(); }, 2100);
+      }
+    }
+    return resp.code;
+  }
+
+  /**
+   * 주문 블럭 체크하기
+   *
+   * VALID = '0000',
+   * INVALID = '0001',
+   * NOT_RENEWAL = '0002',
+   * LOGIN_BLOCKED = '0003',
+   * ORDER_BLOCK = '0005'
+   *
+   * @param {string} code 블럭체크 응답 코드
+   */
+  checkOrderBlock(code: string): boolean {
+    if (code === Block.ORDER_BLOCK) {
+      return true;
+    }
+    return false;
   }
 
 }

@@ -321,7 +321,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (data && data.ber) {
       this.ber = data.ber;
       if (data.ber.number) {
-        this.logger.set('', `>>> 사업자 정보 : ${Utils.stringify(data.ber)}`).debug();
         this.storage.setBer(this.ber.number);
       } else {
         this.ber = null;
@@ -880,29 +879,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 회원 블록 체크
-   *
-   * @param {ResponseMessage} resp 응답값
-   * @param {Accounts} account 회원 정보
-   */
-  private checkUserBlock(resp: ResponseMessage, account: Accounts): string {
-    if (resp.code === Block.INVALID) {
-      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 2000 });
-    } else if (resp.code === Block.NOT_RENEWAL) {
-      const custname = account.accountTypeCode === MemberType.ABO ? account.name : account.parties[0].name;
-      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 2000 });
-    } else if (resp.code === Block.LOGIN_BLOCKED) {
-      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 2000 });
-    } else if (resp.code === Block.ORDER_BLOCK) {
-      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
-    }
-    if (resp.code !== Block.VALID) {
-      setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
-    }
-    return resp.code;
-  }
-
-  /**
    * 회원 검색
    *
    * 중요 체크 내용)
@@ -923,10 +899,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           const account: Accounts = result.accounts[0];
           this.accountService.checkBlock(account).subscribe(
             resp => {
-              const code = this.checkUserBlock(resp, account);
-              if (code === Block.VALID) {
-                this.getAccountAndSaveCart(account);
-              }
+              const code = this.cartService.checkUserBlock(resp, account, this.searchText);
+              if (code === Block.VALID) { this.getAccountAndSaveCart(account); }
             },
             error => {
               if (error) {
@@ -943,7 +917,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
                 } else {
                   const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
-                  this.checkUserBlock(resp, account);
+                  this.cartService.checkUserBlock(resp, account, this.searchText);
                 }
               }
             });
@@ -1072,7 +1046,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const terminalInfo: TerminalInfo = this.storage.getTerminalInfo();
       this.accountService.checkBlock(this.accountInfo).subscribe(
         resp => {
-          if (this.checkOrderBlock(resp.code)) {
+          if (this.cartService.checkOrderBlock(resp.code)) {
             this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
             setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
           } else {
@@ -1091,7 +1065,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               }
               setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
             } else {
-              if (this.checkOrderBlock(error.error.code)) {
+              if (this.cartService.checkOrderBlock(error.error.code)) {
                 this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
                 setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
               }
@@ -1103,24 +1077,6 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.activeSearchMode(SearchMode.ACCOUNT);
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
     }
-  }
-
-  /**
-   * 주문 블럭 체크하기
-   *
-   * VALID = '0000',
-   * INVALID = '0001',
-   * NOT_RENEWAL = '0002',
-   * LOGIN_BLOCKED = '0003',
-   * ORDER_BLOCK = '0005'
-   *
-   * @param {string} code 블럭체크 응답 코드
-   */
-  private checkOrderBlock(code: string): boolean {
-    if (code === Block.ORDER_BLOCK) {
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -1593,7 +1549,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         // 보류 가능
         this.cartService.saveCart(this.accountInfo.uid, this.cartInfo.user.uid, this.cartInfo.code).subscribe(
           () => {
-            // 모두 초기화
             this.init();
             this.info.sendInfo('hold', 'add');
           },
