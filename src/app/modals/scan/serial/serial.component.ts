@@ -58,7 +58,6 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     private dupcheck = false;
     private serialNumbers = [];
     private scanInputSize: number;
-    private scannedCount: number;
     private cartqty: number;
     private changeqty: number;
     private isSerialProduct: boolean;
@@ -69,7 +68,6 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         this.finishStatus = null;
         this.checktype = 0;
         this.scanInputSize = 0;
-        this.scannedCount = 0;
     }
 
     ngOnInit() {
@@ -130,7 +128,6 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             elms.forEach(elm => {
                 if (elm.nodeType === 1 && elm.nodeName === 'INPUT') { elm.focus(); }
             });
-            // this.scannedCount++;
         } else { // 마지막 요소임.
             if (!this.isSerialProduct) { // RFID인 경우 미입력항목 체크하지 않고 바로 처리
                 setTimeout(() => { this.reg(); }, 50);
