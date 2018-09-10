@@ -593,12 +593,12 @@ export class ReceiptService implements OnDestroy {
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
-            const ccard = new CreditCard(ccpinfo.amount, ccpinfo.cardNumber, ccpinfo.installmentPlan, ccpinfo.cardAuthNumber);
+            const ccard = new CreditCard(ccpinfo.amount, ccpinfo.cardNumber, ccpinfo.issuer, ccpinfo.installmentPlan, ccpinfo.cardAuthNumber);
             payment.setCreditCard = ccard;
         }
         if (paymentCapture.getIcCardPaymentInfo) { // IC Card
             const icinfo = paymentCapture.getIcCardPaymentInfo;
-            const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
+            const iccard = new ICCard(icinfo.amount, icinfo.cardNumber, icinfo.issuer, icinfo.cardAuthNumber);
             payment.setICCard = iccard;
         }
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제

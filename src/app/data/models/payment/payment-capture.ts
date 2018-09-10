@@ -179,7 +179,7 @@ export class AmwayPaymentInfoData {
     paymentInfoLine2: string;
     paymentInfoLine3: string;
     paymentInfoLine4: string;
-    protected issuer: string; // 은행/카드사 BankInfoModel 은행코드
+    issuer: string; // 은행/카드사 BankInfoModel 은행코드
     abstractOrderCode: string;
     paymentStatusCode: string;
     mainPayment: boolean;
@@ -344,6 +344,12 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     public get getPaymentSignature(): string {
         return this.paymentSignature;
+    }
+    public set setIssuer(issuer: string) {
+        this.issuer = issuer;
+    }
+    public get getIssuer(): string {
+        return this.issuer;
     }
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,

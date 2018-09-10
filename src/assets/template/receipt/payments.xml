@@ -31,6 +31,9 @@
             {{priceFormatHelper '[신용카드결제]' payments.creditcard.amount orderInfo.cancelFlag}}
         </text-line>
         <text-line>
+            카 드 사: {{payments.creditcard.cardname}}
+        </text-line>        
+        <text-line>
             카드번호: {{payments.creditcard.cardnumber}}
         </text-line>
         <text-line>

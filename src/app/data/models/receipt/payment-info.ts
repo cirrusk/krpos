@@ -27,12 +27,14 @@ export class PaymnetDefault {
 // 신용카드
 export class CreditCard extends PaymnetDefault {
     protected cardnumber: string;  // 카드번호
+    protected cardname: string;    // 카드사명
     protected installment: string; // 할부개월
     protected installmentDesc: string; // 할부개월 명
     protected authnumber: string;  // 승인번호
-    constructor(amount: number, cardnumber: string, installment: string, authnumber: string) {
+    constructor(amount: number, cardnumber: string, cardname: string, installment: string, authnumber: string) {
         super(amount);
         this.cardnumber = cardnumber;
+        this.cardname = cardname;
         this.installment = installment;
         if (installment === '00' || installment === '0' || installment === '1') {
             this.installmentDesc = '일시불';
@@ -60,8 +62,8 @@ export class Cash extends PaymnetDefault {
 }
 // 현금/IC카드 결제
 export class ICCard extends CreditCard {
-    constructor(amount: number, cardnumber: string, authnumber: string) {
-        super(amount, cardnumber, '0', authnumber);
+    constructor(amount: number, cardnumber: string, cardname: string, authnumber: string) {
+        super(amount, cardnumber, cardname, '0', authnumber);
     }
 }
 

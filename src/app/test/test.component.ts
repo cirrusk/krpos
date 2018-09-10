@@ -135,6 +135,7 @@ export class TestComponent implements OnInit {
         cc.cardApprovalNumber = '15503943';
         cc.cardRequestDate = '2018-07-17T15:50:13+09:00';
         cc.number = '457972******8003';
+        cc.issuer = '하나카드';
         paymentCapture.ccPaymentInfo = cc;
         const ch: CashPaymentInfo = new CashPaymentInfo(3000);
         ch.setChange = 7000;
@@ -221,31 +222,26 @@ export class TestComponent implements OnInit {
 
         // payments - START
         console.log('▷ 3.paymentCapture : ' + Utils.stringify(paymentCapture));
-        let apprprice = 0;
         const payment = new PaymentInfo();
         if (paymentCapture.getCcPaymentInfo) { // Credit Card
             const ccpinfo = paymentCapture.getCcPaymentInfo;
-            const ccard = new CreditCard(ccpinfo.amount, ccpinfo.cardNumber, ccpinfo.installmentPlan, ccpinfo.cardAuthNumber);
+            const ccard = new CreditCard(ccpinfo.amount, ccpinfo.cardNumber, ccpinfo.issuer, ccpinfo.installmentPlan, ccpinfo.cardAuthNumber);
             payment.setCreditCard = ccard;
-            apprprice += ccpinfo.amount;
         }
         if (paymentCapture.getIcCardPaymentInfo) { // IC Card
             const icinfo = paymentCapture.getIcCardPaymentInfo;
-            const iccard = new ICCard(icinfo.amount, icinfo.getCardNumber, icinfo.getCardAuthNumber);
+            const iccard = new ICCard(icinfo.amount, icinfo.cardNumber, icinfo.issuer, icinfo.cardAuthNumber);
             payment.setICCard = iccard;
-            apprprice += icinfo.amount;
         }
         if (paymentCapture.getCashPaymentInfo) { // 현금 결제
             const cainfo = paymentCapture.getCashPaymentInfo;
             const cash = new Cash(cainfo.amount, cainfo.getReceived, cainfo.getChange, true); // 거스름돈은 보여주도록 수정
             payment.setCash = cash;
-            apprprice += cainfo.amount;
         }
         if (paymentCapture.getDirectDebitPaymentInfo) { // 자동이체
             const debitinfo = paymentCapture.getDirectDebitPaymentInfo;
             const directdebit = new DirectDebit(debitinfo.amount);
             payment.setDirectDebit = directdebit;
-            apprprice += debitinfo.amount;
         }
         // payments - END
 
@@ -274,12 +270,8 @@ export class TestComponent implements OnInit {
         if (cartInfo.subTotal) { // 합계
             sumAmount = subTotalPrice;
         }
-        if (apprprice > 0) {
-            totalAmount = apprprice;
-        } else {
-            if (cartInfo.totalPrice) { // 결제금액
-                totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;
-            }
+        if (cartInfo.totalPrice) { // 결제금액 - 프로모션 금액
+            totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;
         }
         //                          상품수량  과세 물품         부가세     합계       결제금액      할인금액         할인금액정보
         //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
