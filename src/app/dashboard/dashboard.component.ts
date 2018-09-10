@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
 import { BatchService, MessageService } from '../service';
 import { InfoBroker } from '../broker';
-import { AccessToken, LockType, ModalIds, KeyCode, BatchInfo } from '../data';
+import { AccessToken, LockType, ModalIds } from '../data';
 import { Utils } from '../core/utils';
 
 @Component({
