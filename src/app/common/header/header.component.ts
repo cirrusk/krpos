@@ -5,13 +5,12 @@ import { Subscription } from 'rxjs/Subscription';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 import { InfoBroker, PaymentBroker } from '../../broker';
-import { AlertService, Config, Logger, Modal, NetworkService, NetworkStatusService, StorageService, PrinterService } from '../../core';
+import { Config, Logger, Modal, NetworkService, NetworkStatusService, StorageService, PrinterService } from '../../core';
 import { BatchComponent, LoginComponent, LogoutComponent, PasswordComponent } from '../../modals';
-import { BatchService, CartService, MessageService, TerminalService } from '../../service';
-import { BatchInfo, LockType, TerminalInfo } from '../../data';
+import { BatchService, CartService, TerminalService } from '../../service';
+import { BatchInfo, LockType, TerminalInfo, ModalIds } from '../../data';
 
 import { Utils } from '../../core/utils';
-import { ModalIds } from '../../data/models/common/modal-ids';
 
 /**
  * 공통 헤더 영역
@@ -62,11 +61,9 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     private cartService: CartService,
     private storage: StorageService,
     private batch: BatchService,
-    private msg: MessageService,
     private printer: PrinterService,
     private router: Router,
     private modal: Modal,
-    private alert: AlertService,
     private info: InfoBroker,
     private paymentBroker: PaymentBroker,
     private datePipe: DatePipe,
@@ -222,7 +219,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         this.getTerminal(macAddress);
       }
     } else {
-      this.logger.set('header.component', 'not exist session macaddress, subscribing network driver...').debug();
+      this.logger.set('header.component', 'not exist session macaddress, waiting network driver...').debug();
       this.network.wait().subscribe(
         () => {
           macAddress = this.network.getLocalMacAddress('-');
@@ -254,9 +251,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         this.hasTerminal = true;
       }, error => {
         this.posName = '-';
-        this.logger.set('header.component', `Terminal info get fail : ${error.name} - ${error.message}`).error();
         this.hasTerminal = false;
-        this.alert.error({ title: '미등록 기기 알림', message: this.msg.get('posNotSet') });
+        this.terminalService.terminalError(error);
       });
   }
 
