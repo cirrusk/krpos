@@ -45,7 +45,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     if (this.callerData) {
       const searchParams = this.callerData.data;
-      if (searchParams.searchText.trim() !== '') {
+      if (searchParams.searchText && searchParams.searchText.trim() !== '') {
         this.searchValue.nativeElement.value = searchParams.searchText.trim();
         this.getAccountList(SearchMemberType.ABO, searchParams.searchText.trim());
       }
@@ -87,6 +87,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
     if (cancel) {
       this.searchValue.nativeElement.value = '';
       this.searchMemberType.nativeElement.value = SearchMemberType.ABO;
+      this.searchValue.nativeElement.focus();
     }
   }
 
@@ -109,11 +110,12 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
    * @param {string} searchText 검색어
    */
   getAccountList(searchMemberType: string, searchText: string): void {
-    if (searchText.trim()) {
+    if (searchText && searchText.trim()) {
       this.activeNum = -1;
       this.getAccount(searchMemberType, searchText);
     } else {
-      this.alert.warn({ title: '검색어 미입력', message: '검색어를 입력해주세요.' });
+      this.alert.warn({ title: '검색어 미입력', message: '검색어를 입력해주세요.', timer: true, interval: 1500 });
+      setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
       return;
     }
   }

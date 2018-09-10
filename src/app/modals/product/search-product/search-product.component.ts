@@ -36,6 +36,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   currentPage: number;
   totalPages: number;
   productItems: any;
+  searchData: string;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private search: SearchService,
@@ -48,6 +49,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     this.productCount = -1;
     this.products = null;
     this.currentPage = 0;
+    this.searchData = '';
   }
 
   ngOnInit() {
@@ -56,6 +58,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     this.searchValue.nativeElement.value = result.searchText.trim();
     this.cartInfo = result.data;
     if (result.searchText) {
+      this.searchData = result.searchText.trim();
       this.searchProduct(result.searchText.trim()); // 전달 받은 데이터로 검색
     }
   }
@@ -111,9 +114,12 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
    * 2) "일시품절", "단종", "재고 없음 if (stock - safety stock == 0)"
    */
   searchProduct(searchText?: string, cartInfo?: CartInfo) {
-    if (searchText.trim()) {
+    if (searchText && searchText.trim()) {
+      this.searchData = searchText.trim();
       this.searchValue.nativeElement.value = searchText.trim();
       this.currentPage = 0;
+    } else {
+      searchText = this.searchData;
     }
     const val: string = searchText ? searchText.trim() : (this.searchValue.nativeElement.value).trim();
     const sval = val.toUpperCase();
