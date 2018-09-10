@@ -13,7 +13,7 @@
                     <a href="javascript:void(0)" class="ico_comm next03" (click)="setPage(pager.currentPage + 1)" [class.on]="pager.currentPage !== pager.endPage">다음</a>
                 </span>
 	            <div class="limit">
-	                <span class="img"><img src="{{restrictionModel.image}}" alt=""></span>
+	                <span class="img"><img src="{{restrictionModel.image}}" (error)="errorImgHandler($event)" alt=""></span>
 	                <span class="txt_info01" [innerHTML]="restrictionModel.message"></span>
 	                <dl class="kind" [innerHTML]="restrictionModel.desc">
 	                </dl>
