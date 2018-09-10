@@ -13,6 +13,10 @@ import { Order } from '../data/models/order/order';
 import { Utils } from '../core/utils';
 import { Cart } from '../data/models/order/cart';
 
+/**
+ * 테스트 페이지
+ * 설치 시 인쇄 및 Cash Drawer 테스트 및 신용카드 테스트 진행
+ */
 @Component({
     selector: 'pos-test',
     templateUrl: './test.component.html'
