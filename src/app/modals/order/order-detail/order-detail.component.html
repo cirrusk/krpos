@@ -76,6 +76,7 @@
                             <div>
                                 <ng-container *ngIf="paymentCapture.getCcPaymentInfo">
                                     <li><span>[{{ paymentCapture.getCcPaymentInfo.paymentMode.name }}]</span><em>{{cancelSymbol}}{{paymentCapture.getCcPaymentInfo.amount | number}}</em></li>
+                                    <li>카 드 사 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine5 }}</li>
                                     <li>카드번호 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine1 }}</li>
                                     <li>할부 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getCcPaymentInfo.paymentInfoLine3 }} (승인번호 : {{paymentCapture.getCcPaymentInfo.paymentInfoLine4 }})</li>
                                 </ng-container>
