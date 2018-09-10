@@ -60,47 +60,46 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     }
     if (this.agree) {
       setTimeout(() => {
-        this.modal.openConfirm({
-          title: '개인정보 수집 및 이용 동의 확인',
-          message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
-          modalAddClass: 'pop_s',
-          actionButtonLabel: '확인',
-          closeButtonLabel: '취소',
-          closeByClickOutside: false,
-          closeByEnter: true,
-          closeByEscape: true,
-          modalId: ModalIds.AGREE,
-          beforeCloseCallback : function () {
-            if (this.isEnter) {
-              this.result = this.isEnter;
+        if (this.guser) {
+          this.modal.openModalByComponent(SignupAccountComponent, {
+            callerData: { phonetype: this.phonetype, userPhone: this.userPhone},
+            closeByClickOutside: false,
+            closeByEnter: false,
+            closeByEscape: true,
+            modalId: ModalIds.SIGNUPACCOUNT
+          }).subscribe(
+            result => {
+              if (result) {
+                this.account = result;
+                this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
+                this.close();
+              }
             }
-          }
-        }).subscribe(
-          result => {
-            if (result) {
-              if (this.guser) {
-                setTimeout(() => {
-                  this.modal.openModalByComponent(SignupAccountComponent, {
-                    callerData: { },
-                    closeByClickOutside: false,
-                    closeByEnter: false,
-                    closeByEscape: true,
-                    modalId: ModalIds.SIGNUPACCOUNT
-                  }).subscribe(
-                    sponsorNumber => {
-                      if (sponsorNumber !== '' && sponsorNumber !== undefined) {
-                        this.sponsorNo = sponsorNumber;
-                        this.createCustomerAccount();
-                      }
-                    }
-                  );
-                }, 100);
-              } else {
+          );
+        } else {
+          this.modal.openConfirm({
+            title: '개인정보 수집 및 이용 동의 확인',
+            message: `암웨이 코리아의 고객님<br>개인정보 수집 및 이용에 동의하시겠습니까?`,
+            modalAddClass: 'pop_s',
+            actionButtonLabel: '확인',
+            closeButtonLabel: '취소',
+            closeByClickOutside: false,
+            closeByEnter: true,
+            closeByEscape: true,
+            modalId: ModalIds.AGREE,
+            beforeCloseCallback : function () {
+              if (this.isEnter) {
+                this.result = this.isEnter;
+              }
+            }
+          }).subscribe(
+            result => {
+              if (result) {
                 this.createCustomerAccount();
               }
             }
-          }
-        );
+          );
+        }
       }, 100);
     }
   }
