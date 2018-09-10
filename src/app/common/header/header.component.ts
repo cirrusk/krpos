@@ -213,7 +213,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       this.logger.set('header.component', 'exist session macaddress, get session terminal info...').debug();
       const terminalinfo: TerminalInfo = this.storage.getTerminalInfo();
       if (terminalinfo) {
-        this.posName = terminalinfo.id; // pointOfService.displayName;
+        this.posName = terminalinfo.pointOfService.displayName; // terminalinfo.id; // pointOfService.displayName;
         this.hasTerminal = true;
       } else {
         this.getTerminal(macAddress);
