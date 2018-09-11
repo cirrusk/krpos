@@ -12,10 +12,10 @@ import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, DiscountInfo, ReceiptInfo, ICCard, AccessToken, OrderEntry,
+    Discount, ReceiptInfo, ICCard, AccessToken, OrderEntry,
     GroupResponseData, AmwayExtendedOrdering, AmwayPaymentInfoData, PaymentModes,
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
-    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit
+    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit, EodData, EodInfo
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -87,6 +87,7 @@ export class ReceiptService implements OnDestroy {
     public consumerNormal(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.ConsumerNormal);
     }
+
     /**
      * 그룹주문 요약 출력 정보
      *
@@ -95,6 +96,16 @@ export class ReceiptService implements OnDestroy {
      */
     public groupOrderSummary(data: any): string {
         return this.getReceipt(data, ReceiptTypeEnum.GroupSummary);
+    }
+
+    /**
+     * 캐셔 EOD 출력 정보
+     *
+     * @param {any} data 영수증 데이터
+     * @returns {string} 출력 정보
+     */
+    public cashierEod(data: any): string {
+        return this.getReceipt(data, ReceiptTypeEnum.CashierEod);
     }
 
     /**
@@ -762,6 +773,26 @@ export class ReceiptService implements OnDestroy {
         const text = this.groupOrderSummary(receiptInfo);
         // 최종 영수증 데이터 구성 - END
 
+        // 영수증 출력 - START
+        try {
+            this.printer.printText(text);
+        } catch (e) {
+            this.logger.set('receipt.service', `${e.description}`).error();
+            rtn = false;
+        }
+        // 영수증 출력 - END
+        return rtn;
+    }
+
+    /**
+     * 캐셔 EOD 출력
+     *
+     * @param eodData EOD 데이터
+     */
+    printEod(eodData: EodData) {
+        let rtn = true;
+        const eodInfo: EodInfo = new EodInfo(eodData);
+        const text = this.cashierEod(eodInfo);
         // 영수증 출력 - START
         try {
             this.printer.printText(text);

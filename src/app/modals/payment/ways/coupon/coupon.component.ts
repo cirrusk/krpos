@@ -7,7 +7,7 @@ import { PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
 import {
   Accounts, KeyCode, Coupon, PaymentCapture, PaymentModes, Pagination,
-  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay, AmwayExtendedOrdering, ModalIds
+  CurrencyData, VoucherPaymentInfo, PaymentModeData, StatusDisplay, AmwayExtendedOrdering, ModalIds, CouponList
 } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -19,12 +19,13 @@ import { Utils } from '../../../../core/utils';
 })
 export class CouponComponent extends ModalComponent implements OnInit, OnDestroy {
   accountInfo: Accounts;
-  couponlist: Coupon[];
+  coupons: Coupon[];
   activeNum: number;
   couponCount: number;
   checktype: number;
   finishStatus: string;
   apprmessage: string;
+  private couponlist: CouponList;
   private addPopupType: string;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -51,6 +52,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     this.addPopupType = this.callerData.addPopupType;
+    this.couponlist = this.callerData.couponlist;
     this.searchCoupons(0);
     // 이미 장바구니에 적용된 경우 CART를 새로 구성해야 쿠폰 재설정 가능
     this.alertsubscription = this.alert.alertState.subscribe(state => {
@@ -75,17 +77,38 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
+  /**
+   * 쿠폰 목록 검색
+   *
+   * 메뉴 페이지에서 쿠폰 검색 목록 초기 데이터(첫번째 페이지 couponlist) 가 넘어올 경우는
+   * 이 초기 데이터를 이용하여 페이지 출력
+   * 주의) 출력 후에는 초기 데이터를 지워주어야 페이징 검색이 동작함
+   * 메뉴 페이지에서 쿠폰 초기 데이터가 없는 경우는 쿠폰 페이지로 오지 않음.
+   *
+   * @param pagenum 페이지 번호
+   */
   private searchCoupons(pagenum: number) {
-    this.couponssubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
-      result => {
-        this.couponlist = result.coupons;
-        this.couponCount = result.pagination.totalResults;
-        if (result.pagination) {
-          this.page = result.pagination;
-          this.paging(this.couponCount, pagenum, this.pagesize);
-        }
-      },
-      error => { this.logger.set('coupon.component', `${error}`).error(); });
+    if (pagenum === 0 && this.couponlist) {
+      const cl = this.couponlist;
+      this.coupons = cl.coupons;
+      this.couponCount = cl.pagination.totalResults;
+      if (cl.pagination) {
+        this.page = cl.pagination;
+        this.paging(this.couponCount, pagenum, this.pagesize);
+      }
+      this.couponlist = null;
+    } else {
+      this.couponssubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, pagenum, this.pagesize).subscribe(
+        result => {
+          this.coupons = result.coupons;
+          this.couponCount = result.pagination.totalResults;
+          if (result.pagination) {
+            this.page = result.pagination;
+            this.paging(this.couponCount, pagenum, this.pagesize);
+          }
+        },
+        error => { this.logger.set('coupon.component', `${error}`).error(); });
+    }
   }
 
   searchCoupon(couponcode: string) {
@@ -148,7 +171,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     if (pagenum < 0 || pagenum > this.page.totalPages - 1) { return; }
     this.activeNum = -1;
     this.coupon = null;
-    this.paging(this.couponlist.length, pagenum, this.pagesize);
+    this.paging(this.couponCount, pagenum, this.pagesize);
     this.searchCoupons(pagenum);
   }
 

@@ -1,3 +1,4 @@
+import { EodData, OrderEodData, CancelEodData } from './../../../../../data/models/receipt/eod-data';
 import * as handlebars from 'handlebars/dist/handlebars.min.js';
 import * as moment from 'moment';
 import * as numeral from 'numeral';
@@ -33,6 +34,7 @@ export class TemplateParser {
     this.registerBonusDataHelper();
     this.registerPriceLocaleHelper();
     this.registerDiscountListHelper();
+    this.registerEodDataHelper();
 
   }
 
@@ -135,6 +137,67 @@ export class TemplateParser {
       formatted.push('</text-line>');
       return new handlebars.SafeString(formatted.join(''));
     });
+  }
+
+  /**
+   * EOD 출력 헬퍼
+   */
+  private registerEodDataHelper() {
+    this.handlebars.registerHelper('eodDataHelper', (eodData: EodData) => {
+      const formatted: Array<string> = [];
+      formatted.push(this.printEodData('일반/그룹주문', eodData.normalOrder));
+      formatted.push(this.printEodData('중개주문', eodData.mediateOrder));
+      formatted.push(this.printEodData('멤버/비회원주문', eodData.memberOrder));
+      formatted.push(this.printEodData('주문별 총 합계', eodData.summaryOrder));
+      formatted.push(this.printEodCancelData('주문취소', eodData.orderCancel));
+      return new handlebars.SafeString(formatted.join(''));
+    });
+  }
+
+  /**
+   * EOD 주문 데이터 출력 양식 생성
+   *
+   * @param header 양식 출력 헤더
+   * @param data 주문 데이터
+   * @returns 출력 양식
+   */
+  private printEodData(header: string, data: OrderEodData): string {
+    const formatted: Array<string> = [];
+    formatted.push('<line-feed lines="1"/>');
+    formatted.push(ReceiptUtils.getEodHeader(header));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.credit.name, data.credit.quantity, data.credit.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.iccard.name, data.iccard.quantity, data.iccard.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.debit.name, data.debit.quantity, data.debit.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.point.name, data.point.quantity, data.point.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.recash.name, data.recash.quantity, data.recash.price));
+    formatted.push('<dash-line/>');
+    formatted.push('<bold>');
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.summary.name, data.summary.quantity, data.summary.price));
+    formatted.push('</bold>');
+    formatted.push('<dash-line/>');
+    return formatted.join('');
+  }
+
+  /**
+   * EOD 주문취소 데이터 출력 양식 생성
+   *
+   * @param header 양식 출력 헤더
+   * @param data 주문 취소 데이터
+   * @returns 출력양식
+   */
+  private printEodCancelData(header: string, data: CancelEodData): string {
+    const formatted: Array<string> = [];
+    formatted.push('<line-feed lines="1"/>');
+    formatted.push(ReceiptUtils.getEodHeader(header));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.orderCancel.name, data.orderCancel.quantity, data.orderCancel.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.mediateCancel.name, data.mediateCancel.quantity, data.mediateCancel.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.memberCancel.name, data.memberCancel.quantity, data.memberCancel.price));
+    formatted.push('<dash-line/>');
+    formatted.push('<bold>');
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.summaryCancel.name, data.summaryCancel.quantity, data.summaryCancel.price));
+    formatted.push('</bold>');
+    formatted.push('<dash-line/>');
+    return formatted.join('');
   }
 
   public parser(template, data): BufferBuilder {

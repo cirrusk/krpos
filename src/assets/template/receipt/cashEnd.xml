@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <line-feed lines='1'/>
+    <align mode="center">
+      <bold>
+        <text-line>현금 마감</text-line>
+      </bold>
+    </align> 
+  <line-feed lines='1'/>
+  <text-line>권종              매                금액</text-line>
+  <dash-line/>
+  <text-line>백만원</text-line>
+  <dash-line/>
+  <text-line>오십만원</text-line>
+  <dash-line/>
+  <text-line>오만원</text-line>
+  <dash-line/>
+  <text-line>만원</text-line>
+  <dash-line/>
+  <text-line>오천원</text-line>
+  <dash-line/>
+  <text-line>천원</text-line>
+  <dash-line/>
+  <text-line>백원</text-line>
+  <dash-line/>
+  <text-line>오십원</text-line>
+  <dash-line/>
+  <text-line>십원</text-line>
+  <dash-line/>
+  <bold>
+  <text-line>합계</text-line>
+  </bold>
+  <dash-line/>
+  <line-feed lines='5'/>
+</document>

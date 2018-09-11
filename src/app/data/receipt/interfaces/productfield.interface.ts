@@ -11,3 +11,9 @@ export interface DiscountFieldInterface {
     name: string;
     price: string;
 }
+
+export interface EodFieldInterface {
+    name: string;
+    quantity: string;
+    price: string;
+}

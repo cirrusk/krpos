@@ -19,7 +19,7 @@
                 </span>
                 <!-- //쿠폰이 없을시 삭제 -->
                 <!-- 쿠폰내역(최대 5개) : 내역이 0건일때 삭제 -->
-                <div class="tbl_col bg_bar" *ngIf="couponlist && couponCount > 0; else elseEmpty">
+                <div class="tbl_col bg_bar" *ngIf="coupons && couponCount > 0; else elseEmpty">
                     <table>
                         <caption>쿠폰 내역</caption>
                         <colgroup>
@@ -34,7 +34,7 @@
                         </thead>
                         <tbody>
                             <!-- 내역 선택시 tr에 on클래스 추가 -->
-                            <tr [class.on]="activeNum === i" *ngFor="let coupon of couponlist; let i = index" (click)="activeRow(i, coupon)">
+                            <tr [class.on]="activeNum === i" *ngFor="let coupon of coupons; let i = index" (click)="activeRow(i, coupon)">
                                 <td><span>{{coupon?.name}}</span></td>
                                 <td><span>{{coupon?.couponCode}}</span></td>
                             </tr>

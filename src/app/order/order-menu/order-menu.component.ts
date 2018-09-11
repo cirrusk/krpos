@@ -7,11 +7,12 @@ import {
   CancelCartComponent,
   SearchBerComponent
 } from '../../modals';
-import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, ModalIds } from '../../data';
+import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, ModalIds, Coupon, CouponList } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
 import { SearchAccountBroker, InfoBroker } from '../../broker';
+import { PaymentService } from '../../service';
 
 /**
  * 주문 메뉴 구성
@@ -58,6 +59,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   private couponsubscription: Subscription;
   private cartInfo: Cart;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
+  private couponsize: number;
+  private couponlist: CouponList;
   @Input() promotionList: any;
   @ViewChildren('menus') menus: QueryList<ElementRef>;
   @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();      // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
@@ -70,13 +73,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     private logger: Logger,
     private config: Config,
     private searchAccountBroker: SearchAccountBroker,
+    private payment: PaymentService,
     private infobroker: InfoBroker,
     private renderer: Renderer2
   ) {
     this.init();
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.searchCoupons();
+  }
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }
@@ -85,6 +91,21 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
   init() {
     this.orderType = '';
+    this.couponsize = -1;
+  }
+
+  /**
+   * 쿠폰 목록 검색 후 있으면 쿠폰 페이지가 초기 정보 넘겨주기
+   */
+  private searchCoupons() {
+    this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
+      result => {
+        if (result) {
+          this.couponlist = result;
+          this.couponsize = result.pagination.totalResults;
+        }
+      },
+      error => { this.logger.set('order.menu.component', `${error}`).error(); });
   }
 
   /**
@@ -264,11 +285,15 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    */
   private popupCoupon(addPopupType?: string) {
     if (!this.hasAccount || !this.hasProduct) { return; }
+    if (this.couponsize <= 0) { return; }
     if (this.accountInfo.accountTypeCode === MemberType.ABO) { // ABO 만 쿠폰 적용
       const modalid = this.storage.getLatestModalId();
       if (modalid && (modalid === ModalIds.COMPLEX || modalid === ModalIds.COUPON)) { return; }
       this.modal.openModalByComponent(CouponComponent, {
-        callerData: { accountInfo: this.accountInfo, cartInfo: this.cartInfo, amwayExtendedOrdering: this.amwayExtendedOrdering, addPopupType: addPopupType },
+        callerData: {
+          accountInfo: this.accountInfo, cartInfo: this.cartInfo,
+          amwayExtendedOrdering: this.amwayExtendedOrdering,
+          addPopupType: addPopupType, couponlist: this.couponlist },
         closeByClickOutside: false,
         modalId: ModalIds.COUPON
       });

@@ -17,7 +17,9 @@
         "templMacAndCo",
         "templAdditionalTitle",
         "templCancelTitle",
-        "tempGroupOrderSummary"
+        "tempGroupOrderSummary",
+        "templCashierEOD",
+        "templCashEnd"
     ],
     "precompile": {
         "templApInfo": true,
@@ -37,7 +39,9 @@
         "templMacAndCo": true,
         "templAdditionalTitle": false,
         "templCancelTitle": false,
-        "tempGroupOrderSummary": false
+        "tempGroupOrderSummary": false,
+        "templCachierEOD": false,
+        "templCashEnd": true
     },
     "downloadUriPrefix": "/assets/template/receipt/",
     "downloadUris": {
@@ -58,10 +62,12 @@
         "templMacAndCo": "macAndCoNum.xml",
         "templAdditionalTitle": "additionalTitle.xml",
         "templCancelTitle": "cancel.xml",
-        "tempGroupOrderSummary": "groupOrderSummary.xml"
+        "tempGroupOrderSummary": "groupOrderSummary.xml",
+        "templCashierEOD": "cashierEOD.xml",
+        "templCashEnd": "cashEnd.xml"
     },
     "receipts": [
-        "normalReceiptABO", "normalReceiptMember", "normalReceiptConsumer", "groupReceiptSummary"
+        "normalReceiptABO", "normalReceiptMember", "normalReceiptConsumer", "groupReceiptSummary", "cashierEODReceipt"
     ],
     "receiptTemplates": {
         "normalReceiptABO": [
@@ -103,6 +109,13 @@
         ],
         "groupReceiptSummary": [
             "tempGroupOrderSummary",
+            "templPaperCut"
+        ],
+        "cashierEODReceipt": [
+            "templApInfo",
+            "templCashierEOD",
+            "templPaperCut",
+            "templCashEnd",
             "templPaperCut"
         ]
     }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
-import { BatchService, MessageService } from '../service';
+import { BatchService, MessageService, ReceiptService } from '../service';
 import { InfoBroker } from '../broker';
 import { AccessToken, LockType, ModalIds } from '../data';
 import { Utils } from '../core/utils';
@@ -21,6 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private statssubscription: Subscription;
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
+  private receiptsubscription: Subscription;
   private orderCount: number;
   constructor(
     private modal: Modal,
@@ -29,6 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private alert: AlertService,
     private message: MessageService,
+    private receipt: ReceiptService,
     private logger: Logger,
     private router: Router) {
     this.orderCount = 0;
@@ -70,12 +72,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.receipt.dispose();
     if (this.tokensubscription) { this.tokensubscription.unsubscribe(); }
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
+    if (this.receiptsubscription) { this.receiptsubscription.unsubscribe(); }
   }
 
+  /**
+   * 캐셔 EOD(정산)
+   */
+  startEOD() {
+    if (this.screenLockType === LockType.LOCK) { return; }
+    if (this.storage.isLogin()) {
+      this.modal.openConfirm({
+        modalAddClass: 'pop_s',
+        title: '정산 영수증 출력',
+        message: '정산 영수증을 출력 하시겠습니까?',
+        actionButtonLabel: '확인',
+        closeButtonLabel: '취소',
+        closeByEnter: true,
+        closeByClickOutside: true,
+        beforeCloseCallback: function () {
+          if (this.isEnter) {
+            this.result = this.isEnter;
+          }
+        },
+        modalId: ModalIds.EOD
+      }).subscribe(result => {
+        if (result) {
+          console.log('정산영수증 출력.............................');
+        }
+      });
+    } else {
+      this.alert.warn({ title: '판매정산', message: '근무 시작 후에만 가능합니다.', timer: true, interval: 1500 });
+    }
+  }
   /**
    * 기본조건 : 로그인 상태일 경우
    * 1. start batch

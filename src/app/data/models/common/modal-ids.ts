@@ -26,6 +26,7 @@ export enum ModalIds {
     ECPCONFIRMNO = 'EcpConfirmNo',
     ECPCONFIRMEX = 'EcpConfirmEx',
     ECPCONFIRMOV = 'EcpConfirmOv',
+    EOD = 'EOD',
     ETC = 'EtcOrdert',
     HOLDORDER = 'HoldOrder',
     IC = 'IcCard',

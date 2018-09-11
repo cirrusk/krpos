@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 
@@ -7,7 +7,9 @@ import { ReceiptService, MessageService } from '../service';
 import {
     OrderInfo, TerminalInfo, Cashier, AccessToken, Account, AccountInfo, Accounts, MemberType, ProductsEntryInfo,
     OrderEntry, BonusInfo, Bonus, PaymentInfo, PaymentCapture, AmwayMonetaryPaymentInfo, PointPaymentInfo, PointType,
-    CashPaymentInfo, CreditCardPaymentInfo, CreditCard, ICCard, Cash, DirectDebit, PriceInfo, PointInfo, Discount, ReceiptInfo, AmwayValue, Price
+    CashPaymentInfo, CreditCardPaymentInfo, CreditCard, ICCard, Cash, DirectDebit, PriceInfo, PointInfo, Discount, ReceiptInfo,
+    AmwayValue, Price, EodData, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData, SummaryData,
+    CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel
 } from '../data';
 import { Order } from '../data/models/order/order';
 import { Utils } from '../core/utils';
@@ -22,7 +24,7 @@ import { Cart } from '../data/models/order/cart';
     selector: 'pos-test',
     templateUrl: './test.component.html'
 })
-export class TestComponent implements OnInit {
+export class TestComponent implements OnInit, OnDestroy {
 
     terminalInfo: string;
     tokenInfo: string;
@@ -61,6 +63,10 @@ export class TestComponent implements OnInit {
         }
     }
 
+    ngOnDestroy() {
+        this.receipt.dispose();
+    }
+
     /**
      * 영수증 인쇄 테스트
      */
@@ -71,6 +77,14 @@ export class TestComponent implements OnInit {
                 console.log({}, text);
                 this.print.printText(text);
             }
+        } catch (e) {
+            this.alert.error({ message: `인쇄 중 오류가 발생하였습니다. ${e.description}` });
+        }
+    }
+
+    public testEODPrint() {
+        try {
+            this.receipt.printEod(this.makeEodData());
         } catch (e) {
             this.alert.error({ message: `인쇄 중 오류가 발생하였습니다. ${e.description}` });
         }
@@ -422,6 +436,34 @@ export class TestComponent implements OnInit {
             }
         };
         return Object.assign(orderentry, data);
+    }
+
+    private makeEodData(): EodData {
+        const eodData = new EodData();
+        eodData.printDate = Utils.convertDateToString(new Date());
+        eodData.posNo = this.storage.getTerminalInfo() ? this.storage.getTerminalInfo().id : 'POS';
+        eodData.cashierName = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeName : '캐셔';
+        eodData.cashierId = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeId : 'Cashier-0001';
+        eodData.batchId = this.storage.getBatchInfo() ? this.storage.getBatchInfo().batchNo : 'B-350-PH-01-10000015';
+        const o = new OrderEodData();
+        o.credit = new CcData('9', '10000');
+        o.iccard = new IcData('99', '99999990');
+        o.debit = new DebitData('999', '9999990');
+        o.point = new PointData('9999', '999990');
+        o.recash = new ReCashData('9999', '99990');
+        o.cash = new CashData('9999', '999999990');
+        o.summary = new SummaryData('9999', '999999990');
+        eodData.normalOrder = o;
+        eodData.mediateOrder = o;
+        eodData.memberOrder = o;
+        eodData.summaryOrder = o;
+        const c = new CancelEodData();
+        c.orderCancel = new OrderCancel('9999', '999999990');
+        c.mediateCancel = new MediateCancel('9999', '999999990');
+        c.memberCancel = new MemberCancel('9999', '999999990');
+        c.summaryCancel = new SummaryCancel('9999', '999999990');
+        eodData.orderCancel = c;
+        return eodData;
     }
 
     /**

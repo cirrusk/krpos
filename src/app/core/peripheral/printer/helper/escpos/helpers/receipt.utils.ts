@@ -1,7 +1,7 @@
-import { Command } from './../command';
+import { Command } from '../command';
 
 import { ProductFieldMaxLen } from './maxlen.interface';
-import { ReceiptProductFieldInterface, DiscountFieldInterface } from '../../../../../../data/receipt/interfaces/productfield.interface';
+import { ReceiptProductFieldInterface, DiscountFieldInterface, EodFieldInterface } from '../../../../../../data/receipt/interfaces/productfield.interface';
 import { PosPrinterConstants } from '../posprinter.constants';
 
 export class ReceiptUtils {
@@ -245,5 +245,57 @@ export class ReceiptUtils {
     public static fitTextsEqual(text1: string, text2: string): string {
         const paddedLen = (PosPrinterConstants.LineBytes / 2) - this.getTextLengthUTF8(text1);
         return text1 + this.spaces(paddedLen) + text2;
+    }
+
+    /**
+     * 캐셔 EOD 타이틀 출력부
+     *
+     * @param header 헤더 타이틀
+     * @param quantity 수량 타이틀
+     * @param price 금액 타이틀
+     * @returns 헤더 출력 양식
+     */
+    public static getEodHeader(header: string, quantity?: string, price?: string): string {
+        const formatted: Array<string> = [];
+        quantity = quantity || '건수';
+        price = price || '금액';
+        formatted.push(this.START_TEXTLINE);
+        formatted.push(header);
+        let len: number = PosPrinterConstants.LineBytes / 2 - this.getTextLengthUTF8(header);
+        formatted.push(this.spaces(len));
+        formatted.push(quantity || '건수');
+        len = PosPrinterConstants.LineBytes - (PosPrinterConstants.LineBytes / 2 + this.getTextLengthUTF8(quantity) + this.getTextLengthUTF8(price)) - 2;
+        formatted.push(this.spaces(len));
+        formatted.push(price || '금액');
+        formatted.push(this.END_TEXTLINE);
+        formatted.push('<dash-line/>');
+        return formatted.join('');
+    }
+
+    /**
+     * 캐셔 EOD 금액 출력부
+     * @param name 명칭
+     * @param quantity 실 수량
+     * @param price 실 금액
+     * @returns 본문 출력 양식
+     */
+    public static getEodFormattedFields(name: string, quantity: string, price: string): string {
+        const formatted: Array<string> = [];
+        formatted.push(this.START_TEXTLINE);
+        formatted.push(name);
+        let len: number = PosPrinterConstants.LineBytes / 2 - this.getTextLengthUTF8(name) - 2;
+        formatted.push(this.spaces(len));
+        const qt: string = ReceiptUtils.convertToLocalePrice(quantity);
+        const pr: string = ReceiptUtils.convertToLocalePrice(price);
+        const quantityLen = 7;
+        const priceLen = 16;
+        len = quantityLen - qt.length;
+        formatted.push(this.spaces(len));
+        formatted.push(qt);
+        len = priceLen - pr.length;
+        formatted.push(this.spaces(len));
+        formatted.push(pr);
+        formatted.push(this.END_TEXTLINE);
+        return formatted.join('');
     }
 }

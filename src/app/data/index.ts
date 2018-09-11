@@ -52,6 +52,7 @@ export * from './models/receipt/payment-info';
 export * from './models/receipt/price-info';
 export * from './models/receipt/receipt-info';
 export * from './models/receipt/products-entry-info';
+export * from './models/receipt/eod-data';
 
 export * from './models/common/access-token';
 export * from './models/common/address';
