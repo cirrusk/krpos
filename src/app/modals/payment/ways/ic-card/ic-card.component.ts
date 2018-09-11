@@ -6,7 +6,7 @@ import { CompletePaymentComponent } from '../../complete-payment/complete-paymen
 import { ReceiptService, MessageService, PaymentService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService, Logger,
-  StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService
+  StorageService, Modal, ICCardApprovalResult, NiceConstants, SpinnerService, AlertService
 } from '../../../../core';
 import {
   KeyCode, PaymentCapture, Accounts, StatusDisplay, AmwayExtendedOrdering, ModalIds
@@ -38,7 +38,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private paymentsubscription: Subscription;
   private dupcheck = false;
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService,
-    private message: MessageService, private nicepay: NicePaymentService, private payment: PaymentService,
+    private message: MessageService, private nicepay: NicePaymentService, private payment: PaymentService, private alert: AlertService,
     private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
@@ -51,6 +51,7 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     this.loadPayment();
+    // this.alert.info({ title: '확인', message: '카드를 단말기에 읽혀주세요.', timer: true, interval: 5000 });
   }
 
   ngOnDestroy() {

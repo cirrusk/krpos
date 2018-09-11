@@ -82,6 +82,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) { this.paymentcapture = this.callerData.paymentCapture; }
     this.loadPayment();
+    // this.alert.info({ title: '확인', message: '카드를 단말기에 읽혀주세요.', timer: true, interval: 5000 });
   }
 
   ngOnDestroy() {

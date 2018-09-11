@@ -304,14 +304,14 @@ export class CartService {
    */
   checkUserBlock(resp: ResponseMessage, account: Accounts, el?: ElementRef): string {
     if (resp.code === Block.INVALID) {
-      this.alert.error({ title: '회원제한', message: this.message.get('block.invalid'), timer: true, interval: 2000 });
+      this.alert.error({ title: '알림', message: this.message.get('block.invalid'), timer: true, interval: 2000 });
     } else if (resp.code === Block.NOT_RENEWAL) {
       const custname = account.accountTypeCode === MemberType.ABO ? account.name : account.parties[0].name;
-      this.alert.error({ title: '회원갱신여부', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 2000 });
+      this.alert.error({ title: '알림', message: this.message.get('block.notrenewal', custname, account.uid, resp.returnMessage), timer: true, interval: 2000 });
     } else if (resp.code === Block.LOGIN_BLOCKED) {
-      this.alert.error({ title: '회원로그인제한', message: this.message.get('block.loginblock'), timer: true, interval: 2000 });
+      this.alert.error({ title: '알림', message: this.message.get('block.loginblock'), timer: true, interval: 2000 });
     } else if (resp.code === Block.ORDER_BLOCK) {
-      this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
+      this.alert.error({ title: '알림', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
     }
     if (resp.code !== Block.VALID) {
       if (el) {

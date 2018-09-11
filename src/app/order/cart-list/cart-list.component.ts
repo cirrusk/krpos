@@ -1053,7 +1053,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.accountService.checkBlock(this.accountInfo).subscribe(
         resp => {
           if (this.cartService.checkOrderBlock(resp.code)) {
-            this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
+            this.alert.error({ title: '알림', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
             setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
           } else {
             const accountId = (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.ABO) ? this.accountInfo.uid : this.accountInfo.parties[0].uid;
@@ -1072,14 +1072,14 @@ export class CartListComponent implements OnInit, OnDestroy {
               setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
             } else {
               if (this.cartService.checkOrderBlock(error.error.code)) {
-                this.alert.error({ title: '회원구매제한', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
+                this.alert.error({ title: '알림', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
                 setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
               }
             }
           }
         });
     } else {
-      this.alert.warn({ title: '경고', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      this.alert.warn({ title: '알림', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
       this.activeSearchMode(SearchMode.ACCOUNT);
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
     }
