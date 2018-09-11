@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/map';
@@ -8,7 +8,7 @@ import 'rxjs/add/operator/shareReplay';
 
 import { Logger } from '../logger/logger';
 import { Config } from '../config/config';
-import { HttpData } from '../../data';
+import { HttpData, APIMethodType } from '../../data';
 import { Utils } from '../utils';
 
 /**
@@ -30,7 +30,7 @@ export class ApiService {
    * @returns {any} 응답 데이터
    */
   get(data: HttpData): Observable<any> {
-    return this.callApi('GET', data.apikey, data.pathvariables, data.body, data.param, data.headertype).shareReplay();
+    return this.callApi(APIMethodType.GET, data.apikey, data.pathvariables, data.body, data.param, data.headertype).shareReplay();
   }
 
   /**
@@ -40,7 +40,7 @@ export class ApiService {
    * @returns {any} 응답 데이터
    */
   post(data: HttpData): Observable<any> {
-    return this.callApi('POST', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi(APIMethodType.POST, data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -50,7 +50,7 @@ export class ApiService {
    * @returns {any} 응답 데이터
    */
   put(data: HttpData): Observable<any> {
-    return this.callApi('PUT', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi(APIMethodType.PUT, data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -60,7 +60,7 @@ export class ApiService {
    * @returns {any} 응답 데이터
    */
   patch(data: HttpData): Observable<any> {
-    return this.callApi('PATCH', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi(APIMethodType.PATCH, data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -70,7 +70,16 @@ export class ApiService {
    * @returns {any} 응답 데이터
    */
   delete(data: HttpData): Observable<any> {
-    return this.callApi('DELETE', data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+    return this.callApi(APIMethodType.DELETE, data.apikey, data.pathvariables, data.body, data.param, data.headertype);
+  }
+
+  /**
+   * API Response 로 응답 처리
+   * @param {string} type Method type (GET, POST...)
+   * @returns {any} 응답 데이터
+   */
+  response(type: string, data: HttpData): Observable<any> {
+    return this.callApiResponse(type.toUpperCase(), data.apikey, data.pathvariables, data.body, data.param, data.headertype);
   }
 
   /**
@@ -112,6 +121,31 @@ export class ApiService {
         responseType: 'json'
       })
       .map(Utils.extractData)
+      .catch(Utils.handleError);
+  }
+
+  /**
+   * API Response 로 응답 처리
+   * @param {string} method HTTP METHOD TYPE
+   * @param {string} apikey API URL KEY
+   * @param {any} pathvariables API PATH VARIABLES
+   * @param {object} body BODY 전송 파라미터값
+   * @param {any} params HTTP PARAMETER 값
+   * @param {string} headertype HTTP HEADER TYPE
+   * @returns {any} 응답 데이터
+   */
+  private callApiResponse(method: string, apikey: string, pathvariables: any, body: object = null, params: any, headertype?: string): Observable<any> {
+    const apiUrl = this.getApiUrl(apikey, pathvariables);
+    this.logger.set('api.service', `[${method.toUpperCase()}] URL : ${apiUrl}`).debug();
+    return this.http.request(method, apiUrl,
+      {
+        body: body,
+        headers: this.generateHeaders(headertype),
+        params: this.generateParams(params),
+        responseType: 'json',
+        observe: 'response'
+      })
+      .map(data => data as HttpResponseBase)
       .catch(Utils.handleError);
   }
 

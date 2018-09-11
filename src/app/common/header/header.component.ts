@@ -245,7 +245,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   private getTerminal(macAddr: string) {
     this.subscription = this.terminalService.getTerminalInfo(macAddr).subscribe(
       result => {
-        this.posName = result.id; // pointOfService.displayName;
+        this.posName = result.pointOfService.displayName; // result.id pointOfService.displayName;
         this.storage.setClientId(result.id); // User Authentication에서 가져다 쓰기 편하도록 client Id만 저장
         this.storage.setTerminalInfo(result);
         this.hasTerminal = true;

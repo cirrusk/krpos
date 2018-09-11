@@ -341,15 +341,15 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    */
   setBonusValue(order: Order) {
     if (this.orderInfo.orderStatus.code === 'CANCELLED') {
-      this.groupBusinessVolume = order.value.groupBusinessVolume;
-      this.groupPointValue = order.value.groupPointValue;
-      this.personalBusinessVolume = order.value.personalBusinessVolume;
-      this.personalPointValue = order.value.personalPointValue;
+      this.groupBusinessVolume = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0;
+      this.groupPointValue = order.value.groupPointValue ? order.value.groupPointValue : 0;
+      this.personalBusinessVolume = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0;
+      this.personalPointValue = order.value.personalPointValue ? order.value.personalPointValue : 0;
     } else {
-      this.groupBusinessVolume = order.value.groupBusinessVolume + order.totalPrice.amwayValue.businessVolume;
-      this.groupPointValue = order.value.groupPointValue + order.totalPrice.amwayValue.pointValue;
-      this.personalBusinessVolume = order.value.personalBusinessVolume + order.totalPrice.amwayValue.businessVolume;
-      this.personalPointValue = order.value.personalPointValue + order.totalPrice.amwayValue.pointValue;
+      this.groupBusinessVolume = (order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0) + order.totalPrice.amwayValue.businessVolume;
+      this.groupPointValue = (order.value.groupPointValue ? order.value.groupPointValue : 0) + order.totalPrice.amwayValue.pointValue;
+      this.personalBusinessVolume = (order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0) + order.totalPrice.amwayValue.businessVolume;
+      this.personalPointValue = (order.value.personalPointValue ? order.value.personalPointValue : 0) + order.totalPrice.amwayValue.pointValue;
     }
   }
 

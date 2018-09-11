@@ -577,10 +577,10 @@ export class ReceiptService implements OnDestroy {
                 groupPV = order.value.groupPointValue ? order.value.groupPointValue : 0;
                 groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0;
             } else {
-                sumPV = order.value.personalPointValue ? order.value.personalPointValue : 0 + totalPV;
-                sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0 + totalBV;
-                groupPV = order.value.groupPointValue ? order.value.groupPointValue : 0 + totalPV;
-                groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0 + totalBV;
+                sumPV = order.value.personalPointValue ? order.value.personalPointValue + totalPV : 0 + totalPV;
+                sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume + totalBV : 0 + totalBV;
+                groupPV = order.value.groupPointValue ? order.value.groupPointValue + totalPV : 0 + totalPV;
+                groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume + totalBV : 0 + totalBV;
             }
             bonus.setSum = new Bonus(String(sumPV), String(sumBV));
             bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
@@ -819,7 +819,11 @@ export class ReceiptService implements OnDestroy {
                 '',
                 paymentinfo.paymentInfoLine1,
                 '',
-                paymentinfo.paymentInfoLine4
+                paymentinfo.paymentInfoLine4,
+                '',
+                '',
+                '',
+                paymentinfo.paymentInfoLine5
             );
         }
         if (paymentinfo.paymentMode.code === PaymentModes.ICCARD) {

@@ -1368,7 +1368,12 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.cartList[index].entryNumber).subscribe(
           result => {
             this.resCartInfo.cartList = result.cartList;
-            this.getCartList(index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
+            this.cartList = result.cartList.entries;
+            if (this.cartList.length === 0) {
+              this.sendRightMenu(ModelType.PRODUCT, false);
+            }
+            this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다.
+            this.setPage(index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
             if (this.orderType === OrderType.GROUP) {
               // 그룹 카트 조회
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);

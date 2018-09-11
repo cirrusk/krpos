@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { ApiService, Config, StorageService } from '../../core';
-import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo } from '../../data';
+import { ApiService, StorageService } from '../../core';
+import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo, APIMethodType } from '../../data';
 import { OrderList, Order } from '../../data/models/order/order';
-import { HttpParams, HttpClient, HttpHeaders, HttpResponseBase } from '../../../../node_modules/@angular/common/http';
+import { HttpResponseBase } from '../../../../node_modules/@angular/common/http';
 
 /**
  * 주문 처리 서비스
@@ -12,9 +12,7 @@ import { HttpParams, HttpClient, HttpHeaders, HttpResponseBase } from '../../../
 export class OrderService {
 
   constructor(private api: ApiService,
-    private httpClient: HttpClient,
-    private storage: StorageService,
-    private config: Config) { }
+    private storage: StorageService) { }
 
   /**
    * 주문 목록 조회 - AP별로 처리되어야함.
@@ -194,10 +192,8 @@ export class OrderService {
    */
   cancelReceipt(userid: string, ordercode: string): Observable<HttpResponseBase> {
     const pathvariables = { userId: userid, orderCode: ordercode };
-    const apiURL = this.config.getApiUrl('cancelReceipt', pathvariables);
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.post<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response'} )
-      .map(data => data as HttpResponseBase);
+    const data = new HttpData('cancelReceipt', pathvariables, null, null, 'json');
+    return this.api.response(APIMethodType.POST, data);
   }
 
   /**
@@ -217,9 +213,7 @@ export class OrderService {
     orderList.orders = orders;
     const pos = this.storage.getTerminalInfo();
     const pathvariables = { pickupStore: pos.pointOfService.name };
-    const apiURL = this.config.getApiUrl('confirmPickup', pathvariables);
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.put<HttpResponseBase>(apiURL, orderList, { headers: httpHeaders, observe: 'response'} )
-      .map(data => data as HttpResponseBase);
+    const data = new HttpData('confirmPickup', pathvariables, orderList, null, 'json');
+    return this.api.response(APIMethodType.POST, data);
   }
 }

@@ -1,12 +1,12 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponseBase } from '@angular/common/http';
+import { HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { StorageService, Config, ApiService, AlertService } from '../../core';
+import { StorageService, ApiService, AlertService } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
   ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering,
-  CartModifications, TerminalInfo, CopyGroupCartEntries, ResponseMessage, Block
+  CartModifications, TerminalInfo, CopyGroupCartEntries, ResponseMessage, Block, APIMethodType
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { MessageService } from '../../message';
@@ -16,9 +16,7 @@ import { MessageService } from '../../message';
  */
 @Injectable()
 export class CartService {
-  constructor(private httpClient: HttpClient,
-    private config: Config,
-    private storage: StorageService,
+  constructor(private storage: StorageService,
     private api: ApiService,
     private alert: AlertService,
     private message: MessageService
@@ -51,11 +49,10 @@ export class CartService {
    * @returns {HttpResponseBase} Http 응답
    */
   updateVolumeAccount(userId: string, cartId: string, volumeAccount: string): Observable<HttpResponseBase> {
-    const apiURL = this.config.getApiUrl('updateVolAcc', { 'userId': userId, 'cartId': cartId });
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/x-www-form-urlencoded');
-    const httpParams = new HttpParams().set('volumeAccount', volumeAccount);
-    return this.httpClient.put<HttpResponseBase>(apiURL, httpParams, { headers: httpHeaders, observe: 'response' })
-      .map(data => data as HttpResponseBase);
+    const pathvariables = { 'userId': userId, 'cartId': cartId };
+    const param = { 'volumeAccount': volumeAccount };
+    const data = new HttpData('updateVolAcc', pathvariables, null, param, 'json');
+    return this.api.response(APIMethodType.PUT, data);
   }
 
   /**
@@ -194,11 +191,10 @@ export class CartService {
    * @returns {ResCartInfo} 삭제후 재조회한 카트 정보
    */
   deleteCartEntries(userId: string, cartId: string, entryNumber: number): Observable<ResCartInfo> {
-    const apiURL = this.config.getApiUrl('deleteItemCart', { 'userId': userId, 'cartId': cartId, 'entryNumber': entryNumber });
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.delete<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response' }).flatMap((httpRes: HttpResponseBase) => {
-      return this.getCartList(userId, cartId)
-        .map(cart => new ResCartInfo(cart) as ResCartInfo);
+    const pathvariables = { 'userId': userId, 'cartId': cartId, 'entryNumber': entryNumber };
+    const data = new HttpData('deleteItemCart', pathvariables, null, null, 'json');
+    return this.api.response(APIMethodType.DELETE, data).flatMap((httpRes: HttpResponseBase) => {
+      return this.getCartList(userId, cartId).map(cart => new ResCartInfo(cart) as ResCartInfo);
     });
   }
 
@@ -210,11 +206,9 @@ export class CartService {
    * @returns {HttpResponseBase} Http 응답
    */
   deleteCart(userId: string, cartId: string): Observable<HttpResponseBase> {
-    const apiURL = this.config.getApiUrl('deleteCart', { 'userId': userId, 'cartId': cartId });
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    return this.httpClient.delete<HttpResponseBase>(apiURL, { headers: httpHeaders, observe: 'response' })
-      .map(data => data as HttpResponseBase);
+    const pathvariables = { 'userId': userId, 'cartId': cartId };
+    const data = new HttpData('deleteCart', pathvariables, null, null, 'json');
+    return this.api.response(APIMethodType.DELETE, data);
   }
 
   /**
@@ -249,10 +243,9 @@ export class CartService {
     const tokenInfo = this.storage.getTokenInfo();
     const cashierId = tokenInfo.employeeId;
     const macAddress = this.storage.getMacAddress();
-    const apiURL = this.config.getApiUrl('saveCart', { 'accountId': accountId, 'userId': userId, 'cashierId': cashierId, 'macAddress': macAddress, 'cartId': cartId });
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-    return this.httpClient.patch<SaveCartResult>(apiURL, { headers: httpHeaders, observe: 'response' })
-      .map(data => data as SaveCartResult);
+    const pathvariables = { 'accountId': accountId, 'userId': userId, 'cashierId': cashierId, 'macAddress': macAddress, 'cartId': cartId };
+    const data = new HttpData('saveCart', pathvariables, null, null, 'json');
+    return this.api.patch(data);
   }
 
   /**
@@ -263,11 +256,9 @@ export class CartService {
    * @returns {SaveCartResult} 보류에서 복원된 카트 결과
    */
   restoreSavedCart(userId: string, cartId: string): Observable<SaveCartResult> {
-    const apiURL = this.config.getApiUrl('restoreCart', { 'userId': userId, 'cartId': cartId });
-    const httpHeaders = new HttpHeaders().set('content-type', 'application/json');
-
-    return this.httpClient.patch<SaveCartResult>(apiURL, { headers: httpHeaders, observe: 'response' })
-      .map(data => data as SaveCartResult);
+    const pathvariables = { 'userId': userId, 'cartId': cartId };
+    const data = new HttpData('restoreCart', pathvariables, null, null, 'json');
+    return this.api.patch(data);
   }
 
   /**

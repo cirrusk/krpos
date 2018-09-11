@@ -78,12 +78,12 @@
                                     <li><span>[{{ paymentCapture.getCcPaymentInfo.paymentMode.name }}]</span><em>{{cancelSymbol}}{{paymentCapture.getCcPaymentInfo.amount | number}}</em></li>
                                     <li>카 드 사 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine5 }}</li>
                                     <li>카드번호 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine1 }}</li>
-                                    <li>할부 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getCcPaymentInfo.paymentInfoLine3 }} (승인번호 : {{paymentCapture.getCcPaymentInfo.paymentInfoLine4 }})</li>
+                                    <li>할부 : {{ paymentCapture.getCcPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getCcPaymentInfo.paymentInfoLine3 + '개월'}} (승인번호 : {{paymentCapture.getCcPaymentInfo.paymentInfoLine4 }})</li>
                                 </ng-container>
                                 <ng-container *ngIf="paymentCapture.getIcCardPaymentInfo">
                                     <li><span>[{{ paymentCapture.getIcCardPaymentInfo.paymentMode.name }}]</span><em>{{cancelSymbol}}{{ paymentCapture.getIcCardPaymentInfo.amount | number }}</em></li>
-                                    <li>카드번호 : {{ paymentCapture.getIcCardPaymentInfo.paymentInfoLine1 }}</li>
-                                    <li>할부 : {{ paymentCapture.getIcCardPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getIcCardPaymentInfo.paymentInfoLine3 }} (승인번호 : {{paymentCapture.getIcCardPaymentInfo.paymentInfoLine4 }})</li>
+                                    <!-- <li>카드번호 : {{ paymentCapture.getIcCardPaymentInfo.paymentInfoLine1 }}</li>
+                                    <li>할부 : {{ paymentCapture.getIcCardPaymentInfo.paymentInfoLine3 < 2 ? '일시불' : paymentCapture.getIcCardPaymentInfo.paymentInfoLine3 }} 개월 (승인번호 : {{paymentCapture.getIcCardPaymentInfo.paymentInfoLine4 }})</li> -->
                                 </ng-container>
                                 <li *ngIf="paymentCapture.getDirectDebitPaymentInfo">
                                     <span>[{{paymentCapture.getDirectDebitPaymentInfo.paymentMode.name}}]</span><em>{{cancelSymbol}}{{ paymentCapture.getDirectDebitPaymentInfo.amount | number }}</em>

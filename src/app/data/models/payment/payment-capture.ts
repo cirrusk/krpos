@@ -354,7 +354,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     }
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,
-        validToMonth?: string, validToYear?: string, vanType?: string) {
+        validToMonth?: string, validToYear?: string, vanType?: string, issuer?: string) {
         super(amount, 'creditcard');
         this.paymentType = paymentType || 'GENERAL';
         this.cardCompanyCode = cardCompanyCode;
@@ -366,6 +366,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
         this.validToMonth = validToMonth;
         this.validToYear = validToYear;
         this.vanType = vanType;
+        this.issuer = issuer;
     }
 }
 
