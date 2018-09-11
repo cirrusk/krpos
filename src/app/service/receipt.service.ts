@@ -842,29 +842,19 @@ export class ReceiptService implements OnDestroy {
             );
         }
         if (paymentinfo.paymentMode.code === PaymentModes.ICCARD) {
-            return new ICCardPaymentInfo(
-                paymentinfo.amount
-            );
+            return new ICCardPaymentInfo(paymentinfo.amount);
         }
         if (paymentinfo.paymentMode.code === PaymentModes.CASH) {
-            return new CashPaymentInfo(
-                paymentinfo.amount
-            );
+            return new CashPaymentInfo(paymentinfo.amount);
         }
         if (paymentinfo.paymentMode.code === PaymentModes.DIRECTDEBIT) {
-            return new DirectDebitPaymentInfo(
-                paymentinfo.amount
-            );
+            return new DirectDebitPaymentInfo(paymentinfo.amount);
         }
         if (paymentinfo.paymentMode.code === PaymentModes.POINT) {
-            return new PointPaymentInfo(
-                paymentinfo.amount, ''
-            );
+            return new PointPaymentInfo(paymentinfo.amount, '');
         }
         if (paymentinfo.paymentMode.code === PaymentModes.ARCREDIT) {
-            return new AmwayMonetaryPaymentInfo(
-                paymentinfo.amount
-            );
+            return new AmwayMonetaryPaymentInfo(paymentinfo.amount);
         }
     }
 }
