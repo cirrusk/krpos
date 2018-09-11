@@ -81,7 +81,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.searchCoupons();
   }
 
   ngOnDestroy() {
@@ -98,14 +97,16 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
    * 쿠폰 목록 검색 후 있으면 쿠폰 페이지가 초기 정보 넘겨주기
    */
   private searchCoupons() {
-    this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
-      result => {
-        if (result) {
-          this.couponlist = result;
-          this.couponsize = result.pagination.totalResults;
-        }
-      },
-      error => { this.logger.set('order.menu.component', `${error}`).error(); });
+    if (this.accountInfo) {
+      this.couponsubscription = this.payment.searchCoupons(this.accountInfo.uid, this.accountInfo.parties[0].uid, 0, 5).subscribe(
+        result => {
+          if (result) {
+            this.couponlist = result;
+            this.couponsize = result.pagination.totalResults;
+          }
+        },
+        error => { this.logger.set('order.menu.component', `${error}`).error(); });
+    }
   }
 
   /**
@@ -122,10 +123,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           this.accountInfo = data.data;
           if (this.accountInfo.accountTypeCode === MemberType.ABO) { this.isABO = true; }
           if (this.accountInfo.accountTypeCode === MemberType.CONSUMER) { this.isConsumer = true; }
+          this.searchCoupons();
         } else {
           this.orderType = '';
           this.cartInfo = null;
           this.isABO = false;
+          this.couponlist = null;
+          this.couponsize = -1;
           this.amwayExtendedOrdering = data.data;
         }
       } else if (data.type === ModelType.PRODUCT) {
