@@ -298,7 +298,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         }
       );
     } else {
-      this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
+      this.alert.warn({ title: '알림', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
       setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
     }
   }
@@ -356,7 +356,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           }
       });
     } else {
-      this.alert.warn({ title: '확인', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
+      this.alert.warn({ title: '알림', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
       setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
     }
   }
