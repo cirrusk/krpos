@@ -40,13 +40,13 @@ export class AlertService {
 
   public info(params: any) {
     params.alertType = AlertType.info;
-    params.title = (params.title) ? params.title : '확인';
+    params.title = (params.title) ? params.title : '알림';
     this.show(params);
   }
 
   public warn(params: any) {
     params.alertType = AlertType.warn;
-    params.title = (params.title) ? params.title : '확인';
+    params.title = (params.title) ? params.title : '알림';
     this.show(params);
   }
 

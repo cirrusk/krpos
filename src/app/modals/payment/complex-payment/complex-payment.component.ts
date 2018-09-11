@@ -325,12 +325,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
     if (payment && (payment === 'creditcard' || payment === 'cashiccard')) { // 신용카드 및 IC카드인 경우 한번 하면 더 못하도록 막기
       if (this.paymentcapture.ccPaymentInfo) {
-        this.alert.warn({ message: '신용카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
+        this.alert.warn({ title: '알림', message: '신용카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
         this.enableMenu = this.enableMenu.filter(item => item !== payment);
         return;
       }
       if (this.paymentcapture.icCardPaymentInfo) {
-        this.alert.warn({ message: '현금IC카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
+        this.alert.warn({ title: '알림', message: '현금IC카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
         this.enableMenu = this.enableMenu.filter(item => item !== payment);
         return;
       }
@@ -492,9 +492,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (p) {
       if (p.ccPaymentInfo || p.icCardPaymentInfo) {
         if (p.ccPaymentInfo) {
-          this.alert.warn({ message: '신용카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
+          this.alert.warn({ title: '알림', message: '신용카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
         } else if (p.icCardPaymentInfo) {
-          this.alert.warn({ message: '현금IC카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
+          this.alert.warn({ title: '알림', message: '현금IC카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
         }
         return;
       } else if (p.cashPaymentInfo
