@@ -44,9 +44,14 @@ export class RestrictComponent extends ModalComponent implements OnInit {
     this.restrictionModel = this.restrictionMessageList[this.pager.startIndex];
   }
 
+  /**
+   * 이미지 오류 처리하기
+   * @param evt 이벤트
+   */
   errorImgHandler(evt: any) {
     evt.target.src = '/assets/images/temp/198x198.jpg';
   }
+
   close() {
     this.closeModal();
   }
