@@ -132,8 +132,10 @@ export class TemplateParser {
     this.handlebars.registerHelper('bonusDataHelper', (title1: string, value1: string, title2: string, value2: string, cancelFlag?: string) => {
       const formatted: Array<string> = [];
       const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
+      const pvValue = ReceiptUtils.convertToLocalePrice(value1);
+      const bvValue = ReceiptUtils.convertToLocalePrice(value2);
       formatted.push('<text-line>');
-      formatted.push(ReceiptUtils.fitTextsEqual(title1 + cancelSymbol + value1, title2 + cancelSymbol + value2));
+      formatted.push(ReceiptUtils.fitTextsEqual(title1 + cancelSymbol + pvValue, title2 + cancelSymbol + bvValue));
       formatted.push('</text-line>');
       return new handlebars.SafeString(formatted.join(''));
     });

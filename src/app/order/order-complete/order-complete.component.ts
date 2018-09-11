@@ -135,13 +135,15 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    * @param {string} _searchText 검색어
    */
   searchOrder(_memberType: string, _searchText: string) {
-    if (_searchText === '' || _searchText === undefined || _searchText === null) {
+    if (_searchText.trim() === '' || _searchText === undefined || _searchText === null) {
+      this.inputSearchText.nativeElement.value = '';
       this.alert.info({ message: this.messageService.get('noSearchText'), timer: true, interval: 1500 });
       setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 1520);
     } else {
       this.memberType = _memberType;
-      this.searchText = _searchText;
-      this.getOrderList(this.searchType, _memberType, _searchText, 0);
+      this.searchText = _searchText.trim();
+      this.inputSearchText.nativeElement.value = this.searchText;
+      this.getOrderList(this.searchType, _memberType, this.searchText, 0);
     }
   }
 
