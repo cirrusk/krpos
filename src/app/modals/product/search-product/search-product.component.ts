@@ -57,7 +57,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     const result = this.callerData.data;
     this.searchValue.nativeElement.value = result.searchText.trim();
     this.cartInfo = result.data;
-    if (result.searchText) {
+    if (result.searchText.trim()) {
       this.searchData = result.searchText.trim();
       this.searchProduct(result.searchText.trim()); // 전달 받은 데이터로 검색
     }
