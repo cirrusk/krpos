@@ -179,6 +179,7 @@ export class AmwayPaymentInfoData {
     paymentInfoLine2: string;
     paymentInfoLine3: string;
     paymentInfoLine4: string;
+    paymentInfoLine5: string;
     issuer: string; // 은행/카드사 BankInfoModel 은행코드
     abstractOrderCode: string;
     paymentStatusCode: string;
