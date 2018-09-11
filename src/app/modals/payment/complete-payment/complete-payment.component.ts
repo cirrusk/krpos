@@ -35,6 +35,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   change: number;
   checktype: number;
   orderType: string;
+  receiptenable: boolean;
+  private bernumber: string;
   private orderInfo: Order;
   private cartInfo: Cart;
   private amwayExtendedOrdering: AmwayExtendedOrdering;
@@ -55,6 +57,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paidamount = 0;
     this.change = 0;
     this.checktype = 0;
+    this.bernumber = null;
+    this.receiptenable = false;
   }
 
   ngOnInit() {
@@ -352,12 +356,13 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 중개주문일 경우 Payment 정보에 중개주문 정보를 설정함.
    */
   private setBerInfo(): ReceiptInfoData {
-    const bernumber: string = this.storage.getBer();
-    if (Utils.isEmpty(bernumber)) {
+    this.bernumber = this.storage.getBer();
+    if (Utils.isEmpty(this.bernumber)) {
       return null;
     } else {
       this.storage.removeBer(); // 처리 후에는 초기화함.
-      return new ReceiptInfoData(bernumber);
+      this.receiptenable = false; // 중개주문인 경우는 현금영수증 증빙 못하도록 처리
+      return new ReceiptInfoData(this.bernumber);
     }
   }
 
@@ -402,8 +407,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
    */
   protected popupCashReceipt() {
-    const ber = this.storage.getBer();
-    if (Utils.isEmpty(ber)) { // 중개주문인 경우는 영수증 출력하지 않음.
+    if (Utils.isEmpty(this.bernumber)) { // 중개주문인 경우는 영수증 출력하지 않음.
       const modalid = this.storage.getLatestModalId();
       if (modalid && modalid === ModalIds.CASHRECEIPT) { return; }
       if (this.finishStatus !== StatusDisplay.ERROR) {
@@ -420,6 +424,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           });
         }
       }
+    } else {
+      this.receiptenable = false;
     }
   }
 
@@ -428,8 +434,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       || this.paymentcapture.monetaryPaymentInfo // AP
       || this.paymentcapture.directDebitPaymentInfo // 자동이체
     ) {
+      this.receiptenable = true;
       return true;
     }
+    this.receiptenable = false;
     return false;
   }
 

@@ -358,7 +358,7 @@ export class TestComponent implements OnInit, OnDestroy {
                 currencyIso: 'KRW',
                 formattedValue: '10,000',
                 priceType: 'BUY',
-                value: 10000.0
+                value: 9000000.0
             },
             dispositionCode: {
                 code: 'inStock'
@@ -406,7 +406,7 @@ export class TestComponent implements OnInit, OnDestroy {
                 currencyIso: 'KRW',
                 formattedValue: '10,000',
                 priceType: 'BUY',
-                value: 10000.0,
+                value: 90000000.0,
                 amwayValue: {
                     businessVolume: 36.0,
                     pointValue: 36.0

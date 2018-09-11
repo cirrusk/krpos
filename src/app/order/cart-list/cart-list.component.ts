@@ -322,6 +322,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.ber = data.ber;
       if (data.ber.number) {
         this.storage.setBer(this.ber.number);
+        setTimeout(() => { this.searchText.nativeElement.focus(); }, 250);
       } else {
         this.ber = null;
       }
