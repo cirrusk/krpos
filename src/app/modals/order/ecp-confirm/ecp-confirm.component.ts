@@ -257,7 +257,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
             message = this.messageService.get('ecpReceiptComplete');
           }
           this.alert.info({
-            title: 'ECP 컨펌',
+            title: this.title + ' 컨펌 확인',
             message: message,
             timer: true,
             interval: 1500
@@ -318,7 +318,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   popupExceed(productCode: string, productName: string, productQty: number, exceedQty: number) {
     setTimeout(() => {
       this.modal.openConfirm({
-        title: 'ECP 컨펌',
+        title: this.title + ' 컨펌',
         message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량은 ` +
           `<em class="fc_red">${productQty}</em>개로<br>` +
           `해당상품이 <em class="fc_red">${exceedQty}</em>개 더 담겼습니다.</p>`,
@@ -345,7 +345,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   popupShortage(productCode: string, productName: string, productQty: number, shortageQty: number) {
     setTimeout(() => {
       this.modal.openConfirm({
-        title: 'ECP 컨펌',
+        title: this.title + ' 컨펌',
         message: `<p class="txt_info02 type02">${productCode}  ${productName} 수량이 <em class="fc_red">(${productQty})</em>개<br>` +
           `<em class="fc_red">${shortageQty}</em>개 수량이 더 필요합니다.</p> <span class="blck">해당 상품을 바코드로 스캔하세요!</span>`,
         actionButtonLabel: '확인',
@@ -369,7 +369,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
   popupNoProduct(productCode: string, productName: string) {
     setTimeout(() => {
       this.modal.openConfirm({
-        title: 'ECP 컨펌',
+        title: this.title + ' 컨펌',
         message: `<p class="txt_info02 type02">${productCode}  ${productName} <br> 주문하지 않은 상품이 <em class="fc_red">1</em>개 담겼습니다.</p>`,
         actionButtonLabel: '확인',
         closeButtonLabel: '취소',

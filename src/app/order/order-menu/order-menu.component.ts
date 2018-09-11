@@ -388,7 +388,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       });
     }
     this.modal.openModalByComponent(PickupOrderComponent, {
-      title: 'ECP픽업 주문리스트',
+      title: '온라인 픽업(ECP) 주문리스트',
       callerData: { searchType: 'p' },
       closeByClickOutside: true,
       modalId: ModalIds.PICKUP

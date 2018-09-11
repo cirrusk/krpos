@@ -214,6 +214,6 @@ export class OrderService {
     const pos = this.storage.getTerminalInfo();
     const pathvariables = { pickupStore: pos.pointOfService.name };
     const data = new HttpData('confirmPickup', pathvariables, orderList, null, 'json');
-    return this.api.response(APIMethodType.POST, data);
+    return this.api.response(APIMethodType.PUT, data);
   }
 }

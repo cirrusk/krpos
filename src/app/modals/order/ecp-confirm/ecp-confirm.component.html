@@ -1,6 +1,6 @@
 <div class="pop_wrap pop_l">
   <div class="pop_header">
-      <h1>ECP 컨펌 확인</h1>
+      <h1>{{title}} 컨펌 확인</h1>
       <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()"></button>
   </div>
   <!-- pop_container -->
@@ -16,7 +16,7 @@
               <!-- 보류내역(최대 5개) : 내역이 0건일때 삭제 -->
               <div class="tbl_col bg_bar" *ngIf="entryList.length > 0">
                   <table>
-                      <caption>ECP 컨펌 확인</caption>
+                      <caption>{{title}} 컨펌 확인</caption>
                       <colgroup>
                         <col style="width:60px">
                         <col>

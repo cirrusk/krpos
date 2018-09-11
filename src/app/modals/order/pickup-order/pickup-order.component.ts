@@ -38,6 +38,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   private channels: string;
   private orderStatus: string;
   private isEasyPickupOrder = false;
+  popupName: string;
 
   constructor(protected modalService: ModalService,
     private orderService: OrderService,
@@ -75,6 +76,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.deliveryModes = 'pickup';
       this.orderStatus = 'READY';
       this.isEasyPickupOrder = true;
+      this.popupName = this.messageService.get('easyPickup.order.type');
       // 설치주문 설정
     } else if (this.orderType === 'i') {
       this.orderTypeName =  this.messageService.get('install.order.type');
@@ -83,6 +85,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.deliveryModes = 'install';
       this.orderStatus = 'READY';
       this.isEasyPickupOrder = false;
+      this.popupName = this.messageService.get('install.order.type');
       // 픽업예약주문 설정
     } else {
       this.orderTypeName = this.messageService.get('pickupConfirm.order.type');
@@ -91,6 +94,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.deliveryModes = 'pickup';
       this.orderStatus = 'READY';
       this.isEasyPickupOrder = false;
+      this.popupName = '온라인 픽업(ECP)';
     }
   }
 
@@ -284,6 +288,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     if (this.targetList.orders.length > 0) {
       this.modal.openModalByComponent(EcpConfirmComponent,
         {
+          title: this.popupName,
           callerData: { orderList: this.targetList , orderTypeName: this.orderTypeName, orderType: this.orderType },
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
@@ -395,7 +400,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       try {
         this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
         this.modal.openConfirm({
-          title: 'ECP 컨펌',
+          title: this.popupName + ' 컨펌',
           message: this.messageService.get('ECPConfirmProgress'),
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
