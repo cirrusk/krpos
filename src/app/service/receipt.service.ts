@@ -791,6 +791,21 @@ export class ReceiptService implements OnDestroy {
      */
     printEod(eodData: EodData) {
         let rtn = true;
+        if (Utils.isEmpty(eodData.printDate)) {
+            eodData.printDate = Utils.convertDateToString(new Date());
+        }
+        if (Utils.isEmpty(eodData.posNo)) {
+            eodData.posNo = this.storage.getTerminalInfo() ? this.storage.getTerminalInfo().id : 'Unknown';
+        }
+        if (Utils.isEmpty(eodData.cashierName)) {
+            eodData.cashierName = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeName : 'Unknown';
+        }
+        if (Utils.isEmpty(eodData.cashierId)) {
+            eodData.cashierId = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeId : 'Unknown';
+        }
+        if (Utils.isEmpty(eodData.batchId)) {
+            eodData.batchId = this.storage.getBatchInfo() ? this.storage.getBatchInfo().batchNo : 'Unknown';
+        }
         const eodInfo: EodInfo = new EodInfo(eodData);
         const text = this.cashierEod(eodInfo);
         // 영수증 출력 - START
