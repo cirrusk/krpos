@@ -1194,7 +1194,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   addToCart(code?: string): void {
     if (!this.accountInfo) {
-      this.alert.warn({ title: '경고', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      this.alert.warn({ message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
       this.activeSearchMode(SearchMode.ACCOUNT);
     } else {
       if (this.cartInfo.code === undefined) {
