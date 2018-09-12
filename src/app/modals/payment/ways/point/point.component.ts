@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } fro
 import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { PaymentService, MessageService, ReceiptService } from '../../../../service';
+import { PaymentService, MessageService, ReceiptService, CartService } from '../../../../service';
 import { ModalComponent, ModalService, Logger, StorageService, Modal, KeyboardService, KeyCommand } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
@@ -50,6 +50,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     private message: MessageService,
     private storage: StorageService,
     private keyboard: KeyboardService,
+    private cartService: CartService,
     private info: InfoBroker,
     private logger: Logger) {
     super(modalService);
@@ -84,7 +85,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   }
 
   private loadPayment() {
-    this.paymentprice = this.cartInfo.totalPrice.value;
+    this.paymentprice = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value;
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
     if (p && p.pointPaymentInfo) {
       if (this.paymentprice === p.pointPaymentInfo.amount) { //  전체금액

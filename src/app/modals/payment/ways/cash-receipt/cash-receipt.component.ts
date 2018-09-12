@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { OrderService, MessageService } from '../../../../service';
+import { OrderService, MessageService, CartService } from '../../../../service';
 import { ModalComponent, ModalService } from '../../../../core';
 import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering, PaymentCapture } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
@@ -31,7 +31,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('income') private income: ElementRef;
   @ViewChild('outcome') private outcome: ElementRef;
   constructor(protected modalService: ModalService, private order: OrderService,
-    private message: MessageService, private renderer: Renderer2) {
+    private message: MessageService, private renderer: Renderer2, private cartService: CartService) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
@@ -60,9 +60,12 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     let amount = 0;
     if (this.paymentcapture.cashPaymentInfo) { // 현금
       amount += this.paymentcapture.cashPaymentInfo.amount;
-    } else if (this.paymentcapture.monetaryPaymentInfo) { // AP
+    }
+    if (this.paymentcapture.monetaryPaymentInfo) { // AP
       amount += this.paymentcapture.monetaryPaymentInfo.amount;
-    } else if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
+    }
+
+    if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
       amount += this.paymentcapture.directDebitPaymentInfo.amount;
     }
     return amount;

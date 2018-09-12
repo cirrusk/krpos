@@ -49,7 +49,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   constructor(protected modalService: ModalService, private printer: PrinterService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private cart: CartService,
     private keyboard: KeyboardService, private storage: StorageService, private message: MessageService,
-    private modal: Modal, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger
+    private modal: Modal, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private cartService: CartService
   ) {
     super(modalService);
     this.finishStatus = null;
@@ -69,8 +69,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     this.paymentcapture = this.callerData.paymentInfo;
-    this.paidamount = this.cartInfo.totalPrice.value; // 내신금액
-    this.payamount = this.cartInfo.totalPrice.value;  // 결제금액
+    this.paidamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 내신금액
+    this.payamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value;  // 결제금액
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
     setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.

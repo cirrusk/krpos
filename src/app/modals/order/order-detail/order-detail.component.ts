@@ -38,7 +38,11 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   personalPointValue = 0;
   groupBusinessVolume = 0;
   groupPointValue = 0;
-  apprPrice = 0;
+  taxablePrice = 0;
+  taxPrice = 0;
+  totalPriceWithTax = 0;
+  discountPrice = 0;
+  paymentPrice = 0;
   isReceiptPrint = false;
   currentDate: string;
   constructor(protected modalService: ModalService,
@@ -277,24 +281,15 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
             jsonPaymentData = {};
           });
 
-          let sumPrice = orderDetail.orders[0].totalPrice.value;
-
+          const order = orderDetail.orders[0];
           // ABO인 경우 PV, BV 계산
-          if (this.ABOFlag && orderDetail.orders[0].value) {
-            this.setBonusValue(orderDetail.orders[0]);
+          if (this.ABOFlag && order.value) {
+            this.setBonusValue(order);
           }
-
-          if (this.paymentCapture.pointPaymentInfo) {
-            sumPrice -= Number(this.paymentCapture.pointPaymentInfo.amount);
-          }
-
-          if (this.paymentCapture.monetaryPaymentInfo) {
-            sumPrice -= Number(this.paymentCapture.monetaryPaymentInfo.amount);
-          }
+          // 가격 정보 계산
+          this.priceInfo(order, this.paymentCapture);
 
           this.orderDetail = orderDetail;
-          // 결제 금액(Point + re-cash 를 뺀 금액)
-          this.apprPrice = sumPrice;
           this.isReceiptEnable(); // 현금영수증 출력 가능할 경우 버튼 보이기
         }
       },
@@ -381,6 +376,19 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         interval: 1000
       });
     }
+  }
+
+  priceInfo(order: Order, paymentCapture: PaymentCapture) {
+    // 과세물품
+    this.taxablePrice = this.orderService.getTaxablePrice(order);
+    // 부가세
+    this.taxPrice = this.orderService.getTaxPrice(order);
+    // 합계
+    this.totalPriceWithTax = this.orderService.getTotalPriceWithTax(order);
+    // 할인금액
+    this.discountPrice = this.orderService.getDiscountPrice(order);
+    // 결제금액
+    this.paymentPrice =  this.orderService.getPaymentPrice(order, paymentCapture);
   }
 
   /**

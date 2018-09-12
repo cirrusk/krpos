@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StorageService, Modal, Logger, Config } from '../../core';
 import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, PaymentView } from '../../data';
-import { PagerService, PaymentService } from '../../service';
+import { PagerService, PaymentService, CartService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { Order } from '../../data/models/order/order';
 
@@ -44,7 +44,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   private paymentsubscription: Subscription;
   public memberType = MemberType;
   constructor(private modal: Modal, private storage: StorageService, private payment: PaymentService,
-    private logger: Logger, private config: Config, private route: ActivatedRoute,
+    private logger: Logger, private config: Config, private route: ActivatedRoute, private cartService: CartService,
     private pagerService: PagerService) {
     this.cartListCount = this.config.getConfig('cartListCount');
   }
@@ -215,7 +215,7 @@ export class ClientComponent implements OnInit, OnDestroy {
 
   private totalPriceInfo(): void {
     this.totalItem = this.resCart ? this.resCart.totalUnitCount : 0;
-    this.totalPrice = this.resCart ? this.resCart.totalPrice.value : 0;
+    this.totalPrice = this.resCart ? this.cartService.getTotalPriceWithTax(this.resCart) : 0;
     this.totalPV = this.resCart && this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.pointValue : 0;
     this.totalBV = this.resCart && this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
   }

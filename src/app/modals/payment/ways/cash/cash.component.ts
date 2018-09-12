@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ChecksComponent } from '../checks/checks.component';
-import { MessageService, ReceiptService, PaymentService } from '../../../../service';
+import { MessageService, ReceiptService, PaymentService, CartService } from '../../../../service';
 import { ModalComponent, ModalService, Modal, StorageService, Logger, KeyboardService, KeyCommand } from '../../../../core';
 import {
   Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
@@ -46,6 +46,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private payment: PaymentService,
     private receipt: ReceiptService,
     private storage: StorageService,
+    private cartService: CartService,
     private keyboard: KeyboardService,
     private logger: Logger,
     private info: InfoBroker) {
@@ -86,8 +87,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   private loadPayment() {
-    this.paidamount = this.cartInfo.totalPrice.value; // 원 결제 금액
-    this.payamount = this.cartInfo.totalPrice.value; // 원 결제 금액
+    this.paidamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 원 결제 금액
+    this.payamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 원 결제 금액
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
     if (p && p.cashPaymentInfo) {
       this.paid.nativeElement.value = p.cashPaymentInfo.received;

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, HostListener, ElementRef } fro
 import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { PaymentService, ReceiptService, MessageService } from '../../../../service';
+import { PaymentService, ReceiptService, MessageService, CartService } from '../../../../service';
 import { ModalComponent, ModalService, StorageService, Modal, KeyboardService, KeyCommand, Logger } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
@@ -39,7 +39,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal,
     private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService,
-    private storage: StorageService, private message: MessageService, private info: InfoBroker, private logger: Logger) {
+    private storage: StorageService, private message: MessageService, private info: InfoBroker, private logger: Logger, private cartService: CartService) {
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;
@@ -79,7 +79,7 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   private loadPayment() {
-    this.paidamount = this.cartInfo.totalPrice.value;
+    this.paidamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value;
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
     if (p && p.monetaryPaymentInfo) {
       if (this.paidamount === p.monetaryPaymentInfo.amount) {

@@ -4,7 +4,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { InstallmentPlanComponent } from './installment-plan/installment-plan.component';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ReceiptService, MessageService, PaymentService } from '../../../../service';
+import { ReceiptService, MessageService, PaymentService, CartService } from '../../../../service';
 import {
   ModalComponent, ModalService, NicePaymentService,
   Logger, AlertService, AlertState, Modal, StorageService,
@@ -61,7 +61,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService, private keyboard: KeyboardService,
     private nicepay: NicePaymentService, private payment: PaymentService, private modal: Modal, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private info: InfoBroker, private config: Config,
-    private logger: Logger, private renderer: Renderer2) {
+    private logger: Logger, private renderer: Renderer2, private cartService: CartService) {
     super(modalService);
     this.installment = '00';
     this.finishStatus = null;
@@ -92,7 +92,7 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   }
 
   private loadPayment() {
-    this.paidamount = this.cartInfo.totalPrice.value; // 원 결제 금액
+    this.paidamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 원 결제 금액
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
     if (p && p.ccPaymentInfo) {
       this.paid.nativeElement.value = p.ccPaymentInfo.amount;

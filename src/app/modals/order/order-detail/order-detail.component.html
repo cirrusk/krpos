@@ -44,9 +44,9 @@
                                         <tr *ngFor="let entry of orderDetail.orders[0].entries;">
                                             <td>{{ entry.entryNumber + 1}}</td>
                                             <td><span class="blck">{{entry.product.code}}</span>{{entry.product.name}}</td>
-                                            <td>{{ entry.basePrice.value | number}}</td>
+                                            <td>{{ entry.product.price.value | number}}</td>
                                             <td>{{ entry.quantity }}</td>
-                                            <td>{{ entry.totalPrice.value | number}}</td>
+                                            <td>{{ entry.totalPriceInclTax.value | number}}</td>
                                         </tr>                                       
                                     </tbody>
                                 </table>
@@ -60,17 +60,17 @@
                     <div class="inner">
                         <ul class="list">
                             <li><span>상품수량</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalUnitCount | number }}</em></li>
-                            <li><span>과세물품</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].subTotal.value - orderDetail.orders[0].totalTax.value | number }}</em></li>
-                            <li><span>부&nbsp; 가&nbsp; 세</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].totalTax.value | number }}</em></li>
-                            <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{cancelSymbol}}{{ orderDetail.orders[0].subTotal.value | number }}</em></li>
-                            <li class="txt_b" *ngIf="orderDetail.orders[0].totalDiscounts.value > 0"><span>할인금액</span><em>{{cancelSymbol}}{{orderDetail.orders[0].totalDiscounts.value}}</em></li>
+                            <li><span>과세물품</span><em>{{cancelSymbol}}{{ taxablePrice | number }}</em></li>
+                            <li><span>부&nbsp; 가&nbsp; 세</span><em>{{cancelSymbol}}{{ taxPrice | number }}</em></li>
+                            <li class="txt_b"><span>합 &nbsp; &nbsp; &nbsp; &nbsp; 계</span><em>{{cancelSymbol}}{{ totalPriceWithTax | number }}</em></li>
+                            <li class="txt_b" *ngIf="orderDetail.orders[0].totalDiscounts.value > 0"><span>할인금액</span><em>{{cancelSymbol}}{{ discountPrice }}</em></li>
                             <li class="txt_b" *ngIf="groupMainFlag && paymentCapture.getPointPaymentInfo">
                                 <span>{{pointType}}-{{paymentCapture.getPointPaymentInfo.paymentMode.name}}</span><em>{{cancelSymbol}}{{ paymentCapture.getPointPaymentInfo.amount | number }}</em>
                             </li>
                             <li class="txt_b" *ngIf="groupMainFlag && paymentCapture.getMonetaryPaymentInfo">
                                 <span>Re-Cash</span><em>{{cancelSymbol}}{{ paymentCapture.getMonetaryPaymentInfo.amount | number }}</em>
                             </li>
-                            <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ apprPrice | number }}</em></li>
+                            <li class="txt_b"><span>결제금액</span><em>{{cancelSymbol}}{{ paymentPrice | number }}</em></li>
                         </ul>
                         <ul class="list" *ngIf="groupMainFlag">
                             <div>

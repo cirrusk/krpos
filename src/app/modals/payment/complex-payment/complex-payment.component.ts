@@ -10,7 +10,7 @@ import { DirectDebitComponent } from '../ways/direct-debit/direct-debit.componen
 import { ReCashComponent } from '../ways/re-cash/re-cash.component';
 import { PointComponent } from '../ways/point/point.component';
 import { CompletePaymentComponent } from '../complete-payment/complete-payment.component';
-import { PaymentService, MessageService } from '../../../service';
+import { PaymentService, MessageService, CartService } from '../../../service';
 import { Cart } from '../../../data/models/order/cart';
 import { Utils } from '../../../core/utils';
 import { InfoBroker } from '../../../broker';
@@ -58,6 +58,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private logger: Logger,
     private info: InfoBroker,
     private message: MessageService,
+    private cartService: CartService,
     private renderer: Renderer2) {
     super(modalService);
     this.init();
@@ -153,7 +154,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    */
   private getTotalPrice(): number {
     if (this.cartInfo) { // 프로모션 금액이 있을 경우 프로모션 금액을 차감해야함.
-      return this.cartInfo.totalPrice ? this.cartInfo.totalPrice.value : 0;
+      return this.cartInfo.totalPrice ? this.cartService.getTotalPriceWithTax(this.cartInfo) : 0; //  this.cartInfo.totalPrice.value : 0;
     }
     return 0;
   }

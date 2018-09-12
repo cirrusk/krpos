@@ -6,7 +6,7 @@ import { ModalComponent, ModalService, StorageService, Modal, Config } from '../
 import {
   PaymentCapture, Accounts, BankTypes, StatusDisplay, KeyCode, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
-import { ReceiptService, MessageService, PaymentService } from '../../../../service';
+import { ReceiptService, MessageService, PaymentService, CartService } from '../../../../service';
 import { Order } from '../../../../data/models/order/order';
 import { Cart } from '../../../../data/models/order/cart';
 import { BankAccount } from '../../../../data/models/order/bank-account';
@@ -43,7 +43,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('ddpassword') private ddpassword: ElementRef;
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
     private storage: StorageService, private message: MessageService, private payment: PaymentService,
-    private info: InfoBroker, private renderer: Renderer2, private config: Config) {
+    private info: InfoBroker, private renderer: Renderer2, private config: Config, private cartService: CartService) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -78,7 +78,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   private loadPayment() {
-    this.paidamount = this.cartInfo.totalPrice.value;
+    this.paidamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value;
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
     if (p && p.directDebitPaymentInfo) {
       this.paid.nativeElement.value = p.directDebitPaymentInfo.amount;
