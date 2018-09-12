@@ -4,7 +4,7 @@ import { ProductInfo } from '../../../data';
 import { MessageService } from '../../../service';
 
 /**
- * 장바구니 추가 제품의 수량변경
+ * 장바구니 추가 제품의 수량변경 팝업
  */
 @Component({
   selector: 'pos-update-item-qty',

@@ -5,6 +5,9 @@ import { ModalIds, ConsumerRegister, AccountList } from '../../../../data';
 import { Subscription } from 'rxjs/Subscription';
 import { Utils } from '../../../../core/utils';
 
+/**
+ * 비회원 간편선물 가입 시 스폰서 ABO 정보 입력 팝업
+ */
 @Component({
   selector: 'pos-signup-account',
   templateUrl: './signup-account.component.html'

@@ -4,6 +4,9 @@ import { ModalService } from '../../../core';
 import { CancleOrderBroker } from '../../../broker';
 import { KeyCode } from '../../../data';
 
+/**
+ * 장바구니 삭제 팝업
+ */
 @Component({
   selector: 'pos-cancel-cart',
   templateUrl: './cancel-cart.component.html'

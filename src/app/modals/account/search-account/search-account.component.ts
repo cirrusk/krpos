@@ -7,6 +7,9 @@ import { SearchService, PagerService, MessageService, AccountService } from '../
 import { AccountList, Accounts, Pagination, MemberType, ResponseMessage, Block, OrderType, SearchMemberType } from '../../../data';
 import { Utils } from '../../../core/utils';
 
+/**
+ * 회원 검색 팝업
+ */
 @Component({
   selector: 'pos-search-account',
   templateUrl: './search-account.component.html'

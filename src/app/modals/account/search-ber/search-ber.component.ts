@@ -6,6 +6,9 @@ import { BerData } from '../../../data/models/common/ber-result';
 import { Utils } from '../../../core/utils';
 import { ModalIds } from '../../../data';
 
+/**
+ * 중개주문 사업자등록증 조회 팝업
+ */
 @Component({
   selector: 'pos-search-ber',
   templateUrl: './search-ber.component.html'

@@ -8,7 +8,7 @@ import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
 
 /**
- * 로그인 입력 화면
+ * 로그인 입력 화면 팝업
  *
  * Component 형식으로 레이어 팝업을 띄울 경우 사용.
  * 별도의 UI를 가지는 경우 ModalComponent를 상속받아 사용.

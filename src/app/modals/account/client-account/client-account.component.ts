@@ -6,6 +6,9 @@ import { AccountList, ModalIds, ConsumerRegister, KeyCode } from '../../../data'
 import { AccountService, MessageService } from '../../../service';
 import { SignupAccountComponent } from './signup-account/signup-account.component';
 
+/**
+ * 비회원 등록 팝업
+ */
 @Component({
   selector: 'pos-client-account',
   templateUrl: './client-account.component.html'
