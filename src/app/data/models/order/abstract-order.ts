@@ -14,7 +14,11 @@ export class AbstractOrder {
     totalPriceWithTax: Price;                               // 세금 포함 총 금액
     totalPrice: Price;                                      // 총 금액
     totalTax: Price;                                        // 총 세금 금액
+    totalTaxDiscount: Price;                                // 세금 할인 금액
+    totalDiscountWithTax: Price;                            // 세금을 포함한 총 할인 금액
     subTotal: Price;                                        // 소계
+    subTotalWithDiscounts: Price;                           // 할인 금액을 포함한 총 주문 소계
+    subtotalWithoutProductDiscount: Price;                  // 상품 할인 금액을 제외한 소계
     deliveryCost: Price;                                    // 배송비
     entries: Array<OrderEntry>;                             // 주문 Entries
     totalItems: number;                                     // 제품 전체 갯수
@@ -24,8 +28,11 @@ export class AbstractOrder {
     appliedOrderPromotions: Array<PromotionList>;           // 주문 프로모션 정보 리스트 List<PromotionResultWsDTO>
     appliedProductPromotions: Array<PromotionList>;         // 제품 프로모션 정보 리스트 List<PromotionResultWsDTO>
     productDiscounts: Price;                                // 제품 할인 금액
+    productTaxDiscount: Price;                              // 제품 세금 할인 금액
     orderDiscounts: Price;                                  // 주문 할인 금액
+    orderTaxDiscount: Price;                                // 주문 세금 할인 금액
     totalDiscounts: Price;                                  // 총 할인 금액 (상품 할인 금액 + 주문 할인 금액)
+    availableMaxInstallment: boolean;                       // 최대 할부 가능 여부
     site: string;                                           // 사이트
     store: string;                                          // 스토어
     guid: string;                                           // GUID
