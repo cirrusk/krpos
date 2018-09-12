@@ -724,9 +724,9 @@ export class ReceiptService implements OnDestroy {
                 'idx': (index + 1).toString(),
                 'skuCode': entry.product.code,
                 'productName': entry.product.name,
-                'price': entry.basePrice.value.toString(),
+                'price': entry.product.price.value.toString(),
                 'qty': entry.quantity.toString(),
-                'totalPrice': entry.totalPrice.value.toString()
+                'totalPrice': entry.totalPriceInclTax.value.toString()
             });
             totalQty = totalQty + entry.quantity;
             totalPrice = totalPrice + (entry.basePrice.value * entry.quantity);
