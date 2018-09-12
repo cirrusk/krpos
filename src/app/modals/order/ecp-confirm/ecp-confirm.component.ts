@@ -6,6 +6,9 @@ import { Pagination, OrderEntry, OrderHistoryList, ModalIds } from '../../../dat
 import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 
+/**
+ * ECP 컨펌 팝업 화면
+ */
 @Component({
   selector: 'pos-ecp-confirm',
   templateUrl: './ecp-confirm.component.html'

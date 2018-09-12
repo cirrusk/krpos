@@ -9,7 +9,7 @@ import { Utils } from '../../../core/utils';
 import { OrderList } from '../../../data/models/order/order';
 
 /**
- * 주문 취소 화면
+ * 주문 취소 화면 팝업
  */
 @Component({
   selector: 'pos-cancel-order',
