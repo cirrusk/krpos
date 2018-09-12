@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 
 import { PrinterService, StorageService, CardApprovalResult, NicePaymentService, CardCancelResult, SpinnerService, AlertService, Config } from '../core';
-import { ReceiptService, MessageService } from '../service';
+import { ReceiptService, MessageService, CartService } from '../service';
 import {
     OrderInfo, TerminalInfo, Cashier, AccessToken, Account, AccountInfo, Accounts, MemberType, ProductsEntryInfo,
     OrderEntry, BonusInfo, Bonus, PaymentInfo, PaymentCapture, AmwayMonetaryPaymentInfo, PointPaymentInfo, PointType,
@@ -41,6 +41,7 @@ export class TestComponent implements OnInit, OnDestroy {
     private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'Delete', 'ArrowLeft', 'ArrowRight'];
     constructor(private print: PrinterService,
         private receipt: ReceiptService,
+        private cart: CartService,
         private storage: StorageService,
         private message: MessageService,
         private payment: NicePaymentService,
@@ -139,9 +140,20 @@ export class TestComponent implements OnInit, OnDestroy {
         cartInfo.totalPrice = prc;
         cartInfo.subTotal = prc;
         cartInfo.totalPriceWithTax = prc;
-        cartInfo.totalDiscounts = new Price();
-        cartInfo.totalTax = new Price();
+        const discount = new Price();
+        discount.value = 1500.0;
+        cartInfo.totalDiscounts = discount;
+        const tax = new Price();
+        tax.value = 1350.0;
+        cartInfo.totalTax = tax;
         cartInfo.totalUnitCount = 1;
+        const od = new Price();
+        od.value = 150.0;
+        cartInfo.orderDiscounts = od;
+        cartInfo.productDiscounts = od;
+        const otd = new Price();
+        cartInfo.orderTaxDiscount = otd;
+        cartInfo.productTaxDiscount = otd;
         const paymentCapture: PaymentCapture = new PaymentCapture();
         paymentCapture.monetaryPaymentInfo = new AmwayMonetaryPaymentInfo(1000);
         paymentCapture.pointPaymentInfo = new PointPaymentInfo(1000, PointType.BR030);
@@ -266,32 +278,11 @@ export class TestComponent implements OnInit, OnDestroy {
 
         // prices - START
         console.log('▷ 4.cartInfo : ' + Utils.stringify(cartInfo));
-        let sumAmount = 0; // 합계
-        let totalAmount = 0; // 결제금액
-        let amountVAT = 0; // 부가세
-        let amountWithoutVAT = 0; // 과세 물품
-        let totalDiscount = 0; // 할인금액
-        const taxValue = cartInfo.totalTax.value ? cartInfo.totalTax.value : 0;
-        const subTotalPrice = cartInfo.subTotal.value ? cartInfo.subTotal.value : 0;
+        const amountWithoutVAT = this.cart.getTaxablePrice(cartInfo); // 과세 물품
+        const amountVAT = this.cart.getTaxPrice(cartInfo); // 부가세
+        const sumAmount = this.cart.getTotalPriceWithTax(cartInfo); // 합계
+        const totalAmount = this.cart.getPaymentPrice(cartInfo, paymentCapture); // 결제금액
         const totalQty = cartInfo.totalUnitCount; // 상품수량
-        // if (cartInfo.totalPriceWithTax && cartInfo.totalTax) { // 과세 물품
-        //     amountWithoutVAT = cartInfo.totalPriceWithTax.value - cartInfo.totalTax.value;
-        // }
-        if (cartInfo.subTotal && cartInfo.totalTax) { // 과세 물품
-            amountWithoutVAT = subTotalPrice - taxValue;
-        }
-        if (cartInfo.totalTax) { // 부가세
-            amountVAT = taxValue;
-        }
-        // if (cartInfo.totalPriceWithTax) { // 합계
-        //     sumAmount = cartInfo.totalPriceWithTax.value; // subTotalPrice;
-        // }
-        if (cartInfo.subTotal) { // 합계
-            sumAmount = subTotalPrice;
-        }
-        if (cartInfo.totalPrice) { // 결제금액 - 프로모션 금액
-            totalAmount = cartInfo.totalPrice.value ? cartInfo.totalPrice.value : 0;
-        }
         //                          상품수량  과세 물품         부가세     합계       결제금액      할인금액         할인금액정보
         //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
         const price = new PriceInfo(totalQty, amountWithoutVAT, amountVAT, sumAmount, totalAmount);
@@ -307,13 +298,14 @@ export class TestComponent implements OnInit, OnDestroy {
             const recash = paymentCapture.getMonetaryPaymentInfo;
             price.setRecash = recash.amount;
         }
+        let totalDiscount = 0; // 할인금액
         if (cartInfo.totalDiscounts) { // 할인금액
             totalDiscount = cartInfo.totalDiscounts.value ? cartInfo.totalDiscounts.value : 0;
         }
         if (totalDiscount > 0) { // 할인금액 있을 경우만 출력 -> 프로모션 정보를 이용함.
             price.setTotalDiscount = totalDiscount; // 할인금액
             // 할인금액정보 - START
-            const discount = new Discount();
+            // const discount = new Discount();
             // if (order.appliedVouchers) {
             //     order.appliedVouchers.forEach(voucher => {
             //         if (voucher.appliedValue) {
@@ -323,7 +315,7 @@ export class TestComponent implements OnInit, OnDestroy {
             //         }
             //     });
             // }
-            price.setDiscount = discount;
+            // price.setDiscount = discount;
             // 할인금액정보 - END
         }
         // prices - END
