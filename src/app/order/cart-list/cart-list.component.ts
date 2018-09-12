@@ -32,8 +32,6 @@ import { PromotionList, Promotion } from '../../data/models/order/promotion';
  * restorecartbroker : 보류 복원
  * cancelorderbroker : 주문 취소
  *
- * 한글 특수 문자 제거가 필요할 경우 checkChar 함수의 내용을 복원
- * 현재는 문자열 체크는 별도로 하지 않음.
  */
 @Component({
   selector: 'pos-cart-list',
