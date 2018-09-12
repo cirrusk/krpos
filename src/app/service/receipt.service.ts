@@ -726,10 +726,10 @@ export class ReceiptService implements OnDestroy {
                 'productName': entry.product.name,
                 'price': entry.product.price.value.toString(),
                 'qty': entry.quantity.toString(),
-                'totalPrice': entry.totalPriceInclTax.value.toString()
+                'totalPrice': (entry.product.price.value * entry.quantity).toString()
             });
             totalQty = totalQty + entry.quantity;
-            totalPrice = totalPrice + (entry.basePrice.value * entry.quantity);
+            totalPrice = totalPrice + (entry.product.price.value * entry.quantity);
         });
         const productEntryList = new Array<ProductsEntryInfo>();
         const data = productList;
