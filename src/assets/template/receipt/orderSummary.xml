@@ -2,7 +2,7 @@
 <document>
     {{#if orderInfo.groupInfo}}
     <text-line>    
-        주문형태: 현장구매 [P. {{orderInfo.groupInfo}} ]
+        주문형태: 그룹주문 [P. {{orderInfo.groupInfo}} ]
     </text-line>
     {{else}}
     <text-line>    
