@@ -8,6 +8,24 @@ import { InfoBroker } from '../broker';
 import { AccessToken, LockType, ModalIds } from '../data';
 import { Utils } from '../core/utils';
 
+/**
+ * 캐셔 대시보드
+ *
+ * 기본 조건 : 캐셔로그인이 이루어진 후에 처리 가능(POS 종료 제외)
+ *
+ * 1. 판매등록
+ *     Start Shift(배치 시작) 가 이루어진 후 가능
+ *     장바구니 화면으로 이동(Start Shift 하면 바로 이동, 이미 배치 시작된 경우 현재 화면 유지)
+ *
+ * 2. 판매정산
+ *     캐셔 EOD 영수증 출력
+ *
+ * 3. Start Shift / Stop Shift
+ *     배치 시작 / 종료
+ *
+ * 4. POS 종료
+ *    배치가 시작되었을 경우 배치종료 포함하여 로그아웃, POS 화면 닫기
+ */
 @Component({
   selector: 'pos-dashboard',
   templateUrl: './dashboard.component.html'
