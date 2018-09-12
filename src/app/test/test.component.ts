@@ -361,9 +361,9 @@ export class TestComponent implements OnInit, OnDestroy {
             aboBasePrice: 0.0,
             basePrice: {
                 currencyIso: 'KRW',
-                formattedValue: '10,000',
+                formattedValue: '47,273',
                 priceType: 'BUY',
-                value: 9000000.0
+                value: 47273.0
             },
             dispositionCode: {
                 code: 'inStock'
@@ -387,9 +387,9 @@ export class TestComponent implements OnInit, OnDestroy {
                         volumeabo: 0.0
                     },
                     currencyIso: 'KRW',
-                    formattedValue: '10,000',
+                    formattedValue: '52,000',
                     priceType: 'BUY',
-                    value: 10000.0
+                    value: 52000.0
                 },
                 purchasable: true,
                 retailPrice: {
@@ -409,9 +409,9 @@ export class TestComponent implements OnInit, OnDestroy {
             serialNumbersCodes: [],
             totalPrice: {
                 currencyIso: 'KRW',
-                formattedValue: '10,000',
+                formattedValue: '47,273',
                 priceType: 'BUY',
-                value: 90000000.0,
+                value: 47273.0,
                 amwayValue: {
                     businessVolume: 36.0,
                     pointValue: 36.0
@@ -419,15 +419,15 @@ export class TestComponent implements OnInit, OnDestroy {
             },
             totalPriceInclTax: {
                 currencyIso: 'KRW',
-                formattedValue: '10,000',
+                formattedValue: '52,000',
                 priceType: 'BUY',
-                value: 10000.0
+                value: 52000.0
             },
             totalTax: {
                 currencyIso: 'KRW',
                 formattedValue: '0',
                 priceType: 'BUY',
-                value: 0.0
+                value: 4727.0
             },
             updateable: true,
             value: {
