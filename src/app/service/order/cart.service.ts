@@ -2,7 +2,7 @@ import { Injectable, ElementRef } from '@angular/core';
 import { HttpResponseBase } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { StorageService, ApiService, AlertService } from '../../core';
+import { StorageService, ApiService, AlertService, Logger } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
   ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering,
@@ -19,7 +19,8 @@ export class CartService {
   constructor(private storage: StorageService,
     private api: ApiService,
     private alert: AlertService,
-    private message: MessageService
+    private message: MessageService,
+    private logger: Logger
   ) { }
 
   /**
@@ -337,6 +338,66 @@ export class CartService {
       return true;
     }
     return false;
+  }
+
+  /**
+   * 과세물품 : 총 금액
+   * @param cartInfo 카트 정보
+   */
+  getTaxablePrice(cartInfo: Cart) {
+    const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
+    const taxableprice = totalprice + this.getDiscountPrice(cartInfo);
+    this.logger.set('cart.service', `taxable price : ${taxableprice}`).debug();
+    return taxableprice;
+  }
+
+  /**
+   * 부가세 : 총 세금 금액
+   * @param cartInfo 카트 정보
+   */
+  getTaxPrice(cartInfo: Cart) {
+    const taxprice = cartInfo.totalTax ? cartInfo.totalTax.value : 0; // 총 세금 금액
+    this.logger.set('cart.service', `tax price : ${taxprice}`).debug();
+    return taxprice;
+  }
+
+  /**
+   * 합계 : 세금 포함 총 금액
+   * @param cartInfo 카트 정보
+   */
+  getTotalPrice(cartInfo: Cart) {
+    const totalprice = this.getTaxablePrice(cartInfo) + this.getTaxPrice(cartInfo);
+    this.logger.set('cart.service', `total price : ${totalprice}`).debug();
+    return totalprice;
+  }
+
+  /**
+   * 할인금액 : 세금을 포함한 총 할인금액
+   * @param cartInfo 카트 정보
+   */
+  getDiscountPrice(cartInfo: Cart) {
+    const orderdiscount = cartInfo.orderDiscounts ? cartInfo.orderDiscounts.value : 0;
+    const ordertaxdiscount = cartInfo.orderTaxDiscount ? cartInfo.orderTaxDiscount.value : 0;
+    const productdiscount = cartInfo.productDiscounts ? cartInfo.productDiscounts.value : 0;
+    const producttaxdiscount = cartInfo.productTaxDiscount ? cartInfo.productTaxDiscount.value : 0;
+    this.logger.set('cart.service', `order discount : ${orderdiscount}`).debug();
+    this.logger.set('cart.service', `order tax discount : ${ordertaxdiscount}`).debug();
+    this.logger.set('cart.service', `product discount : ${productdiscount}`).debug();
+    this.logger.set('cart.service', `product tax discount : ${producttaxdiscount}`).debug();
+    const discountprice = orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
+    this.logger.set('cart.service', `discount price : ${discountprice}`).debug();
+    return discountprice;
+  }
+
+  /**
+   * 결제금액 : 세금 포함 총 금액 - 세금을 포함한 총 할인 금액
+   * @param cartInfo 카트 정보
+   */
+  getPaymentPrice(cartInfo: Cart) {
+    const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
+    const paymentprice =  totalprice + this.getTaxPrice(cartInfo);
+    this.logger.set('cart.service', `payment price : ${paymentprice}`).debug();
+    return paymentprice;
   }
 
 }

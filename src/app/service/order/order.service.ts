@@ -216,4 +216,51 @@ export class OrderService {
     const data = new HttpData('confirmPickup', pathvariables, orderList, null, 'json');
     return this.api.response(APIMethodType.PUT, data);
   }
+
+  /**
+   * 과세물품 : 총 금액
+   * @param cartInfo 카트 정보
+   */
+  getTaxablePrice(orderInfo: Order) {
+    const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
+    return totalprice + this.getDiscountPrice(orderInfo);
+  }
+
+  /**
+   * 부가세 : 총 세금 금액
+   * @param cartInfo 카트 정보
+   */
+  getTaxPrice(orderInfo: Order) {
+    return orderInfo.totalTax ? orderInfo.totalTax.value : 0; // 총 세금 금액
+  }
+
+  /**
+   * 합계 : 세금 포함 총 금액
+   * @param cartInfo 카트 정보
+   */
+  getTotalPrice(orderInfo: Order) {
+    return this.getTaxablePrice(orderInfo) + this.getTaxPrice(orderInfo);
+  }
+
+  /**
+   * 할인금액 : 세금을 포함한 총 할인금액
+   * @param cartInfo 카트 정보
+   */
+  getDiscountPrice(orderInfo: Order) {
+    const orderdiscount = orderInfo.orderDiscounts ? orderInfo.orderDiscounts.value : 0;
+    const ordertaxdiscount = orderInfo.orderTaxDiscount ? orderInfo.orderTaxDiscount.value : 0;
+    const productdiscount = orderInfo.productDiscounts ? orderInfo.productDiscounts.value : 0;
+    const producttaxdiscount = orderInfo.productTaxDiscount ? orderInfo.productTaxDiscount.value : 0;
+    return orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
+
+  }
+
+  /**
+   * 결제금액 : 세금 포함 총 금액 - 세금을 포함한 총 할인 금액
+   * @param cartInfo 카트 정보
+   */
+  getPaymentPrice(orderInfo: Order) {
+    const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
+    return totalprice + this.getTaxPrice(orderInfo);
+  }
 }
