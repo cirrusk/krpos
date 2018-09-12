@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService, StorageService } from '../../core';
-import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo, APIMethodType } from '../../data';
+import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo, APIMethodType, PaymentCapture } from '../../data';
 import { OrderList, Order } from '../../data/models/order/order';
 import { HttpResponseBase } from '../../../../node_modules/@angular/common/http';
 
@@ -238,7 +238,7 @@ export class OrderService {
    * 합계 : 세금 포함 총 금액
    * @param cartInfo 카트 정보
    */
-  getTotalPrice(orderInfo: Order) {
+  getTotalPriceWithTax(orderInfo: Order) {
     return this.getTaxablePrice(orderInfo) + this.getTaxPrice(orderInfo);
   }
 
@@ -252,15 +252,23 @@ export class OrderService {
     const productdiscount = orderInfo.productDiscounts ? orderInfo.productDiscounts.value : 0;
     const producttaxdiscount = orderInfo.productTaxDiscount ? orderInfo.productTaxDiscount.value : 0;
     return orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
-
   }
 
   /**
-   * 결제금액 : 세금 포함 총 금액 - 세금을 포함한 총 할인 금액
+   * 결제금액 : 총 금액(TAX 제외) + 부가세 - 포인트 - Re-Cash
    * @param cartInfo 카트 정보
    */
-  getPaymentPrice(orderInfo: Order) {
+  getPaymentPrice(orderInfo: Order, paymentCapture: PaymentCapture) {
     const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
-    return totalprice + this.getTaxPrice(orderInfo);
+    let paymentprice =  totalprice + this.getTaxPrice(orderInfo);
+    if (paymentCapture.pointPaymentInfo) { // 포인트 내역
+      const pointamount = paymentCapture.pointPaymentInfo.amount;
+      paymentprice = paymentprice - pointamount;
+    }
+    if (paymentCapture.monetaryPaymentInfo) { // Recash 내역
+      const recashamount = paymentCapture.monetaryPaymentInfo.amount;
+      paymentprice  = paymentprice - recashamount;
+    }
+    return paymentprice;
   }
 }

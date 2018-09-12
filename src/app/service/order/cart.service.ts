@@ -6,7 +6,7 @@ import { StorageService, ApiService, AlertService, Logger } from '../../core';
 import {
   CartInfo, CartParams, CartModification, OrderEntries, OrderEntryList, Product, Accounts, OrderEntry,
   ProductInfo, SaveCartResult, CartList, CopyCartEntries, HttpData, ResCartInfo, MemberType, AmwayExtendedOrdering,
-  CartModifications, TerminalInfo, CopyGroupCartEntries, ResponseMessage, Block, APIMethodType
+  CartModifications, TerminalInfo, CopyGroupCartEntries, ResponseMessage, Block, APIMethodType, PaymentCapture
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { MessageService } from '../../message';
@@ -365,7 +365,7 @@ export class CartService {
    * 합계 : 세금 포함 총 금액
    * @param cartInfo 카트 정보
    */
-  getTotalPrice(cartInfo: Cart) {
+  getTotalPriceWithTax(cartInfo: Cart) {
     const totalprice = this.getTaxablePrice(cartInfo) + this.getTaxPrice(cartInfo);
     this.logger.set('cart.service', `total price : ${totalprice}`).debug();
     return totalprice;
@@ -390,13 +390,22 @@ export class CartService {
   }
 
   /**
-   * 결제금액 : 세금 포함 총 금액 - 세금을 포함한 총 할인 금액
+   * 결제금액 : 총 금액(TAX 제외) + 부가세 - 포인트 - Re-Cash
    * @param cartInfo 카트 정보
    */
-  getPaymentPrice(cartInfo: Cart) {
+  getPaymentPrice(cartInfo: Cart, paymentCapture: PaymentCapture) {
     const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
-    const paymentprice =  totalprice + this.getTaxPrice(cartInfo);
+    let paymentprice =  totalprice + this.getTaxPrice(cartInfo);
     this.logger.set('cart.service', `payment price : ${paymentprice}`).debug();
+
+    if (paymentCapture.pointPaymentInfo) { // 포인트 내역
+      const pointamount = paymentCapture.pointPaymentInfo.amount;
+      paymentprice = paymentprice - pointamount;
+    }
+    if (paymentCapture.monetaryPaymentInfo) { // Recash 내역
+      const recashamount = paymentCapture.monetaryPaymentInfo.amount;
+      paymentprice  = paymentprice - recashamount;
+    }
     return paymentprice;
   }
 
