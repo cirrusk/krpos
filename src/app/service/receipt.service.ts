@@ -263,7 +263,7 @@ export class ReceiptService implements OnDestroy {
         const ordering: GroupResponseData = this.getGroupDetailInfo(orderingOrder, 0);
         const printInfo = {
             order: ordering.order, account: ordering.account, cartInfo: ordering.cart, cancelFlag: cancelFlag,
-            paymentCapture: paymentCapture, groupInfo: ordering.info, cashReceipt: isCashReceipt
+            paymentCapture: paymentCapture, groupInfo: ordering.info, cashReceipt: isCashReceipt, reIssue: reIssue
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = ordering.account.parties ? ordering.account.parties[0].uid : ordering.account.uid;
@@ -412,7 +412,7 @@ export class ReceiptService implements OnDestroy {
         const printInfo = {
             order: order, account: account, cartInfo: cartInfo, type: type,
             macAndCoNum: macAndCoNum, cancelFlag: cancelFlag,
-            paymentCapture: paymentCapture, groupInfo: groupInfo, cashReceipt: isCashReceipt
+            paymentCapture: paymentCapture, groupInfo: groupInfo, cashReceipt: isCashReceipt, reIssue: reIssue
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
@@ -513,7 +513,7 @@ export class ReceiptService implements OnDestroy {
         }
 
         orderInfo.setType = type || this.message.get('default.order.type'); // '현장구매';
-        orderInfo.setDate = Utils.convertDateToString(new Date());
+        orderInfo.setDate = printInfo.reIssue ? Utils.convertDateToString(order.created) : Utils.convertDateToString(new Date());
         // orderSummary - END
 
         // macAndCoNum - START
