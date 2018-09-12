@@ -373,4 +373,20 @@ export /* default */ class Utils {
     return false;
   }
 
+  public static substring(text: string, len: number): string {
+    let c = 0;
+    let startIdx = 0;
+    // 첫 글자가 Space (ASCII 32) 이면 한 칸 뒤로
+    if (text.charCodeAt(startIdx) === 32) {
+      startIdx++;
+    }
+    let i: number = startIdx;
+    for (let b = 0; c = text.charCodeAt(i);) {
+      b += c >> 7 ? 2 : 1;
+      if (b > len) { break; }
+      i++;
+    }
+    return text.substring(startIdx, i);
+  }
+
 }

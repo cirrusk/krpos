@@ -1,6 +1,7 @@
-import { Subject } from 'rxjs/Subject';
 import { Injectable, Optional, SkipSelf } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 import { AlertType } from '../alert/alert-type.enum';
+import { Utils } from '../utils';
 
 export interface AlertState {
   show: boolean;
@@ -27,8 +28,8 @@ export class AlertService {
     {
       show: true,
       alertType: (params.alertType) ? params.alertType : AlertType.warn,
-      title: (params.title) ? params.title : '확인',
-      message: params.message,
+      title: (params.title) ? params.title : '알림',
+      message: Utils.substring(params.message, 280),
       timer: (params.timer) ? params.timer : false,
       interval: (params.interval > 0) ? params.interval : 3500
     });
