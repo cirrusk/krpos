@@ -7,7 +7,7 @@ import { ReceiptService, MessageService, CartService } from '../service';
 import {
     OrderInfo, TerminalInfo, Cashier, AccessToken, Account, AccountInfo, Accounts, MemberType, ProductsEntryInfo,
     OrderEntry, BonusInfo, Bonus, PaymentInfo, PaymentCapture, AmwayMonetaryPaymentInfo, PointPaymentInfo, PointType,
-    CashPaymentInfo, CreditCardPaymentInfo, CreditCard, ICCard, Cash, DirectDebit, PriceInfo, PointInfo, Discount, ReceiptInfo,
+    CashPaymentInfo, CreditCardPaymentInfo, CreditCard, ICCard, Cash, DirectDebit, PriceInfo, PointInfo, ReceiptInfo,
     AmwayValue, Price, EodData, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData, SummaryData,
     CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel
 } from '../data';
