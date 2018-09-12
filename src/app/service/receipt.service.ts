@@ -688,7 +688,6 @@ export class ReceiptService implements OnDestroy {
 
         // 영수증 출력 - START
         try {
-            console.log(text);
             this.printer.printText(text);
         } catch (e) {
             this.logger.set('receipt.service', `${e.description}`).error();
