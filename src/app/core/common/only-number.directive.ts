@@ -1,5 +1,13 @@
 import { Directive, ElementRef, Input, HostListener } from '@angular/core';
 
+/**
+ * 숫자만 입력가능하도록 처리
+ * 이벤트 차단 방식으로는 조합형인 한글에 대해서 올바르게 처리되지 않음.
+ * 기존의 키보드 up/down, press 등의 이벤트로 처리할 경우
+ * garbage 문자가 남거나 한글인 경우 이벤트를 잡지 못할 경우가 있음.
+ * input에 대해서 Hostlistener를 지정하여 input에 대해서 모든 이벤트를 감지하도록 하고
+ * 해당 이벤트 발생 시 regular expression으로 숫자 이외의 문자에 대해서 모두 빈값으로 치환
+ */
 @Directive({
   selector: '[posOnlyNumber]'
 })
