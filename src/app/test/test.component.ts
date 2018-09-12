@@ -215,9 +215,9 @@ export class TestComponent implements OnInit, OnDestroy {
                 'idx': (entry.entryNumber + 1).toString(),
                 'skuCode': entry.product.code,
                 'productName': entry.product.name,
-                'price': entry.basePrice.value.toString(),
+                'price': entry.product.price.value.toString(),
                 'qty': entry.quantity.toString(),
-                'totalPrice': entry.totalPrice.value.toString()
+                'totalPrice': entry.totalPriceInclTax.value.toString()
             });
         });
         const productEntryList = new Array<ProductsEntryInfo>();
@@ -242,10 +242,10 @@ export class TestComponent implements OnInit, OnDestroy {
         }
         console.log('▷ 2.order : ' + Utils.stringify(order));
         if (order.value) { // 합계 PV BV,  // 그룹 PV BV
-            sumPV = order.value.personalPointValue ? order.value.personalPointValue : 0 + totalPV;
-            sumBV = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0 + totalBV;
-            groupPV = order.value.groupPointValue ? order.value.groupPointValue : 0 + totalPV;
-            groupBV = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0 + totalBV;
+            sumPV = (order.value.personalPointValue ? order.value.personalPointValue : 0) + totalPV;
+            sumBV = (order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0) + totalBV;
+            groupPV = (order.value.groupPointValue ? order.value.groupPointValue : 0) + totalPV;
+            groupBV = (order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0) + totalBV;
             bonus.setSum = new Bonus(String(sumPV), String(sumBV));
             bonus.setGroup = new Bonus(String(groupPV), String(groupBV));
         } else {
