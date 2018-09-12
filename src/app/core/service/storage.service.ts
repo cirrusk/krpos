@@ -2,9 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/share';
 import { InfoBroker } from '../../broker/info.broker';
-import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentModeListByMain, PaymentCapture, PointReCash } from '../../data';
+import { AccessToken, TerminalInfo, BatchInfo, Accounts, PaymentCapture, PointReCash } from '../../data';
 import { Utils } from '../utils';
-import { Promotion } from '../../data/models/order/promotion';
 
 /**
  * 세션 및 로컬 스토리지 저장/삭제 서비스
