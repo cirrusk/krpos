@@ -718,7 +718,7 @@ export class ReceiptService implements OnDestroy {
         // productList - START
         const productList = Array<any>();
         let totalQty = 0;
-        let totalPrice = 0;
+        const totalPrice = 0;
         orderEntry.forEach((entry, index) => {
             productList.push({
                 'idx': (index + 1).toString(),
@@ -729,7 +729,7 @@ export class ReceiptService implements OnDestroy {
                 'totalPrice': (entry.product.price.value * entry.quantity).toString()
             });
             totalQty = totalQty + entry.quantity;
-            totalPrice = totalPrice + (entry.product.price.value * entry.quantity);
+            // totalPrice = totalPrice + (entry.product.price.value * entry.quantity);
         });
         const productEntryList = new Array<ProductsEntryInfo>();
         const data = productList;
@@ -738,7 +738,7 @@ export class ReceiptService implements OnDestroy {
 
         // prices - START
         const sumAmount = 0; // 합계
-        const totalAmount = totalPrice; // 결제금액
+        const totalAmount = 0; // 결제금액
         const amountVAT = 0; // 부가세
         const amountWithoutVAT = 0; // 과세 물품
 
