@@ -630,8 +630,8 @@ export class ReceiptService implements OnDestroy {
         const totalQty = cartInfo.totalUnitCount; // 상품수량
         const amountWithoutVAT = this.cart.getTaxablePrice(cartInfo); // 과세 물품
         const amountVAT = this.cart.getTaxPrice(cartInfo); // 부가세
-        const sumAmount = this.cart.getTotalPrice(cartInfo); // 합계
-        const totalAmount = this.cart.getPaymentPrice(cartInfo); // 결제금액 : 전체금액 - 프로모션 금액
+        const sumAmount = this.cart.getTotalPriceWithTax(cartInfo); // 합계
+        const totalAmount = this.cart.getPaymentPrice(cartInfo, paymentCapture); // 결제금액
         //                          상품수량  과세 물품         부가세     합계       결제금액      할인금액         할인금액정보
         //                          totalQty  amountWithoutVAT  amountVAT  sumAmount  totalAmount   totalDiscount    discount
         const price = new PriceInfo(totalQty, amountWithoutVAT, amountVAT, sumAmount, totalAmount);
