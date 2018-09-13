@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import { StorageService, Modal, Logger, Config } from '../../core';
+import { StorageService, Logger, Config } from '../../core';
 import { Accounts, OrderEntry, Pagination, MemberType, PaymentCapture, PaymentView } from '../../data';
 import { PagerService, PaymentService, CartService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
@@ -37,13 +37,13 @@ export class ClientComponent implements OnInit, OnDestroy {
   accountType: string;                            // 회원 타입
   apprtype: string;
   ber: string;
-  promotion: string;
+  couponSize: number;
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
   private paymentsubscription: Subscription;
   public memberType = MemberType;
-  constructor(private modal: Modal, private storage: StorageService, private payment: PaymentService,
+  constructor(private storage: StorageService, private payment: PaymentService,
     private logger: Logger, private config: Config, private route: ActivatedRoute, private cartService: CartService,
     private pagerService: PagerService) {
     this.cartListCount = this.config.getConfig('cartListCount');
@@ -104,8 +104,8 @@ export class ClientComponent implements OnInit, OnDestroy {
             this.setPage(this.storage.getCartPage());
           } else if (result.key === 'payinforeset' && result.value === true) {
             this.payInfoReset();
-          } else if (result.key === 'promo') {
-            this.promotion = result.value;
+          } else if (result.key === 'cpn') {
+            this.couponSize = result.value;
           }
         }
       });
@@ -174,7 +174,6 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.pager = new Pagination();
     this.installment = -1;
     this.ber = null;
-    this.promotion = null;
   }
 
 

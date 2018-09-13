@@ -97,9 +97,9 @@
                         <!-- 20180504 추가 -->
                         <div class="ic04">
                             <!-- 비회원시 삭제5 -->
-                            <dl *ngIf="accountInfo">
-                                <dt>프로모션</dt>
-                                <dd>{{promotion}}</dd>
+                            <dl *ngIf="accountInfo && accountType === memberType.ABO">
+                                <dt>사용가능 보유 쿠폰</dt>
+                                <dd><a href="javascript:void(0);">총{{couponSize}}개</a></dd>
                                 <!--신규 ABO 적용대상-->
                             </dl>
                             <!-- //비회원시 삭제5 -->

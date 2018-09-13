@@ -172,6 +172,17 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 카트에서 쿠폰 링크 클릭 시 전달된 이벤트를 받아 쿠폰 팝업을 오픈
+   *
+   * @param data 카트에서 전달된 쿠폰 팝업 열기 이벤트
+   */
+  openCoupon(data) {
+    if (data && data.open) {
+      this.popupCoupon('coupon');
+    }
+  }
+
+  /**
    * 키보드 이벤트 컴포넌트의 이벤트를 받아 처리
    *
    * @param data 키보드 이벤트

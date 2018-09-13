@@ -114,7 +114,9 @@ export class CartListComponent implements OnInit, OnDestroy {
   promotion: Promotion;
   couponSize = 0;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
-  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
+  @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();      // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
+  @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 발생한 프로모션을 부모 오더 컴포넌트에 전달
+  @Output() public posCoupon: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 쿠폰 링크 클릭시 메뉴쪽 쿠폰 팝업호출 이벤트 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
 
   constructor(private modal: Modal,
@@ -345,6 +347,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   setCoupon(data) {
     if (data && data.coupon) {
       this.couponSize = data.coupon;
+      this.storage.setCouponSize(this.couponSize);
     }
   }
 
@@ -373,6 +376,17 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  /**
+   * 쿠폰 링크 클릭 시 메뉴의 쿠폰 팝업 오픈 이벤트 전송
+   */
+  couponOpen(len: number) {
+    console.log('111 >>> ' + len );
+    if (len > 0) {
+      this.posCoupon.emit({ open: true });
+    }
+  }
+
   /**
    * 변수 초기화
    */
@@ -702,7 +716,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       closeByClickOutside: false,
       closeByEnter: true,
       modalId: ModalIds.CHANGEUSER,
-      beforeCloseCallback : function () {
+      beforeCloseCallback: function () {
         if (this.isEnter) {
           this.result = this.isEnter;
         }
@@ -1288,7 +1302,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     const orderpromotions: PromotionList[] = cartList.appliedOrderPromotions;
     if (orderpromotions && orderpromotions.length > 0) {
       this.promotion = orderpromotions[0].promotion;
-      this.storage.setPromotion(this.promotion.name);
+      this.posPromotion.emit({ promotion: this.promotion });
+      // this.storage.setPromotion(this.promotion.name); // 클라이언트에 보여주지 않으므로 불필요.
     }
 
     this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송

@@ -2,7 +2,7 @@
   <!-- 좌측영역 -->
   <div class="m_cont">
       <!-- 주문영역 -->
-      <pos-cart-list [noticeList]="noticeList" (posCart)="posMenu.setFlag($event)" #posCart></pos-cart-list>
+      <pos-cart-list [noticeList]="noticeList" (posPromotion)="updatePromotion($event)" (posCoupon)="posMenu.openCoupon($event)" (posCart)="posMenu.setFlag($event)" #posCart></pos-cart-list>
       <!-- //주문영역 -->
   </div>
   <!-- //좌측영역 -->

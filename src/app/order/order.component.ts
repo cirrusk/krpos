@@ -2,7 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { StorageService } from '../core';
 import { CartListComponent } from './cart-list/cart-list.component';
+import { OrderMenuComponent } from './order-menu/order-menu.component';
 import { Accounts } from '../data';
+import { Promotion } from '../data/models/order/promotion';
 
 @Component({
   selector: 'pos-order',
@@ -12,6 +14,7 @@ export class OrderComponent implements OnInit {
   public noticeList: string[] = [];
   public promotionList: any[] = [];
   @ViewChild(CartListComponent) cartList: CartListComponent;
+  @ViewChild(OrderMenuComponent) orderMenu: OrderMenuComponent;
   constructor(private storage: StorageService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -26,6 +29,22 @@ export class OrderComponent implements OnInit {
     // api 가 다른 경우 resolver를 하나 더 만듬.
     // 프로모션 공지
     this.promotionList = data[1];
+  }
+
+  /**
+   * 카트에서 상품 검색 시 프로모션이 있을 경우
+   * 주문 레벨 프로모션인 경우 해당 프로모션 정보를 전달받아 설정함.
+   *
+   * @param data 주문 레벨 프로모션
+   */
+  updatePromotion(data) {
+    if (data) {
+      const promotion: Promotion = data.promotion;
+      if (promotion) {
+        console.log('PROMOTION.................');
+        console.log(JSON.stringify(promotion, null, 2));
+      }
+    }
   }
 
   isCheck(): boolean {
