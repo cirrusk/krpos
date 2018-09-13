@@ -559,6 +559,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         }).subscribe(
           result => {
             if (typeof result !== undefined && result === true) {
+              this.storage.removePaymentProcessing();
               this.closeModal();
             }
           });
