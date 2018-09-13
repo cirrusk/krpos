@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
-import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService } from '../../../core';
+import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config } from '../../../core';
 import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds, PaymentView } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -49,6 +49,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   private custname: string;
   private custid: string;
   private addPopupType: string;
+  private useCache = false;
   @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
   constructor(protected modalService: ModalService,
     private paymentService: PaymentService,
@@ -57,6 +58,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private storage: StorageService,
     private logger: Logger,
     private info: InfoBroker,
+    private cache: CacheService,
+    private config: Config,
     private message: MessageService,
     private cartService: CartService,
     private renderer: Renderer2) {
@@ -77,6 +80,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.point = this.accountInfo.balance[0].amount;
       this.recash = this.accountInfo.balance[1].amount;
     }
+    this.useCache = this.config.getConfig('useCache');
     this.logger.set('complex.payment.component', Utils.stringify(this.paymentcapture)).debug();
     this.cmplsubscription = this.info.getInfo().subscribe(
       result => {
@@ -424,36 +428,53 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    * @param cartId
    */
   private getPaymentModesByMain(userId: string, cartId: string): void {
-    this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
-      result => {
-        if (result) {
-          this.paymentModeListByMain = result;
-          if (result.paymentModes && result.paymentModes.length > 0) {
-            this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
-
-            this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
-              this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
-            });
-
-            // this.logger.set('complex.payment.component', `cash : ${this.paymentModes.get('cash')}`).debug();
-            // this.paymentModes.forEach((data, key) => {
-            //   this.logger.set('complex.payment.component', `>>> 주결제 수단 : ${key} --> ${data}`).debug();
-            // });
-
-            this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
-
-          } else {
-            this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+    if (this.useCache) {
+      this.paymentModesSubscription = this.cache.get('PM-' + userId, this.paymentService.getPaymentModesByMain(userId, cartId)).subscribe(
+        result => {
+          if (result) {
+            this.paymentModeListByMain = result;
+            if (result.paymentModes && result.paymentModes.length > 0) {
+              this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
+              this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
+                this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
+              });
+              this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
+            } else {
+              this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+            }
           }
-        }
-      },
-      error => {
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('complex.payment.component', `${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error', errdata.message) });
-        }
-      });
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('complex.payment.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error', errdata.message) });
+          }
+        });
+    } else {
+      this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
+        result => {
+          if (result) {
+            this.paymentModeListByMain = result;
+            if (result.paymentModes && result.paymentModes.length > 0) {
+              this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
+              this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
+                this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
+              });
+              this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
+            } else {
+              this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+            }
+          }
+        },
+        error => {
+          const errdata = Utils.getError(error);
+          if (errdata) {
+            this.logger.set('complex.payment.component', `${errdata.message}`).error();
+            this.alert.error({ message: this.message.get('server.error', errdata.message) });
+          }
+        });
+    }
   }
 
   private popupPayment(popupType: string) {

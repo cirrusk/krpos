@@ -89,6 +89,7 @@ export const environment = {
   healthCheckUse: false, // Health Check 사용여부
   healthCheckInterval: 15, // Hybris Health Check 타임아웃(sec)
   hybrisCheckUrl: 'https://api.qa.amway.co.kr/api/v2/swagger-ui.html', // Hybris Health Check URL
+  useCache: false,
   cartListCount: 8, // 카트 목록 건수
   noticeInterval: 7, // 일반 공지사항 롤링 주기(sec)
   promotionInterval: 9, // 프로모션 공지사항 롤링 주기(sec)
