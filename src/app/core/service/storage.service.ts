@@ -218,7 +218,8 @@ export class StorageService implements OnDestroy {
    * @returns {TerminalInfo} 터미널 정보
    */
   public getTerminalInfo(): TerminalInfo {
-    const terminalinfo: TerminalInfo = this.getSessionItem('terminalInfo');
+    let terminalinfo: TerminalInfo = this.getSessionItem('terminalInfo');
+    terminalinfo =  (terminalinfo === null) ? this.getLocalItem('terminalInfo') : terminalinfo;
     return terminalinfo;
   }
 
@@ -228,6 +229,7 @@ export class StorageService implements OnDestroy {
    */
   public setTerminalInfo(data: any): void {
     this.setSessionItem('terminalInfo', data);
+    this.setLocalItem('terminalInfo', data);
   }
 
   /**
