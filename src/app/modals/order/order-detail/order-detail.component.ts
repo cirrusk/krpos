@@ -196,7 +196,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         modalId: ModalIds.CANCEL
       }
       ).subscribe(result => {
-        if (result.cancelFlag) {
+        if (result && result.cancelFlag) {
           this.cancelSymbol = '-';
           this.cancelFlag = true;
           this.activeFlag = true;
@@ -217,12 +217,11 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         callerData: { orderInfo: this.orderInfo },
         closeByClickOutside: false,
         closeByEnter: false,
-        closeByEscape: false,
         modalId: ModalIds.REORDER
       }
       ).subscribe(
         result => {
-          if (result.cancelFlag) {
+          if (result && result.cancelFlag) {
             // 재결제 추가
             const data = { 'orderDetail': result.data, 'orderType': this.orderInfo.isGroupCombinationOrder ? this.orderInfo.isGroupCombinationOrder : false };
             this.info.sendInfo('paymentChange', data);
