@@ -36,6 +36,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   checktype: number;
   orderType: string;
   receiptenable: boolean;
+  private dupcheck = false;
   private bernumber: string;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -91,7 +92,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     } else if (this.finishStatus === ErrorType.CARDFAIL) {
       this.sendCartClearOrRecart();
     } else if (this.finishStatus !== StatusDisplay.ERROR) {
-      this.payFinishByEnter();
+      if (!this.dupcheck) {
+        setTimeout(() => { this.payFinishByEnter(); }, 300);
+        this.dupcheck = true;
+      }
     }
   }
 
@@ -103,7 +107,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private pay(): void {
     if (this.finishStatus !== null) {
       if (Utils.isPaymentSuccess(this.finishStatus)) {
-        this.payFinishByEnter();
+        if (!this.dupcheck) {
+          setTimeout(() => { this.payFinishByEnter(); }, 300);
+          this.dupcheck = true;
+        }
       }
       return;
     }
@@ -111,6 +118,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (calpaid >= this.payamount) { // payment capture 와 place order (한꺼번에) 실행
       if (Utils.isEmpty(this.storage.getPaymentModeCode())) {
         this.checktype = -1;
+        this.dupcheck = false;
         this.apprmessage = this.message.get('not.choose.payment'); // '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.';
       } else {
         this.checktype = 0;
@@ -192,6 +200,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             } else {
               this.apprmessage = this.message.get('payment.fail');
             }
+            this.dupcheck = false;
           } else {
             this.popupCashReceipt(); // 현금성 거래 (리캐시, 자동이체, 현금) 일 때는 무조건 현금 영수증 창이 뜸
             this.orderType = result.orderType.code;
@@ -202,6 +211,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         } else { // 결제정보 없는 경우, CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = ErrorType.NOORDER;
           this.apprmessage = this.message.get('payment.fail.other');
+          this.dupcheck = false;
         }
         this.storage.removePay();
       }, error => {
@@ -492,7 +502,10 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         } else if (this.finishStatus === ErrorType.NOORDER) { // 주문정보 없음 다른 결제 수단
           this.close();
         } else if (this.finishStatus !== StatusDisplay.ERROR) {
-          this.payFinishByEnter();
+          if (!this.dupcheck) {
+            setTimeout(() => { this.payFinishByEnter(); }, 300);
+            this.dupcheck = true;
+          }
         }
       }
     } else if (event.keyCode === KeyCode.ESCAPE) {
