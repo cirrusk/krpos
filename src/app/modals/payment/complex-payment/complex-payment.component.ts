@@ -444,8 +444,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    *  현금 IC 카드
    *  현금(수표)
    *
-   * @param userId
-   * @param cartId
+   * @param {string} userId 회원 아이디
+   * @param {string} cartId 카트 아이디
    */
   private getPaymentModesByMain(userId: string, cartId: string): void {
     if (this.useCache) {
