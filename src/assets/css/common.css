@@ -338,8 +338,8 @@ table input[type='text'] {font-family:'NSM';}
 .scrl_area02 {height:215px; padding:20px; margin-top:14px; border:1px solid #08132f; overflow-y:scroll}
 .scrl_area02 li {display:table; vertical-align:middle; width:100%; height:35px}
 .scrl_area02 li em {display:table-cell; vertical-align:middle; line-height:16px}
-.scrl_area02 li span {display:table-cell; width:160px; text-align:right}
-.scrl_area02 li span input {width:150px; text-align:center}
+.scrl_area02 li span {display:table-cell; width:60px; text-align:right}
+.scrl_area02 li span input {width:50px; text-align:right}
 .scrl_area02 li + li {margin-top:10px}
 
  /* 회원정보조회 */
