@@ -107,7 +107,7 @@ export class SignupAccountComponent extends ModalComponent implements OnInit, On
           // if (errdata.message.indexOf('Please enter a valid Sponsor') > -1) {
           //   this.errorMessage = '등록된 후원자와 일치하는 번호가 없습니다. 확인 후 다시 입력해주세요.';
           // } else {
-            this.errorMessage = errdata.message;
+            this.errorMessage = errdata.message ? errdata.message : '오류가 발생하였습니다. 관리자에게 문의하시기 바랍니다.';
           // }
         }
       });
