@@ -161,7 +161,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   reset() {
     this.paymentcapture = new PaymentCapture();
-    this.storage.removePaymentModeCode();
+    this.storage.removePaymentModeCode(); // 금액 잘못 입력등으로 결제창 빠져나올 경우 주결재수단은 초기화!
     // this.storage.removePaymentCapture();
     // this.storage.removePay();
     this.resetSelected();
