@@ -407,22 +407,42 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
   /**
    * ABO
-   *  creditcard
-   *  cash
-   *  cashiccard
-   *  directdebit
-   *  cheque
-   *  creditvoucher
+   *  자동이체	현금(수표)	Recash	A포인트	쿠폰
+   *  현금 IC 카드
+   *  현금(수표)
+   *  현금(수표)	A포인트
+   *  현금(수표)	A포인트	쿠폰
+   *  현금(수표)	Recash
+   *  현금(수표)	Recash	쿠폰
+   *  현금(수표)	A포인트	Recash
+   *  현금(수표)	A포인트	Recash	쿠폰
+   *  Recash
+   *  Recash	A포인트
+   *  Recash	A포인트	쿠폰
+   *  A포인트
+   *  A포인트 Recash
+   *  A포인트 Recash 쿠폰
    *
    * MEMBER
-   *  creditcard
-   *  cash
-   *  point
-   *  cheque
+   *  신용카드
+   *  신용카드	현금(수표)
+   *  신용카드	M포인트
+   *  신용카드	현금(수표)	M포인트
+   *  체크카드
+   *  체크카드	현금(수표)
+   *  체크카드	M포인트
+   *  체크카드	현금(수표)	M포인트
+   *  현금(수표)
+   *  현금(수표)	M포인트
+   *  현금 IC 카드
    *
    * CUSTOMER
-   *  creditcard
-   *  cash
+   *  신용카드
+   *  신용카드	현금(수표)
+   *  체크카드
+   *  체크카드	현금(수표)
+   *  현금 IC 카드
+   *  현금(수표)
    *
    * @param userId
    * @param cartId
@@ -432,16 +452,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.paymentModesSubscription = this.cache.get('PM-' + userId, this.paymentService.getPaymentModesByMain(userId, cartId)).subscribe(
         result => {
           if (result) {
-            this.paymentModeListByMain = result;
-            if (result.paymentModes && result.paymentModes.length > 0) {
-              this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
-              this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
-                this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
-              });
-              this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
-            } else {
-              this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
-            }
+            this.paymentModeset(result);
           }
         },
         error => {
@@ -455,16 +466,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.paymentModesSubscription = this.paymentService.getPaymentModesByMain(userId, cartId).subscribe(
         result => {
           if (result) {
-            this.paymentModeListByMain = result;
-            if (result.paymentModes && result.paymentModes.length > 0) {
-              this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
-              this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
-                this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
-              });
-              this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
-            } else {
-              this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
-            }
+            this.paymentModeset(result);
           }
         },
         error => {
@@ -474,6 +476,24 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             this.alert.error({ message: this.message.get('server.error', errdata.message) });
           }
         });
+    }
+  }
+
+  /**
+   * 결제수단별 설정
+   *
+   * @param {PaymentModeListByMain} result 주결제 및 결제수단 목록
+   */
+  private paymentModeset(result: any) {
+    this.paymentModeListByMain = result;
+    if (result.paymentModes && result.paymentModes.length > 0) {
+      this.setCouponEnabler(); // 쿠폰결제 하고 들어오면 활성화할 메뉴 체크.
+      this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
+        this.paymentModes.set(paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1), paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1));
+      });
+      this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
+    } else {
+      this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
     }
   }
 
