@@ -264,6 +264,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.info.sendInfo('orderClear', 'clear');
         this.close();
       } else if (this.finishStatus === ErrorType.NOORDER) {
+        this.storage.removePay(); // 금액을 초기화해서 다시 결제하도록함.
         this.close();
       }
     }
