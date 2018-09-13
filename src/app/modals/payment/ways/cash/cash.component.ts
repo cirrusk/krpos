@@ -28,10 +28,10 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   paidDate: Date;
   checktype: number;
   apprmessage: string;
-  payamount: number;
+  payamount: number;  // 현재 원 결제금액
   orderType: string;
   private regex: RegExp = /[^0-9]+/g;
-  private paidamount: number;
+  // private paidamount: number;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -79,15 +79,13 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       modalId: ModalIds.CHECKS
     }).subscribe(result => {
       if (result) {
-        this.paid.nativeElement.value = result;
-        // payment 구성할때 수표지불처리해야함.
+        this.paid.nativeElement.value = result; // payment 구성할때 수표지불처리해야함.
         setTimeout(() => { this.paid.nativeElement.focus(); }, 50);
       }
     });
   }
 
   private loadPayment() {
-    this.paidamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 원 결제 금액
     this.payamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 원 결제 금액
     const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
     if (p && p.cashPaymentInfo) {
@@ -96,7 +94,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.paid.nativeElement.value = 0;
       if (this.storage.getPay() > 0) {
         this.payamount = this.storage.getPay();
-        this.paidamount = this.storage.getPay();
       }
     }
     this.cashCal();
@@ -104,10 +101,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   cashCal() {
-    const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0;
-    // const payment = this.payment.nativeElement.value ? Number(this.payment.nativeElement.value) : 0;
-    const payment = this.payamount ? Number(this.payamount) : 0;
-    const paychange = this.paidamount - payment; // 장바구니 결제금액 - 실결제금액
+    const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0; // 받은금액 결제할 금액
     if (paid < 1) { // 1. 받은금액이 작을 경우
       this.paySubmitLock(false); // 버튼 잠금 해제
       this.checktype = -1;
@@ -115,11 +109,6 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       return;
     } else {
       this.checktype = 0;
-    }
-    if (paychange < 0) {
-      this.paySubmitLock(false); // 버튼 잠금 해제
-      this.checktype = -3;
-      this.apprmessage = '결제금액이 장바구니의 금액보다 클 수 없습니다.';
     }
   }
 
@@ -165,14 +154,14 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.apprmessage = this.message.get('notinputPaid');
       return;
     }
-    let paychange = this.paidamount - nPayAmount; // 장바구니 결제금액 - 실결제금액
+    let paychange = this.payamount - nPayAmount; // 장바구니 결제금액 - 실결제금액
     const change = nReceiveAmount - nPayAmount; // 거스름돈 = 내신금액 - 결제금액
     if (change < 0) { // 내신금액이 결제금액보다 작으면 결제금액을 내신금액으로 대체
       nPayAmount = nReceiveAmount;
-      paychange = this.paidamount - nPayAmount;
+      paychange = this.payamount - nPayAmount;
     }
     if (paychange > 0) { // 결제할 금액이 더있음.
-      this.storage.setPay(this.paidamount - nPayAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
+      this.storage.setPay(this.payamount - nPayAmount); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       this.paymentcapture = this.payment.makeCashPaymentCaptureData(this.paymentcapture, nPayAmount, nReceiveAmount, change).capturePaymentInfoData;
       this.result = this.paymentcapture;
       this.finishStatus = StatusDisplay.PAID;
@@ -228,8 +217,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
    * 복합결제 : 카트 및 클라이언트 갱신
    */
   private payFinishByEnter() {
-    const payment = this.payamount ? Number(this.payamount) : 0; // 결제금액
-    const paychange = this.paidamount - payment;
+    const payment = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0; // 받은금액 결제할 금액
+    const paychange = payment - this.payamount; // 받은금액 - 결제금액
     if (paychange >= 0) {
       this.close();
     }

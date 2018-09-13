@@ -145,9 +145,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       const p = this.paymentcapture.directDebitPaymentInfo.amount;
       if (p) { paid += Number(p); }
     }
-    if (this.paymentcapture.voucherPaymentInfo) { // 쿠폰결제
-
-    }
+    if (this.paymentcapture.voucherPaymentInfo) { } // 쿠폰결제
     if (this.paymentcapture.pointPaymentInfo) { // 포인트결제
       const p = this.paymentcapture.pointPaymentInfo.amount;
       if (p) { paid += Number(p); }
