@@ -194,10 +194,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       usepoint = this.paymentprice;
     } else {
       usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
-      if (typeof usepoint !== 'number') {
+      if (usepoint === 0) {
         this.checktype = -3;
         this.apprmessage = this.message.get('point.empty'); // '사용 포인트가 공란입니다.';
         this.dupcheck = false;
+        return;
       }
     }
     if (this.point < usepoint) {
@@ -221,7 +222,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
       this.result = this.paymentcapture;
       this.completePayPopup(usepoint, this.paymentprice, 0);
     } else {
-      this.finishStatus = 'fail';
+      // this.finishStatus = 'fail';
+      this.checktype = -4;
       this.apprmessage = this.message.get('point.overpaid'); // '사용 포인트가 결제금액보다 많습니다.';
       this.dupcheck = false;
     }
