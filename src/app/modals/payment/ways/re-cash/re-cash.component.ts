@@ -38,8 +38,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
   constructor(protected modalService: ModalService, private modal: Modal,
-    private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService,
-    private storage: StorageService, private message: MessageService, private info: InfoBroker, private logger: Logger, private cartService: CartService) {
+    private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService, private cartService: CartService,
+    private storage: StorageService, private message: MessageService, private info: InfoBroker, private logger: Logger) {
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;
