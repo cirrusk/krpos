@@ -162,14 +162,15 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
       paid = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
     }
     this.paymentcapture = this.payments.makeRecashPaymentCaptureData(this.paymentcapture, paid).capturePaymentInfoData;
-    this.result = this.paymentcapture;
     if (check > 0) { // 결제할것이 남음.
       this.storage.setPay(this.paidamount - usepoint); // 현재까지 결제할 남은 금액(전체결제금액 - 실결제금액)을 세션에 저장
       this.payments.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.finishStatus = StatusDisplay.PAID;
       this.apprmessage = this.message.get('payment.success.next');
+      this.result = this.paymentcapture;
       this.close();
     } else if (check === 0) {
+      this.result = this.paymentcapture;
       this.finishStatus = StatusDisplay.PAID;
       this.payments.sendPaymentAndOrderInfo(this.paymentcapture, null);
       this.apprmessage = this.message.get('payment.success');

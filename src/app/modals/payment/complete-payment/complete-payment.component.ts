@@ -129,6 +129,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   /**
    * 전체 결재 금액 계산
+   * 내신금액(받은금액) 은 모든 결제수단의 합계임.
    */
   private calAmountByPayment(): number {
     let paid = 0;
@@ -277,10 +278,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       const apprdate: string = cc.cardRequestDate ? cc.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       const apprnumber: string = cc.cardApprovalNumber;
       const installment: string = cc.installmentPlan;
-      this.logger.set('complete.payment.component', `credit card amount : ${amount}`).debug();
-      this.logger.set('complete.payment.component', `credit card apprdate : ${apprdate}`).debug();
-      this.logger.set('complete.payment.component', `credit card apprnumber : ${apprnumber}`).debug();
-      this.logger.set('complete.payment.component', `credit card installment : ${installment}`).debug();
       const resultNotifier: Subject<CardCancelResult> = this.nicepay.cardCancel(String(amount), apprnumber, apprdate, installment);
       resultNotifier.subscribe(
         (res: CardCancelResult) => {
@@ -312,8 +309,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       this.apprmessage = '현금IC카드 취소를 진행해주세요.';
       const amount: number = ic.amount;
       const apprdate: string = ic.cardRequestDate ? ic.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
-      this.logger.set('complete.payment.component', `ic card amount : ${amount}`).debug();
-      this.logger.set('complete.payment.component', `ic card apprdate : ${apprdate}`).debug();
       const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(amount), apprdate, apprdate);
       resultNotifier.subscribe(
         (res: ICCardCancelResult) => {
@@ -362,6 +357,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   /**
    * 중개주문일 경우 Payment 정보에 중개주문 정보를 설정함.
+   * 중개주문을 설정할 경우 현금영수증 증빙되지 않도록 처리.
    */
   private setBerInfo(): ReceiptInfoData {
     this.bernumber = this.storage.getBer();
@@ -395,8 +391,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   escapeAndClose() {
     if (this.finishStatus) {
       if (this.finishStatus === ErrorType.RECART) { // 카트 재생성
-        // 카드 결제 취소하기 및 후속 처리하기
-        this.cardCancelAndSendInfoForError();
+        this.cardCancelAndSendInfoForError(); // 카드 결제 취소하기 및 후속 처리하기
       } else if (this.finishStatus === ErrorType.FAIL) { // API 오류
         this.cardCancelAndSendInfoForError(ErrorType.API);
       } else if (this.finishStatus === ErrorType.CARDFAIL) {
@@ -413,6 +408,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   /**
    * 영수증 출력 팝업 : 키보드에서 현금영수증 버튼 선택 시, 현금영수증 팝업
+   * 중개주문인 경우는 영수증 증빙 출력하지 않음.
    */
   protected popupCashReceipt() {
     if (Utils.isEmpty(this.bernumber)) { // 중개주문인 경우는 영수증 출력하지 않음.
@@ -458,8 +454,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.finishStatus !== StatusDisplay.ERROR) {
       if (this.paymentcapture.cashPaymentInfo && this.paymentcapture.cashPaymentInfo.amount > 0) { // 현금결제가 있으면 캐셔 drawer 오픈
         this.printer.openCashDrawer(); // cash drawer open
-        // cash drawer open logging
-        this.payments.cashDrawerLogging().subscribe(
+        this.payments.cashDrawerLogging().subscribe( // cash drawer open logging
           result => {
             this.logger.set('complete.payment.component', `${result.returnMessage}`).debug();
             this.printAndCartInit(isCashReceipt);
@@ -492,11 +487,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT) {
         if (this.finishStatus === ErrorType.RECART) { // 카트 재생성
-          // 카드 결제 취소하기 및 후속 처리하기
-          this.cardCancelAndSendInfoForError();
+          this.cardCancelAndSendInfoForError(); // 카드 결제 취소하기 및 후속 처리하기
         } else if (this.finishStatus === ErrorType.FAIL) { // API 오류
-          // 카드 결제 취소하기 및 카트 조회 후 후속 처리하기
-          this.cardCancelAndSendInfoForError(ErrorType.API);
+          this.cardCancelAndSendInfoForError(ErrorType.API); // 카드 결제 취소하기 및 카트 조회 후 후속 처리하기
         } else if (this.finishStatus === ErrorType.NOORDER) { // 주문정보 없음 다른 결제 수단
           this.close();
         } else if (this.finishStatus !== StatusDisplay.ERROR) {
