@@ -265,7 +265,7 @@ export class PaymentService {
         const cash = paymentcapture.cashPaymentInfo;
         receivedprice += cash.amount ? cash.amount : 0;
         const change = cash.change ? Number(cash.change) : 0;
-        receivedprice += change;
+        receivedprice += change; // 받은돈으로 처리하거나 거스름돈을 현금 결제금액에 더해줌.
         pay.setCashamount = cash.amount ? cash.amount : 0;
         pay.setCashchange = cash.change ? Number(cash.change) : 0;
       }

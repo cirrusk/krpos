@@ -68,6 +68,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   @Output() public posPytoCafe: EventEmitter<any> = new EventEmitter<any>();  // 파이토 카페 선택 시 카트컴포넌트에 전달
   @Output() public posBer: EventEmitter<any> = new EventEmitter<any>();       // 중개주문 팝업에서 사업자 선택시 카트 컴포넌트에 전달
   @Output() public posPayReset: EventEmitter<any> = new EventEmitter<any>();  // 통합결제 창이 닫힐 경우 결과 금액 초기화하기
+  @Output() public posCoupon: EventEmitter<any> = new EventEmitter<any>();    // 회원 검색 시 쿠폰이 있을 경우 쿠폰건추 출력 카트에 전달
   constructor(private modal: Modal,
     private storage: StorageService,
     private logger: Logger,
@@ -103,6 +104,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
           if (result) {
             this.couponlist = result;
             this.couponsize = result.pagination.totalResults;
+            this.posCoupon.emit({ coupon: this.couponsize });
           }
         },
         error => { this.logger.set('order.menu.component', `${error}`).error(); });
@@ -297,7 +299,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         callerData: {
           accountInfo: this.accountInfo, cartInfo: this.cartInfo,
           amwayExtendedOrdering: this.amwayExtendedOrdering,
-          addPopupType: addPopupType, couponlist: this.couponlist },
+          addPopupType: addPopupType, couponlist: this.couponlist
+        },
         closeByClickOutside: false,
         modalId: ModalIds.COUPON
       });
@@ -545,7 +548,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     const jsonData = {
       'user': amwayExtendedOrdering.orderList[0].user,
       'totalPrice': amwayExtendedOrdering.totalValue,
-      'totalTax' : null,
+      'totalTax': null,
       'code': amwayExtendedOrdering.orderList[0].code
     };
     Object.assign(this.cartInfo, jsonData);

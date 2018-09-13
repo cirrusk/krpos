@@ -112,7 +112,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   paymentChange: boolean;                                                   // 재결제 여부
   ber: BerData;   // 사업자 정보
   promotion: Promotion;
-
+  couponSize = 0;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
@@ -335,6 +335,16 @@ export class CartListComponent implements OnInit, OnDestroy {
   setPayReset(data) {
     if (data && data.reset) {
       this.payInfoReset();
+    }
+  }
+
+  /**
+   * 고객 검색이 이루어졌을 경우 메뉴에서 쿠폰을 검색하고
+   * 쿠폰 건수를 전달받아 화면에 출력
+   */
+  setCoupon(data) {
+    if (data && data.coupon) {
+      this.couponSize = data.coupon;
     }
   }
 
