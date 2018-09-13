@@ -91,6 +91,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       this.cardCancelAndSendInfoForError(ErrorType.API);
     } else if (this.finishStatus === ErrorType.CARDFAIL) {
       this.sendCartClearOrRecart();
+    } else if (this.finishStatus === ErrorType.NOORDER) {
+      this.cardCancelAndSendInfoForError();
     } else if (this.finishStatus !== StatusDisplay.ERROR) {
       if (!this.dupcheck) {
         setTimeout(() => { this.payFinishByEnter(); }, 300);
