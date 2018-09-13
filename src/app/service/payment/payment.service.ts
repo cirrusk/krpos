@@ -16,6 +16,7 @@ import { Cart } from '../../data/models/order/cart';
 import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
 import { BankAccount } from '../../data/models/order/bank-account';
+import { OrderService } from '../order/order.service';
 
 /**
  * 지불 처리 서비스
@@ -25,6 +26,7 @@ export class PaymentService {
 
   private directdebitTimeout: number;
   constructor(private api: ApiService,
+    private order: OrderService,
     private storage: StorageService,
     private info: InfoBroker,
     private config: Config) {
@@ -296,7 +298,8 @@ export class PaymentService {
       pay.setDiscount = order.totalDiscounts ? order.totalDiscounts.value : 0;
       pay.setPv = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.pointValue : 0;
       pay.setBv = (order.totalPrice && order.totalPrice.amwayValue) ? order.totalPrice.amwayValue.businessVolume : 0;
-      pay.setTotalprice = order.totalPrice ? order.totalPrice.value : 0;
+      // pay.setTotalprice = order.totalPrice ? order.totalPrice.value : 0;
+      pay.setTotalprice = order.totalPrice ? this.order.getTotalPriceWithTax(order) : 0;
     }
     return pay;
   }
