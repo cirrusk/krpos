@@ -72,6 +72,17 @@ export class CacheService {
   }
 
   /**
+   * 캐시값 삭제
+   * @param key 캐시키
+   */
+  clear(key: string): boolean {
+    if (this.has(key)) {
+      return this.cache.delete(key);
+    }
+    return true;
+  }
+
+  /**
    * Observer가 있으면 모든 Observer에게 이벤트 전송
    *
    * @param key 캐시키
