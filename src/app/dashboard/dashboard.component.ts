@@ -242,7 +242,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         message: msg,
         actionButtonLabel: btn,
         closeButtonLabel: '취소',
-        closeByClickOutside: false,
         modalId: ModalIds.POSEND
       }
     ).subscribe(
