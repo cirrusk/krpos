@@ -123,7 +123,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
             this.apprmessage = this.message.get('receipt.reg.number.success');
           } else {
             this.finishStatus = 'fail';
-            this.apprmessage = result.returnMessage;
+            this.apprmessage = this.message.get('receipt.reg.number.fail'); // result.returnMessage;
           }
         },
         error => {
