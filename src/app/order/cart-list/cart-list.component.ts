@@ -1353,11 +1353,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 callerData: { data: this.restrictionMessageList },
                 closeByEnter: true,
                 modalId: ModalIds.RESTRICT
-              }).subscribe(
-                () => {
-                  setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
-                }
-              );
+              }).subscribe(() => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); });
             }
           },
           error => {
@@ -1406,9 +1402,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.alert.error({ message: this.message.get('server.error', errdata.message) });
             }
           },
-          () => {
-            setTimeout(() => { this.searchText.nativeElement.focus(); }, 90);
-          });
+          () => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 90); });
     } else {
       this.alert.error({ message: this.message.get('noCartInfo') });
     }
@@ -1531,15 +1525,12 @@ export class CartListComponent implements OnInit, OnDestroy {
    *   3. 사용자 조회가 안된 상태
    */
   saveCart() {
-    if (this.accountInfo === null) { // 회원이 조회되지 않은 상태 - 보류 조회
-      // 보류 내역 조회
+    if (this.accountInfo === null) { // 회원이 조회되지 않은 상태 - // 보류 내역 조회
       this.getSaveCarts();
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
-    } else if (this.cartInfo.code === undefined) {
-      // 장바구니 정보 없음
+    } else if (this.cartInfo.code === undefined) { // 장바구니 정보 없음
       this.activeSearchMode(SearchMode.PRODUCT);
-      if (this.orderType === OrderType.GROUP) {
-        // Ordering ABO 선택 처리
+      if (this.orderType === OrderType.GROUP) { // Ordering ABO 선택 처리
         this.setUserPage(1);
         this.selectedUserIndex = 0;
         this.selectedUserId = this.groupAccountInfo[0].uid;
@@ -1549,7 +1540,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
       }
       setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
-
     } else {
       // 그룹 - 장바구니 정보 유, 엔트리 정보 무
       if (this.orderType === OrderType.GROUP && this.amwayExtendedOrdering && this.amwayExtendedOrdering.orderList[0].entries.length < 1) {
@@ -1563,8 +1553,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       } else if (this.orderType === OrderType.NORMAL && this.cartList.length < 1) {
         this.alert.error({ message: this.message.get('noCartInfo'), timer: true, interval: 1500 });
         setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1550);
-        // 결제 진행중
-      } else if (this.storage.isPaymentProcessing() === true) {
+      } else if (this.storage.isPaymentProcessing() === true) { // 결제 진행중
         this.alert.error({ message: this.message.get('noHoldDuringPayment') });
       } else {
         if (this.ber !== null) {
@@ -1574,7 +1563,6 @@ export class CartListComponent implements OnInit, OnDestroy {
             Object.assign(this.holdBer, holdBerList);
           }
           this.holdBer.push(bedData);
-
           this.storage.setHoldBer(this.holdBer);
         }
         // 보류 가능
@@ -1707,7 +1695,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   setCartInfo(cartData: Cart): void {
     this.cartList.length = 0;
-
     // 일반주문의 경우 중개주문 여부 확인
     if (this.orderType === OrderType.NORMAL) {
       this.checkStorageHoldBer();
@@ -1759,10 +1746,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {boolean} pagerFlag 페이징 여부
    */
   setPage(page: number, pagerFlag: boolean = false) {
-    if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
-      return;
-    }
-
+    if ((page < 1 || page > this.pager.totalPages) && pagerFlag) { return; }
     const currentCartData = this.pagerService.getCurrentPage(this.cartList, page, this.cartListCount);
     // pagination 생성 데이터 조회
     this.pager = currentCartData.get('pager') as Pagination;
@@ -1787,15 +1771,12 @@ export class CartListComponent implements OnInit, OnDestroy {
     if ((page < 1 || page > this.userPager.totalPages) && pagerFlag) {
       return;
     }
-
     const currentUserData = this.pagerService.getCurrentPage(this.groupAccountInfo, page, this.GROUP_ACCOUNT_PAGE_SIZE);
 
-    // pagination 생성 데이터 조회
-    this.userPager = currentUserData.get('pager') as Pagination;
 
+    this.userPager = currentUserData.get('pager') as Pagination; // pagination 생성 데이터 조회
     // 출력 리스트 생성
-    // 리스트 결과가 없을 경우 리스트 초기화
-    this.currentGroupAccountInfo = currentUserData.get('list') as Array<Accounts>;
+    this.currentGroupAccountInfo = currentUserData.get('list') as Array<Accounts>; // 리스트 결과가 없을 경우 리스트 초기화
 
     this.selectedUserIndex = this.currentGroupAccountInfo.length === 0 ? -1 : this.currentGroupAccountInfo.length - 1;
     this.selectedUserId = this.currentGroupAccountInfo.length === 0 ? '' : this.currentGroupAccountInfo[this.selectedUserIndex].uid;
@@ -2161,8 +2142,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private doOpenDrawer() {
     this.printerService.openCashDrawer(); // cash drawer open
-    // cash drawer open logging
-    this.payment.cashDrawerLogging().subscribe(
+    this.payment.cashDrawerLogging().subscribe( // cash drawer open logging
       result => {
         this.logger.set('cart.list.component', `${result.returnMessage}`).debug();
       },
@@ -2190,9 +2170,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private doHold() {
     const modalData = this.storage.getSessionItem('latestModalId');
-    if (modalData === null) {
-      this.saveCart();
-    }
+    if (modalData === null) { this.saveCart(); }
   }
 
   /**
@@ -2202,9 +2180,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private updateQty() {
     const modalData = this.storage.getSessionItem('latestModalId');
     if (modalData === null) {
-      if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) {
-        this.callUpdateItemQty();
-      }
+      if (this.selectedCartNum !== null && this.selectedCartNum < this.cartListCount) { this.callUpdateItemQty(); }
     }
   }
 
