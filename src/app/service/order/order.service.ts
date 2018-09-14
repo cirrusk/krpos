@@ -223,7 +223,7 @@ export class OrderService {
    */
   getTaxablePrice(orderInfo: Order) {
     const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
-    return totalprice - this.getDiscountPrice(orderInfo);
+    return totalprice + this.getDiscountPrice(orderInfo);
   }
 
   /**

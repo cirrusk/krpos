@@ -70,7 +70,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
-    console.log(this.cartInfo);
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) {
       this.paymentcapture = this.callerData.paymentCapture;

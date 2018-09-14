@@ -217,11 +217,16 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.storage.removePay();
       }, error => {
         this.finishStatus = ErrorType.FAIL; // 카트가 있는지 조회하여 있으면 닫고 없으면 재생성
-        const errdata = Utils.getError(error);
-        if (errdata) {
-          this.logger.set('complete.payment.component', `${errdata.message}`).error();
-          this.apprmessage = errdata.message;
-        } else {
+        try {
+          const errdata = Utils.getError(error);
+          if (errdata && errdata.message) {
+            this.logger.set('complete.payment.component', `${errdata.message}`).error();
+            this.apprmessage = errdata.message;
+          } else {
+            this.checktype = -1;
+            this.apprmessage = this.payments.paymentError(error);
+          }
+        } catch (e) {
           this.checktype = -1;
           this.apprmessage = '오류가 발생하였습니다.';
         }

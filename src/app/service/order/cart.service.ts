@@ -342,17 +342,19 @@ export class CartService {
 
   /**
    * 과세물품 : 총 금액
+   * totalPrice + orderDiscounts + orderTaxDiscount + productDiscounts + productTaxDiscount
    * @param cartInfo 카트 정보
    */
   getTaxablePrice(cartInfo: Cart) {
     const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
-    const taxableprice = totalprice - this.getDiscountPrice(cartInfo);
+    const taxableprice = totalprice + this.getDiscountPrice(cartInfo);
     this.logger.set('cart.service', `taxable price : ${taxableprice}`).debug();
     return taxableprice;
   }
 
   /**
    * 부가세 : 총 세금 금액
+   * totalTax
    * @param cartInfo 카트 정보
    */
   getTaxPrice(cartInfo: Cart) {
@@ -363,6 +365,7 @@ export class CartService {
 
   /**
    * 합계 : 세금 포함 총 금액
+   * 과세물품 + 부가세
    * @param cartInfo 카트 정보
    */
   getTotalPriceWithTax(cartInfo: Cart) {
@@ -373,6 +376,7 @@ export class CartService {
 
   /**
    * 할인금액 : 세금을 포함한 총 할인금액
+   * orderDiscounts + orderTaxDiscount + productDiscounts + productTaxDiscount
    * @param cartInfo 카트 정보
    */
   getDiscountPrice(cartInfo: Cart) {
@@ -391,6 +395,7 @@ export class CartService {
 
   /**
    * 결제금액 : 총 금액(TAX 제외) + 부가세 - 포인트 - Re-Cash
+   *
    * @param cartInfo 카트 정보
    */
   getPaymentPrice(cartInfo: Cart, paymentCapture: PaymentCapture) {
