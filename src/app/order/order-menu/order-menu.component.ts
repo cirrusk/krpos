@@ -367,9 +367,9 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
       });
     }
     this.modal.openModalByComponent(SearchAccountComponent, {
-      closeByClickOutside: false,
       actionButtonLabel: '선택',
       closeButtonLabel: '초기화',
+      closeByClickOutside: true,
       orderType: OrderType.GROUP,
       modalId: ModalIds.ACCOUNT
     }).subscribe(result => {
@@ -494,7 +494,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
   promotionOrder(evt: any) {
     if (!this.hasAccount) { return; }
     this.modal.openModalByComponent(PromotionOrderComponent, {
-      closeByClickOutside: false,
+      closeByClickOutside: true,
       modalId: ModalIds.PROMOTION
     }).subscribe(result => {
       if (result) {
@@ -523,7 +523,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     if (!this.hasAccount) { this.accountInfo = null; }
     this.modal.openModalByComponent(EtcOrderComponent, {
       callerData: { accountInfo: this.accountInfo },
-      closeByClickOutside: false,
+      closeByClickOutside: true,
       modalId: ModalIds.ETC
     }).subscribe(result => {
       if (result && result === 'pyt') {
