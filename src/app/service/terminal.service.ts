@@ -64,19 +64,19 @@ export class TerminalService {
     if (error instanceof HttpErrorResponse) {
       switch (error.status) {
         case 500: {
-          msg = `내부 서버 오류] 서버에 오류가 발생하여 요청을 수행할 수 없습니다.<br>${error.message}`;
+          msg = `[내부 서버 오류] 서버에 오류가 발생하여 요청을 수행할 수 없습니다.<br>${error.message}`;
         } break;
         case 501: {
           msg = `[구현되지 않음] 서버에 요청을 수행할 수 있는 기능이 없습니다.<br>${error.message}`;
         } break;
         case 502: {
-          msg = `[Bad Gateway] 서버가 게이트웨이나 프록시 역할을 하고 있거나 또는 업스트림 서버에서 잘못된 응답을 받았습니다.<br>${error.message}`;
+          msg = `[Bad Gateway] 서버에서 잘못된 응답을 받았습니다.<br>${error.message}`;
         } break;
         case 503: {
-          msg = `[서비스를 사용할 수 없음] 서버가 오버로드되었거나 유지관리를 위해 다운되었기 때문에 현재 서버를 사용할 수 없습니다.<br>${error.message}`;
+          msg = `[서비스를 사용할 수 없음] 서버가 다운되어 서버를 사용할 수 없습니다.<br>${error.message}`;
         } break;
         case 504: {
-          msg = `[게이트웨이 시간초과] 서버가 게이트웨이나 프록시 역할을 하고 있거나 또는 업스트림 서버에서 제때 요청을 받지 못했습니다.<br>${error.message}`;
+          msg = `[시간초과] 서버에서 요청을 받지 못했습니다.<br>${error.message}`;
         } break;
         default: {
           msg = `[${error.status} ${error.name}] ${error.statusText}<br>${error.message}`;
