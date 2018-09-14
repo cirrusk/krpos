@@ -123,7 +123,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.totalPrice = 0;         // 총 금액
     this.received = 0;           // 낸 금액
     this.change = 0;             // 거스름돈
-    this.installment = -1;     // 카드 할부
+    this.installment = -1;       // 카드 할부
     this.ccamount = 0;           // 신용카드 결제금액
     this.cashamount = 0;         // 현금 결제금액
     this.pointamount = 0;        // 포인트 사용금액

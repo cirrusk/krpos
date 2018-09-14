@@ -346,7 +346,7 @@ export class CartService {
    */
   getTaxablePrice(cartInfo: Cart) {
     const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
-    const taxableprice = totalprice + this.getDiscountPrice(cartInfo);
+    const taxableprice = totalprice - this.getDiscountPrice(cartInfo);
     this.logger.set('cart.service', `taxable price : ${taxableprice}`).debug();
     return taxableprice;
   }
