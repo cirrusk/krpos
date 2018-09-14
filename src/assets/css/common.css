@@ -697,10 +697,10 @@ table input[type='text'] {font-family:'NSM';}
 .m_right .promotion .img li .green .pro {color:#fff}
 .m_right .promotion .img li div + div {margin-top:5px}
 .m_right .promotion .img li div .inner > * {display:-webkit-box; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:break-all;}
-.m_right .promotion .controls a {position:absolute; bottom:-3px; width:16px; height:14px; background:url(/assets/images/common/ico_common.png) -203px 0 no-repeat; text-indent:-999px; overflow:hidden;}
+.m_right .promotion .controls a {z-index:2;position:absolute; bottom:-3px; width:16px; height:14px; background:url(/assets/images/common/ico_common.png) -203px 0 no-repeat; text-indent:-999px; overflow:hidden;}
 .m_right .promotion .controls a.bx_prev {left:0}
 .m_right .promotion .controls a.bx_next {right:0; transform:rotate(180deg)}
-.m_right .promotion .pager {position:absolute; bottom:-10px; display:block; width:100%; margin-top:13px; text-align:center; font-size:0;}
+.m_right .promotion .pager {position:absolute; bottom:-10px; display:block; width:100%; margin-top:13px; text-align:center; font-size:0; z-index:1}
 .m_right .promotion .pager span {display:inline-block; width:4px; height:4px; border-radius:2px; margin:0 2px 0 3px; background-color:#9ca1ac; text-indent:-999px; overflow:hidden;}
 .m_right .promotion .pager span.on {background-color:#fff}
 
