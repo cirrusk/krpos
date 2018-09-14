@@ -7,7 +7,7 @@
               <label class="inp_rd type01" for="sk1">ABO 번호/아이디<input #searchType1 type="radio" name="sk" id="sk1" value="abo" [checked]="chkSearchTypeABO"><span class="checkmark"></span></label>
               <label class="inp_rd type01" for="sk2">휴대폰 번호<input #searchType2 type="radio" name="sk" id="sk2" value="phone" [checked]="chkSearchTypeC" disabled><span class="checkmark"></span></label>              
               <div class="mbinfo_search">
-                  <select #searchMemberType title="회원구분" (change)="changeMemberType($event.target.value)">
+                  <select #searchMemberType title="회원구분" (change)="changeMemberType($event.target.value, $event.target.selectedIndex)">
                     <option value="A">ABO회원</option>
                     <option value="M">일반회원</option>
                     <option value="C">소비자</option>

@@ -82,8 +82,11 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    * 맴버타입별 초기화 및 Disable 처리
    * @param {string} memberType 사용자유형
    */
-  changeMemberType(memberType: string) {
+  changeMemberType(memberType: string, memIndex: number) {
     this.searchMemType = memberType;
+    if (memIndex === -1) {
+      this.searchMemberType.nativeElement.value = SearchMemberType.ABO;
+    }
     if (memberType === SearchMemberType.CONSUMER) {
       this.renderer.removeAttribute(this.searchTypeC.nativeElement, 'disabled');
       this.renderer.setAttribute(this.searchTypeABO.nativeElement, 'disabled', 'disabled');
@@ -199,7 +202,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.inputSearchText.nativeElement.value = '';
     this.searchMemberType.nativeElement.value = SearchMemberType.ABO;
-    this.changeMemberType(SearchMemberType.ABO);
+    this.changeMemberType(SearchMemberType.ABO, 0);
     this.init();
   }
 
