@@ -105,8 +105,8 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
           if (res) {
             this.storage.removeBer();
             this.result = new BerData();
+            this.close();
           }
-          this.close();
         });
       } else {
         this.close();
