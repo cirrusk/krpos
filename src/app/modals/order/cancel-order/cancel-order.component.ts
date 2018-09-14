@@ -103,6 +103,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
       cancelData => {
         if (cancelData) {
           if (cancelData.code === '200') {
+            this.cancelFlag = true;
             // 현금이 있을 경우 돈통 열림
             const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
             const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
@@ -129,11 +130,13 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
             });
             this.cancelReceipts();
           } else {
+            this.cancelFlag = false;
             this.alert.error({ message: cancelData.returnMessage, timer: true, interval: 1700 });
           }
         }
       },
       error => {
+        this.cancelFlag = false;
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('cancel-order.component', `cancel order error message : ${errdata.message}`).error();
@@ -155,7 +158,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
   private cancelReceipts() {
     this.receiptService.reissueReceipts(this.orderList, true).subscribe(
       () => {
-        this.cancelFlag = true;
         this.alert.info({
           title: '취소 영수증 발행',
           message: this.messageService.get('cancelReceiptComplete'),
@@ -164,7 +166,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
         });
       },
       error => {
-        this.cancelFlag = false;
         this.logger.set('cancel-order.component', `Reissue Receipts error type : ${error}`).error();
         this.alert.error({
           title: '취소 영수증 발행',
