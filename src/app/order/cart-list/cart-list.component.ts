@@ -381,9 +381,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 쿠폰 링크 클릭 시 메뉴의 쿠폰 팝업 오픈 이벤트 전송
    */
   couponOpen(len: number) {
-    if (len > 0) {
-      this.posCoupon.emit({ open: true });
-    }
+    if (len > 0) { this.posCoupon.emit({ open: true }); }
   }
 
   /**
