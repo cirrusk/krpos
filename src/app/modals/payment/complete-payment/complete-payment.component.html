@@ -36,7 +36,7 @@
           </div>
           <em *ngIf="finishStatus === null && checktype === 0" class="finish ok progressing">결제 처리 진행 중입니다. 잠시만 기다려주세요 <span>.</span><span>.</span><span>.</span></em>
           <em *ngIf="finishStatus === null && checktype < 0" class="finish fail progressing">{{apprmessage}}</em>
-          <em *ngIf="finishStatus !== null && finishStatus !== 'ERROR'; else payFail" class="finish ok">{{apprmessage}}</em>
+          <em *ngIf="finishStatus !== null && finishStatus !== 'ERROR' && finishStatus !== 'fail' && finishStatus !== 'noorder'; else payFail" class="finish ok">{{apprmessage}}</em>
           <ng-template #payFail>
               <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
           </ng-template>
