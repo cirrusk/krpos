@@ -70,7 +70,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
   ngOnInit() {
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
-    this.totalPrice = this.getTotalPrice();
+    console.log(this.cartInfo);
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
     if (this.callerData.paymentCapture) {
       this.paymentcapture = this.callerData.paymentCapture;
@@ -104,6 +104,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       this.custname = this.accountInfo.parties[0].name;
     }
     this.getPaymentModesByMain(this.cartInfo.user.uid, this.cartInfo.code);
+    this.totalPrice = this.getTotalPrice();
   }
 
   ngOnDestroy() {
@@ -158,7 +159,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
    */
   private getTotalPrice(): number {
     if (this.cartInfo) { // 프로모션 금액이 있을 경우 프로모션 금액을 차감해야함.
-      return this.cartInfo.totalPrice ? this.cartService.getTotalPriceWithTax(this.cartInfo) : 0; //  this.cartInfo.totalPrice.value : 0;
+      return this.cartService.getTotalPriceWithTax(this.cartInfo); //  this.cartInfo.totalPrice.value : 0;
     }
     return 0;
   }

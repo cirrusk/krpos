@@ -146,11 +146,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  openComplexPayment() {
-    this.close();
+  openComplexPayment(cartInfo: Cart) {
+    setTimeout(() => { this.close(); }, 100);
     this.modal.openModalByComponent(ComplexPaymentComponent, {
       callerData: {
-        accountInfo: this.accountInfo, cartInfo: this.cartInfo,
+        accountInfo: this.accountInfo, cartInfo: cartInfo,
         paymentCapture: this.paymentcapture, amwayExtendedOrdering: this.amwayExtendedOrdering,
         addPopupType: this.addPopupType
       },
@@ -191,7 +191,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
           pcap.setVoucherPaymentInfo = coupon;
           this.paymentcapture = pcap;
           this.sendPaymentAndOrder(pcap, null);
-          this.openComplexPayment();
+          this.openComplexPayment(result);
         } else {
           this.finishStatus = 'notexist';
           this.logger.set('coupon.component', `no apply or exist cart`).error();
@@ -259,7 +259,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ESCAPE) { // 27 : esc
-      this.openComplexPayment();
+      this.openComplexPayment(this.cartInfo);
     }
   }
 
