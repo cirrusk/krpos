@@ -1052,11 +1052,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       callerData: { data: this.restrictionMessageList },
       closeByEnter: true,
       modalId: ModalIds.RESTRICT
-    }).subscribe(
-      () => {
-        setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
-      }
-    );
+    }).subscribe(() => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); });
   }
 
   /**
