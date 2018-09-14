@@ -347,7 +347,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   setCoupon(data) {
     if (data && data.coupon) {
       this.couponSize = data.coupon;
-      this.storage.setCouponSize(this.couponSize);
+      this.storage.setCouponSize(this.couponSize); // 클라이언트에 전달하기 위해 저장
     }
   }
 
