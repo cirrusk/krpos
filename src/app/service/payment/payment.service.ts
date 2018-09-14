@@ -581,4 +581,5 @@ export class PaymentService {
       msg = `[${error.name}] ${error.message}`;
     }
     return msg;
+  }
 }
