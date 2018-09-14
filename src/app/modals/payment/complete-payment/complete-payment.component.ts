@@ -221,6 +221,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         if (errdata) {
           this.logger.set('complete.payment.component', `${errdata.message}`).error();
           this.apprmessage = errdata.message;
+        } else {
+          this.checktype = -1;
+          this.apprmessage = '오류가 발생하였습니다.';
         }
       });
   }
