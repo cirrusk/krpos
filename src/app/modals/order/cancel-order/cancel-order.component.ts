@@ -102,31 +102,35 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
     this.cancelOrderSubscription = this.orderService.orderCancel(accountuid, useruid, ordercode).subscribe(
       cancelData => {
         if (cancelData) {
-          // 현금이 있을 경우 돈통 열림
-          const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
-          const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
-            paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CASH)
-          );
-          paymentinfos.forEach(paymentinfo => {
-            if (paymentinfo.paymentMode.code === PaymentModes.CASH) {
-              const amount = paymentinfo.amount;
-              if (amount > 0) {
-                this.printer.openCashDrawer(); // cash drawer open
-                // cash drawer open logging
-                this.payment.cashDrawerLogging().subscribe(
-                  result => {
-                    this.logger.set('cancel.order.component', `${result.returnMessage}`).debug();
-                  },
-                  error => {
-                    const errdata = Utils.getError(error);
-                    if (errdata) {
-                      this.logger.set('cancel.order.component', `${errdata.message}`).error();
-                    }
-                  });
+          if (cancelData.code === '200') {
+            // 현금이 있을 경우 돈통 열림
+            const paymentdetails: PaymentDetails = this.orderList.orders[0].paymentDetails;
+            const paymentinfos: AmwayPaymentInfoData[] = paymentdetails.paymentInfos.filter(
+              paymentinfo => (paymentinfo.paymentMode.code === PaymentModes.CASH)
+            );
+            paymentinfos.forEach(paymentinfo => {
+              if (paymentinfo.paymentMode.code === PaymentModes.CASH) {
+                const amount = paymentinfo.amount;
+                if (amount > 0) {
+                  this.printer.openCashDrawer(); // cash drawer open
+                  // cash drawer open logging
+                  this.payment.cashDrawerLogging().subscribe(
+                    result => {
+                      this.logger.set('cancel.order.component', `${result.returnMessage}`).debug();
+                    },
+                    error => {
+                      const errdata = Utils.getError(error);
+                      if (errdata) {
+                        this.logger.set('cancel.order.component', `${errdata.message}`).error();
+                      }
+                    });
+                }
               }
-            }
-          });
-          this.cancelReceipts();
+            });
+            this.cancelReceipts();
+          } else {
+            this.alert.error({ message: cancelData.returnMessage, timer: true, interval: 1700 });
+          }
         }
       },
       error => {
@@ -169,9 +173,9 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
           interval: 1000
         });
       },
-    () => {
-      setTimeout(() => { this.close(); }, 1500);
-    });
+      () => {
+        setTimeout(() => { this.close(); }, 1500);
+      });
   }
 
   /**
