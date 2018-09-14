@@ -37,7 +37,7 @@ export class ClientComponent implements OnInit, OnDestroy {
   accountType: string;                            // 회원 타입
   apprtype: string;
   ber: string;
-  couponSize: number;
+  couponSize: string;
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
@@ -174,6 +174,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.pager = new Pagination();
     this.installment = -1;
     this.ber = null;
+    this.couponSize = '0';
   }
 
 
