@@ -610,7 +610,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 비회원 가입 팝업
    */
   popupNewAccount() {
-    this.storage.setLocalItem('nc', 'Y'); // 클라이언트 화면에 팝업 띄우기 위해 이벤트 전달
+    // this.storage.setLocalItem('nc', 'Y'); // 클라이언트 화면에 팝업 띄우기 위해 이벤트 전달
     this.modal.openModalByComponent(ClientAccountComponent, {
       modalId: ModalIds.CLIENT
     }).subscribe(result => {
