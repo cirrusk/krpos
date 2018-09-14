@@ -623,11 +623,11 @@ export class StorageService implements OnDestroy {
     this.removeLocalItem('customer');
   }
 
-  public setCouponSize(data: number): void {
+  public setCouponSize(data: string): void {
     this.setLocalItem('cpn', data);
   }
 
-  public getCouponSize(): number {
+  public getCouponSize(): string {
     return this.getLocalItem('cpn');
   }
 

@@ -112,7 +112,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   paymentChange: boolean;                                                   // 재결제 여부
   ber: BerData;   // 사업자 정보
   promotion: Promotion;
-  couponSize = 0;
+  couponSize: string;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();      // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 발생한 프로모션을 부모 오더 컴포넌트에 전달
@@ -424,6 +424,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.selectedUserId = '';
     this.copyGroupList = Array<ResCartInfo>();
     this.promotion = null;
+    this.couponSize = '0';
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.initLocals();
