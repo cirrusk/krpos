@@ -722,8 +722,10 @@ export class CartListComponent implements OnInit, OnDestroy {
       result => {
         if (result) {
           if (this.cartList.length > 0) {
+            // 카트 복사시 init() 으로 초기화후 복사 진행
             this.copyCartByEntries(changeUserInfo, this.cartList);
           } else {
+            this.sendRightMenu(ModelType.ACCOUNT, true, changeUserInfo);
             this.accountInfo = changeUserInfo;
             // this.storage.setCustomer(this.accountInfo);
             this.getBalanceInfo(); // 회원의 포인트와 Re-Cash 조회(Account에 포함하여 setCustomer로 이벤트 전송)
