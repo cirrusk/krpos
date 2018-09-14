@@ -29,6 +29,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   paidDate: Date;
   checktype: number;
   apprmessage: string;
+  private dupcheck = false;
   private regex: RegExp = /[^0-9]+/g;
   private orderInfo: Order;
   private cartInfo: Cart;
@@ -51,7 +52,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   }
 
   ngOnInit() {
-    this.directdebitminPrice = this.config.getConfig('directdebitMinPrice' , 1);
+    this.directdebitminPrice = this.config.getConfig('directdebitMinPrice', 1);
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
@@ -61,6 +62,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       // this.checktype = -1;
       this.finishStatus = 'not_processing';
       this.apprmessage = this.message.get('no.accountnumber'); // '계좌번호가 없으므로 자동이체를 진행할 수 없습니다.';
+      this.dupcheck = false;
       setTimeout(() => {
         // this.paid.nativeElement.blur();
         this.renderer.setAttribute(this.paid.nativeElement, 'disabled', 'disabled');
@@ -100,6 +102,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     if (typeof nPaid === 'number' || nPaid !== '') {
       if (nPaid < this.directdebitminPrice) {
         this.checktype = -4;
+        this.dupcheck = false;
         this.apprmessage = this.message.get('debit.min.price');
         return;
       }
@@ -107,6 +110,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       if (this.change < 0) {
         this.change = 0;
         this.checktype = -3;
+        this.dupcheck = false;
         this.apprmessage = this.message.get('payment.valid.overpaid');
       } else {
         this.checktype = 0;
@@ -147,6 +151,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       this.checktype = 0;
     } else {
       this.checktype = -2;
+      this.dupcheck = false;
       this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
   }
@@ -161,6 +166,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       const paid = this.paid.nativeElement.value ? Number(this.paid.nativeElement.value.replace(this.regex, '')) : 0; // 결제금액
       if (nPaidAmount < paid) {
         this.checktype = -3;
+        this.dupcheck = false;
         this.apprmessage = this.message.get('payment.valid.overpaid'); // '실결제금액이 큽니다.';
       } else if (nPaidAmount > paid) { // 다음결제수단
         this.checktype = 0;
@@ -172,6 +178,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
         this.apprmessage = this.message.get('payment.success.next'); // '결제가 완료되었습니다.';
         this.close();
       } else {
+        this.checktype = 0;
         this.paymentcapture = this.payment.makeDirectDebitPaymentCaptureData(this.paymentcapture, this.bankInfo, paid).capturePaymentInfoData;
         this.result = this.paymentcapture;
         this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
@@ -180,6 +187,7 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
       }
     } else {
       this.checktype = -2;
+      this.dupcheck = false;
       this.apprmessage = this.message.get('empty.password'); // '비밀번호가 공란입니다.';
     }
   }
@@ -217,16 +225,30 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER) {
-      if (Utils.isPaymentSuccess(this.finishStatus)) {
-        this.payFinishByEnter();
-      } else if (this.finishStatus === 'recart') {
-        this.info.sendInfo('recart', this.orderInfo);
-        this.info.sendInfo('orderClear', 'clear');
-        this.close();
-      } else if (this.finishStatus === 'fail') {
-        this.close();
+      const modalid = this.storage.getLatestModalId();
+      if (modalid !== ModalIds.COMPLETE) { // 결제완료 창이 뜨지 않았을 경우만 처리
+        this.doPay(event);
       }
     }
   }
+
+  private doPay(evt: any) {
+    if (Utils.isPaymentSuccess(this.finishStatus)) {
+      this.payFinishByEnter();
+    } else if (this.finishStatus === 'recart') {
+      this.info.sendInfo('recart', this.orderInfo);
+      this.info.sendInfo('orderClear', 'clear');
+      this.close();
+    } else if (this.finishStatus === 'fail') {
+      this.close();
+    } else {
+      if (!this.dupcheck) {
+        setTimeout(() => { this.pay(evt); }, 300);
+        this.dupcheck = true;
+      }
+    }
+  }
+
+
 
 }
