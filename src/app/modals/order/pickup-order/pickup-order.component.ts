@@ -263,7 +263,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
             this.sourceList = resultData;
             // barcode 조회시 결과값이 하나면 바로 ADD
             if (barcodeFlag && this.sourceList.orders.length === 1) {
-              this.moveOrder(null, this.sourceList.orders[0].code, 'a');
+              setTimeout(() => {
+                this.moveOrder(null, this.sourceList.orders[0].code, 'a');
+                this.renderer.addClass(this.ecporders.first.nativeElement, 'on');
+              }, 100);
             }
           }
         },
