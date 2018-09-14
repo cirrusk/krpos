@@ -46,6 +46,7 @@ export class SearchBerComponent extends ModalComponent implements OnInit, OnDest
     this.activeNum = index;
     if (ber) {
       this.result = ber;
+      this.setBer();
     }
   }
 
