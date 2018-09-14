@@ -4,7 +4,7 @@ import { StorageService } from '../core';
 import { CartListComponent } from './cart-list/cart-list.component';
 import { OrderMenuComponent } from './order-menu/order-menu.component';
 import { Accounts } from '../data';
-import { Promotion } from '../data/models/order/promotion';
+import { PromotionList } from '../data/models/order/promotion';
 
 @Component({
   selector: 'pos-order',
@@ -39,10 +39,10 @@ export class OrderComponent implements OnInit {
    */
   updatePromotion(data) {
     if (data) {
-      const promotion: Promotion = data.promotion;
-      if (promotion) {
+      const orderpromotions: PromotionList[] = data.promotions;
+      if (orderpromotions && orderpromotions.length > 0) {
         console.log('PROMOTION.................');
-        console.log(JSON.stringify(promotion, null, 2));
+        console.log(JSON.stringify(orderpromotions, null, 2));
       }
     }
   }

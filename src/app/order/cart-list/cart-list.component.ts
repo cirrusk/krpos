@@ -111,7 +111,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   orderList: OrderList;                                                     // 주문상세내역
   paymentChange: boolean;                                                   // 재결제 여부
   ber: BerData;   // 사업자 정보
-  promotion: Promotion;
   couponSize: string;
   @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();      // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
@@ -423,7 +422,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.groupSelectedCart = new AbstractOrder();
     this.selectedUserId = '';
     this.copyGroupList = Array<ResCartInfo>();
-    this.promotion = null;
     this.couponSize = '0';
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
@@ -1297,9 +1295,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 주문레벨 프로모션이 있을 경우 화면 출력
     const orderpromotions: PromotionList[] = cartList.appliedOrderPromotions;
     if (orderpromotions && orderpromotions.length > 0) {
-      this.promotion = orderpromotions[0].promotion;
-      this.posPromotion.emit({ promotion: this.promotion });
-      // this.storage.setPromotion(this.promotion.name); // 클라이언트에 보여주지 않으므로 불필요.
+      this.posPromotion.emit({ promotions: orderpromotions });
     }
 
     this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
