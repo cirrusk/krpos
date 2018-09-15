@@ -75,6 +75,8 @@ export class SearchService {
   /**
    * 캐셔 및 고객용 공지사항 조회
    * API 적용 시 파라미터 재확인 필요.
+   * 프로모션 공지는 요건 변경으로 제외
+   * 프로모션 공지는 주문레벨 프로모션 정보를 이용하여 출력함.
    *
    * @param {string} noticeType 공지사항 타입(ca : 캐셔화면, cl : 클라이언트화면)
    * @returns {any} 공지사항 데이터
@@ -82,13 +84,10 @@ export class SearchService {
   getNoticeList(noticeType: string): Observable<any> {
     const terminal = this.storage.getTerminalInfo();
     const terminalName = (terminal) ? terminal.pointOfService.name : '';
-
     if (noticeType === 'ca') {
       const newsParam = { noticeTypes: 'NEWS', posName: terminalName, pageSize: 20 };
-      const promotionParam = { noticeTypes: 'PROMOTION', posName: terminalName, pageSize: 10 };
       const newsData = new HttpData('noticeList', null, null, newsParam);
-      const promotionData = new HttpData('noticeList', null, null, promotionParam);
-      return Observable.forkJoin(this.api.get(newsData), this.api.get(promotionData));
+      return this.api.get(newsData);
     } else {
       const clientParam = { noticeTypes: 'BUSINESS', posName: terminalName, pageSize: 20 };
       const clientData = new HttpData('noticeList', null, null, clientParam);

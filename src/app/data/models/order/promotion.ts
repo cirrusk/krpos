@@ -53,3 +53,28 @@ export class PromotionDiscount {
     freeGift: boolean;
     taxDiscount: number; // BigDecimal
 }
+
+export class PromotionViews {
+    promotionItems: Array<PromotionItems>;
+    constructor(promotionItems?: Array<PromotionItems>) {
+        this.promotionItems = promotionItems;
+    }
+}
+
+export class PromotionItems {
+    promotion1: PromotionData;
+    promotion2: PromotionData;
+    constructor(promotion1: PromotionData, promotion2: PromotionData) {
+        this.promotion1 = promotion1;
+        this.promotion2 = promotion2;
+    }
+}
+
+export class PromotionData {
+    name: string;
+    desc: string;
+    constructor(name: string, desc: string) {
+        this.name = name;
+        this.desc = desc;
+    }
+}

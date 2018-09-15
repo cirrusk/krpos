@@ -11,7 +11,7 @@
   <div class="m_right">
       <!-- 메뉴 -->
       <pos-order-menu 
-        [promotionList]="promotionList" 
+        [promotionList]="promotionViews" 
         (posMenu)="posCart.setType($event)" 
         (posPromotion)="posCart.setPromotion($event)" 
         (posPytoCafe)="posCart.setPytoCafe($event)" 

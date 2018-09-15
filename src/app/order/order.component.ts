@@ -1,18 +1,28 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { chunk } from 'lodash';
+
 import { StorageService } from '../core';
 import { CartListComponent } from './cart-list/cart-list.component';
 import { OrderMenuComponent } from './order-menu/order-menu.component';
 import { Accounts } from '../data';
-import { PromotionList } from '../data/models/order/promotion';
+import { PromotionList, PromotionData, PromotionViews, PromotionItems } from '../data/models/order/promotion';
 
+/**
+ * 주문 메인 화면
+ *
+ * 프로모션 공지 변경사항
+ * 기존 프로모션 공지사항 데이터 출력에서
+ * 상품 검색 시 주문레벨의 프로모션 데이터를 받아
+ * 화면에 출력하도록 변경
+ */
 @Component({
   selector: 'pos-order',
   templateUrl: './order.component.html'
 })
 export class OrderComponent implements OnInit {
   public noticeList: string[] = [];
-  public promotionList: any[] = [];
+  public promotionViews: PromotionViews;
   @ViewChild(CartListComponent) cartList: CartListComponent;
   @ViewChild(OrderMenuComponent) orderMenu: OrderMenuComponent;
   constructor(private storage: StorageService, private route: ActivatedRoute) { }
@@ -24,11 +34,11 @@ export class OrderComponent implements OnInit {
     // resolver 에서 전달해준 값을 받아 cart list에 전달하여 공지사항 출력
     const data = this.route.snapshot.data['notice'];
     // 일반 공지
-    this.noticeList = data[0];
+    this.noticeList = data;
     // resolver 에서 전달해준 값을 받아 cart menu에 전달하여 프로모션 출력
     // api 가 다른 경우 resolver를 하나 더 만듬.
     // 프로모션 공지
-    this.promotionList = data[1];
+    this.promotionViews = new PromotionViews(); // 초기화
   }
 
   /**
@@ -39,10 +49,23 @@ export class OrderComponent implements OnInit {
    */
   updatePromotion(data) {
     if (data) {
+      const promotionItems: Array<PromotionItems> = new Array<PromotionItems>();
       const orderpromotions: PromotionList[] = data.promotions;
       if (orderpromotions && orderpromotions.length > 0) {
-        console.log('PROMOTION.................');
-        console.log(JSON.stringify(orderpromotions, null, 2));
+        let promotion: PromotionItems;
+        chunk(orderpromotions, 2).forEach(p => {
+          if (p.length === 2) {
+            const p1 = new PromotionData(p[0].promotion.name, p[0].description);
+            const p2 = new PromotionData(p[1].promotion.name, p[1].description);
+            promotion = new PromotionItems(p1, p2);
+            promotionItems.push(promotion);
+          } else {
+            const p1 = new PromotionData(p[0].promotion.name, p[0].description);
+            promotion = new PromotionItems(p1, null);
+            promotionItems.push(promotion);
+          }
+        });
+        this.promotionViews = new PromotionViews(promotionItems);
       }
     }
   }

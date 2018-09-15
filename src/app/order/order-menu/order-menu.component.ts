@@ -81,8 +81,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   ngOnDestroy() {
     if (this.orderInfoSubscribetion) { this.orderInfoSubscribetion.unsubscribe(); }

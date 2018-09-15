@@ -8,21 +8,21 @@
     <button #menus type="button" id='promotionOrder' (click)="promotionOrder($event)" [class.link-disabled]="!hasAccount" [class.disabled]="!hasAccount" class="purple">프로모션 상품</button>
     <button #menus type="button" id='etcOrder' (click)="etcOrder($event)" [class.link-disabled]="hasProduct && hasCart" [class.disabled]="hasProduct && hasCart">기타</button>
 </div>
-<pos-promotion *ngIf="promotionList && promotionList.results.length > 0">
-    <ng-container *ngFor="let promotion of promotionList.results;">
+<pos-promotion *ngIf="promotionList && promotionList.promotionItems && promotionList.promotionItems.length > 0">
+    <ng-container *ngFor="let promotion of promotionList.promotionItems;">
         <ng-container *posPromotionItem>
-            <div class="blue">
+            <div class="blue" *ngIf="promotion.promotion1">
                 <span class="inner">
                     <span class="pro">Promotion</span>
-                    <strong class="tit">{{(promotion.title) ? promotion.title : '프로모션'}}</strong>
-                    <span class="txt">{{promotion?.longDescription | stripHtml}}</span>
+                    <strong class="tit">{{(promotion?.promotion1?.name) ? promotion?.promotion1?.name : '프로모션'}}</strong>
+                    <span class="txt">{{promotion?.promotion1?.desc | stripHtml}}</span>
                 </span>
             </div>
-            <div class="red">
+            <div class="red" *ngIf="promotion.promotion2">
                 <span class="inner">
                     <span class="pro">Promotion</span>
-                    <strong class="tit">[신규 ABO프로모션신규 ABO프로모션신규 ABO프로모션]</strong>
-                    <span class="txt">더블엑스 상품은 2018.02.05~ 02.28 까지 1+1 증정 진행 중입니다.많은 참여 바랍니다.</span>
+                    <strong class="tit">{{(promotion?.promotion2?.name) ? promotion.promotion2?.name : '프로모션'}}</strong>
+                    <span class="txt">{{promotion?.promotion2?.desc | stripHtml}}</span>
                 </span>
             </div>            
         </ng-container>
