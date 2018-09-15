@@ -32,6 +32,9 @@ import { PromotionList, Promotion } from '../../data/models/order/promotion';
  * restorecartbroker : 보류 복원
  * cancelorderbroker : 주문 취소
  *
+ * 상품 레벨 프로모션 : 목록에 프로모션이 있을 경우 표시
+ * 주문 레벨 프로모션 : 프로모션 공지 영역에 상품 검색 시 출력
+ *
  */
 @Component({
   selector: 'pos-cart-list',
