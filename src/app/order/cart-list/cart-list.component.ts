@@ -1294,17 +1294,18 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.sendRightMenu(ModelType.PRODUCT, false);
     }
 
+    this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
+
+    // 장바구니에 추가한 페이지로 이동
+    const page = index ? index + 1 : this.cartList.length;
+    this.setPage(Math.ceil(page / this.cartListCount));
+
     // 주문레벨 프로모션이 있을 경우 화면 출력
     const orderpromotions: PromotionList[] = cartList.appliedOrderPromotions;
     if (orderpromotions && orderpromotions.length > 0) {
       this.posPromotion.emit({ promotions: orderpromotions });
     }
 
-    this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
-
-    // 장바구니에 추가한 페이지로 이동
-    const page = index ? index + 1 : this.cartList.length;
-    this.setPage(Math.ceil(page / this.cartListCount));
   }
 
   /**
