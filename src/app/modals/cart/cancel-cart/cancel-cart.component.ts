@@ -27,6 +27,7 @@ export class CancelCartComponent extends ModalComponent implements OnInit {
   cancleOrder() {
     // 장바구니 삭제 진행
     this.cancleOrderBroker.sendInfo('delCart');
+    this.result = true;
     this.close();
   }
 

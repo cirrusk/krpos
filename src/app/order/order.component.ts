@@ -45,7 +45,7 @@ export class OrderComponent implements OnInit {
    * @param data 주문 레벨 프로모션
    */
   updatePromotion(data) {
-    if (data) {
+    if (data && data.promotions) {
       const promotionItems: Array<PromotionItems> = new Array<PromotionItems>();
       const orderpromotions: PromotionList[] = data.promotions;
       if (orderpromotions && orderpromotions.length > 0) {
@@ -64,6 +64,8 @@ export class OrderComponent implements OnInit {
         });
         this.promotionViews = new PromotionViews(promotionItems);
       }
+    } else {
+      this.promotionViews = null;
     }
   }
 
