@@ -20,6 +20,7 @@ export class AbstractOrder {
     subTotalWithDiscounts: Price;                           // 할인 금액을 포함한 총 주문 소계
     subtotalWithoutProductDiscount: Price;                  // 상품 할인 금액을 제외한 소계
     deliveryCost: Price;                                    // 배송비
+    deliveryCostWithTax: Price;
     entries: Array<OrderEntry>;                             // 주문 Entries
     totalItems: number;                                     // 제품 전체 갯수
     deliveryMode: any;                                      // 배송 방법 DeliveryModeWsDTO
