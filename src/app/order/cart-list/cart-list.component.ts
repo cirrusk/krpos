@@ -1,3 +1,4 @@
+import { Promotion } from './../../data/models/order/promotion';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -1752,6 +1753,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 
+    // 제품레벨 프로모션이 있을 경우 목록 출력
+    this.setCartListProductPromotion();
+
     if (pagerFlag) {
       this.selectedCartNum = -1;
     } else {
@@ -1759,6 +1763,47 @@ export class CartListComponent implements OnInit, OnDestroy {
     }
     this.storage.setCartPage(page);
     this.totalPriceInfo();
+  }
+
+  /**
+   * 카트리스트에서 제품 프로모션항목을 찾아서 해당 제품 프로모션 내역을 넣어줌.
+   * 엔트리에 제품 프로모션 정보가 있으면 좋겠으나, 없기 때문에
+   * Cart 정보의 제품 프로모션 정보를 Cart 목록 정보와 비교하여 조회해야함.
+   */
+  private setCartListProductPromotion() {
+    const productpromotions: PromotionList[] = this.resCartInfo.cartList.appliedProductPromotions;
+    if (productpromotions && productpromotions.length > 0) {
+      this.currentCartList.forEach(orderentry => {
+        const promotions: Array<PromotionList> = new Array<PromotionList>();
+        productpromotions.forEach(promotionlist => {
+          if (promotionlist.consumedEntries && promotionlist.consumedEntries.length > 0) {
+            const orderidx: number = promotionlist.consumedEntries.findIndex(obj => obj.orderEntryNumber === orderentry.entryNumber);
+            if (orderidx !== -1) {
+              promotions.push(promotionlist);
+            }
+          }
+        });
+        orderentry.productPromotions = promotions;
+      });
+    }
+  }
+
+  /**
+   * 장바구니 제품중 프로모션에 걸린 제품 프로모션 상세 내역 확인
+   * @param promotions 해당 제품 프로모션 목록
+   */
+  showPromotion(promotions: PromotionList[]) {
+    if (promotions && promotions.length > 0) {
+      const msg: String[] = [];
+      promotions.forEach((promotion, idx) => {
+        if (idx === 0) {
+          msg.push(promotion.description);
+        } else {
+          msg.push('<br>' + promotion.description);
+        }
+      });
+      this.alert.info({ title: '프로모션', message: msg.join('') });
+    }
   }
 
   /**

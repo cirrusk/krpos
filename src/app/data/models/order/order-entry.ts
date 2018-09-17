@@ -1,5 +1,6 @@
 import { AmwayValue, Price, ProductInfo, DeliveryMode, PointOfService } from '../..';
 import { KitProductChildOrderEntry } from './cart-modification';
+import { PromotionList } from './promotion';
 
 export class OrderEntry {
     entryNumber: number;
@@ -37,6 +38,7 @@ export class OrderEntry {
     quantityReturned: number;    // 반품 수량
     ecpConfirmQty: any; // Ecp 컨펌 (숫자, true='완료')
     serialNumbersCodes: Array<string>; // 시리얼 넘버 (RFID 포함)
+    productPromotions: PromotionList[] = []; // 제품 프로모션이 있을 경우 PromotionList 배열(있으면 제품 프로모션 있음)
 
     constructor(_product?: ProductInfo) {
         this.product = _product;
