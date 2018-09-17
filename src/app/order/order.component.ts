@@ -3,10 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { chunk } from 'lodash';
 
 import { StorageService } from '../core';
+import { Accounts, PromotionViews, PromotionItems, PromotionList, PromotionData } from '../data';
 import { CartListComponent } from './cart-list/cart-list.component';
-import { OrderMenuComponent } from './order-menu/order-menu.component';
-import { Accounts } from '../data';
-import { PromotionList, PromotionData, PromotionViews, PromotionItems } from '../data/models/order/promotion';
 
 /**
  * 주문 메인 화면
@@ -24,7 +22,6 @@ export class OrderComponent implements OnInit {
   public noticeList: string[] = [];
   public promotionViews: PromotionViews;
   @ViewChild(CartListComponent) cartList: CartListComponent;
-  @ViewChild(OrderMenuComponent) orderMenu: OrderMenuComponent;
   constructor(private storage: StorageService, private route: ActivatedRoute) { }
 
   ngOnInit() {

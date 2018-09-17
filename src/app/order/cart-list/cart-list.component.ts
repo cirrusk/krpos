@@ -14,13 +14,12 @@ import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, 
 import {
   Accounts, SearchParam, CartInfo, CartModification, OrderEntry, Pagination, RestrictionModel,
   ResCartInfo, MemberType, PaymentCapture, AmwayExtendedOrdering, AbstractOrder, ProductInfo, ResponseMessage, Block,
-  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView, PointReCash, ModalIds
+  TerminalInfo, OrderType, SearchMode, CartType, ModelType, BerData, PaymentView, PointReCash, ModalIds, PromotionList
 } from '../../data';
 import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
-import { PromotionList, Promotion } from '../../data/models/order/promotion';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
