@@ -67,7 +67,8 @@
                         <td class="ar">{{cartEntry?.totalPriceInclTax?.value | number}}</td>
                         <td *ngIf="cartEntry?.productPromotions?.length > 0; else notPromo"><a href (click)="!!showPromotion(cartEntry?.productPromotions)">프로모션적용</a></td>
                         <ng-template #notPromo>
-                            <td></td>
+                            <td *ngIf="cartEntry?.giveAway; else pEmpty">증정품</td>
+                            <ng-template #pEmpty><td></td></ng-template>
                         </ng-template>
                     </tr>
                 </tbody>
