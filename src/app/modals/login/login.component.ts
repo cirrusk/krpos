@@ -79,6 +79,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * AD 계정 입력 형식이 맞지 않은 경우,
    * AD 계정 입력 형식이 맞지 않습니다  Alert 뜸
    * 비밀번호가 미입력 된 경우, 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
+   * 중요) AD 계정이나 비밀번호가 올바르지 않을 경우 보안문제로
+   * 어떤 이유인지는 메시지 출력하지 않고 정보 올바르지 않음만 메시지 출력해야함.
    *
    * 2018.04.30 : authorization 과 acesstoken 을 merge
    * 2018.04.30 : 처리 프로세스 변경
@@ -108,7 +110,6 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
       setTimeout(() => { this.loginPwdInput.nativeElement.focus(); }, 1050);
       return;
     }
-    // this.spinner.show();
     // 1. authentication code 취득(계속 바뀌고 token 발급 후 삭제되므로 session 저장 필요없음)
     // 2. access token  취득 및 session 저장
     this.authsubscription = this.auth.authAndToken(loginid, loginpwd).subscribe(result => {
@@ -126,8 +127,7 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
-          // this.alert.error({ message: this.message.get('server.error', errdata.message) });
-          this.alert.error({ message: `${errdata.message}` });
+          this.alert.error({ message: '로그인 정보가 올바르지 않습니다.<br>로그인 정보를 다시 한번 확인하시기 바랍니다.'});
         }
       });
   }
