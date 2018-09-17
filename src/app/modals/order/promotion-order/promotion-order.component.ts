@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { chunk } from 'lodash';
 
 import { ModalComponent, ModalService, Logger } from '../../../core';
 import { SearchService } from '../../../service';
@@ -49,14 +50,20 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit, O
   /**
    * 프로모션 상품 목록 가져오기
    * 상품명 / 상품코드
+   *
+   * 프로모션 상품의 개수가 많지 않으므로
+   * 페이징 처리는 로컬에서 처리하도록 함.
+   *
+   * @param pagenum 검색 페이지 넘버
    */
   private getPromotionProducts(pagenum: number) {
     this.promotionsubscription = this.search.getFavoriteProducts(pagenum).subscribe(
       result => {
-        this.promotionProducts = result.products;
-        this.totalCount = result.totalProductCount;
         this.totalPages = result.totalPageCount;
-        this.currentPage = result.currentPage;
+        this.promotionProducts = chunk(result.products, this.pageSize)[pagenum]; // this.promotionProducts = result.products;
+        this.totalCount = result.products.length; // this.totalCount = result.totalProductCount;
+        this.totalPages = this.totalCount / this.pageSize; // this.currentPage = result.currentPage;
+        this.currentPage = pagenum;
         this.paging(this.totalCount, pagenum, this.pageSize);
       },
       error => {

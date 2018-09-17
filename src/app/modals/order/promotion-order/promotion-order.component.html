@@ -16,7 +16,7 @@
               <div class="chc_wrap" *ngIf="promotionProducts && promotionProducts.length > 0; else elseEmpty">
                   <!-- 결제수단 선택시 on클래스 추가 -->
                   <ng-container *ngFor="let product of promotionProducts; let i = index;">
-                  <a #promotions href (click)="!!promotion($event, product)" class="chc_type02"><span>{{product?.name}}</span><i class="ico_comm prom00"></i></a>
+                  <a #promotions href (click)="!!promotion($event, product)" class="chc_type02" title="{{product?.name}}"><span>{{product?.name}}</span><i class="ico_comm prom00"></i></a>
                   </ng-container>
               </div>
               <!-- //프로모션 제품 리스트 : 페이지당 상품수 최대 9개 -->
