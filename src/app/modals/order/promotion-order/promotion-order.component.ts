@@ -9,7 +9,11 @@ import { Utils } from '../../../core/utils';
 
 /**
  * 프로모션 상품 컴포넌트
+ *
  * 비닐봉투 소/대의 Product code는 environment에서 조회.
+ *
+ * 비닐봉투는 키매핑에서 처리가능하도록 해야하므로 모든 AP에서 동일하게 적용해야함.
+ * 만약 AP별로 상품코드가 다를 경우 환경설정(environment)에서 개별 AP별 상품코드를 매핑하도록 구성해야함.
  */
 @Component({
   selector: 'pos-promotion-order',
