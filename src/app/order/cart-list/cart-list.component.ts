@@ -1299,49 +1299,6 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (orderpromotions && orderpromotions.length > 0) {
       this.posPromotion.emit({ promotions: orderpromotions });
     }
-    //       this.posPromotion.emit({ promotions: [ {
-    //         'consumedEntries' : [ ],
-    //         'description' : '공기청정기 루버 제품 구매시 10개월 무이자 할부 제공',
-    //         'promotion' : {
-    //            'code' : 'PRM18O0031',
-    //            'couldFireMessages' : [ ],
-    //            'description' : '10개월 무이자 할부 프로모션 설명',
-    //            'endDate' : '2019-12-30T15:00:00+0000',
-    //            'firedMessages' : [ ],
-    //            'name' : '10개월 무이자 할부 프로모션1',
-    //            'promotionType' : '규칙 기반 프로모션',
-    //            'startDate' : '2018-05-31T15:00:00+0000'
-    //         }
-    //      },
-    //      {
-    //       'consumedEntries' : [ ],
-    //       'description' : '공기청정기 루버 제품 구매시 10개월 무이자 할부 제공',
-    //       'promotion' : {
-    //          'code' : 'PRM18O0031',
-    //          'couldFireMessages' : [ ],
-    //          'description' : '10개월 무이자 할부 프로모션 설명',
-    //          'endDate' : '2019-12-30T15:00:00+0000',
-    //          'firedMessages' : [ ],
-    //          'name' : '10개월 무이자 할부 프로모션2',
-    //          'promotionType' : '규칙 기반 프로모션',
-    //          'startDate' : '2018-05-31T15:00:00+0000'
-    //       }
-    //    },
-    //    {
-    //     'consumedEntries' : [ ],
-    //     'description' : '공기청정기 루버 제품 구매시 10개월 무이자 할부 제공',
-    //     'promotion' : {
-    //        'code' : 'PRM18O0031',
-    //        'couldFireMessages' : [ ],
-    //        'description' : '10개월 무이자 할부 프로모션 설명',
-    //        'endDate' : '2019-12-30T15:00:00+0000',
-    //        'firedMessages' : [ ],
-    //        'name' : '10개월 무이자 할부 프로모션3',
-    //        'promotionType' : '규칙 기반 프로모션',
-    //        'startDate' : '2018-05-31T15:00:00+0000'
-    //     }
-    //  } ] });
-
 
     this.storage.setOrderEntry(cartList); // 장바구니 추가 시 클라이언트에 장바구니 데이터 전송
 
