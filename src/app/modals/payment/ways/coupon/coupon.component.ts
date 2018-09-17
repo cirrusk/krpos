@@ -146,8 +146,9 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  openComplexPayment(cartInfo: Cart) {
+  openComplexPayment(cartInfo?: Cart) {
     setTimeout(() => { this.close(); }, 100);
+    if (!cartInfo) { cartInfo = this.cartInfo; }
     this.modal.openModalByComponent(ComplexPaymentComponent, {
       callerData: {
         accountInfo: this.accountInfo, cartInfo: cartInfo,
@@ -259,7 +260,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ESCAPE) { // 27 : esc
-      this.openComplexPayment(this.cartInfo);
+      this.openComplexPayment();
     }
   }
 

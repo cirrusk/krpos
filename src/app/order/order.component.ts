@@ -34,7 +34,7 @@ export class OrderComponent implements OnInit {
     this.noticeList = data;
     // resolver 에서 전달해준 값을 받아 cart menu에 전달하여 프로모션 출력
     // api 가 다른 경우 resolver를 하나 더 만듬.
-    // 프로모션 공지
+    // 프로모션 공지 변경 : 프로모션 공지사항에서 주문레벨 프로모션으로 변경
     this.promotionViews = new PromotionViews(); // 초기화
   }
 
