@@ -275,7 +275,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
           if (errdata) {
             this.logger.set('pickup-order.component', `Get order list error type : ${errdata.type}`).error();
             this.logger.set('pickup-order.component', `Get order list error message : ${errdata.message}`).error();
-            this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
+            // this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
+            this.alert.error({ message: errdata.message });
           }
         },
         () => { if (barcodeFlag) { this.barcodeScan.nativeElement.value = ''; } }
