@@ -1759,13 +1759,13 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 
-    // 제품레벨 프로모션이 있을 경우 목록 출력
-    this.setCartListProductPromotion();
+    // 제품레벨 프로모션이 있을 경우 목록 출력 (증정품 index return)
+    const selectedIndex = this.setCartListProductPromotion();
 
     if (pagerFlag) {
       this.selectedCartNum = -1;
     } else {
-      this.selectedCartNum = this.currentCartList.length - 1;
+      this.selectedCartNum = selectedIndex === -1 ? this.currentCartList.length - 1 : selectedIndex - 1;
     }
     this.storage.setCartPage(page);
     this.totalPriceInfo();
@@ -1776,11 +1776,15 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 엔트리에 제품 프로모션 정보가 있으면 좋겠으나, 없기 때문에
    * Cart 정보의 제품 프로모션 정보를 Cart 목록 정보와 비교하여 조회해야함.
    */
-  private setCartListProductPromotion() {
+  private setCartListProductPromotion(): number {
     const productpromotions: PromotionList[] = this.resCartInfo.cartList.appliedProductPromotions;
+    let selectedIndex = -1;
     if (productpromotions && productpromotions.length > 0) {
-      this.currentCartList.forEach(orderentry => {
+      this.currentCartList.forEach((orderentry, index) => {
         const promotions: Array<PromotionList> = new Array<PromotionList>();
+        if (orderentry.giveAway && selectedIndex === -1) {
+          selectedIndex = index;
+        }
         productpromotions.forEach(promotionlist => {
           if (promotionlist.consumedEntries && promotionlist.consumedEntries.length > 0) {
             const orderidx: number = promotionlist.consumedEntries.findIndex(obj => obj.orderEntryNumber === orderentry.entryNumber);
@@ -1792,6 +1796,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         orderentry.productPromotions = promotions;
       });
     }
+    return selectedIndex;
   }
 
   /**
