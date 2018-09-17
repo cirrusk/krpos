@@ -618,7 +618,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 비회원 가입 팝업
    */
   popupNewAccount() {
-    // this.storage.setLocalItem('nc', 'Y'); // 클라이언트 화면에 팝업 띄우기 위해 이벤트 전달
     this.modal.openModalByComponent(ClientAccountComponent, {
       modalId: ModalIds.CLIENT
     }).subscribe(result => {
@@ -638,9 +637,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       callerData: { userId: userId },
       closeByClickOutside: false,
       modalId: ModalIds.HOLDORDER
-    }).subscribe(() => {
-      setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
-    });
+    }).subscribe(() => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 100); });
   }
 
   /**
@@ -682,11 +679,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.groupSelectedCart = new AbstractOrder();
             }
           } else {
-            this.alert.info({
-              message: this.message.get('addedABO'),
-              timer: true,
-              interval: 1500
-            });
+            this.alert.info({ message: this.message.get('addedABO'), timer: true, interval: 1500 });
           }
         }
       } else {
@@ -753,9 +746,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param cartList 카트 엔트리 정보
    */
   private copyCartByEntries(account: Accounts, cartList: Array<OrderEntry>) {
-    if (!cartList) {
-      return;
-    }
+    if (!cartList) { return; }
     this.copyCartEntriesSubscription = this.cartService.copyCartEntries(account, cartList).subscribe(resultData => {
       const bernumber = this.storage.getBer();
       this.init();
@@ -785,11 +776,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           callerData: { data: this.restrictionMessageList },
           closeByEnter: true,
           modalId: ModalIds.RESTRICT
-        }).subscribe(
-          () => {
-            setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
-          }
-        );
+        }).subscribe(() => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); });
       } else {
         this.activeSearchMode(SearchMode.PRODUCT);
         this.getSaveCarts(this.accountInfo.parties[0].uid);
@@ -1269,11 +1256,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               callerData: { data: this.restrictionMessageList },
               closeByEnter: true,
               modalId: ModalIds.RESTRICT
-            }).subscribe(
-              () => {
-                setTimeout(() => { this.searchText.nativeElement.focus(); }, 50);
-              }
-            );
+            }).subscribe(() => { setTimeout(() => { this.searchText.nativeElement.focus(); }, 50); });
           }
         },
         error => {
@@ -1772,11 +1755,12 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPriceInfo();
   }
 
-    /**
-   * 카트리스트에서 제품 프로모션항목을 찾아서 해당 제품 프로모션 내역을 넣어줌.
-   * 엔트리에 제품 프로모션 정보가 있으면 좋겠으나, 없기 때문에
-   * Cart 정보의 제품 프로모션 정보를 Cart 목록 정보와 비교하여 조회해야함.
-   */
+  /**
+ * 카트리스트에서 제품 프로모션항목을 찾아서 해당 제품 프로모션 내역을 넣어줌.
+ * 엔트리에 제품 프로모션 정보가 있으면 좋겠으나, 없기 때문에
+ * Cart 정보의 제품 프로모션 정보를 Cart 목록 정보와 비교하여 조회해야함.
+ * 증정품이 있을 경우 증정품의 인덱스를 리턴하여 증점품은 highlight 선택되지 않도록 함.
+ */
   private setCartListProductPromotion(): number {
     const productpromotions: PromotionList[] = this.resCartInfo.cartList.appliedProductPromotions;
     let selectedIndex = -1;
@@ -1789,7 +1773,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         productpromotions.forEach(promotionlist => {
           if (promotionlist.consumedEntries && promotionlist.consumedEntries.length > 0) {
             const orderidx: number = promotionlist.consumedEntries.findIndex(obj => obj.orderEntryNumber === orderentry.entryNumber);
-            if (orderidx !== -1) {
+            if (orderidx !== -1) { // 프로모션 consumed Entry의 entry number 배열에 cart Entry의 entry number가 있으면 추가
               promotions.push(promotionlist);
             }
           }
