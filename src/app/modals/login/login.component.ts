@@ -97,10 +97,15 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
     const loginpwd = this.loginPassword || '';
 
     // 1. AD 계정 Validation 체크
+    if (Utils.isEmpty(loginid)) {
+      this.alert.warn({ message: 'AD 계정이 공란입니다.', timer: true, interval: 1000 });
+      setTimeout(() => { this.loginIdInput.nativeElement.focus(); }, 1050);
+      return;
+    }
     // 2. 비밀번호 미입력
     if (Utils.isEmpty(loginpwd)) { // 비어 있으면 미입력
       this.alert.warn({ message: '비밀번호가 공란입니다.', timer: true, interval: 1000 });
-      setTimeout(() => { this.loginPwdInput.nativeElement.focus(); }, 250);
+      setTimeout(() => { this.loginPwdInput.nativeElement.focus(); }, 1050);
       return;
     }
     // this.spinner.show();
@@ -121,7 +126,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('login.component', `auth and token error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error', errdata.message) });
+          // this.alert.error({ message: this.message.get('server.error', errdata.message) });
+          this.alert.error({ message: `${errdata.message}` });
         }
       });
   }
