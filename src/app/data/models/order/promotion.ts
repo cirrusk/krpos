@@ -4,7 +4,7 @@ import { Price } from './price';
 export class PromotionList {
     description: string;
     promotion: Promotion;
-    consumedEntries: any; // List<PromotionOrderEntryConsumedWsDTO>
+    consumedEntries: Array<PromotionOrderEntryConsumed>; // List<PromotionOrderEntryConsumedWsDTO>
 }
 
 export class Promotion {
@@ -35,6 +35,13 @@ export class PromotionRestriction {
 export class PromotionPremiumItemSet {
     code: string;
     premiumItems: Array<PromotionPremiumItem>;
+}
+
+export class PromotionOrderEntryConsumed {
+    code: string;
+    adjustedUnitPrice: number;
+    orderEntryNumber: number;
+    quantity: number;
 }
 
 export class PromotionPremiumItem {

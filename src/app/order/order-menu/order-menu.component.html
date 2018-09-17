@@ -11,15 +11,15 @@
 <pos-promotion *ngIf="promotionList && promotionList.promotionItems && promotionList.promotionItems.length > 0">
     <ng-container *ngFor="let promotion of promotionList.promotionItems;">
         <ng-container *posPromotionItem>
-            <div class="blue" *ngIf="promotion.promotion1">
-                <span class="inner">
+            <div [class.blue]="promotion.promotion1">
+                <span class="inner" *ngIf="promotion.promotion1">
                     <span class="pro">Promotion</span>
                     <strong class="tit">{{(promotion?.promotion1?.name) ? promotion?.promotion1?.name : '프로모션'}}</strong>
                     <span class="txt">{{promotion?.promotion1?.desc | stripHtml}}</span>
                 </span>
             </div>
-            <div class="red" *ngIf="promotion.promotion2">
-                <span class="inner">
+            <div [class.red]="promotion.promotion2">
+                <span class="inner" *ngIf="promotion.promotion2">
                     <span class="pro">Promotion</span>
                     <strong class="tit">{{(promotion?.promotion2?.name) ? promotion.promotion2?.name : '프로모션'}}</strong>
                     <span class="txt">{{promotion?.promotion2?.desc | stripHtml}}</span>
