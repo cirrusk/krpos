@@ -15,14 +15,14 @@
                 <span class="inner" *ngIf="promotion.promotion1">
                     <span class="pro">Promotion</span>
                     <strong class="tit">{{(promotion?.promotion1?.name) ? promotion?.promotion1?.name : '프로모션'}}</strong>
-                    <span class="txt">{{promotion?.promotion1?.desc | stripHtml}}</span>
+                    <span class="txt" title="{{promotion?.promotion1?.desc}}">{{promotion?.promotion1?.desc | stripHtml}}</span>
                 </span>
             </div>
             <div [class.red]="promotion.promotion2">
                 <span class="inner" *ngIf="promotion.promotion2">
                     <span class="pro">Promotion</span>
                     <strong class="tit">{{(promotion?.promotion2?.name) ? promotion.promotion2?.name : '프로모션'}}</strong>
-                    <span class="txt">{{promotion?.promotion2?.desc | stripHtml}}</span>
+                    <span class="txt" title="{{promotion?.promotion2?.desc}}">{{promotion?.promotion2?.desc | stripHtml}}</span>
                 </span>
             </div>            
         </ng-container>
