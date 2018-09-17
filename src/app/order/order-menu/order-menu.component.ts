@@ -69,7 +69,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     @Output() public posBer: EventEmitter<any> = new EventEmitter<any>();       // 중개주문 팝업에서 사업자 선택시 카트 컴포넌트에 전달
     @Output() public posPayReset: EventEmitter<any> = new EventEmitter<any>();  // 통합결제 창이 닫힐 경우 결과 금액 초기화하기
     @Output() public posCoupons: EventEmitter<any> = new EventEmitter<any>();    // 회원 검색 시 쿠폰이 있을 경우 쿠폰건추 출력 카트에 전달
-    @Output() public posUpdatePromotions: EventEmitter<any> = new EventEmitter<any>();    // 주문취소 시 초기화
     constructor(private modal: Modal,
         private storage: StorageService,
         private logger: Logger,
@@ -482,7 +481,6 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         }).subscribe(result => {
             if (result) {
                 this.isABO = false;
-                this.posUpdatePromotions.emit({ promotions: null }); // 주문취소 시 주문프로모션은 초기화해야함.
             }
         });
     }

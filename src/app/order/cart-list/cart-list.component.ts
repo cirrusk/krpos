@@ -439,6 +439,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.ber = null;
     this.holdBer = Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
+    this.posPromotion.emit({ promotions: null }); // 주문 초기화(주문취소 시 포함) 시 주문프로모션은 초기화해야함.
   }
 
   /**
