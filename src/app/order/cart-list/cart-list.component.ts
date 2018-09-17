@@ -461,7 +461,11 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {number} index 선택 로우 넘버
    */
   activeRowCart(index: number): void {
-    this.selectedCartNum = index;
+    const selectedPrice = Number(this.currentCartList[index].totalPriceInclTax.value);
+
+    if (selectedPrice > 0) {
+      this.selectedCartNum = index;
+    }
   }
 
   /**
@@ -570,40 +574,42 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.alert.warn({ message: this.message.get('selectProductUpdate') });
     } else {
       const selectedCart = this.currentCartList[this.selectedCartNum];
-      const code = selectedCart.product.code;
-      const qty = selectedCart.quantity;
-      const cartId = this.orderType === OrderType.GROUP ? this.groupSelectedCart.code : this.cartInfo.code;
-      this.modal.openModalByComponent(UpdateItemQtyComponent, {
-        callerData: { code: code, qty: qty, product: selectedCart.product },
-        actionButtonLabel: '선택',
-        closeButtonLabel: '취소',
-        modalId: ModalIds.QTY
-      }).subscribe(result => {
-        if (result) {
-          const product: ProductInfo = selectedCart.product;
-          // RFID, SERIAL 입력 받음.
-          if (product && (product.rfid || product.serialNumber)) {
-            if (qty !== result.qty) { // 수량변경이 없으면 처리하지 않음.
-              this.modal.openModalByComponent(SerialComponent, {
-                callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
-                closeByClickOutside: false,
-                modalId: ModalIds.SERIAL
-              }).subscribe(data => {
-                if (data) {
-                  if (qty < result.qty) { // 변경 수량이 증가할 경우
-                    this.setSerials(data, result.code);
-                  } else { // 변경 수량이 줄어들 경우(제품 수량이 줄어들 경우 장바구니부터 다시 시작)
-                    this.setSerials(data);
+      if (Number(selectedCart.totalPriceInclTax.value) > 0) {
+        const code = selectedCart.product.code;
+        const qty = selectedCart.quantity;
+        const cartId = this.orderType === OrderType.GROUP ? this.groupSelectedCart.code : this.cartInfo.code;
+        this.modal.openModalByComponent(UpdateItemQtyComponent, {
+          callerData: { code: code, qty: qty, product: selectedCart.product },
+          actionButtonLabel: '선택',
+          closeButtonLabel: '취소',
+          modalId: ModalIds.QTY
+        }).subscribe(result => {
+          if (result) {
+            const product: ProductInfo = selectedCart.product;
+            // RFID, SERIAL 입력 받음.
+            if (product && (product.rfid || product.serialNumber)) {
+              if (qty !== result.qty) { // 수량변경이 없으면 처리하지 않음.
+                this.modal.openModalByComponent(SerialComponent, {
+                  callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
+                  closeByClickOutside: false,
+                  modalId: ModalIds.SERIAL
+                }).subscribe(data => {
+                  if (data) {
+                    if (qty < result.qty) { // 변경 수량이 증가할 경우
+                      this.setSerials(data, result.code);
+                    } else { // 변경 수량이 줄어들 경우(제품 수량이 줄어들 경우 장바구니부터 다시 시작)
+                      this.setSerials(data);
+                    }
+                    this.updateItemQtyCart(cartId, result.code, result.qty);
                   }
-                  this.updateItemQtyCart(cartId, result.code, result.qty);
-                }
-              });
+                });
+              }
+            } else {
+              this.updateItemQtyCart(cartId, result.code, result.qty);
             }
-          } else {
-            this.updateItemQtyCart(cartId, result.code, result.qty);
           }
-        }
-      });
+        });
+      }
     }
   }
 
@@ -1765,7 +1771,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPriceInfo();
   }
 
-  /**
+    /**
    * 카트리스트에서 제품 프로모션항목을 찾아서 해당 제품 프로모션 내역을 넣어줌.
    * 엔트리에 제품 프로모션 정보가 있으면 좋겠으나, 없기 때문에
    * Cart 정보의 제품 프로모션 정보를 Cart 목록 정보와 비교하여 조회해야함.
@@ -2240,8 +2246,12 @@ export class CartListComponent implements OnInit, OnDestroy {
       if (this.selectedCartNum === -1) {
         this.alert.warn({ message: this.message.get('selectProductDelete') });
       } else {
-        const cartId = this.orderType === OrderType.GROUP ? this.groupSelectedCart.code : this.cartInfo.code;
-        this.removeItemCart(cartId, this.currentCartList[this.selectedCartNum].product.code);
+        // 가격이 0보다 클경우에만 삭제 처리(증정품 수정 금지)
+        const selectedCart = this.currentCartList[this.selectedCartNum];
+        if (Number(selectedCart.totalPriceInclTax.value) > 0) {
+          const cartId = this.orderType === OrderType.GROUP ? this.groupSelectedCart.code : this.cartInfo.code;
+          this.removeItemCart(cartId, this.currentCartList[this.selectedCartNum].product.code);
+        }
       }
     }
   }
