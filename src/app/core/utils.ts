@@ -373,6 +373,17 @@ export /* default */ class Utils {
     return false;
   }
 
+  /**
+   * 결제 처리 후 실패여부 체크하기
+   * @param finishStatus 결제 처리 상태
+   */
+  public static isPaymentError(finishStatus: string) {
+    if (finishStatus === StatusDisplay.ERROR || finishStatus === StatusDisplay.PAYMENTFAILED || finishStatus === StatusDisplay.ORDERFAILED) {
+      return true;
+    }
+    return false;
+  }
+
   public static substring(text: string, len: number): string {
     let c = 0;
     let startIdx = 0;
