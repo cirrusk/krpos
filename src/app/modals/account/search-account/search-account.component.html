@@ -10,7 +10,7 @@
             <label class="inp_rd type01" for="ps1">휴대폰번호/전화번호<input type="radio" name="ps1" id="ps1" checked><span class="checkmark"></span></label>
             <!-- 회원검색영역 -->
             <div class="mbinfo_search">
-                <select #searchMemberType title="회원구분" (change)="selectChangeHandler()">
+                <select #searchMemberType title="회원구분" (change)="selectChangeHandler($event.target.value, $event.target.selectedIndex)">
                     <option value="A">ABO회원</option>
                     <option *ngIf="orderType !== eOrderType.GROUP" value="M">일반회원</option>
                     <option *ngIf="orderType !== eOrderType.GROUP" value="C">소비자</option>

@@ -7,7 +7,6 @@ import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
 
-
 @Component({
   selector: 'pos-order-complete',
   templateUrl: './order-complete.component.html'
@@ -18,9 +17,9 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   private keyboardsubscription: Subscription;
   private regexOnlyNum: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g); // 숫자만
   private regex: RegExp = /[^0-9]+/g;
+  private regexMobile: RegExp = /^\d{3}\d{3,4}\d{4}$/;
   private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'Delete', 'ArrowLeft', 'ArrowRight'];
   private searchMemType: string;
-  private regexMobile: RegExp = /^\d{3}\d{3,4}\d{4}$/;
   @Input() chkSearchTypeABO = true;
   @Input() chkSearchTypeC = false;
   @ViewChild('inputSearchText') private inputSearchText: ElementRef;
@@ -283,6 +282,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    */
   @HostListener('input', ['$event'])
   onInputKeyDown(evt: any) {
+    if (evt.target.tagName === 'SELECT') { return; }
     if (this.searchMemType === SearchMemberType.CONSUMER) {
       if (this.specialKeys.indexOf(evt.key) !== -1) {
         return;
