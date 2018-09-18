@@ -218,6 +218,7 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.totalPrice = this.resCart ? this.cartService.getTotalPriceWithTax(this.resCart) : 0;
     this.totalPV = this.resCart && this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.pointValue : 0;
     this.totalBV = this.resCart && this.resCart.totalPrice.amwayValue ? this.resCart.totalPrice.amwayValue.businessVolume : 0;
+    this.discount = this.resCart && this.resCart.totalDiscounts ? this.resCart.totalDiscounts.value : 0;
   }
 
   activeRowCart(index: number): void {

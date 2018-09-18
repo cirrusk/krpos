@@ -1831,7 +1831,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.totalPrice = this.resCartInfo.cartList ? this.cartService.getTotalPriceWithTax(this.resCartInfo.cartList) : 0;
     this.totalPV = this.resCartInfo.cartList && this.resCartInfo.cartList.totalPrice.amwayValue ? this.resCartInfo.cartList.totalPrice.amwayValue.pointValue : 0;
     this.totalBV = this.resCartInfo.cartList && this.resCartInfo.cartList.totalPrice.amwayValue ? this.resCartInfo.cartList.totalPrice.amwayValue.businessVolume : 0;
-
+    this.discount = this.resCartInfo.cartList && this.resCartInfo.cartList.totalDiscounts ? this.resCartInfo.cartList.totalDiscounts.value : 0;
     this.sendRightMenu(ModelType.CART, true, this.resCartInfo.cartList);
   }
 
