@@ -1743,13 +1743,17 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 
-    // 제품레벨 프로모션이 있을 경우 목록 출력 (증정품 index return)
-    const selectedIndex = this.setCartListProductPromotion();
+    this.setCartListProductPromotion();
+    let orderidx = -1;
+    // 프로모션인 경우 row index 값 추출(증정품 제외)
+    if (this.resCartInfo.cartList.appliedOrderPromotions.length > 0 || this.resCartInfo.cartList.appliedProductPromotions.length > 0) {
+      orderidx = this.currentCartList.findIndex(obj => obj.giveAway === true);
+    }
 
     if (pagerFlag) {
       this.selectedCartNum = -1;
     } else {
-      this.selectedCartNum = selectedIndex === -1 ? this.currentCartList.length - 1 : selectedIndex - 1;
+      this.selectedCartNum = orderidx === -1 ? this.currentCartList.length - 1 : orderidx - 1;
     }
     this.storage.setCartPage(page);
     this.totalPriceInfo();
@@ -1761,15 +1765,13 @@ export class CartListComponent implements OnInit, OnDestroy {
  * Cart 정보의 제품 프로모션 정보를 Cart 목록 정보와 비교하여 조회해야함.
  * 증정품이 있을 경우 증정품의 인덱스를 리턴하여 증점품은 highlight 선택되지 않도록 함.
  */
-  private setCartListProductPromotion(): number {
+  private setCartListProductPromotion(): void {
     const productpromotions: PromotionList[] = this.resCartInfo.cartList.appliedProductPromotions;
-    let selectedIndex = -1;
+
     if (productpromotions && productpromotions.length > 0) {
       this.currentCartList.forEach((orderentry, index) => {
         const promotions: Array<PromotionList> = new Array<PromotionList>();
-        if (orderentry.giveAway && selectedIndex === -1) {
-          selectedIndex = index;
-        }
+
         productpromotions.forEach(promotionlist => {
           if (promotionlist.consumedEntries && promotionlist.consumedEntries.length > 0) {
             const orderidx: number = promotionlist.consumedEntries.findIndex(obj => obj.orderEntryNumber === orderentry.entryNumber);
@@ -1781,7 +1783,6 @@ export class CartListComponent implements OnInit, OnDestroy {
         orderentry.productPromotions = promotions;
       });
     }
-    return selectedIndex;
   }
 
   /**

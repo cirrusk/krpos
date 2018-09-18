@@ -21,7 +21,7 @@
           <!-- 검색결과 영역 : 검색 후-->
           <div class="mbinfo_list">
               <p class="txt"><strong>총 <span class="fc_red">{{orderHistoryList.pagination.totalResults ? orderHistoryList.pagination.totalResults : 0}}</span>건</strong>이 검색되었습니다.</p>
-              <span class="btn_wrap">
+              <span class="btn_wrap" *ngIf="orderHistoryList.pagination.totalResults > PAGE_SIZE">
                   <!-- 이전,다음 리스트가 있을때 on클래스 추가 -->
                   <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== 0" class="ico_comm prev03" (click)="setPage(orderHistoryList.pagination.currentPage - 1)">이전</a>
                   <a href="javascript:void(0)" [class.on]="orderHistoryList.pagination.currentPage !== orderHistoryList.pagination.totalPages - 1" class="ico_comm next03"(click)="setPage(orderHistoryList.pagination.currentPage + 1)">다음</a>

@@ -5,6 +5,7 @@ export interface ReceiptProductFieldInterface {
     price: string;
     qty: string;
     totalPrice: string;
+    giveAway: string;
 }
 
 export interface DiscountFieldInterface {

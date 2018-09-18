@@ -133,17 +133,29 @@ export class ReceiptUtils {
     public static getProductListTitle(maxLengths: ProductFieldMaxLen): string {
         const formatted: Array<string> = [];
         const productName = '상품명';
-        const remainings = '단가 수량 금액';
+        const basePrice = '단가';
+        const qty = '수량';
+        const price = '금액';
+        const basePriceLen = 9 + 2;
+        const qtyLen = 4;
+        const priceLen = 11 + 3;
+        // 단가 9자리, 수량 4자리, 가격 11자리
+        const remainings = basePriceLen + 1 + qtyLen + 1 + priceLen;
 
         formatted.push(this.START_TEXTLINE);
 
-        let len: number = maxLengths.idx + 1 + maxLengths.skuCode + 1;
+        let len: number = maxLengths.idx + 2;
         formatted.push(this.genSafeLeadingSpaces(len));
         formatted.push(productName);
 
-        len = PosPrinterConstants.LineBytes - len - this.getTextLengthUTF8(productName) - this.getTextLengthUTF8(remainings);
+        len = PosPrinterConstants.LineBytes - len - this.getTextLengthUTF8(productName) - remainings;
         formatted.push(this.spaces(len));
-        formatted.push(remainings);
+        formatted.push(this.spaces(basePriceLen - this.getTextLengthUTF8(basePrice)));
+        formatted.push(basePrice);
+        formatted.push(this.spaces(2));
+        formatted.push(qty);
+        formatted.push(this.spaces(priceLen - this.getTextLengthUTF8(price)));
+        formatted.push(price);
 
         formatted.push(this.END_TEXTLINE);
 
@@ -154,6 +166,11 @@ export class ReceiptUtils {
 
     public static getFormattedProductField(product: ReceiptProductFieldInterface, maxLengths: ProductFieldMaxLen): string {
         const formatted: Array<string> = [];
+        const giveProduct = '[증정품] ';
+        let productName = '';
+        const priceLen = 9;
+        const qtyLen = 4;
+        const totalPriceLen = 11;
 
         // 태그 시작
         formatted.push(this.START_TEXTLINE);
@@ -164,7 +181,13 @@ export class ReceiptUtils {
 
         // 상품명 (한줄 자르기)
         const idxLen = maxLengths.idx + 1;
-        const croppedProductName: string = this.substrUnicode(product.productName, PosPrinterConstants.LineBytes - idxLen, 0);
+        if (product.giveAway === 'true') {
+            productName = giveProduct + product.productName;
+        } else {
+            productName = product.productName;
+        }
+
+        const croppedProductName: string = this.substrUnicode(productName, PosPrinterConstants.LineBytes - idxLen, 0);
         formatted.push(croppedProductName);
 
         // 개행
@@ -200,17 +223,29 @@ export class ReceiptUtils {
         // const paddedLen: number = maxLengths.productName - croppedLen;
         // formatted.push(this.spaces(paddedLen + 1));
 
-        let blankLenth: number = (42 - idxLen - 1 ) - maxLengths.skuCode -  (maxLengths.price + maxLengths.qty + maxLengths.totalPrice + 2);
-        blankLenth += (maxLengths.price - product.price.length);
+        // let blankLenth: number = (42 - idxLen - 1 ) - maxLengths.skuCode -  (maxLengths.price + maxLengths.qty + maxLengths.totalPrice + 2);
+        // blankLenth += (maxLengths.price - product.price.length);
+        // formatted.push(this.spaces(blankLenth));
+        // // 상품 단가
+        // formatted.push(product.price);
+        // const blankQtyLength: number = 1 + (maxLengths.qty - product.qty.length);
+        // formatted.push(this.spaces(blankQtyLength));
+
+        // // 수량
+        // formatted.push(product.qty);
+        // const blankTotalLength: number = 1 + (maxLengths.totalPrice - product.totalPrice.length);
+        // formatted.push(this.spaces(blankTotalLength));
+        let blankLenth: number = (42 - idxLen - 1 ) - maxLengths.skuCode -  (priceLen + 2 + qtyLen + totalPriceLen + 5);
+        blankLenth += (priceLen + 2 - product.price.length);
         formatted.push(this.spaces(blankLenth));
         // 상품 단가
         formatted.push(product.price);
-        const blankQtyLength: number = 1 + (maxLengths.qty - product.qty.length);
+        const blankQtyLength: number = 1 + (qtyLen - product.qty.length);
         formatted.push(this.spaces(blankQtyLength));
 
         // 수량
         formatted.push(product.qty);
-        const blankTotalLength: number = 1 + (maxLengths.totalPrice - product.totalPrice.length);
+        const blankTotalLength: number = 2 + (totalPriceLen + 2 - product.totalPrice.length);
         formatted.push(this.spaces(blankTotalLength));
 
         // 가격
