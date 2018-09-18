@@ -87,6 +87,9 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     if (memIndex === -1) {
       this.searchMemberType.nativeElement.value = SearchMemberType.ABO;
     }
+    if (this.searchMemType === SearchMemberType.CONSUMER) {
+      this.inputSearchText.nativeElement.value = '';
+    }
     if (memberType === SearchMemberType.CONSUMER) {
       this.renderer.removeAttribute(this.searchTypeC.nativeElement, 'disabled');
       this.renderer.setAttribute(this.searchTypeABO.nativeElement, 'disabled', 'disabled');
