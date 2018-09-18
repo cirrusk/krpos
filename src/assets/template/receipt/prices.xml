@@ -23,22 +23,25 @@
         </text-line>
         </bold>
         {{/if}}
-        {{#if price.discount.discountList}}
-            {{discountListHelper price.discount.discountList}}
+        {{#if price.coupon}}
+        <text-line>
+            {{priceFormatHelper '쿠    폰' price.coupon}}
+        </text-line>        
+        {{/if}}
+        {{#if price.promotion}}
+        <text-line>
+            {{priceFormatHelper '프로모션' price.promotion}}
+        </text-line>
         {{/if}}
         {{#if price.point}}
-        <bold>
-            <text-line>
-                {{priceFormatHelper price.point.name price.point.amount orderInfo.cancelFlag}}
-            </text-line>
-        </bold>    
+        <text-line>
+            {{priceFormatHelper price.point.name price.point.amount orderInfo.cancelFlag}}
+        </text-line>
         {{/if}}
         {{#if price.recash}}
-        <bold>
-            <text-line>
-                {{priceFormatHelper 'Re-Cash' price.recash orderInfo.cancelFlag}}
-            </text-line>
-        </bold>    
+        <text-line>
+            {{priceFormatHelper 'Re-Cash' price.recash orderInfo.cancelFlag}}
+        </text-line>
         {{/if}}        
         <text-line>
             {{priceFormatHelper '결제금액' price.totalAmount orderInfo.cancelFlag}}

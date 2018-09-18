@@ -8,6 +8,8 @@ export class PriceInfo {
     protected totalAmount: string;       // 결제금액
     protected point: PointInfo;          // 포인트
     protected recash: string;            // Re-Cash
+    protected promotion: string;         // 프로모션
+    protected coupon: string;            // 쿠폰
 
     public set setPointInfo(point: PointInfo) {
         this.point = point;
@@ -20,6 +22,12 @@ export class PriceInfo {
     }
     public set setTotalDiscount(totalDiscount: number) {
         this.totalDiscount = String(totalDiscount);
+    }
+    public set setPromotion(promotion: number) {
+        this.promotion = String(promotion);
+    }
+    public set setCoupon(coupon: number) {
+        this.coupon = String(coupon);
     }
     constructor(totalQty: number, amountWithoutVAT: number, amountVAT: number, sumAmount: number, totalAmount: number, totalDiscount?: number, discount?: Discount) {
         this.totalQty = String(totalQty);

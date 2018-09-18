@@ -648,25 +648,27 @@ export class ReceiptService implements OnDestroy {
             const recash = paymentCapture.getMonetaryPaymentInfo;
             price.setRecash = recash.amount;
         }
-        let totalDiscount = 0; // 할인금액
+        
         if (cartInfo.totalDiscounts) { // 할인금액
-            totalDiscount = cartInfo.totalDiscounts ? cartInfo.totalDiscounts.value : 0;
+            price.setTotalDiscount = cartInfo.totalDiscounts ? cartInfo.totalDiscounts.value : 0;
+        }        
+        let promotion = 0;
+        if (cartInfo.appliedOrderPromotions) { // 4-1. 주문 프로모션
+            promotion += 0;
         }
-        if (totalDiscount > 0) { // 할인금액 있을 경우만 출력 -> 프로모션 정보를 이용함.
-            price.setTotalDiscount = totalDiscount; // 할인금액
-            // 할인금액정보 - START
-            const discount = new Discount();
-            // if (order.appliedVouchers) {
-            //     order.appliedVouchers.forEach(voucher => {
-            //         if (voucher.appliedValue) {
-            //             if (voucher.appliedValue.value > 0) {
-            //                 discount.setCoupon = new DiscountInfo(voucher.name, voucher.appliedValue.value);
-            //             }
-            //         }
-            //     });
-            // }
-            price.setDiscount = discount;
-            // 할인금액정보 - END
+
+        if (cartInfo.appliedProductPromotions) { // 4-2. 상품 프로모션
+            promotion += 0;
+        }
+        if (promotion > 0) {
+            price.setPromotion = promotion;
+        }
+
+        if (cartInfo.appliedCouponData) { // 5. 쿠폰
+            let coupon = 0;
+            if (coupon > 0) {
+                price.setCoupon = coupon;
+            }
         }
         // prices - END
 
