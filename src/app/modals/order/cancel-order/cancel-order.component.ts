@@ -131,7 +131,13 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
             this.cancelReceipts();
           } else {
             this.cancelFlag = false;
-            this.alert.error({ message: cancelData.returnMessage, timer: true, interval: 1700 });
+            if (cancelData.code === '1') {
+              this.alert.error({ message: '주문취소 중 오류가 발생하였습니다.', timer: true, interval: 1700 });
+            } else {
+              this.alert.error({ message: cancelData.returnMessage, timer: true, interval: 1700 });
+            }
+            
+            
           }
         }
       },
