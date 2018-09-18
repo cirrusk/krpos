@@ -203,7 +203,7 @@ export class OrderService {
    * @param {string} orderCode 주문번호
    */
   confirmPickup(orderCodes: string): Observable<HttpResponseBase> {
-    const orderList =  new OrderList();
+    const orderList = new OrderList();
     const orders = new Array<Order>();
     orderCodes.split(',').forEach((orderCode, index) => {
       const order = new Order();
@@ -239,7 +239,8 @@ export class OrderService {
    * @param cartInfo 카트 정보
    */
   getTotalPriceWithTax(orderInfo: Order) {
-    return this.getTaxablePrice(orderInfo) + this.getTaxPrice(orderInfo);
+    return orderInfo.totalPriceWithTax ? orderInfo.totalPriceWithTax.value : 0; 
+    // return this.getTaxablePrice(orderInfo) + this.getTaxPrice(orderInfo);
   }
 
   /**
@@ -259,15 +260,16 @@ export class OrderService {
    * @param cartInfo 카트 정보
    */
   getPaymentPrice(orderInfo: Order, paymentCapture: PaymentCapture) {
-    const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
-    let paymentprice =  totalprice + this.getTaxPrice(orderInfo);
+    // const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
+    // let paymentprice =  totalprice + this.getTaxPrice(orderInfo);
+    let paymentprice = orderInfo.totalPriceInclTax ? orderInfo.totalPriceWithTax.value : 0;
     if (paymentCapture.pointPaymentInfo) { // 포인트 내역
       const pointamount = paymentCapture.pointPaymentInfo.amount;
       paymentprice = paymentprice - pointamount;
     }
     if (paymentCapture.monetaryPaymentInfo) { // Recash 내역
       const recashamount = paymentCapture.monetaryPaymentInfo.amount;
-      paymentprice  = paymentprice - recashamount;
+      paymentprice = paymentprice - recashamount;
     }
     return paymentprice;
   }

@@ -369,7 +369,8 @@ export class CartService {
    * @param cartInfo 카트 정보
    */
   getTotalPriceWithTax(cartInfo: Cart) {
-    const totalprice = this.getTaxablePrice(cartInfo) + this.getTaxPrice(cartInfo);
+    // const totalprice = this.getTaxablePrice(cartInfo) + this.getTaxPrice(cartInfo);
+    const totalprice = cartInfo.totalPriceWithTax ? cartInfo.totalPriceWithTax.value : 0;
     this.logger.set('cart.service', `total price : ${totalprice}`).debug();
     return totalprice;
   }
@@ -398,11 +399,14 @@ export class CartService {
    *
    * @param cartInfo 카트 정보
    */
-  getPaymentPrice(cartInfo: Cart, paymentCapture: PaymentCapture) {
-    const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
-    let paymentprice =  totalprice + this.getTaxPrice(cartInfo);
+  getPaymentPrice(cartInfo: Cart, paymentCapture?: PaymentCapture) {
+    if (!paymentCapture) {
+      paymentCapture = this.storage.getPaymentCapture();
+    }
+    // const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
+    // let paymentprice =  totalprice + this.getTaxPrice(cartInfo);
+    let paymentprice = cartInfo.totalPriceInclTax ? cartInfo.totalPriceWithTax.value : 0;
     this.logger.set('cart.service', `payment price : ${paymentprice}`).debug();
-
     if (paymentCapture.pointPaymentInfo) { // 포인트 내역
       const pointamount = paymentCapture.pointPaymentInfo.amount;
       paymentprice = paymentprice - pointamount;
