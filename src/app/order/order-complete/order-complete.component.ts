@@ -20,6 +20,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   private regex: RegExp = /[^0-9]+/g;
   private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'Delete', 'ArrowLeft', 'ArrowRight'];
   private searchMemType: string;
+  private regexMobile: RegExp = /^\d{3}\d{3,4}\d{4}$/;
   @Input() chkSearchTypeABO = true;
   @Input() chkSearchTypeC = false;
   @ViewChild('inputSearchText') private inputSearchText: ElementRef;
@@ -144,6 +145,13 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
       setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 1520);
     } else {
       this.memberType = _memberType;
+      if (this.memberType === SearchMemberType.CONSUMER) {
+        if (!this.regexMobile.test(_searchText)) {
+            this.alert.warn({ message: '잘못된 휴대폰 번호입니다.', timer: true, interval: 1500 });
+            setTimeout(() => { this.inputSearchText.nativeElement.focus(); }, 1520);
+            return;
+        }
+      }
       this.searchText = _searchText.trim();
       this.inputSearchText.nativeElement.value = this.searchText;
       this.getOrderList(this.searchType, _memberType, this.searchText, 0);
