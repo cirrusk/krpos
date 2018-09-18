@@ -405,7 +405,7 @@ export class CartService {
     }
     // const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
     // let paymentprice =  totalprice + this.getTaxPrice(cartInfo);
-    let paymentprice = cartInfo.totalPriceInclTax ? cartInfo.totalPriceWithTax.value : 0;
+    let paymentprice = cartInfo.totalPriceWithTax ? cartInfo.totalPriceWithTax.value : 0;
     this.logger.set('cart.service', `payment price : ${paymentprice}`).debug();
     if (paymentCapture.pointPaymentInfo) { // 포인트 내역
       const pointamount = paymentCapture.pointPaymentInfo.amount;

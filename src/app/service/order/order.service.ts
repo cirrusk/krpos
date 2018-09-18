@@ -239,7 +239,7 @@ export class OrderService {
    * @param cartInfo 카트 정보
    */
   getTotalPriceWithTax(orderInfo: Order) {
-    return orderInfo.totalPriceWithTax ? orderInfo.totalPriceWithTax.value : 0; 
+    return orderInfo.totalPriceWithTax ? orderInfo.totalPriceWithTax.value : 0;
     // return this.getTaxablePrice(orderInfo) + this.getTaxPrice(orderInfo);
   }
 
@@ -262,7 +262,7 @@ export class OrderService {
   getPaymentPrice(orderInfo: Order, paymentCapture: PaymentCapture) {
     // const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
     // let paymentprice =  totalprice + this.getTaxPrice(orderInfo);
-    let paymentprice = orderInfo.totalPriceInclTax ? orderInfo.totalPriceWithTax.value : 0;
+    let paymentprice = orderInfo.totalPriceWithTax ? orderInfo.totalPriceWithTax.value : 0;
     if (paymentCapture.pointPaymentInfo) { // 포인트 내역
       const pointamount = paymentCapture.pointPaymentInfo.amount;
       paymentprice = paymentprice - pointamount;

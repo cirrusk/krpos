@@ -383,7 +383,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     // 부가세
     this.taxPrice = this.orderService.getTaxPrice(order);
     // 합계
-    this.totalPriceWithTax = this.orderService.getTotalPriceWithTax(order);
+    this.totalPriceWithTax = this.orderService.getTotalPriceWithTax(order) + this.orderService.getDiscountPrice(order);
     // 할인금액
     this.discountPrice = this.orderService.getDiscountPrice(order);
     // 결제금액
