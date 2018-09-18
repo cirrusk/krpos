@@ -23,16 +23,19 @@ export class SearchService {
   getAccountList(searchMemberType: string, searchText: string): Observable<AccountList> {
     let memberType = '';
 
+    let search = searchText;
+
     if (searchMemberType === 'A') {
       memberType = MemberType.ABO;
     } else if (searchMemberType === 'M') {
       memberType = MemberType.MEMBER;
+      search = searchText.toLowerCase();
     } else {
       memberType = MemberType.CONSUMER;
     }
 
     const params = { amwayBusinessNature: memberType, feilds: 'FULL' };
-    const pathvariables = { userId: searchText };
+    const pathvariables = { userId: search };
     const data = new HttpData('userSearch', pathvariables, null, params);
     return this.api.get(data);
   }
