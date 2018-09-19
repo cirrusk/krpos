@@ -26,14 +26,15 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  apiDomain: 'https://api.uat.amway.co.kr',
-  apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
-  // apiRootUrl: 'https://hybris-kor-uat-occ.intranet.local/api/v2', // 암웨이 내부 시스템 OCC 호출
+  // apiDomain: 'https://api.uat.amway.co.kr',
+  apiDomain: 'https://hybris-kor-uat-occ.intranet.local',
+  // apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
+  apiRootUrl: 'https://hybris-kor-uat-occ.intranet.local/api/v2', // 암웨이 내부 시스템 OCC 호출
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',
-    token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
-    // token: 'https://hybris-kor-uat-occ.intranet.local/authorizationserver/oauth/token',
+    // token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
+    token: 'https://hybris-kor-uat-occ.intranet.local/authorizationserver/oauth/token',
     userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
     customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
     batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
@@ -89,7 +90,8 @@ export const environment = {
   healthCheckUse: false, // Health Check 사용여부
   qzCheck: false, // QZ Tray Health Check
   healthCheckInterval: 15, // Hybris Health Check 타임아웃(sec)
-  hybrisCheckUrl: 'https://api.uat.amway.co.kr/api/v2/swagger-ui.html', // Hybris Health Check URL
+  // hybrisCheckUrl: 'https://api.uat.amway.co.kr/api/v2/swagger-ui.html', // Hybris Health Check URL
+  hybrisCheckUrl: 'https://www.uat.amway.co.kr/api/v2/swagger-ui.html', // Hybris Health Check URL
   useCache: false,
   cartListCount: 8, // 카트 목록 건수
   noticeInterval: 7, // 일반 공지사항 롤링 주기(sec)
