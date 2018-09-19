@@ -321,21 +321,21 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     this.paymentComponent = component;
     if (payment && !this.storage.getPaymentModeCode()) {
       if (this.paymentModes.has(payment)) { // 주결제 수단일 경우 선택 시 주결제 수단을 세션에 설정
-        this.logger.set('complex.payment.component', `주결재 수단 설정 : ${payment}`).debug();
+        this.logger.set('complex.payment.component', `주결재 수단 설정 : ${payment}`).info();
         this.storage.setPaymentModeCode(payment); // 주결제 수단을 세션에 설정
       } else {
-        this.logger.set('complex.payment.component', `${payment} 은(는) 주결제 수단이 아닙니다.}`).warn();
+        this.logger.set('complex.payment.component', `${payment} 은(는) 주결제 수단이 아님.}`).warn();
       }
     }
 
     if (payment && (payment === 'creditcard' || payment === 'cashiccard')) { // 신용카드 및 IC카드인 경우 한번 하면 더 못하도록 막기
       if (this.paymentcapture.ccPaymentInfo) {
-        this.alert.warn({ title: '알림', message: '신용카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
+        this.alert.warn({ message: this.message.get('go.payment', '신용카드'), timer: true, interval: 1500 });
         this.enableMenu = this.enableMenu.filter(item => item !== payment);
         return;
       }
       if (this.paymentcapture.icCardPaymentInfo) {
-        this.alert.warn({ title: '알림', message: '현금IC카드로 결제를 진행 중입니다.', timer: true, interval: 1500 });
+        this.alert.warn({ message: this.message.get('go.payment', '현금IC카드'), timer: true, interval: 1500 });
         this.enableMenu = this.enableMenu.filter(item => item !== payment);
         return;
       }
@@ -493,7 +493,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       });
       this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
     } else {
-      this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+      this.alert.warn({ message: this.message.get('not.set.paymentmode') });
     }
   }
 
@@ -534,9 +534,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     if (p) {
       if (p.ccPaymentInfo || p.icCardPaymentInfo) {
         if (p.ccPaymentInfo) {
-          this.alert.warn({ title: '알림', message: '신용카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
+          this.alert.warn({ message: this.message.get('not.yet.payment.card', '신용카드'), timer: true, interval: 1800 });
         } else if (p.icCardPaymentInfo) {
-          this.alert.warn({ title: '알림', message: '현금IC카드로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.', timer: true, interval: 1800 });
+          this.alert.warn({ message: this.message.get('not.yet.payment.card', '현금IC카드'), timer: true, interval: 1800 });
         }
         return;
       } else if (p.cashPaymentInfo
@@ -545,7 +545,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         || p.pointPaymentInfo) {
         this.modal.openConfirm({
           title: '결제 취소',
-          message: `현재 결제된 내역이 초기화 됩니다.<br>결제를 초기화 하시겠습니까?`,
+          message: this.message.get('init.payment'),
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
           closeByClickOutside: false,
@@ -599,7 +599,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         }
       }
     } else {
-      this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+      this.alert.warn({ message: this.message.get('not.set.paymentmode') });
     }
   }
 
@@ -626,7 +626,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         }
       }
     } else {
-      this.alert.warn({ message: '결제 수단이 설정되어 있지 않습니다.' });
+      this.alert.warn({ message: this.message.get('not.set.paymentmode') });
     }
   }
 
@@ -649,6 +649,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
       );
       if (existedIdx === -1) { return; }
       this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
+        this.logger.set('complex.component', `### enable menu : ${paymentType.name} (${paymentType.code})`).info();
         this.enableMenu.push(paymentType.code);
       });
     }

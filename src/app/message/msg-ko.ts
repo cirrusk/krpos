@@ -94,5 +94,9 @@ export const LANG_KO_MSGS = {
     'block.loginblock': '일반 로그인이 제한된 회원입니다.',
     'block.orderblock': '구매제한 회원입니다.',
     'dms.error': 'MDMS 서버에 오류가 발생하였습니다.<br>{0}',
-    'not.use.mediator':'개인 사업자회원({0} {1})은<br>중개판매를 이용하실 수 없는 회원입니다.'
+    'not.use.mediator':'개인 사업자회원({0} {1})은<br>중개판매를 이용하실 수 없는 회원입니다.',
+    'not.set.paymentmode':'결제 수단이 설정되어 있지 않습니다.',
+    'init.payment':'현재 결제된 내역이 초기화 됩니다.<br>결제를 초기화 하시겠습니까?',
+    'not.yet.payment.card':'{0}로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.',
+    'go.payment':'{0}로 결제를 진행 중입니다.'
 };
