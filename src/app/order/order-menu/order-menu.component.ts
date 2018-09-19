@@ -569,9 +569,14 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     private transformCartInfo(amwayExtendedOrdering: AmwayExtendedOrdering) {
         const jsonData = {
             'user': amwayExtendedOrdering.orderList[0].user,
-            'totalPrice': amwayExtendedOrdering.totalValue,
+            'totalPrice': null,
             'totalTax': null,
-            'code': amwayExtendedOrdering.orderList[0].code
+            'totalPriceWithTax': amwayExtendedOrdering.totalValue,
+            'code': amwayExtendedOrdering.orderList[0].code,
+            'orderDiscounts' : null,
+            'orderTaxDiscount' : null,
+            'productDiscounts' : null,
+            'productTaxDiscount' : null
         };
         Object.assign(this.cartInfo, jsonData);
     }

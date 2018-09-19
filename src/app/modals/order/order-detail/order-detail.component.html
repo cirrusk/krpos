@@ -104,8 +104,8 @@
                             <li><span>공제번호</span><em *ngIf="orderDetail.orders[0].deductionNumber; else elseTemplate">{{orderDetail.orders[0].deductionNumber}}</em><ng-template #elseTemplate><em>공제조합홈페이지 확인</em></ng-template>
                             </li>
                         </ul>
-                        <p class="txt" *ngIf="orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED'">*** 정상 승인 완료 ***</p>
-                        <p class="txt" *ngIf="orderInfo.orderStatus.code === 'CANCELLED'">*** 취소 승인 완료 ***</p>
+                        <p class="txt" *ngIf="orderInfo.orderStatus.code === 'pickupCompleted' || orderInfo.orderStatus.code === 'completed'">*** 정상 승인 완료 ***</p>
+                        <p class="txt" *ngIf="orderInfo.orderStatus.code === 'cancelled'">*** 취소 승인 완료 ***</p>
                     </div>
                 </div>
                 <!-- //오른쪽 -->

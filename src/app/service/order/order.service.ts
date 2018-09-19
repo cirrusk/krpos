@@ -34,7 +34,7 @@ export class OrderService {
    */
   orderList(searchText: string, memberType: string, searchType: string, orderTypes: string, channels: string,
     deliveryModes: string, confirmFlag = false, isEasyPickupOrder = false, currentPage = 0, pageSize = 10,
-    sort = 'code', asc = false, orderStatus?: string): Observable<OrderHistoryList> {
+    sort = 'date', asc = false, orderStatus?: string): Observable<OrderHistoryList> {
     const arrOrderTypes = new Array<string>(); // NORMAL_ORDER
     const arrChannels = new Array<string>(); // Web,WebMobile
     const arrDeliveryModes = new Array<string>(); // delivery,install
@@ -84,7 +84,7 @@ export class OrderService {
     const param = {
       currentPage: currentPage,
       pageSize: pageSize,
-      sort: sort, asc: asc, fields: 'FULL'
+      sorts : [{sort: sort, asc: asc}], fields: 'FULL'
     };
 
     const data = new HttpData('orderList', null, orderData, param, 'json');

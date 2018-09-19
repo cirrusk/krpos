@@ -109,7 +109,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * @param {OrderHistory} orderInfo 주문정보
    */
   checkCancelStatus(orderInfo: OrderHistory) {
-    if (orderInfo.orderStatus.code === 'CANCELLED') {
+    if (orderInfo.orderStatus.code === 'cancelled') {
       this.cancelSymbol = '-';
       this.cancelFlag = true;
     } else {
@@ -117,7 +117,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.cancelFlag = false;
     }
 
-    if (orderInfo.cancellable && (orderInfo.orderStatus.code === 'PICKUP_COMPLETED' || orderInfo.orderStatus.code === 'COMPLETED')) {
+    if (orderInfo.cancellable && (orderInfo.orderStatus.code === 'pickupCompleted' || orderInfo.orderStatus.code === 'completed')) {
       this.isCancelButton = true;
     }
 
@@ -334,7 +334,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * @param {Order} order 주문 상세 정보
    */
   setBonusValue(order: Order) {
-    if (this.orderInfo.orderStatus.code === 'CANCELLED') {
+    if (this.orderInfo.orderStatus.code === 'cancelled') {
       this.groupBusinessVolume = order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0;
       this.groupPointValue = order.value.groupPointValue ? order.value.groupPointValue : 0;
       this.personalBusinessVolume = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0;
