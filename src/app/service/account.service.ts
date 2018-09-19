@@ -76,7 +76,7 @@ export class AccountService {
    * 에러가 잡혔을 경우 에러 내용 출력
    * 
    * @param errdata 에러 객체
-   * @param msgkey 에러 메시지 출력 메시지 키
+   * @param msgkey 에러 메시지 출력 메시지 키(지정한 에러가 아닐 경우 메시지 출력용)
    */
   checkError(errdata: Errors, msgkey?: string): string {
     if (errdata.type === 'InvalidTokenError') {
