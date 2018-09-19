@@ -156,7 +156,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
                         this.orderType = OrderType.GROUP;
                     }
                     this.amwayExtendedOrdering = data.data;
-                    this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function(order) {
+                    this.hasProduct = !this.amwayExtendedOrdering.orderList.some(function (order) {
                         return order.entries.length === 0;
                     });
                 } else {
@@ -353,9 +353,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         if (this.hasAccount && this.orderType === '') { return; }
         if (action) {
             const modals = this.storage.getAllModalIds();
-            if (modals && modals.indexOf(ModalIds.ACCOUNT) !== -1) {
-                return;
-            }
+            if (modals && modals.indexOf(ModalIds.ACCOUNT) !== -1) { return; }
             this.checkClassById('groupPayment');
         } else {
             this.checkClass(evt);
@@ -390,9 +388,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         if (this.hasAccount) { return; }
         if (action) {
             const modals = this.storage.getAllModalIds();
-            if (modals && modals.indexOf(ModalIds.PICKUP) !== -1) {
-                return;
-            }
+            if (modals && modals.indexOf(ModalIds.PICKUP) !== -1) { return; }
             this.checkClassById('pickupOrder');
         } else {
             this.checkClass(evt);
@@ -431,9 +427,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         }
         if (action) {
             const modals = this.storage.getAllModalIds();
-            if (modals && modals.indexOf(ModalIds.BERSEARCH) !== -1) {
-                return;
-            }
+            if (modals && modals.indexOf(ModalIds.BERSEARCH) !== -1) { return; }
             this.checkClassById('mediateOrder');
         } else {
             this.checkClass(evt);
@@ -470,9 +464,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         if (!this.hasAccount) { return; }
         if (action) {
             const modals = this.storage.getAllModalIds();
-            if (modals && modals.indexOf(ModalIds.CANCELCART) !== -1) {
-                return;
-            }
+            if (modals && modals.indexOf(ModalIds.CANCELCART) !== -1) { return; }
             this.checkClassById('cancelOrder');
         } else {
             this.checkClass(evt);
@@ -482,7 +474,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             closeButtonLabel: '취소',
             closeByEnter: true,
             closeByClickOutside: true,
-            beforeCloseCallback: function() {
+            beforeCloseCallback: function () {
                 if (this.isEnter) {
                     this.result = this.isEnter;
                 }
@@ -518,13 +510,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
      * @param {any} evt 이벤트
      */
     etcOrder(evt: any, action?: string) {
-        // if (!this.hasAccount) { return; }
         if (this.hasProduct && this.hasCart) { return; }
         if (action) {
             const modals = this.storage.getAllModalIds();
-            if (modals && modals.indexOf(ModalIds.ETC) !== -1) {
-                return;
-            }
+            if (modals && modals.indexOf(ModalIds.ETC) !== -1) { return; }
             this.checkClassById('etcOrder');
         } else {
             this.checkClass(evt);
@@ -573,10 +562,10 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             'totalTax': null,
             'totalPriceWithTax': amwayExtendedOrdering.totalValue,
             'code': amwayExtendedOrdering.orderList[0].code,
-            'orderDiscounts' : null,
-            'orderTaxDiscount' : null,
-            'productDiscounts' : null,
-            'productTaxDiscount' : null
+            'orderDiscounts': null,
+            'orderTaxDiscount': null,
+            'productDiscounts': null,
+            'productTaxDiscount': null
         };
         Object.assign(this.cartInfo, jsonData);
     }
