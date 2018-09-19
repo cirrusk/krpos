@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { Modal, Logger, StorageService, Config } from '../../core';
+import { Modal, Logger, StorageService, Config, AlertService } from '../../core';
 import {
     PromotionOrderComponent, EtcOrderComponent,
     SearchAccountComponent, PickupOrderComponent,
@@ -8,12 +8,11 @@ import {
     SearchBerComponent
 } from '../../modals';
 import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, ModalIds, Coupon, CouponList } from '../../data';
+import { MessageService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
 import { CouponComponent } from '../../modals/payment/ways/coupon/coupon.component';
 import { SearchAccountBroker, InfoBroker } from '../../broker';
-import { PaymentService } from '../../service';
-
 /**
  * 주문 메뉴 구성
  *
@@ -73,6 +72,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         private storage: StorageService,
         private logger: Logger,
         private config: Config,
+        private alert: AlertService,
+        private message: MessageService,
         private searchAccountBroker: SearchAccountBroker,
         private payment: PaymentService,
         private infobroker: InfoBroker,
@@ -414,12 +415,20 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
      * 중개 주문 팝업
      * 중개 주문은 ABO만 할 수 있음.
      *
+     * @add 2018.09.18
+     * 개인사업자인 경우 중개판매를 이용할 수 없음.
+     * "개인 사업자회원은 중개판매를 이용하실 수 없는 회원입니다." 메시지 처리
      *
      * @param {any} evt 이벤트
      */
     mediateOrder(evt: any, action?: string) {
         if (!this.hasAccount || this.orderType === OrderType.GROUP) { return; }
         if (this.accountInfo && this.accountInfo.accountTypeCode !== MemberType.ABO) { return; }
+        // 개인사업자는 중개판매 불가함.
+        if (this.accountInfo && this.accountInfo.saleTypeCode !== 'C') {
+            this.alert.warn({ message: this.message.get('not.use.mediator', this.accountInfo.name, this.accountInfo.uid), timer: true, interval: 2000 });
+            return;
+        }
         if (action) {
             const modals = this.storage.getAllModalIds();
             if (modals && modals.indexOf(ModalIds.BERSEARCH) !== -1) {
@@ -444,6 +453,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
 
     /**
      * 중개주문 메뉴 비활성화 처리
+     * 개인사업자인 경우 중개판매를 이용할 수 없음.
      */
     checkMediateDisable(): boolean {
         if (!this.hasAccount || this.orderType === OrderType.GROUP) { return true; }

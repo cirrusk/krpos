@@ -93,5 +93,6 @@ export const LANG_KO_MSGS = {
     'block.notrenewal': '{0} 회원님({1})은<br>미갱신 상태입니다.<br>회원 갱신이 필요합니다.<br>(갱신기간 : {2})',
     'block.loginblock': '일반 로그인이 제한된 회원입니다.',
     'block.orderblock': '구매제한 회원입니다.',
-    'dms.error': 'MDMS 서버에 오류가 발생하였습니다.<br>{0}'
+    'dms.error': 'MDMS 서버에 오류가 발생하였습니다.<br>{0}',
+    'not.use.mediator':'개인 사업자회원({0} {1})은<br>중개판매를 이용하실 수 없는 회원입니다.'
 };
