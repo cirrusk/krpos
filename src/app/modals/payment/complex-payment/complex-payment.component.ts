@@ -495,7 +495,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             this.paymentModeListByMain.paymentModes.forEach(paymentmode => {
                 const pmc = paymentmode.code.substring(paymentmode.code.lastIndexOf('-') + 1);
                 this.paymentModes.set(pmc, pmc);
-                if (this.paymentModeLog) { this.logger.set('complex.payment.component', `${this.getPaymentModeLog(pmc, paymentmode)}`).all(); }
+                this.printPaymentModeLog(pmc, paymentmode);
             });
             this.popupPayment(this.addPopupType); // 추가 팝업이 있을경우 처리
         } else {
@@ -503,24 +503,25 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         }
     }
 
-    private getPaymentModeLog(pmc: string, paymentmode: PaymentModeByMain): string {
-        const paymentmodes: PaymentMode[] = paymentmode.paymentModes;
-        let s: Array<string> = new Array<string>();
-        s.push('\n┌──────────── Main payment ─────────────────');
-        s.push(`\n│   ${pmc} (${paymentmode.code})`);
-        s.push('\n└───────────────────────────────────────────')
-        s.push('\n┌───────────── Sub payment ─────────────────');
-        paymentmodes.forEach((paymentmode, idx) => {
-            s.push(`\n│   [${++idx}] ${paymentmode.name} (${paymentmode.code})`);
-        });
-        s.push('\n└───────────────────────────────────────────');
-        return s.join('');
+    private printPaymentModeLog(pmc: string, paymentmode: PaymentModeByMain) {
+        if (this.paymentModeLog) {
+            const paymentmodes: PaymentMode[] = paymentmode.paymentModes;
+            let s: Array<string> = new Array<string>();
+            s.push('\n┌──────────── Main payment ─────────────────');
+            s.push(`\n│   ${pmc} (${paymentmode.code})`);
+            s.push('\n└───────────────────────────────────────────')
+            s.push('\n┌───────────── Sub payment ─────────────────');
+            paymentmodes.forEach((paymentmode, idx) => {
+                s.push(`\n│   [${++idx}] ${paymentmode.name} (${paymentmode.code})`);
+            });
+            s.push('\n└───────────────────────────────────────────');
+            this.logger.set('complex.payment.component', s.join('')).all();
+        }
     }
 
     private popupPayment(popupType: string) {
-        // 실결제 팝업까지 떠있을 경우는 진행하지 못하도록 함.
         const modalids = this.storage.getAllModalIds();
-        if (modalids && modalids.length === 2) {
+        if (modalids && modalids.length === 2) { // 실결제 팝업까지 떠있을 경우는 진행하지 못하도록 함.
             return;
         }
         if (popupType) {
@@ -571,7 +572,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
                     closeByClickOutside: false,
                     closeByEnter: true,
                     modalId: ModalIds.APPRCANCEL,
-                    beforeCloseCallback: function() {
+                    beforeCloseCallback: function () {
                         if (this.isEnter) {
                             this.result = this.isEnter;
                         }
@@ -655,26 +656,28 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     setEnableMenu(type: string) {
         if (this.paymentModeListByMain.paymentModes) {
             const existedIdx: number = this.paymentModeListByMain.paymentModes.findIndex(
-                function(obj) {
+                function (obj) {
                     return obj.code.substring(obj.code.lastIndexOf('-') + 1) === type;
                 }
             );
             if (existedIdx === -1) { return; }
-            if (this.paymentModeLog) { this.logger.set('complex.payment.component', `${this.getEnableMenuLog(this.paymentModeListByMain.paymentModes[existedIdx].paymentModes)}`).all(); }
+            this.printPaymentEnableMenuLog(this.paymentModeListByMain.paymentModes[existedIdx].paymentModes);
             this.paymentModeListByMain.paymentModes[existedIdx].paymentModes.forEach(paymentType => {
                 this.enableMenu.push(paymentType.code);
             });
         }
     }
 
-    private getEnableMenuLog(paymentmodes: PaymentMode[]): string {
-        let s: Array<string> = new Array<string>();
-        s.push('\n┌───────────── Enable Menu ─────────────────');
-        paymentmodes.forEach((paymentmode, idx) => {
-            s.push(`\n│   [${++idx}] ${paymentmode.name} (${paymentmode.code})`);
-        });
-        s.push('\n└───────────────────────────────────────────');
-        return s.join('');
+    private printPaymentEnableMenuLog(paymentmodes: PaymentMode[]) {
+        if (this.paymentModeLog) {
+            let s: Array<string> = new Array<string>();
+            s.push('\n┌───────────── Enable Menu ─────────────────');
+            paymentmodes.forEach((paymentmode, idx) => {
+                s.push(`\n│   [${++idx}] ${paymentmode.name} (${paymentmode.code})`);
+            });
+            s.push('\n└───────────────────────────────────────────');
+            this.logger.set('complex.payment.component', s.join('')).all();
+        }
     }
 
     // 이벤트 리스닝이므로 모달 이벤트와 쫑난다.
