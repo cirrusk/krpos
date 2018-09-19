@@ -62,64 +62,65 @@ export class CartListComponent implements OnInit, OnDestroy {
   private paymentGroupListsubscription: Subscription;
   private paymentGroupEntriessubscription: Subscription;
 
-  private searchParams: SearchParam;                                        // 조회 파라미터
-  private cartInfo: CartInfo;                                               // 장바구니 기본정보
-  private productInfo: OrderEntry;                                          // 상품 정보
-  private addCartModel: CartModification[];                                 // 장바구니 담기 응답모델
-  private updateCartModel: CartModification;                                // 장바구니 수정 응답모델
-  private pager: Pagination;                                                // pagination 정보
-  private selectedCartNum: number;                                          // 선택된 카트번호
-  private restrictionModel: RestrictionModel;                               // 상품 제한 메시지(ERROR)
-  private restrictionMessageList: Array<RestrictionModel>;                  // 상품 제한 메시지 리스트(ERROR)
-  private resCartInfo: ResCartInfo;                                         // Cart 정보
-  private domain: string;                                                   // api root 도메인
-  private serialNumbers: Array<string>;                                     // Serial/RFID 정보 받기
-  private serial: string;                                                   // Serial/RFID 값 입력 화면 첫번째에 뿌리도록.
+  private searchParams: SearchParam;                                          // 조회 파라미터
+  private cartInfo: CartInfo;                                                 // 장바구니 기본정보
+  private productInfo: OrderEntry;                                            // 상품 정보
+  private addCartModel: CartModification[];                                   // 장바구니 담기 응답모델
+  private updateCartModel: CartModification;                                  // 장바구니 수정 응답모델
+  private pager: Pagination;                                                  // pagination 정보
+  private selectedCartNum: number;                                            // 선택된 카트번호
+  private restrictionModel: RestrictionModel;                                 // 상품 제한 메시지(ERROR)
+  private restrictionMessageList: Array<RestrictionModel>;                    // 상품 제한 메시지 리스트(ERROR)
+  private resCartInfo: ResCartInfo;                                           // Cart 정보
+  private domain: string;                                                     // api root 도메인
+  private serialNumbers: Array<string>;                                       // Serial/RFID 정보 받기
+  private serial: string;                                                     // Serial/RFID 값 입력 화면 첫번째에 뿌리도록.
   private copyGroupList: Array<ResCartInfo>;
   private holdBer: Array<string>;
 
-  accountInfo: Accounts;                                                    // 사용자 정보
-  groupAccountInfo: Array<Accounts>;                                        // 그룹 사용자 정보
-  currentGroupAccountInfo: Array<Accounts>;                                 // 그룹 사용자 정보()
-  userPager: Pagination;                                                    // 그룹 사용자 페이징
-  searchMode: string;                                                       // 조회 모드
-  cartList: Array<OrderEntry>;                                              // 장바구니 리스트
-  currentCartList: Array<OrderEntry>;                                       // 출력 장바구니 리스트
-  totalItem: number;                                                        // 총 수량
-  totalPrice: number;                                                       // 총 금액
-  totalPV: number;                                                          // 총 PV
-  totalBV: number;                                                          // 총 Bv
-  cartListCount: number;                                                    // 카트 목록 개수
-  balance: number;                                                          // 회원 포인트
-  recash: number;                                                           // 회원 Re-Cash
-  orderType: string;                                                        // 결제타입(일반 = n, 그룹 = g)
-  eOrderType = OrderType;
-  ccamount: number;                                                         // 신용카드 결제금액
-  installment: number;                                                      // 카드 할부
-  cashamount: number;                                                       // 현금 결제금액
-  pointamount: number;                                                      // 포인트 사용금액
-  recashamount: number;                                                     // Recash 사용금액
-  ddamount: number;                                                         // 자동이체 사용금액
-  discount: number;                                                         // 할인금액
-  received: number;                                                         // 낸 금액
-  change: number;                                                           // 거스름돈
-  selectedUserIndex = -1;                                                   // 그룹주문 선택한 유저 Table 상의 index
-  selectedUserId: string;                                                   // 그룹주문 선택한 유저의 ID
+  accountInfo: Accounts;                                                      // 사용자 정보
+  groupAccountInfo: Array<Accounts>;                                          // 그룹 사용자 정보
+  currentGroupAccountInfo: Array<Accounts>;                                   // 그룹 사용자 정보()
+  userPager: Pagination;                                                      // 그룹 사용자 페이징
+  searchMode: string;                                                         // 조회 모드
+  cartList: Array<OrderEntry>;                                                // 장바구니 리스트
+  currentCartList: Array<OrderEntry>;                                         // 출력 장바구니 리스트
+  totalItem: number;                                                          // 총 수량
+  totalPrice: number;                                                         // 총 금액
+  totalPV: number;                                                            // 총 PV
+  totalBV: number;                                                            // 총 Bv
+  cartListCount: number;                                                      // 카트 목록 개수
+  balance: number;                                                            // 회원 포인트
+  recash: number;                                                             // 회원 Re-Cash
+  orderType: string;                                                          // 결제타입(일반 = n, 그룹 = g)
+  ccamount: number;                                                           // 신용카드 결제금액
+  installment: number;                                                        // 카드 할부
+  cashamount: number;                                                         // 현금 결제금액
+  pointamount: number;                                                        // 포인트 사용금액
+  recashamount: number;                                                       // Recash 사용금액
+  ddamount: number;                                                           // 자동이체 사용금액
+  discount: number;                                                           // 할인금액
+  received: number;                                                           // 낸 금액
+  change: number;                                                             // 거스름돈
+  selectedUserIndex = -1;                                                     // 그룹주문 선택한 유저 Table 상의 index
+  selectedUserId: string;                                                     // 그룹주문 선택한 유저의 ID
   apprtype: string;
-  memberType = MemberType;                                                  // HTML 사용(enum)
+  memberType = MemberType;                                                    // HTML 사용(enum)
+  eOrderType = OrderType;                                                     // HTML 사용(enum)
   // 그룹
-  amwayExtendedOrdering: AmwayExtendedOrdering;                             // 그룹카트 정보
-  groupSelectedCart: AbstractOrder;                                         // 선택된 그룹카트 정보
+  amwayExtendedOrdering: AmwayExtendedOrdering;                               // 그룹카트 정보
+  groupSelectedCart: AbstractOrder;                                           // 선택된 그룹카트 정보
   // 결제수단변경
-  orderList: OrderList;                                                     // 주문상세내역
-  paymentChange: boolean;                                                   // 재결제 여부
-  ber: BerData;   // 사업자 정보
-  couponSize: string;
-  @ViewChild('searchText') private searchText: ElementRef;                  // 입력창
+  orderList: OrderList;                                                       // 주문상세내역
+  paymentChange: boolean;                                                     // 재결제 여부
+  ber: BerData;                                                               // 사업자 정보
+  couponSize: string;                                                         // 쿠폰 count
+  addProductCode: string;                                                     // 제품 추가시 선택을 위한 제품코드 임시 저장
+  @ViewChild('searchText') private searchText: ElementRef;                    // 입력창
   @Output() public posCart: EventEmitter<any> = new EventEmitter<any>();      // 카트에서 이벤트를 발생시켜 메뉴컴포넌트에 전달
   @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 발생한 프로모션을 부모 오더 컴포넌트에 전달
   @Output() public posCoupon: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 쿠폰 링크 클릭시 메뉴쪽 쿠폰 팝업호출 이벤트 전달
-  @Input() public noticeList: string[] = [];                                // 캐셔용 공지사항
+  @Input() public noticeList: string[] = [];                                  // 캐셔용 공지사항
 
   constructor(private modal: Modal,
     private cartService: CartService,
@@ -426,6 +427,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.selectedUserId = '';
     this.copyGroupList = Array<ResCartInfo>();
     this.couponSize = '0';
+    this.addProductCode = '';
     this.sendRightMenu('all', false);
     // client 초기화 : 결제가 완료되면 이 함수를 타고 customer 화면 초기화수행!
     this.storage.initLocals();
@@ -462,9 +464,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {number} index 선택 로우 넘버
    */
   activeRowCart(index: number): void {
-    const selectedPrice = Number(this.currentCartList[index].totalPriceInclTax.value);
-
-    if (selectedPrice > 0) {
+    // 증정품, kitproduct 의 제품을 제외한 상품만 선택 가능
+    if (!this.currentCartList[index].giveAway && this.currentCartList[index].kitEntryNumber === undefined) {
       this.selectedCartNum = index;
     }
   }
@@ -1238,6 +1239,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           this.addCartModel = this.resCartInfo.cartModifications.cartModifications;
           // 정상적으로 담았을 경우
           if (this.addCartModel[0].statusCode === 'success') {
+            // row 선택을 위한 제품코드 임시 저장
+            this.addProductCode = this.addCartModel[0].entry.product.code;
             this.addCartModel.forEach(addModel => {
               this.productInfo = addModel.entry;
               this.addCartEntry(this.resCartInfo.cartList);
@@ -1378,8 +1381,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.cartList.length === 0) {
               this.sendRightMenu(ModelType.PRODUCT, false);
             }
-            this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다.
-            this.setPage(index < this.cartListCount ? 1 : Math.ceil(index / this.cartListCount));
+            this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다
+            this.setPage((index + 1) < this.cartListCount ? 1 : Math.ceil((index + 1) / this.cartListCount));
             if (this.orderType === OrderType.GROUP) {
               // 그룹 카트 조회
               this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
@@ -1746,17 +1749,23 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.setCartListProductPromotion();
     let orderidx = -1;
     // 프로모션인 경우 row index 값 추출(증정품 제외)
-    if (this.resCartInfo.cartList.appliedOrderPromotions.length > 0 || this.resCartInfo.cartList.appliedProductPromotions.length > 0) {
-      orderidx = this.currentCartList.findIndex(obj => obj.giveAway === true);
+    // if (this.resCartInfo.cartList.appliedOrderPromotions.length > 0 || this.resCartInfo.cartList.appliedProductPromotions.length > 0) {
+    //   orderidx = this.currentCartList.findIndex(obj => obj.giveAway === true);
+    // }
+
+    // this.currentCartList.findIndex(obj => obj.kitEntryNumber === undefined);
+    if (this.addProductCode !== '') {
+      orderidx = this.currentCartList.findIndex(obj => obj.product.code === this.addProductCode);
     }
 
     if (pagerFlag) {
       this.selectedCartNum = -1;
     } else {
-      this.selectedCartNum = orderidx === -1 ? this.currentCartList.length - 1 : orderidx - 1;
+      this.selectedCartNum = orderidx === -1 ? -1 : orderidx;
     }
     this.storage.setCartPage(page);
     this.totalPriceInfo();
+    this.addProductCode = '';
   }
 
   /**
@@ -1963,7 +1972,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.getCartList();
 
         // 재 주문을 했을 경우
-        // 기획 필요
+        // 재결제 및 결제수단변경일 경우
+        // Restriction에 걸린 내요에 대한 처리
         // if (this.copyGroupList.length > 0) {
         //   // 선택한 사용자의 Cart 정보 검색
         //   const copyGroupListIdx: number = this.copyGroupList.findIndex(

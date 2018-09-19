@@ -84,7 +84,7 @@ export class OrderService {
     const param = {
       currentPage: currentPage,
       pageSize: pageSize,
-      sorts : [{sort: sort, asc: asc}], fields: 'FULL'
+      fields: 'FULL'
     };
 
     const data = new HttpData('orderList', null, orderData, param, 'json');
