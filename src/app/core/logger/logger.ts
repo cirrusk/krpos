@@ -22,15 +22,19 @@ export class Logger {
    */
   private logger(level: string) {
     const cnfLevel: string = (this.confLogLevel && this.confLogLevel !== '') ? this.confLogLevel.toUpperCase() : 'DEBUG';
-    if (LogLevels[level] >= LogLevels[cnfLevel]) {
+    let printLog: boolean = LogLevels[level] >= LogLevels[cnfLevel];
+    if (level === 'ALL') { printLog = true; }
+    if (printLog) {
       let nm, msg;
       if (this.message) {
         if (this.name) { nm = '[' + this.name + '] '; } else { nm = ''; }
         msg = this.message ? this.message : '';
         switch (level) {
           case 'DEBUG': { return console.debug.bind(console, `%c[%s] %c%s%s`, 'color:teal', level, 'color:teal', nm, msg); }
+          case 'ALL':
           case 'INFO':
-          case 'LOG':   { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:black', level, 'color:black', nm, msg); }
+          case 'LOG': { return console.log.bind(console, `%c[%s] %c%s%s`, 'color:black', level, 'color:black', nm, msg); }
+          case 'TRACE': { return console.trace.bind(console, `%c[%s] %c%s%s`, 'color:red', level, 'color:red;', nm, msg); }
           case 'WARN':
           case 'ERROR': { return console.error.bind(console, `%c[%s] %c%s%s`, 'color:red', level, 'color:red;', nm, msg); }
           case 'OFF':
@@ -39,8 +43,10 @@ export class Logger {
       } else {
         switch (level) {
           case 'DEBUG': { return console.debug.bind(console); }
+          case 'ALL':
           case 'INFO':
-          case 'LOG':   { return console.log.bind(console); }
+          case 'LOG': { return console.log.bind(console); }
+          case 'TRACE': { return console.trace.bind(console); }
           case 'WARN':
           case 'ERROR': { return console.error.bind(console); }
           case 'OFF':
@@ -64,8 +70,15 @@ export class Logger {
     return this;
   }
 
+  get all() {
+    return this.logger('ALL');
+  }
+  get trace() {
+    return this.logger('TRACE');
+  }
+
   get debug() {
-     return this.logger('DEBUG');
+    return this.logger('DEBUG');
   }
 
   get info() {
