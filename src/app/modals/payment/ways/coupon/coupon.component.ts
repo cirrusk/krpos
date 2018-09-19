@@ -127,12 +127,14 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
         } else {
           this.checktype = -1;
           this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
+          this.alert.warn({ message: this.message.get('noresult.coupon'), timer: true, interval: 1500 });
         }
       },
       error => {
         this.checktype = -1;
-        this.apprmessage = this.message.get('noresult.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
+        this.apprmessage = this.message.get('nosearch.coupon'); // '해당 쿠폰이 존재하지 않습니다. 쿠폰번호를 다시 확인해주세요.';
         this.logger.set('coupon.component', `${error}`).error();
+        this.alert.warn({ message: this.message.get('nosearch.coupon'), timer: true, interval: 1500 });
       });
   }
 
