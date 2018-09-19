@@ -72,6 +72,12 @@ export class AccountService {
     }
   }
 
+  /**
+   * 에러가 잡혔을 경우 에러 내용 출력
+   * 
+   * @param errdata 에러 객체
+   * @param msgkey 에러 메시지 출력 메시지 키
+   */
   checkError(errdata: Errors, msgkey?: string): string {
     if (errdata.type === 'InvalidTokenError') {
       this.alert.error({ message: this.message.get('token.error', errdata.message), timer: true, interval: 1500 });
