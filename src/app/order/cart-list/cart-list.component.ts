@@ -931,13 +931,11 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (error) {
                 const errdata = Utils.getError(error);
                 if (errdata) {
-                  if (errdata.type === 'InvalidTokenError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+                  const errtype = this.accountService.checkError(errdata);
+                  if (errtype === 'InvalidTokenError') {
                     this.storage.removeTokenInfo();
                     this.storage.removeBatchInfo();
                     this.router.navigate(['/']);
-                  } else if (errdata.type === 'InvalidDmsError') {
-                    this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
                   }
                   setTimeout(() => { this.searchText.nativeElement.focus(); }, 1510);
                 } else {
@@ -955,13 +953,11 @@ export class CartListComponent implements OnInit, OnDestroy {
         if (error) {
           const errdata = Utils.getError(error);
           if (errdata) {
-            if (errdata.type === 'InvalidTokenError') { // Token 이 없을 경우 세션 초기화 하고 초기 화면으로 이동
-              this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+            const errtype = this.accountService.checkError(errdata, 'search.account.error');
+            if (errtype === 'InvalidTokenError') { // Token 이 없을 경우 세션 초기화 하고 초기 화면으로 이동
               this.storage.removeTokenInfo();
               this.storage.removeBatchInfo();
               this.router.navigate(['/']);
-            } else {
-              this.alert.error({ message: this.message.get('search.account.error', errdata.message), timer: true, interval: 1500 });
             }
           }
         }
@@ -1079,10 +1075,12 @@ export class CartListComponent implements OnInit, OnDestroy {
           if (error) {
             const errdata = Utils.getError(error);
             if (errdata) {
-              if (errdata.type === 'InvalidTokenError') {
-                this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
-              } else if (errdata.type === 'InvalidDmsError') {
-                this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+              const errtype = this.accountService.checkError(errdata);
+              this.logger.set('cart.list.component', `create cart error type : ${errtype}`).all();
+              if (errtype === 'InvalidTokenError') { // Token 이 없을 경우 세션 초기화 하고 초기 화면으로 이동
+                this.storage.removeTokenInfo();
+                this.storage.removeBatchInfo();
+                this.router.navigate(['/']);
               }
               setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
             } else {

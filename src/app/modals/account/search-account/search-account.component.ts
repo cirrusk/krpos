@@ -121,6 +121,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
      * 1. 기본체크 : 회원 탈퇴 및 존재여부
      * 2. 프로필 업데이트 : 자동갱신, 일반 갱신 기간에 갱신 하지 않은 회원
      * 3. 주문 블락 체크
+     * 
+     * @add 2018.09.19 아이디 생성될때는 대문자로 생성되기 때문에 조회 시 변경 필요
      *
      * @param {string} searchMemberType 검색 회원 타입
      * @param {string} searchText 검색어
@@ -129,11 +131,11 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         if (searchText && searchText.trim()) {
             this.activeNum = -1;
             if (searchMemberType === SearchMemberType.CONSUMER) {
-                // if (!this.regexMobile.test(searchText)) {
-                //     this.alert.warn({ message: '잘못된 휴대폰/전화 번호입니다.', timer: true, interval: 1500 });
-                //     setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
-                //     return;
-                // }
+                if (!this.regexMobile.test(searchText)) {
+                    this.alert.warn({ message: '잘못된 휴대폰/전화 번호입니다.', timer: true, interval: 1500 });
+                    setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);
+                    return;
+                }
             }
             this.getAccount(searchMemberType, searchText);
         } else {
@@ -210,7 +212,7 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         if (this.activeNum > -1) {
             const uid = this.activeCode;
             const existedIdx: number = this.accountList.accounts.findIndex(
-                function(obj) {
+                function (obj) {
                     return obj.parties[0].uid === uid;
                 }
             );
@@ -227,11 +229,8 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
                     if (error) {
                         const errdata = Utils.getError(error);
                         if (errdata) {
-                            if (errdata.type === 'InvalidTokenError') {
-                                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
-                            } else if (errdata.type === 'InvalidDmsError') {
-                                this.alert.error({ message: this.message.get('dms.error', errdata.message) });
-                            }
+                            const errtype = this.accountService.checkError(errdata);
+                            this.logger.set('search.account', `search error type : ${errtype}`).all();
                         } else {
                             const resp = new ResponseMessage(error.error.code, error.error.returnMessage);
                             this.checkUserBlock(resp, account);
@@ -250,11 +249,9 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
         if ((page < 1 || page > this.pager.totalPages) && pagerFlag) {
             return;
         }
-
         if (pagerFlag) {
             this.activeNum = -1;
         }
-
         // pagination 생성 데이터 조회
         this.pager = this.pagerService.getPager(this.accountList.accounts.length, page, this.PAGE_SIZE);
         // 출력 리스트 생성

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { ApiService, Config } from '../core';
-import { AccountList, Accounts, Block, HttpData, MemberType, ResponseMessage } from '../data';
+import { ApiService, Config, AlertService } from '../core';
+import { AccountList, Accounts, Block, HttpData, MemberType, ResponseMessage, Errors } from '../data';
+import { MessageService } from '../message';
 
 /**
  * 회원 서비스
@@ -10,7 +11,7 @@ import { AccountList, Accounts, Block, HttpData, MemberType, ResponseMessage } f
 @Injectable()
 export class AccountService {
 
-  constructor(private api: ApiService, private config: Config) { }
+  constructor(private api: ApiService, private alert: AlertService, private message: MessageService, private config: Config) { }
 
   /**
    * 비회원 등록
@@ -21,12 +22,13 @@ export class AccountService {
    * @param {string} sponsorNo 후원자 번호
    * @returns {AccountList} 등록된 회원 정보
    */
-  createNewAccount(registerType: string, phoneContactInfoType: string, phoneNumber: string, sponsorNo?: string ): Observable<AccountList> {
+  createNewAccount(registerType: string, phoneContactInfoType: string, phoneNumber: string, sponsorNo?: string): Observable<AccountList> {
     const param = {
       registerType: registerType,
       phoneContactInfoType: phoneContactInfoType,
       phoneNumber: phoneNumber,
-      sponsorNo: sponsorNo  };
+      sponsorNo: sponsorNo
+    };
     const data = new HttpData('createNewAccount', null, param, null, 'json');
     return this.api.post(data);
   }
@@ -68,6 +70,19 @@ export class AccountService {
       const data = new HttpData('checkBlock', pathvariables, null, null, 'json');
       return this.api.put(data);
     }
+  }
+
+  checkError(errdata: Errors, msgkey?: string): string {
+    if (errdata.type === 'InvalidTokenError') {
+      this.alert.error({ message: this.message.get('token.error', errdata.message), timer: true, interval: 1500 });
+    } else if (errdata.type === 'InvalidDmsError') {
+      this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+    } else {
+      if (msgkey) {
+        this.alert.error({ message: this.message.get(msgkey, errdata.message), timer: true, interval: 1500 });
+      }
+    }
+    return errdata.type;
   }
 
 }

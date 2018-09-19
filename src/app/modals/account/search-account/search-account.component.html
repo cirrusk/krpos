@@ -56,7 +56,6 @@
                             <!-- 회원 선택시 tr에 on클래스 추가 -->
                             <tr [class.on]='activeNum == i' *ngFor="let account of currentLeftAccountList; let i = index" (click)='activeRow(i, account.parties[0].uid)'>
                                 <td class="tit" title="{{account.name}}"><span class="elips">
-                                    <!-- {{account.parties[0].name}} -->
                                     {{account.accountTypeCode.toUpperCase() === memberType.ABO ? account.name: account.parties[0].name}}
                                 </span></td>
                                 <td><span class="bg_bar none">{{account.parties[0].uid}}</span></td>
