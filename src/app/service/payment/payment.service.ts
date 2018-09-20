@@ -133,7 +133,7 @@ export class PaymentService {
    * @param {string} accountid 회원 아이디
    * @param {string} userid 회원 아이디
    * @param {string} couponcode 쿠폰코드
-   * @returns {Coupon} 쿠폰정보
+   * @returns {CouponList} 쿠폰 목록 첫번째 값
    */
   searchCoupon(accountid: string, userid: string, couponcode: string): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
