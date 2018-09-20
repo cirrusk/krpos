@@ -517,8 +517,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             s.push(`\n│   ${pmc} (${paymentmode.code})`);
             s.push('\n└───────────────────────────────────────────')
             s.push('\n┌───────────── Sub payment ─────────────────');
-            paymentmodes.forEach((paymentmode, idx) => {
-                s.push(`\n│   [${++idx}] ${paymentmode.name} (${paymentmode.code})`);
+            paymentmodes.forEach((pm, idx) => {
+                s.push(`\n│   [${++idx}] ${pm.name} (${pm.code})`);
             });
             s.push('\n└───────────────────────────────────────────');
             this.logger.set('complex.payment.component', s.join('')).all();
