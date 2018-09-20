@@ -66,20 +66,18 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
       }
       this.result = true;
       this.modalResult();
-      this.modal.openConfirm(
-        {
-          title: '근무 종료',
-          message: posmsg,
-          actionButtonLabel: '계속',
-          closeButtonLabel: '취소',
-          modalId: ModalIds.ENDWORK
-        }
-      ).subscribe(
+      this.modal.openConfirm({
+        title: '근무 종료',
+        message: posmsg,
+        actionButtonLabel: '계속',
+        closeButtonLabel: '취소',
+        modalId: ModalIds.ENDWORK
+      }).subscribe(
         result => {
           if (result) {
             this.logger.set('logout.component', 'end work, stop batch...').debug();
             this.batchsubscription = this.batch.endBatch().subscribe(
-              data => {
+              () => {
                 this.storage.logout();
                 // this.storage.removeEmployeeName(); // client 담당자 삭제
                 this.storage.clearClient();
@@ -92,8 +90,6 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
                   modalId: ModalIds.ENDWORKLAST
                 });
               });
-          } else {
-            // this.router.navigate(['/order']);
           }
         }
       );
