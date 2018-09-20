@@ -158,6 +158,22 @@ export class PaymentService {
   }
 
   /**
+   * 쿠폰 삭제
+   * 
+   * @param {string} userid 회원 아이디
+   * @param {string} cartid 카트 아이디
+   * @param {string} couponcode 쿠폰 코드
+   * @returns {Cart} 카트 정보
+   */
+  deleteCoupon(userid: string, cartid: string, couponcode: string): Observable<Cart> {
+    const pathvariables = { userId: userid, cartId: cartid, voucherId: couponcode };
+    const param = { fields: 'FULL' };
+    const data = new HttpData('deleteCoupon', pathvariables, null, param, 'json');
+    return this.api.delete(data);
+  }
+
+
+  /**
    * 수표 조회
    *
    * @param {string} checknumber 수표번호(42 자리, 0으로 right padding)

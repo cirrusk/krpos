@@ -56,6 +56,7 @@ export const environment = {
     searchCoupons: '/{baseSiteId}/accounts/{accountId}/users/{userId}/coupons',
     searchCoupon: '/{baseSiteId}/accounts/{accountId}/users/{userId}/coupon',
     applyCoupon: '/{baseSiteId}/users/{userId}/carts/{cartId}/vouchers',
+    deleteCoupon: '/{baseSiteId}/users/{userId}/carts/{cartId}/vouchers/{voucherId}',
     placeOrder: '/{baseSiteId}/users/{userId}/carts/{cartId}/paymentCaptureAndPlaceOrder',
     searchCheque: '/{baseSiteId}/validateCheckNumber',
     orderList: '/{baseSiteId}/order/search',
