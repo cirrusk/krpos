@@ -29,7 +29,7 @@ export class CartService {
    * @param {string} accountId 회원 아이디
    * @param {string} userId 회원 아이디
    * @param {string} pickupStore AP명
-   * @param {string} cartType ex) POS -> 일반주문, POSGROUP -> 그룹주문
+   * @param {string} cartType 장바구니 타입 ex) POS -> 일반주문, POSGROUP -> 그룹주문
    * @returns {CartInfo} Cart 정보
    */
   createCartInfo(accountId: string, userId: string, pickupStore: string, cartType: string): Observable<CartInfo> {
@@ -167,6 +167,7 @@ export class CartService {
    * @param {number} entryNumber 엔트리 넘버
    * @param {string} code 제품 코드
    * @param {number} qty 수량
+   * @param {Array<string>} serialNumbersCodes 시리얼/RFID 배열 정보
    * @returns {ResCartInfo} 카트 정보
    */
   updateItemQuantityCart(userId: string, cartId: string, entryNumber: number, code: string, qty: number, serialNumbersCodes?: Array<string>): Observable<ResCartInfo> {
@@ -397,7 +398,8 @@ export class CartService {
   /**
    * 결제금액 : 총 금액(TAX 제외) + 부가세 - 포인트 - Re-Cash
    *
-   * @param cartInfo 카트 정보
+   * @param {Cart} cartInfo 카트 정보
+   * @param {PaymentCapture} paymentCapture 결제 캡쳐 정보
    */
   getPaymentPrice(cartInfo: Cart, paymentCapture?: PaymentCapture) {
     if (!paymentCapture) {
