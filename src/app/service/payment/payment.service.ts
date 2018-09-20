@@ -237,41 +237,42 @@ export class PaymentService {
    * @param payment Payment Capture 정보
    * @param order Order 정보
    */
-  sendPaymentAndOrderInfo(payment: PaymentCapture, order: Order) {
+  sendPaymentAndOrderInfo(payment: PaymentCapture, order: Order): void {
     this.info.sendInfo('payinfo', [payment, order]);
     this.storage.setPayment([payment, order]);
   }
 
   /**
+   * @deprecated
    * 일반결제/복합결제인지 체크
    * 지불금액과 결제금액이 같을 경우 최종 결제 진행
    * 위의 조건이 만족할 경우
    * 1이면 일반결제, 1보다 크면 복합결제
    *
    * @param paymentcapture Payment 정보
+   * @returns {number} 일반결제인지 복합결제 인지 체크
    */
   getPaymentCheck(paymentcapture: PaymentCapture): number {
     let check = 0;
     if (paymentcapture) {
-      if (paymentcapture.ccPaymentInfo) { check++; }
-      if (paymentcapture.icCardPaymentInfo) { check++; }
-      if (paymentcapture.cashPaymentInfo) { check++; }
-      if (paymentcapture.directDebitPaymentInfo) { check++; }
-      if (paymentcapture.monetaryPaymentInfo) { check++; }
-      if (paymentcapture.pointPaymentInfo) { check++; }
-      if (paymentcapture.voucherPaymentInfo) { check++; }
+      Object.keys(paymentcapture).forEach((key) => {
+        const payment = paymentcapture[key];
+        if (payment != null) { check++; }
+      });
       return check;
     }
   }
 
   /**
    * 결제 내역 설정
+   * 
    * 결제금액 : 전체 금액 - 프로모션 금액
    * 받은금액 : 결제수단 총합 금액
    * 거스름돈 : 거스름돈
    *
    * @param {PaymentCapture} paymentcapture Payment Capture 정보
    * @param {Order} order 주문정보
+   * @returns {PaymentView} 결제 금액 정보
    */
   viewPayment(paymentcapture: PaymentCapture, order: Order): PaymentView {
     const pay = new PaymentView();
@@ -331,6 +332,7 @@ export class PaymentService {
    * @param paidamount 지불 금액
    * @param received 받은 금액
    * @param change 거스름돈
+   * @returns {CapturePaymentInfo} 결제 지불 정보
    */
   makeCashPaymentCaptureData(paymentcapture: PaymentCapture, paidamount: number, received: number, change: number): CapturePaymentInfo {
     let paidamountbypayment = paidamount;
@@ -365,6 +367,7 @@ export class PaymentService {
    * @param paymentcapture 지불 정보 객체
    * @param cardresult 카드 승인 응답 객체
    * @param paidamount 지불 금액
+   * @returns {CapturePaymentInfo} 결제 지불 정보
    */
   makeCCPaymentCaptureData(paymentcapture: PaymentCapture, cardresult: CardApprovalResult, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -394,6 +397,7 @@ export class PaymentService {
    *
    * @param cardresult 신용카드 승인 응답 결과값
    * @param paidamount 지불 금액
+   * @returns {CreditCardPaymentInfo} 결제 지불 정보
    */
   private makeCCPaymentInfo(cardresult: CardApprovalResult, paidamount: number): CreditCardPaymentInfo {
     const ccard = new CreditCardPaymentInfo(paidamount);
@@ -429,6 +433,7 @@ export class PaymentService {
    * @param paymentcapture 지불 정보 객체
    * @param bank 자동이체 계좌 정보
    * @param paidamount 지불 금액
+   * @returns {CapturePaymentInfo} 결제 지불 정보
    */
   makeDirectDebitPaymentCaptureData(paymentcapture: PaymentCapture, bank: BankAccount, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -461,6 +466,7 @@ export class PaymentService {
    * @param paymentcapture 지불 정보 객체
    * @param cardresult 현금 IC카드 승인 응답 정보
    * @param paidamount 지불 금액
+   * @returns {CapturePaymentInfo} 결제 지불 정보
    */
   makeICPaymentCaptureData(paymentcapture: PaymentCapture, cardresult: ICCardApprovalResult, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -487,6 +493,7 @@ export class PaymentService {
    *
    * @param cardresult 현금 IC카드 승인 응답 결과값
    * @param paidamount 지불 금액
+   * @returns {ICCardPaymentInfo} 결제 지불 정보
    */
   private makeICPaymentInfo(cardresult: ICCardApprovalResult, paidamount: number): ICCardPaymentInfo {
     const iccard = new ICCardPaymentInfo(paidamount);
@@ -522,6 +529,7 @@ export class PaymentService {
    * @param paymentcapture 지불 정보 객체
    * @param pointType 포인트 유형
    * @param paidamount 지불 금액
+   * @returns {CapturePaymentInfo} 결제 지불 정보
    */
   makePointPaymentCaptureData(paymentcapture: PaymentCapture, pointType: string, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -551,6 +559,7 @@ export class PaymentService {
    *
    * @param paymentcapture 지불 정보 객체
    * @param paidamount 지불 금액
+   * @returns {CapturePaymentInfo} 결제 지불 정보
    */
   makeRecashPaymentCaptureData(paymentcapture: PaymentCapture, paidamount: number): CapturePaymentInfo {
     const capturepaymentinfo = new CapturePaymentInfo();
@@ -573,6 +582,12 @@ export class PaymentService {
     return capturepaymentinfo;
   }
 
+  /**
+   * 결제 에러 메시지 생성
+   * 
+   * @param error 에러 정보
+   * @returns {string} 에러 메시지
+   */
   paymentError(error: any): string {
     let msg = '';
     if (error instanceof HttpErrorResponse) {
