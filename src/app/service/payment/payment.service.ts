@@ -135,7 +135,7 @@ export class PaymentService {
    * @param {string} couponcode 쿠폰코드
    * @returns {Coupon} 쿠폰정보
    */
-  searchCoupon(accountid: string, userid: string, couponcode: string): Observable<Coupon> {
+  searchCoupon(accountid: string, userid: string, couponcode: string): Observable<CouponList> {
     const pathvariables = { accountId: accountid, userId: userid };
     const params = { voucherId: couponcode, feilds: 'DEFAULT' };
     const data = new HttpData('searchCoupon', pathvariables, null, params, 'json');

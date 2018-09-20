@@ -111,6 +111,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
+  /**
+   * 바코드 쿠폰 검색 시 단건 검색
+   * 
+   * @param couponcode 쿠폰코드
+   */
   searchCoupon(couponcode: string) {
     if (Utils.isEmpty(couponcode)) {
       this.checktype = -2;
@@ -120,7 +125,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.couponsubscription = this.payment.searchCoupon(this.accountInfo.uid, this.accountInfo.parties[0].uid, couponcode).subscribe(
       result => {
         if (result) {
-          this.coupon = result;
+          this.coupon = result ? result.coupons[0] : null;
           if (this.finishStatus !== StatusDisplay.PAID) {
             this.applyCouponAndPaymentCapture();
           }

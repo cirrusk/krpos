@@ -314,7 +314,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
                     amwayExtendedOrdering: this.amwayExtendedOrdering,
                     addPopupType: addPopupType, couponlist: this.couponlist
                 },
-                closeByClickOutside: false,
+                closeByClickOutside: true,
                 modalId: ModalIds.COUPON
             });
         }
