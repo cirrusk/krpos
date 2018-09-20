@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, MessageService, ReceiptService, CartService } from '../../../../service';
-import { ModalComponent, ModalService, Logger, StorageService, Modal, KeyboardService, KeyCommand } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService, Modal, KeyboardService, KeyCommand, SpinnerService } from '../../../../core';
 import {
   KeyCode, Accounts, Balance, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
 } from '../../../../data';
@@ -43,6 +43,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
   @ViewChild('pointPanel') pointPanel: ElementRef;
   @ViewChild('allCheck') allCheck: ElementRef;
   @ViewChild('partCheck') partCheck: ElementRef;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private payments: PaymentService,
@@ -51,6 +53,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     private storage: StorageService,
     private keyboard: KeyboardService,
     private cartService: CartService,
+    private spinnerService: SpinnerService,
     private info: InfoBroker,
     private logger: Logger) {
     super(modalService);
@@ -256,11 +259,11 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     this.closeModal();
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onPointKeyDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onPointKeyDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.COMPLETE) { // 결제완료 창이 뜨지 않았을 경우만 처리
         this.doPay();

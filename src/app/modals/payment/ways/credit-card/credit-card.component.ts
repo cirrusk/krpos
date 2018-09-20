@@ -58,6 +58,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
   @ViewChild('installmentPeriod') private installmentPeriod: ElementRef;
   @ViewChild('allCheck') private allCheck: ElementRef;
   @ViewChild('partCheck') private partCheck: ElementRef;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private spinner: SpinnerService, private keyboard: KeyboardService,
     private nicepay: NicePaymentService, private payment: PaymentService, private modal: Modal, private storage: StorageService,
     private message: MessageService, private alert: AlertService, private info: InfoBroker, private config: Config,
@@ -407,16 +409,16 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onCreditCardPay(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinner.status()'])
+  onCreditCardPay(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.COMPLETE) {
         this.doPay();
       }
-    } else if (event.keyCode === KeyCode.ESCAPE) {
+    } else if (event.keyCode === KeyCode.ESCAPE && isSpinnerStatus) {
       this.spinner.hide();
     }
   }

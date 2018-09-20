@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener } fro
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 
-import { ModalComponent, ModalService, Logger, StorageService } from '../../../../core';
+import { ModalComponent, ModalService, Logger, StorageService, SpinnerService } from '../../../../core';
 import { PaymentService, MessageService } from '../../../../service';
 import { Utils, StringBuilder } from '../../../../core/utils';
 import { StatusDisplay, KeyCode, ModalIds } from '../../../../data';
@@ -28,8 +28,10 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
   @ViewChild('checktype') checktype: ElementRef;        // 수표종류
   @ViewChild('checkprice') checkprice: ElementRef;      // 수표금액
   @ViewChild('checkpopup') checkpopup: ElementRef;      // 팝업
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private payments: PaymentService, private message: MessageService,
-    private storage: StorageService, private logger: Logger) {
+    private storage: StorageService, private spinnerService: SpinnerService, private logger: Logger) {
     super(modalService);
     this.finishStatus = null;
     this.check = 0;
@@ -403,11 +405,11 @@ export class ChecksComponent extends ModalComponent implements OnInit, OnDestroy
     this.close();
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onChecksKeyBoardDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onChecksKeyBoardDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const lastmodal = this.storage.getLatestModalId();
       if (lastmodal === ModalIds.CHECKS) {
         if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {

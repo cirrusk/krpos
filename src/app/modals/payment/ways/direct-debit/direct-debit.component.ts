@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2, HostLis
 import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
-import { ModalComponent, ModalService, StorageService, Modal, Config } from '../../../../core';
+import { ModalComponent, ModalService, StorageService, Modal, Config, SpinnerService } from '../../../../core';
 import {
   PaymentCapture, Accounts, BankTypes, StatusDisplay, KeyCode, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
@@ -42,9 +42,12 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
   private directdebitminPrice: number;
   @ViewChild('paid') private paid: ElementRef;
   @ViewChild('ddpassword') private ddpassword: ElementRef;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private receipt: ReceiptService, private modal: Modal,
     private storage: StorageService, private message: MessageService, private payment: PaymentService,
-    private info: InfoBroker, private renderer: Renderer2, private config: Config, private cartService: CartService) {
+    private info: InfoBroker, private renderer: Renderer2, private config: Config, private spinnerService: SpinnerService,
+    private cartService: CartService) {
     super(modalService);
     this.finishStatus = null;
     this.checktype = 0;
@@ -220,11 +223,11 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     });
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onKeyBoardDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onKeyBoardDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.COMPLETE) { // 결제완료 창이 뜨지 않았을 경우만 처리
         this.doPay(event);

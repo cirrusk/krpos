@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ComplexPaymentComponent } from '../../complex-payment/complex-payment.component';
-import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService, SpinnerService } from '../../../../core';
 import { PaymentService, MessageService } from '../../../../service';
 import { InfoBroker } from '../../../../broker';
 import {
@@ -38,9 +38,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
   private coupon: Coupon;
   private page: Pagination;
   private pagesize = 5;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private modal: Modal,
     private info: InfoBroker, private payment: PaymentService, private storage: StorageService,
-    private message: MessageService, private alert: AlertService, private logger: Logger) {
+    private message: MessageService, private alert: AlertService, private spinnerService: SpinnerService, private logger: Logger) {
     super(modalService);
     this.couponCount = -1;
     this.checktype = 0;
@@ -113,7 +115,7 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
 
   /**
    * 바코드 쿠폰 검색 시 단건 검색
-   * 
+   *
    * @param couponcode 쿠폰코드
    */
   searchCoupon(couponcode: string) {
@@ -262,11 +264,11 @@ export class CouponComponent extends ModalComponent implements OnInit, OnDestroy
     this.page.currentPage = currentPage;
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onCouponKeyDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onCouponKeyDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ESCAPE) { // 27 : esc
+    if (event.keyCode === KeyCode.ESCAPE && !isSpinnerStatus) { // 27 : esc
       this.openComplexPayment();
     }
   }

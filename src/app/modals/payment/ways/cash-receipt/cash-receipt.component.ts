@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Rend
 import { Subscription } from 'rxjs/Subscription';
 
 import { OrderService, MessageService, CartService } from '../../../../service';
-import { ModalComponent, ModalService } from '../../../../core';
+import { ModalComponent, ModalService, SpinnerService } from '../../../../core';
 import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering, PaymentCapture } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
@@ -30,8 +30,10 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   @ViewChild('clientnum') private clientnum: ElementRef;       // 고객번호
   @ViewChild('income') private income: ElementRef;
   @ViewChild('outcome') private outcome: ElementRef;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private order: OrderService,
-    private message: MessageService, private renderer: Renderer2, private cartService: CartService) {
+    private message: MessageService, private renderer: Renderer2, private cartService: CartService, private spinnerService: SpinnerService) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
@@ -145,11 +147,11 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     this.closeModal();
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onReceiptKeyBoardDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onReceiptKeyBoardDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       if (this.finishStatus === StatusDisplay.CREATED || this.finishStatus === StatusDisplay.PAID) {
         this.close();
       }

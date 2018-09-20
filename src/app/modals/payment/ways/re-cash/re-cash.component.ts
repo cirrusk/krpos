@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { PaymentService, ReceiptService, MessageService, CartService } from '../../../../service';
-import { ModalComponent, ModalService, StorageService, Modal, KeyboardService, KeyCommand, Logger } from '../../../../core';
+import { ModalComponent, ModalService, StorageService, Modal, KeyboardService, KeyCommand, Logger, SpinnerService } from '../../../../core';
 import {
   KeyCode, Balance, Accounts, PaymentCapture, StatusDisplay, AmwayExtendedOrdering, PointReCash, ModalIds
 } from '../../../../data';
@@ -37,9 +37,12 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
   private keyboardsubscription: Subscription;
   @ViewChild('usePoint') usePoint: ElementRef;
   @ViewChild('recashPanel') recashPanel: ElementRef;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private modal: Modal,
     private receipt: ReceiptService, private payments: PaymentService, private keyboard: KeyboardService, private cartService: CartService,
-    private storage: StorageService, private message: MessageService, private info: InfoBroker, private logger: Logger) {
+    private storage: StorageService, private message: MessageService, private info: InfoBroker, private spinnerService: SpinnerService,
+    private logger: Logger) {
     super(modalService);
     this.isAllPay = false;
     this.finishStatus = null;
@@ -210,11 +213,11 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     this.closeModal();
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onAlertKeyDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onAlertKeyDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.COMPLETE) { // 결제 최종 팝업이 떠있으면 처리하지 않음.
         this.doPay(event);

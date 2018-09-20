@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input, 
 import { Router } from '@angular/router';
 import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType, ModalIds, KeyCode } from '../../data';
 import { MessageService, OrderService } from '../../service';
-import { Modal, Logger, AlertService, KeyboardService, KeyCommand, StorageService } from '../../core';
+import { Modal, Logger, AlertService, KeyboardService, KeyCommand, StorageService, SpinnerService } from '../../core';
 import { Utils } from '../../core/utils';
 import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
@@ -12,7 +12,6 @@ import { OrderDetailComponent } from '../../modals/order/order-detail/order-deta
   templateUrl: './order-complete.component.html'
 })
 export class OrderCompleteComponent implements OnInit, OnDestroy {
-  private PAGE_SIZE = 7;
   private orderListSubscription: Subscription;
   private keyboardsubscription: Subscription;
   private regexOnlyNum: RegExp = new RegExp(/^[0-9]+(\.[0-9]*){0,1}$/g); // 숫자만
@@ -27,12 +26,14 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   @ViewChild('searchType1') private searchTypeABO: ElementRef;
   @ViewChild('searchType2') private searchTypeC: ElementRef;
 
+  PAGE_SIZE = 7;
   orderHistoryList: OrderHistoryList;
   selectedOrderNum: number;
   searchType: string;
   memberType: string;
   searchText: string;
 
+  // spinnerService 는 HostListener 사용중
   constructor(private router: Router,
     private modal: Modal,
     private orderService: OrderService,
@@ -40,6 +41,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private keyboard: KeyboardService,
     private storage: StorageService,
+    private spinnerService: SpinnerService,
     private renderer: Renderer2,
     private logger: Logger,
     private element: ElementRef) {
@@ -261,11 +263,11 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onKeyBoardDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onKeyBoardDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modal = this.storage.getLatestModalId();
       if (modal !== ModalIds.ORDERDETAIL) {
         const order: any = this.orderHistoryList.orders.find((obj, i) => {

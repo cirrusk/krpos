@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
-import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config } from '../../../core';
+import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config, SpinnerService } from '../../../core';
 import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds, PaymentView, PaymentMode, PaymentModeByMain } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -52,6 +52,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     private useCache = false;
     private paymentModeLog = false;
     @ViewChildren('paytypes') paytypes: QueryList<ElementRef>;
+
+    // spinnerService 는 HostListener 사용중
     constructor(protected modalService: ModalService,
         private paymentService: PaymentService,
         private modal: Modal,
@@ -63,6 +65,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         private config: Config,
         private message: MessageService,
         private cartService: CartService,
+        private spinnerService: SpinnerService,
         private renderer: Renderer2) {
         super(modalService);
         this.init();
@@ -505,17 +508,17 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
     /**
      * 결제 지불 수단 출력
-     * 
+     *
      * @param pmc 결제 지불 수단 코드
      * @param paymentmode 결제 지불 수단 목록
      */
     private printPaymentModeLog(pmc: string, paymentmode: PaymentModeByMain) {
         if (this.paymentModeLog) {
             const paymentmodes: PaymentMode[] = paymentmode.paymentModes;
-            let s: Array<string> = new Array<string>();
+            const s: Array<string> = new Array<string>();
             s.push('\n┌──────────── Main payment ─────────────────');
             s.push(`\n│   ${pmc} (${paymentmode.code})`);
-            s.push('\n└───────────────────────────────────────────')
+            s.push('\n└───────────────────────────────────────────');
             s.push('\n┌───────────── Sub payment ─────────────────');
             paymentmodes.forEach((pm, idx) => {
                 s.push(`\n│   [${++idx}] ${pm.name} (${pm.code})`);
@@ -689,12 +692,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
     /**
      * 주 결제 수단 선택 시 활성화되는 지불 수단 로그 출력
-     * 
+     *
      * @param paymentmodes 지불 수단 목록
      */
     private printPaymentEnableMenuLog(paymentmodes: PaymentMode[]) {
         if (this.paymentModeLog) {
-            let s: Array<string> = new Array<string>();
+            const s: Array<string> = new Array<string>();
             s.push('\n┌───────────── Enable Menu ─────────────────');
             paymentmodes.forEach((paymentmode, idx) => {
                 s.push(`\n│   [${++idx}] ${paymentmode.name} (${paymentmode.code})`);
@@ -707,15 +710,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
     // 이벤트 리스닝이므로 모달 이벤트와 쫑난다.
     // 반드시 컴포넌트의 모달 아이디 체크를 해야함.
     // 가급적 모달 컴포넌트의 모달 아이디는 변경하지 않아야함.
-    @HostListener('document:keydown', ['$event'])
-    onKeyBoardDown(event: any) {
+    @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+    onKeyBoardDown(event: any, isSpinnerStatus: boolean) {
         event.stopPropagation();
         if (event.target.tagName === 'INPUT') { return; }
         const modals: string[] = this.storage.getAllModalIds();
         if (modals && modals.length === 1) {
             const latestmodalid = this.storage.getLatestModalId();
             if (latestmodalid === ModalIds.COMPLEX) {
-                if (event.keyCode === KeyCode.ESCAPE) {
+                if (event.keyCode === KeyCode.ESCAPE && !isSpinnerStatus) {
                     this.close();
                 }
             }

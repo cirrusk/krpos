@@ -7,6 +7,7 @@ import { ModalComponent } from './modal.component';
 import { ModalConfig } from './modal-config';
 import { StorageService } from '../service/storage.service';
 import { KeyCode } from '../../data/models/key-code';
+import { SpinnerService } from '../spinner/spinner.service';
 
 @Component({
   moduleId: module.id,
@@ -24,7 +25,8 @@ export class ModalMainComponent {
   isGrayBg: boolean;
   isDraggable: boolean;
 
-  constructor(private resolver: ComponentFactoryResolver, private elem: ElementRef, private storage: StorageService) { }
+  // spinnerService 는 HostListener 사용중
+  constructor(private resolver: ComponentFactoryResolver, private elem: ElementRef, private storage: StorageService, private spinnerService: SpinnerService) { }
 
   addComponent(component: Type<ModalComponent>) {
     const factory = this.resolver.resolveComponentFactory(component);
@@ -88,25 +90,27 @@ export class ModalMainComponent {
   }
 
   // Press Esc or Enter key to close dialog.
-  @HostListener('document:keydown', ['$event', '$event.target'])
-  keyboardInput(event: any, targetElm: HTMLElement) {
+  @HostListener('document:keydown', ['$event', '$event.target', 'this.spinnerService.status()'])
+  keyboardInput(event: any, targetElm: HTMLElement, isSpinnerStatus: boolean) {
     event.stopPropagation();   // event.preventDefault();
     const modalid = this.content.modalId;
     const latestmodalid = this.storage.getLatestModalId();
     if ((this.content.closeByEnter && event.keyCode === KeyCode.ENTER) ||
       (this.content.closeByEscape && event.keyCode === KeyCode.ESCAPE)) {
-      if (event.keyCode === KeyCode.ENTER) {
-        this.content.isEnter = true;
-      }
-      if (modalid && latestmodalid) { // 모달 찾는 값들이 있어야만 처리
-        if (modalid === latestmodalid) { // session 의 마지막 모달 아이디와 전송한 모달 아이디가 같을 경우
-          // this.storage.removeLatestModalId();
-          this.content.modalResult();
+        if (!isSpinnerStatus) {
+          if (event.keyCode === KeyCode.ENTER) {
+            this.content.isEnter = true;
+          }
+          if (modalid && latestmodalid) { // 모달 찾는 값들이 있어야만 처리
+            if (modalid === latestmodalid) { // session 의 마지막 모달 아이디와 전송한 모달 아이디가 같을 경우
+              // this.storage.removeLatestModalId();
+              this.content.modalResult();
+            }
+          } else {
+            console.log('close modal basic');
+            this.content.modalResult();
+          }
         }
-      } else {
-        console.log('close modal basic');
-        this.content.modalResult();
-      }
     }
   }
 

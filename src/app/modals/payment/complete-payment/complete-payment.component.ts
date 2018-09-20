@@ -47,6 +47,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private alertsubscription: Subscription;
   private keyboardsubscription: Subscription;
   private cartsubscription: Subscription;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private printer: PrinterService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private cart: CartService,
     private keyboard: KeyboardService, private storage: StorageService, private message: MessageService,
@@ -199,7 +201,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           this.logger.set('complete.payment.component', `payment capture and place order(${result.code}) : ${result.status}, status display : ${result.statusDisplay}`).debug();
           // if (result.statusDisplay === StatusDisplay.ERROR) {
-          if (Utils.isPaymentError(result.statusDisplay)) {  
+          if (Utils.isPaymentError(result.statusDisplay)) {
             let failmsg = '';
             if (result.statusDisplay === StatusDisplay.PAYMENTFAILED) {
               failmsg = this.message.get('payment.failed');
@@ -246,7 +248,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   /**
-   * 화면에 성공인 경우 와 실패인 경우 메시지를 
+   * 화면에 성공인 경우 와 실패인 경우 메시지를
    * 뿌려주기 위한 구분 플래그
    */
   isPaymentSuccessFlag() {
@@ -261,7 +263,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.finishStatus !== ErrorType.FAIL
         &&
         this.finishStatus !== ErrorType.NOORDER
-        ) { 
+        ) {
           return true; // 성공 화면
         }
         return false; // 실패 화면
@@ -526,11 +528,11 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onPaymentdDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinner.status()'])
+  onPaymentdDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT) {
         if (this.finishStatus === ErrorType.RECART) { // 카트 재생성

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChildren, QueryList, Host
 import { Subscription } from 'rxjs/Subscription';
 
 import { range } from 'lodash';
-import { ModalComponent, ModalService, StorageService, KeyboardService, KeyCommand } from '../../../core';
+import { ModalComponent, ModalService, StorageService, KeyboardService, KeyCommand, SpinnerService } from '../../../core';
 import { KeyCode, StatusDisplay } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { Product } from '../../../data/models/cart/cart-data';
@@ -63,7 +63,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     private isSerialProduct: boolean;
     private keyboardsubscription: Subscription;
     @ViewChildren('codes') codes: QueryList<ElementRef>;
-    constructor(protected modalService: ModalService, private keyboard: KeyboardService, private storage: StorageService) {
+
+    // spinnerService 는 HostListener 사용중
+    constructor(protected modalService: ModalService, private keyboard: KeyboardService, private storage: StorageService,
+        private spinnerService: SpinnerService) {
         super(modalService);
         this.finishStatus = null;
         this.checktype = 0;
@@ -210,11 +213,11 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         this.closeModal();
     }
 
-    @HostListener('document:keydown', ['$event'])
-    onSerialKeyBoardDown(event: any) {
+    @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+    onSerialKeyBoardDown(event: any, isSpinnerStatus: boolean) {
         event.stopPropagation();
         if (event.target.tagName === 'INPUT') { return; }
-        if (event.keyCode === KeyCode.ENTER) {
+        if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
             if (this.finishStatus === StatusDisplay.PAID) {
                 if (!this.dupcheck) {
                     setTimeout(() => { this.reg(); }, 50);

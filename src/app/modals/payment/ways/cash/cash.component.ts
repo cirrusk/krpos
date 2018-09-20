@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CompletePaymentComponent } from '../../complete-payment/complete-payment.component';
 import { ChecksComponent } from '../checks/checks.component';
 import { MessageService, ReceiptService, PaymentService, CartService } from '../../../../service';
-import { ModalComponent, ModalService, Modal, StorageService, Logger, KeyboardService, KeyCommand } from '../../../../core';
+import { ModalComponent, ModalService, Modal, StorageService, Logger, KeyboardService, KeyCommand, SpinnerService } from '../../../../core';
 import {
   Accounts, PaymentCapture, KeyCode, StatusDisplay, AmwayExtendedOrdering, ModalIds
 } from '../../../../data';
@@ -40,6 +40,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   private paymentsubscription: Subscription;
   private keyboardsubscription: Subscription;
   @ViewChild('paid') private paid: ElementRef;         // 받은금액
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService,
     private message: MessageService,
     private modal: Modal,
@@ -47,6 +49,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     private receipt: ReceiptService,
     private storage: StorageService,
     private cartService: CartService,
+    private spinnerService: SpinnerService,
     private keyboard: KeyboardService,
     private logger: Logger,
     private info: InfoBroker) {
@@ -241,11 +244,11 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onKeyBoardDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinnerService.status()'])
+  onKeyBoardDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const lastmodal = this.storage.getLatestModalId();
       if (lastmodal === ModalIds.COMPLETE) {
         return;

@@ -1,5 +1,5 @@
 import { Promotion } from './../../data/models/order/promotion';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -476,6 +476,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 증정품, kitproduct 의 제품을 제외한 상품만 선택 가능
     if (!this.currentCartList[index].giveAway && this.currentCartList[index].kitEntryNumber === undefined) {
       this.selectedCartNum = index;
+      this.addProductCode = this.currentCartList[index].product.code;
     }
   }
 
@@ -2263,5 +2264,4 @@ export class CartListComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 }

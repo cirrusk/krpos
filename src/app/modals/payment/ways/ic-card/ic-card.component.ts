@@ -37,6 +37,8 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
   private cardresult: ICCardApprovalResult;
   private paymentsubscription: Subscription;
   private dupcheck = false;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private modal: Modal, private receipt: ReceiptService,
     private message: MessageService, private nicepay: NicePaymentService, private payment: PaymentService, private alert: AlertService,
     private storage: StorageService, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private cartService: CartService) {
@@ -152,16 +154,16 @@ export class IcCardComponent extends ModalComponent implements OnInit, OnDestroy
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onIcCardDown(event: any) {
+  @HostListener('document:keydown', ['$event', 'this.spinner.status()'])
+  onIcCardDown(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT') { return; }
-    if (event.keyCode === KeyCode.ENTER) {
+    if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.COMPLETE) {
         this.doPay();
       }
-    } else if (event.KeyCode === KeyCode.ESCAPE) {
+    } else if (event.KeyCode === KeyCode.ESCAPE && isSpinnerStatus) {
       this.spinner.hide();
     }
   }

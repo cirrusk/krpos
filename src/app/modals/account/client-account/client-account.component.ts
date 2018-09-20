@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { ModalComponent, AlertService, ModalService, Logger, Modal, StorageService } from '../../../core';
+import { ModalComponent, AlertService, ModalService, Logger, Modal, StorageService, SpinnerService } from '../../../core';
 import { Utils } from '../../../core/utils';
 import { AccountList, ModalIds, ConsumerRegister, KeyCode } from '../../../data';
 import { AccountService, MessageService } from '../../../service';
@@ -24,12 +24,15 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   @Input() guser: boolean; // 간편선물 받은 사용자 여부
   @Input() sponsorNo: string; // 후원자 번호
   @ViewChild('phoneNumText') private phoneNumText: ElementRef;
+
+  // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private message: MessageService,
     private alert: AlertService,
     private storageService: StorageService,
     private accountService: AccountService,
+    private spinnerService: SpinnerService,
     private logger: Logger) {
     super(modalService);
     this.phonetype = 'MOBILE';
@@ -129,14 +132,16 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
       });
   }
 
-  @HostListener('document:keydown.enter', ['$event'])
-  onCreateAccount(event: any) {
+  @HostListener('document:keydown.enter', ['$event', 'this.spinnerService.status()'])
+  onCreateAccount(event: any, isSpinnerStatus: boolean) {
     event.stopPropagation();
     if (event.target.tagName === 'INPUT' && event.target.type.toUpperCase() === 'TEXT') { return; }
-    const modals: string[] = this.storageService.getAllModalIds();
-    if (modals && modals.length === 1 && event.target.id !== 'pos_layer_alert') {
-      if (event.keyCode === KeyCode.ENTER) {
-        this.saveNewCustomer(this.phoneNumText.nativeElement);
+    if (!isSpinnerStatus) {
+      const modals: string[] = this.storageService.getAllModalIds();
+      if (modals && modals.length === 1 && event.target.id !== 'pos_layer_alert') {
+        if (event.keyCode === KeyCode.ENTER) {
+          this.saveNewCustomer(this.phoneNumText.nativeElement);
+        }
       }
     }
   }
