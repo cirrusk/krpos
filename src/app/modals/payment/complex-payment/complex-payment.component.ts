@@ -503,6 +503,12 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         }
     }
 
+    /**
+     * 결제 지불 수단 출력
+     * 
+     * @param pmc 결제 지불 수단 코드
+     * @param paymentmode 결제 지불 수단 목록
+     */
     private printPaymentModeLog(pmc: string, paymentmode: PaymentModeByMain) {
         if (this.paymentModeLog) {
             const paymentmodes: PaymentMode[] = paymentmode.paymentModes;
@@ -681,6 +687,11 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         }
     }
 
+    /**
+     * 주 결제 수단 선택 시 활성화되는 지불 수단 로그 출력
+     * 
+     * @param paymentmodes 지불 수단 목록
+     */
     private printPaymentEnableMenuLog(paymentmodes: PaymentMode[]) {
         if (this.paymentModeLog) {
             let s: Array<string> = new Array<string>();
