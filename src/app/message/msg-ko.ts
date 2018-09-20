@@ -100,5 +100,9 @@ export const LANG_KO_MSGS = {
     'not.set.paymentmode':'결제 수단이 설정되어 있지 않습니다.',
     'init.payment':'현재 결제된 내역이 초기화 됩니다.<br>결제를 초기화 하시겠습니까?',
     'not.yet.payment.card':'{0}로 결제가 완료되었습니다.<br>잔여 금액을 결제해 주세요.',
-    'go.payment':'{0}로 결제를 진행 중입니다.'
+    'go.payment':'{0}로 결제를 진행 중입니다.',
+    'order.failed':' (주문 생성 오류)',
+    'payment.failed':' (결제 처리 오류)',
+    'error.occurred':'오류가 발생하였습니다.',
+    'do.card.canceld':'{0} 취소를 진행해주세요.'
 };

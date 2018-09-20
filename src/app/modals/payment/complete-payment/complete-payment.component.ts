@@ -122,7 +122,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       if (Utils.isEmpty(this.storage.getPaymentModeCode())) {
         this.checktype = -1;
         this.dupcheck = false;
-        this.apprmessage = this.message.get('not.choose.payment'); // '주결제 수단이 선택되지 않았습니다. 다시 결제를 진행해주세요.';
+        this.apprmessage = this.message.get('not.choose.payment');
       } else {
         this.checktype = 0;
         this.paymentCaptureAndPlaceOrder();
@@ -202,9 +202,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           if (Utils.isPaymentError(result.statusDisplay)) {  
             let failmsg = '';
             if (result.statusDisplay === StatusDisplay.PAYMENTFAILED) {
-              failmsg = ' (결제 처리 오류)';
+              failmsg = this.message.get('payment.failed');
             } else if (result.statusDisplay === StatusDisplay.ORDERFAILED) {
-              failmsg = ' (주문 생성 오류)';
+              failmsg = this.message.get('order.failed');
             }
             this.finishStatus = ErrorType.RECART; // 결제 정보가 있을 경우 에러발생하면 CART 가 삭제되었으므로 장바구니 재생성
             if (result.code.startsWith('PR')) {
@@ -240,7 +240,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = this.payments.paymentError(error);
           }
         } catch (e) {
-          this.apprmessage = '오류가 발생하였습니다.';
+          this.apprmessage = this.message.get('error.occurred');
         }
       });
   }
@@ -320,7 +320,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private doCreditCardCancel(cc: CreditCardPaymentInfo, errorType = 'N') {
     if (cc) {
-      this.apprmessage = '신용카드 취소를 진행해주세요.';
+      this.apprmessage = this.message.get('do.card.canceld', '신용카드');
       const amount: number = cc.amount;
       const apprdate: string = cc.cardRequestDate ? cc.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       const apprnumber: string = cc.cardApprovalNumber;
@@ -353,7 +353,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
    */
   private doICCardCancel(ic: ICCardPaymentInfo, errorType = 'N') {
     if (ic) {
-      this.apprmessage = '현금IC카드 취소를 진행해주세요.';
+      this.apprmessage = this.message.get('do.card.canceld', '현금IC카드');
       const amount: number = ic.amount;
       const apprdate: string = ic.cardRequestDate ? ic.cardRequestDate.replace(/\-/g, '').substring(2, 8) : '';
       const resultNotifier: Subject<ICCardCancelResult> = this.nicepay.icCardCancel(String(amount), apprdate, apprdate);
