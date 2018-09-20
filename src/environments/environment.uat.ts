@@ -85,7 +85,7 @@ export const environment = {
     getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}'
   },
   logLevel: 'debug', // 로그레벨 설정
-  paymentModeLog: true, // 통합결제 창에서 결제 관련 모드 로그 출력
+  paymentModeLog: false, // 통합결제 창에서 결제 관련 모드 로그 출력
   terminalTimeout: 10, // 터미널 인증 타임아웃(sec)
   directdebitTimeout: 60, // 자동이체 타임아웃(sec)
   healthCheckUse: false, // Health Check 사용여부
