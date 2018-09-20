@@ -175,7 +175,6 @@ export class PaymentService {
     return this.api.delete(data);
   }
 
-
   /**
    * 수표 조회
    *

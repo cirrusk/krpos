@@ -595,7 +595,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
 
     private deleteCartCoupon() {
         if (this.cartInfo.appliedCouponData && this.cartInfo.appliedCouponData.length > 0) {
-            const couponcode = this.cartInfo.appliedCouponData[0].couponCode;
+            const couponcode = this.cartInfo.appliedCouponData[0].code ? this.cartInfo.appliedCouponData[0].code : this.cartInfo.appliedCouponData[0].couponCode;
             this.paymentService.deleteCoupon(this.cartInfo.user.uid, this.cartInfo.code, couponcode).subscribe(
                 result => {
                     if (result) {

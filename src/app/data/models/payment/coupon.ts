@@ -7,6 +7,8 @@ export class CouponList {
 }
 
 export class Coupon {
+    code: string;
+    couponType: string;
     couponCode: string;
     couponId: string;
     name: string;
