@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import * as moment from 'moment';
@@ -41,7 +42,8 @@ export /* default */ class Utils {
   /**
    * UTF8 Array encode
    *
-   * @param data
+   * @param {string} data UTF8 Array 로 인코딩할 문자열
+   * @returns {Uint8Array} UTF8 Array 로 인코딩된 값
    */
   public static utf8ArrayEncode(data: string): Uint8Array {
     return this.encoder.encode(data);
@@ -50,21 +52,22 @@ export /* default */ class Utils {
   /**
    * UTF8 Array decode
    *
-   * @param array
+   * @param {Uint8Array} array 디코딩할 UTF8 Array 문자열
+   * @returns {string} 디코딩된 UTF8 Array 문자열
    */
-  public static utf8ArrayDecode(array: Uint8Array) {
+  public static utf8ArrayDecode(array: Uint8Array): string {
     return this.decoder.decode(array);
   }
 
   /**
    * Map converter
    *
-   * @param obj
+   * @param {Object} obj 변환할 객체
+   * @returns {Map<string, V>} 변환된 Map 객체
    */
   public static do<K, V>(obj: Object): Map<string, V> {
     // let map: Map<string, V> = new Map<string, V>();
-    let map;
-    map = new Map<string, V>();
+    let map = new Map<string, V>();
     Object.keys(obj).forEach((key) => {
       map.set(key, obj[key]);
     });
@@ -74,9 +77,9 @@ export /* default */ class Utils {
   /**
    * HttpClient 데이터 추출
    *
-   * @param res
+   * @param {Response} res HttpClient 응답 객체
    */
-  public static extractData(res: Response) {
+  public static extractData(res: Response): any {
     if (res.status < 200 || res.status >= 300) {
       console.error(`extract data error: ${res.statusText}`);
       return {};
@@ -89,16 +92,17 @@ export /* default */ class Utils {
   /**
    * Httpclient 오류 검출
    *
-   * @param error
+   * @param error 에러 객체
    */
-  public static handleError(error: Response | any) {
-    return Observable.throw(error); // error.message ||
+  public static handleError(error: Response | HttpErrorResponse | any) {
+    return Observable.throw(error);
   }
 
   /**
    * Error 정보 객체 파싱하기
    *
-   * @param err
+   * @param err 에러 객체
+   * @returns 에러 객체
    */
   public static parseError(err: any): ErrorInfo {
     const errorData = err as ErrorInfo;
@@ -128,8 +132,9 @@ export /* default */ class Utils {
   /**
    * qz tray 에서 얻어온 mac address 변환
    *
-   * @param macaddress
-   * @param splitter
+   * @param {string} macaddress Mac Address
+   * @param {string} splitter 구분자
+   * @returns {string} Mac Address
    */
   public static convertMacAddress(macaddress: string, splitter?: string): string {
     if (macaddress === null || macaddress === undefined) {
