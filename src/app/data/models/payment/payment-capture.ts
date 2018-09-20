@@ -1,4 +1,4 @@
-import { CCMemberType, CCPaymentType } from './payment.enum';
+import { CCMemberType, CCPaymentType, PaymentModes } from './payment.enum';
 
 export class CapturePaymentInfo {
     paymentModeCode: string;
@@ -23,13 +23,14 @@ export class CapturePaymentInfo {
 
 /**
  * Payment Capture
- * 신용카드          ; creditcard         ; CreditCardPaymentInfo
- * 현금결제         ; cash               ; AmwayCashPaymentInfo
- * 자동이체          ; directdebit        ; DirectDebitPaymentInfo
- * 쿠폰결제(price 영역에 포함)         ; creditvoucher      ; VoucherPaymentInfo
- * 포인트(price 영역에 포함)            ; point              ; PointPaymentInfo
- * 미수금결제       ; arCredit           ; AmwayMonetaryPaymentInfo
- * 현금/IC카드결제  ; cashiccard         ; ICCardPaymentInfo
+ * 
+ * 자동이체                      ; directdebit        ; DirectDebitPaymentInfo
+ * 신용카드                      ; creditcard         ; CreditCardPaymentInfo
+ * 현금결제                      ; cash               ; AmwayCashPaymentInfo
+ * 포인트(price 영역에 포함)     ; point              ; PointPaymentInfo
+ * 쿠폰결제(price 영역에 포함)   ; creditvoucher      ; VoucherPaymentInfo
+ * 미수금결제                    ; arCredit           ; AmwayMonetaryPaymentInfo
+ * 현금/IC카드결제               ; cashiccard         ; ICCardPaymentInfo
  *
  * <code>
  * let pc = new PaymentCapture();
@@ -355,7 +356,7 @@ export class CreditCardPaymentInfo extends AmwayPaymentInfoData {
     constructor(amount: number, paymentType?: string, cardCompanyCode?: string, installmentPlan?: string,
         memberType?: string, cardNumber?: string, cardPassword?: string, cardAuthNumber?: string,
         validToMonth?: string, validToYear?: string, vanType?: string, issuer?: string) {
-        super(amount, 'creditcard');
+        super(amount, PaymentModes.CREDITCARD);
         this.paymentType = paymentType || 'GENERAL';
         this.cardCompanyCode = cardCompanyCode;
         this.installmentPlan = installmentPlan || '0';
@@ -398,7 +399,7 @@ export class CashPaymentInfo extends AmwayPaymentInfoData {
         return this.cashreceipt;
     }
     constructor(amount: number, cashType?: string, paymentProvider?: string, status?: string) {
-        super(amount, 'cash', paymentProvider, status);
+        super(amount, PaymentModes.CASH, paymentProvider, status);
         this.cashType = cashType;
     }
 }
@@ -422,7 +423,7 @@ export class DirectDebitPaymentInfo extends AmwayPaymentInfoData {
         this.bank = bank;
     }
     constructor(amount: number, accountNumber?: string, baOwner?: string, bankIDNumber?: string, bank?: string) {
-        super(amount, 'directdebit');
+        super(amount, PaymentModes.DIRECTDEBIT);
         this.accountNumber = accountNumber;
         this.baOwner = baOwner;
         this.bankIDNumber = bankIDNumber;
@@ -437,7 +438,7 @@ export class PointPaymentInfo extends AmwayPaymentInfoData {
         this.pointType = pointType;
     }
     constructor(amount: number, pointType: string) {
-        super(amount, 'point');
+        super(amount, PaymentModes.POINT);
         this.pointType = pointType;
     }
 }
@@ -445,7 +446,7 @@ export class PointPaymentInfo extends AmwayPaymentInfoData {
 /** 미수금결제 */
 export class AmwayMonetaryPaymentInfo extends AmwayPaymentInfoData {
     constructor(amount: number) {
-        super(amount, 'arCredit');
+        super(amount, PaymentModes.ARCREDIT);
     }
 }
 
@@ -468,7 +469,7 @@ export class ICCardPaymentInfo extends CreditCardPaymentInfo {
         this.bank = bank;
     }
     constructor(amount: number, accountNumber?: string, baOwner?: string, bankIDNumber?: string, bank?: string) {
-        super(amount, 'cashiccard');
+        super(amount, PaymentModes.ICCARD);
         this.accountNumber = accountNumber;
         this.baOwner = baOwner;
         this.bankIDNumber = bankIDNumber;
@@ -486,7 +487,7 @@ export class VoucherPaymentInfo extends AmwayPaymentInfoData {
         return this.name;
     }
     constructor(amount: number) {
-        super(amount, 'creditvoucher');
+        super(amount, PaymentModes.COUPON);
     }
 }
 
