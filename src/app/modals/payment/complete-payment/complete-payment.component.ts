@@ -179,11 +179,16 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
 
   /**
    * 주결제 수단 설정 및 결제 정보 캡쳐
-   *
+   * 주결재 수단은 첫번째 선택한 결제 수단이 주결제 수단이나
+   * POS에서는 ABN 처럼 명확하게 알 수 없기 때문에
+   * 우선순위에 따라 주결제 수단을 세팅함.
+   * 우선순위는 아래와 같음.
+   *  1. 자동이체 2. 카드 3. 현금 4.포인트
+   * 그 이외에는 선택한 결제수단을 넣어줌.
    */
   private paymentCaptureAndPlaceOrder() {
     const capturepaymentinfo = new CapturePaymentInfo();
-    capturepaymentinfo.paymentModeCode = this.storage.getPaymentModeCode();
+    capturepaymentinfo.paymentModeCode = this.payments.getPaymentModeCode(this.paymentcapture); // this.storage.getPaymentModeCode();
     capturepaymentinfo.capturePaymentInfoData = this.paymentcapture;
     capturepaymentinfo.receiptInfoData = this.setBerInfo(); // 중개주문 설정하기
     this.logger.set('complete.payment.component', 'payment capture : ' + Utils.stringify(this.paymentcapture)).debug();

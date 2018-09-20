@@ -581,6 +581,7 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
                     result => {
                         if (typeof result !== undefined && result === true) {
                             this.storage.removePaymentProcessing();
+                            this.deleteCartCoupon();
                             this.closeModal();
                         }
                     });
@@ -589,6 +590,18 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             }
         } else {
             this.closeModal();
+        }
+    }
+
+    private deleteCartCoupon() {
+        if (this.cartInfo.appliedCouponData && this.cartInfo.appliedCouponData.length > 0) {
+            const couponcode = this.cartInfo.appliedCouponData[0].couponCode;
+            this.paymentService.deleteCoupon(this.cartInfo.user.uid, this.cartInfo.code, couponcode).subscribe(
+                result => {
+                    if (result) {
+                        this.info.sendInfo('cartreload', result);
+                    }
+                });
         }
     }
 

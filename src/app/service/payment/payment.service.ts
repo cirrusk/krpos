@@ -143,7 +143,9 @@ export class PaymentService {
   }
 
   /**
-   * 쿠폰 적용
+   * 쿠폰 적용(카트)
+   * apac 의 voucher 정보를 payment정보에 전달하지 않고
+   * CART에 전달하여 처리
    *
    * @param {string} userid 회원 아이디
    * @param {string} cartid 카트 아이디
@@ -158,7 +160,8 @@ export class PaymentService {
   }
 
   /**
-   * 쿠폰 삭제
+   * 쿠폰 삭제(카트)
+   * 카트에 적용된 쿠폰 정보를 삭제
    * 
    * @param {string} userid 회원 아이디
    * @param {string} cartid 카트 아이디
@@ -597,5 +600,34 @@ export class PaymentService {
       msg = `[${error.name}] ${error.message}`;
     }
     return msg;
+  }
+
+  /**
+   * 결제 방법에 우선 순위를 부여하여 paymentMode를 셋팅
+   * 1. 자동이체 2. 카드 3. 현금 4.포인트
+   * 
+   * @param {PaymentCapture} paymentCapture 지불 캡쳐 정보
+   * @returns {string} 우선순위에 따른 주결제 수단 정보
+   */
+  getPaymentModeCode(paymentCapture: PaymentCapture): string {
+    const paymentmodecodes: Array<string> = new Array<string>();
+    Object.keys(paymentCapture).forEach((key) => {
+      const payment = paymentCapture[key];
+      if (payment != null) { paymentmodecodes.push(payment.paymentMode.code); }
+    });
+    if (paymentmodecodes.indexOf(PaymentModes.DIRECTDEBIT) !== -1) {
+      return PaymentModes.DIRECTDEBIT;
+    }
+    if (paymentmodecodes.indexOf(PaymentModes.CREDITCARD) !== -1) {
+      return PaymentModes.CREDITCARD;
+    }
+    if (paymentmodecodes.indexOf(PaymentModes.CASH) !== -1) {
+      return PaymentModes.CASH;
+    }
+    if (paymentmodecodes.indexOf(PaymentModes.POINT) !== -1) {
+      return PaymentModes.POINT;
+    }
+    return this.storage.getPaymentModeCode();
+
   }
 }

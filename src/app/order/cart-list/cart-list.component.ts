@@ -167,6 +167,15 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (result.data) {
               this.payInfoReset();
             }
+          } else if (type === 'cartreload') {
+            const cart: Cart = result.data;
+            this.resCartInfo.cartList = cart;
+            this.cartList = cart.entries;
+            this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다
+            this.setPage(1);
+            if (this.orderType === OrderType.GROUP) { // 그룹 카트 조회
+              this.getGroupCart(this.cartInfo.user.uid, this.cartInfo.code);
+            }
           }
         }
       }
