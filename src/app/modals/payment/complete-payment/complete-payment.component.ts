@@ -74,7 +74,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.payamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value;  // 결제금액
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
-    this.dupcheck = true;
+    this.dupcheck = true; // pay하는 도중에 ENTER가 들어오면 다른 함수 실행됨.
     setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
   }
 
@@ -209,7 +209,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             } else {
               this.apprmessage = this.message.get('payment.fail') + failmsg;
             }
-            this.dupcheck = false;
           } else {
             this.popupCashReceipt(); // 현금성 거래 (리캐시, 자동이체, 현금) 일 때는 무조건 현금 영수증 창이 뜸
             this.orderType = result.orderType.code;
@@ -220,11 +219,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         } else { // 결제정보 없는 경우, CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = ErrorType.NOORDER;
           this.apprmessage = this.message.get('payment.fail.other');
-          this.dupcheck = false;
         }
+        this.dupcheck = false;
         this.storage.removePay();
       }, error => {
         this.checktype = -1;
+        this.dupcheck = false;
         this.finishStatus = ErrorType.FAIL; // 카트가 있는지 조회하여 있으면 닫고 없으면 재생성
         try {
           const errdata = Utils.getError(error);
