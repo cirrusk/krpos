@@ -628,6 +628,5 @@ export class PaymentService {
       return PaymentModes.POINT;
     }
     return this.storage.getPaymentModeCode();
-
   }
 }
