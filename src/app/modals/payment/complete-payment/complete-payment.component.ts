@@ -246,6 +246,30 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   /**
+   * 화면에 성공인 경우 와 실패인 경우 메시지를 
+   * 뿌려주기 위한 구분 플래그
+   */
+  isPaymentSuccessFlag() {
+    if (this.finishStatus !== null) {
+      if (
+        this.finishStatus !== StatusDisplay.ERROR
+        &&
+        this.finishStatus !== StatusDisplay.PAYMENTFAILED
+        &&
+        this.finishStatus !== StatusDisplay.ORDERFAILED
+        &&
+        this.finishStatus !== ErrorType.FAIL
+        &&
+        this.finishStatus !== ErrorType.NOORDER
+        ) { 
+          return true; // 성공 화면
+        }
+        return false; // 실패 화면
+    }
+    return false;
+  }
+
+  /**
    * 일반 결제 오류인 경우 카드결제 취소 및 후속 처리하기
    */
   private cardCancelAndSendInfoForError(errorType?: string) {
