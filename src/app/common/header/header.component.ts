@@ -362,6 +362,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     }).subscribe((result) => {
       if (result) {
         this.storage.removeScreenLock();
+        this.screenLockType = LockType.INIT;
         // this.router.navigate(['/order']);
       } else {
         this.screenLockType = LockType.LOCK;
