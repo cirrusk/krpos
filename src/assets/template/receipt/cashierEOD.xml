@@ -15,9 +15,15 @@
     <text-line>
       POS번호: {{eodData.posNo}}
     </text-line>
+    {{#if eodData.cashierName}}
     <text-line>
       캐셔정보: {{eodData.cashierName}}({{eodData.cashierId}})
     </text-line>
+    {{else}}
+    <text-line>
+      캐셔정보: 
+    </text-line>    
+    {{/if}}
     <text-line>
       Batch ID: {{eodData.batchId}}
     </text-line> 

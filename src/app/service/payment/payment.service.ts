@@ -7,7 +7,7 @@ import 'rxjs/add/operator/timeout';
 import { ApiService, StorageService, Config, CardApprovalResult, ICCardApprovalResult } from '../../core';
 import {
   Balance, CouponList, HttpData, PaymentModeList, PaymentModeListByMain,
-  ResponseData, BankInfoList, CapturePaymentInfo, Coupon, BatchInfo, ResponseMessage,
+  ResponseData, BankInfoList, CapturePaymentInfo, BatchInfo, ResponseMessage,
   PaymentCapture, PaymentView, CashPaymentInfo, CashType, PaymentModeData, PaymentModes,
   CurrencyData, CreditCardPaymentInfo, VanTypes, CCMemberType, CCPaymentType, DirectDebitPaymentInfo,
   ICCardPaymentInfo, PointType, PointPaymentInfo, AmwayMonetaryPaymentInfo
@@ -643,4 +643,5 @@ export class PaymentService {
     }
     return this.storage.getPaymentModeCode();
   }
+
 }

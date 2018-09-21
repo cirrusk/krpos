@@ -12,10 +12,12 @@ import { ReceiptTypeEnum } from '../data/receipt/receipt.enum';
 import {
     Accounts, PaymentCapture, OrderInfo, Cashier, MemberType, Account, AccountInfo,
     ProductsEntryInfo, BonusInfo, Bonus, PaymentInfo, CreditCard, Cash, PriceInfo,
-    Discount, ReceiptInfo, ICCard, AccessToken, OrderEntry,
+    ReceiptInfo, ICCard, AccessToken, OrderEntry,
     GroupResponseData, AmwayExtendedOrdering, AmwayPaymentInfoData, PaymentModes,
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
-    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit, EodData, EodInfo
+    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit, 
+    EodData, EodInfo, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData, 
+    SummaryData, CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -550,7 +552,7 @@ export class ReceiptService implements OnDestroy {
                 'price': entry.product.price.value.toString(),
                 'qty': entry.quantity.toString(),
                 'totalPrice': entry.totalPriceInclTax.value.toString(),
-                'giveAway' : entry.giveAway.toString()
+                'giveAway': entry.giveAway.toString()
             });
         });
         const productEntryList = new Array<ProductsEntryInfo>();
@@ -648,10 +650,10 @@ export class ReceiptService implements OnDestroy {
             const recash = paymentCapture.getMonetaryPaymentInfo;
             price.setRecash = recash.amount;
         }
-        
+
         if (cartInfo.totalDiscounts) { // 할인금액
             price.setTotalDiscount = cartInfo.totalDiscounts ? cartInfo.totalDiscounts.value : 0;
-        }        
+        }
         let promotion = 0;
         if (cartInfo.appliedOrderPromotions) { // 4-1. 주문 프로모션
             promotion += 0;
@@ -774,22 +776,28 @@ export class ReceiptService implements OnDestroy {
      *
      * @param eodData EOD 데이터
      */
-    printEod(eodData: EodData) {
+    printEod(eodData: EodData, mockup = false) {
         let rtn = true;
         if (Utils.isEmpty(eodData.printDate)) {
             eodData.printDate = Utils.convertDateToString(new Date());
         }
         if (Utils.isEmpty(eodData.posNo)) {
-            eodData.posNo = this.storage.getTerminalInfo() ? this.storage.getTerminalInfo().id : 'Unknown';
+            eodData.posNo = this.storage.getTerminalInfo() ? this.storage.getTerminalInfo().id : '';
         }
         if (Utils.isEmpty(eodData.cashierName)) {
-            eodData.cashierName = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeName : 'Unknown';
+            eodData.cashierName = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeName : '';
         }
         if (Utils.isEmpty(eodData.cashierId)) {
-            eodData.cashierId = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeId : 'Unknown';
+            eodData.cashierId = this.storage.getTokenInfo() ? this.storage.getTokenInfo().employeeId : '';
         }
         if (Utils.isEmpty(eodData.batchId)) {
-            eodData.batchId = this.storage.getBatchInfo() ? this.storage.getBatchInfo().batchNo : 'Unknown';
+            eodData.batchId = this.storage.getBatchInfo() ? this.storage.getBatchInfo().batchNo : '';
+        }
+        if (mockup) {
+            eodData.posNo = '';
+            eodData.cashierName = null;
+            eodData.cashierId = '';
+            eodData.batchId = '';
         }
         const eodInfo: EodInfo = new EodInfo(eodData);
         const text = this.cashierEod(eodInfo);
@@ -803,6 +811,15 @@ export class ReceiptService implements OnDestroy {
         // 영수증 출력 - END
         return rtn;
     }
+
+    /**
+     * EOD 목업 출력
+     */
+    printEodMockup() {
+        try {
+            this.printEod(this.makeEodMockupData(), true);
+        } catch (e) { }
+    }    
 
     /**
      * 주문 정보의 payment 정보를 paymentcapute 정보로 전환(인쇄용)
@@ -841,5 +858,36 @@ export class ReceiptService implements OnDestroy {
         if (paymentinfo.paymentMode.code === PaymentModes.ARCREDIT) {
             return new AmwayMonetaryPaymentInfo(paymentinfo.amount);
         }
+    }
+
+    /**
+     * EOD 목업 데이터 생성
+     */
+    private makeEodMockupData(): EodData {
+        const eodData = new EodData();
+        eodData.printDate = Utils.convertDateToString(new Date());
+        eodData.posNo = '';
+        eodData.cashierName = '';
+        eodData.cashierId = '';
+        eodData.batchId = '';
+        const o = new OrderEodData();
+        o.credit = new CcData('', '');
+        o.iccard = new IcData('', '');
+        o.debit = new DebitData('', '');
+        o.point = new PointData('', '');
+        o.recash = new ReCashData('', '');
+        o.cash = new CashData('', '');
+        o.summary = new SummaryData('', '');
+        eodData.normalOrder = o;
+        eodData.mediateOrder = o;
+        eodData.memberOrder = o;
+        eodData.summaryOrder = o;
+        const c = new CancelEodData();
+        c.orderCancel = new OrderCancel('', '');
+        c.mediateCancel = new MediateCancel('', '');
+        c.memberCancel = new MemberCancel('', '');
+        c.summaryCancel = new SummaryCancel('', '');
+        eodData.orderCancel = c;
+        return eodData;
     }
 }

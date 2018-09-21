@@ -120,7 +120,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         modalId: ModalIds.EOD
       }).subscribe(result => {
         if (result) {
-          console.log('정산영수증 출력.............................');
+          this.receipt.printEodMockup();
         }
       });
     } else {
