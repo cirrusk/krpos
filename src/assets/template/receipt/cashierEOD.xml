@@ -12,9 +12,11 @@
     <text-line>
       출력일자: {{eodData.printDate}}
     </text-line>
+    {{#if eodData.posNo}}
     <text-line>
       POS번호: {{eodData.posNo}}
     </text-line>
+    {{/if}}
     {{#if eodData.cashierName}}
     <text-line>
       캐셔정보: {{eodData.cashierName}}({{eodData.cashierId}})
@@ -24,9 +26,10 @@
       캐셔정보: 
     </text-line>    
     {{/if}}
+    {{#if eodData.batchId}}
     <text-line>
       Batch ID: {{eodData.batchId}}
     </text-line> 
-
+    {{/if}}
    {{eodDataHelper eodData}}
 </document>
