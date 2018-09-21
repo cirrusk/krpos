@@ -137,8 +137,8 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
    */
   pointEnter(evt: any) {
     if (!this.isAllPay) { // 일부금액
-      const point = this.usePoint.nativeElement.value;
-      if (Utils.isNotEmpty(point)) {
+      const point: string = this.usePoint.nativeElement.value;
+      if (Utils.isNotEmpty(point) || point !== '0') {
         this.doPay(evt);
       } else {
         setTimeout(() => { this.usePoint.nativeElement.blur(); }, 50);
@@ -150,10 +150,16 @@ export class ReCashComponent extends ModalComponent implements OnInit, OnDestroy
     evt.preventDefault();
     const usepoint = this.usePoint.nativeElement.value ? Number(this.usePoint.nativeElement.value.replace(this.regex, '')) : 0;
     const check = this.paidamount - usepoint;
+    if (usepoint === 0) {
+      this.checktype = -3;
+      this.dupcheck = false;
+      this.apprmessage = '사용할 금액을 입력해주세요.';
+      return;      
+    }
     if (this.change < 0) {
       this.checktype = -3;
       this.dupcheck = false;
-      this.apprmessage = this.message.get('recash.lack'); // '사용가능한 Re-Cash가 부족합니다.';
+      this.apprmessage = this.message.get('recash.lack');
       return;
     } else {
       this.checktype = 0;

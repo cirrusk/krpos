@@ -1,0 +1,17 @@
+<div class="pop_wrap pop_m">
+  <div class="pop_header">
+      <h1>프로모션</h1>
+      <button tabindex="-1" type="button" class="ico_comm pop_close01" [posFocusBlur]="'focus'" (click)="close()">닫기</button>
+  </div>
+  <!-- pop_container -->
+  <div class="pop_container">
+      <div class="pop_content" *ngFor="let promotion of promotions;">
+        <em class="txt05">{{promotion?.promotion?.description}}</em>
+        <p class="txt04 mgt10">{{promotion?.description}}</p>
+      </div>
+  </div>
+  <!-- //pop_container -->
+  <div class="pop_footer line02 clearfix">
+      <span class="fl">취소 ESC</span>
+  </div>
+</div>

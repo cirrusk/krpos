@@ -41,6 +41,7 @@ export enum ModalIds {
     POSENDLAST = 'PosEndLast',
     PRODUCT = 'SearchProduct',
     PROMOTION = 'PromotionOrder',
+    PROMODETAIL = 'PromotionDetail',
     PWD = 'Password',
     QZ = 'QZ',
     QTY = 'UpdateItemQty',

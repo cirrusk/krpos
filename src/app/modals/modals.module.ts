@@ -41,6 +41,7 @@ import { SerialComponent } from './scan/serial/serial.component';
 import { UpdateItemQtyComponent } from './cart/update-item-qty/update-item-qty.component';
 import { CancelEcpPrintComponent } from './order/ecp-print/cancel-ecp-print/cancel-ecp-print.component';
 import { SignupAccountComponent } from './account/client-account/signup-account/signup-account.component';
+import { PromotionDetailComponent } from './order/promotion-detail/promotion-detail.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { SignupAccountComponent } from './account/client-account/signup-account/
     UpdateItemQtyComponent,
     MaskPipe,
     CancelEcpPrintComponent,
-    SignupAccountComponent
+    SignupAccountComponent,
+    PromotionDetailComponent
   ],
   imports: [
     CommonModule,
@@ -121,7 +123,8 @@ import { SignupAccountComponent } from './account/client-account/signup-account/
     SerialComponent,
     UpdateItemQtyComponent,
     CancelEcpPrintComponent,
-    SignupAccountComponent
+    SignupAccountComponent,
+    PromotionDetailComponent
   ]
 })
 export class ModalsModule {
