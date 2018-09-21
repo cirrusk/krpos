@@ -14,10 +14,9 @@ export class PromotionDetailComponent extends ModalComponent implements OnInit {
 
   ngOnInit() {
     this.promotions = this.callerData.promotionList;
-    console.log(JSON.stringify(this.promotions, null, 2));
   }
 
-    /**
+  /**
    * @ignore
    */
   close() {
