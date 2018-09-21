@@ -540,7 +540,7 @@ table input[type='text'] {font-family:'NSM';}
 .promotion_layer .player.open {display:block}
 .promotion_layer .player.up {top:initial; bottom:37px;}
 .promotion_layer .player.up:before {top:initial; bottom:-9px; transform:rotate(180deg)}
-.promotion_layer .player .inner {width:calc(100% - 20px); white-space:initial; text-align:left; color:#fff; font-size:13px; line-height:18px; font-family:'NSR'}
+.promotion_layer .player .inner {width:calc(100% - 20px); height:37px; overflow:hidden; white-space:initial; text-align:left; color:#fff; font-size:13px; line-height:18px; font-family:'NSR'}
 .promotion_layer .player .lay_close01 {position:absolute; top:10px; right:15px}
 
 /* tab */
