@@ -1,5 +1,5 @@
 import { Promotion } from './../../data/models/order/promotion';
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, Output, EventEmitter, HostListener, ViewChildren, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,7 +8,7 @@ import {
   SerialComponent, SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
   HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent
 } from '../../modals';
-import { Modal, StorageService, AlertService, Logger, Config, PrinterService } from '../../core';
+import { Modal, StorageService, AlertService, Logger, Config, PrinterService, KeyboardService, KeyCommand } from '../../core';
 
 import { CartService, PagerService, SearchService, MessageService, PaymentService, OrderService, AccountService } from '../../service';
 import { SearchAccountBroker, RestoreCartBroker, CancleOrderBroker, InfoBroker, PaymentBroker } from '../../broker';
@@ -61,6 +61,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   private paymentChangesubscription: Subscription;
   private paymentGroupListsubscription: Subscription;
   private paymentGroupEntriessubscription: Subscription;
+  private keyboardsubscription: Subscription;
 
   private searchParams: SearchParam;                                          // 조회 파라미터
   private cartInfo: CartInfo;                                                 // 장바구니 기본정보
@@ -121,7 +122,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 카트에서 발생한 프로모션을 부모 오더 컴포넌트에 전달
   @Output() public posCoupon: EventEmitter<any> = new EventEmitter<any>();    // 카트에서 쿠폰 링크 클릭시 메뉴쪽 쿠폰 팝업호출 이벤트 전달
   @Input() public noticeList: string[] = [];                                  // 캐셔용 공지사항
-
+  @ViewChildren('groups') groups: QueryList<ElementRef>;
   constructor(private modal: Modal,
     private cartService: CartService,
     private searchService: SearchService,
@@ -139,6 +140,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     private config: Config,
     private printerService: PrinterService,
     private accountService: AccountService,
+    private keyboard: KeyboardService,
     private logger: Logger,
     private router: Router) {
     this.cartListCount = this.config.getConfig('cartListCount');
@@ -266,6 +268,9 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.printerService.init();
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
   }
 
@@ -289,6 +294,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (this.paymentChangesubscription) { this.paymentChangesubscription.unsubscribe(); }
     if (this.paymentGroupEntriessubscription) { this.paymentGroupEntriessubscription.unsubscribe(); }
     if (this.paymentGroupListsubscription) { this.paymentGroupListsubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   /**
@@ -2263,5 +2269,38 @@ export class CartListComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  doPageUp(evt: any) {
+    if (this.orderType === OrderType.GROUP) {
+      const glen = this.groups.length;
+      if (glen > 0) {
+        let selidx = 0;
+        this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
+        if (selidx < glen - 1) { 
+          const sidx = ++selidx; this.selectedUserIndex = sidx;           
+          const g = this.groups.find((group, idx) => idx === sidx);
+          this.choiceGroupUser(sidx, g.nativeElement.getAttribute('data-uid'));  
+        }
+      }
+    }
+  }
+
+  doPageDown(evt: any) {
+    if (this.orderType === OrderType.GROUP) {
+      let selidx = 0;
+      this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
+      if (selidx > 0) { 
+        const sidx = --selidx; this.selectedUserIndex = sidx; 
+        const g = this.groups.find((group, idx) => idx === sidx);
+        this.choiceGroupUser(sidx, g.nativeElement.getAttribute('data-uid'));  
+      }
+    }
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this[command.name](command.ev);
+    } catch (e) { }
   }
 }

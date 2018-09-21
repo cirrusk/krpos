@@ -9,8 +9,8 @@
             <button type="button" [disabled]="userPager.currentPage === userPager.endPage" class="ico_comm next02" (click)="setUserPage(userPager.currentPage + 1, true)">다음</button>
         </span>
         <span>
-            <a href="javascript:void(0)" [class.on]="selectedUserIndex == i" *ngFor="let accountInfo of currentGroupAccountInfo; let i = index;"
-                (click)="choiceGroupUser(i, accountInfo.uid)">
+            <a #groups href="javascript:void(0)" [class.on]="selectedUserIndex == i" *ngFor="let accountInfo of currentGroupAccountInfo; let i = index;"
+                (click)="choiceGroupUser(i, accountInfo.uid)" [attr.data-uid]="accountInfo.uid">
                 <!-- {{accountInfo.parties[0].name}} -->
                 {{accountInfo.name}}
             </a>
