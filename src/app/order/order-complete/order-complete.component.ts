@@ -1,11 +1,11 @@
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, OnDestroy, Input, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 import { Pagination, OrderHistoryList, OrderHistory, SearchMemberType, ModalIds, KeyCode } from '../../data';
 import { MessageService, OrderService } from '../../service';
 import { Modal, Logger, AlertService, KeyboardService, KeyCommand, StorageService, SpinnerService } from '../../core';
-import { Utils } from '../../core/utils';
-import { Subscription } from 'rxjs/Subscription';
 import { OrderDetailComponent } from '../../modals/order/order-detail/order-detail.component';
+import { Utils } from '../../core/utils';
 
 @Component({
   selector: 'pos-order-complete',
@@ -183,9 +183,8 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
           if (errdata) {
             this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
             this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
-            // this.alert.error({ message: this.messageService.get('server.error', errdata.message), timer: true, interval: 1500 });
             this.alert.error({ message: errdata.message, timer: true, interval: 1500 });
-            setTimeout(() => { this.inputSearchText.nativeElement.focus(); this.inputSearchText.nativeElement.select(); }, 1550);
+            setTimeout(() => { this.inputSearchText.nativeElement.focus(); this.inputSearchText.nativeElement.select(); }, 1520);
           }
         });
   }
