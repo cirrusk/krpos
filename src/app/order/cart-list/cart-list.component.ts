@@ -2278,9 +2278,9 @@ export class CartListComponent implements OnInit, OnDestroy {
         let selidx = 0;
         this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
         if (selidx < glen - 1) { 
-          const sidx = ++selidx; this.selectedUserIndex = sidx;           
-          const g = this.groups.find((group, idx) => idx === sidx);
-          this.choiceGroupUser(sidx, g.nativeElement.getAttribute('data-uid'));  
+          this.selectedUserIndex = ++selidx;;           
+          const g = this.groups.find((group, idx) => idx === this.selectedUserIndex);
+          this.choiceGroupUser(this.selectedUserIndex, g.nativeElement.getAttribute('data-uid'));  
         }
       }
     }
@@ -2291,9 +2291,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       let selidx = 0;
       this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
       if (selidx > 0) { 
-        const sidx = --selidx; this.selectedUserIndex = sidx; 
-        const g = this.groups.find((group, idx) => idx === sidx);
-        this.choiceGroupUser(sidx, g.nativeElement.getAttribute('data-uid'));  
+        this.selectedUserIndex = --selidx; 
+        const g = this.groups.find((group, idx) => idx === this.selectedUserIndex);
+        this.choiceGroupUser(this.selectedUserIndex, g.nativeElement.getAttribute('data-uid'));  
       }
     }
   }
