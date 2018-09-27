@@ -40,6 +40,7 @@ export class OrderEntry {
     serialNumbersCodes: Array<string>; // 시리얼 넘버 (RFID 포함)
     productPromotions: PromotionList[] = []; // 제품 프로모션이 있을 경우 PromotionList 배열(있으면 제품 프로모션 있음)
     giveAway: boolean; // 증정품 여부
+    healthFood: boolean; // 건강기능식품 여부
 
     constructor(_product?: ProductInfo) {
         this.product = _product;

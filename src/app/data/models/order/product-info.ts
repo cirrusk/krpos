@@ -41,6 +41,7 @@ export class ProductInfo {
     vpsCode: string;
     rfid: boolean;
     serialNumber: boolean;
+    healthFood: boolean;
 
     constructor(_code?: string) {
         this.code = _code;
