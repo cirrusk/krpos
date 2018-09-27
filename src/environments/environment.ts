@@ -82,7 +82,7 @@ export const environment = {
     getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}'
   },
   logLevel: 'debug', // 로그레벨 설정
-  paymentModeLog: true, // 통합결제 창에서 결제 관련 모드 로그 출력
+  paymentModeLog: false, // 통합결제 창에서 결제 관련 모드 로그 출력
   terminalTimeout: 10, // 터미널 인증 타임아웃(sec)
   directdebitTimeout: 60, // 자동이체 타임아웃(sec)
   qzCheck: false, // QZ Tray Health Check
@@ -93,7 +93,7 @@ export const environment = {
   cartListCount: 8, // 카트 목록 건수
   noticeInterval: 7, // 일반 공지사항 롤링 주기(sec)
   promotionInterval: 9, // 프로모션 공지사항 롤링 주기(sec)
-  isMdmsSkip: true, // MDMS 블록 체크 제외 여부
+  isMdmsSkip: false, // MDMS 블록 체크 제외 여부
   installcheckPrice: 50000, // 할부 제한 금액
   creditcardMinPrice: 200, // 복합결제 시 주결제 방법 최소 금액 신용카드
   directdebitMinPrice: 1, // 복합결제 시 주결제 방법 최소 금액 자동이체
