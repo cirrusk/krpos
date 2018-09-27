@@ -329,6 +329,13 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             if (this.paymentModes.has(payment)) { // 주결제 수단일 경우 선택 시 주결제 수단을 세션에 설정
                 this.logger.set('complex.payment.component', `주결재 수단 설정 : ${payment}`).info();
                 const mainpayment = this.paymentService.getPaymentModeCode(this.paymentcapture);
+                if (this.paymentModeLog) {
+                    const s: Array<string> = new Array<string>();
+                    s.push('\n┌───────────── Select Main Payment ─────────────────');
+                    s.push(`\n│    ${payment}  ====>  ${mainpayment}`);
+                    s.push('\n└───────────────────────────────────────────────────');
+                    this.logger.set('complex.payment.component', s.join('')).all();
+                }
                 if (Utils.isNotEmpty(mainpayment)) {
                     this.storage.setPaymentModeCode(mainpayment); // 주결제 수단을 세션에 설정
                 }
