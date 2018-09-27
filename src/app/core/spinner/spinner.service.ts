@@ -16,6 +16,8 @@ export class SpinnerService {
     if (prior) { return prior; }
    }
 
+   init() { }
+
    show(iconType?: string) {
      this.isStatus = true;
      this.spinnerSubject.next(<SpinnerState> { show: true, iconType: iconType });

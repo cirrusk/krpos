@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
-import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config } from '../../../core';
+import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config, SpinnerService } from '../../../core';
 import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds, PaymentView, PaymentMode, PaymentModeByMain } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -65,12 +65,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         private config: Config,
         private message: MessageService,
         private cartService: CartService,
+        private spinnerService: SpinnerService,
         private renderer: Renderer2) {
         super(modalService);
         this.init();
     }
 
     ngOnInit() {
+        this.spinnerService.init();
         this.accountInfo = this.callerData.accountInfo;
         this.cartInfo = this.callerData.cartInfo;
         this.amwayExtendedOrdering = this.callerData.amwayExtendedOrdering;
@@ -325,9 +327,9 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
      */
     selectPopup(modalId: string, component: any, pointtype?: string, payment?: string) {
         this.paymentComponent = component;
-        if (payment && !this.storage.getPaymentModeCode()) {
+        const mainpayment = this.paymentService.getPaymentModeCode(this.paymentcapture);
+        if (payment && Utils.isEmpty(mainpayment)) {
             if (this.paymentModes.has(payment)) { // 주결제 수단일 경우 선택 시 주결제 수단을 세션에 설정
-                this.logger.set('complex.payment.component', `주결재 수단 설정 : ${payment}`).info();
                 const mainpayment = this.paymentService.getPaymentModeCode(this.paymentcapture);
                 if (this.paymentModeLog) {
                     const s: Array<string> = new Array<string>();
@@ -338,6 +340,8 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
                 }
                 if (Utils.isNotEmpty(mainpayment)) {
                     this.storage.setPaymentModeCode(mainpayment); // 주결제 수단을 세션에 설정
+                } else {
+                    this.storage.setPaymentModeCode(payment); // 주결제 수단을 세션에 설정
                 }
             } else {
                 this.logger.set('complex.payment.component', `${payment} 은(는) 주결제 수단이 아님.}`).warn();
