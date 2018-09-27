@@ -1755,7 +1755,9 @@ export class CartListComponent implements OnInit, OnDestroy {
     // 출력 리스트 생성
     this.currentCartList = currentCartData.get('list') as Array<OrderEntry>;
 
-    this.setCartListProductPromotion();
+    if (this.cartList.length > 0) {
+      this.setCartListProductPromotion();
+    }
     let orderidx = -1;
     // 프로모션인 경우 row index 값 추출(증정품 제외)
     // if (this.resCartInfo.cartList.appliedOrderPromotions.length > 0 || this.resCartInfo.cartList.appliedProductPromotions.length > 0) {
