@@ -113,9 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         closeByEnter: true,
         closeByClickOutside: true,
         beforeCloseCallback: function () {
-          if (this.isEnter) {
-            this.result = this.isEnter;
-          }
+          if (this.isEnter) { this.result = this.isEnter; }
         },
         modalId: ModalIds.EOD
       }).subscribe(result => {
@@ -136,30 +134,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
   startShift() {
     if (this.screenLockType === LockType.LOCK) { return; }
     if (this.storage.isLogin()) {
-      this.batchsubscription = this.batch.startBatch().subscribe(
-        result => {
-          if (result && Utils.isNotEmpty(result.batchNo)) {
-            this.logger.set('dashboard.component', 'start batch...').debug();
-            this.storage.setBatchInfo(result);
-            this.info.sendInfo('bat', result);
-            this.alert.info({ message: this.message.get('start.batch') });
-            this.alertsubscription = this.alert.alertState.subscribe(
-              (state: AlertState) => {
-                if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
-              }
-            );
-          }
-        },
-        error => {
-          const errdt = Utils.getError(error);
-          if (errdt) {
-            if (errdt.type === 'AmbiguousIdentifierError') {
-              this.logger.set('dashboard.component', `${errdt.message}`).error();
+      this.batchsubscription = this.batch.startBatch().subscribe(result => {
+        if (result && Utils.isNotEmpty(result.batchNo)) {
+          this.logger.set('dashboard.component', 'start batch...').debug();
+          this.storage.setBatchInfo(result);
+          this.info.sendInfo('bat', result);
+          this.alert.info({ message: this.message.get('start.batch') });
+          this.alertsubscription = this.alert.alertState.subscribe(
+            (state: AlertState) => {
+              if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
             }
+          );
+        }
+      }, error => {
+        const errdt = Utils.getError(error);
+        if (errdt) {
+          if (errdt.type === 'AmbiguousIdentifierError') {
             this.logger.set('dashboard.component', `${errdt.message}`).error();
-            this.alert.error({ message: this.message.get('server.error', errdt.message) });
           }
-        });
+          this.logger.set('dashboard.component', `${errdt.message}`).error();
+          this.alert.error({ message: this.message.get('server.error', errdt.message) });
+        }
+      });
     }
   }
 
@@ -237,37 +233,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       msg = `POS를 종료하시겠습니까?<br>화면 종료가 진행됩니다.`;
     }
-    this.modal.openConfirm(
-      {
-        title: 'POS 종료',
-        message: msg,
-        actionButtonLabel: btn,
-        closeButtonLabel: '취소',
-        modalId: ModalIds.POSEND
-      }
-    ).subscribe(
+    this.modal.openConfirm({
+      title: 'POS 종료',
+      message: msg,
+      actionButtonLabel: btn,
+      closeButtonLabel: '취소',
+      modalId: ModalIds.POSEND
+    }).subscribe(
       result => {
         if (result) {
           if (isloginBatch) {
-            this.batchsubscription = this.batch.endBatch().subscribe(
-              () => {
-                this.storage.logout();
-                // this.storage.removeEmployeeName(); // client 담당자 삭제
-                this.storage.clearClient();
-                this.modal.openConfirm({
-                  title: 'POS 종료',
-                  message: `배치 정보 저장이 완료되었습니다.`,
-                  actionButtonLabel: '확인',
-                  closeButtonLabel: '취소',
-                  closeByClickOutside: false,
-                  modalId: ModalIds.POSENDLAST
-                }).subscribe(ret => {
-                  if (ret) {
-                    this.storage.logout();
-                    Utils.kioskModeEnd();
-                  }
-                });
+            this.batchsubscription = this.batch.endBatch().subscribe(() => {
+              this.storage.logout();
+              // this.storage.removeEmployeeName(); // client 담당자 삭제
+              this.storage.clearClient();
+              this.modal.openConfirm({
+                title: 'POS 종료',
+                message: `배치 정보 저장이 완료되었습니다.`,
+                actionButtonLabel: '확인',
+                closeButtonLabel: '취소',
+                closeByClickOutside: false,
+                modalId: ModalIds.POSENDLAST
+              }).subscribe(ret => {
+                if (ret) {
+                  this.storage.logout();
+                  Utils.kioskModeEnd();
+                }
               });
+            });
           } else {
             Utils.kioskModeEnd();
           }
