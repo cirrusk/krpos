@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, Renderer2, OnDestroy, HostListener } from '@angular/core';
-import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config, SpinnerService } from '../../../core';
+import { ModalComponent, ModalService, Modal, AlertService, Logger, StorageService, CacheService, Config } from '../../../core';
 import { Accounts, PaymentModeListByMain, MemberType, PaymentCapture, AmwayExtendedOrdering, KeyCode, ModalIds, PaymentView, PaymentMode, PaymentModeByMain } from '../../../data';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -65,7 +65,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         private config: Config,
         private message: MessageService,
         private cartService: CartService,
-        private spinnerService: SpinnerService,
         private renderer: Renderer2) {
         super(modalService);
         this.init();
@@ -329,7 +328,10 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
         if (payment && !this.storage.getPaymentModeCode()) {
             if (this.paymentModes.has(payment)) { // 주결제 수단일 경우 선택 시 주결제 수단을 세션에 설정
                 this.logger.set('complex.payment.component', `주결재 수단 설정 : ${payment}`).info();
-                this.storage.setPaymentModeCode(payment); // 주결제 수단을 세션에 설정
+                const mainpayment = this.paymentService.getPaymentModeCode(this.paymentcapture);
+                if (Utils.isNotEmpty(mainpayment)) {
+                    this.storage.setPaymentModeCode(mainpayment); // 주결제 수단을 세션에 설정
+                }
             } else {
                 this.logger.set('complex.payment.component', `${payment} 은(는) 주결제 수단이 아님.}`).warn();
             }
