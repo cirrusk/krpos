@@ -165,6 +165,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   /**
    * 로그오프 시 배치 정보 저장 후(P7페이지 배치 정보 저장 확인 팝업 뜸) 이후, 대시보드 메인으로 이동
+   * 
+   * @add 2018.09.27 판매정산 관련
+   * Case 1) 근무 종료 클릭 > 배치정보 저장 팝업 > 계속 클릭 시 (batch 종료 시) EOD 출력
+   * Case 2) 근무 시작 후 대시보드로 이동 > 대시보드에서 Stop shift 클릭 > 계속 클릭 시 (batch 종료 시) EOD 출력
    */
   stopShift() {
     if (this.screenLockType === LockType.LOCK) { return; }

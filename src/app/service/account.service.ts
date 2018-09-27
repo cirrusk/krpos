@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { ApiService, Config, AlertService } from '../core';
+import { ApiService, Config, AlertService, StorageService } from '../core';
 import { AccountList, Accounts, Block, HttpData, MemberType, ResponseMessage, Errors } from '../data';
 import { MessageService } from '../message';
+import { InfoBroker } from '../broker';
 
 /**
  * 회원 서비스
@@ -11,7 +12,8 @@ import { MessageService } from '../message';
 @Injectable()
 export class AccountService {
 
-  constructor(private api: ApiService, private alert: AlertService, private message: MessageService, private config: Config) { }
+  constructor(private api: ApiService, private alert: AlertService,
+    private info: InfoBroker, private storage: StorageService, private message: MessageService, private config: Config) { }
 
   /**
    * 비회원 등록
@@ -80,12 +82,15 @@ export class AccountService {
    */
   checkError(errdata: Errors, msgkey?: string): string {
     if (errdata.type === 'InvalidTokenError') {
-      this.alert.error({ message: this.message.get('token.error', errdata.message), timer: true, interval: 1500 });
+      this.storage.removeTokenInfo();
+      this.storage.removeBatchInfo();
+      this.info.sendInfo('tkn', null);
+      this.alert.error({ message: this.message.get('token.error', errdata.message), timer: true, interval: 1800 });
     } else if (errdata.type === 'InvalidDmsError') {
-      this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1500 });
+      this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1800 });
     } else {
       if (msgkey) {
-        this.alert.error({ message: this.message.get(msgkey, errdata.message), timer: true, interval: 1500 });
+        this.alert.error({ message: this.message.get(msgkey, errdata.message), timer: true, interval: 1800 });
       }
     }
     return errdata.type;
