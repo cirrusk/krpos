@@ -1,5 +1,7 @@
 export const LANG_KO_NAME = 'ko';
 export const LANG_KO_MSGS = {
+    'btn.ok.label':'확인',
+    'btn.no.label':'취소',
     'server.error': '오류가 발생하였습니다.<br>관리자에게 문의하시기 바랍니다.<br>{0}',
     'notSelectedUser' : '회원/비회원 정보를 입력해주세요.',
     'addedABO' : '추가된 ABO번호 입니다.',
@@ -104,5 +106,9 @@ export const LANG_KO_MSGS = {
     'order.failed':' (주문 생성 오류)',
     'payment.failed':' (결제 처리 오류)',
     'error.occurred':'오류가 발생하였습니다.',
-    'do.card.canceld':'{0} 취소를 진행해주세요.'
+    'do.card.canceld':'{0} 취소를 진행해주세요.',
+    'eod.tmpl.title':'판매정산 템플릿 출력',
+    'eod.tmpl.msg':'판매정산 템플릿을 출력 하시겠습니까?',
+    'eod.tmpl.warn':'판매정산 템플릿 출력은 근무 시작 후에만 가능합니다.',
+    'start.batch':'배치가 시작되었습니다.'
 };

@@ -106,10 +106,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.storage.isLogin()) {
       this.modal.openConfirm({
         modalAddClass: 'pop_s',
-        title: '정산 영수증 출력',
-        message: '정산 영수증을 출력 하시겠습니까?',
-        actionButtonLabel: '확인',
-        closeButtonLabel: '취소',
+        title: this.message.get('eod.tmpl.title'),
+        message: this.message.get('eod.tmpl.msg'),
+        actionButtonLabel: this.message.get('btn.ok.label'),
+        closeButtonLabel: this.message.get('btn.no.label'),
         closeByEnter: true,
         closeByClickOutside: true,
         beforeCloseCallback: function () {
@@ -124,7 +124,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.alert.warn({ title: '판매정산', message: '근무 시작 후에만 가능합니다.', timer: true, interval: 1500 });
+      this.alert.warn({ title: this.message.get('eod.tmpl.title'), message: this.message.get('eod.tmpl.warn'), timer: true, interval: 1500 });
     }
   }
   /**
@@ -142,7 +142,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.logger.set('dashboard.component', 'start batch...').debug();
             this.storage.setBatchInfo(result);
             this.info.sendInfo('bat', result);
-            this.alert.info({ message: '배치가 시작되었습니다.' });
+            this.alert.info({ message: this.message.get('start.batch') });
             this.alertsubscription = this.alert.alertState.subscribe(
               (state: AlertState) => {
                 if (!state.show) { this.router.navigate(['/order']); }  // 닫히면 order 화면으로...
@@ -181,31 +181,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
         msg = `배치를 종료하시겠습니까?<br>배치정보 저장 후, Stop Shift가 진행됩니다.`;
         btn = '계속';
       }
-      this.modal.openConfirm(
-        {
-          title: 'Stop Shift',
-          message: msg,
-          actionButtonLabel: btn,
-          closeButtonLabel: '취소',
-          closeByClickOutside: false,
-          modalId: ModalIds.STOPSHIFT
-        }
-      ).subscribe(result => {
+      this.modal.openConfirm({
+        title: 'Stop Shift',
+        message: msg,
+        actionButtonLabel: btn,
+        closeButtonLabel: '취소',
+        closeByClickOutside: false,
+        modalId: ModalIds.STOPSHIFT
+      }).subscribe(result => {
         if (result) {
           this.logger.set('dashboard.component', 'stop shift, stop batch...').debug();
-          this.batchsubscription = this.batch.endBatch().subscribe(
-            () => {
-              this.storage.removeBatchInfo();
-              this.info.sendInfo('bat', { batchNo: null });
-              this.modal.openConfirm({
-                title: 'Stop Shift',
-                message: `배치 정보 저장이 완료되었습니다.`,
-                actionButtonLabel: '확인',
-                closeButtonLabel: '취소',
-                closeByClickOutside: false,
-                modalId: ModalIds.STOPSHIFTEND
-              });
+          this.batchsubscription = this.batch.endBatch().subscribe(() => {
+            this.storage.removeBatchInfo();
+            this.info.sendInfo('bat', { batchNo: null });
+            this.modal.openConfirm({
+              title: 'Stop Shift',
+              message: `배치 정보 저장이 완료되었습니다.`,
+              actionButtonLabel: '확인',
+              closeButtonLabel: '취소',
+              closeByClickOutside: false,
+              modalId: ModalIds.STOPSHIFTEND
             });
+          });
         }
       });
     }
