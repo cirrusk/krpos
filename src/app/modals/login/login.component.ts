@@ -79,7 +79,8 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * AD 계정 입력 형식이 맞지 않은 경우,
    * AD 계정 입력 형식이 맞지 않습니다  Alert 뜸
    * 비밀번호가 미입력 된 경우, 근무 시작 버튼 터치 시, 비밀번호가 공란입니다.
-   * 중요) AD 계정이나 비밀번호가 올바르지 않을 경우 보안문제로
+   * 
+   * 중요 : AD 계정이나 비밀번호가 올바르지 않을 경우 오류 내용을 출력하게 되는데 보안문제로
    * 어떤 이유인지는 메시지 출력하지 않고 정보 올바르지 않음만 메시지 출력해야함.
    *
    * 2018.04.30 : authorization 과 acesstoken 을 merge
@@ -91,7 +92,11 @@ export class LoginComponent extends ModalComponent implements OnInit, OnDestroy 
    * 3. 배치가 있으면 : 같은 POS 기기 여부 체크
    * 4. 같은 POS 기기 : 해당 배치 그냥 사용
    * 5. 다른 POS 기기 : 메시지 뿌리고 무조건 배치 종료.
-   *
+   * 
+   * 2018.09.27 : 캐셔 계정은 1인 1아이디 기준
+   * 해당 기준으로 로그인한 경우 최대 8시간 인증만료 시간이므로 인증만료를 신경쓸 필요는 없음.
+   * 아이디를 공유하는 경우 인증만료 시간을 초과하여 인증만료가 될 수 있음.
+   * 인증만료 시 `InvalidTokenError` 가 발생하므로 해당 에러를 처리하도록 구성함.
    */
   startWork() {
     if (this.loginId) { this.logger.set('login.component', `login id : ${this.loginId}`).debug(); }

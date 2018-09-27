@@ -85,9 +85,9 @@ export class AccountService {
       this.storage.removeTokenInfo();
       this.storage.removeBatchInfo();
       this.info.sendInfo('tkn', null);
-      this.alert.error({ message: this.message.get('token.error', errdata.message), timer: true, interval: 1800 });
+      this.alert.error({ message: this.message.get('token.error', errdata.message), timer: true, interval: 2500 });
     } else if (errdata.type === 'InvalidDmsError') {
-      this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 1800 });
+      this.alert.error({ message: this.message.get('dms.error', errdata.message), timer: true, interval: 2500 });
     } else {
       if (msgkey) {
         this.alert.error({ message: this.message.get(msgkey, errdata.message), timer: true, interval: 1800 });
