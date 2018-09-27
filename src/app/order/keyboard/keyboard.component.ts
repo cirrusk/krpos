@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { KeyboardService, Logger, KeyCommand } from '../../core';
+import { KeyboardService, Logger, KeyCommand, SpinnerService } from '../../core';
 
 @Component({
   selector: 'pos-keyboard',
@@ -13,11 +13,14 @@ export class KeyboardComponent implements OnInit, OnDestroy {
   @Output() public keyMenuAction: EventEmitter<any> = new EventEmitter<any>();
   @Output() public keyCartAction: EventEmitter<any> = new EventEmitter<any>();
   constructor(private keyboard: KeyboardService,
+    private spinnerService: SpinnerService,
     private logger: Logger) { }
 
   ngOnInit() {
     this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
-      this.handleKeyboardCommand(c);
+      if (!this.spinnerService.isStatus) {
+        this.handleKeyboardCommand(c);
+      }
     });
   }
 

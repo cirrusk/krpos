@@ -2177,16 +2177,17 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   doAction(data: any) {
     if (data) {
+      const modalid = this.storage.getLatestModalId();
       const action = data.action;
-      if (action === 'entrydel') {
+      if (action === 'entrydel' && modalid === undefined) {
         this.deleteByEntry(event);
-      } else if (action === 'updateqty') {
+      } else if (action === 'updateqty' && modalid === undefined) {
         this.updateQty();
-      } else if (action === 'dohold') {
+      } else if (action === 'dohold' && modalid === undefined) {
         this.doHold();
-      } else if (action === 'searchaccount') {
+      } else if (action === 'searchaccount' && modalid === undefined) {
         this.doSearch('A');
-      } else if (action === 'searchproduct') {
+      } else if (action === 'searchproduct' && modalid === undefined) {
         this.doSearch('P');
       } else if (action === 'opendrawer') {
         this.doOpenDrawer();
