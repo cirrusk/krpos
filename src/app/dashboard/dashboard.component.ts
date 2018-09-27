@@ -100,6 +100,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   /**
    * 캐셔 EOD(정산)
+   * 
+   * 판매정산 관련
+   * Case 1) 근무 종료 클릭 > 배치정보 저장 팝업 > 계속 클릭 시 (batch 종료 시) EOD 출력
+   * Case 2) 근무 시작 후 대시보드로 이동 > 대시보드에서 Stop shift 클릭 > 계속 클릭 시 (batch 종료 시) EOD 출력
+   * 판매정산 버튼 클릭 시 값이 없는 판매정산 템플릿 출력 (Alert : 판매정산 템플릿을 출력 하시겠습니까?)
    */
   startEOD() {
     if (this.screenLockType === LockType.LOCK) { return; }
