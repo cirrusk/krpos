@@ -85,7 +85,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
 
     this.checkCancelStatus(this.orderInfo);
     this.clientId = this.storageService.getClientId();
-    this.emloyeeName = this.storageService.getEmloyeeName();
+    this.emloyeeName = this.storageService.getTokenInfo().employeeName; //  this.storageService.getEmloyeeName();
   }
 
   ngOnDestroy() {
