@@ -26,15 +26,15 @@ export const environment = {
 
   // pos configurations
   baseSiteId: 'amwaykorea',
-  // apiDomain: 'https://api.uat.amway.co.kr',
-  apiDomain: 'https://hybris-kor-uat-occ.intranet.local',
-  // apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
-  apiRootUrl: 'https://hybris-kor-uat-occ.intranet.local/api/v2', // 암웨이 내부 시스템 OCC 호출
+  apiDomain: 'https://api.uat.amway.co.kr',
+  // apiDomain: 'https://hybris-kor-uat-occ.intranet.local',
+  apiRootUrl: 'https://api.uat.amway.co.kr/api/v2',
+  // apiRootUrl: 'https://hybris-kor-uat-occ.intranet.local/api/v2', // 암웨이 내부 시스템 OCC 호출
   apiUrl: {
     terminal: '/{baseSiteId}/auth/terminal',
     auth: '/{baseSiteId}/auth/authorize',
-    // token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
-    token: 'https://hybris-kor-uat-occ.intranet.local/authorizationserver/oauth/token',
+    token: 'https://api.uat.amway.co.kr/authorizationserver/oauth/token',
+    // token: 'https://hybris-kor-uat-occ.intranet.local/authorizationserver/oauth/token',
     userSearch: '/{baseSiteId}/accounts/Uid/{userId}',
     customerSearch: '/{baseSiteId}/customers/Uid/{userId}',
     batchStart: '/{baseSiteId}/users/{user_id}/orderbatches',
