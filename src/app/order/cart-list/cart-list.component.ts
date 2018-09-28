@@ -1390,6 +1390,13 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (this.cartList.length === 0) {
               this.sendRightMenu(ModelType.PRODUCT, false);
             }
+
+            // 주문레벨 프로모션이 있을 경우 화면 출력
+            const orderpromotions: PromotionList[] = this.resCartInfo.cartList.appliedOrderPromotions;
+            if (orderpromotions && orderpromotions.length > 0) {
+              this.posPromotion.emit({ promotions: orderpromotions });
+            }
+            
             this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다
             this.setPage((index + 1) < this.cartListCount ? 1 : Math.ceil((index + 1) / this.cartListCount));
             if (this.orderType === OrderType.GROUP) {
