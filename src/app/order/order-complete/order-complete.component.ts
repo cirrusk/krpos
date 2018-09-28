@@ -50,6 +50,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.spinnerService.init();
     this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
       this.handleKeyboardCommand(c);
     });
