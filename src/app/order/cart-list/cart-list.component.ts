@@ -613,6 +613,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.modal.openModalByComponent(SerialComponent, {
                   callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
                   closeByClickOutside: false,
+                  closeByEscape: true,
                   modalId: ModalIds.SERIAL
                 }).subscribe(data => {
                   if (data) {
@@ -1000,6 +1001,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                 this.modal.openModalByComponent(SerialComponent, {
                   callerData: { productInfo: product },
                   closeByClickOutside: false,
+                  closeByEscape: true,
                   modalId: ModalIds.SERIAL
                 }).subscribe(data => {
                   if (data) {
