@@ -1005,7 +1005,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   modalId: ModalIds.SERIAL
                 }).subscribe(data => {
                   if (data) {
-                    this.setSerials(data);
+                    this.setSerials(data, productCode);
                     this.addCartEntries(productCode);
                   }
                 });
