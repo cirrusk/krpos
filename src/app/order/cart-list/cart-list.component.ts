@@ -1313,6 +1313,8 @@ export class CartListComponent implements OnInit, OnDestroy {
     const orderpromotions: PromotionList[] = cartList.appliedOrderPromotions;
     if (orderpromotions && orderpromotions.length > 0) {
       this.posPromotion.emit({ promotions: orderpromotions });
+    } else {
+      this.posPromotion.emit({ promotions: null });
     }
 
   }
@@ -1401,6 +1403,8 @@ export class CartListComponent implements OnInit, OnDestroy {
             const orderpromotions: PromotionList[] = this.resCartInfo.cartList.appliedOrderPromotions;
             if (orderpromotions && orderpromotions.length > 0) {
               this.posPromotion.emit({ promotions: orderpromotions });
+            } else {
+              this.posPromotion.emit({ promotions: null });
             }
 
             this.storage.removeSerialCodes(code); // 개별삭제 시 해당 저장 serial 삭제
