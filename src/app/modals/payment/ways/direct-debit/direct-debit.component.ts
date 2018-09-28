@@ -91,6 +91,8 @@ export class DirectDebitComponent extends ModalComponent implements OnInit, OnDe
     } else {
       if (this.storage.getPay() > 0) {
         this.paidamount = this.storage.getPay();
+      } else {
+        this.paidamount = this.cartService.getPaymentPriceByPaid(this.paymentcapture, this.cartInfo);
       }
     }
     setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);

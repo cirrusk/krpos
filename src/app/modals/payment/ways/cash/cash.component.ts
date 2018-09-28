@@ -97,6 +97,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.paid.nativeElement.value = 0;
       if (this.storage.getPay() > 0) {
         this.payamount = this.storage.getPay();
+      } else {
+        this.payamount = this.cartService.getPaymentPriceByPaid(this.paymentcapture, this.cartInfo);
       }
     }
     this.cashCal();

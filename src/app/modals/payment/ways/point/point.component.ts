@@ -100,6 +100,8 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
     } else {
       if (this.storage.getPay() > 0) {
         this.paymentprice = this.storage.getPay();
+      } else {
+        this.paymentprice = this.cartService.getPaymentPriceByPaid(this.paymentcapture, this.cartInfo);
       }
       this.usePoint.nativeElement.value = this.paymentprice;
     }

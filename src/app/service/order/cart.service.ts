@@ -420,4 +420,41 @@ export class CartService {
     return paymentprice;
   }
 
+  /**
+   * 결제 진행되고 남은 결제 금액 계산
+   * 
+   * @param paymentcapture Payment Capture 정보
+   * @param cart CART 정보
+   * @returns {number} 계산되고 남은 결제금액
+   */
+  getPaymentPriceByPaid(paymentcapture: PaymentCapture, cart: Cart): number {
+    const payamount = this.getTotalPriceWithTax(cart);
+    let receivedprice = 0;  
+    if (paymentcapture.ccPaymentInfo) { // 신용카드
+      const cc = paymentcapture.ccPaymentInfo;
+      receivedprice += cc.amount ? cc.amount : 0;
+    }
+    if (paymentcapture.cashPaymentInfo) { // 현금결제
+      const cash = paymentcapture.cashPaymentInfo;
+      receivedprice += cash.amount ? cash.amount : 0;
+    }
+    if (paymentcapture.directDebitPaymentInfo) { // 자동이체
+      const ddamount = paymentcapture.directDebitPaymentInfo.amount;
+      receivedprice += ddamount ? ddamount : 0;
+    }
+    if (paymentcapture.pointPaymentInfo) { // 포인트결제
+      const pointamount = paymentcapture.pointPaymentInfo.amount;
+      receivedprice += pointamount ? pointamount : 0;
+    }
+    if (paymentcapture.monetaryPaymentInfo) { // 미수금결제(Recash 내역)
+      const recashamount = paymentcapture.monetaryPaymentInfo.amount;
+      receivedprice += recashamount ? recashamount : 0;
+    }
+    if (paymentcapture.icCardPaymentInfo) { // 현금IC카드
+      const ic = paymentcapture.icCardPaymentInfo;
+      receivedprice += ic.amount ? ic.amount : 0;
+    }
+    return payamount - receivedprice;
+  }
+
 }

@@ -112,6 +112,8 @@ export class CreditCardComponent extends ModalComponent implements OnInit, OnDes
     } else {
       if (this.storage.getPay() > 0) {
         this.paidamount = this.storage.getPay();
+      } else {
+        this.paidamount = this.cartService.getPaymentPriceByPaid(this.paymentcapture, this.cartInfo);
       }
       this.checkInstallment(0); // 초기 일시불 설정
       this.renderer.setAttribute(this.allCheck.nativeElement, 'disabled', 'disabled');
