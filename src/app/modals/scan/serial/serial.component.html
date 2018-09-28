@@ -10,9 +10,9 @@
                 <p class="txt04">제품의 시리얼 번호를 입력하시거나 RFID 를 스캔해주세요.
                     <br>시리얼 번호 또는 RFID 가 인식되지 않는 경우, 
                     <br>입력 없이 확인 버튼 또는 ENTER 키를 입력해 주세요.</p>
-                <div class="list_serial" *ngIf="serial; else singleInput">
+                <div class="list_serial" *ngIf="serials && serials.length > 0; else singleInput">
                     <ol>
-                        <li *ngIf="serial"><input type="text" value="{{serial}}" readonly></li>
+                        <li *ngFor="let s of serials"><input type="text" value="{{s}}" readonly></li>
                         <li *ngFor="let p of productCount">
                             <input *ngIf="productInfo.serialNumber || productInfo.rfid;" #codes type="text" [attr.data-serial]="productInfo.serialNumber" [attr.data-rfid]="productInfo.rfid" [attr.data-prdname]="productInfo.name" class="mgt15 mousetrap" title="{{regLabel}}" (keydown.enter)="checkEnter(codes, $event)">
                         </li>

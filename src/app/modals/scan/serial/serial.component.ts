@@ -55,6 +55,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     productInfo: Product;
     productCount = [];
     serial: string;
+    serials: Array<string>;
     private dupcheck = false;
     private serialNumbers = [];
     private scanInputSize: number;
@@ -83,9 +84,9 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             if (this.productInfo.serialNumber) { this.isSerialProduct = true; }
             if (this.productInfo.rfid) { this.isSerialProduct = false; }
         }
-        const serials: Array<string>  = this.storage.getSerialCodes(this.productInfo.code);
+        this.serials  = this.storage.getSerialCodes(this.productInfo.code);
         // this.serial = (serials && serials.length > 0) ? serials.join(', ') : ''; //  this.callerData.serial; // 첫행에 보여질 기존 값
-        this.serial = (serials && serials.length > 0) ? serials[0] : ''; //  this.callerData.serial; // 첫행에 보여질 기존 값
+        this.serial = (this.serials && this.serials.length > 0) ? this.serials[0] : ''; //  this.callerData.serial; // 첫행에 보여질 기존 값
         this.cartqty = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
         this.changeqty = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
         if (this.changeqty === 0) {
