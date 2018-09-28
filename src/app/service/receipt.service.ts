@@ -15,8 +15,8 @@ import {
     ReceiptInfo, ICCard, AccessToken, OrderEntry,
     GroupResponseData, AmwayExtendedOrdering, AmwayPaymentInfoData, PaymentModes,
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
-    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit, 
-    EodData, EodInfo, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData, 
+    PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit,
+    EodData, EodInfo, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData,
     SummaryData, CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
@@ -667,7 +667,7 @@ export class ReceiptService implements OnDestroy {
         }
 
         if (cartInfo.appliedCouponData) { // 5. 쿠폰
-            let coupon = 0;
+            const coupon = 0;
             if (coupon > 0) {
                 price.setCoupon = coupon;
             }
@@ -819,7 +819,7 @@ export class ReceiptService implements OnDestroy {
         try {
             this.printEod(this.makeEodMockupData(), true);
         } catch (e) { }
-    }    
+    }
 
     /**
      * 주문 정보의 payment 정보를 paymentcapute 정보로 전환(인쇄용)

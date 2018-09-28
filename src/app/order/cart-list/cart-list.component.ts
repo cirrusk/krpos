@@ -106,7 +106,7 @@ export class CartListComponent implements OnInit, OnDestroy {
   change: number;                                                             // 거스름돈
   selectedUserIndex = -1;                                                     // 그룹주문 선택한 유저 Table 상의 index
   selectedUserId: string;                                                     // 그룹주문 선택한 유저의 ID
-  apprtype: string;
+  // apprtype: string;
   memberType = MemberType;                                                    // HTML 사용(enum)
   eOrderType = OrderType;                                                     // HTML 사용(enum)
   // 그룹
@@ -257,7 +257,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.removeCart(userId, cartId);
             } else {
               this.init();
-              this.storage.clearClient();
+              this.storage.clearLocalCart();
             }
           } else {
             this.removeGroupCart();
@@ -301,12 +301,13 @@ export class CartListComponent implements OnInit, OnDestroy {
   /**
    * 메뉴에서 전달한 타입 정보를 받음.
    * @param {any} data 타입정보
+   * 기획 변경 삭제
    */
-  setType(data) {
-    if (data) {
-      this.apprtype = data.type;
-    }
-  }
+  // setType(data) {
+  //   if (data) {
+  //     this.apprtype = data.type;
+  //   }
+  // }
 
   /**
    * 메뉴에서 전달한 프로모션 상품코드를 받음.
@@ -430,7 +431,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.change = 0;
     this.installment = -1;
     this.selectedUserIndex = -1;
-    this.apprtype = '';
+    // this.apprtype = '';
     this.paymentChange = false;
     this.pager = new Pagination();
     this.userPager = new Pagination();
@@ -454,6 +455,7 @@ export class CartListComponent implements OnInit, OnDestroy {
     this.storage.removePaymentProcessing();
     this.storage.removePointReCash();
     this.storage.removePaymentModeCode();
+    this.storage.removeCouponSize();
     this.ber = null;
     this.holdBer = Array<string>();
     setTimeout(() => { this.searchText.nativeElement.focus(); }, 250); // 초기화된 후에는 포커스 가도록
@@ -1396,7 +1398,7 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (orderpromotions && orderpromotions.length > 0) {
               this.posPromotion.emit({ promotions: orderpromotions });
             }
-            
+
             this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다
             this.setPage((index + 1) < this.cartListCount ? 1 : Math.ceil((index + 1) / this.cartListCount));
             if (this.orderType === OrderType.GROUP) {
@@ -1425,7 +1427,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       this.removeCartSubscription = this.cartService.deleteCart(userId, cartId).subscribe(
         () => {
           this.init();
-          this.storage.clearClient();
+          this.storage.clearLocalCart();
         },
         error => {
           const errdata = Utils.getError(error);
@@ -1436,7 +1438,7 @@ export class CartListComponent implements OnInit, OnDestroy {
         });
     } else {
       this.init();
-      this.storage.clearClient();
+      this.storage.clearLocalCart();
     }
   }
 
@@ -1455,7 +1457,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           // Ordering ABO 만 남았을 경우, Ordering ABO 가 카트 삭제시 초기화
           if (this.groupAccountInfo.length < 2 || this.groupAccountInfo[0].parties[0].uid === this.groupSelectedCart.volumeABOAccount.uid) {
             this.init();
-            this.storage.clearClient();
+            this.storage.clearLocalCart();
           } else {
             // 그룹주문 에서 사용자 삭제
             this.groupAccountInfo.splice(groupAccountIndex, 1);
@@ -1488,7 +1490,7 @@ export class CartListComponent implements OnInit, OnDestroy {
       const groupAccountIndex = this.checkGroupUserId(this.selectedUserId);
       if (groupAccountIndex <= 0) {
         this.init();
-        this.storage.clearClient();
+        this.storage.clearLocalCart();
       } else {
         this.groupAccountInfo.splice(groupAccountIndex, 1);
         const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;

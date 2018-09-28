@@ -98,7 +98,6 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
       this.renderer.setAttribute(this.searchTypeABO.nativeElement, 'disabled', 'disabled');
       this.chkSearchTypeABO = false;
       this.chkSearchTypeC = true;
-      this.searchType = 'phone';
       this.inputSearchText.nativeElement.focus();
       this.inputSearchText.nativeElement.select();
     } else {
@@ -106,7 +105,6 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
       this.renderer.setAttribute(this.searchTypeC.nativeElement, 'disabled', 'disabled');
       this.chkSearchTypeABO = true;
       this.chkSearchTypeC = false;
-      this.searchType = 'abo';
       this.inputSearchText.nativeElement.focus();
       this.inputSearchText.nativeElement.select();
     }
@@ -158,8 +156,9 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
         }
       }
       this.searchText = _searchText.trim();
+      this.searchType = this.memberType === SearchMemberType.CONSUMER ? 'phone' : 'abo';
       this.inputSearchText.nativeElement.value = this.searchText;
-      this.getOrderList(this.searchType, _memberType, this.searchText, 0);
+      this.getOrderList(this.searchType, this.memberType, this.searchText, 0);
     }
   }
 

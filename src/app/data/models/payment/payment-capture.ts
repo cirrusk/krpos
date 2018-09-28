@@ -23,7 +23,7 @@ export class CapturePaymentInfo {
 
 /**
  * Payment Capture
- * 
+ *
  * 자동이체                      ; directdebit        ; DirectDebitPaymentInfo
  * 신용카드                      ; creditcard         ; CreditCardPaymentInfo
  * 현금결제                      ; cash               ; AmwayCashPaymentInfo

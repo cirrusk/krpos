@@ -35,9 +35,9 @@ export class ClientComponent implements OnInit, OnDestroy {
   received: number;
   change: number;
   accountType: string;                            // 회원 타입
-  apprtype: string;
+  // apprtype: string;
   ber: string;
-  couponSize: string;
+  couponSize = '0';
   private pager: Pagination;                      // pagination 정보
   private resCart: Cart;
   private stsubscription: Subscription;
@@ -96,8 +96,6 @@ export class ClientComponent implements OnInit, OnDestroy {
             if (data) {
               this.retreiveInfo(data[0], data[1]);
             }
-          } else if (result.key === 'apprtype') {
-            this.apprtype = '통합결제';
           } else if (result.key === 'Ber') {
             this.ber = result.value;
           } else if (result.key === 'cartPage') {
@@ -170,11 +168,10 @@ export class ClientComponent implements OnInit, OnDestroy {
     this.received = 0;
     this.change = 0;
     this.selectedCartNum = -1;
-    this.apprtype = '';
+    // this.apprtype = '';
     this.pager = new Pagination();
     this.installment = -1;
     this.ber = null;
-    this.couponSize = '0';
   }
 
 

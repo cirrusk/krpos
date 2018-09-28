@@ -712,6 +712,17 @@ export class StorageService implements OnDestroy {
   }
 
   /**
+   * order 페이지 에서 cart 정보 reset
+   */
+  public clearLocalCart(): void {
+    this.removeCustomer();
+    this.removeOrderEntry();
+    this.removePayment();
+    this.removeCouponSize();
+    this.removeCartPage();
+  }
+
+  /**
    * @ignore
    */
   private isSessionStorageSupported(): boolean {

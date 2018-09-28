@@ -77,7 +77,7 @@
                         <!-- 비회원시 삭제1 -->
                         <em *ngIf="accountInfo">{{accountType !== memberType.ABO ? accountInfo?.parties[0]?.name : accountInfo?.name}} 회원님</em>
                         <span class="t01" *ngIf="accountInfo">{{accountType !== memberType.ABO ? accountInfo?.parties[0]?.uid : accountInfo?.uid}}</span>
-                        <span class="t02" *ngIf="accountInfo">{{apprtype}}</span>
+                        <!-- 기획 변경 삭제 <span class="t02" *ngIf="accountInfo">{{apprtype}}</span> -->
                         <!-- //비회원시 삭제1 -->
                     </div>
                     <!-- //20180504 수정 -->
@@ -109,7 +109,7 @@
                             <!-- 비회원시 삭제3 -->
                             <dl *ngIf="accountInfo && accountType !== memberType.CONSUMER">
                                 <dt>Re-Cash</dt>
-                                <dd>{{recash | number}}원</dd>
+                                <dd>{{recash < 0 ? 0 : recash | number}}원</dd>
                             </dl>
                             <!-- //비회원시 삭제3 -->
                         </div>

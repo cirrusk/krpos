@@ -282,8 +282,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
         } else {
             this.checkClass(evt);
         }
-        this.posMenu.emit({ type: '통합결제' });
-        this.storage.setLocalItem('apprtype', 'c');
+        // this.posMenu.emit({ type: '통합결제' });
+        // this.storage.setLocalItem('apprtype', 'c');
         if (this.orderType === OrderType.GROUP) { this.transformCartInfo(this.amwayExtendedOrdering); }
         this.popupPayment(addPopupType);
     }

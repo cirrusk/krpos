@@ -106,7 +106,7 @@
                     </em>
 
                     <span *ngIf="accountInfo;" class="t01">{{accountInfo.accountTypeCode.toUpperCase() === memberType.ABO ? accountInfo.uid: accountInfo.parties[0].uid}}</span>
-                    <span class="t02" *ngIf="accountInfo;">{{apprtype}}</span>
+                    <!-- 기획 변경 삭제 <span class="t02" *ngIf="accountInfo;">{{apprtype}}</span> -->
                     <!-- //비회원시 삭제1 -->
                 </ng-container>
                 <ng-container *ngIf="orderType == eOrderType.GROUP">
@@ -117,7 +117,7 @@
                     </em>
                     <span *ngIf="groupAccountInfo.length > 0;" class="t01">{{groupAccountInfo[selectedUserIndex].accountTypeCode.toUpperCase() === memberType.ABO ? groupAccountInfo[selectedUserIndex].uid
                         : groupAccountInfo[selectedUserIndex].parties[0].uid}}</span>
-                    <span class="t02" *ngIf="groupAccountInfo.length > 0;">{{apprtype}}(그룹)</span>
+                    <!-- 기획 변경 삭제 <span class="t02" *ngIf="groupAccountInfo.length > 0;">{{apprtype}}(그룹)</span> -->
                     <!-- //비회원시 삭제1 -->
                 </ng-container>
             </div>
