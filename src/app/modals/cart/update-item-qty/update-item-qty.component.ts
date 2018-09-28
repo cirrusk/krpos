@@ -50,6 +50,7 @@ export class UpdateItemQtyComponent extends ModalComponent implements OnInit {
         return;
       }
       this.result = { code: this.code, qty: quantity };
+      // this.modalResult();
       this.close();
     }
   }

@@ -74,6 +74,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     }
 
     ngOnInit() {
+        this.spinnerService.init();
         this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
             this.handleKeyboardCommand(c);
         });
@@ -82,7 +83,8 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             if (this.productInfo.serialNumber) { this.isSerialProduct = true; }
             if (this.productInfo.rfid) { this.isSerialProduct = false; }
         }
-        this.serial = this.callerData.serial; // 첫행에 보여질 기존 값
+        const serials: Array<string>  = this.storage.getSerialCodes(this.productInfo.code);
+        this.serial = (serials && serials.length > 0) ? serials[0] : null; //  this.callerData.serial; // 첫행에 보여질 기존 값
         this.cartqty = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
         this.changeqty = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
         if (this.changeqty === 0) {
@@ -199,7 +201,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             this.apprmessage = '스캔이 완료되었습니다.';
             this.serialNumbers = this.serialNumbers.reduce(function (a, b) { if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
             this.result = { serialNumbers: this.serialNumbers };
-            setTimeout(() => { this.close(); }, 50);
+            setTimeout(() => { this.close(); }, 250);
         } else {
             if (this.isSerialProduct) {
                 this.checktype = -1;

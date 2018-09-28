@@ -606,29 +606,32 @@ export class CartListComponent implements OnInit, OnDestroy {
           modalId: ModalIds.QTY
         }).subscribe(result => {
           if (result) {
-            const product: ProductInfo = selectedCart.product;
-            // RFID, SERIAL 입력 받음.
-            if (product && (product.rfid || product.serialNumber)) {
-              if (qty !== result.qty) { // 수량변경이 없으면 처리하지 않음.
-                this.modal.openModalByComponent(SerialComponent, {
-                  callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
-                  closeByClickOutside: false,
-                  closeByEscape: true,
-                  modalId: ModalIds.SERIAL
-                }).subscribe(data => {
-                  if (data) {
-                    if (qty < result.qty) { // 변경 수량이 증가할 경우
-                      this.setSerials(data, result.code);
-                    } else { // 변경 수량이 줄어들 경우(제품 수량이 줄어들 경우 장바구니부터 다시 시작)
-                      this.setSerials(data);
+            setTimeout(() => {
+              const product: ProductInfo = selectedCart.product;
+              // RFID, SERIAL 입력 받음.
+              if (product && (product.rfid || product.serialNumber)) {
+                if (qty !== result.qty) { // 수량변경이 없으면 처리하지 않음.
+                  this.modal.openModalByComponent(SerialComponent, {
+                    callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
+                    closeAllModals: true,
+                    closeByClickOutside: false,
+                    closeByEscape: true,
+                    modalId: ModalIds.SERIAL
+                  }).subscribe(data => {
+                    if (data) {
+                      if (qty < result.qty) { // 변경 수량이 증가할 경우
+                        this.setSerials(data, result.code);
+                      } else { // 변경 수량이 줄어들 경우(제품 수량이 줄어들 경우 장바구니부터 다시 시작)
+                        this.setSerials(data);
+                      }
+                      this.updateItemQtyCart(cartId, result.code, result.qty);
                     }
-                    this.updateItemQtyCart(cartId, result.code, result.qty);
-                  }
-                });
+                  });
+                }
+              } else {
+                this.updateItemQtyCart(cartId, result.code, result.qty);
               }
-            } else {
-              this.updateItemQtyCart(cartId, result.code, result.qty);
-            }
+            }, 170);
           }
         });
       }
