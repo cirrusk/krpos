@@ -1403,6 +1403,8 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.posPromotion.emit({ promotions: orderpromotions });
             }
 
+            this.storage.removeSerialCodes(code); // 개별삭제 시 해당 저장 serial 삭제
+
             this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다
             this.setPage((index + 1) < this.cartListCount ? 1 : Math.ceil((index + 1) / this.cartListCount));
             if (this.orderType === OrderType.GROUP) {
