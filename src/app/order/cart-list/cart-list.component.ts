@@ -668,7 +668,6 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   private getAccountAndSaveCart(account: Accounts) {
     if (this.accountInfo && !this.paymentChange && this.orderType === OrderType.NORMAL) {
-      this.sendRightMenu(ModelType.ACCOUNT, true, account);
       this.changeUser(account);
     } else {
       // 그룹 결제시
