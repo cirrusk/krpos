@@ -1,4 +1,4 @@
-import { AbstractOrder, Consignment, OrderEntry, Address, Enumeration } from '../..';
+import { AbstractOrder, Consignment, OrderEntry, Address, Enumeration, CartModification } from '../..';
 import { Price } from './price';
 import { PaymentDetails } from '../payment/payment-details';
 import { PointOfService } from '../common/point-of-service';
@@ -17,6 +17,8 @@ export class Order extends AbstractOrder {
     totalUnitCount: number;
     deductionNumber: string;                // Mac&Co
     receiptInfo: Receipt;                   // ReceiptWsDTO
+    cartModifications: Array<CartModification>;
+    promotionResultActions: Array<PromotionResultAction>; // 프로모션 할인 정보
     constructor() {
         super();
     }
@@ -43,4 +45,13 @@ export class GroupOrder {
     deliveryPointOfService: PointOfService; // PointOfServiceWsDTO
 }
 
-
+export class PromotionResultAction {
+    code: string;
+    name: string;
+    amount: number;
+    bonusPointValue: number;
+    bonusBusinessVolume: number;
+    totalExtraPrice: number;
+    orderEntryQuantity: number;
+    isProductPromotion: boolean;
+}

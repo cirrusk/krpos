@@ -1899,7 +1899,11 @@ export class CartListComponent implements OnInit, OnDestroy {
       if (model.entry.product.images === null) {
         imgUrl = '/assets/images/temp/198x198.jpg';
       } else {
-        imgUrl = this.domain + (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+        if ((model.entry.product.images[1].url).indexOf('http') > -1) {
+          imgUrl = (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+        } else {
+          imgUrl = this.domain + (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+        }
       }
     } catch (e) {
       imgUrl = '/assets/images/temp/198x198.jpg';

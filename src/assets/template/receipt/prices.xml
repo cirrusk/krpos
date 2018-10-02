@@ -33,6 +33,11 @@
             {{priceFormatHelper '프로모션' price.promotion}}
         </text-line>
         {{/if}}
+        {{#if price.promotionDiscountInfo}}
+        <text-line>
+            {{promotionListHelper price.promotionDiscountInfo orderInfo.cancelFlag}}
+        </text-line>
+        {{/if}}
         {{#if price.point}}
         <text-line>
             {{priceFormatHelper price.point.name price.point.amount orderInfo.cancelFlag}}

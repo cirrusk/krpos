@@ -9,6 +9,6 @@ export class PaymentsVO {
                 'installment': '할부개월',
                 'authNumber': '승인번호'
             }
-        }
+        };
     }
 }

@@ -10,6 +10,7 @@ import { BufferBuilder } from './buffer-builder';
 
 import { ReceiptUtils } from './helpers/receipt.utils';
 import { ReceiptProductFieldInterface, DiscountFieldInterface } from '../../../../../data/receipt/interfaces/productfield.interface';
+import { PromotionResultAction } from '../../../../../data/models/order/order';
 // import { BonusDataInterface } from './helpers/bonusdata.interface';
 
 export class TemplateParser {
@@ -35,6 +36,7 @@ export class TemplateParser {
     this.registerPriceLocaleHelper();
     this.registerDiscountListHelper();
     this.registerEodDataHelper();
+    this.registerPromotionListHelper();
 
   }
 
@@ -200,6 +202,21 @@ export class TemplateParser {
     formatted.push('</bold>');
     formatted.push('<dash-line/>');
     return formatted.join('');
+  }
+
+  /**
+   * 프로모션 할인정보 헬퍼
+   */
+  private registerPromotionListHelper() {
+    this.handlebars.registerHelper('promotionListHelper', (promotionList: Array<PromotionResultAction>, cancelFlag: string) => {
+      const formatted: Array<string> = [];
+      promotionList.forEach(
+        (promotion) => {
+          formatted.push(ReceiptUtils.getFormattedProdmotionField(promotion, cancelFlag));
+        }
+      );
+      return new handlebars.SafeString(formatted.join(''));
+    });
   }
 
   public parser(template, data): BufferBuilder {

@@ -3,6 +3,7 @@ import { Command } from '../command';
 import { ProductFieldMaxLen } from './maxlen.interface';
 import { ReceiptProductFieldInterface, DiscountFieldInterface, EodFieldInterface } from '../../../../../../data/receipt/interfaces/productfield.interface';
 import { PosPrinterConstants } from '../posprinter.constants';
+import { PromotionResultAction } from '../../../../../../data/models/order/order';
 
 export class ReceiptUtils {
 
@@ -331,6 +332,31 @@ export class ReceiptUtils {
         formatted.push(this.spaces(len));
         formatted.push(pr);
         formatted.push(this.END_TEXTLINE);
+        return formatted.join('');
+    }
+
+    /**
+     * Promotion 할인 출력부
+     * @param promotion
+     */
+    public static getFormattedProdmotionField(promotion: PromotionResultAction, cancelFlag: string): string {
+        const formatted: Array<string> = [];
+        const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
+
+        // 태그 시작
+        formatted.push(this.START_TEXTLINE);
+
+        const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(promotion.name);
+        const localePrice: string = ReceiptUtils.convertToLocalePrice(cancelSymbol + String(promotion.amount));
+        const localPriceLen = localePrice.length;
+        const blankLenth: number = 42 - utf8ItemLen - localPriceLen;
+        formatted.push(promotion.name);
+        formatted.push(ReceiptUtils.spaces(blankLenth));
+        formatted.push(localePrice);
+
+        // 태그 끝
+        formatted.push(this.END_TEXTLINE);
+
         return formatted.join('');
     }
 }

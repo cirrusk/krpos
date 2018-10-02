@@ -1,3 +1,5 @@
+import { PromotionResultAction } from '../order/order';
+
 export class PriceInfo {
     protected totalQty: string;          // 상품수량
     protected amountWithoutVAT: string;  // 과세 물품
@@ -10,6 +12,7 @@ export class PriceInfo {
     protected recash: string;            // Re-Cash
     protected promotion: string;         // 프로모션
     protected coupon: string;            // 쿠폰
+    protected promotionDiscountInfo: Array<PromotionResultAction>; // 프로모션 할인 정보
 
     public set setPointInfo(point: PointInfo) {
         this.point = point;
@@ -28,6 +31,10 @@ export class PriceInfo {
     }
     public set setCoupon(coupon: number) {
         this.coupon = String(coupon);
+    }
+
+    public set setPromotionDiscountInfo(promotionDiscountInfo: Array<PromotionResultAction>) {
+        this.promotionDiscountInfo = promotionDiscountInfo;
     }
     constructor(totalQty: number, amountWithoutVAT: number, amountVAT: number, sumAmount: number, totalAmount: number, totalDiscount?: number, discount?: Discount) {
         this.totalQty = String(totalQty);

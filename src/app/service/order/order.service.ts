@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ApiService, StorageService } from '../../core';
 import { HttpData, OrderHistoryList, OrderData, MemberType, ResponseMessage, AmwayExtendedOrdering, ResponseData, TerminalInfo, APIMethodType, PaymentCapture } from '../../data';
-import { OrderList, Order } from '../../data/models/order/order';
+import { OrderList, Order, PromotionResultAction } from '../../data/models/order/order';
 import { HttpResponseBase } from '../../../../node_modules/@angular/common/http';
 
 /**
@@ -272,5 +272,35 @@ export class OrderService {
       paymentprice = paymentprice - recashamount;
     }
     return paymentprice;
+  }
+
+  /**
+   * 프로모션 할인 정보
+   * @param promotionInfo
+   */
+  getPromotionDiscountInfo(promotionInfo: Array<PromotionResultAction>): Array<PromotionResultAction> {
+    const promotionDiscount = new Array<PromotionResultAction>();
+    promotionInfo.forEach(promotion => {
+      const promotionIndex = promotionDiscount.findIndex(obj => obj.code === promotion.code);
+      const promotionData = new PromotionResultAction();
+
+      promotionData.amount = promotion.orderEntryQuantity ? promotion.amount * promotion.orderEntryQuantity : promotion.amount;
+      promotionData.bonusBusinessVolume = promotion.bonusBusinessVolume;
+      promotionData.bonusPointValue = promotion.bonusPointValue;
+      promotionData.code = promotion.code;
+      promotionData.name = promotion.name;
+      promotionData.totalExtraPrice = promotion.totalExtraPrice;
+      promotionData.orderEntryQuantity = promotion.orderEntryQuantity;
+      promotionData.isProductPromotion = promotion.isProductPromotion;
+
+      if (promotionIndex === -1) {
+        if (promotionData.amount !== 0) {
+          promotionDiscount.push(promotionData);
+        }
+      } else {
+        promotionDiscount[promotionIndex].amount += promotionData.amount;
+      }
+    });
+    return promotionDiscount;
   }
 }

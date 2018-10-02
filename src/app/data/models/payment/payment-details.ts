@@ -4,6 +4,7 @@ export class PaymentDetails {
     paymentInfos: AmwayPaymentInfoData[];
     totalPaidAmount: number;
     balanceAmount: number;
+    paymentStatusCode: string; // 결제 상태
 }
 
 export class PaymentDetailInfo {
