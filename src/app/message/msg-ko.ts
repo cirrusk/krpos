@@ -92,6 +92,7 @@ export const LANG_KO_MSGS = {
     'order.capable.notfound': '주문 가능 제품이 없습니다.',
     'entry.product.empty': '제품의 재고가 부족합니다.',
     'update.qty.invalid': '현재보다 시리얼 번호 입력 / RFID 스캔 상품 수량이 적어지는 경우 처음부터 다시 진행 해야 합니다.',
+    'update.qty.same':'시리얼 번호 입력 / RFID 스캔 상품을 변경해주시기 바랍니다.',
     'block.invalid': '탈퇴되거나 존재하지 않는 회원 혹은 블랙리스트 회원입니다.',
     'block.notrenewal': '{0} 회원님({1})은<br>미갱신 상태입니다.<br>회원 갱신이 필요합니다.<br>(갱신기간 : {2})',
     'block.loginblock': '일반 로그인이 제한된 회원입니다.',
