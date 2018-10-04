@@ -7,7 +7,7 @@
   <div class="pop_container">
       <div class="pop_content">
         <ng-container *ngFor="let promotion of promotions; let last = last;">
-            <em class="txt05">{{promotion?.promotion?.description}}</em>
+            <em class="txt05">{{promotion?.promotion?.name}}</em>
             <p class="txt04 mgt10">{{promotion?.description}}</p>
             <br *ngIf="!last"/>
         </ng-container>
