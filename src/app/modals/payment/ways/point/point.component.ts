@@ -89,7 +89,7 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
 
   private loadPayment() {
     this.paymentprice = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value;
-    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    const p: PaymentCapture = this.storage.getPaymentCapture() || this.paymentcapture;
     if (p && p.pointPaymentInfo) {
       if (this.paymentprice === p.pointPaymentInfo.amount) { //  전체금액
         this.checkPay(0);
@@ -97,11 +97,16 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
         this.checkPay(1);
       }
       this.usePoint.nativeElement.value = p.pointPaymentInfo.amount;
+      if (this.storage.getPay() > 0) {
+        this.paymentprice = this.storage.getPay();
+      } else {
+        this.paymentprice = this.cartService.getPaymentPriceByPaid(p, this.cartInfo);
+      }      
     } else {
       if (this.storage.getPay() > 0) {
         this.paymentprice = this.storage.getPay();
       } else {
-        this.paymentprice = this.cartService.getPaymentPriceByPaid(this.paymentcapture, this.cartInfo);
+        this.paymentprice = this.cartService.getPaymentPriceByPaid(p, this.cartInfo);
       }
       this.usePoint.nativeElement.value = this.paymentprice;
     }
@@ -109,17 +114,20 @@ export class PointComponent extends ModalComponent implements OnInit, OnDestroy 
 
   private getBalance() {
     const pointrecash: PointReCash = this.storage.getPointReCash();
+    const usepoint = this.usePoint.nativeElement.value;
     if (pointrecash && pointrecash.point) {
       this.balance = pointrecash.point;
       this.point = this.balance.amount;
-      const changeprice = this.point - this.paymentprice;
+      // const changeprice = this.point - this.paymentprice;
+      const changeprice = this.point - Number(usepoint);
       this.change = (changeprice < 0) ? 0 : changeprice;
     } else {
       this.balancesubscription = this.payments.getBalance(this.accountInfo.parties[0].uid).subscribe(
         result => {
           this.balance = result;
           this.point = this.balance.amount;
-          const changeprice = this.point - this.paymentprice;
+          // const changeprice = this.point - this.paymentprice;
+          const changeprice = this.point - usepoint;
           this.change = (changeprice < 0) ? 0 : changeprice;
         },
         error => { this.logger.set('point.component', `${error}`).error(); });

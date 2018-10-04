@@ -77,7 +77,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
     this.dupcheck = true; // pay하는 도중에 ENTER가 들어오면 다른 함수 실행됨.
-    setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
+    if (this.paidamount === this.payamount) { // 최종 결제 금액 validation 체크
+      setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
+    } else {
+      this.checktype = -999;
+      this.apprmessage = '결제할 금액이 맞지않습니다.';
+    }
   }
 
   ngOnDestroy() {
@@ -88,6 +93,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   }
 
   payButton(evt: any) {
+    if (this.checktype === -999) { // 결제금액이 맞지 않음.
+      this.storage.removePay();
+      this.storage.removePaymentCapture();
+      this.info.sendInfo('initpayment', true); 
+      this.close();
+    }    
     if (this.finishStatus === ErrorType.RECART) {
       this.cardCancelAndSendInfoForError();
     } else if (this.finishStatus === ErrorType.FAIL) {
@@ -547,6 +558,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
       if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT) {
+        if (this.checktype === -999) { // 결제금액이 맞지 않음.
+          this.storage.removePay();
+          this.storage.removePaymentCapture();
+          this.info.sendInfo('initpayment', true); 
+          this.close();
+        }
         if (this.finishStatus === ErrorType.RECART) { // 카트 재생성
           this.cardCancelAndSendInfoForError(); // 카드 결제 취소하기 및 후속 처리하기
         } else if (this.finishStatus === ErrorType.FAIL) { // API 오류

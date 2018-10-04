@@ -262,6 +262,16 @@ export class PaymentService {
     }
   }
 
+  checkFinalPrice(totalprice: number, paymentcapture: PaymentCapture) : boolean {
+    Object.keys(paymentcapture).forEach((key) => {
+      const payment  = paymentcapture[key];
+      if (payment != null) { 
+        console.log('====== ' + payment.amount);
+      }
+    });
+    return false;
+  }
+
   /**
    * 결제 내역 설정
    * 

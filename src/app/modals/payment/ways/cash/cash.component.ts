@@ -30,8 +30,8 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   apprmessage: string;
   payamount: number;  // 현재 원 결제금액
   orderType: string;
+  private checkTotalPrice: number;
   private regex: RegExp = /[^0-9]+/g;
-  // private paidamount: number;
   private orderInfo: Order;
   private cartInfo: Cart;
   private accountInfo: Accounts;
@@ -89,18 +89,32 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
   }
 
   private loadPayment() {
-    this.payamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // this.cartInfo.totalPrice.value; // 원 결제 금액
-    const p: PaymentCapture = this.paymentcapture || this.storage.getPaymentCapture();
+    this.payamount = this.cartService.getTotalPriceWithTax(this.cartInfo); // 원 결제 금액
+    this.checkTotalPrice = this.payamount; // 최종 체크할 금액
+    const p: PaymentCapture = this.storage.getPaymentCapture() || this.paymentcapture;
     if (p && p.cashPaymentInfo) {
+      if (this.payment.getPaymentCheck(p) === 1) {
+      } else {
+        if (this.storage.getPay() > 0) {
+          this.payamount = this.storage.getPay();
+        } else {
+          this.payamount = this.cartService.getPaymentPriceByPaid(p, this.cartInfo);
+        }
+      }
       this.paid.nativeElement.value = p.cashPaymentInfo.received;
     } else {
       this.paid.nativeElement.value = 0;
       if (this.storage.getPay() > 0) {
         this.payamount = this.storage.getPay();
       } else {
-        this.payamount = this.cartService.getPaymentPriceByPaid(this.paymentcapture, this.cartInfo);
+        this.payamount = this.cartService.getPaymentPriceByPaid(p, this.cartInfo);
       }
     }
+    // if (this.storage.getPay() > 0) {
+    //   this.payamount = this.storage.getPay();
+    // } else {
+    //   this.payamount = this.cartService.getPaymentPriceByPaid(p, this.cartInfo);
+    // }
     this.cashCal();
     setTimeout(() => { this.paid.nativeElement.focus(); this.paid.nativeElement.select(); }, 50);
   }
@@ -178,12 +192,7 @@ export class CashComponent extends ModalComponent implements OnInit, OnDestroy {
       this.result = this.paymentcapture;
       this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
       this.payment.sendPaymentAndOrderInfo(this.paymentcapture, null);
-      const ordercheck = this.payment.getPaymentCheck(this.paymentcapture);
-      if (ordercheck === 1) { // 일반결제
-        this.completePayPopup(nReceiveAmount, nPayAmount, change);
-      } else if (ordercheck > 1) { // 복합결제
-        this.completePayPopup(nReceiveAmount, nPayAmount, change);
-      }
+      this.completePayPopup(nReceiveAmount, nPayAmount, change);
     }
   }
 
