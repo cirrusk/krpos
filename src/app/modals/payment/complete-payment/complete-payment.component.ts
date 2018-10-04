@@ -223,6 +223,18 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = this.message.get('payment.success'); // '결제가 완료되었습니다.';
             this.payments.sendPaymentAndOrderInfo(this.paymentcapture, this.orderInfo);
           }
+        } else if (result.cartModifications) { // Restriction
+          this.finishStatus = ErrorType.NOORDER;
+          let appendMessage = '';
+          result.cartModifications[0].messages.forEach(message => {
+            const msg = this.message.get(message.message) ? this.message.get(message.message) : message.message;
+            if (appendMessage === '') {
+              appendMessage += msg;
+            } else {
+              appendMessage += '<br/>' + msg;
+            }
+          });
+          this.apprmessage = appendMessage;
         } else { // 결제정보 없는 경우, CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = ErrorType.NOORDER;
           this.apprmessage = this.message.get('payment.fail.other');

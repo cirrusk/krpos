@@ -666,6 +666,11 @@ export class ReceiptService implements OnDestroy {
             price.setPromotion = promotion;
         }
 
+        // 프로모션 할인금액
+        // if (order.promotionResultActions) {
+        //     price.setPromotionDiscountInfo = this.order.getPromotionDiscountInfo(order.promotionResultActions);
+        // }
+
         if (cartInfo.appliedCouponData) { // 5. 쿠폰
             const coupon = 0;
             if (coupon > 0) {

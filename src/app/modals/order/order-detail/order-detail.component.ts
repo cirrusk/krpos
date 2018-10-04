@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../core';
 import { OrderService, ReceiptService, MessageService, PaymentService } from '../../../service';
 import { Utils } from '../../../core/utils';
-import { OrderList, Order } from '../../../data/models/order/order';
+import { OrderList, Order, PromotionResultAction } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
 import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds, Accounts } from '../../../data';
 import { InfoBroker } from '../../../broker';
@@ -45,6 +45,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   paymentPrice = 0;
   isReceiptPrint = false;
   currentDate: string;
+  promotionDiscountInfo: Array<PromotionResultAction>;
   constructor(protected modalService: ModalService,
     private router: Router,
     private orderService: OrderService,
@@ -102,6 +103,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.orderType = OrderType.NORMAL;
     this.orderTypeName = this.messageService.get('default.order.type');
     this.paymentCapture = new PaymentCapture();
+    this.promotionDiscountInfo = new Array<PromotionResultAction>();
   }
 
   /**
@@ -377,7 +379,15 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     }
   }
 
+  /**
+   * 가격 정보 계산
+   * @param order
+   * @param paymentCapture
+   */
   priceInfo(order: Order, paymentCapture: PaymentCapture) {
+    // if (order.promotionResultActions) {
+    //   this.promotionDiscountInfo = this.orderService.getPromotionDiscountInfo(order.promotionResultActions);
+    // }
     // 과세물품
     this.taxablePrice = this.orderService.getTaxablePrice(order);
     // 부가세
