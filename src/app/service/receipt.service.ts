@@ -667,9 +667,9 @@ export class ReceiptService implements OnDestroy {
         }
 
         // 프로모션 할인금액
-        // if (order.promotionResultActions) {
-        //     price.setPromotionDiscountInfo = this.order.getPromotionDiscountInfo(order.promotionResultActions);
-        // }
+        if (order.promotionResultActions) {
+            price.setPromotionDiscountInfo = this.order.getPromotionDiscountInfo(order.promotionResultActions);
+        }
 
         if (cartInfo.appliedCouponData) { // 5. 쿠폰
             const coupon = 0;

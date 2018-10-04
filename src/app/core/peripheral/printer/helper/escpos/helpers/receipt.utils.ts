@@ -342,6 +342,7 @@ export class ReceiptUtils {
     public static getFormattedProdmotionField(promotion: PromotionResultAction, cancelFlag: string): string {
         const formatted: Array<string> = [];
         const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
+        const titleMaxLen = 30;
 
         // 태그 시작
         formatted.push(this.START_TEXTLINE);
@@ -349,8 +350,36 @@ export class ReceiptUtils {
         const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(promotion.name);
         const localePrice: string = ReceiptUtils.convertToLocalePrice(cancelSymbol + String(promotion.amount));
         const localPriceLen = localePrice.length;
-        const blankLenth: number = 42 - utf8ItemLen - localPriceLen;
-        formatted.push(promotion.name);
+        let title = promotion.name;
+        let blankLenth = PosPrinterConstants.LineBytes;
+
+        if (utf8ItemLen > 60) {
+            // 30글자씩 끊어서 출력
+            const title_1: string = this.substrUnicode(title, titleMaxLen, 0);
+            title = title.replace(title_1, '');
+            formatted.push(title_1);
+            formatted.push(this.END_TEXTLINE);
+            formatted.push(this.START_TEXTLINE);
+            // 30글자씩 끊어서 출력
+            const title_2: string = this.substrUnicode(title, titleMaxLen - 2, 0) + '..';
+            blankLenth = blankLenth - ReceiptUtils.getTextLengthUTF8(title_2) - localPriceLen;
+            formatted.push(title_2);
+        } else {
+            if (utf8ItemLen > 30) {
+                // 30글자씩 끊어서 출력
+                const title_1: string = this.substrUnicode(title, titleMaxLen, 0);
+                title = title.replace(title_1, '');
+                formatted.push(title_1);
+                formatted.push(this.END_TEXTLINE);
+                formatted.push(this.START_TEXTLINE);
+                const title_2: string = this.substrUnicode(title, ReceiptUtils.getTextLengthUTF8(title), 0);
+                blankLenth = blankLenth - ReceiptUtils.getTextLengthUTF8(title_2) - localPriceLen;
+                formatted.push(title_2);
+            } else {
+                formatted.push(promotion.name);
+                blankLenth = blankLenth - utf8ItemLen - localPriceLen;
+            }
+        }
         formatted.push(ReceiptUtils.spaces(blankLenth));
         formatted.push(localePrice);
 

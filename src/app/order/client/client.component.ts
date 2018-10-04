@@ -70,7 +70,9 @@ export class ClientComponent implements OnInit, OnDestroy {
               this.recash = this.accountInfo.balance[1].amount;
             }
           } else if (result.key === 'orderentry') {
+
             if (result.value === null) {
+              this.resCart = null;
               this.init();
             } else {
               this.resCart = result.value;

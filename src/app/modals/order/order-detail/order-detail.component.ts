@@ -385,9 +385,9 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * @param paymentCapture
    */
   priceInfo(order: Order, paymentCapture: PaymentCapture) {
-    // if (order.promotionResultActions) {
-    //   this.promotionDiscountInfo = this.orderService.getPromotionDiscountInfo(order.promotionResultActions);
-    // }
+    if (order.promotionResultActions) {
+      this.promotionDiscountInfo = this.orderService.getPromotionDiscountInfo(order.promotionResultActions);
+    }
     // 과세물품
     this.taxablePrice = this.orderService.getTaxablePrice(order);
     // 부가세

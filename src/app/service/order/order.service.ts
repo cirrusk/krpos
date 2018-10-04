@@ -284,7 +284,7 @@ export class OrderService {
       const promotionIndex = promotionDiscount.findIndex(obj => obj.code === promotion.code);
       const promotionData = new PromotionResultAction();
 
-      promotionData.amount = promotion.orderEntryQuantity ? promotion.amount * promotion.orderEntryQuantity : promotion.amount;
+      promotionData.amount = promotion.isProductPromotion ? promotion.amount * promotion.orderEntryQuantity : promotion.amount;
       promotionData.bonusBusinessVolume = promotion.bonusBusinessVolume;
       promotionData.bonusPointValue = promotion.bonusPointValue;
       promotionData.code = promotion.code;
