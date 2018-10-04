@@ -21,7 +21,8 @@ export enum ErrorType {
     FAIL = 'fail',
     CARDFAIL = 'cardfail',
     NOORDER = 'noorder',
-    API = 'api'
+    API = 'api',
+    RESTRICT = 'restrict'
 }
 
 /**
