@@ -41,6 +41,9 @@ import { Product } from '../../../data/models/cart/cart-data';
  *
  * 변경사항) 2018.09.07 Serial은 100% 입력, RFID는 100% 입력이 안되더라도 넘어갈 수 있음
  *
+ * 요건 중 수량 변경 시 Serial/RFID 최초 상품 1건에 대한 표기 요건이 있었으나
+ * 이후 입력된 모든 Serial/RFID 에 대해서 표기 요청으로 변경
+ * 
  * @since 2018.08.09 RFID를 Serial에 통합
  */
 @Component({
