@@ -610,7 +610,8 @@ export class CartListComponent implements OnInit, OnDestroy {
               const product: ProductInfo = selectedCart.product;
               // RFID, SERIAL 입력 받음.
               if (product && (product.rfid || product.serialNumber)) {
-                if (qty !== result.qty) { // 수량변경이 없으면 처리하지 않음.
+                if (qty == result.qty) { // 수량이 같으면 처리하지 않음.(type 체크 하므로 == 사용)
+                } else { // 수량변경이 없으면 처리하지 않음.
                   this.modal.openModalByComponent(SerialComponent, {
                     callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
                     closeAllModals: true,
@@ -629,7 +630,10 @@ export class CartListComponent implements OnInit, OnDestroy {
                   });
                 }
               } else {
-                this.updateItemQtyCart(cartId, result.code, result.qty);
+                if (qty == result.qty) { // 수량이 같으면 처리하지 않음.(type 체크 하므로 == 사용)
+                } else {
+                  this.updateItemQtyCart(cartId, result.code, result.qty);
+                }
               }
             }, 170);
           }
