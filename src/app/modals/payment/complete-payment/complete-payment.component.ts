@@ -77,12 +77,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
     this.dupcheck = true; // pay하는 도중에 ENTER가 들어오면 다른 함수 실행됨.
-    if (this.paidamount === this.payamount) { // 최종 결제 금액 validation 체크
+    // if (this.paidamount === this.payamount) { // 최종 결제 금액 validation 체크
       setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
-    } else {
-      this.checktype = -999;
-      this.apprmessage = '결제할 금액이 맞지않습니다.';
-    }
+    // } else {
+    //   this.checktype = -999;
+    //   this.apprmessage = '결제할 금액이 맞지않습니다.';
+    // }
   }
 
   ngOnDestroy() {
@@ -106,6 +106,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     } else if (this.finishStatus === ErrorType.CARDFAIL) {
       this.sendCartClearOrRecart();
     } else if (this.finishStatus === ErrorType.NOORDER) {
+      this.cardCancelAndSendInfoForError();
+    } else if (this.finishStatus === ErrorType.RESTRICT) {
       this.cardCancelAndSendInfoForError();
     } else if (this.finishStatus !== StatusDisplay.ERROR) {
       if (!this.dupcheck) {
@@ -235,7 +237,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.payments.sendPaymentAndOrderInfo(this.paymentcapture, this.orderInfo);
           }
         } else if (result.cartModifications) { // Restriction
-          this.finishStatus = ErrorType.NOORDER;
+          this.finishStatus = ErrorType.RESTRICT;
           let appendMessage = '';
           result.cartModifications[0].messages.forEach(message => {
             const msg = this.message.get(message.message) ? this.message.get(message.message) : message.message;
@@ -335,6 +337,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       } else if (this.finishStatus === ErrorType.NOORDER) {
         this.storage.removePay(); // 금액을 초기화해서 다시 결제하도록함.
         this.close();
+      } else if (this.finishStatus === ErrorType.RESTRICT) {
+        this.storage.removePay();
+        this.close();
       }
     }
   }
@@ -392,7 +397,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
             this.apprmessage = `${res.resultMsg1} ${res.resultMsg2}`;
             this.logger.set('complete.payment.component', `ic card cancel error : ${res.resultMsg1} ${res.resultMsg2}`).error();
           }
-          setTimeout(() => { this.sendCartClearOrRecart(); }, 350);
+          setTimeout(() => { this.sendCartClearOrRecart(errorType); }, 350);
         },
         error => {
           this.spinner.hide();
@@ -470,6 +475,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.sendCartClearOrRecart();
       } else if (this.finishStatus === ErrorType.NOORDER) { // 주문정보 없음 다른 결제 수단
         this.close();
+      } else if (this.finishStatus === ErrorType.RESTRICT) {
+        this.cardCancelAndSendInfoForError(ErrorType.RESTRICT);
       } else {
         this.close();
       }
@@ -570,6 +577,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           this.cardCancelAndSendInfoForError(ErrorType.API); // 카드 결제 취소하기 및 카트 조회 후 후속 처리하기
         } else if (this.finishStatus === ErrorType.NOORDER) { // 주문정보 없음 다른 결제 수단
           this.close();
+        } else if (this.finishStatus === ErrorType.RESTRICT) {
+          this.cardCancelAndSendInfoForError(ErrorType.RESTRICT);
         } else if (this.finishStatus !== StatusDisplay.ERROR) {
           if (!this.dupcheck) {
             setTimeout(() => { this.payFinishByEnter(); }, 300);
