@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import {
   SerialComponent, SearchAccountComponent, ClientAccountComponent, SearchProductComponent,
-  HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent
+  HoldOrderComponent, RestrictComponent, UpdateItemQtyComponent, PromotionDetailComponent
 } from '../../modals';
 import { Modal, StorageService, AlertService, Logger, Config, PrinterService, KeyboardService, KeyCommand } from '../../core';
 
@@ -21,7 +21,6 @@ import { Cart } from '../../data/models/order/cart';
 import { Product } from '../../data/models/cart/cart-data';
 import { Order, OrderList } from '../../data/models/order/order';
 import { Utils } from '../../core/utils';
-import { PromotionDetailComponent } from '../../modals/order/promotion-detail/promotion-detail.component';
 
 /**
  * 장바구니(Cart) 리스트 컴포넌트
@@ -1005,7 +1004,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               // RFID, SERIAL 입력 받음.
               if (product && (product.rfid || product.serialNumber)) {
                 this.modal.openModalByComponent(SerialComponent, {
-                  callerData: { productInfo: product },
+                  callerData: { productInfo: product, cartInfo: this.currentCartList, addProduct: true },
                   closeByClickOutside: false,
                   closeByEscape: true,
                   modalId: ModalIds.SERIAL
@@ -1074,44 +1073,20 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 장바구니 생성
    *  - 상품 추가시 생성
    *  - Productcode 가 없을 경우 카트 생성 후 조회
-   *`
+   *
    * 중요처리사항) OCC를 사용하는 모든 시스템은 주문 시점(Cart 생성 시점) 마다
    * 주문 블록 체크 API를 호출해야함.
-   *`
+   * 
+   * @mod Magic(MDMS) 속도 문제로 주문 블록 체크는 삭제처리 
+   *
    * @param {boolean} popupFlag 팝업플래그
    * @param {string} productCode  상품 코드
    */
   createCartInfo(popupFlag: boolean, productCode?: string): void {
     if (this.accountInfo) {
       const terminalInfo: TerminalInfo = this.storage.getTerminalInfo();
-      this.accountService.checkBlock(this.accountInfo).subscribe(
-        resp => {
-          if (this.cartService.checkOrderBlock(resp.code)) {
-            this.alert.error({ title: '알림', message: this.message.get('block.orderblock'), timer: true, interval: 2000 });
-            setTimeout(() => { this.searchText.nativeElement.focus(); }, 500);
-          } else {
-            const accountId = (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.ABO) ? this.accountInfo.uid : this.accountInfo.parties[0].uid;
-            this.createCart(accountId, terminalInfo, popupFlag, productCode);
-          }
-        },
-        error => {
-          if (error) {
-            const errdata = Utils.getError(error);
-            if (errdata) {
-              const errtype = this.accountService.checkError(errdata);
-              this.logger.set('cart.list.component', `create cart error type : ${errtype}`).all();
-              if (errtype === 'InvalidTokenError') { // Token 이 없을 경우 세션 초기화 하고 초기 화면으로 이동
-                this.router.navigate(['/']);
-              }
-              setTimeout(() => { this.searchText.nativeElement.focus(); }, 1520);
-            } else {
-              if (this.cartService.checkOrderBlock(error.error.code)) {
-                this.alert.error({ title: '알림', message: this.message.get('block.orderblock'), timer: true, interval: 1500 });
-                setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 1520);
-              }
-            }
-          }
-        });
+      const accountId = (this.accountInfo.accountTypeCode.toUpperCase() === this.memberType.ABO) ? this.accountInfo.uid : this.accountInfo.parties[0].uid;
+      this.createCart(accountId, terminalInfo, popupFlag, productCode);
     } else {
       this.alert.warn({ title: '알림', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
       this.activeSearchMode(SearchMode.ACCOUNT);
