@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { range } from 'lodash';
 import { ModalComponent, ModalService, StorageService, KeyboardService, KeyCommand, SpinnerService } from '../../../core';
-import { KeyCode, StatusDisplay } from '../../../data';
+import { KeyCode, StatusDisplay, OrderEntry } from '../../../data';
 import { Utils } from '../../../core/utils';
 import { Product } from '../../../data/models/cart/cart-data';
 
@@ -59,12 +59,14 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     productCount = [];
     serialsrfids: Array<string>;
     singleInputFlag: boolean;
+    private addProduct = false;
     private dupcheck = false;
     private serialNumbers = [];
     private scanInputSize: number;
     private cartqty: number;
     private changeqty: number;
     private isSerialProduct: boolean;
+    private cartInfo: OrderEntry[];
     private keyboardsubscription: Subscription;
     @ViewChildren('codes') codes: QueryList<ElementRef>;
 
@@ -87,9 +89,12 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             if (this.productInfo.serialNumber) { this.isSerialProduct = true; }
             if (this.productInfo.rfid) { this.isSerialProduct = false; }
         }
+        this.cartInfo = this.callerData.cartInfo ? this.callerData.cartInfo : null;
+        this.addProduct = this.callerData.addProduct ? this.callerData.addProduct : false;
         this.cartqty = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
+        console.log('cart qty ' + this.cartqty);
         this.changeqty = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량                
-        this.serialsrfids  = this.storage.getSerialCodes(this.productInfo.code);
+        this.serialsrfids = this.storage.getSerialCodes(this.productInfo.code);
         if (this.serialsrfids && this.serialsrfids.length > 0) {
             this.singleInputFlag = false;
         } else { // 입력한 값이 없으면 single input
@@ -99,20 +104,66 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
             this.productCount = range(0, 1);
         } else {
             this.scanInputSize = this.changeqty - this.cartqty;
+            const inputedRfidCount = this.serialsrfids ? this.serialsrfids.length : 0; // 입력된 SERIAL / RFID 개수
             if (this.isSerialProduct) {
-                this.productCount = range(0, this.scanInputSize);
-            } else { // RFID인 경우 빈값으로 입력하더라도 입력창을 열어주어야함.
-                const inputedRfidCount = this.serialsrfids ? this.serialsrfids.length : 0; // 입력된 RFID 개수
-                const currRfidCount = inputedRfidCount + this.scanInputSize;
-                if (this.changeqty === currRfidCount) {
-                    this.productCount = range(0, this.scanInputSize);
-                } else {
-                    this.singleInputFlag = false; // single input인 경우 rfid이면 개수만큼 입력창 만들어주어야함.
-                    const inputSize = this.scanInputSize + (this.changeqty - currRfidCount);
-                    this.productCount = range(0, inputSize);
+                if (this.addProduct) { // SERIAL 상품 추가인 경우
+                    this.scanInputSize = inputedRfidCount + 1;
+                    this.changeqty = this.scanInputSize;
+                    if (this.scanInputSize === 1) {
+                        this.singleInputFlag = true;
+                    } else {
+                        this.singleInputFlag = false;
+                    }
+                    if (inputedRfidCount > 0) {
+                        const inputSize = this.scanInputSize - inputedRfidCount;
+                        this.productCount = range(0, inputSize);
+                    } else {
+                        this.productCount = range(0, this.scanInputSize);
+                    }
                     this.scanInputSize = this.productCount.length; // RFID인 경우 입력창개수를 refresh 해주어야 마지막 input에서 등록 처리됨.
+                } else { // 수량 변경인 경우
+                    const currRfidCount = inputedRfidCount + this.scanInputSize;
+                    if (this.changeqty === currRfidCount) {
+                        this.productCount = range(0, this.scanInputSize);
+                    } else {
+                        this.singleInputFlag = false; // single input인 경우 rfid이면 개수만큼 입력창 만들어주어야함.
+                        const inputSize = this.scanInputSize + (this.changeqty - currRfidCount);
+                        this.productCount = range(0, inputSize);
+                        this.scanInputSize = this.productCount.length; // RFID인 경우 입력창개수를 refresh 해주어야 마지막 input에서 등록 처리됨.
+                    }
                 }
-            }            
+                // this.productCount = range(0, this.scanInputSize);
+            } else { // RFID인 경우 빈값으로 입력하더라도 입력창을 열어주어야함.
+                if (this.addProduct) { // RFID 상품 추가인 경우
+                    const order: OrderEntry = this.cartInfo.find(orderentry => orderentry.product.code === this.productInfo.code);
+                    const cartqty = order ? order.quantity : 0;
+                    this.scanInputSize = cartqty + 1;
+                    this.changeqty = this.scanInputSize;
+                    if (this.scanInputSize === 1) {
+                        this.singleInputFlag = true;
+                    } else {
+                        this.singleInputFlag = false;
+                    }
+                    // const currRfidCount = inputedRfidCount + 1;
+                    if (inputedRfidCount > 0) {
+                        const inputSize = this.scanInputSize - inputedRfidCount;
+                        this.productCount = range(0, inputSize);
+                    } else {
+                        this.productCount = range(0, this.scanInputSize);
+                    }
+                    this.scanInputSize = this.productCount.length; // RFID인 경우 입력창개수를 refresh 해주어야 마지막 input에서 등록 처리됨.
+                } else { // 수량 변경인 경우
+                    const currRfidCount = inputedRfidCount + this.scanInputSize;
+                    if (this.changeqty === currRfidCount) {
+                        this.productCount = range(0, this.scanInputSize);
+                    } else {
+                        this.singleInputFlag = false; // single input인 경우 rfid이면 개수만큼 입력창 만들어주어야함.
+                        const inputSize = this.scanInputSize + (this.changeqty - currRfidCount);
+                        this.productCount = range(0, inputSize);
+                        this.scanInputSize = this.productCount.length; // RFID인 경우 입력창개수를 refresh 해주어야 마지막 input에서 등록 처리됨.
+                    }
+                }
+            }
         }
         if (this.productInfo) {
             this.regLabel = '시리얼 번호 입력 / RFID 스캔';
@@ -205,6 +256,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
                 }
             }
         });
+        console.log(this.scanInputSize + '/' + scannedRegCount);
         if (this.scanInputSize === scannedRegCount) {
             if (this.changeqty > this.cartqty) {
                 const orgSerials: Array<string> = this.storage.getSerialCodes(this.productInfo.code);

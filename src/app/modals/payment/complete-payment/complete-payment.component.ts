@@ -77,12 +77,12 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.paidamount = this.calAmountByPayment();
     this.calChange(); // 거스름돈
     this.dupcheck = true; // pay하는 도중에 ENTER가 들어오면 다른 함수 실행됨.
-    // if (this.paidamount === this.payamount) { // 최종 결제 금액 validation 체크
+    if (this.paidamount >= this.payamount) { // 최종 결제 금액 validation 체크
       setTimeout(() => { this.pay(); }, 50);  // 결제완료 창에서 바로 결제를 전행하여 ENTER키 입력을 줄임.
-    // } else {
-    //   this.checktype = -999;
-    //   this.apprmessage = '결제할 금액이 맞지않습니다.';
-    // }
+    } else {
+      this.checktype = -999;
+      this.apprmessage = '결제할 금액이 맞지않습니다.';
+    }
   }
 
   ngOnDestroy() {
