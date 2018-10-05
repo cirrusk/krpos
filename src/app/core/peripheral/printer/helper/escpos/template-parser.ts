@@ -6,12 +6,11 @@ import 'numeral/locales/pt-br';
 import { cloneDeep } from 'lodash';
 import { XMLParser } from './xml-parser';
 import { BufferBuilder } from './buffer-builder';
-// import { TextEncoder, TextDecoder } from 'text-encoding';
 
 import { ReceiptUtils } from './helpers/receipt.utils';
 import { ReceiptProductFieldInterface, DiscountFieldInterface } from '../../../../../data/receipt/interfaces/productfield.interface';
 import { PromotionResultAction } from '../../../../../data/models/order/order';
-// import { BonusDataInterface } from './helpers/bonusdata.interface';
+
 
 export class TemplateParser {
 
@@ -37,6 +36,7 @@ export class TemplateParser {
     this.registerDiscountListHelper();
     this.registerEodDataHelper();
     this.registerPromotionListHelper();
+    this.registerCompareHelper();
 
   }
 
@@ -231,5 +231,42 @@ export class TemplateParser {
 
     return parsed;
   }
+
+  /**
+   * 비교 구문을 지원하기 위한 Helper
+   */
+  private registerCompareHelper() {
+    this.handlebars.registerHelper('compare', (lval: any, operator: any, rval: any, options: any) => {
+      if (options === undefined) {
+        options = rval;
+        rval = operator;
+        operator = '===';
+      }
+      const operators = {
+        '==': function (l, r) { return l == r; },
+        '===': function (l, r) { return l === r; },
+        '!=': function (l, r) { return l != r; },
+        '!==': function (l, r) { return l !== r; },
+        '<': function (l, r) { return l < r; },
+        '>': function (l, r) { return l > r; },
+        '<=': function (l, r) { return l <= r; },
+        '>=': function (l, r) { return l >= r; },
+        'typeof': function (l, r) { return typeof l == r; }
+      };
+      if (!operators[operator]) {
+        throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
+      }
+      const result = operators[operator](lval, rval);
+      if (result) {
+        return options.fn(this);
+      } else {
+        return options.inverse(this);
+      }
+    });
+
+  }
+
+
+
 
 }
