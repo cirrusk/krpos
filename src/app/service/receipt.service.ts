@@ -542,7 +542,7 @@ export class ReceiptService implements OnDestroy {
         orderInfo.setCashReceipt = cashReceipt; // 현금 영수증 소득공제
         // Additional Info - END
 
-        // productList - START
+        // productList - START(Add healthFood)
         const productList = Array<any>();
         cartInfo.entries.forEach(entry => {
             productList.push({
@@ -558,7 +558,14 @@ export class ReceiptService implements OnDestroy {
         const productEntryList = new Array<ProductsEntryInfo>();
         const data = productList;
         Object.assign(productEntryList, data);
-        // productList - END
+
+        const healthFoodIdx = cartInfo.entries.findIndex(entry => entry.product.healthFood === true);
+        if (healthFoodIdx > -1) { 
+            orderInfo.setHealthFood = 'Y'; 
+        } else {
+            orderInfo.setHealthFood = 'N'; 
+        }
+        // productList - END(Add healthFood)
 
         // bonus - START
         let totalPV = 0;

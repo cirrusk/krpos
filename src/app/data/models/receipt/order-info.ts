@@ -14,6 +14,7 @@ export class OrderInfo {
     protected cancelFlag: string;
     protected groupInfo: string;
     protected cashReceipt: boolean;
+    protected healthFood: string;
     public set setCashier(cashier: Cashier) {
         this.cashier = cashier;
     }
@@ -37,6 +38,9 @@ export class OrderInfo {
     }
     public set setCashReceipt(cashReceipt: boolean) {
         this.cashReceipt = cashReceipt;
+    }
+    public set setHealthFood(healthFood: string) {
+        this.healthFood = healthFood;
     }
     constructor(posId: string, number: string, type?: string, macAndCoNum?: string) {
         this.posId = posId;
