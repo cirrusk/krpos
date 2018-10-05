@@ -30,7 +30,7 @@
         "templPosCashierInfo": false,
         "templPayments": false,
         "templBarcode": false,
-        "templNoticeHealthyFood": true,
+        "templNoticeHealthyFood": false,
         "templNoticeABO": true,
         "templNoticeOthers": true,
         "templCompanyInfo": true,
