@@ -422,14 +422,14 @@ export class CartService {
 
   /**
    * 결제 진행되고 남은 결제 금액 계산
-   * 
+   *
    * @param paymentcapture Payment Capture 정보
    * @param cart CART 정보
    * @returns {number} 계산되고 남은 결제금액
    */
   getPaymentPriceByPaid(paymentcapture: PaymentCapture, cart: Cart): number {
     const payamount = this.getTotalPriceWithTax(cart);
-    let receivedprice = 0;  
+    let receivedprice = 0;
     if (paymentcapture.ccPaymentInfo) { // 신용카드
       const cc = paymentcapture.ccPaymentInfo;
       receivedprice += cc.amount ? cc.amount : 0;
