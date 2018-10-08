@@ -212,10 +212,14 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             }
             if (this.point <= 0) {
                 this.alert.warn({ message: this.message.get('no.point', this.custname, this.custid) });
-                this.reset();
-                // this.storage.removePaymentCapture();
-                // this.storage.removePay();
-                // this.retreiveInfo(new PaymentCapture());
+                console.log('amwayPoint>>>>>>>>>>>>>>> ' + this.paymentService.isPaymentProcessing(this.paymentcapture));
+                const ispay = this.paymentService.isPaymentProcessing(this.paymentcapture);
+                if (!ispay) {
+                    this.reset();
+                    // this.storage.removePaymentCapture();
+                    // this.storage.removePay();
+                    // this.retreiveInfo(new PaymentCapture());
+                }
                 return;
             }
             if (this.enableMenu.indexOf('point') > -1) {
@@ -237,10 +241,15 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             }
             if (this.point <= 0) {
                 this.alert.warn({ message: this.message.get('no.point', this.custname, this.custid) });
-                this.reset();
-                // this.storage.removePaymentCapture();
-                // this.storage.removePay();
-                // this.retreiveInfo(new PaymentCapture());
+                console.log('memberPoint>>>>>>>>>>>>>>> ' + this.paymentService.isPaymentProcessing(this.paymentcapture));
+                const ispay = this.paymentService.isPaymentProcessing(this.paymentcapture);
+                if (!ispay) {
+                    this.reset();
+                    // this.storage.removePaymentCapture();
+                    // this.storage.removePay();
+                    // this.retreiveInfo(new PaymentCapture());
+                }
+
                 return;
             }
             if (this.enableMenu.indexOf('point') > -1) {

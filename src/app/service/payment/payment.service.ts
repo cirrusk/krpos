@@ -659,4 +659,24 @@ export class PaymentService {
     return this.storage.getPaymentModeCode();
   }
 
+  /**
+   * 결제가 하나라도 진행되었는지 체크
+   * 
+   * @param {PaymentCapture} paymentCapture 지불 캡쳐 정보
+   * @returns {boolean} 결제가 하나라도 진행되었는지 여부
+   */
+  isPaymentProcessing(paymentCapture: PaymentCapture): boolean {
+    console.log(JSON.stringify(paymentCapture, null, 2));
+    let ispay = 0;
+    Object.keys(paymentCapture).forEach((key) => {
+      const payment = paymentCapture[key];
+      if (payment != null) { 
+        if (payment.amount > 0) {
+          ispay++;
+        }
+      }
+    });
+    return ispay > 0 ? true : false;
+  }
+
 }
