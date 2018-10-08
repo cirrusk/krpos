@@ -41,6 +41,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
   }
 
   ngOnInit() {
+    this.spinnerService.init();
     setTimeout(() => { this.phoneNumText.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
   }
 
