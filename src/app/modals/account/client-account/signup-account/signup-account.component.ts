@@ -103,7 +103,7 @@ export class SignupAccountComponent extends ModalComponent implements OnInit, On
       error => {
         const errdata = Utils.getError(error);
         if (errdata) {
-          this.logger.set('client.account.component', `create new customer error message : ${errdata.message}`).error();
+          this.logger.set('signup.account.component', `create new customer error message : ${errdata.message}`).error();
           // if (errdata.message.indexOf('Please enter a valid Sponsor') > -1) {
           //   this.errorMessage = '등록된 후원자와 일치하는 번호가 없습니다. 확인 후 다시 입력해주세요.';
           // } else {
