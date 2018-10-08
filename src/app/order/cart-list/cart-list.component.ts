@@ -1019,9 +1019,9 @@ export class CartListComponent implements OnInit, OnDestroy {
               }
             } else {
               if (product.sellableStatusForStock === 'OUTOFSTOCK') {
-                this.stockMessage(product, '재고가 부족합니다.');
+                this.stockMessage(product, `[${product.code}] 은 재고가 부족합니다.`);
               } else if (product.sellableStatusForStock === 'ENDOFSALE') {
-                this.stockMessage(product, '단종된 상품입니다.');
+                this.stockMessage(product, `[${product.code}] 은 단종 상품입니다.`);
               }
             }
           } else {
