@@ -666,7 +666,6 @@ export class PaymentService {
    * @returns {boolean} 결제가 하나라도 진행되었는지 여부
    */
   isPaymentProcessing(paymentCapture: PaymentCapture): boolean {
-    console.log(JSON.stringify(paymentCapture, null, 2));
     let ispay = 0;
     Object.keys(paymentCapture).forEach((key) => {
       const payment = paymentCapture[key];

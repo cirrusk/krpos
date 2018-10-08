@@ -212,7 +212,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             }
             if (this.point <= 0) {
                 this.alert.warn({ message: this.message.get('no.point', this.custname, this.custid) });
-                console.log('amwayPoint>>>>>>>>>>>>>>> ' + this.paymentService.isPaymentProcessing(this.paymentcapture));
                 const ispay = this.paymentService.isPaymentProcessing(this.paymentcapture);
                 if (!ispay) {
                     this.reset();
@@ -241,7 +240,6 @@ export class ComplexPaymentComponent extends ModalComponent implements OnInit, O
             }
             if (this.point <= 0) {
                 this.alert.warn({ message: this.message.get('no.point', this.custname, this.custid) });
-                console.log('memberPoint>>>>>>>>>>>>>>> ' + this.paymentService.isPaymentProcessing(this.paymentcapture));
                 const ispay = this.paymentService.isPaymentProcessing(this.paymentcapture);
                 if (!ispay) {
                     this.reset();
