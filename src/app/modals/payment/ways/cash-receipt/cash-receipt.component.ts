@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { OrderService, MessageService, CartService } from '../../../../service';
+import { OrderService, MessageService } from '../../../../service';
 import { ModalComponent, ModalService, SpinnerService } from '../../../../core';
 import { Accounts, StatusDisplay, KeyCode, AmwayExtendedOrdering, PaymentCapture } from '../../../../data';
 import { Cart } from '../../../../data/models/order/cart';
@@ -33,7 +33,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
 
   // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private order: OrderService,
-    private message: MessageService, private renderer: Renderer2, private cartService: CartService, private spinnerService: SpinnerService) {
+    private message: MessageService, private renderer: Renderer2, private spinnerService: SpinnerService) {
     super(modalService);
     this.divcheck = 'i';
     this.checktype = 0;
@@ -41,6 +41,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   }
 
   ngOnInit() {
+    this.spinnerService.init();
     this.accountInfo = this.callerData.accountInfo;
     this.cartInfo = this.callerData.cartInfo;
     this.orderInfo = this.callerData.orderInfo;
