@@ -77,13 +77,15 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
   /**
    * 현금 영수증 발급
    * 고객번호 유형
-   *     CDN = 현금영수증 카드번호 : 13 ~ 19
-   *     CPN = 휴대폰번호 : 9 ~ 11
+   *     CDN = 현금영수증 카드번호 : 15 ~ 18
+   *     CPN = 휴대폰번호 : 10 ~ 11
    *     BRN = 사업자등록번호 : 10(주민번호 앞에서부터 10자리)
    *
    * @param issuancenumber 고객번호(휴대폰 번호, 현금영수증 카드번호, 사업자 등록번호)
    */
   requestReceipt(issuancenumber: string) {
+    this.checktype = 0;
+    this.finishStatus = null;
     const isnumber = issuancenumber.replace(this.regex, '');
     if (Utils.isEmpty(isnumber)) {
       if (this.divcheck === 'i') {
@@ -94,11 +96,24 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
         this.apprmessage = this.message.get('receipt.reg.number.biz'); // 사업자 등록번호, 현금영수증 카드번호
       }
     } else {
+      const iv = this.checkValidation(isnumber);
+      if (iv < 0) {
+        setTimeout(() => { this.clientnum.nativeElement.focus(); this.clientnum.nativeElement.select(); }, 50);
+        this.checktype = iv;
+        if (iv === -997) { // 현금영수증카드번호 맞지 않으면 
+          this.apprmessage = '현금영수증카드 번호 또는 휴대폰 번호가 올바르지 않습니다.';
+        } else if (iv === -998) { // 휴대폰 맞지 않으면
+          this.apprmessage = '현금영수증카드 번호 또는 휴대폰 번호가 올바르지 않습니다.';
+        } else if (iv === -999) { // 사업자등록번호 맞지 않으면
+          this.apprmessage = '사업자 등록번호가 올바르지 않습니다.';
+        }
+        return;
+      } 
       let issuancetype, numbertype;
       const receipttype = 'CASH'; // CASH(현금영수증), TAX(세금계산서)
       if (this.divcheck === 'i') {
         issuancetype = 'INCOME_DEDUCTION'; // 소득공제
-        if (isnumber.length > 12) {
+        if (iv === 1) {
           numbertype = 'CDN'; // 현금영수증카드번호
         } else {
           numbertype = 'CPN'; // 휴대폰
@@ -137,6 +152,41 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
           }
         });
     }
+  }
+
+  /**
+   * 입력한 고객번호 유효성 체크하기
+   * 고객번호 유형
+   *     CDN = 현금영수증 카드번호 : 15 ~ 18
+   *     CPN = 휴대폰번호 : 10 ~ 11
+   *     BRN = 사업자등록번호 : 10(주민번호 앞에서부터 10자리)
+   * @param issuancenumber 고객번호(휴대폰 번호, 현금영수증 카드번호, 사업자 등록번호) 
+   */
+  checkValidation(issuancenumber: string): number {
+    const issnumber = issuancenumber.replace(this.regex, '');
+    const isslen = issnumber.length;
+    if (this.divcheck === 'i') { // 소득공제
+      if (isslen >= 15 && isslen <= 18) { // 현금영수증 카드번호
+        this.checktype = 0;
+        this.apprmessage = '';
+        return 1;
+      } else if (isslen >= 10 && isslen <= 11) { // 휴대폰번호
+        this.checktype = 0;
+        this.apprmessage = '';
+        return 2;
+      } else {
+        return -997;// 현금영수증카드번호 맞지 않으면 -997, 휴대폰 맞지 않으면 -998
+      }
+    } else if (this.divcheck === 'o') { // 지출증빙
+      if (isslen === 10) {
+        this.checktype = 0;
+        this.apprmessage = '';
+        return 3;
+      } else {
+        return -999;  // 사업자등록번호 맞지 않으면 -999
+      }
+    }
+    return 0;
   }
 
   selectDiv(div: string) {

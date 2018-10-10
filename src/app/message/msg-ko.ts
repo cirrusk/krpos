@@ -75,7 +75,7 @@ export const LANG_KO_MSGS = {
     'receipt.reg.number.emp': '고객번호를 입력해주세요.',
     'receipt.reg.number.biz': '고객번호를 입력해주세요.',
     'receipt.reg.number.success': '영수증 신청이 정상적으로 처리되었습니다.',
-    'receipt.reg.number.fail': '영수증 신청이 실패하였습니다. 다시 시도해주시기 바랍니다.',
+    'receipt.reg.number.fail': '영수증 신청이 실패하였습니다. 다시 시도해주세요.',
     'check.invalid.value': '수표 입력 정보가 부정확합니다.',
     'check.invalid.date': '발행일 정보가 부정확합니다.',
     'check.success': '수표가 정상 인증되었습니다.',

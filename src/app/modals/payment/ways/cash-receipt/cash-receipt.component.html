@@ -28,7 +28,7 @@
                       </tr>
                       <tr>
                         <th scope="row">고객번호</th>
-                        <td><input type="text" #clientnum class="w200 mousetrap" posOnlyNumber="true" title="고객번호" (keydown.enter)="requestReceipt(clientnum.value)"></td><!-- //20180620 수정 -->
+                        <td><input type="text" #clientnum class="w200 mousetrap" posOnlyNumber="true" maxlength=18 title="고객번호" (keyup)="checkValidation(clientnum.value)" (keydown.enter)="requestReceipt(clientnum.value)"></td><!-- //20180620 수정 -->
                       </tr>
                       <tr>
                           <th scope="row">영수증발행일자</th>
@@ -43,9 +43,7 @@
   <!-- //pop_container -->
   <div class="pop_footer clearfix">
       <span class="fl">취소 ESC</span>
-      <em *ngIf="finishStatus === null && checktype === -1" class="finish fail">{{apprmessage}}</em>
-      <em *ngIf="finishStatus === null && checktype === -2" class="finish fail">{{apprmessage}}</em>
-      <em *ngIf="finishStatus === null && checktype === -3" class="finish fail">{{apprmessage}}</em>
+      <em *ngIf="finishStatus === null && checktype < 0" class="finish fail">{{apprmessage}}</em>
       <em *ngIf="finishStatus === 'created' || finishStatus === 'paid'; else payFail" class="finish ok">{{apprmessage}}</em>
       <ng-template #payFail>
           <em *ngIf="finishStatus !== null && finishStatus !== ''" class="finish fail">{{apprmessage}}</em>
