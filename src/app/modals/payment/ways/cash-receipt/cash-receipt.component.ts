@@ -67,7 +67,6 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
     if (this.paymentcapture.monetaryPaymentInfo) { // AP
       amount += this.paymentcapture.monetaryPaymentInfo.amount;
     }
-
     if (this.paymentcapture.directDebitPaymentInfo) { // 자동이체
       amount += this.paymentcapture.directDebitPaymentInfo.amount;
     }
