@@ -392,11 +392,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     }
 
     // 가격 정보 계산
-    if (groupOrder) {
-      this.priceInfo(order, this.paymentCapture, this.groupMainFlag);
-    } else {
-      this.priceInfo(order, this.paymentCapture);
-    }
+    this.priceInfo(order, this.paymentCapture, this.groupMainFlag);
 
     this.orderDetail = orderDetail;
     this.isReceiptEnable(); // 현금영수증 출력 가능할 경우 버튼 보이기

@@ -609,6 +609,7 @@ export class CartListComponent implements OnInit, OnDestroy {
               const product: ProductInfo = selectedCart.product;
               // RFID, SERIAL 입력 받음.
               if (product && (product.rfid || product.serialNumber)) {
+                // tslint:disable-next-line:triple-equals
                 if (qty == result.qty) { // 수량이 같으면 처리하지 않음.(type 체크 하므로 == 사용)
                 } else { // 수량변경이 없으면 처리하지 않음.
                   this.modal.openModalByComponent(SerialComponent, {
@@ -629,6 +630,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                   });
                 }
               } else {
+                // tslint:disable-next-line:triple-equals
                 if (qty == result.qty) { // 수량이 같으면 처리하지 않음.(type 체크 하므로 == 사용)
                 } else {
                   this.updateItemQtyCart(cartId, result.code, result.qty);
@@ -649,7 +651,9 @@ export class CartListComponent implements OnInit, OnDestroy {
       modalId: ModalIds.CLIENT
     }).subscribe(result => {
       if (result) {
-        this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
+        setTimeout(() => {
+          this.getAccountAndSaveCart(result); // 검색하여 선택한 회원으로 출력 및 Cart 생성
+        }, 100);
       }
     });
   }
@@ -1076,8 +1080,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    *
    * 중요처리사항) OCC를 사용하는 모든 시스템은 주문 시점(Cart 생성 시점) 마다
    * 주문 블록 체크 API를 호출해야함.
-   * 
-   * @mod Magic(MDMS) 속도 문제로 주문 블록 체크는 삭제처리 
+   *
+   * @mod Magic(MDMS) 속도 문제로 주문 블록 체크는 삭제처리
    *
    * @param {boolean} popupFlag 팝업플래그
    * @param {string} productCode  상품 코드

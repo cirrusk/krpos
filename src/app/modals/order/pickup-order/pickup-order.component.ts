@@ -403,7 +403,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     // 사용자별 영수증 출력
     setTimeout(() => {
       try {
-        this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
+        this.receiptService.reissueReceiptsConfirm(orderList, false, this.orderTypeName);
         this.modal.openConfirm({
           title: this.popupName + ' 컨펌',
           message: this.messageService.get('ECPConfirmProgress'),

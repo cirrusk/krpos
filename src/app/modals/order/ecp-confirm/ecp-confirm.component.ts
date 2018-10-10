@@ -301,7 +301,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
     if (orderList.orders.length > 0) {
       setTimeout(() => {
         try {
-          this.receiptService.reissueReceipts(orderList, false, false, this.orderTypeName);
+          this.receiptService.reissueReceiptsConfirm(orderList, false, this.orderTypeName);
           // this.alert.info({ title: '영수증 재발행', message: this.messageService.get('receiptComplete') });
         } catch (e) {
           this.logger.set('ecp-confirm.component', `makeReceiptPrintData error type : ${e}`).error();

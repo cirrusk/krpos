@@ -141,7 +141,9 @@ export class ReceiptService implements OnDestroy {
      *
      * @param {OrderList} orderData 주문 정보
      * @param {boolean} cancelFlag 취소여부
-     * @param {boolean} groupOrderFlag 그룹주문 여부
+     * @param {boolean} groupOrderFlag 그룹주문여부
+     * @param {string} type 주문이름
+     * @param {boolean} isCashReceipt 현금영수증
      */
     public reissueReceipts(orderData: OrderList, cancelFlag = false, groupOrderFlag = false, type?: string, isCashReceipt = false): Observable<boolean> {
         let rtn = true;
@@ -196,6 +198,67 @@ export class ReceiptService implements OnDestroy {
             };
             rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
         }
+        return Observable.of(rtn);
+    }
+
+    /**
+     * 컨펌(픽업예약, 간편선물, 설치주문) 영수증
+     *
+     * @param {OrderList} orderData 주문 정보
+     * @param {boolean} cancelFlag 취소여부
+     * @param {string} type 주문이름
+     * @param {boolean} isCashReceipt 현금영수증
+     */
+    public reissueReceiptsConfirm(orderData: OrderList, cancelFlag = false, type?: string, isCashReceipt = false): Observable<boolean> {
+        let rtn = true;
+
+        orderData.orders.forEach(
+            order => {
+                let cartInfo = new Cart();
+                const paymentCapture = new PaymentCapture();
+                let jsonPaymentData = {};
+
+                const jsonCartData = {
+                    'user': order.user,
+                    'entries': order.entries,
+                    'totalPrice': order.totalPrice,
+                    'subTotal': order.subTotal,
+                    'totalUnitCount': order.totalUnitCount,
+                    'totalPriceWithTax': order.totalPriceWithTax,
+                    'totalTax': order.totalTax,
+                    'totalDiscounts': order.totalDiscounts,
+                    'orderDiscounts' : order.orderDiscounts,
+                    'orderTaxDiscount' : order.orderTaxDiscount,
+                    'productDiscounts' : order.productDiscounts,
+                    'productTaxDiscount' : order.productTaxDiscount,
+                    'isGroupCombinationOrder': order.isGroupCombinationOrder
+                };
+                cartInfo = jsonCartData as Cart;
+                order.paymentDetails.paymentInfos.forEach(paymentInfo => {
+                    switch (paymentInfo.paymentMode.code) {
+                        case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                        case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                        case 'cash': { jsonPaymentData = { 'cashPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                        case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                        case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                        case 'point': { jsonPaymentData = { 'pointPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                        default: { jsonPaymentData = {}; } break;
+                    }
+                    Object.assign(paymentCapture, jsonPaymentData);
+                    jsonPaymentData = {};
+                });
+
+                const params = {
+                    cancelFlag: cancelFlag ? 'Y' : 'N',
+                    groupInfo: null,
+                    type: type,
+                    reIssue: true,
+                    isGroupOrder: false,
+                    isCashReceipt: isCashReceipt
+                };
+                rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
+            }
+        );
         return Observable.of(rtn);
     }
 
