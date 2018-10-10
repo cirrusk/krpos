@@ -42,7 +42,7 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let entry of orderDetail.orders[0].entries;">
-                                            <td>{{ entry.entryNumber + 1}}</td>
+                                            <td>{{ entry.displayEntryNumber + 1}}</td>
                                             <td><span class="blck">{{entry.product.code}}</span>{{ entry.giveAway ? '[증정품] ' + entry.product.name : entry.product.name}}</td>
                                             <td>{{ entry.product.price.value | number}}</td>
                                             <td>{{ entry.quantity }}</td>

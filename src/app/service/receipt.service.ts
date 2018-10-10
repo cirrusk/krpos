@@ -587,7 +587,7 @@ export class ReceiptService implements OnDestroy {
         const productList = Array<any>();
         cartInfo.entries.forEach(entry => {
             productList.push({
-                'idx': (entry.entryNumber + 1).toString(),
+                'idx': (entry.displayEntryNumber + 1).toString(),
                 'skuCode': entry.product.code,
                 'productName': entry.product.name,
                 'price': entry.product.price.value.toString(),
