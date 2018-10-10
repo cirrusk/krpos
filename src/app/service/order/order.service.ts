@@ -259,18 +259,27 @@ export class OrderService {
    * 결제금액 : 총 금액(TAX 제외) + 부가세 - 포인트 - Re-Cash
    * @param cartInfo 카트 정보
    */
-  getPaymentPrice(orderInfo: Order, paymentCapture: PaymentCapture) {
+  getPaymentPrice(orderInfo: Order, paymentCapture: PaymentCapture, isMain?: boolean) {
     // const totalprice = orderInfo.totalPrice ? orderInfo.totalPrice.value : 0;
     // let paymentprice =  totalprice + this.getTaxPrice(orderInfo);
-    let paymentprice = orderInfo.totalPriceWithTax ? orderInfo.totalPriceWithTax.value : 0;
-    if (paymentCapture.pointPaymentInfo) { // 포인트 내역
-      const pointamount = paymentCapture.pointPaymentInfo.amount;
-      paymentprice = paymentprice - pointamount;
+    let paymentprice = 0;
+
+    if (isMain) {// 그룹주문 메인, 일반 일경우 차감
+      paymentprice = orderInfo.isGroupCombinationOrder ? orderInfo.groupOrderMainPrice.value : orderInfo.totalPriceWithTax.value;
+
+      if (paymentCapture.pointPaymentInfo) { // 포인트 내역
+        const pointamount = paymentCapture.pointPaymentInfo.amount;
+        paymentprice = paymentprice - pointamount;
+      }
+      if (paymentCapture.monetaryPaymentInfo) { // Recash 내역
+        const recashamount = paymentCapture.monetaryPaymentInfo.amount;
+        paymentprice = paymentprice - recashamount;
+      }
+    } else {
+      // 그룹주문 Sub 인경우 차감 안함.
+      paymentprice = orderInfo.totalPriceWithTax.value;
     }
-    if (paymentCapture.monetaryPaymentInfo) { // Recash 내역
-      const recashamount = paymentCapture.monetaryPaymentInfo.amount;
-      paymentprice = paymentprice - recashamount;
-    }
+
     return paymentprice;
   }
 
@@ -292,6 +301,8 @@ export class OrderService {
       promotionData.totalExtraPrice = promotion.totalExtraPrice;
       promotionData.orderEntryQuantity = promotion.orderEntryQuantity;
       promotionData.isProductPromotion = promotion.isProductPromotion;
+      promotionData.totalAmount = promotion.isProductPromotion ? promotion.totalAmount * promotion.orderEntryQuantity : promotion.totalAmount;
+      promotionData.tax = promotion.tax;
 
       if (promotionIndex === -1) {
         if (promotionData.amount !== 0) {
@@ -299,6 +310,7 @@ export class OrderService {
         }
       } else {
         promotionDiscount[promotionIndex].amount += promotionData.amount;
+        promotionDiscount[promotionIndex].totalAmount += promotionData.totalAmount;
       }
     });
     return promotionDiscount;

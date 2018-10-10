@@ -19,6 +19,7 @@ export class Order extends AbstractOrder {
     receiptInfo: Receipt;                   // ReceiptWsDTO
     cartModifications: Array<CartModification>;
     promotionResultActions: Array<PromotionResultAction>; // 프로모션 할인 정보
+    groupOrderMainPrice: Price;                       // 그룹주문 Main 결제금액을 출력을 위해 생성
     constructor() {
         super();
     }
@@ -54,4 +55,6 @@ export class PromotionResultAction {
     totalExtraPrice: number;
     orderEntryQuantity: number;
     isProductPromotion: boolean;
+    totalAmount: number;
+    tax: number;
 }

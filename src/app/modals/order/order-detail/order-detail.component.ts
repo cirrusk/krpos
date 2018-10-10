@@ -1,14 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+
+import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds, Accounts, AmwayExtendedOrdering, Price, AmwayValue } from '../../../data';
 import { ModalComponent, ModalService, Modal, StorageService, Logger, AlertService } from '../../../core';
 import { OrderService, ReceiptService, MessageService, PaymentService } from '../../../service';
 import { Utils } from '../../../core/utils';
 import { OrderList, Order, PromotionResultAction } from '../../../data/models/order/order';
 import { CancelOrderComponent, CancelEcpPrintComponent } from '../..';
-import { OrderHistory, PaymentCapture, Balance, MemberType, OrderType, PointReCash, ModalIds, Accounts } from '../../../data';
 import { InfoBroker } from '../../../broker';
-import { Router } from '@angular/router';
 import { CashReceiptComponent } from '../../payment/ways/cash-receipt/cash-receipt.component';
-import { DatePipe } from '@angular/common';
 // import { TotalPrice } from './../../../data/models/cart/cart-data';
 /**
  * 주문 상세 페이지
@@ -18,6 +20,8 @@ import { DatePipe } from '@angular/common';
   templateUrl: './order-detail.component.html'
 })
 export class OrderDetailComponent extends ModalComponent implements OnInit, OnDestroy {
+
+  private orderSubscription: Subscription;
 
   orderDetail: OrderList;
   orderInfo: OrderHistory;
@@ -64,7 +68,17 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
 
   ngOnInit() {
     this.orderInfo = this.callerData.orderInfo;
-    this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+    if (this.orderInfo.isGroupCombinationOrder) {
+      if (this.orderInfo.code === this.orderInfo.parentOrder) {
+        this.getGroupOrder(this.orderInfo.user.uid, this.orderInfo.code);
+      } else {
+        this.groupMainFlag = false;
+        this.getOrderDetail(this.orderInfo.volumeAccount.uid, this.orderInfo.code);
+      }
+    } else {
+      this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+    }
+
     this.getBalance(this.orderInfo.user.uid);
     this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     if (this.orderInfo.isGroupCombinationOrder) {
@@ -91,6 +105,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
 
   ngOnDestroy() {
     this.receiptService.dispose();
+    if (this.orderSubscription) { this.orderSubscription.unsubscribe(); }
   }
 
   init() {
@@ -123,8 +138,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.isCancelButton = true;
     }
 
-    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code !== this.orderInfo.parentOrder) {
-      this.groupMainFlag = false;
+    if (orderInfo.isGroupCombinationOrder && !this.groupMainFlag) {
       this.isCancelButton = this.currentDate === this.datePipe.transform(orderInfo.placed, 'yyyy-MM-dd') ? true : false;
     }
   }
@@ -192,7 +206,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   popupCancel() {
     if (this.isCancelButton) {
       this.modal.openModalByComponent(CancelOrderComponent, {
-        callerData: { orderInfo: this.orderInfo },
+        callerData: { orderInfo: this.orderInfo, orderTypeName: this.orderTypeName },
         closeByClickOutside: false,
         closeByEnter: false,
         modalId: ModalIds.CANCEL
@@ -203,7 +217,11 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
           this.cancelFlag = true;
           this.activeFlag = true;
           this.result = this.activeFlag;
-          this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
+          if (this.orderDetail.orders[0].isGroupCombinationOrder && this.groupMainFlag) {
+            this.getGroupOrder(this.orderInfo.user.uid, this.orderInfo.code);
+          } else {
+            this.getOrderDetail(this.orderInfo.volumeAccount.uid, this.orderInfo.code);
+          }
           this.getBalance(this.orderInfo.user.uid);
         }
       });
@@ -262,36 +280,40 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
   getOrderDetail(userId: string, orderCode: string) {
     const orderCodes = new Array<string>();
     orderCodes.push(orderCode);
-    this.orderService.orderDetails(userId, orderCodes).subscribe(
+    this.orderSubscription = this.orderService.orderDetails(userId, orderCodes).subscribe(
       orderDetail => {
-        if (orderDetail) {
-          let jsonPaymentData = {};
-          this.ABOFlag = orderDetail.orders[0].account.accountTypeCode === MemberType.ABO ? true : false;
-          orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
-            switch (paymentInfo.paymentMode.code) {
-              case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
-              case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
-              case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
-              case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
-              case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
-              case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
-              case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
-              default: { jsonPaymentData = {}; } break;
-            }
-            Object.assign(this.paymentCapture, jsonPaymentData);
-            jsonPaymentData = {};
-          });
+        if (orderDetail && orderDetail.orders.length > 0) {
+          this.setDetailInfo(orderDetail);
+          // let jsonPaymentData = {};
+          // this.ABOFlag = orderDetail.orders[0].account.accountTypeCode === MemberType.ABO ? true : false;
+          // orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
+          //   switch (paymentInfo.paymentMode.code) {
+          //     case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
+          //     case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
+          //     case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
+          //     case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
+          //     case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
+          //     case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
+          //     case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
+          //     default: { jsonPaymentData = {}; } break;
+          //   }
+          //   Object.assign(this.paymentCapture, jsonPaymentData);
+          //   jsonPaymentData = {};
+          // });
 
-          const order = orderDetail.orders[0];
-          // ABO인 경우 PV, BV 계산
-          if (this.ABOFlag && order.value) {
-            this.setBonusValue(order);
-          }
-          // 가격 정보 계산
-          this.priceInfo(order, this.paymentCapture);
+          // const order = orderDetail.orders[0];
+          // // ABO인 경우 PV, BV 계산
+          // if (this.ABOFlag && order.value) {
+          //   this.setBonusValue(order);
+          // }
+          // // 가격 정보 계산
+          // this.priceInfo(order, this.paymentCapture);
 
-          this.orderDetail = orderDetail;
-          this.isReceiptEnable(); // 현금영수증 출력 가능할 경우 버튼 보이기
+          // this.orderDetail = orderDetail;
+          // this.isReceiptEnable(); // 현금영수증 출력 가능할 경우 버튼 보이기
+        } else {
+          this.alert.error({ message: this.messageService.get('order.search.failed'), timer: true, interval: 1500  });
+          setTimeout(() => { this.close(); }, 1520);
         }
       },
       error => {
@@ -302,6 +324,82 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
           this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
         }
       });
+  }
+
+  getGroupOrder(uid: string, orderCode: string) {
+    this.orderSubscription = this.orderService.groupOrder(uid, orderCode).subscribe(
+      groupOrder => {
+          if (groupOrder && groupOrder.orderList.length > 0) {
+            const orderList = new OrderList();
+            orderList.orders = groupOrder.orderList;
+            this.setDetailInfo(orderList, groupOrder);
+          } else {
+            this.alert.error({ message: this.messageService.get('order.search.failed'), timer: true, interval: 1500 });
+            setTimeout(() => { this.close(); }, 1520);
+          }
+      },
+      error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('order-detail.component', `Get Group Order error type : ${errdata.type}`).error();
+          this.logger.set('order-detail.component', `Get Group Order error message : ${errdata.message}`).error();
+          this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
+        }
+      });
+  }
+
+  setDetailInfo(orderDetail: OrderList, groupOrder?: AmwayExtendedOrdering) {
+    let jsonPaymentData = {};
+    if (groupOrder) {
+      let totalDiscount = 0;
+        let totalBV = 0;
+        let totalPV = 0;
+        groupOrder.orderList.forEach(
+            gOrder => {
+            totalDiscount += this.orderService.getDiscountPrice(gOrder);
+            totalPV += gOrder.totalPriceWithTax.amwayValue ? gOrder.totalPriceWithTax.amwayValue.pointValue : 0;
+            totalBV += gOrder.totalPriceWithTax.amwayValue ? gOrder.totalPriceWithTax.amwayValue.businessVolume : 0;
+        });
+        const discountPrice = new Price();
+        const amwayValue = new AmwayValue();
+        discountPrice.value = totalDiscount;
+        amwayValue.businessVolume = totalBV;
+        amwayValue.pointValue = totalPV;
+        discountPrice.amwayValue = amwayValue;
+        orderDetail.orders[0].groupOrderMainPrice = groupOrder.totalValue;
+        orderDetail.orders[0].totalDiscounts = discountPrice;
+    }
+    this.ABOFlag = orderDetail.orders[0].account.accountTypeCode === MemberType.ABO ? true : false;
+    orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
+      switch (paymentInfo.paymentMode.code) {
+        case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': paymentInfo }; } break;
+        case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': paymentInfo }; } break;
+        case 'cash': { jsonPaymentData = { 'cashPaymentInfo': paymentInfo }; } break;
+        case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': paymentInfo }; } break;
+        case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': paymentInfo }; } break;
+        case 'point': { jsonPaymentData = { 'pointPaymentInfo': paymentInfo }; } break;
+        case 'creditvoucher': { jsonPaymentData = { 'voucherPaymentInfo': paymentInfo }; } break;
+        default: { jsonPaymentData = {}; } break;
+      }
+      Object.assign(this.paymentCapture, jsonPaymentData);
+      jsonPaymentData = {};
+    });
+
+    const order = orderDetail.orders[0];
+    // ABO인 경우 PV, BV 계산
+    if (this.ABOFlag && order.value) {
+      this.setBonusValue(order);
+    }
+
+    // 가격 정보 계산
+    if (groupOrder) {
+      this.priceInfo(order, this.paymentCapture, this.groupMainFlag);
+    } else {
+      this.priceInfo(order, this.paymentCapture);
+    }
+
+    this.orderDetail = orderDetail;
+    this.isReceiptEnable(); // 현금영수증 출력 가능할 경우 버튼 보이기
   }
 
   /**
@@ -342,10 +440,14 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.personalBusinessVolume = order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0;
       this.personalPointValue = order.value.personalPointValue ? order.value.personalPointValue : 0;
     } else {
-      this.groupBusinessVolume = (order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0) + order.totalPrice.amwayValue.businessVolume;
-      this.groupPointValue = (order.value.groupPointValue ? order.value.groupPointValue : 0) + order.totalPrice.amwayValue.pointValue;
-      this.personalBusinessVolume = (order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0) + order.totalPrice.amwayValue.businessVolume;
-      this.personalPointValue = (order.value.personalPointValue ? order.value.personalPointValue : 0) + order.totalPrice.amwayValue.pointValue;
+      this.groupBusinessVolume = (order.value.groupBusinessVolume ? order.value.groupBusinessVolume : 0) +
+                                 (order.totalPrice.amwayValue ? order.totalPrice.amwayValue.businessVolume : 0);
+      this.groupPointValue = (order.value.groupPointValue ? order.value.groupPointValue : 0) +
+                             (order.totalPrice.amwayValue ? order.totalPrice.amwayValue.pointValue : 0);
+      this.personalBusinessVolume = (order.value.personalBusinessVolume ? order.value.personalBusinessVolume : 0) +
+                                    (order.totalPrice.amwayValue ? order.totalPrice.amwayValue.businessVolume : 0);
+      this.personalPointValue = (order.value.personalPointValue ? order.value.personalPointValue : 0) +
+                                (order.totalPrice.amwayValue ? order.totalPrice.amwayValue.pointValue : 0);
     }
   }
 
@@ -384,7 +486,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
    * @param order
    * @param paymentCapture
    */
-  priceInfo(order: Order, paymentCapture: PaymentCapture) {
+  priceInfo(order: Order, paymentCapture: PaymentCapture, isMain?: boolean) {
     if (order.promotionResultActions) {
       this.promotionDiscountInfo = this.orderService.getPromotionDiscountInfo(order.promotionResultActions);
     }
@@ -394,10 +496,15 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.taxPrice = this.orderService.getTaxPrice(order);
     // 합계
     this.totalPriceWithTax = this.orderService.getTotalPriceWithTax(order) + this.orderService.getDiscountPrice(order);
-    // 할인금액
-    this.discountPrice = this.orderService.getDiscountPrice(order);
+    if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code === this.orderInfo.parentOrder) {
+      this.discountPrice = order.totalDiscounts.value;
+    } else {
+      // 할인금액
+      this.discountPrice = this.orderService.getDiscountPrice(order);
+    }
+
     // 결제금액
-    this.paymentPrice =  this.orderService.getPaymentPrice(order, paymentCapture);
+    this.paymentPrice =  this.orderService.getPaymentPrice(order, paymentCapture, isMain);
   }
 
   /**

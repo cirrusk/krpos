@@ -1,4 +1,4 @@
-import { AbstractOrder, Principal } from '../..';
+import { AbstractOrder, Principal, Price } from '../..';
 import { PromotionList } from './promotion';
 
 
@@ -11,6 +11,7 @@ export class Cart extends AbstractOrder {
     expirationTime: Date;
     saveTime: Date;
     savedBy: Principal;
+    groupOrderMainPrice: Price;                       // 그룹주문 Main 결제금액을 출력을 위해 생성
 
     constructor() {
         super();

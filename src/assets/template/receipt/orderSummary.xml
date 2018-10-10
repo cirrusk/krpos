@@ -23,6 +23,11 @@
     <text-line>
         구매일자: {{orderInfo.date}}
     </text-line>
+    {{#if orderInfo.pickupDate}}
+        <text-line>
+            픽업일자: {{orderInfo.pickupDate}}
+        </text-line>
+    {{/if}}
     <text-line>
         POS번호: {{orderInfo.posId}}
     </text-line>

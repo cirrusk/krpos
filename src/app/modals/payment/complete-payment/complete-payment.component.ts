@@ -96,9 +96,9 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (this.checktype === -999) { // 결제금액이 맞지 않음.
       this.storage.removePay();
       this.storage.removePaymentCapture();
-      this.info.sendInfo('invalidpayment', true); 
+      this.info.sendInfo('invalidpayment', true);
       this.close();
-    }    
+    }
     if (this.finishStatus === ErrorType.RECART) {
       this.cardCancelAndSendInfoForError();
     } else if (this.finishStatus === ErrorType.FAIL) {
@@ -568,7 +568,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         if (this.checktype === -999) { // 결제금액이 맞지 않음.
           this.storage.removePay();
           this.storage.removePaymentCapture();
-          this.info.sendInfo('invalidpayment', true); 
+          this.info.sendInfo('invalidpayment', true);
           this.close();
         }
         if (this.finishStatus === ErrorType.RECART) { // 카트 재생성

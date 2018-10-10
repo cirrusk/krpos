@@ -37,6 +37,7 @@ export class TemplateParser {
     this.registerEodDataHelper();
     this.registerPromotionListHelper();
     this.registerCompareHelper();
+    this.registerGroupPriceHelper();
 
   }
 
@@ -219,6 +220,17 @@ export class TemplateParser {
     });
   }
 
+  /**
+   * 그룹 Summary 가격정보 헬퍼
+   */
+  private registerGroupPriceHelper() {
+    this.handlebars.registerHelper('groupPriceHelper',  (priceName: string, qty: string, price: string, cancelFlag?: string) => {
+      const formatted: Array<string> = [];
+      formatted.push(ReceiptUtils.getFormattedGroupPriceField(priceName, qty, price, cancelFlag));
+      return new handlebars.SafeString(formatted.join(''));
+    });
+  }
+
   public parser(template, data): BufferBuilder {
     const fn = this.handlebars.compile(template);
     const xml = fn(data);
@@ -243,18 +255,18 @@ export class TemplateParser {
         operator = '===';
       }
       const operators = {
-        '==': function (l, r) { return l == r; },
+        '==': function (l, r) { return l === r; },
         '===': function (l, r) { return l === r; },
-        '!=': function (l, r) { return l != r; },
+        '!=': function (l, r) { return l !== r; },
         '!==': function (l, r) { return l !== r; },
         '<': function (l, r) { return l < r; },
         '>': function (l, r) { return l > r; },
         '<=': function (l, r) { return l <= r; },
         '>=': function (l, r) { return l >= r; },
-        'typeof': function (l, r) { return typeof l == r; }
+        'typeof': function (l, r) { return typeof l === r; }
       };
       if (!operators[operator]) {
-        throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
+        throw new Error('Handlerbars Helper \'compare\' doesn\'t know the operator ' + operator);
       }
       const result = operators[operator](lval, rval);
       if (result) {

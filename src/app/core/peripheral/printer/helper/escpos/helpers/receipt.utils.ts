@@ -348,7 +348,7 @@ export class ReceiptUtils {
         formatted.push(this.START_TEXTLINE);
 
         const utf8ItemLen: number = ReceiptUtils.getTextLengthUTF8(promotion.name);
-        const localePrice: string = ReceiptUtils.convertToLocalePrice(cancelSymbol + String(promotion.amount));
+        const localePrice: string = ReceiptUtils.convertToLocalePrice(cancelSymbol + String(promotion.totalAmount));
         const localPriceLen = localePrice.length;
         let title = promotion.name;
         let blankLenth = PosPrinterConstants.LineBytes;
@@ -381,6 +381,39 @@ export class ReceiptUtils {
             }
         }
         formatted.push(ReceiptUtils.spaces(blankLenth));
+        formatted.push(localePrice);
+
+        // 태그 끝
+        formatted.push(this.END_TEXTLINE);
+
+        return formatted.join('');
+    }
+
+    /**
+     * 그룹 Summary 출력부
+     * @param promotion
+     */
+    public static getFormattedGroupPriceField(priceName: string, qty: string, price: string, cancelFlag: string): string {
+        const formatted: Array<string> = [];
+        const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
+        const localePrice: string = ReceiptUtils.convertToLocalePrice(cancelSymbol + String(price));
+        const qtyLen = 4;
+        const totalPriceLen = 11;
+
+        // 태그 시작
+        formatted.push(this.START_TEXTLINE);
+
+        const blankLenth: number = 42 -  (this.getTextLengthUTF8(priceName) + qtyLen + totalPriceLen + 2);
+        formatted.push(priceName);
+        formatted.push(this.spaces(blankLenth));
+        formatted.push(this.spaces((qtyLen - 1) - qty.length));
+
+        // 수량
+        formatted.push(qty);
+        const blankTotalLength: number = 1 + (totalPriceLen - localePrice.length);
+        formatted.push(this.spaces(blankTotalLength));
+
+        // 가격
         formatted.push(localePrice);
 
         // 태그 끝

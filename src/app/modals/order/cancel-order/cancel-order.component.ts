@@ -18,6 +18,7 @@ import { OrderList } from '../../../data/models/order/order';
 export class CancelOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   private cancelOrderSubscription: Subscription;
   private orderDetailsSubscription: Subscription;
+  private orderTypeName: string;
   orderInfo: OrderHistory;
   orderList: OrderList;
   cancelFlag: boolean;
@@ -38,6 +39,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
 
   ngOnInit() {
     this.orderInfo = this.callerData.orderInfo;
+    this.orderTypeName = this.callerData.orderTypeName;
   }
 
   ngOnDestroy() {
@@ -136,8 +138,6 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
             } else {
               this.alert.error({ message: cancelData.returnMessage, timer: true, interval: 1700 });
             }
-            
-            
           }
         }
       },
@@ -162,7 +162,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
    * @param {string} orderCode 주문 코드
    */
   private cancelReceipts() {
-    this.receiptService.reissueReceipts(this.orderList, true).subscribe(
+    this.receiptService.reissueReceipts(this.orderList, true, this.orderInfo.isGroupCombinationOrder, this.orderTypeName).subscribe(
       () => {
         this.alert.info({
           title: '취소 영수증 발행',

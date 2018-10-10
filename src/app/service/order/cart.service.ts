@@ -408,6 +408,20 @@ export class CartService {
     // const totalprice = cartInfo.totalPrice ? cartInfo.totalPrice.value : 0;
     // let paymentprice =  totalprice + this.getTaxPrice(cartInfo);
     let paymentprice = cartInfo.totalPriceWithTax ? cartInfo.totalPriceWithTax.value : 0;
+
+    // 그룹주문의 main 의 경우 그룹주문의 Price 값을 사용
+    if (cartInfo.isGroupCombinationOrder) {
+      if (cartInfo.groupOrderMainPrice) {
+        paymentprice = cartInfo.groupOrderMainPrice.value;
+      } else {
+        // sub 인 경우 차감 암함.
+        paymentprice = cartInfo.totalPriceWithTax.value;
+        return paymentprice;
+      }
+    } else {
+      paymentprice = cartInfo.totalPriceWithTax.value;
+    }
+
     this.logger.set('cart.service', `payment price : ${paymentprice}`).debug();
     if (paymentCapture.pointPaymentInfo) { // 포인트 내역
       const pointamount = paymentCapture.pointPaymentInfo.amount;

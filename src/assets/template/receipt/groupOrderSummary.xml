@@ -5,13 +5,16 @@
         주문형태: {{orderInfo.type}}
     </text-line>
     <text-line>
+        픽업일자: {{orderInfo.date}}
+    </text-line>
+    <text-line>
     </text-line>
     <text-line>
         {{productListHelper productList}}
     </text-line>
     <dash-line/>    
     <text-line>
-        {{priceFormatHelper '상품수량' price.totalQty}}
+        {{groupPriceHelper '상품수량' price.totalQty price.sumAmount orderInfo.cancelFlag }}
     </text-line>
     <text-line>
     </text-line>

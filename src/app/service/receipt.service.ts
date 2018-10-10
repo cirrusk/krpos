@@ -17,7 +17,7 @@ import {
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
     PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit,
     EodData, EodInfo, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData,
-    SummaryData, CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel
+    SummaryData, CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel, Price, AmwayValue
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -148,47 +148,54 @@ export class ReceiptService implements OnDestroy {
         let cartInfo = new Cart();
         const paymentCapture = new PaymentCapture();
         let jsonPaymentData = {};
-        orderData.orders.forEach(order => {
-            const jsonCartData = {
-                'user': order.user,
-                'entries': order.entries,
-                'totalPrice': order.totalPrice,
-                'subTotal': order.subTotal,
-                'totalUnitCount': order.totalUnitCount,
-                'totalPriceWithTax': order.totalPriceWithTax,
-                'totalTax': order.totalTax,
-                'totalDiscounts': order.totalDiscounts
-            };
-            cartInfo = jsonCartData as Cart;
-            order.paymentDetails.paymentInfos.forEach(paymentInfo => {
-                switch (paymentInfo.paymentMode.code) {
-                    case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
-                    case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
-                    case 'cash': { jsonPaymentData = { 'cashPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
-                    case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
-                    case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
-                    case 'point': { jsonPaymentData = { 'pointPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
-                    default: { jsonPaymentData = {}; } break;
-                }
-                Object.assign(paymentCapture, jsonPaymentData);
-                jsonPaymentData = {};
-            });
 
-            if (groupOrderFlag) {
-                this.groupPrint(order, paymentCapture, cancelFlag, true, isCashReceipt);
-                return Observable.of(true);
-            } else {
-                const params = {
-                    cancelFlag: cancelFlag ? 'Y' : 'N',
-                    groupInfo: null,
-                    type: type,
-                    reIssue: true,
-                    isGroupOrder: false,
-                    isCashReceipt: isCashReceipt
-                };
-                rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
+        // 재출력의 경우 단건이기 때문에 0번째 사용
+        // 그룹인 경우는 그룹주문을 조회 하여 처리
+        const order = orderData.orders[0];
+        const jsonCartData = {
+            'user': order.user,
+            'entries': order.entries,
+            'totalPrice': order.totalPrice,
+            'subTotal': order.subTotal,
+            'totalUnitCount': order.totalUnitCount,
+            'totalPriceWithTax': order.totalPriceWithTax,
+            'totalTax': order.totalTax,
+            'totalDiscounts': order.totalDiscounts,
+            'orderDiscounts' : order.orderDiscounts,
+            'orderTaxDiscount' : order.orderTaxDiscount,
+            'productDiscounts' : order.productDiscounts,
+            'productTaxDiscount' : order.productTaxDiscount,
+            'isGroupCombinationOrder': order.isGroupCombinationOrder
+        };
+        cartInfo = jsonCartData as Cart;
+        order.paymentDetails.paymentInfos.forEach(paymentInfo => {
+            switch (paymentInfo.paymentMode.code) {
+                case 'creditcard': { jsonPaymentData = { 'ccPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                case 'cashiccard': { jsonPaymentData = { 'icCardPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                case 'cash': { jsonPaymentData = { 'cashPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                case 'directdebit': { jsonPaymentData = { 'directDebitPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                case 'arCredit': { jsonPaymentData = { 'monetaryPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                case 'point': { jsonPaymentData = { 'pointPaymentInfo': this.paymentCaptureConverter(paymentInfo) }; } break;
+                default: { jsonPaymentData = {}; } break;
             }
+            Object.assign(paymentCapture, jsonPaymentData);
+            jsonPaymentData = {};
         });
+
+        if (groupOrderFlag) {
+            this.groupPrint(order, paymentCapture, cancelFlag, true, isCashReceipt);
+            return Observable.of(true);
+        } else {
+            const params = {
+                cancelFlag: cancelFlag ? 'Y' : 'N',
+                groupInfo: null,
+                type: type,
+                reIssue: true,
+                isGroupOrder: false,
+                isCashReceipt: isCashReceipt
+            };
+            rtn = this.print(order.account, cartInfo, order, paymentCapture, params);
+        }
         return Observable.of(rtn);
     }
 
@@ -201,13 +208,14 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 재발행 여부
      * @param {boolean} isCashReceipt 현금영수증 증빙 신청 여부
      */
-    public groupPrint(order: Order, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) {
+    public groupPrint(order: Order, paymentCapture: PaymentCapture, isCancel = false, reIssue = false, isCashReceipt = false) {
 
         this.groupordersubscription = this.order.groupOrder(order.user.uid, order.code).subscribe(
             result => {
                 if (result) {
                     const groupOrder: AmwayExtendedOrdering = result;
                     this.groupOrderTotalCount = (groupOrder.orderList.length).toString();
+                    const cancelFlag = isCancel ? 'Y' : 'N';
                     if (order.account.uid === order.volumeABOAccount.uid) {
                         const entryList = new Array<OrderEntry>();
 
@@ -231,10 +239,10 @@ export class ReceiptService implements OnDestroy {
                         });
 
                         // Summary 출력
-                        this.makeTextAndGroupSummaryPrint(entryList, '그룹주문');
+                        this.makeTextAndGroupSummaryPrint(entryList, '그룹주문', cancelFlag);
 
                         setTimeout(() => {
-                            this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt);
+                            this.printByGroup(groupOrder.orderList, paymentCapture, cancelFlag, reIssue, isCashReceipt, groupOrder);
                         }, 500);
                     } else {
                         // volumeABO 가 영수증을 재출력 했을 경우
@@ -262,9 +270,10 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 영수증 재출력 여부
      * @param {boolean} isCashReceipt 영수증 증빙 신청 여부
      */
-    private printByGroup(orderList: Array<Order>, paymentCapture: PaymentCapture, cancelFlag = false, reIssue = false, isCashReceipt = false) {
+    private printByGroup(orderList: Array<Order>, paymentCapture: PaymentCapture, cancelFlag = 'N', reIssue = false, isCashReceipt = false,
+                         amwayExtendedOrdering: AmwayExtendedOrdering) {
         const orderingOrder = orderList[0];
-        const ordering: GroupResponseData = this.getGroupDetailInfo(orderingOrder, 0);
+        const ordering: GroupResponseData = this.getGroupDetailInfo(orderingOrder, 0, amwayExtendedOrdering);
         const printInfo = {
             order: ordering.order, account: ordering.account, cartInfo: ordering.cart, cancelFlag: cancelFlag,
             paymentCapture: paymentCapture, groupInfo: ordering.info, cashReceipt: isCashReceipt, reIssue: reIssue
@@ -349,10 +358,10 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 재출력 여부
      * @param {boolean} isCashReceipt 현금 영수증 증빙여부
      */
-    private printSubOrder(order: Order, index: number, cancelFlag = false, reIssue = false, isCashReceipt = false): Observable<boolean> {
+    private printSubOrder(order: Order, index: number, cancelFlag = 'N', reIssue = false, isCashReceipt = false): Observable<boolean> {
         const sub: GroupResponseData = this.getGroupDetailInfo(order, index + 1);
         const params = {
-            cancelFlag: cancelFlag ? 'Y' : 'N',
+            cancelFlag: cancelFlag,
             groupInfo: sub.info,
             reIssue: reIssue,
             isGroupOrder: true, // balance 조회 없이 print
@@ -370,7 +379,28 @@ export class ReceiptService implements OnDestroy {
      * @param {number} index 인쇄 페이지 인덱스
      * @returns {GroupResponseData} 그룹주문 데이터
      */
-    private getGroupDetailInfo(order: Order, index: number): GroupResponseData {
+    private getGroupDetailInfo(order: Order, index: number, amwayExtendedOrdering?: AmwayExtendedOrdering): GroupResponseData {
+        let totalDiscounts = order.totalDiscounts;
+        let groupOrderMainPrice;
+        if (amwayExtendedOrdering) {
+            let totalDiscount = 0;
+            let totalBV = 0;
+            let totalPV = 0;
+            amwayExtendedOrdering.orderList.forEach(
+                gOrder => {
+                totalDiscount += gOrder.totalDiscounts.value;
+                totalPV += gOrder.totalPriceWithTax.amwayValue.pointValue;
+                totalBV += gOrder.totalPriceWithTax.amwayValue.businessVolume;
+            });
+            const discountPrice = new Price();
+            const amwayValue = new AmwayValue();
+            amwayValue.businessVolume = totalBV;
+            amwayValue.pointValue = totalPV;
+            discountPrice.value = totalDiscount;
+            discountPrice.amwayValue = amwayValue;
+            totalDiscounts = discountPrice;
+            groupOrderMainPrice = amwayExtendedOrdering.totalValue;
+        }
         const gJsonCartData = {
             'user': { 'uid': order.volumeABOAccount.uid, 'name': order.volumeABOAccount.name },
             'entries': order.entries,
@@ -379,8 +409,15 @@ export class ReceiptService implements OnDestroy {
             'totalUnitCount': order.totalUnitCount,
             'totalPriceWithTax': order.totalPriceWithTax,
             'totalTax': order.totalTax,
-            'totalDiscounts': order.totalDiscounts
+            'totalDiscounts': totalDiscounts,
+            'isGroupCombinationOrder': order.isGroupCombinationOrder,
+            'orderDiscounts' : order.orderDiscounts,
+            'orderTaxDiscount' : order.orderTaxDiscount,
+            'productDiscounts' : order.productDiscounts,
+            'productTaxDiscount' : order.productTaxDiscount,
+            'groupOrderMainPrice' : groupOrderMainPrice
         };
+
         const groupCart = gJsonCartData as Cart;
         const groupOrder = order as Order;
         const groupAccount = order.volumeABOAccount;
@@ -518,6 +555,10 @@ export class ReceiptService implements OnDestroy {
 
         orderInfo.setType = type || this.message.get('default.order.type'); // '현장구매';
         orderInfo.setDate = printInfo.reIssue ? Utils.convertDateToString(order.created) : Utils.convertDateToString(new Date());
+        // confirm일 경우 출력일자 추가
+        if (order.channel.code !== 'pos') {
+            orderInfo.setPickupDate = Utils.convertDateToString(new Date());
+        }
         // orderSummary - END
 
         // macAndCoNum - START
@@ -560,10 +601,10 @@ export class ReceiptService implements OnDestroy {
         Object.assign(productEntryList, data);
 
         const healthFoodIdx = cartInfo.entries.findIndex(entry => entry.product.healthFood === true);
-        if (healthFoodIdx > -1) { 
-            orderInfo.setHealthFood = 'Y'; 
+        if (healthFoodIdx > -1) {
+            orderInfo.setHealthFood = 'Y';
         } else {
-            orderInfo.setHealthFood = 'N'; 
+            orderInfo.setHealthFood = 'N';
         }
         // productList - END(Add healthFood)
 
@@ -721,7 +762,7 @@ export class ReceiptService implements OnDestroy {
      * @param {string} type 주문유형 정보
      * @returns {boolean} 성공/실패 여부
      */
-    makeTextAndGroupSummaryPrint(orderEntry: Array<OrderEntry>, type: string): boolean {
+    makeTextAndGroupSummaryPrint(orderEntry: Array<OrderEntry>, type: string, cancelFlag = 'N'): boolean {
         let rtn = true;
         // 영수증 출력 파라미터 설정 - START
         const posId: string = this.storage.getTerminalInfo().id;
@@ -729,13 +770,14 @@ export class ReceiptService implements OnDestroy {
 
         // orderSummery - START
         const orderInfo = new OrderInfo(posId, '0', type);
+        orderInfo.setCancelFlag = cancelFlag;
         orderInfo.setDate = Utils.convertDateToString(new Date());
         // orderSummary - END
 
         // productList - START
         const productList = Array<any>();
         let totalQty = 0;
-        const totalPrice = 0;
+        let totalPrice = 0;
         orderEntry.forEach((entry, index) => {
             productList.push({
                 'idx': (index + 1).toString(),
@@ -746,7 +788,7 @@ export class ReceiptService implements OnDestroy {
                 'totalPrice': (entry.product.price.value * entry.quantity).toString()
             });
             totalQty = totalQty + entry.quantity;
-            // totalPrice = totalPrice + (entry.product.price.value * entry.quantity);
+            totalPrice = totalPrice + (entry.product.price.value * entry.quantity);
         });
         const productEntryList = new Array<ProductsEntryInfo>();
         const data = productList;
@@ -754,7 +796,7 @@ export class ReceiptService implements OnDestroy {
         // productList - END
 
         // prices - START
-        const sumAmount = 0; // 합계
+        const sumAmount = totalPrice; // 합계
         const totalAmount = 0; // 결제금액
         const amountVAT = 0; // 부가세
         const amountWithoutVAT = 0; // 과세 물품
