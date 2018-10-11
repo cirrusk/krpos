@@ -128,7 +128,8 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('client.account.component', `create new customer error message : ${errdata.message}`).error();
-          this.alert.error({ message: this.message.get('server.error', errdata.message) });
+          // this.alert.error({ message: this.message.get('server.error', errdata.message) });
+          this.alert.error({ message: errdata.message });
         }
       });
   }
