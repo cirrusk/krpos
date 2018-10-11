@@ -248,11 +248,12 @@ export class OrderService {
    * @param cartInfo 카트 정보
    */
   getDiscountPrice(orderInfo: Order) {
-    const orderdiscount = orderInfo.orderDiscounts ? orderInfo.orderDiscounts.value : 0;
-    const ordertaxdiscount = orderInfo.orderTaxDiscount ? orderInfo.orderTaxDiscount.value : 0;
-    const productdiscount = orderInfo.productDiscounts ? orderInfo.productDiscounts.value : 0;
-    const producttaxdiscount = orderInfo.productTaxDiscount ? orderInfo.productTaxDiscount.value : 0;
-    return orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
+    // const orderdiscount = orderInfo.orderDiscounts ? orderInfo.orderDiscounts.value : 0;
+    // const ordertaxdiscount = orderInfo.orderTaxDiscount ? orderInfo.orderTaxDiscount.value : 0;
+    // const productdiscount = orderInfo.productDiscounts ? orderInfo.productDiscounts.value : 0;
+    // const producttaxdiscount = orderInfo.productTaxDiscount ? orderInfo.productTaxDiscount.value : 0;
+    // return orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
+    return orderInfo.totalDiscountWithTax ? orderInfo.totalDiscountWithTax.value : 0;
   }
 
   /**

@@ -382,17 +382,17 @@ export class CartService {
    * @param cartInfo 카트 정보
    */
   getDiscountPrice(cartInfo: Cart) {
-    const orderdiscount = cartInfo.orderDiscounts ? cartInfo.orderDiscounts.value : 0;
-    const ordertaxdiscount = cartInfo.orderTaxDiscount ? cartInfo.orderTaxDiscount.value : 0;
-    const productdiscount = cartInfo.productDiscounts ? cartInfo.productDiscounts.value : 0;
-    const producttaxdiscount = cartInfo.productTaxDiscount ? cartInfo.productTaxDiscount.value : 0;
-    this.logger.set('cart.service', `order discount : ${orderdiscount}`).debug();
-    this.logger.set('cart.service', `order tax discount : ${ordertaxdiscount}`).debug();
-    this.logger.set('cart.service', `product discount : ${productdiscount}`).debug();
-    this.logger.set('cart.service', `product tax discount : ${producttaxdiscount}`).debug();
-    const discountprice = orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
-    this.logger.set('cart.service', `discount price : ${discountprice}`).debug();
-    return discountprice;
+    // const orderdiscount = cartInfo.orderDiscounts ? cartInfo.orderDiscounts.value : 0;
+    // const ordertaxdiscount = cartInfo.orderTaxDiscount ? cartInfo.orderTaxDiscount.value : 0;
+    // const productdiscount = cartInfo.productDiscounts ? cartInfo.productDiscounts.value : 0;
+    // const producttaxdiscount = cartInfo.productTaxDiscount ? cartInfo.productTaxDiscount.value : 0;
+    // this.logger.set('cart.service', `order discount : ${orderdiscount}`).debug();
+    // this.logger.set('cart.service', `order tax discount : ${ordertaxdiscount}`).debug();
+    // this.logger.set('cart.service', `product discount : ${productdiscount}`).debug();
+    // this.logger.set('cart.service', `product tax discount : ${producttaxdiscount}`).debug();
+    // const discountprice = orderdiscount + ordertaxdiscount + productdiscount + producttaxdiscount;
+    // this.logger.set('cart.service', `discount price : ${discountprice}`).debug();
+    return cartInfo.totalDiscountWithTax ? cartInfo.totalDiscountWithTax.value : 0;
   }
 
   /**

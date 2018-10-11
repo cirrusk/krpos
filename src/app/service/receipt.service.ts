@@ -167,6 +167,7 @@ export class ReceiptService implements OnDestroy {
             'orderTaxDiscount' : order.orderTaxDiscount,
             'productDiscounts' : order.productDiscounts,
             'productTaxDiscount' : order.productTaxDiscount,
+            'totalDiscountWithTax' : order.totalDiscountWithTax,
             'isGroupCombinationOrder': order.isGroupCombinationOrder
         };
         cartInfo = jsonCartData as Cart;
@@ -231,6 +232,7 @@ export class ReceiptService implements OnDestroy {
                     'orderTaxDiscount' : order.orderTaxDiscount,
                     'productDiscounts' : order.productDiscounts,
                     'productTaxDiscount' : order.productTaxDiscount,
+                    'totalDiscountWithTax' : order.totalDiscountWithTax,
                     'isGroupCombinationOrder': order.isGroupCombinationOrder
                 };
                 cartInfo = jsonCartData as Cart;
@@ -443,7 +445,7 @@ export class ReceiptService implements OnDestroy {
      * @returns {GroupResponseData} 그룹주문 데이터
      */
     private getGroupDetailInfo(order: Order, index: number, amwayExtendedOrdering?: AmwayExtendedOrdering): GroupResponseData {
-        let totalDiscounts = order.totalDiscounts;
+        let groupTotalDiscountWithTax;
         let groupOrderMainPrice;
         if (amwayExtendedOrdering) {
             let totalDiscount = 0;
@@ -451,7 +453,7 @@ export class ReceiptService implements OnDestroy {
             let totalPV = 0;
             amwayExtendedOrdering.orderList.forEach(
                 gOrder => {
-                totalDiscount += gOrder.totalDiscounts.value;
+                totalDiscount += gOrder.totalDiscountWithTax.value;
                 totalPV += gOrder.totalPriceWithTax.amwayValue.pointValue;
                 totalBV += gOrder.totalPriceWithTax.amwayValue.businessVolume;
             });
@@ -460,8 +462,8 @@ export class ReceiptService implements OnDestroy {
             amwayValue.businessVolume = totalBV;
             amwayValue.pointValue = totalPV;
             discountPrice.value = totalDiscount;
-            discountPrice.amwayValue = amwayValue;
-            totalDiscounts = discountPrice;
+            // discountPrice.amwayValue = amwayValue;
+            groupTotalDiscountWithTax = discountPrice;
             groupOrderMainPrice = amwayExtendedOrdering.totalValue;
         }
         const gJsonCartData = {
@@ -472,13 +474,15 @@ export class ReceiptService implements OnDestroy {
             'totalUnitCount': order.totalUnitCount,
             'totalPriceWithTax': order.totalPriceWithTax,
             'totalTax': order.totalTax,
-            'totalDiscounts': totalDiscounts,
+            'totalDiscounts': order.totalDiscounts,
             'isGroupCombinationOrder': order.isGroupCombinationOrder,
             'orderDiscounts' : order.orderDiscounts,
             'orderTaxDiscount' : order.orderTaxDiscount,
             'productDiscounts' : order.productDiscounts,
             'productTaxDiscount' : order.productTaxDiscount,
-            'groupOrderMainPrice' : groupOrderMainPrice
+            'totalDiscountWithTax' : order.totalDiscountWithTax,
+            'groupOrderMainPrice' : groupOrderMainPrice,
+            'groupTotalDiscountWithTax' : groupTotalDiscountWithTax
         };
 
         const groupCart = gJsonCartData as Cart;
@@ -762,8 +766,12 @@ export class ReceiptService implements OnDestroy {
             price.setRecash = recash.amount;
         }
 
-        if (cartInfo.totalDiscounts) { // 할인금액
-            price.setTotalDiscount = cartInfo.totalDiscounts ? cartInfo.totalDiscounts.value : 0;
+        if (cartInfo.totalDiscountWithTax) { // 할인금액
+            if (cartInfo.groupTotalDiscountWithTax) {
+                price.setTotalDiscount = cartInfo.groupTotalDiscountWithTax ? cartInfo.groupTotalDiscountWithTax.value : 0;
+            } else {
+                price.setTotalDiscount = cartInfo.totalDiscountWithTax ? cartInfo.totalDiscountWithTax.value : 0;
+            }
         }
         let promotion = 0;
         if (cartInfo.appliedOrderPromotions) { // 4-1. 주문 프로모션

@@ -367,7 +367,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
         amwayValue.pointValue = totalPV;
         discountPrice.amwayValue = amwayValue;
         orderDetail.orders[0].groupOrderMainPrice = groupOrder.totalValue;
-        orderDetail.orders[0].totalDiscounts = discountPrice;
+        orderDetail.orders[0].groupTotalDiscountWithTax = discountPrice;
     }
     this.ABOFlag = orderDetail.orders[0].account.accountTypeCode === MemberType.ABO ? true : false;
     orderDetail.orders[0].paymentDetails.paymentInfos.forEach(paymentInfo => {
@@ -492,10 +492,10 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
     this.taxPrice = this.orderService.getTaxPrice(order);
     // 합계
     this.totalPriceWithTax = this.orderService.getTotalPriceWithTax(order) + this.orderService.getDiscountPrice(order);
+    // 할인금액
     if (this.orderInfo.isGroupCombinationOrder && this.orderInfo.code === this.orderInfo.parentOrder) {
-      this.discountPrice = order.totalDiscounts.value;
+      this.discountPrice = order.groupTotalDiscountWithTax.value;
     } else {
-      // 할인금액
       this.discountPrice = this.orderService.getDiscountPrice(order);
     }
 
