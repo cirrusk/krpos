@@ -117,10 +117,16 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
     this.createAccountSubscription = this.accountService.createNewAccount(this.registerType, this.phonetype, this.userPhone, this.sponsorNo).subscribe(
       userInfo => {
         if (userInfo) {
+          if (userInfo.message) {
+            this.alert.error({ message: userInfo.message.returnMessage, timer: true, interval: 1500 });
+            setTimeout(() => { this.phoneNumText.nativeElement.focus(); this.phoneNumText.nativeElement.select(); }, 1520);
+            return;
+          }
           this.account = userInfo;
           this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
           this.close();
         }
+
       },
       error => {
         const errdata = Utils.getError(error);
