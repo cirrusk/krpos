@@ -52,12 +52,15 @@ export class OrderComponent implements OnInit {
         let promotion: PromotionItems;
         chunk(orderpromotions, 2).forEach(p => {
           if (p.length === 2) {
-            const p1 = new PromotionData(p[0].promotion.name, p[0].description);
-            const p2 = new PromotionData(p[1].promotion.name, p[1].description);
+            const nm0 = p[0].promotion.name ? p[0].promotion.name : p[0].promotion.description;
+            const nm1 = p[1].promotion.name ? p[1].promotion.name : p[1].promotion.description;
+            const p1 = new PromotionData(nm0, p[0].description);
+            const p2 = new PromotionData(nm1, p[1].description);
             promotion = new PromotionItems(p1, p2);
             promotionItems.push(promotion);
           } else {
-            const p1 = new PromotionData(p[0].promotion.name, p[0].description);
+            const nm0 = p[0].promotion.name ? p[0].promotion.name : p[0].promotion.description;
+            const p1 = new PromotionData(nm0, p[0].description);
             promotion = new PromotionItems(p1, null);
             promotionItems.push(promotion);
           }
