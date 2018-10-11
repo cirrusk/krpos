@@ -63,12 +63,14 @@ export class PromotionOrderComponent extends ModalComponent implements OnInit, O
   private getPromotionProducts(pagenum: number) {
     this.promotionsubscription = this.search.getFavoriteProducts(pagenum).subscribe(
       result => {
-        this.totalPages = result.totalPageCount;
-        this.promotionProducts = chunk(result.products, this.pageSize)[pagenum]; // this.promotionProducts = result.products;
-        this.totalCount = result.products.length; // this.totalCount = result.totalProductCount;
-        this.totalPages = this.totalCount / this.pageSize; // this.currentPage = result.currentPage;
-        this.currentPage = pagenum;
-        this.paging(this.totalCount, pagenum, this.pageSize);
+        if (result.products) {
+          this.totalPages = result.totalPageCount;
+          this.promotionProducts = chunk(result.products, this.pageSize)[pagenum]; // this.promotionProducts = result.products;
+          this.totalCount = result.products.length; // this.totalCount = result.totalProductCount;
+          this.totalPages = this.totalCount / this.pageSize; // this.currentPage = result.currentPage;
+          this.currentPage = pagenum;
+          this.paging(this.totalCount, pagenum, this.pageSize);
+        }
       },
       error => {
         const errdata = Utils.getError(error);
