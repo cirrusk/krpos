@@ -69,20 +69,18 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
       setTimeout(() => {
         if (this.guser) {
           this.modal.openModalByComponent(SignupAccountComponent, {
-            callerData: { phonetype: this.phonetype, userPhone: this.userPhone},
+            callerData: { phonetype: this.phonetype, userPhone: this.userPhone },
             closeByClickOutside: false,
             closeByEnter: false,
             closeByEscape: true,
             modalId: ModalIds.SIGNUPACCOUNT
-          }).subscribe(
-            result => {
-              if (result) {
-                this.account = result;
-                this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
-                this.close();
-              }
+          }).subscribe(result => {
+            if (result) {
+              this.account = result;
+              this.result = this.account.accounts[0]; // result로 본창에 전송(broker 삭제!)
+              this.close();
             }
-          );
+          });
         } else {
           this.modal.openConfirm({
             title: '개인정보 수집 및 이용 동의 확인',
@@ -94,7 +92,7 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
             closeByEnter: true,
             closeByEscape: true,
             modalId: ModalIds.AGREE,
-            beforeCloseCallback : function () {
+            beforeCloseCallback: function () {
               if (this.isEnter) {
                 this.result = this.isEnter;
               }
