@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ModalComponent, ModalService, Logger, Modal, StorageService } from '../../core';
-import { BatchService } from '../../service';
-import { ModalIds } from '../../data';
+import { BatchService, ReceiptService } from '../../service';
+import { ModalIds, EodData } from '../../data';
 
 /**
  * 로그아웃 팝업 화면
@@ -14,14 +14,16 @@ import { ModalIds } from '../../data';
 })
 export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy {
 
-  statssubscription: Subscription;
-  batchsubscription: Subscription;
-  modalsubscription: Subscription;
+  private statssubscription: Subscription;
+  private batchsubscription: Subscription;
+  private modalsubscription: Subscription;
+  private eodsubscription: Subscription;
   private orderCount: number;
   constructor(protected modalService: ModalService,
     private modal: Modal,
     private storage: StorageService,
     private batch: BatchService,
+    private receipt: ReceiptService,
     private logger: Logger) {
     super(modalService);
     this.orderCount = 0;
@@ -37,9 +39,11 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
   }
 
   ngOnDestroy() {
+    this.receipt.dispose();
     if (this.batchsubscription) { this.batchsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
     if (this.modalsubscription) { this.modalsubscription.unsubscribe(); }
+    if (this.eodsubscription) { this.eodsubscription.unsubscribe(); }
   }
 
   /**
@@ -76,24 +80,35 @@ export class LogoutComponent extends ModalComponent implements OnInit, OnDestroy
         result => {
           if (result) {
             this.logger.set('logout.component', 'end work, stop batch...').debug();
-            this.batchsubscription = this.batch.endBatch().subscribe(
-              () => {
-                this.storage.logout();
-                // this.storage.removeEmployeeName(); // client 담당자 삭제
-                this.storage.clearClient();
-                this.modal.openConfirm({
-                  title: '근무 종료',
-                  message: `배치 정보 저장이 완료되었습니다.`,
-                  actionButtonLabel: '확인',
-                  closeButtonLabel: '취소',
-                  closeByClickOutside: false,
-                  modalId: ModalIds.ENDWORKLAST
-                });
+            this.batchsubscription = this.batch.endBatch().subscribe(() => {
+              // EOD 영수증 출력
+              this.eodsubscription = this.batch.getEodData().subscribe(result => {
+                const eodData: EodData = this.batch.convertEodData(result);
+                this.receipt.printEod(eodData);
+                this.logoutConfirm();
+              }, error => {
+                this.logoutConfirm();
               });
+
+            });
           }
         }
       );
     }
+  }
+
+  private logoutConfirm() {
+    this.storage.logout();
+    // this.storage.removeEmployeeName(); // client 담당자 삭제
+    this.storage.clearClient();
+    this.modal.openConfirm({
+      title: '근무 종료',
+      message: `배치 정보 저장이 완료되었습니다.`,
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: ModalIds.ENDWORKLAST
+    });
   }
 
   close() {

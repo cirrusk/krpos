@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Modal, Logger, StorageService, AlertService, AlertState } from '../core';
 import { BatchService, MessageService, ReceiptService } from '../service';
 import { InfoBroker } from '../broker';
-import { AccessToken, LockType, ModalIds } from '../data';
+import { AccessToken, LockType, ModalIds, EodData } from '../data';
 import { Utils } from '../core/utils';
 
 /**
@@ -40,6 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private batchsubscription: Subscription;
   private alertsubscription: Subscription;
   private receiptsubscription: Subscription;
+  private eodsubscription: Subscription;
   private orderCount: number;
   constructor(
     private modal: Modal,
@@ -96,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.alertsubscription) { this.alertsubscription.unsubscribe(); }
     if (this.statssubscription) { this.statssubscription.unsubscribe(); }
     if (this.receiptsubscription) { this.receiptsubscription.unsubscribe(); }
+    if (this.eodsubscription) { this.eodsubscription.unsubscribe(); }
   }
 
   /**
@@ -197,20 +199,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (result) {
           this.logger.set('dashboard.component', 'stop shift, stop batch...').debug();
           this.batchsubscription = this.batch.endBatch().subscribe(() => {
-            this.storage.removeBatchInfo();
-            this.info.sendInfo('bat', { batchNo: null });
-            this.modal.openConfirm({
-              title: 'Stop Shift',
-              message: `배치 정보 저장이 완료되었습니다.`,
-              actionButtonLabel: '확인',
-              closeButtonLabel: '취소',
-              closeByClickOutside: false,
-              modalId: ModalIds.STOPSHIFTEND
+            // EOD 영수증 출력
+            this.eodsubscription = this.batch.getEodData().subscribe(result => {
+              const eodData: EodData = this.batch.convertEodData(result);
+              this.receipt.printEod(eodData);
+              this.stopShiftConfirm();
+            }, error => {
+              this.stopShiftConfirm();
             });
+            
           });
         }
       });
     }
+  }
+
+  private stopShiftConfirm() {
+    this.storage.removeBatchInfo();
+    this.info.sendInfo('bat', { batchNo: null });
+    this.modal.openConfirm({
+      title: 'Stop Shift',
+      message: `배치 정보 저장이 완료되었습니다.`,
+      actionButtonLabel: '확인',
+      closeButtonLabel: '취소',
+      closeByClickOutside: false,
+      modalId: ModalIds.STOPSHIFTEND
+    });
   }
 
   /**

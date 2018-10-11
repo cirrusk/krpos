@@ -72,7 +72,8 @@ export const environment = {
     cancelReceipt: '/{baseSiteId}/users/{userId}/cancel-receipt/{orderCode}',
     confirmPickup: '/{baseSiteId}/confirm-pickup/{pickupStore}',
     checkBlock: '/{baseSiteId}/check-order-block/{userId}',
-    getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}'
+    getFavoriteProducts: '/{baseSiteId}/point-of-service/popular-products/{pickupStore}',
+    eodData: '/{baseSiteId}/eod/{batchNo}'
   },
   logLevel: 'error', // 로그레벨 설정
   paymentModeLog: false, // 통합결제 창에서 결제 관련 모드 로그 출력

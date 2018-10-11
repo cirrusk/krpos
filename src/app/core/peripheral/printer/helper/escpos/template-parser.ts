@@ -175,6 +175,7 @@ export class TemplateParser {
     formatted.push(ReceiptUtils.getEodFormattedFields(data.debit.name, data.debit.quantity, data.debit.price));
     formatted.push(ReceiptUtils.getEodFormattedFields(data.point.name, data.point.quantity, data.point.price));
     formatted.push(ReceiptUtils.getEodFormattedFields(data.recash.name, data.recash.quantity, data.recash.price));
+    formatted.push(ReceiptUtils.getEodFormattedFields(data.cash.name, data.cash.quantity, data.cash.price));
     formatted.push('<dash-line/>');
     formatted.push('<bold>');
     formatted.push(ReceiptUtils.getEodFormattedFields(data.summary.name, data.summary.quantity, data.summary.price));

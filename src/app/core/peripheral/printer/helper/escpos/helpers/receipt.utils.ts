@@ -321,8 +321,8 @@ export class ReceiptUtils {
         formatted.push(name);
         let len: number = PosPrinterConstants.LineBytes / 2 - this.getTextLengthUTF8(name) - 2;
         formatted.push(this.spaces(len));
-        const qt: string = (quantity === '' || quantity === '0') ? '' : ReceiptUtils.convertToLocalePrice(quantity);
-        const pr: string = (price === '' || price === '0') ? '' : ReceiptUtils.convertToLocalePrice(price);
+        const qt: string = (quantity === '' || quantity === '-1') ? '' : ReceiptUtils.convertToLocalePrice(quantity);
+        const pr: string = (price === '' || price === '-1') ? '' : ReceiptUtils.convertToLocalePrice(price);
         const quantityLen = 7;
         const priceLen = 16;
         len = quantityLen - qt.length;

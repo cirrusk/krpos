@@ -81,6 +81,7 @@ export * from './models/common/terminal-info';
 export * from './models/common/ber-result';
 export * from './models/common/modal-ids';
 export * from './models/common/common.enum';
+export * from './models/common/eod-data-result';
 
 
 export * from './error/error';

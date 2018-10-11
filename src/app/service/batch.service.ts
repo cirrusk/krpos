@@ -5,7 +5,7 @@ import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/switchMap';
 
 import { ApiService, StorageService, Logger } from '../core';
-import { BatchInfo, BatchStats, HttpData } from '../data';
+import { BatchInfo, BatchStats, HttpData, EodDataResultList, EodData, EodDataResult, OrderEodData, CcData, CancelEodData } from '../data';
 
 /**
  * 배치 처리 서비스
@@ -14,8 +14,8 @@ import { BatchInfo, BatchStats, HttpData } from '../data';
 export class BatchService {
 
   constructor(private api: ApiService,
-              private storage: StorageService,
-              private logger: Logger) { }
+    private storage: StorageService,
+    private logger: Logger) { }
 
   /**
    * Start Shift
@@ -59,7 +59,7 @@ export class BatchService {
       batchid = batchinfo && batchinfo.batchNo;
     }
     this.logger.set('batch.service', `end batch of [${batchid}]`).debug();
-    const data = new HttpData('batchStop', { batch_id: batchid }, null, {endingBalance: '0'} );
+    const data = new HttpData('batchStop', { batch_id: batchid }, null, { endingBalance: '0' });
     return this.api.put(data);
   }
 
@@ -94,9 +94,60 @@ export class BatchService {
     if (batchid === null) {
       return Observable.empty();
     } else {
-      const data = new HttpData('batchStats', {batch_id: batchid}, null, null);
+      const data = new HttpData('batchStats', { batch_id: batchid }, null, null);
       return this.api.get(data);
     }
   }
 
+  /**
+   * EOD 통계 정보 조회
+   * @returns {EodDataResultList} EOD 통계 정보 조회
+   */
+  getEodData(): Observable<EodDataResultList> {
+    const batchinfo = this.storage.getBatchInfo();
+    const batchid = batchinfo && batchinfo.batchNo;
+    if (batchid === null) {
+      return Observable.empty();
+    } else {
+      const param = { fields: 'DEFAULT' };
+      const pathvariables = { batchNo: batchid };
+      const data = new HttpData('eodData', pathvariables, null, param, 'json');
+      return this.api.post(data);
+    }
+  }
+
+  /**
+   * 넘어온 EOD 데이터 리스트를 영수증 출력위해 EOD 데이터 형태로 변경
+   * @param eodDataList EOD 데이터 리스트
+   */
+  convertEodData(eodDataList: EodDataResultList): EodData {
+    if (eodDataList) {
+      const eodDataResult: Array<EodDataResult> = eodDataList.orderFactResults;
+      if (eodDataResult) {
+        const eodData = new EodData();
+        const terminal = this.storage.getTerminalInfo();
+        const token =  this.storage.getTokenInfo();
+        const batch = this.storage.getBatchInfo();
+        eodData.posNo = terminal ? terminal.id : '';
+        eodData.cashierName = token ? token.employeeName : '';
+        eodData.cashierId = token ? token.employeeId : '';
+        eodData.batchId = batch ? batch.batchNo : '';
+        eodDataResult.forEach(data => {
+          if (data.typeOfOrder === 'NORMAL') {
+            eodData.setNormalOrder = new OrderEodData(data);
+          } else if (data.typeOfOrder === 'ARRANGEMENT') {
+            eodData.setMediateOrder = new OrderEodData(data);
+          } else if (data.typeOfOrder === 'MEMBER') {
+            eodData.setMemberOrder = new OrderEodData(data);
+          } else if (data.typeOfOrder === 'TOTAL') {
+            eodData.setSummaryOrder = new OrderEodData(data);
+          } else if (data.typeOfOrder === 'CANCEL') {
+            eodData.setOrderCancel = new CancelEodData(data);
+          }
+        });
+        return eodData;
+      }
+    }
+    return null;
+  }
 }
