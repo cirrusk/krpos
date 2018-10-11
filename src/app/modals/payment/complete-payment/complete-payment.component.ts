@@ -3,15 +3,16 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { CashReceiptComponent } from '../ways/cash-receipt/cash-receipt.component';
+import { RestrictComponent } from '../../order/restrict/restrict.component';
 import {
   ModalComponent, ModalService, PrinterService, StorageService,
-  KeyboardService, KeyCommand, Modal, Logger, CardCancelResult, NicePaymentService, SpinnerService, ICCardCancelResult
+  KeyboardService, KeyCommand, Modal, Logger, CardCancelResult, NicePaymentService, SpinnerService, ICCardCancelResult, Config
 } from '../../../core';
 import { Order } from '../../../data/models/order/order';
 import { Cart } from '../../../data/models/order/cart';
 import {
   Accounts, PaymentCapture, StatusDisplay, KeyCode, CapturePaymentInfo, AmwayExtendedOrdering,
-  ReceiptInfoData, ModalIds, CreditCardPaymentInfo, ICCardPaymentInfo, ErrorType, MemberType
+  ReceiptInfoData, ModalIds, CreditCardPaymentInfo, ICCardPaymentInfo, ErrorType, MemberType, RestrictionModel, CartModification
 } from '../../../data';
 import { ReceiptService, PaymentService, MessageService, CartService } from '../../../service';
 import { InfoBroker } from '../../../broker';
@@ -43,6 +44,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   private amwayExtendedOrdering: AmwayExtendedOrdering;
   private accountInfo: Accounts;
   private paymentcapture: PaymentCapture;
+  private domain: string;                                                     // api root 도메인
+  private restrictionMessageList: Array<RestrictionModel>;                    // 상품 제한 메시지 리스트(ERROR)
   private paymentsubscription: Subscription;
   private alertsubscription: Subscription;
   private keyboardsubscription: Subscription;
@@ -51,7 +54,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
   // spinnerService 는 HostListener 사용중
   constructor(protected modalService: ModalService, private printer: PrinterService, private receipt: ReceiptService,
     private payments: PaymentService, private nicepay: NicePaymentService, private cart: CartService,
-    private keyboard: KeyboardService, private storage: StorageService, private message: MessageService,
+    private keyboard: KeyboardService, private storage: StorageService, private message: MessageService, private config: Config,
     private modal: Modal, private spinner: SpinnerService, private info: InfoBroker, private logger: Logger, private cartService: CartService
   ) {
     super(modalService);
@@ -62,6 +65,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     this.checktype = 0;
     this.bernumber = null;
     this.receiptenable = false;
+    this.domain = this.config.getConfig('apiDomain');
   }
 
   ngOnInit() {
@@ -213,7 +217,6 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.finishStatus = result.statusDisplay;
         if (Utils.isNotEmpty(result.code)) { // 결제정보가 있을 경우
           this.logger.set('complete.payment.component', `payment capture and place order(${result.code}) : ${result.status}, status display : ${result.statusDisplay}`).debug();
-          // if (result.statusDisplay === StatusDisplay.ERROR) {
           if (Utils.isPaymentError(result.statusDisplay)) {
             let failmsg = '';
             if (result.statusDisplay === StatusDisplay.PAYMENTFAILED) {
@@ -247,6 +250,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
               appendMessage += '<br/>' + msg;
             }
           });
+          this.restrictionMessage(result.cartModifications[0], appendMessage);
           this.apprmessage = appendMessage;
         } else { // 결제정보 없는 경우, CART 삭제되지 않은 상태, 다른 지불 수단으로 처리
           this.finishStatus = ErrorType.NOORDER;
@@ -338,6 +342,8 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
         this.storage.removePay(); // 금액을 초기화해서 다시 결제하도록함.
         this.close();
       } else if (this.finishStatus === ErrorType.RESTRICT) {
+        this.info.sendInfo('recart', this.orderInfo);
+        this.info.sendInfo('orderClear', 'clear');
         this.storage.removePay();
         this.close();
       }
@@ -564,7 +570,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     if (event.target.tagName === 'INPUT') { return; }
     if (event.keyCode === KeyCode.ENTER && !isSpinnerStatus) {
       const modalid = this.storage.getLatestModalId();
-      if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT) {
+      if (modalid !== ModalIds.SERIAL && modalid !== ModalIds.CASHRECEIPT && modalid !== ModalIds.RESTRICT) {
         if (this.checktype === -999) { // 결제금액이 맞지 않음.
           this.storage.removePay();
           this.storage.removePaymentCapture();
@@ -603,6 +609,39 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
     } catch (e) {
       this.logger.set('complete.payment.component', `[${command.combo}] key event, [${command.name}] undefined function!`).info();
     }
+  }
+
+  /**
+   * Restriction 메시지
+   */
+  private restrictionMessage(model: CartModification, message: string) {
+    let imgUrl;
+    try {
+      if (model.entry.product.images === null) {
+        imgUrl = '/assets/images/temp/198x198.jpg';
+      } else {
+        if ((model.entry.product.images[1].url).indexOf('http') > -1) {
+          imgUrl = (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+        } else {
+          imgUrl = this.domain + (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
+        }        
+      }
+    } catch (e) {
+      imgUrl = '/assets/images/temp/198x198.jpg';
+    }
+    if (this.restrictionMessageList) {
+      this.restrictionMessageList.length = 0;
+    } else {
+      this.restrictionMessageList = new Array<RestrictionModel>();
+    }
+    this.restrictionMessageList.push(new RestrictionModel(imgUrl, message, ''));
+    this.modal.openModalByComponent(RestrictComponent, {
+      callerData: { data: this.restrictionMessageList },
+      closeByEnter: true,
+      modalId: ModalIds.RESTRICT
+    }).subscribe(() => { 
+      this.cardCancelAndSendInfoForError(ErrorType.RESTRICT);
+    });
   }
 
 }
