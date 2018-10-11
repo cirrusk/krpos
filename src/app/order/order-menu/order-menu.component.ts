@@ -5,9 +5,10 @@ import {
     PromotionOrderComponent, EtcOrderComponent,
     SearchAccountComponent, PickupOrderComponent,
     CancelCartComponent,
-    SearchBerComponent
+    SearchBerComponent,
+    PromotionDetailComponent
 } from '../../modals';
-import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, ModalIds, Coupon, CouponList } from '../../data';
+import { Accounts, MemberType, AmwayExtendedOrdering, OrderType, ModelType, ModalIds, Coupon, CouponList, PromotionData, PromotionList, Promotion } from '../../data';
 import { MessageService, PaymentService } from '../../service';
 import { Cart } from '../../data/models/order/cart';
 import { ComplexPaymentComponent } from '../../modals/payment/complex-payment/complex-payment.component';
@@ -528,6 +529,25 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
                 this.posPytoCafe.emit({ pytocafe: true });
             }
         });
+    }
+
+    showPromotion(promotionData: PromotionData) {
+        if (promotionData) {
+            let promotionArray: Array<PromotionList> = new Array<PromotionList>();
+            let promotionList: PromotionList = new PromotionList();
+            let promotion: Promotion = new Promotion();
+            promotion.name = promotionData.name;
+            promotion.description = promotionData.name;
+            promotionList.promotion = promotion;
+            promotionList.description = promotionData.desc;
+            promotionArray.push(promotionList);
+            this.modal.openModalByComponent(PromotionDetailComponent, {
+                callerData: { promotionList: promotionArray },
+                closeByClickOutside: true,
+                closeByEnter: true,
+                modalId: ModalIds.PROMODETAIL
+            });
+        }
     }
 
     /**

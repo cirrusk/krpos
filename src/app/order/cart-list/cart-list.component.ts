@@ -1059,7 +1059,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           imgUrl = (product.images[1].url).replace('/amwaycommercewebservices/v2', '');
         } else {
           imgUrl = this.domain + (product.images[1].url).replace('/amwaycommercewebservices/v2', '');
-        }        
+        }
       }
     } catch (e) {
       imgUrl = '/assets/images/temp/198x198.jpg';
