@@ -1925,6 +1925,9 @@ export class CartListComponent implements OnInit, OnDestroy {
 
   /**
    * 파이토 카페 사용자 조회 - 기타에서 파이토 카페 상품 메뉴 선택했을 경우
+   * 중요) C(소비자)인 경우 기존에 API에서 전화번호(휴대폰) 번호 검색만 지원함.
+   * 이 경우 파이토 카페 사용자를 찾기 위해서 전화번호를 환경에 설정해야함.
+   * 이를 처리 하기 위해 API에서 8백만번대의 경우 UID로 검색되도록 수정.
    */
   private searchPhytoCafeAccount() {
     const phytoUserId = this.config.getConfig('phytoCafeUserId');
