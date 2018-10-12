@@ -480,10 +480,11 @@ export class CartListComponent implements OnInit, OnDestroy {
   activeSearchMode(mode: string): void {
     if (mode === SearchMode.ACCOUNT || (mode === SearchMode.PRODUCT && this.accountInfo)) {
       this.searchMode = mode;
+      setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
     } else {
       this.alert.warn({ title: '알림', message: this.message.get('notSelectedUser'), timer: true, interval: 1500 });
+      setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 1520);
     }
-    setTimeout(() => { this.searchText.nativeElement.value = ''; this.searchText.nativeElement.focus(); }, 90);
   }
 
   /**
