@@ -228,7 +228,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    *
    * @param evt 키 이벤트
    */
-  protected doPageDown(evt: KeyboardEvent) {
+  protected doPageUp(evt: KeyboardEvent) {
     if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
     this.selectedOrderNum = -1;
     if (this.orderHistoryList.pagination.currentPage === 0) {
@@ -242,7 +242,7 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
    *
    * @param evt 키 이벤트
    */
-  protected doPageUp(evt: KeyboardEvent) {
+  protected doPageDown(evt: KeyboardEvent) {
     if (this.orderHistoryList.orders.length === 0) { evt.preventDefault(); return; }
     this.selectedOrderNum = -1;
     if (this.orderHistoryList.pagination.currentPage === this.orderHistoryList.pagination.totalPages - 1) {
