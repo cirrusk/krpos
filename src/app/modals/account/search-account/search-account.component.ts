@@ -163,7 +163,11 @@ export class SearchAccountComponent extends ModalComponent implements OnInit, On
             const errdata = Utils.getError(error);
             if (errdata) {
                 this.logger.set('search.account.component', `get account error message : ${errdata.message}`).error();
-                this.alert.error({ message: this.message.get('server.error', errdata.message) });
+                if (errdata.type === 'UnknownIdentifierError') {
+                    this.alert.error({ message: `${searchText} 로 검색된 사용자가 존재하지 않습니다.`});
+                } else {
+                    this.alert.error({ message: this.message.get('server.error', errdata.message) });
+                }
             }
         });
     }

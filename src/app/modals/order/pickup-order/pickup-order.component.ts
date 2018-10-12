@@ -70,7 +70,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
 
     // 간편선물 설정
     if (this.orderType === 'e') {
-      this.orderTypeName =  this.messageService.get('easyPickup.order.type');
+      this.orderTypeName = this.messageService.get('easyPickup.order.type');
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes = 'pickup';
@@ -79,7 +79,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.popupName = this.messageService.get('easyPickup.order.type');
       // 설치주문 설정
     } else if (this.orderType === 'i') {
-      this.orderTypeName =  this.messageService.get('install.order.type');
+      this.orderTypeName = this.messageService.get('install.order.type');
       this.confirmFlag = true;
       this.channels = 'pos,Web,WebMobile';
       this.deliveryModes = 'install';
@@ -257,30 +257,29 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.PAGE_SIZE,
       sort,
       asc,
-      orderStatus).subscribe(
-        resultData => {
-          if (resultData) {
-            this.sourceList = resultData;
-            // barcode 조회시 결과값이 하나면 바로 ADD
-            if (barcodeFlag && this.sourceList.orders.length === 1) {
-              setTimeout(() => {
-                this.moveOrder(null, this.sourceList.orders[0].code, 'a');
-                this.renderer.addClass(this.ecporders.first.nativeElement, 'on');
-              }, 100);
-            }
+      orderStatus).subscribe(resultData => {
+        if (resultData) {
+          this.sourceList = resultData;
+          // barcode 조회시 결과값이 하나면 바로 ADD
+          if (barcodeFlag && this.sourceList.orders.length === 1) {
+            setTimeout(() => {
+              this.moveOrder(null, this.sourceList.orders[0].code, 'a');
+              this.renderer.addClass(this.ecporders.first.nativeElement, 'on');
+            }, 100);
           }
-        },
-        error => {
-          const errdata = Utils.getError(error);
-          if (errdata) {
-            this.logger.set('pickup-order.component', `Get order list error type : ${errdata.type}`).error();
-            this.logger.set('pickup-order.component', `Get order list error message : ${errdata.message}`).error();
-            // this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
-            // this.alert.error({ message: errdata.message });
-            this.alert.error({ message: '존재하지 않는 회원입니다.' });
+        }
+      }, error => {
+        const errdata = Utils.getError(error);
+        if (errdata) {
+          this.logger.set('pickup-order.component', `Get order list error type : ${errdata.type}`).error();
+          if (errdata.type === 'UnknownIdentifierError') {
+            this.alert.error({ message: `${searchText} 로 검색된 사용자가 존재하지 않습니다.` });
+          } else {
+            this.alert.error({ message: errdata.message });
           }
-        },
-        () => { if (barcodeFlag) { this.barcodeScan.nativeElement.value = ''; } }
+
+        }
+      }, () => { if (barcodeFlag) { this.barcodeScan.nativeElement.value = ''; } }
       );
   }
 
@@ -294,7 +293,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       this.modal.openModalByComponent(EcpConfirmComponent,
         {
           title: this.popupName,
-          callerData: { orderList: this.targetList , orderTypeName: this.orderTypeName, orderType: this.orderType },
+          callerData: { orderList: this.targetList, orderTypeName: this.orderTypeName, orderType: this.orderType },
           actionButtonLabel: '확인',
           closeButtonLabel: '취소',
           modalId: ModalIds.ECPCONFIRM
@@ -364,7 +363,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
             this.logger.set('pickup-order.component', `printECP error message : ${errdata.message}`).error();
             this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
           }
-      });
+        });
     } else {
       this.alert.warn({ title: '알림', message: this.messageService.get('noECPOrder'), timer: true, interval: 1500 });
       setTimeout(() => { this.searchValue.nativeElement.focus(); }, 1520);

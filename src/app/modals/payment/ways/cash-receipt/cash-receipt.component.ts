@@ -8,6 +8,9 @@ import { Cart } from '../../../../data/models/order/cart';
 import { Order } from '../../../../data/models/order/order';
 import { Utils } from '../../../../core/utils';
 
+/**
+ * 현금영수증 신청 팝업 화면
+ */
 @Component({
   selector: 'pos-cash-receipt',
   templateUrl: './cash-receipt.component.html'
@@ -140,7 +143,7 @@ export class CashReceiptComponent extends ModalComponent implements OnInit, OnDe
             this.apprmessage = this.message.get('receipt.reg.number.success');
           } else {
             this.finishStatus = 'fail';
-            this.apprmessage = this.message.get('receipt.reg.number.fail'); // result.returnMessage;
+            this.apprmessage =  result.returnMessage; // this.message.get('receipt.reg.number.fail');
           }
         },
         error => {

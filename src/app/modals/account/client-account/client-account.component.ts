@@ -132,8 +132,13 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
         const errdata = Utils.getError(error);
         if (errdata) {
           this.logger.set('client.account.component', `create new customer error message : ${errdata.message}`).error();
-          // this.alert.error({ message: this.message.get('server.error', errdata.message) });
-          this.alert.error({ message: errdata.message });
+          if (errdata.type === 'InvalidDmsError') {
+            this.alert.error({ message: errdata.message });
+          } else if (errdata.type === 'AmbiguousIdentifierError') {
+            this.alert.error({ message: `${this.userPhone} 은 이미 등록된 번호입니다.` });
+          } else {
+            this.alert.error({ message: errdata.message });
+          }
         }
       });
   }
