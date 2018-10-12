@@ -78,7 +78,7 @@ export class OrderService {
     } else if (searchType === 'orderCode') {
       orderData.orderCode = searchText;
     } else {
-      orderData.orderingABOId = searchText;
+      orderData.orderingABOId = searchText.toUpperCase();
     }
 
     const param = {
