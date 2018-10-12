@@ -118,8 +118,8 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
       userInfo => {
         if (userInfo) {
           if (userInfo.message) {
-            this.alert.error({ message: userInfo.message.returnMessage, timer: true, interval: 1500 });
-            setTimeout(() => { this.phoneNumText.nativeElement.focus(); this.phoneNumText.nativeElement.select(); }, 1520);
+            this.alert.error({ message: userInfo.message.returnMessage, timer: true, interval: 1700 });
+            setTimeout(() => { this.phoneNumText.nativeElement.focus(); this.phoneNumText.nativeElement.select(); }, 1720);
             return;
           }
           this.account = userInfo;
@@ -135,9 +135,11 @@ export class ClientAccountComponent extends ModalComponent implements OnInit, On
           if (errdata.type === 'InvalidDmsError') {
             this.alert.error({ message: errdata.message });
           } else if (errdata.type === 'AmbiguousIdentifierError') {
-            this.alert.error({ message: `${this.userPhone} 은 이미 등록된 번호입니다.` });
+            this.alert.error({ message: `'${this.userPhone.replace(/(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,"$1-$2-$3")}' 은 이미 등록된 번호입니다.`, timer: true, interval: 1700 });
+            setTimeout(() => { this.phoneNumText.nativeElement.focus(); this.phoneNumText.nativeElement.select(); }, 1720);
           } else {
-            this.alert.error({ message: errdata.message });
+            this.alert.error({ message: errdata.message, timer: true, interval: 1700 });
+            setTimeout(() => { this.phoneNumText.nativeElement.focus(); this.phoneNumText.nativeElement.select(); }, 1720);
           }
         }
       });
