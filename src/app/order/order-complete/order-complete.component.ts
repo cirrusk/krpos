@@ -183,7 +183,11 @@ export class OrderCompleteComponent implements OnInit, OnDestroy {
           if (errdata) {
             this.logger.set('order-complete.component', `Get order list error type : ${errdata.type}`).error();
             this.logger.set('order-complete.component', `Get order list error message : ${errdata.message}`).error();
-            this.alert.error({ message: errdata.message, timer: true, interval: 1500 });
+            if (errdata.type === 'UnknownIdentifierError') {
+              this.alert.error({ message: `${searchText} 로 검색된 사용자가 존재하지 않습니다.`, timer: true, interval: 1500 });
+            } else {
+              this.alert.error({ message: errdata.message, timer: true, interval: 1500  });
+            }
             setTimeout(() => { this.inputSearchText.nativeElement.focus(); this.inputSearchText.nativeElement.select(); }, 1520);
           }
         });
