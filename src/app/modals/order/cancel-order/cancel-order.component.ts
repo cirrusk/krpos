@@ -147,7 +147,7 @@ export class CancelOrderComponent extends ModalComponent implements OnInit, OnDe
         if (errdata) {
           this.logger.set('cancel-order.component', `cancel order error message : ${errdata.message}`).error();
           if (errdata.type === 'OrderCancelDeniedError') {
-            this.alert.error({ message: this.messageService.get('server.error', errdata.type) });
+            this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
           } else {
             this.alert.error({ message: this.messageService.get('server.error', errdata.message) });
           }
