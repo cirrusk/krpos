@@ -2290,28 +2290,36 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   doPageUp(evt: any) {
-    if (this.orderType === OrderType.GROUP) {
-      const glen = this.groups.length;
-      if (glen > 0) {
-        let selidx = 0;
-        this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
-        if (selidx < glen - 1) {
-          this.selectedUserIndex = ++selidx;
-          const g = this.groups.find((group, idx) => idx === this.selectedUserIndex);
-          this.choiceGroupUser(this.selectedUserIndex, g.nativeElement.getAttribute('data-uid'));
+    if (this.cartList.length > this.cartListCount) {
+      this.setPage(this.pager.currentPage - 1, true);
+    } else {
+      if (this.orderType === OrderType.GROUP) {
+        const glen = this.groups.length;
+        if (glen > 0) {
+          let selidx = 0;
+          this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
+          if (selidx < glen - 1) {
+            this.selectedUserIndex = ++selidx;
+            const g = this.groups.find((group, idx) => idx === this.selectedUserIndex);
+            this.choiceGroupUser(this.selectedUserIndex, g.nativeElement.getAttribute('data-uid'));
+          }
         }
       }
     }
   }
 
   doPageDown(evt: any) {
-    if (this.orderType === OrderType.GROUP) {
-      let selidx = 0;
-      this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
-      if (selidx > 0) {
-        this.selectedUserIndex = --selidx;
-        const g = this.groups.find((group, idx) => idx === this.selectedUserIndex);
-        this.choiceGroupUser(this.selectedUserIndex, g.nativeElement.getAttribute('data-uid'));
+    if (this.cartList.length > this.cartListCount) {
+      this.setPage(this.pager.currentPage + 1, true);
+    } else {
+      if (this.orderType === OrderType.GROUP) {
+        let selidx = 0;
+        this.groups.forEach((group, idx) => { if (group.nativeElement.classList.contains('on')) { selidx = idx; } });
+        if (selidx > 0) {
+          this.selectedUserIndex = --selidx;
+          const g = this.groups.find((group, idx) => idx === this.selectedUserIndex);
+          this.choiceGroupUser(this.selectedUserIndex, g.nativeElement.getAttribute('data-uid'));
+        }
       }
     }
   }
