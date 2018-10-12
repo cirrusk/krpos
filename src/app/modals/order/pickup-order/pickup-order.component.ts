@@ -2,20 +2,21 @@ import { Component, OnInit, ViewChildren, QueryList, ElementRef, Renderer2, View
 import { Subscription } from 'rxjs/Subscription';
 
 import { EcpConfirmComponent } from '../ecp-confirm/ecp-confirm.component';
-import { ModalComponent, ModalService, Modal, Logger, AlertService } from '../../../core';
+import { ModalComponent, ModalService, Modal, Logger, AlertService, KeyboardService, KeyCommand } from '../../../core';
 import { OrderService, MessageService, ReceiptService, PagerService } from '../../../service';
 import { OrderHistoryList, OrderHistory, OrderEntry, Pagination, ModalIds } from '../../../data';
 import { OrderList } from '../../../data/models/order/order';
 import { Utils } from '../../../core/utils';
 
+/**
+ * 픽업주문 팝업
+ */
 @Component({
   selector: 'pos-pickup-order',
   templateUrl: './pickup-order.component.html'
 })
 export class PickupOrderComponent extends ModalComponent implements OnInit, OnDestroy {
   PAGE_SIZE = 5;
-
-  private orderListSubscription: Subscription;
 
   @ViewChildren('ecporders') ecporders: QueryList<ElementRef>;
   @ViewChild('inputSearchText') searchValue: ElementRef;
@@ -30,6 +31,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   targetUserList: Map<string, number>;
   targetListPager: Pagination;
   entryList: Array<OrderEntry>;
+  popupName: string;
 
   private confirmFlag = false;
   private searchType: string;
@@ -38,7 +40,8 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   private channels: string;
   private orderStatus: string;
   private isEasyPickupOrder = false;
-  popupName: string;
+  private orderListSubscription: Subscription;
+  private keyboardsubscription: Subscription;  
 
   constructor(protected modalService: ModalService,
     private orderService: OrderService,
@@ -46,6 +49,7 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     private modal: Modal,
     private messageService: MessageService,
     private receiptService: ReceiptService,
+    private keyboard: KeyboardService,
     private logger: Logger,
     private alert: AlertService,
     private renderer: Renderer2) {
@@ -65,6 +69,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   ngOnInit() {
+    this.keyboardsubscription = this.keyboard.commands.subscribe(c => {
+      this.handleKeyboardCommand(c);
+    });
     setTimeout(() => { this.searchValue.nativeElement.focus(); }, 100); // 모달 팝업 포커스 보다 timeout을 더주어야 focus 잃지 않음.
     this.orderType = this.callerData.searchType;
 
@@ -99,8 +106,9 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
   }
 
   ngOnDestroy() {
-    if (this.orderListSubscription) { this.orderListSubscription.unsubscribe(); }
     this.receiptService.dispose();
+    if (this.orderListSubscription) { this.orderListSubscription.unsubscribe(); }
+    if (this.keyboardsubscription) { this.keyboardsubscription.unsubscribe(); }
   }
 
   /**
@@ -494,4 +502,23 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
     this.searchValue.nativeElement.value = '';
     this.barcodeScan.nativeElement.value = '';
   }
+
+  doPageUp(evt: any) {
+    if (this.sourceList.pagination && this.sourceList.pagination.totalResults > this.PAGE_SIZE) {
+      this.setPage(this.sourceList.pagination.currentPage - 1);
+    }
+  }
+
+  doPageDown(evt: any) {
+    if (this.sourceList.pagination && this.sourceList.pagination.totalResults > this.PAGE_SIZE) {
+      this.setPage(this.sourceList.pagination.currentPage + 1);
+    }
+  }
+
+  private handleKeyboardCommand(command: KeyCommand) {
+    try {
+      this[command.name](command.ev);
+    } catch (e) { }
+  }
+    
 }
