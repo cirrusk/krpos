@@ -298,17 +298,6 @@ export class CartListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 메뉴에서 전달한 타입 정보를 받음.
-   * @param {any} data 타입정보
-   * 기획 변경 삭제
-   */
-  // setType(data) {
-  //   if (data) {
-  //     this.apprtype = data.type;
-  //   }
-  // }
-
-  /**
    * 메뉴에서 전달한 프로모션 상품코드를 받음.
    * @param {any} data 프로모션 상품코드
    */
@@ -367,6 +356,27 @@ export class CartListComponent implements OnInit, OnDestroy {
     if (data && data.coupon) {
       this.couponSize = data.coupon;
       this.storage.setCouponSize(this.couponSize); // 클라이언트에 전달하기 위해 저장
+    }
+  }
+
+  /**
+   * 메뉴에서 팝업이 닫힐때 포커스 처리
+   * Case 1) 회원 미등록 상태
+   *  - 그룹주문, 픽업주문, 기타 팝업이 뜬 상태에서 해당 팝업을 닫을 경우
+   *     회원탭으로 세팅이 되고 input box로 focus이동해 있어야 함
+   * Case 2) 회원 등록 상태
+   *  - 통합주문, 중개주문, 프로모션 상품, 기타 팝업이 뜬 상태에서 해당 팝업을 닫을 경우
+   *     상품탭으로 세팅이 되고 input box로 focus이동해 있어야 함
+   * @param data 이벤트 데이터
+   */
+  setInputStatus(data) {
+    if (data && data.status) {
+      if (this.accountInfo) {
+        this.activeSearchMode('P');
+      } else {
+        this.activeSearchMode('A');
+      }
+      setTimeout(() => { this.searchText.nativeElement.focus(); }, 150);
     }
   }
 

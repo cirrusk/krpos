@@ -63,12 +63,13 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
     private couponlist: CouponList;
     @Input() promotionList: any;
     @ViewChildren('menus') menus: QueryList<ElementRef>;
-    @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();      // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
-    @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>(); // 프로모션 팝업에서 제품코드를 받아 카트 컴포넌트에 전달
-    @Output() public posPytoCafe: EventEmitter<any> = new EventEmitter<any>();  // 파이토 카페 선택 시 카트컴포넌트에 전달
-    @Output() public posBer: EventEmitter<any> = new EventEmitter<any>();       // 중개주문 팝업에서 사업자 선택시 카트 컴포넌트에 전달
-    @Output() public posPayReset: EventEmitter<any> = new EventEmitter<any>();  // 통합결제 창이 닫힐 경우 결과 금액 초기화하기
-    @Output() public posCoupons: EventEmitter<any> = new EventEmitter<any>();   // 회원 검색 시 쿠폰이 있을 경우 쿠폰건추 출력 카트에 전달
+    @Output() public posMenu: EventEmitter<any> = new EventEmitter<any>();        // 메뉴에서 이벤트를 발생시켜 카트컴포넌트에 전달
+    @Output() public posPromotion: EventEmitter<any> = new EventEmitter<any>();   // 프로모션 팝업에서 제품코드를 받아 카트 컴포넌트에 전달
+    @Output() public posPytoCafe: EventEmitter<any> = new EventEmitter<any>();    // 파이토 카페 선택 시 카트컴포넌트에 전달
+    @Output() public posBer: EventEmitter<any> = new EventEmitter<any>();         // 중개주문 팝업에서 사업자 선택시 카트 컴포넌트에 전달
+    @Output() public posPayReset: EventEmitter<any> = new EventEmitter<any>();    // 통합결제 창이 닫힐 경우 결과 금액 초기화하기
+    @Output() public posCoupons: EventEmitter<any> = new EventEmitter<any>();     // 회원 검색 시 쿠폰이 있을 경우 쿠폰건추 출력 카트에 전달
+    @Output() public posInputStatus: EventEmitter<any> = new EventEmitter<any>(); // 메뉴에서 팝업이 닫힐 경우 카트의 입력 상태 처리 위한 값 전달
     constructor(private modal: Modal,
         private storage: StorageService,
         private logger: Logger,
@@ -332,6 +333,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             modalId: ModalIds.COMPLEX
         }).subscribe(result => {
             this.posPayReset.emit({ reset: true });
+            this.posInputStatus.emit({ status: true });
             if (!result) {
                 this.storage.removePaymentModeCode();
                 this.storage.removePaymentCapture();
@@ -376,6 +378,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
                 this.orderType = OrderType.GROUP;
                 this.searchAccountBroker.sendInfo(OrderType.GROUP, result);
             }
+            this.posInputStatus.emit({ status: true });
         });
     }
 
@@ -405,6 +408,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             callerData: { searchType: 'p' },
             closeByClickOutside: true,
             modalId: ModalIds.PICKUP
+        }).subscribe(() => {
+            this.posInputStatus.emit({ status: true });
         });
     }
 
@@ -443,6 +448,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             if (result) {
                 this.posBer.emit({ ber: result });
             }
+            this.posInputStatus.emit({ status: true });
         });
     }
 
@@ -485,6 +491,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             if (result) {
                 this.isABO = false;
             }
+            this.posInputStatus.emit({ status: true });
         });
     }
 
@@ -502,6 +509,7 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             if (result) {
                 this.posPromotion.emit({ product: result });
             }
+            this.posInputStatus.emit({ status: true });
         });
     }
 
@@ -528,9 +536,15 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
             if (result && result === 'pyt') {
                 this.posPytoCafe.emit({ pytocafe: true });
             }
+            this.posInputStatus.emit({ status: true });
         });
     }
 
+    /**
+     * 프로모션 메시지 팝업 출력
+     * 
+     * @param promotionData 프로모션 정보
+     */
     showPromotion(promotionData: PromotionData) {
         if (promotionData) {
             let promotionArray: Array<PromotionList> = new Array<PromotionList>();
@@ -546,6 +560,8 @@ export class OrderMenuComponent implements OnInit, OnDestroy {
                 closeByClickOutside: true,
                 closeByEnter: true,
                 modalId: ModalIds.PROMODETAIL
+            }).subscribe(() => {
+                this.posInputStatus.emit({ status: true });
             });
         }
     }
