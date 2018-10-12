@@ -4,7 +4,6 @@ import { TemplateParser } from './template-parser';
 import { XMLParser } from './xml-parser';
 import { BufferBuilder } from './buffer-builder';
 import { Utils } from '../../../../utils';
-// import { UTF8ArrayConverter } from '../../../utils/utf8.arrayconverter';
 
 export class EscPos {
   private static NULL_CHAR = '\0';
