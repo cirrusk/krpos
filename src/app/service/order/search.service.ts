@@ -29,7 +29,7 @@ export class SearchService {
       memberType = MemberType.ABO;
     } else if (searchMemberType === 'M') {
       memberType = MemberType.MEMBER;
-      search = searchText.toLowerCase();
+      search = searchText.toUpperCase();
     } else {
       memberType = MemberType.CONSUMER;
     }
