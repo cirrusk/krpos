@@ -396,21 +396,22 @@ export class ReceiptUtils {
     public static getFormattedGroupPriceField(priceName: string, qty: string, price: string, cancelFlag: string): string {
         const formatted: Array<string> = [];
         const cancelSymbol = cancelFlag === 'Y' ? '-' : '';
+
         const localePrice: string = ReceiptUtils.convertToLocalePrice(cancelSymbol + String(price));
         const qtyLen = 4;
-        const totalPriceLen = 11;
+        const totalPriceLen = 11 + 2; // 11자리 + 콤마(1000단위)
 
         // 태그 시작
         formatted.push(this.START_TEXTLINE);
 
-        const blankLenth: number = 42 -  (this.getTextLengthUTF8(priceName) + qtyLen + totalPriceLen + 2);
+        const blankLenth: number = 42 -  (this.getTextLengthUTF8(priceName) + qtyLen + 1 + totalPriceLen);
         formatted.push(priceName);
         formatted.push(this.spaces(blankLenth));
         formatted.push(this.spaces((qtyLen - 1) - qty.length));
 
         // 수량
         formatted.push(qty);
-        const blankTotalLength: number = 1 + (totalPriceLen - localePrice.length);
+        const blankTotalLength: number = 2 + (totalPriceLen - localePrice.length);
         formatted.push(this.spaces(blankTotalLength));
 
         // 가격
