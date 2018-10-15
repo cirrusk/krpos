@@ -268,6 +268,10 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
       orderStatus).subscribe(resultData => {
         if (resultData) {
           this.sourceList = resultData;
+          if (this.sourceList.orders.length === 0) {
+            this.alert.error({ message: `${searchText} 로 검색된 주문이 존재하지 않습니다.`, timer: true, interval: 1500 });
+            setTimeout(() => { this.searchValue.nativeElement.focus(); this.searchValue.nativeElement.select(); }, 1520);
+          }
           // barcode 조회시 결과값이 하나면 바로 ADD
           if (barcodeFlag && this.sourceList.orders.length === 1) {
             setTimeout(() => {
@@ -281,11 +285,11 @@ export class PickupOrderComponent extends ModalComponent implements OnInit, OnDe
         if (errdata) {
           this.logger.set('pickup-order.component', `Get order list error type : ${errdata.type}`).error();
           if (errdata.type === 'UnknownIdentifierError') {
-            this.alert.error({ message: `${searchText} 로 검색된 사용자가 존재하지 않습니다.` });
+            this.alert.error({ message: `${searchText} 로 검색된 사용자가 존재하지 않습니다.`, timer: true, interval: 1500 });
+            setTimeout(() => { this.searchValue.nativeElement.focus(); this.searchValue.nativeElement.select(); }, 1520);
           } else {
             this.alert.error({ message: errdata.message });
           }
-
         }
       }, () => { if (barcodeFlag) { this.barcodeScan.nativeElement.value = ''; } }
       );
