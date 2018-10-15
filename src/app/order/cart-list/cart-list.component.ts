@@ -1061,6 +1061,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 재고관련 메시지를 기존 restrict 메시지와 맞춤
    */
   private stockMessage(product: Product, message: string) {
+    this.storage.removeSerialCodes(product.code);
     let imgUrl;
     try {
       if (product.images === null) {
@@ -1265,6 +1266,10 @@ export class CartListComponent implements OnInit, OnDestroy {
             this.initSerials();
             setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
           } else {
+            if (this.serialNumbers && Array.isArray(this.serialNumbers)) {
+              this.serialNumbers.pop(); // remove last add serial
+              this.storage.setSerialCodes(code, this.serialNumbers);
+            }
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
             this.restrictionMessageList.push(this.restrictionModel);
@@ -1355,6 +1360,11 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.initSerials();
               setTimeout(() => { this.searchText.nativeElement.focus(); this.searchText.nativeElement.select(); }, 90);
             } else {
+              if (this.serialNumbers && Array.isArray(this.serialNumbers)) {
+                const orderentry: OrderEntry = this.currentCartList[this.selectedCartNum];
+                const currentqty = orderentry.quantity;
+                this.storage.setSerialCodes(code, this.serialNumbers.slice(0, currentqty));  
+              }
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
               this.modal.openModalByComponent(RestrictComponent, {

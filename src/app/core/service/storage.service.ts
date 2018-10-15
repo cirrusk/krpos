@@ -399,6 +399,7 @@ export class StorageService implements OnDestroy {
    */
   public setSerialCodes(key: string, data: Array<string>): void {
     this.removeSerialCodes(key);
+    data = data.reduce(function (a, b) { if (a.indexOf(b) < 0) { a.push(b); } return a; }, []);
     this.setSessionItem('SR_' + key, data);
   }
 
