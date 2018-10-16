@@ -278,8 +278,4 @@ export class TemplateParser {
     });
 
   }
-
-
-
-
 }
