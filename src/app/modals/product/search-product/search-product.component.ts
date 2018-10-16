@@ -21,6 +21,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
   private searchSubscription: Subscription;
   private spsubscription: Subscription;
   private cartInfo: CartInfo;
+  private userId: string;
 
   @ViewChild('searchValue') private searchValue: ElementRef;
   @ViewChild('searchPrev', { read: ElementRef }) private searchPrev: ElementRef;
@@ -57,6 +58,7 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
     const result = this.callerData.data;
     this.searchValue.nativeElement.value = result.searchText.trim();
     this.cartInfo = result.data;
+    this.userId = result.userId;
     if (result.searchText.trim()) {
       this.searchData = result.searchText.trim();
       this.searchProduct(result.searchText.trim()); // 전달 받은 데이터로 검색
@@ -211,13 +213,13 @@ export class SearchProductComponent extends ModalComponent implements OnInit, Af
       // RFID, SERIAL 입력 받음.
       if (product && (product.rfid || product.serialNumber)) {
         this.modal.openModalByComponent(SerialComponent, {
-          callerData: { productInfo: product },
+          callerData: { productInfo: product, userId: this.userId},
           closeByClickOutside: false,
           modalId: ModalIds.SERIAL
         }).subscribe(data => {
           // 검색팝업이 닫힐때 SERIAL 받기(cart-list.component)
           if (data) {
-            this.result = { productCode: this.product.code, serialNumber: data.serial };
+            this.result = { productCode: this.product.code, serialNumbers: data.serialNumbers };
             this.close();
           } else {
             this.activeNum = -1;

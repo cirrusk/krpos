@@ -394,7 +394,7 @@ export class StorageService implements OnDestroy {
   /**
    * Serial 배열 세션 저장하기
    *
-   * @param key 조회할 Serial값 키(제품코드 + UID) : 그룹주문 시 고려
+   * @param key 조회할 Serial값 키(UID + 제품코드) : 그룹주문 시 고려 ex) 7480001_100020K
    * @param data 저장할 Serial 배열
    */
   public setSerialCodes(key: string, data: Array<string>): void {
@@ -406,7 +406,7 @@ export class StorageService implements OnDestroy {
   /**
    * 저장한 Serial 배열 조회하기
    *
-   * @param key 조회할 Serial값 키(제품코드 + UID) : 그룹주문 시 고려
+   * @param key 조회할 Serial값 키(UID + 제품코드) : 그룹주문 시 고려 ex) 7480001_100020K
    */
   public getSerialCodes(key: string): Array<string> {
     return this.getSessionItem('SR_' + key);
@@ -415,7 +415,7 @@ export class StorageService implements OnDestroy {
   /**
    * 저장한 Serial 배열 삭제하기
    *
-   * @param key 삭제할 Serial값 키(제품코드 + UID) : 그룹주문 시 고려
+   * @param key 삭제할 Serial값 키(UID + 제품코드) : 그룹주문 시 고려 ex) 7480001_100020K
    */
   public removeSerialCodes(key: string): void {
     this.removeSessionItem('SR_' + key);
@@ -427,6 +427,18 @@ export class StorageService implements OnDestroy {
   public cleanSerialCodes(): void {
     Object.keys(this.sstorage).forEach(key => {
       if (key.startsWith('SR_')) {
+        this.removeSessionItem(key);
+      }
+    });
+  }
+
+  /**
+   * 그룹주문 취소시 사용자별 삭제
+   * @param userid
+   */
+  public cleanSerialCodesByUserId(userid: string): void {
+    Object.keys(this.sstorage).forEach(key => {
+      if (key.startsWith('SR_' + userid.trim())) {
         this.removeSessionItem(key);
       }
     });

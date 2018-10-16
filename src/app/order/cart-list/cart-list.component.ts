@@ -544,7 +544,7 @@ export class CartListComponent implements OnInit, OnDestroy {
    */
   callSearchAccount(params?: any): void {
     this.modal.openModalByComponent(SearchAccountComponent, {
-      callerData: { data: params },
+      callerData: { data: params},
       actionButtonLabel: '선택',
       closeButtonLabel: '초기화',
       orderType: this.orderType !== '' ? this.orderType : OrderType.NORMAL,
@@ -567,14 +567,15 @@ export class CartListComponent implements OnInit, OnDestroy {
    * @param {any} params 검색 파라미터값
    */
   callSearchProduct(params?: any): void {
+    const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
     this.modal.openModalByComponent(SearchProductComponent, {
-      callerData: { data: params },
+      callerData: { data: params, userId: serialByUserId },
       actionButtonLabel: '선택',
       closeButtonLabel: '초기화',
       modalId: ModalIds.PRODUCT
     }).subscribe(data => {
       if (data) {
-        this.setSerials(data);
+        this.setSerials(data, data.productCode);
         this.addToCart(data.productCode);
       }
       setTimeout(() => { this.searchText.nativeElement.focus(); }, 100);
@@ -623,8 +624,9 @@ export class CartListComponent implements OnInit, OnDestroy {
                 // tslint:disable-next-line:triple-equals
                 if (qty == result.qty) { // 수량이 같으면 처리하지 않음.(type 체크 하므로 == 사용)
                 } else { // 수량변경이 없으면 처리하지 않음.
+                  const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
                   this.modal.openModalByComponent(SerialComponent, {
-                    callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial },
+                    callerData: { productInfo: product, cartQty: qty, productQty: result.qty, serial: this.serial, userId: serialByUserId},
                     closeAllModals: true,
                     closeByClickOutside: false,
                     closeByEscape: true,
@@ -634,7 +636,7 @@ export class CartListComponent implements OnInit, OnDestroy {
                       if (qty < result.qty) { // 변경 수량이 증가할 경우
                         this.setSerials(data, result.code);
                       } else { // 변경 수량이 줄어들 경우(제품 수량이 줄어들 경우 장바구니부터 다시 시작)
-                        this.setSerials(data);
+                        this.setSerials(data, result.code);
                       }
                       this.updateItemQtyCart(cartId, result.code, result.qty);
                     }
@@ -1018,8 +1020,9 @@ export class CartListComponent implements OnInit, OnDestroy {
             if (product.sellableStatusForStock === undefined) {
               // RFID, SERIAL 입력 받음.
               if (product && (product.rfid || product.serialNumber)) {
+                const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
                 this.modal.openModalByComponent(SerialComponent, {
-                  callerData: { productInfo: product, cartInfo: this.currentCartList, addProduct: true },
+                  callerData: { productInfo: product, cartInfo: this.currentCartList, addProduct: true, userId: serialByUserId },
                   closeByClickOutside: false,
                   closeByEscape: true,
                   modalId: ModalIds.SERIAL
@@ -1061,7 +1064,8 @@ export class CartListComponent implements OnInit, OnDestroy {
    * 재고관련 메시지를 기존 restrict 메시지와 맞춤
    */
   private stockMessage(product: Product, message: string) {
-    this.storage.removeSerialCodes(product.code);
+    const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
+    this.storage.removeSerialCodes(serialByUserId + '_' + product.code);
     let imgUrl;
     try {
       if (product.images === null) {
@@ -1268,7 +1272,8 @@ export class CartListComponent implements OnInit, OnDestroy {
           } else {
             if (this.serialNumbers && Array.isArray(this.serialNumbers)) {
               this.serialNumbers.pop(); // remove last add serial
-              this.storage.setSerialCodes(code, this.serialNumbers);
+              const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
+              this.storage.setSerialCodes(serialByUserId + '_' + code, this.serialNumbers);
             }
             // Error 메시지 생성하여 팝업 창으로 전달
             this.restrictionModel = this.makeRestrictionMessage(this.addCartModel[0]);
@@ -1363,7 +1368,9 @@ export class CartListComponent implements OnInit, OnDestroy {
               if (this.serialNumbers && Array.isArray(this.serialNumbers)) {
                 const orderentry: OrderEntry = this.currentCartList[this.selectedCartNum];
                 const currentqty = orderentry.quantity;
-                this.storage.setSerialCodes(code, this.serialNumbers.slice(0, currentqty));  
+                this.serialNumbers = this.serialNumbers.slice(0, currentqty);
+                const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
+                this.storage.setSerialCodes(serialByUserId + '_' + code, this.serialNumbers);
               }
               this.restrictionModel = this.makeRestrictionMessage(this.updateCartModel);
               this.restrictionMessageList.push(this.restrictionModel);
@@ -1415,7 +1422,8 @@ export class CartListComponent implements OnInit, OnDestroy {
               this.posPromotion.emit({ promotions: null });
             }
 
-            this.storage.removeSerialCodes(code); // 개별삭제 시 해당 저장 serial 삭제
+            const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
+            this.storage.removeSerialCodes(serialByUserId + '_' + code); // 개별삭제 시 해당 저장 serial 삭제
 
             this.storage.setOrderEntry(this.resCartInfo.cartList); // 클라이언트 카트를 갱신하기 위해서 카트 정보를 보내준다
             this.setPage(this.cartList.length % this.cartListCount === 0 ? Math.ceil((this.cartList.length) / this.cartListCount) :
@@ -1480,6 +1488,7 @@ export class CartListComponent implements OnInit, OnDestroy {
           } else {
             // 그룹주문 에서 사용자 삭제
             this.groupAccountInfo.splice(groupAccountIndex, 1);
+            this.storage.cleanSerialCodesByUserId(this.selectedUserId);
             // 사용자의 현재 페이지 및 사용자 선택
             const selectIndex = this.selectedUserIndex - 1 === -1 ? 9 : this.selectedUserIndex - 1;
             const page = this.selectedUserIndex - 1 === -1 ? this.userPager.currentPage - 1 : this.userPager.currentPage;
@@ -2194,7 +2203,8 @@ export class CartListComponent implements OnInit, OnDestroy {
         this.serialNumbers.push(serial);
       });
       if (productcode) {
-        this.storage.setSerialCodes(productcode, this.serialNumbers);
+        const serialByUserId = (this.orderType === OrderType.GROUP) ? this.selectedUserId : this.cartInfo.user.uid;
+        this.storage.setSerialCodes(serialByUserId + '_' + productcode, this.serialNumbers);
       }
     }
     this.serial = (this.serialNumbers.length > 0) ? this.serialNumbers[0] : null; // 초기값 출력 세팅

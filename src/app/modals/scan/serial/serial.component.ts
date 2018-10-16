@@ -43,7 +43,7 @@ import { Product } from '../../../data/models/cart/cart-data';
  *
  * 요건 중 수량 변경 시 Serial/RFID 최초 상품 1건에 대한 표기 요건이 있었으나
  * 이후 입력된 모든 Serial/RFID 에 대해서 표기 요청으로 변경
- * 
+ *
  * @since 2018.08.09 RFID를 Serial에 통합
  */
 @Component({
@@ -67,6 +67,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
     private changeqty: number;
     private isSerialProduct: boolean;
     private cartInfo: OrderEntry[];
+    private userId: string;
     private keyboardsubscription: Subscription;
     @ViewChildren('codes') codes: QueryList<ElementRef>;
 
@@ -92,9 +93,10 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         this.cartInfo = this.callerData.cartInfo ? this.callerData.cartInfo : null;
         this.addProduct = this.callerData.addProduct ? this.callerData.addProduct : false;
         this.cartqty = this.callerData.cartQty ? this.callerData.cartQty : 0; // 카트에 담긴 제품 수량
-        console.log('cart qty ' + this.cartqty);
-        this.changeqty = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량                
-        this.serialsrfids = this.storage.getSerialCodes(this.productInfo.code);
+        this.userId = this.callerData.userId;
+
+        this.changeqty = this.callerData.productQty ? this.callerData.productQty : 1; // 수량변경한 제품 수량
+        this.serialsrfids = this.storage.getSerialCodes(this.userId + '_' + this.productInfo.code);
         if (this.serialsrfids && this.serialsrfids.length > 0) {
             this.singleInputFlag = false;
         } else { // 입력한 값이 없으면 single input
@@ -257,7 +259,7 @@ export class SerialComponent extends ModalComponent implements OnInit, OnDestroy
         });
         if (this.scanInputSize === scannedRegCount) {
             if (this.changeqty > this.cartqty) {
-                const orgSerials: Array<string> = this.storage.getSerialCodes(this.productInfo.code);
+                const orgSerials: Array<string> = this.storage.getSerialCodes(this.userId + '_' + this.productInfo.code);
                 if (orgSerials && Array.isArray(orgSerials)) {
                     this.serialNumbers.forEach(serial => {
                         orgSerials.push(serial); // 원래 입력했던거 찾아서 넣어주기
