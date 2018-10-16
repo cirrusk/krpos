@@ -79,7 +79,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
       this.getOrderDetail(this.orderInfo.user.uid, this.orderInfo.code);
     }
 
-    this.getBalance(this.orderInfo.user.uid);
+    this.getBalance(this.orderInfo.volumeAccount.uid);
     this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     if (this.orderInfo.isGroupCombinationOrder) {
       this.orderType = OrderType.GROUP;
@@ -222,7 +222,7 @@ export class OrderDetailComponent extends ModalComponent implements OnInit, OnDe
           } else {
             this.getOrderDetail(this.orderInfo.volumeAccount.uid, this.orderInfo.code);
           }
-          this.getBalance(this.orderInfo.user.uid);
+          this.getBalance(this.orderInfo.volumeAccount.uid);
         }
       });
     }
