@@ -394,7 +394,7 @@ export class StorageService implements OnDestroy {
   /**
    * Serial 배열 세션 저장하기
    *
-   * @param key 조회할 Serial값 키(제품코드)
+   * @param key 조회할 Serial값 키(제품코드 + UID) : 그룹주문 시 고려
    * @param data 저장할 Serial 배열
    */
   public setSerialCodes(key: string, data: Array<string>): void {
@@ -406,7 +406,7 @@ export class StorageService implements OnDestroy {
   /**
    * 저장한 Serial 배열 조회하기
    *
-   * @param key 조회할 Serial값 키(제품코드)
+   * @param key 조회할 Serial값 키(제품코드 + UID) : 그룹주문 시 고려
    */
   public getSerialCodes(key: string): Array<string> {
     return this.getSessionItem('SR_' + key);
@@ -415,7 +415,7 @@ export class StorageService implements OnDestroy {
   /**
    * 저장한 Serial 배열 삭제하기
    *
-   * @param key 삭제할 Serial값 키(제품코드)
+   * @param key 삭제할 Serial값 키(제품코드 + UID) : 그룹주문 시 고려
    */
   public removeSerialCodes(key: string): void {
     this.removeSessionItem('SR_' + key);
