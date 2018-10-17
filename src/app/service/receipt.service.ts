@@ -185,7 +185,7 @@ export class ReceiptService implements OnDestroy {
             jsonPaymentData = {};
         });
 
-        if (groupOrderFlag) {
+        if (groupOrderFlag) { // Sub 주문만 출력시 해당 로직 수행하여 sub 만 출력되도록 처리
             this.groupPrint(order, paymentCapture, cancelFlag, true, isCashReceipt);
             return Observable.of(true);
         } else {
@@ -347,36 +347,7 @@ export class ReceiptService implements OnDestroy {
             order: ordering.order, account: ordering.account, cartInfo: ordering.cart, cancelFlag: cancelFlag,
             paymentCapture: paymentCapture, groupInfo: ordering.info, cashReceipt: isCashReceipt, reIssue: reIssue
         };
-        // 현재 포인트를 조회 후에 프린트 정보 설정
-        const uid = ordering.account.parties ? ordering.account.parties[0].uid : ordering.account.uid;
-        this.logger.set('receipt.service', `ordering abo : ${uid}`).info();
-        // 잔여 포인트 표시 (삭제 예정)
-        // const pointrecash: PointReCash = this.storage.getPointReCash();
-        // if (pointrecash && pointrecash.point) { // 포인트가 세션에 있으면 그 정보로 인쇄
-        //     let changepoint: number = pointrecash.point ? pointrecash.point.amount : 0;
-        //     if (changepoint > 0) {
-        //         if (paymentCapture && paymentCapture.pointPaymentInfo) {
-        //             changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
-        //         }
-        //     }
-        //     this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
-        // } else { // 포인트가 세션에 없으면 포인트 조회 후 인쇄
-        //     this.paymentsubscription = this.payment.getBalance(uid).subscribe(
-        //         result => {
-        //             let changepoint: number = result ? result.amount : 0;
-        //             if (changepoint > 0) {
-        //                 if (paymentCapture && paymentCapture.pointPaymentInfo) {
-        //                     changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
-        //                 }
-        //             }
-        //             this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
-        //         },
-        //         error => {
-        //             this.logger.set('receipt.service', `${error}`).error();
-        //             this.doPrintByGroup(ordering, orderList, printInfo, 0, reIssue);
-        //         }
-        //     );
-        // }
+
         // 그룹주문시 사용자별 포인트 조회
         const addAccount = [];
         orderList.forEach(
@@ -385,16 +356,12 @@ export class ReceiptService implements OnDestroy {
             }
         );
 
-        Observable.forkJoin<GroupBalance>(addAccount).subscribe(result => {
+        Observable.forkJoin<GroupBalance>(addAccount).subscribe(gBalance => {
             const pointMap = new Map<string, object>();
-            result.map(obj => { pointMap.set(obj.uid,  obj.point); });
+            gBalance.forEach(obj => { pointMap.set(obj.uid,  obj.point); });
 
-            let changepoint: number = pointMap.size > 0 ? Number(pointMap.get(orderList[0].account.uid)) : 0;
-            if (changepoint > 0) {
-                if (paymentCapture && paymentCapture.pointPaymentInfo) {
-                    changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
-                }
-            }
+            const changepoint: number = pointMap.size > 0 ? Number(pointMap.get(orderList[0].account.uid)) : 0;
+
             this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue, pointMap);
           });
 
@@ -572,12 +539,8 @@ export class ReceiptService implements OnDestroy {
             } else {
                 this.paymentsubscription = this.payment.getBalance(uid).subscribe(
                     result => {
-                        let changepoint: number = result ? result.amount : 0;
-                        if (changepoint > 0) {
-                            if (paymentCapture && paymentCapture.pointPaymentInfo) {
-                                changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
-                            }
-                        }
+                        const changepoint: number = result ? result.amount : 0;
+
                         Object.assign(printInfo, { point: changepoint });
                         rtn = this.makeTextAndPrint(printInfo);
                         if (rtn && reIssue) { this.issueReceipt(account, order); }
