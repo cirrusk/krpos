@@ -17,7 +17,7 @@ import {
     CreditCardPaymentInfo, ICCardPaymentInfo, CashPaymentInfo, DirectDebitPaymentInfo,
     PointPaymentInfo, AmwayMonetaryPaymentInfo, PointReCash, PointInfo, DirectDebit,
     EodData, EodInfo, OrderEodData, CcData, IcData, DebitData, PointData, ReCashData, CashData,
-    SummaryData, CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel, Price, AmwayValue
+    SummaryData, CancelEodData, OrderCancel, MediateCancel, MemberCancel, SummaryCancel, Price, AmwayValue, GroupBalance
 } from '../data';
 import { Order, OrderList } from '../data/models/order/order';
 import { Cart } from '../data/models/order/cart';
@@ -319,7 +319,11 @@ export class ReceiptService implements OnDestroy {
 
                         if (volumeABOIndex > -1) {
                             // Ordering ABO를 제외한 index 로 -1 처리
-                            this.printSubOrder(groupOrder.orderList[volumeABOIndex], (volumeABOIndex - 1), cancelFlag, reIssue, false);
+                            this.payment.getBalance(groupOrder.orderList[volumeABOIndex].volumeABOAccount.uid).subscribe(
+                                balance => {
+                                    this.printSubOrder(groupOrder.orderList[volumeABOIndex], (volumeABOIndex - 1), cancelFlag, reIssue, false, Number(balance.amount));
+                                }
+                            );
                         }
                     }
                 }
@@ -346,33 +350,54 @@ export class ReceiptService implements OnDestroy {
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = ordering.account.parties ? ordering.account.parties[0].uid : ordering.account.uid;
         this.logger.set('receipt.service', `ordering abo : ${uid}`).info();
-        // 잔여 포인트 표시
-        const pointrecash: PointReCash = this.storage.getPointReCash();
-        if (pointrecash && pointrecash.point) { // 포인트가 세션에 있으면 그 정보로 인쇄
-            let changepoint: number = pointrecash.point ? pointrecash.point.amount : 0;
+        // 잔여 포인트 표시 (삭제 예정)
+        // const pointrecash: PointReCash = this.storage.getPointReCash();
+        // if (pointrecash && pointrecash.point) { // 포인트가 세션에 있으면 그 정보로 인쇄
+        //     let changepoint: number = pointrecash.point ? pointrecash.point.amount : 0;
+        //     if (changepoint > 0) {
+        //         if (paymentCapture && paymentCapture.pointPaymentInfo) {
+        //             changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
+        //         }
+        //     }
+        //     this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
+        // } else { // 포인트가 세션에 없으면 포인트 조회 후 인쇄
+        //     this.paymentsubscription = this.payment.getBalance(uid).subscribe(
+        //         result => {
+        //             let changepoint: number = result ? result.amount : 0;
+        //             if (changepoint > 0) {
+        //                 if (paymentCapture && paymentCapture.pointPaymentInfo) {
+        //                     changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
+        //                 }
+        //             }
+        //             this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
+        //         },
+        //         error => {
+        //             this.logger.set('receipt.service', `${error}`).error();
+        //             this.doPrintByGroup(ordering, orderList, printInfo, 0, reIssue);
+        //         }
+        //     );
+        // }
+        // 그룹주문시 사용자별 포인트 조회
+        const addAccount = [];
+        orderList.forEach(
+            order => {
+                addAccount.push(this.payment.getBalanceByUid(order.volumeABOAccount.uid));
+            }
+        );
+
+        Observable.forkJoin<GroupBalance>(addAccount).subscribe(result => {
+            const pointMap = new Map<string, object>();
+            result.map(obj => { pointMap.set(obj.uid,  obj.point); });
+
+            let changepoint: number = pointMap.size > 0 ? Number(pointMap.get(orderList[0].account.uid)) : 0;
             if (changepoint > 0) {
                 if (paymentCapture && paymentCapture.pointPaymentInfo) {
                     changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
                 }
             }
-            this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
-        } else { // 포인트가 세션에 없으면 포인트 조회 후 인쇄
-            this.paymentsubscription = this.payment.getBalance(uid).subscribe(
-                result => {
-                    let changepoint: number = result ? result.amount : 0;
-                    if (changepoint > 0) {
-                        if (paymentCapture && paymentCapture.pointPaymentInfo) {
-                            changepoint = changepoint - paymentCapture.pointPaymentInfo.amount;
-                        }
-                    }
-                    this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue);
-                },
-                error => {
-                    this.logger.set('receipt.service', `${error}`).error();
-                    this.doPrintByGroup(ordering, orderList, printInfo, 0, reIssue);
-                }
-            );
-        }
+            this.doPrintByGroup(ordering, orderList, printInfo, changepoint, reIssue, pointMap);
+          });
+
     }
 
     /**
@@ -384,14 +409,14 @@ export class ReceiptService implements OnDestroy {
      * @param {number} point 잔여 포인트 값
      * @param {boolean} reIssue 재발행 여부
      */
-    private doPrintByGroup(ordering: GroupResponseData, orderList: Array<Order>, printInfo: any, point: number, reIssue = false) {
+    private doPrintByGroup(ordering: GroupResponseData, orderList: Array<Order>, printInfo: any, point: number, reIssue = false, pointMap?: any) {
         this.printMainOrder(ordering, printInfo, point, reIssue).subscribe(
             () => {
                 setTimeout(() => {
                     const subOrderList: Array<Order> = orderList.filter((o, index) => index !== 0).map(o => o);
                     subOrderList.forEach((order, index) => {
                         setTimeout(() => {
-                            this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, false);
+                            this.printSubOrder(order, index, printInfo.cancelFlag, reIssue, false, Number(pointMap.get(order.volumeABOAccount.uid)));
                         }, 500);
                     });
                 }, 1000);
@@ -423,15 +448,17 @@ export class ReceiptService implements OnDestroy {
      * @param {boolean} reIssue 재출력 여부
      * @param {boolean} isCashReceipt 현금 영수증 증빙여부
      */
-    private printSubOrder(order: Order, index: number, cancelFlag = 'N', reIssue = false, isCashReceipt = false): Observable<boolean> {
+    private printSubOrder(order: Order, index: number, cancelFlag = 'N', reIssue = false, isCashReceipt = false, point = 0): Observable<boolean> {
         const sub: GroupResponseData = this.getGroupDetailInfo(order, index + 1);
+
         const params = {
             cancelFlag: cancelFlag,
             groupInfo: sub.info,
             reIssue: reIssue,
             isGroupOrder: true, // balance 조회 없이 print
             isCashReceipt: isCashReceipt,
-            type: this.message.get('group.order.type')
+            type: this.message.get('group.order.type'),
+            groupSubPoint: point
         };
         const rtn = this.print(sub.account, sub.cart, sub.order, new PaymentCapture(), params);
         return Observable.of(rtn);
@@ -511,8 +538,8 @@ export class ReceiptService implements OnDestroy {
      * @returns {boolean} 성공/실패 여부
      */
     public print(account: Accounts, cartInfo: Cart, order: Order, paymentCapture: PaymentCapture,
-        { cancelFlag = 'N', groupInfo = null, type = null, macAndCoNum = null, reIssue = false, isGroupOrder = false, isCashReceipt = false }:
-            { cancelFlag?: string, groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean, isCashReceipt?: boolean }
+        { cancelFlag = 'N', groupInfo = null, type = null, macAndCoNum = null, reIssue = false, isGroupOrder = false, isCashReceipt = false, groupSubPoint = 0}:
+        { cancelFlag?: string, groupInfo?: string, type?: string, macAndCoNum?: string, reIssue?: boolean, isGroupOrder?: boolean, isCashReceipt?: boolean, groupSubPoint?: number}
     ): boolean {
         let rtn = true;
         type = type && type.length > 0 ? type : null;
@@ -524,8 +551,9 @@ export class ReceiptService implements OnDestroy {
         };
         // 현재 포인트를 조회 후에 프린트 정보 설정
         const uid = account.parties ? account.parties[0].uid : account.uid;
-        if (isGroupOrder) { // 그룹주문의 경우 포인트 조회 subscribe 시 async 로 인해 출력 순서 꼬임.
-            Object.assign(printInfo, { point: 0 });
+        if (isGroupOrder) {
+            // sub 포인트
+            Object.assign(printInfo, { point: groupSubPoint });
             rtn = this.makeTextAndPrint(printInfo);
             if (rtn && reIssue) { this.issueReceipt(account, order); }
         } else {

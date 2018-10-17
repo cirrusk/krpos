@@ -15,3 +15,12 @@ export class PointReCash {
         this.recash = recash;
     }
 }
+
+export class GroupBalance {
+    uid: string;
+    point: Balance;
+    constructor(uid: string, point: Balance) {
+        this.uid = uid;
+        this.point = point;
+    }
+}

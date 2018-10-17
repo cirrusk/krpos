@@ -10,7 +10,7 @@ import {
   ResponseData, BankInfoList, CapturePaymentInfo, BatchInfo, ResponseMessage,
   PaymentCapture, PaymentView, CashPaymentInfo, CashType, PaymentModeData, PaymentModes,
   CurrencyData, CreditCardPaymentInfo, VanTypes, CCMemberType, CCPaymentType, DirectDebitPaymentInfo,
-  ICCardPaymentInfo, PointType, PointPaymentInfo, AmwayMonetaryPaymentInfo
+  ICCardPaymentInfo, PointType, PointPaymentInfo, AmwayMonetaryPaymentInfo, GroupBalance
 } from '../../data';
 import { Order } from '../../data/models/order/order';
 import { Cart } from '../../data/models/order/cart';
@@ -18,6 +18,7 @@ import { InfoBroker } from '../../broker';
 import { Utils } from '../../core/utils';
 import { BankAccount } from '../../data/models/order/bank-account';
 import { OrderService } from '../order/order.service';
+import { stringify } from '@angular/core/src/render3/util';
 
 /**
  * 지불 처리 서비스
@@ -98,6 +99,18 @@ export class PaymentService {
   }
 
   /**
+   * 회원의 가용 포인트 조회
+   *  - return 객체에 사용자 uid 추가
+   * @param userid
+   */
+  getBalanceByUid(userid: string): Observable<GroupBalance> {
+    const pathvariables = { userId: userid };
+    const params = { feilds: 'DEFAULT' };
+    const data = new HttpData('balance', pathvariables, null, params);
+    return this.api.get(data).map(result => new GroupBalance(userid, result.amount));
+  }
+
+  /**
    * 회원의 Re-Cash 조회
    *
    * @param {string} userid 회원아이디
@@ -162,7 +175,7 @@ export class PaymentService {
   /**
    * 쿠폰 삭제(카트)
    * 카트에 적용된 쿠폰 정보를 삭제
-   * 
+   *
    * @param {string} userid 회원 아이디
    * @param {string} cartid 카트 아이디
    * @param {string} couponcode 쿠폰 코드
@@ -262,10 +275,10 @@ export class PaymentService {
     }
   }
 
-  checkFinalPrice(totalprice: number, paymentcapture: PaymentCapture) : boolean {
+  checkFinalPrice(totalprice: number, paymentcapture: PaymentCapture): boolean {
     Object.keys(paymentcapture).forEach((key) => {
       const payment  = paymentcapture[key];
-      if (payment != null) { 
+      if (payment != null) {
         console.log('====== ' + payment.amount);
       }
     });
@@ -274,7 +287,7 @@ export class PaymentService {
 
   /**
    * 결제 내역 설정
-   * 
+   *
    * 결제금액 : 전체 금액 - 프로모션 금액
    * 받은금액 : 결제수단 총합 금액
    * 거스름돈 : 거스름돈
@@ -593,7 +606,7 @@ export class PaymentService {
 
   /**
    * 결제 에러 메시지 생성
-   * 
+   *
    * @param error 에러 정보
    * @returns {string} 에러 메시지
    */
@@ -629,12 +642,12 @@ export class PaymentService {
   /**
    * 결제 방법에 우선 순위를 부여하여 paymentMode를 셋팅
    * 1. 자동이체 2. 카드 3. 현금 4.포인트
-   * 
+   *
    * 기존에는 첫번째 선택한 결제수단을 주결제 수단으로 처리하였음.
    * 그러나 요건에 의해서 주결제 수단으로 설정되지 않아야할 결제수단까지
    * 주결제 수단으로 선택되도록 요건이 변경되어
    * 첫번째 선택한 결제수단이 아닌 우선순위에 의한 주결제 수단 선택으로 변경
-   * 
+   *
    * @param {PaymentCapture} paymentCapture 지불 캡쳐 정보
    * @returns {string} 우선순위에 따른 주결제 수단 정보
    */
@@ -661,7 +674,7 @@ export class PaymentService {
 
   /**
    * 결제가 하나라도 진행되었는지 체크
-   * 
+   *
    * @param {PaymentCapture} paymentCapture 지불 캡쳐 정보
    * @returns {boolean} 결제가 하나라도 진행되었는지 여부
    */
@@ -669,7 +682,7 @@ export class PaymentService {
     let ispay = 0;
     Object.keys(paymentCapture).forEach((key) => {
       const payment = paymentCapture[key];
-      if (payment != null) { 
+      if (payment != null) {
         if (payment.amount > 0) {
           ispay++;
         }
