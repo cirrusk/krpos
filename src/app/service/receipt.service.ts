@@ -764,17 +764,18 @@ export class ReceiptService implements OnDestroy {
                 price.setTotalDiscount = cartInfo.totalDiscountWithTax ? cartInfo.totalDiscountWithTax.value : 0;
             }
         }
-        let promotion = 0;
-        if (cartInfo.appliedOrderPromotions) { // 4-1. 주문 프로모션
-            promotion += 0;
-        }
+        // 사용하지 않음(추후 삭제)
+        // let promotion = 0;
+        // if (cartInfo.appliedOrderPromotions) { // 4-1. 주문 프로모션
+        //     promotion += 0;
+        // }
 
-        if (cartInfo.appliedProductPromotions) { // 4-2. 상품 프로모션
-            promotion += 0;
-        }
-        if (promotion > 0) {
-            price.setPromotion = promotion;
-        }
+        // if (cartInfo.appliedProductPromotions) { // 4-2. 상품 프로모션
+        //     promotion += 0;
+        // }
+        // if (promotion > 0) {
+        //     price.setPromotion = promotion;
+        // }
 
         // 프로모션 할인금액
         if (order.promotionResultActions) {

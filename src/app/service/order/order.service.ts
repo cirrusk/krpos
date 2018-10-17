@@ -302,7 +302,7 @@ export class OrderService {
       promotionData.totalExtraPrice = promotion.totalExtraPrice;
       promotionData.orderEntryQuantity = promotion.orderEntryQuantity;
       promotionData.isProductPromotion = promotion.isProductPromotion;
-      promotionData.totalAmount = promotion.isProductPromotion ? promotion.totalAmount * promotion.orderEntryQuantity : promotion.totalAmount;
+      promotionData.totalAmount = promotion.isProductPromotion ? promotion.totalAmount * promotion.orderEntryQuantity : Math.abs(promotion.totalAmount);
       promotionData.tax = promotion.tax;
 
       if (promotionIndex === -1) {
