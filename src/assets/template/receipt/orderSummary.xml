@@ -32,7 +32,7 @@
         POS번호: {{orderInfo.posId}}
     </text-line>
     <text-line>
-        캐셔정보: {{orderInfo.cashier.firstName}}
+        캐셔정보: {{orderInfo.cashier.name}}
     </text-line>
     <text-line>
         주문번호: {{orderInfo.number}}

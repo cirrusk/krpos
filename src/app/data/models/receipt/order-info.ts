@@ -55,12 +55,11 @@ export class OrderInfo {
 }
 
 export class Cashier {
-    ad: string;
-    lastName: string;
-    firstName: string;
-    constructor(ad: string, firstName: string, lastName?: string) {
-        this.ad = ad;
-        this.firstName = firstName;
+    id: string;
+    name: string;
+    constructor(id: string, name: string) {
+        this.id = id;
+        this.name = name;
     }
 }
 

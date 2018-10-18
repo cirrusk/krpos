@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <text-line>
-        POS:{{orderInfo.posId}} / 캐셔:{{orderInfo.cashier.ad}}
+        POS:{{orderInfo.posId}} / 캐셔:{{orderInfo.cashier.id}}
     </text-line>
 </document>

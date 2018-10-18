@@ -13,9 +13,8 @@ export class OrderInfoVO {
         this.posId = posId;
         this.number = '10000000';
         this.cashier = {
-            'ad': cashierId,
-            'lastName': '',
-            'firstName': cashierName
+            'id': cashierId,
+            'name': cashierName
         };
         this.macAndCoNum = 'MAC&CO';
         this.type = '현장구매';
