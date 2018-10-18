@@ -220,7 +220,14 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           if (Utils.isPaymentError(result.statusDisplay)) {
             let failmsg = '';
             if (result.statusDisplay === StatusDisplay.PAYMENTFAILED) {
-              failmsg = this.message.get('payment.failed');
+              let errorMessage = '';
+              const isErrorMessage = result.paymentDetails.paymentInfos.some(function (payment, index, arr) {
+                if (payment.statusDetails) {
+                  errorMessage = '(' + payment.statusDetails + ')';
+                  return true;
+                }
+              });
+              failmsg = isErrorMessage ? errorMessage : this.message.get('payment.failed');
             } else if (result.statusDisplay === StatusDisplay.ORDERFAILED) {
               failmsg = this.message.get('order.failed');
             }
@@ -624,7 +631,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
           imgUrl = (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
         } else {
           imgUrl = this.domain + (model.entry.product.images[1].url).replace('/amwaycommercewebservices/v2', '');
-        }        
+        }
       }
     } catch (e) {
       imgUrl = '/assets/images/temp/198x198.jpg';
@@ -639,7 +646,7 @@ export class CompletePaymentComponent extends ModalComponent implements OnInit, 
       callerData: { data: this.restrictionMessageList },
       closeByEnter: true,
       modalId: ModalIds.RESTRICT
-    }).subscribe(() => { 
+    }).subscribe(() => {
       this.cardCancelAndSendInfoForError(ErrorType.RESTRICT);
     });
   }

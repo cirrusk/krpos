@@ -273,7 +273,7 @@ export class EcpConfirmComponent extends ModalComponent implements OnInit, OnDes
           if (errdata) {
             this.logger.set('ecp-confirm.component', `confirm error type : ${errdata.type}`).error();
             this.logger.set('ecp-confirm.component', `confirm error message : ${errdata.message}`).error();
-            
+
             if (errdata.type === 'OrderUpdateError') {
               this.alert.error({ message: `${this.title} 컨펌 시 오류가 발생하였습니다.` });
             } else {
